@@ -1,14 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 4.8.3
+-- version 5.2.0
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 08-05-2024 a las 21:08:58
--- Versión del servidor: 10.1.36-MariaDB
--- Versión de PHP: 5.6.38
+-- Tiempo de generación: 09-05-2024 a las 22:13:42
+-- Versión del servidor: 10.4.27-MariaDB
+-- Versión de PHP: 7.4.33
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -30,21 +29,21 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `empleados` (
   `id` int(11) NOT NULL,
-  `nacionalidad` varchar(1) COLLATE latin1_spanish_ci NOT NULL,
-  `cedula` varchar(20) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `cod_empleado` varchar(20) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `nombres` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `nacionalidad` varchar(1) NOT NULL,
+  `cedula` varchar(20) DEFAULT NULL,
+  `cod_empleado` varchar(20) DEFAULT NULL,
+  `nombres` varchar(255) DEFAULT NULL,
   `fecha_ingreso` date DEFAULT NULL,
-  `otros_años` int(11) NOT NULL DEFAULT '0',
-  `status` varchar(5) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `obeservacion` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `cod_cargo` varchar(10) COLLATE latin1_spanish_ci NOT NULL,
-  `cargo` varchar(255) COLLATE latin1_spanish_ci NOT NULL,
-  `banco` varchar(255) COLLATE latin1_spanish_ci NOT NULL,
-  `cuenta_bancaria` varchar(25) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `hijos` int(11) NOT NULL DEFAULT '0',
-  `instruccion_academica` int(11) NOT NULL DEFAULT '0',
-  `discapacidades` int(2) NOT NULL DEFAULT '0',
+  `otros_años` int(11) NOT NULL DEFAULT 0,
+  `status` varchar(5) DEFAULT NULL,
+  `obeservacion` varchar(255) DEFAULT NULL,
+  `cod_cargo` varchar(10) NOT NULL,
+  `cargo` varchar(255) NOT NULL,
+  `banco` varchar(255) NOT NULL,
+  `cuenta_bancaria` varchar(25) DEFAULT NULL,
+  `hijos` int(11) NOT NULL DEFAULT 0,
+  `instruccion_academica` int(11) NOT NULL DEFAULT 0,
+  `discapacidades` int(2) NOT NULL DEFAULT 0,
   `becas` int(2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
@@ -57,7 +56,7 @@ CREATE TABLE `empleados` (
 CREATE TABLE `nominas` (
   `id` int(11) NOT NULL,
   `codigo` int(20) NOT NULL,
-  `nombre` varchar(255) COLLATE latin1_spanish_ci NOT NULL
+  `nombre` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 -- --------------------------------------------------------
@@ -80,7 +79,7 @@ CREATE TABLE `nominas_conceptos` (
   `cod_nomina` varchar(10) DEFAULT NULL,
   `nom_nomina` varchar(255) DEFAULT NULL,
   `tipo_concepto` varchar(1) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
 -- Volcado de datos para la tabla `nominas_conceptos`
@@ -116,8 +115,8 @@ CREATE TABLE `system_users` (
   `u_oficina` varchar(255) DEFAULT NULL,
   `u_email` varchar(255) CHARACTER SET utf8 COLLATE utf8_spanish2_ci NOT NULL,
   `u_contrasena` varchar(255) NOT NULL,
-  `creado` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `creado` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
 -- Volcado de datos para la tabla `system_users`
@@ -125,6 +124,57 @@ CREATE TABLE `system_users` (
 
 INSERT INTO `system_users` (`u_id`, `u_nombre`, `u_oficina_id`, `u_oficina`, `u_email`, `u_contrasena`, `creado`) VALUES
 (31, 'user Nombre', 1, 'Nomina', 'corro@correo.com', '$2y$10$EyP1MOY39kuw4uREdk7ao.UUzQ10YNIZ95IZLM70MUPo5J6YzEBVG', '2024-03-07 11:18:19');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `tabuladores`
+--
+
+CREATE TABLE `tabuladores` (
+  `id` int(255) NOT NULL,
+  `nombre` varchar(255) NOT NULL,
+  `grado` varchar(255) NOT NULL,
+  `pasos` varchar(255) NOT NULL,
+  `aniosPasos` varchar(255) NOT NULL,
+  `timestamp` date NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `tabuladores`
+--
+
+INSERT INTO `tabuladores` (`id`, `nombre`, `grado`, `pasos`, `aniosPasos`, `timestamp`) VALUES
+(6, 'tabulador_regional_001', '3', '3', '5', '2024-05-09');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `tabuladores_estr`
+--
+
+CREATE TABLE `tabuladores_estr` (
+  `id` int(255) NOT NULL,
+  `paso` varchar(255) NOT NULL,
+  `grado` varchar(255) NOT NULL,
+  `monto` varchar(255) NOT NULL,
+  `tabulador_id` int(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `tabuladores_estr`
+--
+
+INSERT INTO `tabuladores_estr` (`id`, `paso`, `grado`, `monto`, `tabulador_id`) VALUES
+(46, 'P1', 'G1', '1', 6),
+(47, 'P2', 'G1', '2', 6),
+(48, 'P3', 'G1', '3', 6),
+(49, 'P1', 'G2', '4', 6),
+(50, 'P2', 'G2', '5', 6),
+(51, 'P3', 'G2', '6', 6),
+(52, 'P1', 'G3', '7', 6),
+(53, 'P2', 'G3', '8', 6),
+(54, 'P3', 'G3', '9', 6);
 
 --
 -- Índices para tablas volcadas
@@ -156,6 +206,18 @@ ALTER TABLE `system_users`
   ADD UNIQUE KEY `usuario` (`u_email`);
 
 --
+-- Indices de la tabla `tabuladores`
+--
+ALTER TABLE `tabuladores`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `tabuladores_estr`
+--
+ALTER TABLE `tabuladores_estr`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- AUTO_INCREMENT de las tablas volcadas
 --
 
@@ -182,6 +244,18 @@ ALTER TABLE `nominas_conceptos`
 --
 ALTER TABLE `system_users`
   MODIFY `u_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+
+--
+-- AUTO_INCREMENT de la tabla `tabuladores`
+--
+ALTER TABLE `tabuladores`
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT de la tabla `tabuladores_estr`
+--
+ALTER TABLE `tabuladores_estr`
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
