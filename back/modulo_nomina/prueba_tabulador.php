@@ -1,4 +1,6 @@
 <?php
+require_once '../sistema_global/session.php';
+
 // URL del servidor
 $url = 'http://localhost/sigob/back/modulo_nomina/tabulador.php/';
 

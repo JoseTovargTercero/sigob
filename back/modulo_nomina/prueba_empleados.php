@@ -1,24 +1,27 @@
 <?php
+require_once '../sistema_global/session.php';
+
 // URL del servidor
-$url = 'http://localhost/sigob/back/sistema_global/tabulador.php/';
+$url = 'http://localhost/sigob/back/modulo_nomina/registro_empleados.php/';
 
 // Datos a enviar (el objeto JSON)
 $data = array(
-    "nombre" => "tabulador_regional_001",
-    "grados" => 3,
-    "pasos" => 3,
-    "anioPasos" => 5,
-    "tabulador" => [
-        ["G1", "P1", 1],
-        ["G1", "P2", 2],
-        ["G1", "P3", 3],
-        ["G2", "P1", 4],
-        ["G2", "P2", 5],
-        ["G2", "P3", 6],
-        ["G3", "P1", 7],
-        ["G3", "P2", 8],
-        ["G3", "P3", 9]
-    ]
+    "nacionalidad" => "1",
+    "Cedula" => 123456789,
+    "cod_empleado" => 441151,
+    "nombres" => "Pedro Pablo",
+    "fecha_ingreso" => "2010/05/02",
+    "otros_años" => 0,
+    "status" => 1,
+    "observacion" => "N/A",
+    "cod_cargo" => "25212",
+    "cargo" => 12,
+    "banco" => "Venezuela",
+    "cuenta_bancaria" => "1002555541124",
+    "hijos" => 3,
+    "instruccion_academica" => 1,
+    "discapacidades" => 0,
+    "becas" => 0,
 );
 
 // Convertir el array a formato JSON

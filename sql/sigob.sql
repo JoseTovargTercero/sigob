@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 10-05-2024 a las 01:35:32
+-- Tiempo de generación: 11-05-2024 a las 00:29:52
 -- Versión del servidor: 10.4.27-MariaDB
 -- Versión de PHP: 7.4.33
 
@@ -537,7 +537,14 @@ CREATE TABLE `empleados` (
 --
 
 INSERT INTO `empleados` (`id`, `nacionalidad`, `cedula`, `cod_empleado`, `nombres`, `fecha_ingreso`, `otros_años`, `status`, `observacion`, `cod_cargo`, `cargo`, `banco`, `cuenta_bancaria`, `hijos`, `instruccion_academica`, `discapacidades`, `becas`) VALUES
-(1, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', '12', 'Venezuela', '1002555541124', 3, 3, 0, 0);
+(26, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', '12', 'Venezuela', '1002555541124', 3, 1, 0, 0),
+(27, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', '12', 'Venezuela', '1002555541124', 3, 1, 0, 0),
+(28, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', '12', 'Venezuela', '1002555541124', 3, 1, 0, 0),
+(29, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', '12', 'Venezuela', '1002555541124', 3, 1, 0, 0),
+(30, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', '12', 'Venezuela', '1002555541124', 3, 1, 0, 0),
+(31, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', '12', 'Venezuela', '1002555541124', 3, 1, 0, 0),
+(32, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', '12', 'Venezuela', '1002555541124', 3, 1, 0, 0),
+(33, '1', '123456789', '441151', 'Pedro Pablo', '2022-05-02', 0, '1', 'N/A', '25212', '12', 'Venezuela', '1002555541124', 3, 1, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -637,8 +644,7 @@ CREATE TABLE `tabuladores` (
 --
 
 INSERT INTO `tabuladores` (`id`, `nombre`, `grado`, `pasos`, `aniosPasos`, `timestamp`) VALUES
-(6, 'tabulador_regional_001', '3', '3', '1', '2024-05-09'),
-(7, 'tabulador_regional_001', '3', '3', '1', '2024-05-09');
+(6, 'tabulador_regional_001', '3', '3', '1', '2024-05-09');
 
 -- --------------------------------------------------------
 
@@ -730,7 +736,7 @@ ALTER TABLE `cargos_grados`
 -- AUTO_INCREMENT de la tabla `empleados`
 --
 ALTER TABLE `empleados`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- AUTO_INCREMENT de la tabla `nominas`
@@ -754,13 +760,13 @@ ALTER TABLE `system_users`
 -- AUTO_INCREMENT de la tabla `tabuladores`
 --
 ALTER TABLE `tabuladores`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT de la tabla `tabuladores_estr`
 --
 ALTER TABLE `tabuladores_estr`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=64;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=244;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

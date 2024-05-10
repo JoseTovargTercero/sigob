@@ -1,28 +1,9 @@
 <?php
 require_once '../sistema_global/conexion.php';
+require_once '../sistema_global/session.php';
 
-
-// Array de datos
-$data = array(
-    "nacionalidad" => "1",
-    "Cedula" => 123456789,
-    "cod_empleado" => 441151,
-    "nombres" => "Pedro Pablo",
-    "fecha_ingreso" => "2010/05/02",
-    "otros_años" => 0,
-    "status" => 1,
-    "observacion" => "N/A",
-    "cod_cargo" => "25212",
-    "cargo" => 12,
-    "banco" => "Venezuela",
-    "cuenta_bancaria" => "1002555541124",
-    "hijos" => 3,
-    "instruccion_academica" => 1,
-    "discapacidades" => 0,
-    "becas" => 0,
-);
-
-
+// Recibir el array enviado desde el primer archivo
+$data = json_decode(file_get_contents('php://input'), true);
 
 // Construir la consulta SQL para insertar datos
 $sql = "INSERT INTO empleados (nacionalidad, Cedula, cod_empleado, nombres, fecha_ingreso, otros_años, status, observacion, cod_cargo, cargo, banco, cuenta_bancaria, hijos, instruccion_academica, discapacidades, becas)
@@ -44,5 +25,4 @@ if ($stmt->execute()) {
 // Cerrar la declaración y la conexión
 $stmt->close();
 $conexion->close();
-
 ?>

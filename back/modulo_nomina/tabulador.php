@@ -1,5 +1,6 @@
 <?php
 require_once '../sistema_global/conexion.php';
+require_once '../sistema_global/session.php';
 
 // Objeto recibido
 $objeto = json_decode(file_get_contents('php://input'), true);
