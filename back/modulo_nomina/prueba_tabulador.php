@@ -9,7 +9,7 @@ $data = array(
     "nombre" => "tabulador_regional_001",
     "grados" => 3,
     "pasos" => 3,
-    "anioPasos" => 5,
+    "aniosPasos" => 5,
     "tabulador" => [
         ["G1", "P1", 1],
         ["G1", "P2", 2],

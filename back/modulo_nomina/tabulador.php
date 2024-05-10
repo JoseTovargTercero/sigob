@@ -9,12 +9,12 @@ $objeto = json_decode(file_get_contents('php://input'), true);
 $nombre = $objeto["nombre"];
 $grados = $objeto["grados"];
 $pasos = $objeto["pasos"];
-$anioPasos = $objeto["anioPasos"];
+$aniosPasos = $objeto["aniosPasos"];
 $tabulador = $objeto["tabulador"];
 
 // Insertar en la tabla tabuladores
 $timestamp = date("Y-m-d H:i:s"); // Timestamp actual
-$sql_tabuladores = "INSERT INTO tabuladores (nombre, grado, pasos, aniosPasos, timestamp) VALUES ('$nombre', '$grados', $pasos, $anioPasos, '$timestamp')";
+$sql_tabuladores = "INSERT INTO tabuladores (nombre, grado, pasos, aniosPasos, timestamp) VALUES ('$nombre', '$grados', $pasos, $aniosPasos, '$timestamp')";
 
 if ($conexion->query($sql_tabuladores) !== TRUE) {
     echo "Error al insertar datos en tabuladores: " . $conexion->error;
