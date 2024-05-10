@@ -1,17 +1,6 @@
 <?php
-// Conexión a la base de datos (reemplaza con tus propios datos)
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "sigob";
-
-// Crear conexión
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Verificar conexión
-if ($conn->connect_error) {
-    die("Conexión fallida: " . $conn->connect_error);
-}
+require_once '../sistema_global/conexion.php';
+require_once '../sistema_global/session.php';
 
 // Objeto recibido
 $objeto = json_decode(file_get_contents('php://input'), true);
@@ -27,11 +16,11 @@ $tabulador = $objeto["tabulador"];
 $timestamp = date("Y-m-d H:i:s"); // Timestamp actual
 $sql_tabuladores = "INSERT INTO tabuladores (nombre, grado, pasos, aniosPasos, timestamp) VALUES ('$nombre', '$grados', $pasos, $anioPasos, '$timestamp')";
 
-if ($conn->query($sql_tabuladores) !== TRUE) {
-    echo "Error al insertar datos en tabuladores: " . $conn->error;
+if ($conexion->query($sql_tabuladores) !== TRUE) {
+    echo "Error al insertar datos en tabuladores: " . $conexion->error;
 } else {
     // Obtener el ID insertado en tabuladores
-    $tabuladores_id = $conn->insert_id;
+    $tabuladores_id = $conexion->insert_id;
 
     // Insertar en la tabla tabuladores_estr
     foreach ($tabulador as $data) {
@@ -41,8 +30,8 @@ if ($conn->query($sql_tabuladores) !== TRUE) {
 
         $sql_estr = "INSERT INTO tabuladores_estr (grado, paso, monto, tabulador_id) VALUES ('$grado', '$paso', $monto, $tabuladores_id)";
 
-        if ($conn->query($sql_estr) !== TRUE) {
-            echo "Error al insertar datos en tabuladores_estr: " . $conn->error;
+        if ($conexion->query($sql_estr) !== TRUE) {
+            echo "Error al insertar datos en tabuladores_estr: " . $conexion->error;
         }
     }
 
@@ -50,5 +39,5 @@ if ($conn->query($sql_tabuladores) !== TRUE) {
 }
 
 // Cerrar conexión
-$conn->close();
+$conexion->close();
 ?>
