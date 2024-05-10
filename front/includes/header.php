@@ -6,12 +6,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link rel="icon" href="<?php echo constant('URL') ?>/src/assets/images/favicon.svg" type="image/x-icon"> <!-- [Font] Family -->
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="<?php echo constant('URL') ?>/src/assets/fonts/tabler-icons.min.css">
-    <link rel="stylesheet" href="<?php echo constant('URL') ?>/src/assets/fonts/feather.css">
-    <link rel="stylesheet" href="<?php echo constant('URL') ?>/src/assets/fonts/fontawesome.css">
-    <link rel="stylesheet" href="<?php echo constant('URL') ?>/src/assets/fonts/material.css">
     <link rel="stylesheet" href="<?php echo constant('URL') ?>/src/assets/css/style.css" id="main-style-link">
     <link rel="stylesheet" href="<?php echo constant('URL') ?>/src/assets/css/style-preset.css">
+    <script src="<?php echo constant('URL') ?>src/assets/js/sweetalert2.all.min.js"></script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-14K1GBX9FG"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.5.5/css/simple-line-icons.min.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 </head>
 </html>

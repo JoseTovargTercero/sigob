@@ -1,29 +1,12 @@
 <?php
 ob_start();
-
-if ($data = file_get_contents('php://input')) {
-	$info = json_encode($data);
-}
-
-
-
-
-$info = str_replace('"', '', $info);
-$info = str_replace('{', '', $info);
-$info = str_replace('}', '', $info);
-$info = str_replace('email:', '', $info);
-$info = str_replace('password:', '', $info);
-$info = str_replace(' ', '', $info);
-$info = str_replace(':', '', $info);
-$info = str_replace(',', '', $info);
-$info = explode('\\', $info);
-
-
-
-
 include('../sistema_global/conexion.php');
-$email = clear($info[3]);
-$contrasena = clear($info[7]);
+$values = json_decode(file_get_contents('php://input'), true);
+
+$email = clear($values['email']);
+$contrasena = clear($values['password']);
+
+
 $email = mysqli_real_escape_string($conexion,  $email);
 $contrasena = mysqli_real_escape_string($conexion,  $contrasena);
 
