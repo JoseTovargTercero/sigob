@@ -5,7 +5,7 @@ require_once '../../back/sistema_global/session.php';
 <html lang="en">
 
 <head>
-  <title>Conceptos</title>
+  <title>Grupos de nominas</title>
   <!-- [Meta] -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
@@ -38,7 +38,7 @@ require_once '../../back/sistema_global/session.php';
           <div class="row align-items-center">
             <div class="col-md-12">
               <div class="page-header-title">
-                <h5 class="mb-0">Conceptos</h5>
+                <h5 class="mb-0">Grupo de nominas</h5>
               </div>
             </div>
           </div>
@@ -51,8 +51,8 @@ require_once '../../back/sistema_global/session.php';
           <div class="card">
             <div class="card-header">
               <div class="d-flex align-items-start justify-content-between">
-                <h5 class="mb-0">Lista de conceptos</h5>
-                <button class="btn btn-light" id="btn-svr" onclick="setVistaRegistro()"> Nuevo Concepto</button>
+                <h5 class="mb-0">Grupos</h5>
+                <button class="btn btn-light" id="btn-svr" onclick="setVistaRegistro()"> Nuevo grupo</button>
               </div>
             </div>
             <div class="card-body">
@@ -60,25 +60,23 @@ require_once '../../back/sistema_global/session.php';
                 <table id="table" class="table">
                   <thead>
                     <tr>
-                      <th>Nombre</th>
-                      <th>Tipo</th>
-                      <th>Partida</th>
+                      <th>Código</th>
+                      <th>Nombre del grupo</th>
                       <th class="w-15"></th>
                     </tr>
-                    <tr id="section_registro" class="hide">
-                      <th><input type="text" class="form-control" name="nombre" id="nombre" placeholder="Concepto"></th>
-                      <th> <select class="form-control" name="tipo" id="tipo">
-                          <option value="">Seleccione</option>
-                          <option value="A">Asignacion</option>
-                          <option value="D">Deducción</option>
-                          <option value="P">Aporte</option>
-                        </select></th>
-                      <th><input type="text" list="partidas" class="form-control" name="partida" id="partida" placeholder="Concepto"></th>
-                      <th><button type="submit" class="btn btn-sm btn-primary" id="btn-guardar">Guardar</button></th>
-                    </tr>
+
+                    
                   </thead>
                   <tbody>
+                   
                   </tbody>
+                  <tfoot>
+                  <tr id="section_registro" class="hide">
+                      <td><input type="text" class="form-control" name="codigo" id="codigo" placeholder="Código"></td>
+                      <th><input type="text" class="form-control" name="nombre" id="nombre" placeholder="Nombre del grupo"></th>
+                      <th><button type="submit" class="btn btn-sm btn-primary" id="btn-guardar">Guardar</button></th>
+                    </tr>
+                  </tfoot>
                 </table>
               </div>
             </div>
@@ -91,48 +89,44 @@ require_once '../../back/sistema_global/session.php';
     </div>
   </div>
   <!-- [ Main Content ] end -->
-  <datalist id="partidas"></datalist>
   <script src="../../src/assets/js/plugins/simplebar.min.js"></script>
   <script src="../../src/assets/js/plugins/bootstrap.min.js"></script>
   <script src="../../src/assets/js/fonts/custom-font.js"></script>
   <script src="../../src/assets/js/pcoded.js"></script>
   <script src="../../src/assets/js/plugins/feather.min.js"></script>
-  <script src="../../src/assets/js/clasificador-presupuestario.js"></script>
   <script src="https://cdn.datatables.net/2.0.1/js/dataTables.js"></script>
   <script src="https://cdn.datatables.net/2.0.1/js/dataTables.bootstrap5.js"></script>
   <script src="../../src/assets/js/main.js"></script>
-
   <script>
-    let tipo_concepto = {
-      'A': 'Asignacion',
-      'D': 'Deducción',
-      'P': 'Aporte'
-    }
-    const url_back = '../../back/modulo_nomina/nom_conceptos_back.php';
+    const url_back = '../../back/modulo_nomina/nom_grupos_back.php';
 
     function cargarTabla() {
+
       $.ajax({
         url: url_back,
         type: 'POST',
         data: {
           tabla: true
         },
+        cache: false,
         success: function(response) {
-          $('#table tbody').html('');
 
+          $('#table tbody').html('');
           if (response) {
+
             var data = JSON.parse(response);
 
             for (var i = 0; i < data.length; i++) {
-              var nombre = data[i].nom_concepto;
-              var tipo = data[i].tipo_concepto;
-              var cod_partida = data[i].cod_partida;
+              var codigo = data[i].codigo;
+              var nombre = data[i].nombre;
               var id = data[i].id;
 
-              $('#table tbody').append('<tr><td>' + nombre + '</td><td>' + tipo_concepto[tipo] + '</td><td>' + cod_partida + '</td><td><a href="#!" class="badge me-2 bg-brand-color-2 text-white f-12" onclick="eliminar(' + id + ')">Eliminar</a></td></tr>');
+              $('#table tbody').append('<tr><td>' + codigo + '</td><td>' + nombre + '</td><td><a href="#!" class="badge me-2 bg-brand-color-2 text-white f-12" onclick="eliminar(' + id + ')">Eliminar</a></td></tr>');
             }
           }
+
         }
+
       });
     }
     // ready function
@@ -181,46 +175,35 @@ require_once '../../back/sistema_global/session.php';
 
 
 
-    // saca todas las keys del obj "clasificador" y se agregan como option a partidas
-    for (var key in clasificador) {
-      $('#partidas').append('<option value="' + key + '">' + key + ' - ' + clasificador[key] + '</option>');
-    }
+
 
 
     // enviar data al back
     function guardar() {
+      let codigo = document.getElementsByName('codigo')[0].value;
       let nombre = document.getElementsByName('nombre')[0].value;
-      let tipo = document.getElementsByName('tipo')[0].value;
-      let partida = document.getElementsByName('partida')[0].value;
 
-
-      if (nombre.trim() === '' || tipo.trim() === '' || partida.trim() === '') {
+      if (nombre.trim() === '' || codigo.trim() === '') {
         toast_s('error', 'Por favor, complete todos los campos')
         return;
       } else {
-
-        // verificar si la partida existe como key en el objeto 'clasificador'
-        if (!clasificador.hasOwnProperty(partida)) {
-          toast_s('error', 'Partida no encontrada')
-          return;
-        }
 
         $.ajax({
           url: url_back,
           type: 'POST',
           data: {
+            codigo: codigo,
             nombre: nombre,
-            tipo: tipo,
-            partida: partida,
             registro: true
           },
           success: function(text) {
+            console.log(text)
+
             if (text == 'ok') {
               cargarTabla()
               toast_s('success', 'Creado con éxito')
+              $('#codigo').val('');
               $('#nombre').val('');
-              $('#partida').val('');
-              $("#tipo" + " option[value='']").attr("selected", true);
               setVistaRegistro()
             } else if (text == 'ye') {
               toast_s('error', 'Ya existe un concepto con este nombre')
@@ -233,12 +216,10 @@ require_once '../../back/sistema_global/session.php';
       }
     }
 
+    // cuando el boton btn-guardar sea pulsado, se ejecuta la funcion anterior
     $(document).ready(function() {
       document.getElementById('btn-guardar').addEventListener('click', guardar);
-
     });
-
-    // cuando el boton btn-guardar sea pulsado, se ejecuta la funcion anterior
   </script>
 
 </body>
