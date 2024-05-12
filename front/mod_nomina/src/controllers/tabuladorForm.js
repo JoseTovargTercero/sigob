@@ -1,11 +1,17 @@
 import { sendTabulatorData } from '../api/tabulator.js'
-import { validateInput } from '../helpers/helpers.js'
+import {
+  confirmNotification,
+  validateInput,
+  validateModal,
+} from '../helpers/helpers.js'
+import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 
 const d = document
 const w = window
 
 function validateTabulatorForm({
   formId,
+  secondaryFormId,
   tabulatorInputClass,
   matrixId,
   matrixRowClass,
@@ -13,40 +19,67 @@ function validateTabulatorForm({
   matrixInputsClass,
   btnId,
   btnSaveId,
-  btnCloseId,
-  modalClass,
   fieldList = {},
 }) {
   const formElement = d.getElementById(formId)
+  const formElementSecondary = d.getElementById(secondaryFormId)
+  const tabulatorInputsElement = d.querySelectorAll(`.${tabulatorInputClass}`)
   const matrixElement = d.getElementById(matrixId)
   const btnElement = d.getElementById(btnId)
   const btnSaveElement = d.getElementById(btnSaveId)
 
   formElement.addEventListener('submit', (e) => e.preventDefault())
+  formElementSecondary.addEventListener('submit', (e) => e.preventDefault())
 
   formElement.addEventListener('input', (e) => {
-    if (e.target.classList.contains(tabulatorInputClass))
-      fieldList = validateInput(fieldList, e)
+    if (e.target.classList.contains(tabulatorInputClass)) {
+      fieldList = validateInput(e, fieldList)
+      console.log(fieldList)
+    }
   })
-  formElement.addEventListener('change', (e) => {
-    if (e.target.classList.contains(tabulatorInputClass))
-      fieldList = validateInput(fieldList, e)
+  formElementSecondary.addEventListener('input', (e) => {
+    if (e.target.classList.contains(matrixInputsClass)) validateCellValue(e)
   })
 
-  btnElement.addEventListener('click', () => {
-    generateMatrix({
-      fieldList,
-      matrixElement,
-      matrixRowClass,
-      matrixCellClass,
-      matrixInputsClass,
-    })
+  formElement.addEventListener('change', (e) => {
+    if (e.target.classList.contains(tabulatorInputClass))
+      validateInput(e, fieldList)
+  })
+
+  d.addEventListener('click', (e) => {
+    if (e.target === btnElement) {
+      // Si hay errores en el primer formulario, no continuar
+      if (Object.values(fieldList.errors).some((el) => el.value)) return
+
+      validateModal(e, 'tabulator-btn', 'modal-window')
+
+      generateMatrix({
+        fieldList,
+        matrixElement,
+        matrixRowClass,
+        matrixCellClass,
+        matrixInputsClass,
+      })
+    }
   })
   btnSaveElement.addEventListener('click', (e) => {
-    generateMatrixData({ fieldList, matrixInputsClass })
+    confirmNotification({
+      type: NOTIFICATIONS_TYPES.send,
+      successFunction: generateMatrixData,
+      successFunctionParams: { fieldList, matrixInputsClass },
+    })
   })
 
   // Funciones
+}
+
+function validateCellValue(e) {
+  console.log(e.target.value)
+  if (!e.target.checkValidity()) {
+    e.target.classList.add('input-error')
+  } else {
+    e.target.classList.remove('input-error')
+  }
 }
 
 function generateCellContent({ row, col, matrixInputsClass }) {
@@ -59,11 +92,14 @@ function generateCellContent({ row, col, matrixInputsClass }) {
   let inputText = `G${row} - P${col}`
   return `<input
   class="${matrixInputsClass} form-control form-control-sm"
-  type="text"
+  type="number"
+  step="0.01"
+  min="0.00"
   placeholder="${inputText}"
-  name=""
+  name="g${row}p${col}"
   data-grado="${row}"
   data-paso="${col}"
+  required
 />`
 }
 
@@ -83,14 +119,11 @@ function generateMatrix({
   let columns = fieldList.pasos
 
   matrixElement.style.display = 'grid'
-  // matrixElement.style.gridTemplateColumns = `repeat(${columns + 1}, 1fr)`
   matrixElement.style.gridTemplateRows = `repeat(${rows + 1}, 1fr)`
 
   for (let i = 0; i <= rows; i++) {
     const matrixRow = d.createElement('div')
     matrixRow.classList.add(matrixRowClass)
-
-    // cellsFragment.appendChild(matrixRow)
 
     for (let j = 0; j <= columns; j++) {
       const matrixCell = d.createElement('div')
@@ -110,21 +143,32 @@ function generateMatrix({
 }
 
 function generateMatrixData({ fieldList, matrixInputsClass }) {
-  console.log(matrixInputsClass)
   const inputsElements = d.querySelectorAll(`.${matrixInputsClass}`)
-  console.log(inputsElements)
+
+  if ([...inputsElements].some((el) => el.checkValidity())) {
+    return
+  }
 
   const tabulatorData = [...inputsElements].map((el) => {
+    console.log(el.checkValidity())
     let grado = `G${el.dataset.grado}`
     let paso = `P${el.dataset.paso}`
     let value = Number(el.value)
+
     return [grado, paso, value]
   })
+  if ([...inputsElements].some((el) => !el.checkValidity())) {
+    return
+  }
   fieldList.tabulador = tabulatorData
+  delete fieldList.errors
 
   // Enviar datos
-  console.log(fieldList)
   sendTabulatorData({ tabulatorData: fieldList })
+  confirmNotification({
+    type: NOTIFICATIONS_TYPES.done,
+    // successFunction: location.reload(),
+  })
 }
 
 export { validateTabulatorForm }

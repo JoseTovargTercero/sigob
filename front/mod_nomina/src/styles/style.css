@@ -41,6 +41,12 @@ td {
   height: 0;
 }
 
+.form-control.input-error {
+  border: 1px solid rgb(255, 137, 137);
+}
+
+/* TABULATOR STYLES */
+
 .tabulator-secundary-form {
   width: 100%;
   display: flex;

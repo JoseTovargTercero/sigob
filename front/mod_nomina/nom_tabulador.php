@@ -24,7 +24,7 @@ require_once '../../back/sistema_global/session.php';
       <div class="form-group">
         <label class="form-label" class="form-label" for="nombre">NOMBRE</label>
         <input class="tabulator-input form-control" type="text" name="nombre" id="nombre"
-          placeholder="NOMBRE DE TABULADOR" />
+          placeholder="NOMBRE DE TABULADOR" required />
       </div>
 
 
@@ -32,14 +32,16 @@ require_once '../../back/sistema_global/session.php';
         <div class="col">
           <div class="form-group">
             <label class="form-label" for="grados">GRADOS</label>
-            <input class="tabulator-input form-control" type="number" name="grados" id="grados" placeholder="GRADOS" />
+            <input class="tabulator-input form-control" type="number" name="grados" id="grados" placeholder="GRADOS"
+              required />
           </div>
         </div>
 
         <div class="col">
           <div class="form-group">
             <label class="form-label" for="pasos">PASOS</label>
-            <input class="tabulator-input form-control" type="number" name="pasos" id="pasos" placeholder="PASOS" />
+            <input class="tabulator-input form-control" type="number" name="pasos" id="pasos" placeholder="PASOS"
+              required />
           </div>
         </div>
       </div>
@@ -47,7 +49,7 @@ require_once '../../back/sistema_global/session.php';
       <div class="form-group">
         <label class="form-label" for="aniosPasos">AÑOS POR PASO</label>
         <input class="tabulator-input form-control" type="number" name="aniosPasos" id="aniosPasos"
-          placeholder="AÑOS POR PASO" />
+          placeholder="AÑOS POR PASO" required />
       </div>
 
       <div clas="form-group">
@@ -60,7 +62,7 @@ require_once '../../back/sistema_global/session.php';
 
 
 
-      <div class="tabulator-secundary-form">
+      <form id="tabulator-secundary-form" class="tabulator-secundary-form">
 
         <header class="tabulator-secundary-form-header">
           <h4>MATRIZ DE TABULADOR</h4>
@@ -73,7 +75,7 @@ require_once '../../back/sistema_global/session.php';
         <div class="">
           <button class="btn btn-primary w-100" id="tabulator-save-btn">ENVIAR TABULADOR</button>
         </div>
-      </div>
+      </form>
     </div>
   </div>
 
