@@ -2582,3 +2582,7 @@ div.dt-container .dt-paging .dt-paging-button{
 .hide{
   display: none;
 }
+
+.w-15{
+  width: 15%;
+}

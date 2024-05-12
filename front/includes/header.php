@@ -10,8 +10,8 @@
     <link rel="stylesheet" href="<?php echo constant('URL') ?>/src/assets/css/style-preset.css">
     <script src="<?php echo constant('URL') ?>src/assets/js/sweetalert2.all.min.js"></script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-14K1GBX9FG"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.5.5/css/simple-line-icons.min.css">
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <link rel="stylesheet" crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
 </head>
 </html>
