@@ -101,7 +101,6 @@ require_once '../../back/sistema_global/session.php';
   <script src="https://cdn.datatables.net/2.0.1/js/dataTables.js"></script>
   <script src="https://cdn.datatables.net/2.0.1/js/dataTables.bootstrap5.js"></script>
   <script src="../../src/assets/js/main.js"></script>
-
   <script>
     let tipo_concepto = {
       'A': 'Asignacion',
@@ -137,8 +136,6 @@ require_once '../../back/sistema_global/session.php';
     }
     // ready function
     cargarTabla()
-
-
 
 
     /**
@@ -179,13 +176,10 @@ require_once '../../back/sistema_global/session.php';
       });
     }
 
-
-
     // saca todas las keys del obj "clasificador" y se agregan como option a partidas
     for (var key in clasificador) {
       $('#partidas').append('<option value="' + key + '">' + key + ' - ' + clasificador[key] + '</option>');
     }
-
 
     // enviar data al back
     function guardar() {
@@ -229,13 +223,11 @@ require_once '../../back/sistema_global/session.php';
             }
           }
         });
-
       }
     }
 
     $(document).ready(function() {
       document.getElementById('btn-guardar').addEventListener('click', guardar);
-
     });
 
     // cuando el boton btn-guardar sea pulsado, se ejecuta la funcion anterior
