@@ -1,7 +1,7 @@
 async function sendTabulatorData({ tabulatorData }) {
   try {
     const res = await fetch(
-      'http://localhost/sigob/back/modulo_nomina/tabulador.php',
+      '../../../../../sigob/back/modulo_nomina/tabulador.php',
       {
         method: 'POST',
         headers: {

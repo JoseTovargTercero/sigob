@@ -8,9 +8,13 @@ function validateTabulatorForm({
   formId,
   tabulatorInputClass,
   matrixId,
+  matrixRowClass,
+  matrixCellClass,
   matrixInputsClass,
   btnId,
   btnSaveId,
+  btnCloseId,
+  modalClass,
   fieldList = {},
 }) {
   const formElement = d.getElementById(formId)
@@ -19,72 +23,96 @@ function validateTabulatorForm({
   const btnSaveElement = d.getElementById(btnSaveId)
 
   formElement.addEventListener('submit', (e) => e.preventDefault())
+
   formElement.addEventListener('input', (e) => {
     if (e.target.classList.contains(tabulatorInputClass))
       fieldList = validateInput(fieldList, e)
   })
   formElement.addEventListener('change', (e) => {
-    // if (e.target.classList.contains(tabulatorInputClass))
-    //   fieldList = validateInput(fieldList, e)
+    if (e.target.classList.contains(tabulatorInputClass))
+      fieldList = validateInput(fieldList, e)
   })
 
   btnElement.addEventListener('click', () => {
-    generateMatrix({ fieldList, matrixElement })
+    generateMatrix({
+      fieldList,
+      matrixElement,
+      matrixRowClass,
+      matrixCellClass,
+      matrixInputsClass,
+    })
   })
-  btnSaveElement.addEventListener('click', () => {
+  btnSaveElement.addEventListener('click', (e) => {
     generateMatrixData({ fieldList, matrixInputsClass })
   })
 
   // Funciones
 }
 
-function generateCellContent({ row, col }) {
-  if (col === 0 && row === 0) return ''
-  if (col === 0) return `GRADO ${row}`
-  if (row === 0) return `PASO ${col}`
+function generateCellContent({ row, col, matrixInputsClass }) {
+  if (col === 0 && row === 0)
+    return `<span class="tabulator-matrix-cell tabulator-matrix-span">INICIO</span>`
+  if (col === 0)
+    return `<span class="tabulator-matrix-cell tabulator-matrix-span">GRADO ${row}</span>`
+  if (row === 0)
+    return `<span class="tabulator-matrix-cell tabulator-matrix-span">PASO${col}</span>`
   let inputText = `G${row} - P${col}`
   return `<input
-  class="tabulator-matrix-cell"
+  class="${matrixInputsClass} form-control form-control-sm"
   type="text"
-  placeholder="... ${inputText}"
+  placeholder="${inputText}"
   name=""
   data-grado="${row}"
   data-paso="${col}"
 />`
 }
 
-function generateMatrix({ fieldList, matrixElement }) {
+function generateMatrix({
+  fieldList,
+  matrixElement,
+  matrixCellClass,
+  matrixRowClass,
+  matrixInputsClass,
+}) {
   // Borrar contenido de la matriz
   matrixElement.innerHTML = ''
 
   const cellsFragment = d.createDocumentFragment()
-  const tableElement = d.createElement('table')
 
   let rows = fieldList.grados
-  let colums = fieldList.pasos
+  let columns = fieldList.pasos
 
-  //   Generar celdas de la matriz
+  matrixElement.style.display = 'grid'
+  // matrixElement.style.gridTemplateColumns = `repeat(${columns + 1}, 1fr)`
+  matrixElement.style.gridTemplateRows = `repeat(${rows + 1}, 1fr)`
+
   for (let i = 0; i <= rows; i++) {
-    // Crear Filas
-    const tr = d.createElement('tr')
-    cellsFragment.appendChild(tr)
+    const matrixRow = d.createElement('div')
+    matrixRow.classList.add(matrixRowClass)
 
-    // Crear número de columna (pasos)
-    for (let j = 0; j <= colums; j++) {
-      //   Crear culumnas
-      const td = d.createElement('td')
+    // cellsFragment.appendChild(matrixRow)
 
-      td.innerHTML = generateCellContent({ row: i, col: j })
-      cellsFragment.appendChild(td)
+    for (let j = 0; j <= columns; j++) {
+      const matrixCell = d.createElement('div')
+      matrixCell.classList.add(matrixCellClass)
+
+      matrixCell.innerHTML = generateCellContent({
+        row: i,
+        col: j,
+        matrixInputsClass,
+      })
+      matrixRow.appendChild(matrixCell)
     }
+    cellsFragment.appendChild(matrixRow)
   }
 
-  tableElement.appendChild(cellsFragment)
-  matrixElement.appendChild(tableElement)
+  matrixElement.appendChild(cellsFragment)
 }
 
 function generateMatrixData({ fieldList, matrixInputsClass }) {
+  console.log(matrixInputsClass)
   const inputsElements = d.querySelectorAll(`.${matrixInputsClass}`)
+  console.log(inputsElements)
 
   const tabulatorData = [...inputsElements].map((el) => {
     let grado = `G${el.dataset.grado}`
@@ -95,6 +123,7 @@ function generateMatrixData({ fieldList, matrixInputsClass }) {
   fieldList.tabulador = tabulatorData
 
   // Enviar datos
+  console.log(fieldList)
   sendTabulatorData({ tabulatorData: fieldList })
 }
 
