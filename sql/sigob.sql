@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 11-05-2024 a las 00:29:52
+-- Tiempo de generación: 13-05-2024 a las 16:58:00
 -- Versión del servidor: 10.4.27-MariaDB
 -- Versión de PHP: 7.4.33
 
@@ -20,8 +20,6 @@ SET time_zone = "+00:00";
 --
 -- Base de datos: `sigob`
 --
-CREATE DATABASE IF NOT EXISTS `sigob` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-USE `sigob`;
 
 -- --------------------------------------------------------
 
@@ -509,6 +507,40 @@ INSERT INTO `cargos_grados` (`id`, `cargo`, `cod_cargo`, `grado`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `conceptos`
+--
+
+CREATE TABLE `conceptos` (
+  `id` int(11) NOT NULL,
+  `nom_concepto` varchar(255) DEFAULT NULL,
+  `cod_partida` varchar(255) DEFAULT NULL,
+  `tipo_concepto` varchar(2) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+--
+-- Volcado de datos para la tabla `conceptos`
+--
+
+INSERT INTO `conceptos` (`id`, `nom_concepto`, `cod_partida`, `tipo_concepto`) VALUES
+(1, 'SUELDO', '401-01-01-00-0000', 'A'),
+(2, 'PRIMA POR HIJO EMPLEADOS', '401-03-04-00-0000', 'A'),
+(3, 'PRIMA POR TRANSPORTE', '401-03-02-00-0000', 'A'),
+(4, 'PRIMA POR ANTIGUEDAD EMPLEADOS', '401-03-49-00-0000', 'A'),
+(5, 'PRIMA POR ESCALAFON', '401-03-98-00-0001', 'A'),
+(6, 'PRIMA POR FRONTERA', '401-03-97-00-0001', 'A'),
+(7, 'PRIMA POR ANTIGUEDAD (ESPECIAL)', '401-03-09-00-0000', 'A'),
+(8, 'PRIMA P/DED AL S/PUBLICO UNICO DE SALUD', '401-03-98-00-0005', 'A'),
+(9, 'PRIMA POR PROFESIONALES', '401-03-08-00-0000', 'A'),
+(10, 'CONTRIBUCION POR DISCAPACIDAD', '401-03-98-00-0006', 'A'),
+(11, 'PAGO DE BECA', '401-07-18-00-0000', 'A'),
+(12, 'S. S. O', '401-01-01-00-0000', 'D'),
+(13, 'RPE', '401-01-02-00-0000', 'D'),
+(14, 'A/P S.S.O', '401-06-01-00-0000', 'P'),
+(15, 'A/P RPE', '401-06-12-00-0000', 'P');
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `empleados`
 --
 
@@ -633,7 +665,7 @@ INSERT INTO `system_users` (`u_id`, `u_nombre`, `u_oficina_id`, `u_oficina`, `u_
 CREATE TABLE `tabuladores` (
   `id` int(255) NOT NULL,
   `nombre` varchar(255) NOT NULL,
-  `grado` varchar(255) NOT NULL,
+  `grados` varchar(255) NOT NULL,
   `pasos` varchar(255) NOT NULL,
   `aniosPasos` varchar(255) NOT NULL,
   `timestamp` date NOT NULL
@@ -643,8 +675,8 @@ CREATE TABLE `tabuladores` (
 -- Volcado de datos para la tabla `tabuladores`
 --
 
-INSERT INTO `tabuladores` (`id`, `nombre`, `grado`, `pasos`, `aniosPasos`, `timestamp`) VALUES
-(6, 'tabulador_regional_001', '3', '3', '1', '2024-05-09');
+INSERT INTO `tabuladores` (`id`, `nombre`, `grados`, `pasos`, `aniosPasos`, `timestamp`) VALUES
+(29, 'tabulador_regional_001', '3', '3', '1', '2024-05-13');
 
 -- --------------------------------------------------------
 
@@ -665,67 +697,30 @@ CREATE TABLE `tabuladores_estr` (
 --
 
 INSERT INTO `tabuladores_estr` (`id`, `paso`, `grado`, `monto`, `tabulador_id`) VALUES
-(46, 'P1', 'G1', '1', 6),
-(47, 'P2', 'G1', '2', 6),
-(48, 'P3', 'G1', '3', 6),
-(49, 'P1', 'G2', '4', 6),
-(50, 'P2', 'G2', '5', 6),
-(51, 'P3', 'G2', '6', 6),
-(52, 'P1', 'G3', '7', 6),
-(53, 'P2', 'G3', '8', 6),
-(54, 'P3', 'G3', '246.74', 6);
+(253, 'P1', 'G1', '1', 29),
+(254, 'P2', 'G1', '1', 29),
+(255, 'P3', 'G1', '1', 29),
+(256, 'P1', 'G2', '1', 29),
+(257, 'P2', 'G2', '1', 29),
+(258, 'P3', 'G2', '1', 29),
+(259, 'P1', 'G3', '1', 29),
+(260, 'P2', 'G3', '1', 29),
+(261, 'P3', 'G3', '249.31', 29);
 
 --
 -- Índices para tablas volcadas
 --
-
-CREATE TABLE `conceptos` (
-  `id` int(11) NOT NULL,
-  `nom_concepto` varchar(255) DEFAULT NULL,
-  `cod_partida` varchar(255) DEFAULT NULL,
-  `tipo_concepto` varchar(2) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Volcado de datos para la tabla `conceptos`
---
-
-INSERT INTO `conceptos` (`id`, `nom_concepto`, `cod_partida`, `tipo_concepto`) VALUES
-(1, 'SUELDO', '401-01-01-00-0000', 'A'),
-(2, 'PRIMA POR HIJO EMPLEADOS', '401-03-04-00-0000', 'A'),
-(3, 'PRIMA POR TRANSPORTE', '401-03-02-00-0000', 'A'),
-(4, 'PRIMA POR ANTIGUEDAD EMPLEADOS', '401-03-49-00-0000', 'A'),
-(5, 'PRIMA POR ESCALAFON', '401-03-98-00-0001', 'A'),
-(6, 'PRIMA POR FRONTERA', '401-03-97-00-0001', 'A'),
-(7, 'PRIMA POR ANTIGUEDAD (ESPECIAL)', '401-03-09-00-0000', 'A'),
-(8, 'PRIMA P/DED AL S/PUBLICO UNICO DE SALUD', '401-03-98-00-0005', 'A'),
-(9, 'PRIMA POR PROFESIONALES', '401-03-08-00-0000', 'A'),
-(10, 'CONTRIBUCION POR DISCAPACIDAD', '401-03-98-00-0006', 'A'),
-(11, 'PAGO DE BECA', '401-07-18-00-0000', 'A'),
-(12, 'S. S. O', '401-01-01-00-0000', 'D'),
-(13, 'RPE', '401-01-02-00-0000', 'D'),
-(14, 'A/P S.S.O', '401-06-01-00-0000', 'P'),
-(15, 'A/P RPE', '401-06-12-00-0000', 'P');
-
---
--- Índices para tablas volcadas
---
-
---
--- Indices de la tabla `conceptos`
---
-ALTER TABLE `conceptos`
-  ADD PRIMARY KEY (`id`);
-
---
--- AUTO_INCREMENT de las tablas volcadas
---
-
 
 --
 -- Indices de la tabla `cargos_grados`
 --
 ALTER TABLE `cargos_grados`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `conceptos`
+--
+ALTER TABLE `conceptos`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -768,15 +763,18 @@ ALTER TABLE `tabuladores_estr`
 --
 -- AUTO_INCREMENT de las tablas volcadas
 --
--- AUTO_INCREMENT de la tabla `conceptos`
---
-ALTER TABLE `conceptos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+
 --
 -- AUTO_INCREMENT de la tabla `cargos_grados`
 --
 ALTER TABLE `cargos_grados`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=465;
+
+--
+-- AUTO_INCREMENT de la tabla `conceptos`
+--
+ALTER TABLE `conceptos`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT de la tabla `empleados`
@@ -806,13 +804,13 @@ ALTER TABLE `system_users`
 -- AUTO_INCREMENT de la tabla `tabuladores`
 --
 ALTER TABLE `tabuladores`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT de la tabla `tabuladores_estr`
 --
 ALTER TABLE `tabuladores_estr`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=244;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=262;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
