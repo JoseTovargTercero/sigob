@@ -1,6 +1,7 @@
-const isFloat = (number) => {
-  let regExp = /^\d+(\.\d{2,})?$/
-  return number.match(regExp) ? true : false
+const regularExpressions = {
+  TEXT: /^[A-Za-z0-9s]+$/,
+  FLOAT: /^\d+(\.\d{1,2})?$/,
+  NUMBER: /^\d+(\.\d{0,0})?$/,
 }
 
-export { isFloat }
+export { regularExpressions }

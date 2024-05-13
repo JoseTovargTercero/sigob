@@ -6,6 +6,7 @@ require_once '../../back/sistema_global/session.php';
 
 <head>
   <link rel="stylesheet" href="src/styles/style.css">
+  <title>Tabuladores</title>
 </head>
 
 <body>
@@ -15,18 +16,17 @@ require_once '../../back/sistema_global/session.php';
   <?php require_once '../includes/top-bar.php' ?>
   <!-- [ top bar ] -->
 
-  <div class="pc-container">
+  <div class="pc-container flex-container">
     <div>
       <h2 class="text-uppercase text-center">TABULADOR</h2>
     </div>
-    <form class="row w-75 mx-auto" action="" id="tabulator-primary-form" autocomplete="off">
+    <form class="row w-75 mx-auto tabulator-primary-form" id="tabulator-primary-form" autocomplete="off">
 
       <div class="form-group">
         <label class="form-label" class="form-label" for="nombre">NOMBRE</label>
         <input class="tabulator-input form-control" type="text" name="nombre" id="nombre"
           placeholder="NOMBRE DE TABULADOR" />
       </div>
-
 
       <div class="row">
         <div class="col">

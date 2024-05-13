@@ -1,8 +1,9 @@
 import { NOTIFICATIONS_TYPES } from './types.js'
+import { regularExpressions } from './regExp.js'
 
 const d = document
 
-function validateInput(e, fieldList = {}) {
+function validateInput({ e, fieldList = {}, type }) {
   //   inputElement.addEventListener('input', function() {
   //     const value = parseFloat(this.value);
 
@@ -13,20 +14,58 @@ function validateInput(e, fieldList = {}) {
   //     }
   // });
 
-  let errorValue = fieldList.errors[e.target.name].value
-  let message = fieldList.errors[e.target.name].message
-  let inputValue = e.target.value
+  let value = e.target.value
 
-  // Validar si el input es válido desde el html
-  if (!e.target.checkValidity() || e.target.value === '') {
+  if (type === 'matrixCell') {
+    let isFloat = regularExpressions.FLOAT.test(value)
+
+    if (!isFloat || value <= 0) {
+      return e.target.classList.add('input-error')
+    } else {
+      return e.target.classList.remove('input-error')
+    }
+  }
+
+  let message = fieldList.errors[e.target.name].message
+    ? fieldList.errors[e.target.name].message
+    : 'Contenido inválido'
+
+  if (!e.target.checkValidity() || value === '') {
     e.target.classList.add('input-error')
     fieldList.errors[e.target.name].value = true
     errorMessage(e.target, message)
   } else {
-    e.target.classList.remove('input-error')
     fieldList.errors[e.target.name].value = false
-    errorMessage(e.target, message)
+    e.target.classList.remove('input-error')
   }
+
+  if (type === 'number') {
+    let isNumber = regularExpressions.NUMBER.test(value)
+
+    if (!isNumber || value <= 0) {
+      e.target.classList.add('input-error')
+      fieldList.errors[e.target.name].value = true
+      errorMessage(e.target, message)
+    } else {
+      fieldList.errors[e.target.name].value = false
+      e.target.classList.remove('input-error')
+    }
+  }
+
+  if (type === 'text') {
+    let isText = regularExpressions.TEXT.test(value)
+
+    if (!isText) {
+      e.target.classList.add('input-error')
+      fieldList.errors[e.target.name].value = true
+      errorMessage(e.target, message)
+    } else {
+      fieldList.errors[e.target.name].value = false
+      e.target.classList.remove('input-error')
+    }
+  }
+
+  errorMessage(e.target, message)
 
   fieldList = {
     ...fieldList,
@@ -55,16 +94,10 @@ const errorMessage = (target, message) => {
   }
 
   if (target.classList.contains('input-error')) {
-    const errorSpan = document.createElement('span')
-    errorSpan.classList.add('input-error-message')
-    errorSpan.id = `${target.name}-error-message`
-    errorSpan.textContent = message
-    target.parentNode.insertBefore(errorSpan, target.nextSibling)
-  } else {
-    const errorSpan = document.getElementById(`${target.name}-error-message`)
-    if (errorSpan) {
-      errorSpan.remove()
-    }
+    const errorSpan = `<span id='${target.name}-error-message' class='input-error-message slide-up-animation'>${message}</span>`
+
+    // Añadir error al input
+    target.insertAdjacentHTML('afterend', errorSpan)
   }
 }
 
@@ -155,4 +188,4 @@ function confirmNotification({
   }
 }
 
-export { validateInput, validateModal, confirmNotification }
+export { validateInput, validateModal, confirmNotification, errorMessage }

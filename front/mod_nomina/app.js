@@ -1,5 +1,5 @@
 import { validateTabulatorForm } from './src/controllers/tabuladorForm.js'
-import { confirmNotification, validateModal } from './src/helpers/helpers.js'
+import { validateModal } from './src/helpers/helpers.js'
 const d = document
 
 d.addEventListener('DOMContentLoaded', (e) => {
@@ -22,7 +22,7 @@ d.addEventListener('DOMContentLoaded', (e) => {
       errors: {
         nombre: {
           value: true,
-          message: 'Introducir nombre de tabulador',
+          message: 'Introducir un nombre válido',
           type: 'text',
         },
         pasos: {

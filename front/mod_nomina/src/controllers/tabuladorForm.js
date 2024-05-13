@@ -4,7 +4,7 @@ import {
   validateInput,
   validateModal,
 } from '../helpers/helpers.js'
-import { isFloat } from '../helpers/regExp.js'
+import { regularExpressions } from '../helpers/regExp.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 
 const d = document
@@ -36,24 +36,33 @@ function validateTabulatorForm({
 
   formElement.addEventListener('input', (e) => {
     if (e.target.classList.contains(tabulatorInputClass)) {
-      fieldList = validateInput(e, fieldList)
-      console.log(fieldList)
+      fieldList = validateInput({
+        e: e,
+        fieldList: fieldList,
+        type: fieldList.errors[e.target.name].type,
+      })
     }
-  })
-  formElementSecondary.addEventListener('input', (e) => {
-    if (e.target.classList.contains(matrixInputsClass)) validateCellValue(e)
   })
 
   formElement.addEventListener('change', (e) => {
     if (e.target.classList.contains(tabulatorInputClass))
-      fieldList = validateInput(e, fieldList)
+      fieldList = validateInput({
+        e: e,
+        fieldList: fieldList,
+        type: fieldList.errors[e.target.name].type,
+      })
+  })
+
+  formElementSecondary.addEventListener('input', (e) => {
+    if (e.target.classList.contains(matrixInputsClass))
+      validateInput({ e: e, type: 'matrixCell' })
   })
 
   d.addEventListener('click', (e) => {
+    // PRIMER FORMULARIO
     if (e.target === btnElement) {
       // Si hay errores en el primer formulario, no continuar
       if (Object.values(fieldList.errors).some((el) => el.value)) {
-        console.log('hola')
         confirmNotification({
           type: NOTIFICATIONS_TYPES.fail,
           message: 'Complete los datos requeridos antes de avanzar',
@@ -63,7 +72,7 @@ function validateTabulatorForm({
 
       validateModal(e, 'tabulator-btn', 'modal-window')
 
-      generateMatrix({
+      return generateMatrix({
         fieldList,
         matrixElement,
         matrixRowClass,
@@ -71,25 +80,19 @@ function validateTabulatorForm({
         matrixInputsClass,
       })
     }
-  })
-  btnSaveElement.addEventListener('click', (e) => {
-    confirmNotification({
-      type: NOTIFICATIONS_TYPES.send,
-      successFunction: generateMatrixData,
-      successFunctionParams: { fieldList, matrixInputsClass },
-    })
+
+    // SEGUNDO FORMULARIO - Enviar datos
+
+    if (e.target === btnSaveElement) {
+      confirmNotification({
+        type: NOTIFICATIONS_TYPES.send,
+        successFunction: generateMatrixData,
+        successFunctionParams: { fieldList, matrixInputsClass },
+      })
+    }
   })
 
   // Funciones
-}
-
-function validateCellValue(e) {
-  console.log(isFloat(e.target.value))
-  if (!e.target.checkValidity()) {
-    e.target.classList.add('input-error')
-  } else {
-    e.target.classList.remove('input-error')
-  }
 }
 
 function generateCellContent({ row, col, matrixInputsClass }) {
@@ -109,7 +112,6 @@ function generateCellContent({ row, col, matrixInputsClass }) {
   name="g${row}p${col}"
   data-grado="${row}"
   data-paso="${col}"
-  required
 />`
 }
 
@@ -154,17 +156,14 @@ function generateMatrix({
 
 function generateMatrixData({ fieldList, matrixInputsClass }) {
   const inputsElements = d.querySelectorAll(`.${matrixInputsClass}`)
-
-  const tabulatorData = [...inputsElements].map((el) => {
-    console.log(el.checkValidity())
-    let grado = `G${el.dataset.grado}`
-    let paso = `P${el.dataset.paso}`
-    let value = Number(el.value)
-
-    return [grado, paso, value]
-  })
-  if ([...inputsElements].some((el) => !el.checkValidity())) {
-    console.log([...inputsElements].some((el) => !el.checkValidity()))
+  if (
+    [...inputsElements].some(
+      (el) =>
+        el.value <= 0 ||
+        el.value === '' ||
+        !regularExpressions.FLOAT.test(el.value)
+    )
+  ) {
     confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
       message: 'Complete el tabulario correctamente',
@@ -172,6 +171,15 @@ function generateMatrixData({ fieldList, matrixInputsClass }) {
     })
     return
   }
+
+  const tabulatorData = [...inputsElements].map((el) => {
+    let grado = `G${el.dataset.grado}`
+    let paso = `P${el.dataset.paso}`
+    let value = Number(el.value)
+
+    return [grado, paso, value]
+  })
+
   fieldList.tabulador = tabulatorData
   delete fieldList.errors
 

@@ -1,3 +1,5 @@
+@import './animations.css';
+
 :root {
   --modal-height: calc(100% + 61px);
   --bluegray: #3f4d67;
@@ -15,6 +17,12 @@ table,
 th,
 td {
   padding: 5px;
+}
+
+.flex-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .modal-window {
@@ -42,10 +50,28 @@ td {
 }
 
 .form-control.input-error {
-  border: 1px solid rgb(255, 137, 137);
+  border: 1px solid rgb(255, 93, 93);
+  opacity: 0.8;
+}
+
+.input-error-message {
+  position: relative;
+  top: 8px;
+  background-color: #c74747;
+  color: white;
+  padding: 0.4rem 0.8rem;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  background-color: rgb(255, 149, 149);
+  opacity: 0.8;
 }
 
 /* TABULATOR STYLES */
+.tabulator-primary-form {
+  max-width: 800px;
+  display: flex;
+  align-items: center;
+}
 
 .tabulator-secundary-form {
   width: 100%;

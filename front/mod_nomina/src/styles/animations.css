@@ -1,0 +1,15 @@
+.slide-up-animation {
+  animation: slide-up;
+  animation-duration: 0.5s;
+}
+
+@keyframes slide-up {
+  from {
+    left: 50px;
+    opacity: 0;
+  }
+  to {
+    left: 0;
+    opacity: 0.8;
+  }
+}
