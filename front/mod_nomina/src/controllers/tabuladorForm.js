@@ -4,6 +4,7 @@ import {
   validateInput,
   validateModal,
 } from '../helpers/helpers.js'
+import { isFloat } from '../helpers/regExp.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 
 const d = document
@@ -28,7 +29,9 @@ function validateTabulatorForm({
   const btnElement = d.getElementById(btnId)
   const btnSaveElement = d.getElementById(btnSaveId)
 
-  formElement.addEventListener('submit', (e) => e.preventDefault())
+  formElement.addEventListener('submit', (e) => {
+    e.preventDefault()
+  })
   formElementSecondary.addEventListener('submit', (e) => e.preventDefault())
 
   formElement.addEventListener('input', (e) => {
@@ -43,13 +46,20 @@ function validateTabulatorForm({
 
   formElement.addEventListener('change', (e) => {
     if (e.target.classList.contains(tabulatorInputClass))
-      validateInput(e, fieldList)
+      fieldList = validateInput(e, fieldList)
   })
 
   d.addEventListener('click', (e) => {
     if (e.target === btnElement) {
       // Si hay errores en el primer formulario, no continuar
-      if (Object.values(fieldList.errors).some((el) => el.value)) return
+      if (Object.values(fieldList.errors).some((el) => el.value)) {
+        console.log('hola')
+        confirmNotification({
+          type: NOTIFICATIONS_TYPES.fail,
+          message: 'Complete los datos requeridos antes de avanzar',
+        })
+        return
+      }
 
       validateModal(e, 'tabulator-btn', 'modal-window')
 
@@ -74,7 +84,7 @@ function validateTabulatorForm({
 }
 
 function validateCellValue(e) {
-  console.log(e.target.value)
+  console.log(isFloat(e.target.value))
   if (!e.target.checkValidity()) {
     e.target.classList.add('input-error')
   } else {
@@ -145,10 +155,6 @@ function generateMatrix({
 function generateMatrixData({ fieldList, matrixInputsClass }) {
   const inputsElements = d.querySelectorAll(`.${matrixInputsClass}`)
 
-  if ([...inputsElements].some((el) => el.checkValidity())) {
-    return
-  }
-
   const tabulatorData = [...inputsElements].map((el) => {
     console.log(el.checkValidity())
     let grado = `G${el.dataset.grado}`
@@ -158,6 +164,12 @@ function generateMatrixData({ fieldList, matrixInputsClass }) {
     return [grado, paso, value]
   })
   if ([...inputsElements].some((el) => !el.checkValidity())) {
+    console.log([...inputsElements].some((el) => !el.checkValidity()))
+    confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Complete el tabulario correctamente',
+      // successFunction: location.reload(),
+    })
     return
   }
   fieldList.tabulador = tabulatorData

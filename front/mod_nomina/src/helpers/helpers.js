@@ -16,11 +16,9 @@ function validateInput(e, fieldList = {}) {
   let errorValue = fieldList.errors[e.target.name].value
   let message = fieldList.errors[e.target.name].message
   let inputValue = e.target.value
-  if (Object.values(fieldList.errors).every((el) => el.value)) {
-  }
 
   // Validar si el input es válido desde el html
-  if (!e.target.checkValidity()) {
+  if (!e.target.checkValidity() || e.target.value === '') {
     e.target.classList.add('input-error')
     fieldList.errors[e.target.name].value = true
     errorMessage(e.target, message)
@@ -121,6 +119,20 @@ function confirmNotification({
       // showDenyButton: true,
       confirmButtonText: 'ACEPTAR',
       denyButtonText: 'CANCELAR',
+    }).then((result) => {
+      if (result.isConfirmed)
+        notificationAction({ successFunction, successFunctionParams })
+    })
+  }
+  if (type === NOTIFICATIONS_TYPES.fail) {
+    return Swal.fire({
+      title: 'Hubo un error',
+      text: message || 'Error al procesar',
+      icon: 'error',
+      showConfirmButton: true,
+      // showDenyButton: true,
+      confirmButtonText: 'ACEPTAR',
+      // denyButtonText: 'CANCELAR',
     }).then((result) => {
       if (result.isConfirmed)
         notificationAction({ successFunction, successFunctionParams })
