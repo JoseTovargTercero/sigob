@@ -177,10 +177,6 @@ function generateMatrixData({ fieldList, matrixInputsClass }) {
 
   // Enviar datos
   sendTabulatorData({ tabulatorData: fieldList })
-  confirmNotification({
-    type: NOTIFICATIONS_TYPES.done,
-    // successFunction: location.reload(),
-  })
 }
 
 export { validateTabulatorForm }
