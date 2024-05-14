@@ -10,7 +10,6 @@ require_once '../../back/sistema_global/session.php';
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <link rel="stylesheet" href="https://cdn.datatables.net/2.0.1/css/dataTables.dataTables.css" />
 
 </head>
 <?php require_once '../includes/header.php' ?>
@@ -51,32 +50,51 @@ require_once '../../back/sistema_global/session.php';
           <div class="card">
             <div class="card-header">
               <div class="d-flex align-items-start justify-content-between">
-                <h5 class="mb-0">Grupos</h5>
+                <div>
+                  <h5 class="mb-0">Grupo de nominas</h5>
+                  <small class="text-muded">Cree y configure sus grupos de nominas</small>
+                </div>  
                 <button class="btn btn-light" id="btn-svr" onclick="setVistaRegistro()"> Nuevo grupo</button>
               </div>
             </div>
             <div class="card-body">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
               <div class="table-responsive p-1">
-                <table id="table" class="table">
+                <table id="table" class="table table-hover">
                   <thead>
                     <tr>
-                      <th>Código</th>
-                      <th>Nombre del grupo</th>
-                      <th class="w-15"></th>
+                      <th class="w-5"></th>
+                      <th class="w-10">Código</th>
+                      <th class="w-60">Nombre del grupo</th>
+                      <th class="w-10"></th>
+                      <th class="w-10"></th>
                     </tr>
 
-                    
+                    <tr id="section_registro" class="hide">
+                      <td></td>
+                      <td class="ps-0"><input type="text" class="form-control" name="codigo" id="codigo" placeholder="Código"></td>
+                      <th class="ps-0"><input type="text" class="form-control" name="nombre" id="nombre" placeholder="Nombre del grupo"></th>
+                      <th><button type="submit" class="btn btn-primary rounded" id="btn-guardar">Guardar</button></th>
+                      <td></td>
+                    </tr>
                   </thead>
                   <tbody>
-                   
+
                   </tbody>
-                  <tfoot>
-                  <tr id="section_registro" class="hide">
-                      <td><input type="text" class="form-control" name="codigo" id="codigo" placeholder="Código"></td>
-                      <th><input type="text" class="form-control" name="nombre" id="nombre" placeholder="Nombre del grupo"></th>
-                      <th><button type="submit" class="btn btn-sm btn-primary" id="btn-guardar">Guardar</button></th>
-                    </tr>
-                  </tfoot>
+
                 </table>
               </div>
             </div>
@@ -94,8 +112,6 @@ require_once '../../back/sistema_global/session.php';
   <script src="../../src/assets/js/fonts/custom-font.js"></script>
   <script src="../../src/assets/js/pcoded.js"></script>
   <script src="../../src/assets/js/plugins/feather.min.js"></script>
-  <script src="https://cdn.datatables.net/2.0.1/js/dataTables.js"></script>
-  <script src="https://cdn.datatables.net/2.0.1/js/dataTables.bootstrap5.js"></script>
   <script src="../../src/assets/js/main.js"></script>
   <script>
     const url_back = '../../back/modulo_nomina/nom_grupos_back.php';
@@ -121,7 +137,14 @@ require_once '../../back/sistema_global/session.php';
               var nombre = data[i].nombre;
               var id = data[i].id;
 
-              $('#table tbody').append('<tr><td>' + codigo + '</td><td>' + nombre + '</td><td><a href="#!" class="badge me-2 bg-brand-color-2 text-white f-12" onclick="eliminar(' + id + ')">Eliminar</a></td></tr>');
+              $('#table tbody').append(`
+              <tr>
+              <td><img class="rounded-circle" src="../../src/assets/images/icons-png/folder.png" alt="activity-user"></td>
+              <td>` + codigo + `</td>
+              <td>` + nombre + `</td>
+              <td><a href="nom_formulacion?i=`+id+`" class="pointer btn-wicon badge me-2 bg-brand-color-1 text-white f-12" onclick="addNomina(` + id + `)"> <box-icon class="icon" name='add-to-queue'></box-icon> Agregar</a></td>
+              <td><a class="pointer btn-wicon badge me-2 bg-brand-color-2 text-white f-12" onclick="eliminar(` + id + `)">Eliminar</a></td>
+              </tr>`);
             }
           }
 
@@ -173,11 +196,6 @@ require_once '../../back/sistema_global/session.php';
       });
     }
 
-
-
-
-
-
     // enviar data al back
     function guardar() {
       let codigo = document.getElementsByName('codigo')[0].value;
@@ -208,7 +226,7 @@ require_once '../../back/sistema_global/session.php';
             } else if (text == 'ye') {
               toast_s('error', 'Ya existe un concepto con este nombre')
             } else {
-              toast_s('error', 'error')
+              toast_s('error', 'error ' + text)
             }
           }
         });
