@@ -4,7 +4,7 @@ require_once '../sistema_global/session.php';
 
 
 // URL del servidor
-$url = 'http://localhost/sigob/back/modulo_nomina/calculo_cestaticket.php';
+$url = 'http://localhost/sigob/back/modulo_nomina/nom_cestaticket_calculo.php';
 
 // Datos a enviar (el objeto JSON)
 $data = array(

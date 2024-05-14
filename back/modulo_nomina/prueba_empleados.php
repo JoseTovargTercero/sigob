@@ -3,7 +3,7 @@ require_once '../sistema_global/conexion.php';
 require_once '../sistema_global/session.php';
 
 // URL del servidor
-$url = 'http://localhost/sigob/back/modulo_nomina/registro_empleados.php/';
+$url = 'http://localhost/sigob/back/modulo_nomina/nom_empleados_registro.php/';
 
 // Datos a enviar (el objeto JSON)
 $data = array(

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 13-05-2024 a las 16:58:00
+-- Tiempo de generación: 14-05-2024 a las 16:54:39
 -- Versión del servidor: 10.4.27-MariaDB
 -- Versión de PHP: 7.4.33
 
@@ -636,6 +636,30 @@ INSERT INTO `nominas_conceptos` (`id`, `contador_cod_con`, `cod_concepto`, `nom_
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `profesiones`
+--
+
+CREATE TABLE `profesiones` (
+  `id_profesion` int(255) NOT NULL,
+  `profesion` varchar(255) NOT NULL,
+  `porcentaje` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `profesiones`
+--
+
+INSERT INTO `profesiones` (`id_profesion`, `profesion`, `porcentaje`) VALUES
+(2, 'TECNICO SUPERIOR UNIVERSITARIO', '20'),
+(3, 'PROFESIONAL', '25'),
+(4, 'ESPECIALISTA', '30'),
+(5, 'MAESTRIA', '35'),
+(6, 'DOCTOR', '40'),
+(7, 'Sin Profesionalizacion', '0');
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `system_users`
 --
 
@@ -742,6 +766,12 @@ ALTER TABLE `nominas_conceptos`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indices de la tabla `profesiones`
+--
+ALTER TABLE `profesiones`
+  ADD PRIMARY KEY (`id_profesion`);
+
+--
 -- Indices de la tabla `system_users`
 --
 ALTER TABLE `system_users`
@@ -793,6 +823,12 @@ ALTER TABLE `nominas`
 --
 ALTER TABLE `nominas_conceptos`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+
+--
+-- AUTO_INCREMENT de la tabla `profesiones`
+--
+ALTER TABLE `profesiones`
+  MODIFY `id_profesion` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de la tabla `system_users`
