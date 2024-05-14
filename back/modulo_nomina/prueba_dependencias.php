@@ -1,26 +1,13 @@
 <?php
+require_once '../sistema_global/conexion.php';
 require_once '../sistema_global/session.php';
 
 // URL del servidor
-$url = 'http://localhost/sigob/back/modulo_nomina/nom_tabuladorEst_info.php/';
+$url = 'http://localhost/sigob/back/modulo_nomina/nom_dependencia_registro.php/';
 
 // Datos a enviar (el objeto JSON)
 $data = array(
-    "nombre" => "tabulador_regional_001",
-    "grados" => 3,
-    "pasos" => 3,
-    "aniosPasos" => 5,
-    "tabulador" => [
-        ["G1", "P1", 1],
-        ["G1", "P2", 2],
-        ["G1", "P3", 3],
-        ["G2", "P1", 4],
-        ["G2", "P2", 5],
-        ["G2", "P3", 6],
-        ["G3", "P1", 7],
-        ["G3", "P2", 8],
-        ["G3", "P3", 9]
-    ]
+    "dependencia" => "GOBERNACION",
 );
 
 // Convertir el array a formato JSON

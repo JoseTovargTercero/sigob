@@ -36,7 +36,7 @@ if (isset($_POST["tabla"])) {
         if ($stmt->execute()) {
             echo 'ok';
         } else {
-            echo "E: " . $conexion->error;
+            echo "E: " . $stmt->error;
         }
 
         $stmt->close();
