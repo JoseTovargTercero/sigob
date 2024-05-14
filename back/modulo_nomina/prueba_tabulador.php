@@ -2,7 +2,7 @@
 require_once '../sistema_global/session.php';
 
 // URL del servidor
-$url = 'http://localhost/sigob/back/modulo_nomina/tabulador.php/';
+$url = 'http://localhost/sigob/back/modulo_nomina/nom_tabuladorEst_info.php/';
 
 // Datos a enviar (el objeto JSON)
 $data = array(
