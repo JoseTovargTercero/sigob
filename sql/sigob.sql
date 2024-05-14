@@ -544,6 +544,7 @@ INSERT INTO `conceptos` (`id`, `nom_concepto`, `cod_partida`, `tipo_concepto`) V
 -- Estructura de tabla para la tabla `empleados`
 --
 
+
 CREATE TABLE `empleados` (
   `id` int(11) NOT NULL,
   `nacionalidad` varchar(1) NOT NULL,
@@ -731,6 +732,42 @@ INSERT INTO `tabuladores_estr` (`id`, `paso`, `grado`, `monto`, `tabulador_id`) 
 (260, 'P2', 'G3', '1', 29),
 (261, 'P3', 'G3', '249.31', 29);
 
+
+
+CREATE TABLE `nominas_grupos` (
+  `id` int(11) NOT NULL,
+  `codigo` varchar(20) COLLATE latin1_spanish_ci NOT NULL,
+  `nombre` varchar(255) COLLATE latin1_spanish_ci NOT NULL,
+  `creado` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+
+--
+-- Volcado de datos para la tabla `nominas_grupos`
+--
+
+INSERT INTO `nominas_grupos` (`id`, `codigo`, `nombre`, `creado`) VALUES
+(2, '015', 'Empleados contratados', '2024-05-13 20:11:37'),
+(3, '003', 'Obreros', '2024-05-13 20:18:19');
+
+--
+-- Índices para tablas volcadas
+--
+
+--
+-- Indices de la tabla `nominas_grupos`
+--
+ALTER TABLE `nominas_grupos`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- AUTO_INCREMENT de las tablas volcadas
+--
+
+--
+-- AUTO_INCREMENT de la tabla `nominas_grupos`
+--
+ALTER TABLE `nominas_grupos`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 --
 -- Índices para tablas volcadas
 --
