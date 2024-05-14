@@ -4,18 +4,7 @@ import { regularExpressions } from './regExp.js'
 const d = document
 
 function validateInput({ e, fieldList = {}, type }) {
-  //   inputElement.addEventListener('input', function() {
-  //     const value = parseFloat(this.value);
-
-  //     if (!isNaN(value) && (value * 100 % 1 === 0)) {
-  //         this.setCustomValidity('');
-  //     } else {
-  //         this.setCustomValidity('Ingrese un número válido con al menos 2 decimales.');
-  //     }
-  // });
-
   let value = e.target.value
-
   if (type === 'matrixCell') {
     let isFloat = regularExpressions.FLOAT.test(value)
 
@@ -43,6 +32,8 @@ function validateInput({ e, fieldList = {}, type }) {
     let isNumber = regularExpressions.NUMBER.test(value)
 
     if (!isNumber || value <= 0) {
+      console.log('a')
+
       e.target.classList.add('input-error')
       fieldList.errors[e.target.name].value = true
       errorMessage(e.target, message)
@@ -53,8 +44,8 @@ function validateInput({ e, fieldList = {}, type }) {
   }
 
   if (type === 'text') {
+    console.log('hola')
     let isText = regularExpressions.TEXT.test(value)
-
     if (!isText) {
       e.target.classList.add('input-error')
       fieldList.errors[e.target.name].value = true
@@ -64,6 +55,9 @@ function validateInput({ e, fieldList = {}, type }) {
       e.target.classList.remove('input-error')
     }
   }
+
+  // if (type === 'date') {
+  // }
 
   errorMessage(e.target, message)
 
@@ -80,13 +74,6 @@ const convertStringOrNumber = (string) =>
 
 // Mensaje de error para inputs
 const errorMessage = (target, message) => {
-  // Validaciones personalizadas
-  // if(type !== ""){
-  //   if(type === text){
-
-  //   }
-  // }
-
   // Verificar si el mensaje de error existe:
   const errorSpan = document.getElementById(`${target.name}-error-message`)
   if (errorSpan) {

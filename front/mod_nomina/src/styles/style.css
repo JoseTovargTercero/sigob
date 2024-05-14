@@ -54,6 +54,12 @@ td {
   opacity: 0.8;
 }
 
+.form-container {
+  max-width: 800px;
+  display: flex;
+  align-items: center;
+}
+
 .input-error-message {
   position: relative;
   top: 8px;

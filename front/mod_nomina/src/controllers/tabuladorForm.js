@@ -24,7 +24,6 @@ function validateTabulatorForm({
 }) {
   const formElement = d.getElementById(formId)
   const formElementSecondary = d.getElementById(secondaryFormId)
-  const tabulatorInputsElement = d.querySelectorAll(`.${tabulatorInputClass}`)
   const matrixElement = d.getElementById(matrixId)
   const btnElement = d.getElementById(btnId)
   const btnSaveElement = d.getElementById(btnSaveId)
