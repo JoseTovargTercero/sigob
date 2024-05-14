@@ -67,12 +67,14 @@ require_once '../../back/sistema_global/session.php';
 
                     <div class="col-sm">
                         <label class="form-label" for="cargo">CARGO AL QUE OPTA</label>
-                        <select name="cod_cargo" class="form-select employee-select" id="cargo">
+                        <input class="employee-input form-control select-search" type="text" name="cargo"
+                            placeholder="Buscar cargo..." id="cargo" />
+                        <!-- <select name="cargo" class="form-select employee-select" id="cargo">
                             <option value="activo" selected>ELEGIR...</option>
                             <option value="inactivo">OPERADOR</option>
                             <option value="inactivo">ADMINISTRATIVO</option>
                             <option value="inactivo">MANTENIMIENTO</option>
-                        </select>
+                        </select> -->
                     </div>
                     <div class="col-sm">
                         <label class="form-label" for="fecha_ingreso">FECHA DE INGRESO</label>
@@ -130,6 +132,7 @@ require_once '../../back/sistema_global/session.php';
                 <label class="form-label" for="dependencias">DEPENDENCIAS LABORALES</label>
                 <select name="dependencias" class="form-select employee-input" id="dependencias">
                     <option value="dependenciaID" selected>AÑADIR DEPENDENCIAS</option>
+                    <h2>HOLA</h2>
 
                 </select>
             </div>

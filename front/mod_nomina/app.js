@@ -55,6 +55,7 @@ d.addEventListener('DOMContentLoaded', (e) => {
       formElement: employeeForm,
       employeeInputClass: 'employee-input',
       btnId: 'tabulator-btn',
+      selectSerach: 'select-search',
       fieldList: {
         nombre: '',
         nacionalidad: '',
