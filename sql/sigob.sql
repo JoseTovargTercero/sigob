@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 14-05-2024 a las 16:54:39
+-- Tiempo de generación: 14-05-2024 a las 19:08:25
 -- Versión del servidor: 10.4.27-MariaDB
 -- Versión de PHP: 7.4.33
 
@@ -541,9 +541,30 @@ INSERT INTO `conceptos` (`id`, `nom_concepto`, `cod_partida`, `tipo_concepto`) V
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `empleados`
+-- Estructura de tabla para la tabla `dependencias`
 --
 
+CREATE TABLE `dependencias` (
+  `id_dependencia` int(255) NOT NULL,
+  `dependencia` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `dependencias`
+--
+
+INSERT INTO `dependencias` (`id_dependencia`, `dependencia`) VALUES
+(6, 'GOBERNACION'),
+(7, 'ESCUELA'),
+(9, 'Alcaldia'),
+(10, 'Barrio'),
+(11, 'Adentro');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `empleados`
+--
 
 CREATE TABLE `empleados` (
   `id` int(11) NOT NULL,
@@ -562,22 +583,27 @@ CREATE TABLE `empleados` (
   `hijos` int(11) NOT NULL DEFAULT 0,
   `instruccion_academica` int(11) NOT NULL DEFAULT 0,
   `discapacidades` int(2) NOT NULL DEFAULT 0,
-  `becas` int(2) NOT NULL
+  `becas` int(2) NOT NULL,
+  `tipo_cuenta` int(10) NOT NULL,
+  `tipo_nomina` int(10) NOT NULL,
+  `id_dependencia` int(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 --
 -- Volcado de datos para la tabla `empleados`
 --
 
-INSERT INTO `empleados` (`id`, `nacionalidad`, `cedula`, `cod_empleado`, `nombres`, `fecha_ingreso`, `otros_años`, `status`, `observacion`, `cod_cargo`, `cargo`, `banco`, `cuenta_bancaria`, `hijos`, `instruccion_academica`, `discapacidades`, `becas`) VALUES
-(26, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', '12', 'Venezuela', '1002555541124', 3, 1, 0, 0),
-(27, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', '12', 'Venezuela', '1002555541124', 3, 1, 0, 0),
-(28, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', '12', 'Venezuela', '1002555541124', 3, 1, 0, 0),
-(29, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', '12', 'Venezuela', '1002555541124', 3, 1, 0, 0),
-(30, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', '12', 'Venezuela', '1002555541124', 3, 1, 0, 0),
-(31, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', '12', 'Venezuela', '1002555541124', 3, 1, 0, 0),
-(32, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', '12', 'Venezuela', '1002555541124', 3, 1, 0, 0),
-(33, '1', '123456789', '441151', 'Pedro Pablo', '2022-05-02', 0, '1', 'N/A', '25212', '12', 'Venezuela', '1002555541124', 3, 1, 0, 0);
+INSERT INTO `empleados` (`id`, `nacionalidad`, `cedula`, `cod_empleado`, `nombres`, `fecha_ingreso`, `otros_años`, `status`, `observacion`, `cod_cargo`, `cargo`, `banco`, `cuenta_bancaria`, `hijos`, `instruccion_academica`, `discapacidades`, `becas`, `tipo_cuenta`, `tipo_nomina`, `id_dependencia`) VALUES
+(26, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', '12', 'Venezuela', '1002555541124', 3, 1, 0, 0, 0, 0, 0),
+(27, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', '12', 'Venezuela', '1002555541124', 3, 1, 0, 0, 0, 0, 0),
+(28, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', '12', 'Venezuela', '1002555541124', 3, 1, 0, 0, 0, 0, 0),
+(29, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', '12', 'Venezuela', '1002555541124', 3, 1, 0, 0, 0, 0, 0),
+(30, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', '12', 'Venezuela', '1002555541124', 3, 1, 0, 0, 0, 0, 0),
+(31, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', '12', 'Venezuela', '1002555541124', 3, 1, 0, 0, 0, 0, 0),
+(32, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', '12', 'Venezuela', '1002555541124', 3, 1, 0, 0, 0, 0, 0),
+(33, '1', '123456789', '441151', 'Pedro Pablo', '2022-05-02', 0, '1', 'N/A', '25212', '12', 'Venezuela', '1002555541124', 3, 1, 0, 0, 0, 0, 0),
+(34, '1', '123456789', '441151', 'Pedro Pablo', '2010-05-02', 0, '1', 'N/A', '25212', '12', 'Venezuela', '1002555541124', 3, 1, 0, 0, 1, 2, 6),
+(35, '1', '123456789', '441151', 'Pedro Pablo', '2010-05-02', 0, '1', 'N/A', '25212', '12', 'Venezuela', '1002555541124', 3, 1, 0, 0, 1, 2, 6);
 
 -- --------------------------------------------------------
 
@@ -633,6 +659,27 @@ INSERT INTO `nominas_conceptos` (`id`, `contador_cod_con`, `cod_concepto`, `nom_
 (13, 555, 502, 'RPE', '401-01-02-00-0000', '0', '357,91', '0', '16/03/2024', '31/03/2024', '15', 'CONTRATADOS DE LA GOBERNACION', 'D'),
 (14, 555, 560, 'A/P S.S.O', '401-06-01-00-0000', '0', '0', '2862,97', '16/03/2024', '31/03/2024', '15', 'CONTRATADOS DE LA GOBERNACION', 'P'),
 (15, 555, 570, 'A/P RPE', '401-06-12-00-0000', '0', '0', '1431,72', '16/03/2024', '31/03/2024', '15', 'CONTRATADOS DE LA GOBERNACION', 'P');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `nominas_grupos`
+--
+
+CREATE TABLE `nominas_grupos` (
+  `id` int(11) NOT NULL,
+  `codigo` varchar(20) NOT NULL,
+  `nombre` varchar(255) NOT NULL,
+  `creado` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+
+--
+-- Volcado de datos para la tabla `nominas_grupos`
+--
+
+INSERT INTO `nominas_grupos` (`id`, `codigo`, `nombre`, `creado`) VALUES
+(2, '015', 'Empleados contratados', '2024-05-13 20:11:37'),
+(3, '003', 'Obreros', '2024-05-13 20:18:19');
 
 -- --------------------------------------------------------
 
@@ -732,42 +779,6 @@ INSERT INTO `tabuladores_estr` (`id`, `paso`, `grado`, `monto`, `tabulador_id`) 
 (260, 'P2', 'G3', '1', 29),
 (261, 'P3', 'G3', '249.31', 29);
 
-
-
-CREATE TABLE `nominas_grupos` (
-  `id` int(11) NOT NULL,
-  `codigo` varchar(20) COLLATE latin1_spanish_ci NOT NULL,
-  `nombre` varchar(255) COLLATE latin1_spanish_ci NOT NULL,
-  `creado` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
-
---
--- Volcado de datos para la tabla `nominas_grupos`
---
-
-INSERT INTO `nominas_grupos` (`id`, `codigo`, `nombre`, `creado`) VALUES
-(2, '015', 'Empleados contratados', '2024-05-13 20:11:37'),
-(3, '003', 'Obreros', '2024-05-13 20:18:19');
-
---
--- Índices para tablas volcadas
---
-
---
--- Indices de la tabla `nominas_grupos`
---
-ALTER TABLE `nominas_grupos`
-  ADD PRIMARY KEY (`id`);
-
---
--- AUTO_INCREMENT de las tablas volcadas
---
-
---
--- AUTO_INCREMENT de la tabla `nominas_grupos`
---
-ALTER TABLE `nominas_grupos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 --
 -- Índices para tablas volcadas
 --
@@ -785,6 +796,12 @@ ALTER TABLE `conceptos`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indices de la tabla `dependencias`
+--
+ALTER TABLE `dependencias`
+  ADD PRIMARY KEY (`id_dependencia`);
+
+--
 -- Indices de la tabla `empleados`
 --
 ALTER TABLE `empleados`
@@ -800,6 +817,12 @@ ALTER TABLE `nominas`
 -- Indices de la tabla `nominas_conceptos`
 --
 ALTER TABLE `nominas_conceptos`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `nominas_grupos`
+--
+ALTER TABLE `nominas_grupos`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -844,10 +867,16 @@ ALTER TABLE `conceptos`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
+-- AUTO_INCREMENT de la tabla `dependencias`
+--
+ALTER TABLE `dependencias`
+  MODIFY `id_dependencia` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+
+--
 -- AUTO_INCREMENT de la tabla `empleados`
 --
 ALTER TABLE `empleados`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
 
 --
 -- AUTO_INCREMENT de la tabla `nominas`
@@ -860,6 +889,12 @@ ALTER TABLE `nominas`
 --
 ALTER TABLE `nominas_conceptos`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+
+--
+-- AUTO_INCREMENT de la tabla `nominas_grupos`
+--
+ALTER TABLE `nominas_grupos`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `profesiones`
