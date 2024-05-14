@@ -1,19 +1,19 @@
 <?php
 require_once '../sistema_global/conexion.php';
-require_once '../sistema_global/session.php';
+
 
 // Recibir el array enviado desde el primer archivo
 $data = json_decode(file_get_contents('php://input'), true);
 
 // Construir la consulta SQL para insertar datos
-$sql = "INSERT INTO empleados (nacionalidad, Cedula, cod_empleado, nombres, fecha_ingreso, otros_años, status, observacion, cod_cargo, cargo, banco, cuenta_bancaria, hijos, instruccion_academica, discapacidades, becas)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+$sql = "INSERT INTO empleados (nacionalidad, Cedula, cod_empleado, nombres, fecha_ingreso, otros_años, status, observacion, cod_cargo, cargo, banco, cuenta_bancaria, hijos, instruccion_academica, discapacidades, becas, tipo_cuenta, tipo_nomina, id_dependencia)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 // Preparar la declaración SQL
 $stmt = $conexion->prepare($sql);
 
 // Vincular parámetros y ejecutar la consulta
-$stmt->bind_param("iisssisssssisisi", $data["nacionalidad"], $data["Cedula"], $data["cod_empleado"], $data["nombres"], $data["fecha_ingreso"], $data["otros_años"], $data["status"], $data["observacion"], $data["cod_cargo"], $data["cargo"], $data["banco"], $data["cuenta_bancaria"], $data["hijos"], $data["instruccion_academica"], $data["discapacidades"], $data["becas"]);
+$stmt->bind_param("iisssisssssisisiiii", $data["nacionalidad"], $data["Cedula"], $data["cod_empleado"], $data["nombres"], $data["fecha_ingreso"], $data["otros_años"], $data["status"], $data["observacion"], $data["cod_cargo"], $data["cargo"], $data["banco"], $data["cuenta_bancaria"], $data["hijos"], $data["instruccion_academica"], $data["discapacidades"], $data["becas"], $data["tipo_cuenta"], $data["tipo_nomina"], $data["id_dependencia"]);
 
 // Ejecutar la consulta preparada
 if ($stmt->execute()) {
