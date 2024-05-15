@@ -67,3 +67,15 @@ function App() {
 }
 
 export default App;
+
+#filterContainer {
+  margin-bottom: 10px;
+}
+
+#filterInput {
+  width: 100%;
+}
+
+#mySelect {
+  width: 100%;
+}
