@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 14-05-2024 a las 19:08:25
+-- Tiempo de generación: 15-05-2024 a las 23:11:22
 -- Versión del servidor: 10.4.27-MariaDB
 -- Versión de PHP: 7.4.33
 
@@ -577,13 +577,11 @@ CREATE TABLE `empleados` (
   `status` varchar(5) DEFAULT NULL,
   `observacion` varchar(255) DEFAULT NULL,
   `cod_cargo` varchar(10) NOT NULL,
-  `cargo` varchar(255) NOT NULL,
   `banco` varchar(255) NOT NULL,
   `cuenta_bancaria` varchar(25) DEFAULT NULL,
   `hijos` int(11) NOT NULL DEFAULT 0,
   `instruccion_academica` int(11) NOT NULL DEFAULT 0,
   `discapacidades` int(2) NOT NULL DEFAULT 0,
-  `becas` int(2) NOT NULL,
   `tipo_cuenta` int(10) NOT NULL,
   `tipo_nomina` int(10) NOT NULL,
   `id_dependencia` int(255) NOT NULL
@@ -593,17 +591,17 @@ CREATE TABLE `empleados` (
 -- Volcado de datos para la tabla `empleados`
 --
 
-INSERT INTO `empleados` (`id`, `nacionalidad`, `cedula`, `cod_empleado`, `nombres`, `fecha_ingreso`, `otros_años`, `status`, `observacion`, `cod_cargo`, `cargo`, `banco`, `cuenta_bancaria`, `hijos`, `instruccion_academica`, `discapacidades`, `becas`, `tipo_cuenta`, `tipo_nomina`, `id_dependencia`) VALUES
-(26, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', '12', 'Venezuela', '1002555541124', 3, 1, 0, 0, 0, 0, 0),
-(27, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', '12', 'Venezuela', '1002555541124', 3, 1, 0, 0, 0, 0, 0),
-(28, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', '12', 'Venezuela', '1002555541124', 3, 1, 0, 0, 0, 0, 0),
-(29, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', '12', 'Venezuela', '1002555541124', 3, 1, 0, 0, 0, 0, 0),
-(30, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', '12', 'Venezuela', '1002555541124', 3, 1, 0, 0, 0, 0, 0),
-(31, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', '12', 'Venezuela', '1002555541124', 3, 1, 0, 0, 0, 0, 0),
-(32, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', '12', 'Venezuela', '1002555541124', 3, 1, 0, 0, 0, 0, 0),
-(33, '1', '123456789', '441151', 'Pedro Pablo', '2022-05-02', 0, '1', 'N/A', '25212', '12', 'Venezuela', '1002555541124', 3, 1, 0, 0, 0, 0, 0),
-(34, '1', '123456789', '441151', 'Pedro Pablo', '2010-05-02', 0, '1', 'N/A', '25212', '12', 'Venezuela', '1002555541124', 3, 1, 0, 0, 1, 2, 6),
-(35, '1', '123456789', '441151', 'Pedro Pablo', '2010-05-02', 0, '1', 'N/A', '25212', '12', 'Venezuela', '1002555541124', 3, 1, 0, 0, 1, 2, 6);
+INSERT INTO `empleados` (`id`, `nacionalidad`, `cedula`, `cod_empleado`, `nombres`, `fecha_ingreso`, `otros_años`, `status`, `observacion`, `cod_cargo`, `banco`, `cuenta_bancaria`, `hijos`, `instruccion_academica`, `discapacidades`, `tipo_cuenta`, `tipo_nomina`, `id_dependencia`) VALUES
+(26, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 1, 0, 0, 0, 0),
+(27, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', 'Tesoro', '1002555541124', 3, 1, 0, 0, 0, 0),
+(28, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', 'Bicentenario', '1002555541124', 3, 1, 0, 0, 0, 0),
+(29, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 1, 0, 0, 0, 0),
+(30, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 1, 0, 0, 0, 0),
+(31, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 1, 0, 0, 0, 0),
+(32, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 1, 0, 0, 0, 0),
+(33, '1', '123456789', '441151', 'Pedro Pablo', '2022-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 1, 0, 0, 0, 0),
+(34, '1', '123456789', '441151', 'Pedro Pablo', '2010-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 1, 0, 1, 2, 6),
+(35, '1', '123456789', '441151', 'Pedro Pablo', '2010-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 1, 0, 1, 2, 6);
 
 -- --------------------------------------------------------
 
