@@ -55,21 +55,25 @@ d.addEventListener('DOMContentLoaded', (e) => {
       formElement: employeeForm,
       employeeInputClass: 'employee-input',
       btnId: 'tabulator-btn',
-      selectSerach: 'select-search',
+      selectSearchInput: 'select-search-input',
+      selectSearch: ['cargo'],
+      btnAddId: 'add-dependency',
       fieldList: {
         nombre: '',
         nacionalidad: '',
-        identificacion: 0,
+        cedula: 0,
         status: '',
         instruccion_academica: '',
         cod_cargo: '',
         fecha_ingreso: '',
-        otros_anios: '',
+        otros_años: '',
         hijos: 0,
-        discapacidad: '',
+        discapacidades: '',
         banco: '',
         cuenta: 0,
-        becas: '',
+        tipo_cuenta: '',
+        dependencias: '',
+        tipo_nomina: '',
         errors: {
           nombre: {
             value: true,
@@ -81,7 +85,7 @@ d.addEventListener('DOMContentLoaded', (e) => {
             message: 'Introducir un campo válido',
             type: 'text',
           },
-          identificacion: {
+          cedula: {
             value: true,
             message: 'Introducir un campo válido',
             type: 'number',
@@ -103,10 +107,20 @@ d.addEventListener('DOMContentLoaded', (e) => {
           },
           fecha_ingreso: {
             value: true,
-            message: 'Introducir un campo válido',
-            type: 'text',
+            message: 'Fecha inválida o mayor',
+            type: 'date',
           },
-          discapacidad: {
+          otros_años: {
+            value: true,
+            message: 'Introducir un campo válido',
+            type: 'date',
+          },
+          hijos: {
+            value: true,
+            message: 'Introducir un campo válido',
+            type: 'number',
+          },
+          discapacidades: {
             value: true,
             message: 'Introducir un campo válido',
             type: 'text',
@@ -117,6 +131,11 @@ d.addEventListener('DOMContentLoaded', (e) => {
             type: 'text',
           },
           cuenta: {
+            value: true,
+            message: 'Introducir un campo válido',
+            type: 'number',
+          },
+          dependencias: {
             value: true,
             message: 'Introducir un campo válido',
             type: 'text',

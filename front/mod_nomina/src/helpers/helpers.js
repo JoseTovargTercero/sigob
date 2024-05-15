@@ -44,7 +44,6 @@ function validateInput({ e, fieldList = {}, type }) {
   }
 
   if (type === 'text') {
-    console.log('hola')
     let isText = regularExpressions.TEXT.test(value)
     if (!isText) {
       e.target.classList.add('input-error')
@@ -56,8 +55,16 @@ function validateInput({ e, fieldList = {}, type }) {
     }
   }
 
-  // if (type === 'date') {
-  // }
+  if (type === 'date') {
+    if (!validarFecha(value)) {
+      e.target.classList.add('input-error')
+      fieldList.errors[e.target.name].value = true
+      errorMessage(e.target, message)
+    } else {
+      fieldList.errors[e.target.name].value = false
+      e.target.classList.remove('input-error')
+    }
+  }
 
   errorMessage(e.target, message)
 
@@ -71,6 +78,26 @@ function validateInput({ e, fieldList = {}, type }) {
 
 const convertStringOrNumber = (string) =>
   isNaN(Number(string)) ? string : Number(string)
+
+function validarFecha(valorInput) {
+  // Convertir el valor del input a una fecha
+  var fechaIngresada = new Date(valorInput)
+  // Obtener la fecha actual
+  var fechaActual = new Date()
+
+  // Comprobar si el valor ingresado es una fecha válida
+  if (isNaN(fechaIngresada)) {
+    return false
+  }
+
+  // Comprobar si la fecha ingresada es mayor que la fecha actual
+  if (fechaIngresada > fechaActual) {
+    return false
+  }
+
+  // Si pasa ambas validaciones, la fecha es válida y no es mayor que la fecha actual
+  return true
+}
 
 // Mensaje de error para inputs
 const errorMessage = (target, message) => {

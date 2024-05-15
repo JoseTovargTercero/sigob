@@ -23,7 +23,8 @@ require_once '../../back/sistema_global/session.php';
         <form class="row w-100 mx-auto form-container employee-form" id="employee-form" autocomplete="off">
             <div class="form-group">
                 <label class="form-label" class="form-label" for="nombre">NOMBRE COMPLETO</label>
-                <input class=" form-control" type="text" name="nombre" id="nombre" placeholder="NOMBRE COMPLETO" />
+                <input class="form-control employee-input" type="text" name="nombre" id="nombre"
+                    placeholder="NOMBRE COMPLETO" />
             </div>
 
             <div class="form-group">
@@ -37,14 +38,14 @@ require_once '../../back/sistema_global/session.php';
                         </select>
                     </div>
                     <div class="col-sm">
-                        <label class="form-label" for="identificacion">IDENTIFICACION</label>
-                        <input class="employee-input form-control" type="number" name="identificacion"
-                            id="identificacion" placeholder="IDENTIFICACION" />
+                        <label class="form-label" for="cedula">cedula</label>
+                        <input class="employee-input form-control" type="number" name="cedula" id="cedula"
+                            placeholder="CEDULA..." />
                     </div>
                     <div class="col-sm">
                         <label class="form-label" for="grados">ESTADO DEL TRABAJADOR</label>
                         <select name="status" id="status" class="form-select employee-select">
-                            <option>ELEGIR...</option>
+                            <option value="">ELEGIR...</option>
                             <option value="activo" selected>ACTIVO</option>
                             <option value="inactivo">INACTIVO</option>
                         </select>
@@ -56,19 +57,21 @@ require_once '../../back/sistema_global/session.php';
                 <div class="row">
                     <div class="col-sm">
                         <label class="form-label" for="instruccion_academica">INSTRUCCIÓN ACADÉMICA</label>
-                        <select name="instruccion_academica" id="instruccion_academica"
-                            class="form-select employee-select">
-                            <option selected>ELEGIR...</option>
-                            <option value="activo">INGENIERO</option>
-                            <option value="inactivo">TSU</option>
-                            <option value="inactivo">ETC</option>
+                        <select class="form-select employee-select" name="instruccion_academica"
+                            id="search-select-instruccion_academica">
+                            <option value="" selected>ELEGIR...</option>
                         </select>
+
                     </div>
 
-                    <div class="col-sm">
+                    <div class="col-sm" tabindex="0">
                         <label class="form-label" for="cargo">CARGO AL QUE OPTA</label>
-                        <input class="employee-input form-control select-search" type="text" name="cargo"
-                            placeholder="Buscar cargo..." id="cargo" />
+                        <!-- <input class="employee-input form-control select-search-input" type="text" name="cargo"
+                            placeholder="Buscar cargo..." id="cargo" /> -->
+
+                        <select class="form-select employee-select" name="cod_cargo" id="search-select-cargo">
+                            <option value="" selected>ELEGIR...</option>
+                        </select>
                         <!-- <select name="cargo" class="form-select employee-select" id="cargo">
                             <option value="activo" selected>ELEGIR...</option>
                             <option value="inactivo">OPERADOR</option>
@@ -87,9 +90,9 @@ require_once '../../back/sistema_global/session.php';
             <div class="form-group">
                 <div class="row">
                     <div class="col-sm">
-                        <label class="form-label" for="otros_anios">AÑOS LABORALES</label>
-                        <input class="employee-input form-control" type="number" name="otros_anios"
-                            placeholder="Cantidad de años" id="otros_anios" />
+                        <label class="form-label" for="otros_años">AÑOS LABORALES</label>
+                        <input class="employee-input form-control" type="number" name="otros_años"
+                            placeholder="Cantidad de años" id="otros_años" />
                     </div>
                     <div class="col-sm">
                         <label class="form-label" for="">HIJOS</label>
@@ -99,9 +102,9 @@ require_once '../../back/sistema_global/session.php';
                     <div class="col-sm">
                         <label class="form-label" for="discapacidades">DISCAPACIDAD</label>
                         <select name="discapacidades" class="form-select employee-select" id="discapacidades">
-                            <option value="activo" selected>ELEGIR...</option>
-                            <option value="">SÍ POSEE</option>
-                            <option value="inactivo">NO POSEE</option>
+                            <option value="" selected>ELEGIR...</option>
+                            <option value="NO">SÍ POSEE</option>
+                            <option value="SI">NO POSEE</option>
                         </select>
                     </div>
 
@@ -129,12 +132,24 @@ require_once '../../back/sistema_global/session.php';
             </div>
 
             <div class="form-group">
-                <label class="form-label" for="dependencias">DEPENDENCIAS LABORALES</label>
-                <select name="dependencias" class="form-select employee-input" id="dependencias">
-                    <option value="dependenciaID" selected>AÑADIR DEPENDENCIAS</option>
-                    <h2>HOLA</h2>
-
-                </select>
+                <label class="form-label" for="id_dependencia">DEPENDENCIAS LABORALES</label>
+                <div class="row">
+                    <div class="col-sm">
+                        <select class="form-select employee-select" name="id_dependencia"
+                            id="search-select-dependencias">
+                            <option value="" selected>ELEGIR...</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-1">
+                        <div class="form-group">
+                            <button id="add-dependency" class="btn btn-primary w-100">+</button>
+                        </div>
+                    </div>
+                    <div class="col-sm">
+                        <input class="employee-input form-control" type="number" name="cuenta"
+                            placeholder="0000 0000 00 0000" id="cuenta">
+                    </div>
+                </div>
             </div>
 
             <!-- <div class="form-group">
