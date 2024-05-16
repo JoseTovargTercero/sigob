@@ -51,16 +51,20 @@
             <span class="pc-mtext">Nómina</span><span class="pc-arrow"><i class="ti ti-chevron-right"></i></span>
           </a>
           <ul class="pc-submenu">
-            <li class="pc-item"><a class="pc-link" href="<?php echo constant('URL') ?>/nom_Formulación">Formulación</a>
-            </li>
-            <li class="pc-item"><a class="pc-link" href="<?php echo constant('URL') ?>/nom_Pagar">Pagar</a></li>
+          <li class="pc-item"><a class="pc-link" href="<?php echo constant('URL') ?>front/mod_nomina/nom_grupos">Registro de nominas</a></li>
+              <li class="pc-item"><a class="pc-link" href="<?php echo constant('URL') ?>front/mod_nomina/nom_Pagar">Pagar</a></li>
           </ul>
         </li>
 
 
 
+        <!--
 
 
+        banco='Venezuela' OR banco='Tesoro' 
+        valor: 15.5
+
+        -->
 
 
         <li class="pc-item pc-caption">

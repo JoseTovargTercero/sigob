@@ -1,4 +1,5 @@
 <?php
+require_once '../../back/sistema_global/conexion.php';
 require_once '../../back/sistema_global/session.php';
 
 if (isset($_GET["i"])) {
@@ -6,6 +7,20 @@ if (isset($_GET["i"])) {
 } else {
   header("Location: nom_grupos");
 }
+
+// has un query tipo select para buscar el codigo y el nombre de la nomina en la tabla nominas_grupos mediante su id
+$stmt = mysqli_prepare($conexion, "SELECT * FROM `nominas_grupos` WHERE id = ?");
+$stmt->bind_param('i', $i);
+$stmt->execute();
+$result = $stmt->get_result();
+if ($result->num_rows > 0) {
+  while ($row = $result->fetch_assoc()) {
+    $nombre = $row['nombre'];
+    $codigo = $row['codigo'];
+}
+}
+$stmt->close();
+
 
 ?>
 <!DOCTYPE html>
@@ -44,7 +59,7 @@ if (isset($_GET["i"])) {
           <div class="row align-items-center">
             <div class="col-md-12">
               <div class="page-header-title">
-                <h5 class="mb-0">Formulación de nómina</h5>
+                <h5 class="mb-0">Formulación de nómina <br><small class="text-muted"><?php echo $codigo.' '.$nombre ?></small> </h5>
               </div>
             </div>
           </div>
@@ -116,18 +131,11 @@ if (isset($_GET["i"])) {
                         </div>
                       </div>
                     </div>
-                    
                   </form>
                   <div class="d-flex w-100 mt-3">
                     <div class="d-flex m-a">
                       <div class="previous me-2"><a href="javascript:void(0);" class="btn btn-secondary disabled">Regresar</a></div>
                       <div class="next" data-target-form="#contactDetailForm" role="presentation"><a href="#contactDetail" data-bs-toggle="tab" data-toggle="tab" aria-selected="true" role="tab" class="btn btn-secondary mt-3 mt-md-0">Siguiente</a></div>
-
-
-
-
-
-
                     </div>
                   </div>
 
@@ -135,7 +143,10 @@ if (isset($_GET["i"])) {
                 <div class="tab-pane" id="jobDetail">
                   <form id="jobForm" method="post" action="#">
                     <div class="text-center">
-                      <h3 class="mb-2">Tell me something about Home address</h3><small class="text-muted">Let us know your name and email address. Use an address you don't mind other users contacting you at</small>
+                      <h3 class="mb-2">Es hora de agregar los conceptos</h3>
+                      <small class="text-muted">
+                        Por favor, ingrese los conceptos de la nómina.
+                      </small>
                     </div>
                     <div class="row mt-4">
                       <div class="col-sm-6">
@@ -167,7 +178,10 @@ if (isset($_GET["i"])) {
                 <div class="tab-pane" id="educationDetail">
                   <form id="educationForm" method="post" action="#">
                     <div class="text-center">
-                      <h3 class="mb-2">Tell us about your education</h3><small class="text-muted">Let us know your name and email address. Use an address you don't mind other users contacting you at</small>
+                      <h3 class="mb-2">Continua agregando los empleados</h3>
+                      <small class="text-muted">
+                        Por favor, ingrese los empleados de la nómina.
+                      </small>
                     </div>
                     <div class="row">
                       <div class="col-md-12">
@@ -189,10 +203,8 @@ if (isset($_GET["i"])) {
                   <div class="row d-flex justify-content-center">
                     <div class="col-lg-6">
                       <div class="text-center"><i class="ph-duotone ph-gift f-50 text-danger"></i>
-                        <h3 class="mt-4 mb-3">Thank you !</h3>
-                        <div class="mb-3">
-                          <div class="form-check d-inline-block"><input type="checkbox" class="form-check-input" id="customCheck1"> <label class="form-check-label" for="customCheck1">I agree with the Terms and Conditions</label></div>
-                        </div>
+                        <h3 class="mt-4 mb-3">Verifica que todo este correcto</h3>
+                       Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsam cupiditate possimus deserunt esse necessitatibus sint aspernatur laboriosam dolore consequatur perspiciatis nulla fuga beatae assumenda voluptatum, est libero saepe autem fugit.
                       </div>
                     </div>
                   </div>
