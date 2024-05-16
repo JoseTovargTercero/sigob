@@ -2,9 +2,15 @@ import {
   getCargoData,
   getDependenciasData,
   getProfesionesData,
+  sendDependencyData,
   sendEmployeeData,
 } from '../api/empleados.js'
-import { confirmNotification, validateInput } from '../helpers/helpers.js'
+import {
+  closeModal,
+  confirmNotification,
+  validateInput,
+  validateModal,
+} from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 
 const d = document
@@ -19,7 +25,9 @@ function validateEmployeeForm({
 }) {
   const btnElement = d.getElementById(btnId)
   const btnAddElement = d.getElementById(btnAddId)
+  const btnDependencySave = d.getElementById('dependency-save-btn')
   const selectSearchInputElement = d.querySelectorAll(`.${selectSearchInput}`)
+  const employeeInputElement = d.querySelectorAll(`.${employeeInputClass}`)
 
   let cargoData = []
 
@@ -68,7 +76,7 @@ function validateEmployeeForm({
   //   })
   // })
 
-  btnElement.addEventListener('click', () => {
+  d.addEventListener('click', (e) => {
     // if (Object.values(fieldList.errors).some((el) => el.value)) {
     //   return confirmNotification({
     //     type: NOTIFICATIONS_TYPES.fail,
@@ -76,14 +84,29 @@ function validateEmployeeForm({
     //   })
     // }
 
-    delete fieldList.errors
+    if (e.target === btnAddElement) {
+      validateModal({
+        e: e,
+        btnId: btnAddElement.id,
+        modalId: 'modal-dependency',
+      })
+    }
+    if (e.target === btnElement) {
+      delete fieldList.errors
+      sendEmployeeData({ data: fieldList })
+    }
 
-    sendEmployeeData({ data: fieldList })
+    if (e.target === btnDependencySave) {
+      let newDependency = { dependencia: fieldList.dependencia }
+
+      validateNewDependency({ newDependency })
+    }
   })
 }
 
 function insertOptions({ input, data }) {
   const selectElement = d.getElementById(`search-select-${input}`)
+  selectElement.innerHTML = `<option value="">ELEGIR...</option>`
   const fragment = d.createDocumentFragment()
   data.forEach((el) => {
     const option = d.createElement('option')
@@ -93,6 +116,17 @@ function insertOptions({ input, data }) {
   })
 
   selectElement.appendChild(fragment)
+}
+
+async function validateNewDependency({ newDependency }) {
+  let isSend = await sendDependencyData({ newDependency })
+  if (isSend) {
+    getDependenciasData().then((res) => {
+      insertOptions({ input: 'dependencias', data: res })
+    })
+  }
+  closeModal({ modalId: 'modal-dependency' })
+  formElement.id_dependencia.value = isSend
 }
 
 const activateSelect = ({ selectSearchId }) => {

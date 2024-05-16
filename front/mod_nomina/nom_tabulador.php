@@ -20,7 +20,7 @@ require_once '../../back/sistema_global/session.php';
     <div>
       <h2 class="text-uppercase text-center">TABULADOR</h2>
     </div>
-    <form class="row w-75 mx-auto tabulator-primary-form" id="tabulator-primary-form" autocomplete="off">
+    <form class="row w-75 mx-auto form-container" id="tabulator-primary-form" autocomplete="off">
 
       <div class="form-group">
         <label class="form-label" class="form-label" for="nombre">NOMBRE</label>
@@ -56,21 +56,21 @@ require_once '../../back/sistema_global/session.php';
     </form>
 
     <!-- MATRIZ MODAL DE INPUTS  -->
-    <div class="modal-window hide">
-      <form id="tabulator-secundary-form" class="tabulator-secundary-form">
+    <div id="modal-secondary-form-tabulator" class="modal-window">
+      <div id="tabulator-secundary-form" class="modal-box">
 
-        <header class="tabulator-secundary-form-header">
+        <header class="modal-box-header">
           <h4>MATRIZ DE TABULADOR</h4>
           <button id="btn-close" type="button" class="btn btn-danger" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
+            &times;
           </button>
         </header>
 
         <div class="tabulator-matrix" id="tabulator-matrix"></div>
-        <div class="">
-          <button class="btn btn-primary w-100" id="tabulator-save-btn">ENVIAR TABULADOR</button>
-        </div>
-      </form>
+
+        <button class="btn-form btn btn-primary" id="tabulator-save-btn">ENVIAR TABULADOR</button>
+
+      </div>
     </div>
   </div>
 

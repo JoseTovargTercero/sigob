@@ -115,14 +115,24 @@ const errorMessage = (target, message) => {
   }
 }
 
-function validateModal(e, btnId, modalClass) {
-  const modalElement = d.querySelector(`.${modalClass}`)
-  if (e.target.matches(`#${btnId}`) || e.target.matches(`#${btnId} *`)) {
+function validateModal({ e, btnId, modalId }) {
+  const modalElement = d.getElementById(modalId)
+  if (e.target.matches(`#${btnId}`) || e.target.closest(`#${btnId} > *`)) {
     if (modalElement.classList.contains('hide')) {
       modalElement.classList.remove('hide')
     } else {
       modalElement.classList.add('hide')
     }
+  }
+}
+
+function closeModal({ modalId }) {
+  const modalElement = d.getElementById(modalId)
+
+  if (modalElement.classList.contains('hide')) {
+    modalElement.classList.remove('hide')
+  } else {
+    modalElement.classList.add('hide')
   }
 }
 
@@ -202,4 +212,10 @@ function confirmNotification({
   }
 }
 
-export { validateInput, validateModal, confirmNotification, errorMessage }
+export {
+  validateInput,
+  validateModal,
+  closeModal,
+  confirmNotification,
+  errorMessage,
+}

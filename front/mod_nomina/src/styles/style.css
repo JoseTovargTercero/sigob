@@ -3,6 +3,7 @@
 :root {
   --modal-height: calc(100% + 61px);
   --bluegray: #3f4d67;
+  --lightgray: #f4f7fa;
 }
 
 * {
@@ -27,12 +28,15 @@ td {
 
 .modal-window {
   padding: 1rem;
+  display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
   overflow: auto;
   top: 0;
   left: 0;
   width: 100%;
+
   height: var(--modal-height);
   position: absolute;
   z-index: 20;
@@ -41,13 +45,39 @@ td {
   visibility: visible;
   opacity: 1;
 
-  transition: opacity 2s ease;
+  transition: opacity 0.5s ease;
 }
 .modal-window.hide {
   visibility: hidden;
   opacity: 0;
   height: 0;
 }
+
+.modal-box {
+  background-color: var(--lightgray);
+  width: 100%;
+  max-width: 1000px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1rem;
+  height: 90%;
+  background-color: white;
+}
+
+.modal-box.short {
+  height: fit-content;
+}
+
+.modal-box-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  width: 100%;
+}
+
+/* FORM STYLES */
 
 .form-control.input-error {
   border: 1px solid rgb(255, 93, 93);
@@ -58,6 +88,7 @@ td {
   max-width: 800px;
   display: flex;
   align-items: center;
+  margin-bottom: 2rem;
 }
 
 .input-error-message {
@@ -72,31 +103,15 @@ td {
   opacity: 0.8;
 }
 
-/* TABULATOR STYLES */
-.tabulator-primary-form {
-  max-width: 800px;
-  display: flex;
-  align-items: center;
+.btn-form {
+  margin: 1rem auto;
+  max-width: 200px;
 }
 
-.tabulator-secundary-form {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  justify-content: space-between;
-  padding: 1rem;
-  height: 90%;
-  background-color: white;
-}
-.tabulator-secundary-form-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-}
+/* TABULATOR STYLES */
 
 .tabulator-matrix {
+  margin: auto;
   width: 100%;
   gap: 6px;
   overflow: auto;

@@ -72,7 +72,7 @@ d.addEventListener('DOMContentLoaded', (e) => {
         banco: '',
         cuenta: 0,
         tipo_cuenta: '',
-        dependencias: '',
+        id_dependencia: '',
         tipo_nomina: '',
         errors: {
           nombre: {
@@ -135,7 +135,17 @@ d.addEventListener('DOMContentLoaded', (e) => {
             message: 'Introducir un campo válido',
             type: 'number',
           },
-          dependencias: {
+          tipo_cuenta: {
+            value: true,
+            message: 'Introducir un campo válido',
+            type: 'text',
+          },
+          id_dependencia: {
+            value: true,
+            message: 'Introducir un campo válido',
+            type: 'number',
+          },
+          dependencia: {
             value: true,
             message: 'Introducir un campo válido',
             type: 'text',
@@ -147,5 +157,12 @@ d.addEventListener('DOMContentLoaded', (e) => {
 })
 
 d.addEventListener('click', (e) => {
-  validateModal(e, 'btn-close', 'modal-window')
+  if (e.target.id === 'btn-close')
+    validateModal({
+      e: e,
+      btnId: e.target.id,
+      modalId: 'modal-secondary-form-tabulator',
+    })
+  if (e.target.id === 'btn-close-dependency')
+    validateModal({ e: e, btnId: e.target.id, modalId: 'modal-dependency' })
 })

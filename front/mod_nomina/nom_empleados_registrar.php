@@ -115,18 +115,26 @@ require_once '../../back/sistema_global/session.php';
                 <div class="row">
                     <div class="col-sm-3">
                         <label class="form-label" for="banco">BANCO</label>
-                        <select name="banco" class="form-select employee-input" id="banco">
+                        <select name="banco" class="form-select employee-select" id="banco">
                             <option value="activo" selected>ELEGIR...</option>
-                            <option value="1">VENEZUELA</option>
-                            <option value="2">BICENTENARIO</option>
-                            <option value="2">TESORO</option>
+                            <option value="VENEZUELA">VENEZUELA</option>
+                            <option value="BICENTENARIO">BICENTENARIO</option>
+                            <option value="TESORO">TESORO</option>
                         </select>
                     </div>
-
                     <div class="col-sm">
                         <label class="form-label" for="cuenta">N° DE CUENTA</label>
                         <input class="employee-input form-control" type="number" name="cuenta"
                             placeholder="0000 0000 00 0000" id="cuenta">
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="form-label" for="tipo_cuenta">TIPO DE CUENTA</label>
+                        <select name="tipo_cuenta" class="form-select employee-select" id="tipo_cuenta">
+                            <option value="activo" selected>ELEGIR...</option>
+                            <option value=0>CORRIENTE</option>
+                            <option value=1>AHORRO</option>
+
+                        </select>
                     </div>
                 </div>
             </div>
@@ -137,18 +145,15 @@ require_once '../../back/sistema_global/session.php';
                     <div class="col-sm">
                         <select class="form-select employee-select" name="id_dependencia"
                             id="search-select-dependencias">
-                            <option value="" selected>ELEGIR...</option>
+
                         </select>
                     </div>
                     <div class="col-sm-1">
-                        <div class="form-group">
-                            <button id="add-dependency" class="btn btn-primary w-100">+</button>
-                        </div>
+
+                        <button type="button" id="add-dependency" class="btn btn-primary w-100">+</button>
+
                     </div>
-                    <div class="col-sm">
-                        <input class="employee-input form-control" type="number" name="cuenta"
-                            placeholder="0000 0000 00 0000" id="cuenta">
-                    </div>
+
                 </div>
             </div>
 
@@ -172,7 +177,24 @@ require_once '../../back/sistema_global/session.php';
             <div clas="form-group">
                 <button class="btn btn-primary w-100" id="tabulator-btn">GUARDAR</button>
             </div>
+            <div id="modal-dependency" class="modal-window hide">
+                <div class="modal-box short">
+
+                    <div class="row">
+                        <header class="modal-box-header">
+                            <h4>MATRIZ DE TABULADOR</h4>
+                            <button id="btn-close-dependency" type="button" class="btn btn-danger" aria-label="Close">
+                                &times;
+                            </button>
+                    </div>
+
+                    <input class="employee-input form-control" type="text" name="dependencia"
+                        placeholder="0000 0000 00 0000" id="dependencia">
+                    <button class="btn-form btn btn-primary" id="dependency-save-btn">ENVIAR TABULADOR</button>
+                </div>
+            </div>
         </form>
+
 
     </div>
 

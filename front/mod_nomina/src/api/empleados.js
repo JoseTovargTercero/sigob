@@ -2,13 +2,18 @@ import { confirmNotification } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 
 const cargosUrl = '../../../../../sigob/back/modulo_nomina/nom_cargos_info.php'
+
 const depdendenciasUrl =
   '../../../../../sigob/back/modulo_nomina/nom_dependencias_datos.php'
+
 const profesionesUrl =
   '../../../../../sigob/back/modulo_nomina/nom_profesion_info.php'
 
 const sendEmployeeUrl =
   '../../../../../sigob/back/modulo_nomina/nom_empleados_registro.php'
+
+const sendDependencyUrl =
+  '../../../../../sigob/back/modulo_nomina/nom_dependencia_registro.php'
 
 const mapData = ({ obj, name, id }) => {
   return obj.map((el) => {
@@ -29,14 +34,14 @@ const sendEmployeeData = async ({ data }) => {
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
     else {
-      return confirmNotification({
+      console.log(res)
+      confirmNotification({
         type: NOTIFICATIONS_TYPES.done,
         message: 'Datos enviados',
       })
     }
-    console.log(res)
-    // const json = await res.json()
-    // console.log(json)
+    const json = await res.text()
+    console.log(json)
   } catch (e) {
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
@@ -83,7 +88,6 @@ const getDependenciasData = async () => {
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
 
     const json = await res.json()
-    console.log(json)
 
     return mapData({ obj: json, name: 'dependencia', id: 'id_dependencia' })
   } catch (e) {
@@ -94,9 +98,37 @@ const getDependenciasData = async () => {
   }
 }
 
+const sendDependencyData = async ({ newDependency }) => {
+  console.log(newDependency)
+  try {
+    const res = await fetch(sendDependencyUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newDependency),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+    else {
+      console.log(res)
+      confirmNotification({
+        type: NOTIFICATIONS_TYPES.done,
+        message: 'Dependencia añadida',
+      })
+      return newDependency
+    }
+  } catch (e) {
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al enviar datos del empleado',
+    })
+  }
+}
 export {
   getCargoData,
   getProfesionesData,
   getDependenciasData,
   sendEmployeeData,
+  sendDependencyData,
 }
