@@ -77,13 +77,6 @@ function validateEmployeeForm({
   // })
 
   d.addEventListener('click', (e) => {
-    // if (Object.values(fieldList.errors).some((el) => el.value)) {
-    //   return confirmNotification({
-    //     type: NOTIFICATIONS_TYPES.fail,
-    //     message: 'Complete todo el formulario antes de avanzar',
-    //   })
-    // }
-
     if (e.target === btnAddElement) {
       validateModal({
         e: e,
@@ -92,14 +85,22 @@ function validateEmployeeForm({
       })
     }
     if (e.target === btnElement) {
+      // if (Object.values(fieldList.errors).some((el) => el.value)) {
+      //   return confirmNotification({
+      //     type: NOTIFICATIONS_TYPES.fail,
+      //     message: 'Complete todo el formulario antes de avanzar',
+      //   })
+      // }
       delete fieldList.errors
       sendEmployeeData({ data: fieldList })
     }
 
     if (e.target === btnDependencySave) {
       let newDependency = { dependencia: fieldList.dependencia }
-
-      validateNewDependency({ newDependency })
+      console.log(fieldList)
+      if (!fieldList.errors.dependencia.value) {
+        validateNewDependency({ newDependency })
+      }
     }
   })
 }
@@ -126,7 +127,6 @@ async function validateNewDependency({ newDependency }) {
     })
   }
   closeModal({ modalId: 'modal-dependency' })
-  formElement.id_dependencia.value = isSend
 }
 
 const activateSelect = ({ selectSearchId }) => {

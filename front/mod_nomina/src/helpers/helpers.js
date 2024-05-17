@@ -4,6 +4,7 @@ import { regularExpressions } from './regExp.js'
 const d = document
 
 function validateInput({ e, fieldList = {}, type }) {
+  console.log(fieldList)
   let value = e.target.value
   if (type === 'matrixCell') {
     let isFloat = regularExpressions.FLOAT.test(value)

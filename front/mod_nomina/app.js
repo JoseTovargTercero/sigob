@@ -1,6 +1,7 @@
 import { validateEmployeeForm } from './src/controllers/employeeForm.js'
 import { validateTabulatorForm } from './src/controllers/tabuladorForm.js'
 import { validateModal } from './src/helpers/helpers.js'
+import { employeeTable } from './src/tables.js'
 const d = document
 
 d.addEventListener('DOMContentLoaded', (e) => {
@@ -62,7 +63,7 @@ d.addEventListener('DOMContentLoaded', (e) => {
         nombre: '',
         nacionalidad: '',
         cedula: 0,
-        status: '',
+        status: 'ACTIVO',
         instruccion_academica: '',
         cod_cargo: '',
         fecha_ingreso: '',
@@ -70,10 +71,10 @@ d.addEventListener('DOMContentLoaded', (e) => {
         hijos: 0,
         discapacidades: '',
         banco: '',
-        cuenta: 0,
+        cuenta_bancaria: 0,
         tipo_cuenta: '',
         id_dependencia: '',
-        tipo_nomina: '',
+        tipo_nomina: 'a',
         errors: {
           nombre: {
             value: true,
@@ -91,7 +92,7 @@ d.addEventListener('DOMContentLoaded', (e) => {
             type: 'number',
           },
           status: {
-            value: true,
+            value: false,
             message: 'Introducir un campo válido',
             type: 'text',
           },
@@ -130,7 +131,7 @@ d.addEventListener('DOMContentLoaded', (e) => {
             message: 'Introducir un campo válido',
             type: 'text',
           },
-          cuenta: {
+          cuenta_bancaria: {
             value: true,
             message: 'Introducir un campo válido',
             type: 'number',
@@ -143,10 +144,10 @@ d.addEventListener('DOMContentLoaded', (e) => {
           id_dependencia: {
             value: true,
             message: 'Introducir un campo válido',
-            type: 'number',
+            type: 'text',
           },
           dependencia: {
-            value: true,
+            value: false,
             message: 'Introducir un campo válido',
             type: 'text',
           },
@@ -154,6 +155,8 @@ d.addEventListener('DOMContentLoaded', (e) => {
       },
     })
   }
+
+  employeeTable()
 })
 
 d.addEventListener('click', (e) => {

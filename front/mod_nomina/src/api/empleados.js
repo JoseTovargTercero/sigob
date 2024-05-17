@@ -39,6 +39,9 @@ const sendEmployeeData = async ({ data }) => {
         type: NOTIFICATIONS_TYPES.done,
         message: 'Datos enviados',
       })
+      setTimeout(() => {
+        location.reload()
+      }, 2000)
     }
     const json = await res.text()
     console.log(json)
@@ -99,8 +102,19 @@ const getDependenciasData = async () => {
 }
 
 const sendDependencyData = async ({ newDependency }) => {
-  console.log(newDependency)
   try {
+    const dependencyData = await getDependenciasData()
+    if (
+      dependencyData.some(
+        (el) =>
+          el.name.toUpperCase() === newDependency.dependencia.toUpperCase()
+      )
+    )
+      return confirmNotification({
+        type: NOTIFICATIONS_TYPES.fail,
+        message: 'Dependencia ya existe',
+      })
+
     const res = await fetch(sendDependencyUrl, {
       method: 'POST',
       headers: {

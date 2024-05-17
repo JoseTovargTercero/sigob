@@ -6,7 +6,7 @@ require_once '../../back/sistema_global/session.php';
 
 <head>
     <link rel="stylesheet" href="src/styles/style.css">
-    <title>Tabuladores</title>
+    <title>Registrar Personal</title>
 </head>
 
 <body>
@@ -103,8 +103,8 @@ require_once '../../back/sistema_global/session.php';
                         <label class="form-label" for="discapacidades">DISCAPACIDAD</label>
                         <select name="discapacidades" class="form-select employee-select" id="discapacidades">
                             <option value="" selected>ELEGIR...</option>
-                            <option value="NO">SÍ POSEE</option>
-                            <option value="SI">NO POSEE</option>
+                            <option value="1">SÍ POSEE</option>
+                            <option value="0">NO POSEE</option>
                         </select>
                     </div>
 
@@ -123,9 +123,9 @@ require_once '../../back/sistema_global/session.php';
                         </select>
                     </div>
                     <div class="col-sm">
-                        <label class="form-label" for="cuenta">N° DE CUENTA</label>
-                        <input class="employee-input form-control" type="number" name="cuenta"
-                            placeholder="0000 0000 00 0000" id="cuenta">
+                        <label class="form-label" for="cuenta_bancaria">N° DE CUENTA</label>
+                        <input class="employee-input form-control" type="number" name="cuenta_bancaria"
+                            placeholder="0000 0000 00 0000" id="cuenta_bancaria">
                     </div>
                     <div class="col-sm-3">
                         <label class="form-label" for="tipo_cuenta">TIPO DE CUENTA</label>
@@ -149,9 +149,7 @@ require_once '../../back/sistema_global/session.php';
                         </select>
                     </div>
                     <div class="col-sm-1">
-
-                        <button type="button" id="add-dependency" class="btn btn-primary w-100">+</button>
-
+                        <button type="button" id="add-dependency" class="btn btn-primary">+</button>
                     </div>
 
                 </div>

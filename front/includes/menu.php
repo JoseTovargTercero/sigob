@@ -37,7 +37,10 @@
             <li class="pc-item"><a class="pc-link"
                 href="<?php echo constant('URL') ?>front/mod_nomina/nom_personal">Personal</a></li>
             <li class="pc-item"><a class="pc-link"
-                href="<?php echo constant('URL') ?>front/mod_nomina/nom_empleados_registrar">Registrar Trabajador</a>
+                href="<?php echo constant('URL') ?>front/mod_nomina/nom_empleados_vista">Empleados</a>
+            </li>
+            <li class="pc-item"><a class="pc-link"
+                href="<?php echo constant('URL') ?>front/mod_nomina/nom_empleados_registrar">Registrar Personal</a>
             </li>
           </ul>
         </li>
@@ -51,8 +54,10 @@
             <span class="pc-mtext">Nómina</span><span class="pc-arrow"><i class="ti ti-chevron-right"></i></span>
           </a>
           <ul class="pc-submenu">
-          <li class="pc-item"><a class="pc-link" href="<?php echo constant('URL') ?>front/mod_nomina/nom_grupos">Registro de nominas</a></li>
-              <li class="pc-item"><a class="pc-link" href="<?php echo constant('URL') ?>front/mod_nomina/nom_Pagar">Pagar</a></li>
+            <li class="pc-item"><a class="pc-link"
+                href="<?php echo constant('URL') ?>front/mod_nomina/nom_grupos">Registro de nominas</a></li>
+            <li class="pc-item"><a class="pc-link"
+                href="<?php echo constant('URL') ?>front/mod_nomina/nom_Pagar">Pagar</a></li>
           </ul>
         </li>
 
