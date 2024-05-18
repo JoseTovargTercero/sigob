@@ -118,7 +118,7 @@ const errorMessage = (target, message) => {
 
 function validateModal({ e, btnId, modalId }) {
   const modalElement = d.getElementById(modalId)
-  if (e.target.matches(`#${btnId}`) || e.target.closest(`#${btnId} > *`)) {
+  if (e.target.matches(`#${btnId}`)) {
     if (modalElement.classList.contains('hide')) {
       modalElement.classList.remove('hide')
     } else {

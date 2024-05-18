@@ -16,7 +16,7 @@ const getEmployeesUrl =
   '../../../../../sigob/back/modulo_nomina/nom_empleados_datos.php'
 
 const deleteEmployeeUrl =
-  '../../../../../sigob/back/modulo_nomina/nom_empleados_eliminar.php'
+  '../../../../../sigob/back/modulo_nomina/nom_empleados_delete.php'
 
 const sendDependencyUrl =
   '../../../../../sigob/back/modulo_nomina/nom_dependencia_registro.php'
@@ -77,12 +77,11 @@ const sendEmployeeData = async ({ data }) => {
 
 const deleteEmployee = async ({ id }) => {
   try {
-    const res = await fetch(deleteEmployeeUrl, {
-      method: 'DELETE',
+    const res = await fetch(`${deleteEmployeeUrl}?id=${id}`, {
+      method: 'GET',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(id),
     })
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }

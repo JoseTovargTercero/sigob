@@ -1,10 +1,7 @@
 import { validateEmployeeForm } from './src/controllers/empleadosForm.js'
 import { validateTabulatorForm } from './src/controllers/tabuladorForm.js'
 import { validateModal } from './src/helpers/helpers.js'
-import {
-  confirmDeleteEmployee,
-  loadTable,
-} from './src/controllers/empleadosTable.js'
+import { loadTable } from './src/controllers/empleadosTable.js'
 const d = document
 
 const tabulatorForm = d.getElementById('tabulator-primary-form')
@@ -24,7 +21,7 @@ d.addEventListener('DOMContentLoaded', (e) => {
       btnId: 'tabulator-btn',
       btnSaveId: 'tabulator-save-btn',
       fieldList: {
-        nombre: '',
+        nombre: 'aaaaaaaaaa',
         pasos: 0,
         grados: 0,
         aniosPasos: 0,
@@ -175,10 +172,4 @@ d.addEventListener('click', (e) => {
 
   if (e.target.id === 'btn-close-dependency')
     validateModal({ e: e, btnId: e.target.id, modalId: 'modal-dependency' })
-
-  if (employeeTableElement) {
-    if (e.target.classList.contains('btn-delete')) {
-      confirmDeleteEmployee({ e: e, id: e.target.dataset.empleadoId })
-    }
-  }
 })

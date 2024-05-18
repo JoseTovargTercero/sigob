@@ -29,10 +29,7 @@ function validateEmployeeForm({
   const selectSearchInputElement = d.querySelectorAll(`.${selectSearchInput}`)
   const employeeInputElement = d.querySelectorAll(`.${employeeInputClass}`)
 
-  let cargoData = []
-
   formElement.addEventListener('submit', (e) => e.preventDefault())
-
   formElement.addEventListener('input', (e) => {
     if (e.target.classList.contains('employee-input')) {
       fieldList = validateInput({
@@ -41,6 +38,12 @@ function validateEmployeeForm({
         type: fieldList.errors[e.target.name].type,
       })
     }
+
+    if (e.target.value) {
+      const inputElement = document.querySelector(`.${e.target.name}`)
+      inputElement.value = fieldList[e.target.name] // Llenar el campo de entrada con el valor de fieldList
+    }
+
     if (e.target.classList.contains('employee-select')) {
       fieldList = validateInput({
         e,

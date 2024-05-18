@@ -69,7 +69,11 @@ function validateTabulatorForm({
         return
       }
 
-      validateModal(e, 'tabulator-btn', 'modal-secondary-form-tabulator')
+      validateModal({
+        e: e,
+        btnId: 'tabulator-btn',
+        modalId: 'modal-secondary-form-tabulator',
+      })
 
       return generateMatrix({
         fieldList,
