@@ -1,36 +1,45 @@
 <?php
 require_once '../sistema_global/conexion.php';
 
-// Verificar si el parámetro 'id' está presente en la URL
-if (isset($_GET['id'])) {
-    $id = $_GET['id'];
+// Verificar si el método de solicitud es DELETE
+if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
+    // Obtener el contenido de la solicitud DELETE
+    parse_str(file_get_contents("php://input"), $data);
 
-    // Preparar la declaración SQL para eliminar el registro
-    $sql = "DELETE FROM empleados WHERE id = ?";
+    // Verificar si el parámetro 'id' está presente en los datos recibidos
+    if (isset($data['id'])) {
+        $id = $data['id'];
 
-    // Preparar la declaración SQL
-    $stmt = $conexion->prepare($sql);
+        // Preparar la declaración SQL para eliminar el registro
+        $sql = "DELETE FROM empleados WHERE id = ?";
 
-    // Comprobar si la preparación de la declaración fue exitosa
-    if (!$stmt) {
-        die("Error en la preparación de la declaración: " . $conexion->error);
-    }
+        // Preparar la declaración SQL
+        $stmt = $conexion->prepare($sql);
 
-    // Vincular el parámetro y ejecutar la consulta
-    $stmt->bind_param("i", $id);
+        // Comprobar si la preparación de la declaración fue exitosa
+        if (!$stmt) {
+            die("Error en la preparación de la declaración: " . $conexion->error);
+        }
 
-    // Ejecutar la consulta preparada
-    if ($stmt->execute()) {
-        echo "Registro eliminado correctamente.";
+        // Vincular el parámetro y ejecutar la consulta
+        $stmt->bind_param("i", $id);
+
+        // Ejecutar la consulta preparada
+        if ($stmt->execute()) {
+            echo "Registro eliminado correctamente.";
+        } else {
+            echo "Error al eliminar el registro: " . $conexion->error;
+        }
+
+        // Cerrar la declaración
+        $stmt->close();
     } else {
-        echo "Error al eliminar el registro: " . $conexion->error;
+        echo "No se ha proporcionado un ID.";
     }
-
-    // Cerrar la declaración y la conexión
-    $stmt->close();
 } else {
-    echo "No se ha proporcionado un ID.";
+    echo "Método de solicitud no permitido.";
 }
 
+// Cerrar la conexión
 $conexion->close();
 ?>
