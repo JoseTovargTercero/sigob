@@ -3,12 +3,9 @@ require_once '../sistema_global/conexion.php';
 
 // Verificar si el método de solicitud es DELETE
 if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
-    // Obtener el contenido de la solicitud DELETE
-    parse_str(file_get_contents("php://input"), $data);
-
-    // Verificar si el parámetro 'id' está presente en los datos recibidos
-    if (isset($data['id'])) {
-        $id = $data['id'];
+    // Verificar si el parámetro 'id' está presente en la URL
+    if (isset($_GET['id'])) {
+        $id = $_GET['id'];
 
         // Preparar la declaración SQL para eliminar el registro
         $sql = "DELETE FROM empleados WHERE id = ?";
