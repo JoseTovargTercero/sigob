@@ -1,8 +1,8 @@
 <?php
-require_once '../sistema_global/session.php';
+
 
 // URL del servidor
-$url = 'http://localhost/sigob/back/modulo_nomina/nom_tabuladorEst_info.php/';
+$url = 'http://localhost/sigob/back/modulo_nomina/nom_tabulador_registro.php/';
 
 // Datos a enviar (el objeto JSON)
 $data = array(
@@ -19,7 +19,7 @@ $data = array(
         ["G2", "P3", 6],
         ["G3", "P1", 7],
         ["G3", "P2", 8],
-        ["G3", "P3", 9]
+        ["G3", "P3", 246.15]
     ]
 );
 

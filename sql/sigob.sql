@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 15-05-2024 a las 23:11:22
+-- Tiempo de generación: 18-05-2024 a las 03:57:04
 -- Versión del servidor: 10.4.27-MariaDB
 -- Versión de PHP: 7.4.33
 
@@ -568,7 +568,7 @@ INSERT INTO `dependencias` (`id_dependencia`, `dependencia`) VALUES
 
 CREATE TABLE `empleados` (
   `id` int(11) NOT NULL,
-  `nacionalidad` varchar(1) NOT NULL,
+  `nacionalidad` varchar(255) NOT NULL,
   `cedula` varchar(20) DEFAULT NULL,
   `cod_empleado` varchar(20) DEFAULT NULL,
   `nombres` varchar(255) DEFAULT NULL,
@@ -601,7 +601,12 @@ INSERT INTO `empleados` (`id`, `nacionalidad`, `cedula`, `cod_empleado`, `nombre
 (32, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 1, 0, 0, 0, 0),
 (33, '1', '123456789', '441151', 'Pedro Pablo', '2022-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 1, 0, 0, 0, 0),
 (34, '1', '123456789', '441151', 'Pedro Pablo', '2010-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 1, 0, 1, 2, 6),
-(35, '1', '123456789', '441151', 'Pedro Pablo', '2010-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 1, 0, 1, 2, 6);
+(35, '1', '123456789', '441151', 'Pedro Pablo', '2010-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 1, 0, 1, 2, 6),
+(37, '1', '123456789', '441151', 'Pedro Pablo', '2010-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 1, 0, 1, 2, 6),
+(38, 'V', '123456789', '441151', 'Pedro Pablo', '2010-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 1, 0, 1, 2, 6),
+(39, 'V', '123456789', '441151', 'Pedro Pablo', '2010-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 1, 0, 1, 2, 6),
+(40, 'V', '123456789', '441151', 'Pedro Pablo', '2010-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 1, 0, 1, 2, 6),
+(41, 'V123456', '123456789', '441151', 'Pedro Pablo', '2010-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 1, 0, 1, 2, 6);
 
 -- --------------------------------------------------------
 
@@ -746,7 +751,7 @@ CREATE TABLE `tabuladores` (
 --
 
 INSERT INTO `tabuladores` (`id`, `nombre`, `grados`, `pasos`, `aniosPasos`, `timestamp`) VALUES
-(29, 'tabulador_regional_001', '3', '3', '1', '2024-05-13');
+(30, 'tabulador_regional_001', '3', '3', '5', '2024-05-17');
 
 -- --------------------------------------------------------
 
@@ -767,15 +772,15 @@ CREATE TABLE `tabuladores_estr` (
 --
 
 INSERT INTO `tabuladores_estr` (`id`, `paso`, `grado`, `monto`, `tabulador_id`) VALUES
-(253, 'P1', 'G1', '1', 29),
-(254, 'P2', 'G1', '1', 29),
-(255, 'P3', 'G1', '1', 29),
-(256, 'P1', 'G2', '1', 29),
-(257, 'P2', 'G2', '1', 29),
-(258, 'P3', 'G2', '1', 29),
-(259, 'P1', 'G3', '1', 29),
-(260, 'P2', 'G3', '1', 29),
-(261, 'P3', 'G3', '249.31', 29);
+(262, 'P1', 'G1', '1', 30),
+(263, 'P2', 'G1', '2', 30),
+(264, 'P3', 'G1', '3', 30),
+(265, 'P1', 'G2', '4', 30),
+(266, 'P2', 'G2', '5', 30),
+(267, 'P3', 'G2', '6', 30),
+(268, 'P1', 'G3', '7', 30),
+(269, 'P2', 'G3', '8', 30),
+(270, 'P3', 'G3', '246.15', 30);
 
 --
 -- Índices para tablas volcadas
@@ -874,7 +879,7 @@ ALTER TABLE `dependencias`
 -- AUTO_INCREMENT de la tabla `empleados`
 --
 ALTER TABLE `empleados`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
 
 --
 -- AUTO_INCREMENT de la tabla `nominas`
@@ -910,13 +915,13 @@ ALTER TABLE `system_users`
 -- AUTO_INCREMENT de la tabla `tabuladores`
 --
 ALTER TABLE `tabuladores`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT de la tabla `tabuladores_estr`
 --
 ALTER TABLE `tabuladores_estr`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=262;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=271;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

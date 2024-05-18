@@ -7,7 +7,7 @@ $url = 'http://localhost/sigob/back/modulo_nomina/nom_empleados_registro.php/';
 
 // Datos a enviar (el objeto JSON)
 $data = array(
-    "nacionalidad" => "1",
+    "nacionalidad" => "V123456",
     "cedula" => 123456789,
     "cod_empleado" => 441151,
     "nombres" => "Pedro Pablo",
