@@ -3,14 +3,12 @@ require_once '../sistema_global/conexion.php';
 require_once '../sistema_global/session.php';
 
 // Verificar si el método de solicitud es GET y si el parámetro 'id' está presente en la URL
-if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id'])) {
-    $id = $_GET['id'];
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
     // Consulta SQL para obtener los datos del empleado y su dependencia
     $sql = "SELECT e.id, e.cedula, e.nombres, e.tipo_nomina, d.id_dependencia, d.dependencia
             FROM empleados AS e
-            INNER JOIN dependencias AS d ON e.id_dependencia = d.id_dependencia
-            WHERE e.id = ?";
+            INNER JOIN dependencias AS d ON e.id_dependencia = d.id_dependencia";
 
     // Preparar la declaración SQL
     $stmt = $conexion->prepare($sql);
@@ -21,7 +19,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id'])) {
     }
 
     // Vincular el parámetro y ejecutar la consulta
-    $stmt->bind_param("i", $id);
     $stmt->execute();
     $result = $stmt->get_result();
 
