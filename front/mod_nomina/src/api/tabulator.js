@@ -6,7 +6,7 @@ const tabuladorRegistrarUrl =
 
 async function sendTabulatorData({ tabulatorData }) {
   try {
-    const res = await fetch('tabuladorRegistrarUrl', {
+    const res = await fetch(tabuladorRegistrarUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
