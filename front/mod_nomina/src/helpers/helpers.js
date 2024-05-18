@@ -157,7 +157,7 @@ function confirmNotification({
   if (type === NOTIFICATIONS_TYPES.send)
     return Swal.fire({
       title: 'Alerta!',
-      text: '¿Estás seguro de esta acción?',
+      text: message || '¿Estás seguro de esta acción?',
       icon: 'warning',
       showConfirmButton: true,
       showDenyButton: true,
@@ -200,15 +200,17 @@ function confirmNotification({
   if (type === NOTIFICATIONS_TYPES.delete) {
     return Swal.fire({
       title: '¡Alerta!',
-      text: '¿Estás seguro de eliminar este registro?',
+      text: message || '¿Estás seguro de eliminar este registro?',
       icon: 'warning',
       showConfirmButton: true,
       showDenyButton: true,
       confirmButtonText: 'ELIMINAR',
       denyButtonText: 'CANCELAR',
     }).then((result) => {
-      if (result.isConfirmed)
+      if (result.isConfirmed) {
         notificationAction({ successFunction, successFunctionParams })
+        return true
+      } else return false
     })
   }
 }

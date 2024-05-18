@@ -84,16 +84,6 @@ function validateEmployeeForm({
         modalId: 'modal-dependency',
       })
     }
-    if (e.target === btnElement) {
-      // if (Object.values(fieldList.errors).some((el) => el.value)) {
-      //   return confirmNotification({
-      //     type: NOTIFICATIONS_TYPES.fail,
-      //     message: 'Complete todo el formulario antes de avanzar',
-      //   })
-      // }
-      delete fieldList.errors
-      sendEmployeeData({ data: fieldList })
-    }
 
     if (e.target === btnDependencySave) {
       let newDependency = { dependencia: fieldList.dependencia }
@@ -101,6 +91,17 @@ function validateEmployeeForm({
       if (!fieldList.errors.dependencia.value) {
         validateNewDependency({ newDependency })
       }
+    }
+
+    if (e.target === btnElement) {
+      if (Object.values(fieldList.errors).some((el) => el.value)) {
+        return confirmNotification({
+          type: NOTIFICATIONS_TYPES.fail,
+          message: 'Complete todo el formulario antes de avanzar',
+        })
+      }
+      delete fieldList.errors
+      sendEmployeeData({ data: fieldList })
     }
   })
 }

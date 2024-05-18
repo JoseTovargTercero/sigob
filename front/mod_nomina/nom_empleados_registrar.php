@@ -38,7 +38,7 @@ require_once '../../back/sistema_global/session.php';
                         </select>
                     </div>
                     <div class="col-sm">
-                        <label class="form-label" for="cedula">cedula</label>
+                        <label class="form-label" for="cedula">CÉDULA</label>
                         <input class="employee-input form-control" type="number" name="cedula" id="cedula"
                             placeholder="CEDULA..." />
                     </div>

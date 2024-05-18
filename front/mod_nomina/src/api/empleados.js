@@ -12,6 +12,12 @@ const profesionesUrl =
 const sendEmployeeUrl =
   '../../../../../sigob/back/modulo_nomina/nom_empleados_registro.php'
 
+const getEmployeesUrl =
+  '../../../../../sigob/back/modulo_nomina/nom_empleados_datos.php'
+
+const deleteEmployeeUrl =
+  '../../../../../sigob/back/modulo_nomina/nom_empleados_eliminar.php'
+
 const sendDependencyUrl =
   '../../../../../sigob/back/modulo_nomina/nom_dependencia_registro.php'
 
@@ -19,6 +25,22 @@ const mapData = ({ obj, name, id }) => {
   return obj.map((el) => {
     return { name: el[name], id: el[id] }
   })
+}
+
+const getEmployeesData = async () => {
+  try {
+    const res = await fetch(getEmployeesUrl)
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    const json = await res.json()
+    return json
+  } catch (e) {
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener empleados',
+    })
+  }
 }
 
 const sendEmployeeData = async ({ data }) => {
@@ -52,6 +74,35 @@ const sendEmployeeData = async ({ data }) => {
     })
   }
 }
+
+const deleteEmployee = async ({ id }) => {
+  try {
+    const res = await fetch(deleteEmployeeUrl, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(id),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+    else {
+      console.log(res)
+      confirmNotification({
+        type: NOTIFICATIONS_TYPES.done,
+        message: 'Registro eliminado',
+      })
+    }
+    const json = await res.text()
+    console.log(json)
+  } catch (e) {
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al enviar datos del empleado',
+    })
+  }
+}
+
 const getCargoData = async () => {
   try {
     const res = await fetch(cargosUrl)
@@ -140,9 +191,11 @@ const sendDependencyData = async ({ newDependency }) => {
   }
 }
 export {
+  getEmployeesData,
+  sendEmployeeData,
+  deleteEmployee,
   getCargoData,
   getProfesionesData,
   getDependenciasData,
-  sendEmployeeData,
   sendDependencyData,
 }

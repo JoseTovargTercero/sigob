@@ -17,6 +17,7 @@ require_once '../../back/sistema_global/session.php';
   <!-- [ top bar ] -->
 
   <div class="pc-container flex-container">
+
     <div>
       <h2 class="text-uppercase text-center">TABULADOR</h2>
     </div>
@@ -56,7 +57,7 @@ require_once '../../back/sistema_global/session.php';
     </form>
 
     <!-- MATRIZ MODAL DE INPUTS  -->
-    <div id="modal-secondary-form-tabulator" class="modal-window">
+    <div id="modal-secondary-form-tabulator" class="modal-window hide">
       <div id="tabulator-secundary-form" class="modal-box">
 
         <header class="modal-box-header">
