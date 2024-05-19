@@ -21,6 +21,7 @@ function validateTabulatorForm({
   btnId,
   btnSaveId,
   fieldList = {},
+  fieldListErrors = {},
 }) {
   const formElement = d.getElementById(formId)
   const formElementSecondary = d.getElementById(secondaryFormId)
@@ -37,8 +38,9 @@ function validateTabulatorForm({
     if (e.target.classList.contains(tabulatorInputClass)) {
       fieldList = validateInput({
         e: e,
-        fieldList: fieldList,
-        type: fieldList.errors[e.target.name].type,
+        fieldList,
+        fieldListErrors,
+        type: fieldListErrors[e.target.name].type,
       })
     }
   })
@@ -47,8 +49,9 @@ function validateTabulatorForm({
     if (e.target.classList.contains(tabulatorInputClass))
       fieldList = validateInput({
         e: e,
-        fieldList: fieldList,
-        type: fieldList.errors[e.target.name].type,
+        fieldList,
+        fieldListErrors,
+        type: fieldListErrors[e.target.name].type,
       })
   })
 
@@ -61,7 +64,7 @@ function validateTabulatorForm({
     // PRIMER FORMULARIO
     if (e.target === btnElement) {
       // Si hay errores en el primer formulario, no continuar
-      if (Object.values(fieldList.errors).some((el) => el.value)) {
+      if (Object.values(fieldListErrors).some((el) => el.value)) {
         confirmNotification({
           type: NOTIFICATIONS_TYPES.fail,
           message: 'Complete los datos requeridos antes de avanzar',
@@ -184,7 +187,6 @@ function generateMatrixData({ fieldList, matrixInputsClass }) {
   })
 
   fieldList.tabulador = tabulatorData
-  delete fieldList.errors
 
   // Enviar datos
   sendTabulatorData({ tabulatorData: fieldList })

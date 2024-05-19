@@ -1,6 +1,7 @@
 import {
   getCargoData,
   getDependenciasData,
+  getEmployeeData,
   getProfesionesData,
   sendDependencyData,
   sendEmployeeData,
@@ -14,12 +15,17 @@ import {
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 
 const d = document
+const w = window
+const urlParameters = new URLSearchParams(w.location.search)
+const id = urlParameters.get('id')
 function validateEmployeeForm({
   formElement,
   employeeInputClass,
+  employeeSelectClass,
   btnId,
   btnAddId,
   fieldList = {},
+  fieldListErrors = {},
   selectSearchInput,
   selectSearch,
 }) {
@@ -27,43 +33,62 @@ function validateEmployeeForm({
   const btnAddElement = d.getElementById(btnAddId)
   const btnDependencySave = d.getElementById('dependency-save-btn')
   const selectSearchInputElement = d.querySelectorAll(`.${selectSearchInput}`)
+
   const employeeInputElement = d.querySelectorAll(`.${employeeInputClass}`)
+  const employeeSelectElement = d.querySelectorAll(`.${employeeSelectClass}`)
+
+  let employeeInputElement2 = [...employeeInputElement]
+  let employeeSelectElement2 = [...employeeSelectElement]
+
+  const loadEmployeeData = async () => {
+    let cargos = await getCargoData()
+    let profesiones = await getProfesionesData()
+    let dependencias = await getDependenciasData()
+    insertOptions({ input: 'cargo', data: cargos })
+    insertOptions({ input: 'instruccion_academica', data: profesiones })
+    insertOptions({ input: 'dependencias', data: dependencias })
+
+    if (id) {
+      let employeeData = await getEmployeeData(id)
+
+      employeeInputElement2.forEach((input) => {
+        input.value = employeeData[0][input.name]
+      })
+
+      employeeSelectElement2.forEach((select) => {
+        select.value = employeeData[0][select.name]
+      })
+
+      fieldList = employeeData[0]
+    }
+  }
+
+  loadEmployeeData()
 
   formElement.addEventListener('submit', (e) => e.preventDefault())
+
+  setTimeout(() => {}, 3000)
+
   formElement.addEventListener('input', (e) => {
     if (e.target.classList.contains('employee-input')) {
       fieldList = validateInput({
         e,
         fieldList,
-        type: fieldList.errors[e.target.name].type,
+        fieldListErrors,
+        type: fieldListErrors[e.target.name].type,
       })
-    }
-
-    if (e.target.value) {
-      const inputElement = document.querySelector(`.${e.target.name}`)
-      inputElement.value = fieldList[e.target.name] // Llenar el campo de entrada con el valor de fieldList
     }
 
     if (e.target.classList.contains('employee-select')) {
       fieldList = validateInput({
         e,
         fieldList,
-        type: fieldList.errors[e.target.name].type,
+        fieldListErrors,
+        type: fieldListErrors[e.target.name].type,
       })
     }
     console.log(fieldList)
   })
-
-  getCargoData().then((res) => {
-    insertOptions({ input: 'cargo', data: res })
-  })
-
-  getProfesionesData().then((res) =>
-    insertOptions({ input: 'instruccion_academica', data: res })
-  )
-  getDependenciasData().then((res) =>
-    insertOptions({ input: 'dependencias', data: res })
-  )
 
   // selectSearchInputElement.forEach((input) => {
   //   const parentElement = input.parentNode
@@ -91,19 +116,19 @@ function validateEmployeeForm({
     if (e.target === btnDependencySave) {
       let newDependency = { dependencia: fieldList.dependencia }
       console.log(fieldList)
-      if (!fieldList.errors.dependencia.value) {
+      if (!fieldListErrors.dependencia.value) {
         validateNewDependency({ newDependency })
       }
     }
 
     if (e.target === btnElement) {
-      if (Object.values(fieldList.errors).some((el) => el.value)) {
+      if (id) return sendEmployeeData({ data: fieldList })
+      if (Object.values(fieldListErrors).some((el) => el.value)) {
         return confirmNotification({
           type: NOTIFICATIONS_TYPES.fail,
           message: 'Complete todo el formulario antes de avanzar',
         })
       }
-      delete fieldList.errors
       sendEmployeeData({ data: fieldList })
     }
   })

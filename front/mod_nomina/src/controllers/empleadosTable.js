@@ -3,6 +3,7 @@ import { confirmNotification } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 
 const d = document
+const w = window
 
 const tableLanguage = {
   decimal: '',
@@ -92,13 +93,14 @@ export const confirmDeleteEmployee = ({ id }) => {
     successFunction: deleteEmployee,
     successFunctionParams: id,
   })
-  console.log('hola')
-  employeeTable.clear()
 }
 d.addEventListener('click', (e) => {
   if (e.target.classList.contains('btn-delete')) {
-    console.log(e.target.dataset.id)
-    confirmDeleteEmployee({ e: e, id: e.target.dataset.id })
+    confirmDeleteEmployee({ id: e.target.dataset.id })
+  }
+
+  if (e.target.classList.contains('btn-edit')) {
+    w.location.assign(`nom_empleados_registrar.php?id=${e.target.dataset.id}`)
   }
 })
 

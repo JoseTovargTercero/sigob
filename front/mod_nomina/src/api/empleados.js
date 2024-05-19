@@ -15,6 +15,9 @@ const sendEmployeeUrl =
 const getEmployeesUrl =
   '../../../../../sigob/back/modulo_nomina/nom_empleados_datos.php'
 
+const getEmployeeUrl =
+  '../../../../../sigob/back/modulo_nomina/nom_empleado_datos.php'
+
 const deleteEmployeeUrl =
   '../../../../../sigob/back/modulo_nomina/nom_empleados_delete.php'
 
@@ -34,6 +37,23 @@ const getEmployeesData = async () => {
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
 
     const json = await res.json()
+    return json
+  } catch (e) {
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener empleados',
+    })
+  }
+}
+
+const getEmployeeData = async (id) => {
+  try {
+    const res = await fetch(`${getEmployeeUrl}?id=${id}`)
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    const json = await res.json()
+    console.log(json)
     return json
   } catch (e) {
     return confirmNotification({
@@ -75,7 +95,8 @@ const sendEmployeeData = async ({ data }) => {
   }
 }
 
-const deleteEmployee = async ({ id }) => {
+const deleteEmployee = async (id) => {
+  console.log(id)
   try {
     const res = await fetch(`${deleteEmployeeUrl}?id=${id}`, {
       method: 'GET',
@@ -191,6 +212,7 @@ const sendDependencyData = async ({ newDependency }) => {
 }
 export {
   getEmployeesData,
+  getEmployeeData,
   sendEmployeeData,
   deleteEmployee,
   getCargoData,

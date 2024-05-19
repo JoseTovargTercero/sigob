@@ -20,10 +20,10 @@ require_once '../../back/sistema_global/session.php';
         <div>
             <h2 class="text-uppercase text-center">REGISTRAR EMPLEADO</h2>
         </div>
-        <form class="row w-100 mx-auto form-container employee-form" id="employee-form" autocomplete="off">
+        <form class="row w-75 mx-auto form-container employee-form" id="employee-form" autocomplete="off">
             <div class="form-group">
-                <label class="form-label" class="form-label" for="nombre">NOMBRE COMPLETO</label>
-                <input class="form-control employee-input" type="text" name="nombre" id="nombre"
+                <label class="form-label" class="form-label" for="nombres">NOMBRE COMPLETO</label>
+                <input class="form-control employee-input" type="text" name="nombres" id="nombres"
                     placeholder="NOMBRE COMPLETO" />
             </div>
 
@@ -46,8 +46,8 @@ require_once '../../back/sistema_global/session.php';
                         <label class="form-label" for="grados">ESTADO DEL TRABAJADOR</label>
                         <select name="status" id="status" class="form-select employee-select">
                             <option value="">ELEGIR...</option>
-                            <option value="activo" selected>ACTIVO</option>
-                            <option value="inactivo">INACTIVO</option>
+                            <option value="1" selected>ACTIVO</option>
+                            <option value="0">INACTIVO</option>
                         </select>
                     </div>
                 </div>
@@ -116,7 +116,7 @@ require_once '../../back/sistema_global/session.php';
                     <div class="col-sm-3">
                         <label class="form-label" for="banco">BANCO</label>
                         <select name="banco" class="form-select employee-select" id="banco">
-                            <option value="activo" selected>ELEGIR...</option>
+                            <option value="" selected>ELEGIR...</option>
                             <option value="VENEZUELA">VENEZUELA</option>
                             <option value="BICENTENARIO">BICENTENARIO</option>
                             <option value="TESORO">TESORO</option>

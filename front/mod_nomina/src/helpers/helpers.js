@@ -3,7 +3,7 @@ import { regularExpressions } from './regExp.js'
 
 const d = document
 
-function validateInput({ e, fieldList = {}, type }) {
+function validateInput({ e, fieldList = {}, fieldListErrors = {}, type }) {
   console.log(fieldList)
   let value = e.target.value
   if (type === 'matrixCell') {
@@ -16,16 +16,16 @@ function validateInput({ e, fieldList = {}, type }) {
     }
   }
 
-  let message = fieldList.errors[e.target.name].message
-    ? fieldList.errors[e.target.name].message
+  let message = fieldListErrors[e.target.name].message
+    ? fieldListErrors[e.target.name].message
     : 'Contenido inválido'
 
   if (!e.target.checkValidity() || value === '') {
     e.target.classList.add('input-error')
-    fieldList.errors[e.target.name].value = true
+    fieldListErrors[e.target.name].value = true
     errorMessage(e.target, message)
   } else {
-    fieldList.errors[e.target.name].value = false
+    fieldListErrors[e.target.name].value = false
     e.target.classList.remove('input-error')
   }
 
@@ -36,10 +36,10 @@ function validateInput({ e, fieldList = {}, type }) {
       console.log('a')
 
       e.target.classList.add('input-error')
-      fieldList.errors[e.target.name].value = true
+      fieldListErrors[e.target.name].value = true
       errorMessage(e.target, message)
     } else {
-      fieldList.errors[e.target.name].value = false
+      fieldListErrors[e.target.name].value = false
       e.target.classList.remove('input-error')
     }
   }
@@ -48,10 +48,10 @@ function validateInput({ e, fieldList = {}, type }) {
     let isText = regularExpressions.TEXT.test(value)
     if (!isText) {
       e.target.classList.add('input-error')
-      fieldList.errors[e.target.name].value = true
+      fieldListErrors[e.target.name].value = true
       errorMessage(e.target, message)
     } else {
-      fieldList.errors[e.target.name].value = false
+      fieldListErrors[e.target.name].value = false
       e.target.classList.remove('input-error')
     }
   }
@@ -59,10 +59,10 @@ function validateInput({ e, fieldList = {}, type }) {
   if (type === 'date') {
     if (!validarFecha(value)) {
       e.target.classList.add('input-error')
-      fieldList.errors[e.target.name].value = true
+      fieldListErrors[e.target.name].value = true
       errorMessage(e.target, message)
     } else {
-      fieldList.errors[e.target.name].value = false
+      fieldListErrors[e.target.name].value = false
       e.target.classList.remove('input-error')
     }
   }
@@ -207,10 +207,8 @@ function confirmNotification({
       confirmButtonText: 'ELIMINAR',
       denyButtonText: 'CANCELAR',
     }).then((result) => {
-      if (result.isConfirmed) {
+      if (result.isConfirmed)
         notificationAction({ successFunction, successFunctionParams })
-        return true
-      } else return false
     })
   }
 }

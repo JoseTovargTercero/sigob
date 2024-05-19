@@ -26,27 +26,27 @@ d.addEventListener('DOMContentLoaded', (e) => {
         grados: 0,
         aniosPasos: 0,
         tabulador: [],
-        errors: {
-          nombre: {
-            value: true,
-            message: 'Introducir un nombre válido',
-            type: 'text',
-          },
-          pasos: {
-            value: true,
-            message: 'Introduzca valor numérico',
-            type: 'number',
-          },
-          grados: {
-            value: true,
-            message: 'Introduzca valor numérico',
-            type: 'number',
-          },
-          aniosPasos: {
-            value: true,
-            message: 'Introduzca valor numérico',
-            type: 'number',
-          },
+      },
+      fieldListErrors: {
+        nombre: {
+          value: true,
+          message: 'Introducir un nombre válido',
+          type: 'text',
+        },
+        pasos: {
+          value: true,
+          message: 'Introduzca valor numérico',
+          type: 'number',
+        },
+        grados: {
+          value: true,
+          message: 'Introduzca valor numérico',
+          type: 'number',
+        },
+        aniosPasos: {
+          value: true,
+          message: 'Introduzca valor numérico',
+          type: 'number',
         },
       },
     })
@@ -56,102 +56,103 @@ d.addEventListener('DOMContentLoaded', (e) => {
     validateEmployeeForm({
       formElement: employeeForm,
       employeeInputClass: 'employee-input',
+      employeeSelectClass: 'employee-select',
       btnId: 'tabulator-btn',
       selectSearchInput: 'select-search-input',
       selectSearch: ['cargo'],
       btnAddId: 'add-dependency',
       fieldList: {
-        nombre: '',
+        nombres: '',
         nacionalidad: '',
         cedula: 0,
-        status: 'ACTIVO',
+        status: '',
         instruccion_academica: '',
         cod_cargo: '',
         fecha_ingreso: '',
-        otros_años: '',
+        otros_años: 0,
         hijos: 0,
         discapacidades: '',
         banco: '',
         cuenta_bancaria: 0,
-        tipo_cuenta: '',
+        tipo_cuenta: 0,
         id_dependencia: '',
-        tipo_nomina: 'a',
-        errors: {
-          nombre: {
-            value: true,
-            message: 'Introducir un campo válido',
-            type: 'text',
-          },
-          nacionalidad: {
-            value: true,
-            message: 'Introducir un campo válido',
-            type: 'text',
-          },
-          cedula: {
-            value: true,
-            message: 'Introducir un campo válido',
-            type: 'number',
-          },
-          status: {
-            value: false,
-            message: 'Introducir un campo válido',
-            type: 'text',
-          },
-          instruccion_academica: {
-            value: true,
-            message: 'Introducir un campo válido',
-            type: 'text',
-          },
-          cod_cargo: {
-            value: true,
-            message: 'Introducir un campo válido',
-            type: 'number',
-          },
-          fecha_ingreso: {
-            value: true,
-            message: 'Fecha inválida o mayor',
-            type: 'date',
-          },
-          otros_años: {
-            value: true,
-            message: 'Introducir un campo válido',
-            type: 'date',
-          },
-          hijos: {
-            value: true,
-            message: 'Introducir un campo válido',
-            type: 'number',
-          },
-          discapacidades: {
-            value: true,
-            message: 'Introducir un campo válido',
-            type: 'text',
-          },
-          banco: {
-            value: true,
-            message: 'Introducir un campo válido',
-            type: 'text',
-          },
-          cuenta_bancaria: {
-            value: true,
-            message: 'Introducir un campo válido',
-            type: 'number',
-          },
-          tipo_cuenta: {
-            value: true,
-            message: 'Introducir un campo válido',
-            type: 'text',
-          },
-          id_dependencia: {
-            value: true,
-            message: 'Introducir un campo válido',
-            type: 'text',
-          },
-          dependencia: {
-            value: false,
-            message: 'Introducir un campo válido',
-            type: 'text',
-          },
+        tipo_nomina: '',
+      },
+      fieldListErrors: {
+        nombres: {
+          value: true,
+          message: 'Introducir un campo válido',
+          type: 'text',
+        },
+        nacionalidad: {
+          value: true,
+          message: 'Introducir un campo válido',
+          type: 'text',
+        },
+        cedula: {
+          value: true,
+          message: 'Introducir un campo válido',
+          type: 'number',
+        },
+        status: {
+          value: false,
+          message: 'Introducir un campo válido',
+          type: 'text',
+        },
+        instruccion_academica: {
+          value: true,
+          message: 'Introducir un campo válido',
+          type: 'text',
+        },
+        cod_cargo: {
+          value: true,
+          message: 'Introducir un campo válido',
+          type: 'number',
+        },
+        fecha_ingreso: {
+          value: true,
+          message: 'Fecha inválida o mayor',
+          type: 'date',
+        },
+        otros_años: {
+          value: true,
+          message: 'Introducir un campo válido',
+          type: 'date',
+        },
+        hijos: {
+          value: true,
+          message: 'Introducir un campo válido',
+          type: 'number',
+        },
+        discapacidades: {
+          value: true,
+          message: 'Introducir un campo válido',
+          type: 'text',
+        },
+        banco: {
+          value: true,
+          message: 'Introducir un campo válido',
+          type: 'text',
+        },
+        cuenta_bancaria: {
+          value: true,
+          message: 'Introducir un campo válido',
+          type: 'number',
+        },
+        tipo_cuenta: {
+          value: true,
+          message: 'Introducir un campo válido',
+          type: 'text',
+        },
+        id_dependencia: {
+          value: true,
+          message: 'Introducir un campo válido',
+          type: 'text',
+        },
+        dependencia: {
+          value: false,
+          message: 'Introducir un campo válido',
+          type: 'text',
         },
       },
     })
