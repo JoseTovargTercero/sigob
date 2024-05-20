@@ -15,7 +15,6 @@ if (empty($condicion)) {
     $conexion->close();
     exit();
 }
-
 // Palabras clave prohibidas
 $palabras_prohibidas = array('UPDATE', 'DELETE', 'DROP', 'TRUNCATE', 'INSERT', 'ALTER', 'GRANT', 'REVOKE');
 
