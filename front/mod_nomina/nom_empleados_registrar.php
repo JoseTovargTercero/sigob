@@ -17,14 +17,32 @@ require_once '../../back/sistema_global/session.php';
     <!-- [ top bar ] -->
 
     <div class="pc-container flex-container">
-        <div>
+        <div class="form-header w-75 mx-auto">
+            <a class="btn btn-outline-info btn-sm" href="nom_empleados_tabla"><box-icon
+                    name='arrow-back'></box-icon></a>
             <h2 class="text-uppercase text-center">REGISTRAR EMPLEADO</h2>
+            <box-icon name=''></box-icon>
+
         </div>
-        <form class="row w-75 mx-auto form-container employee-form" id="employee-form" autocomplete="off">
+        <form class="row w-90 mx-auto form-container employee-form" id="employee-form" autocomplete="off">
             <div class="form-group">
-                <label class="form-label" class="form-label" for="nombres">NOMBRE COMPLETO</label>
-                <input class="form-control employee-input" type="text" name="nombres" id="nombres"
-                    placeholder="NOMBRE COMPLETO" />
+                <div class="row">
+                    <div class="col-sm">
+                        <label class="form-label" class="form-label" for="nombres">NOMBRE COMPLETO</label>
+                        <input class="form-control employee-input" type="text" name="nombres" id="nombres"
+                            placeholder="NOMBRE COMPLETO" />
+                    </div>
+                    <div class="col-sm-4">
+                        <label class="form-label" for="nacionalidad">TIPO NÓMINA</label>
+                        <select name="tipo_nomina" class="form-select employee-select" id="tipo_nomina">
+                            <option selected>ELEGIR...</option>
+                            <option value="1">OPCIÓN 1</option>
+                            <option value="2">OPCIÓN 2</option>
+                        </select>
+                    </div>
+
+                </div>
+
             </div>
 
             <div class="form-group">
@@ -32,7 +50,7 @@ require_once '../../back/sistema_global/session.php';
                     <div class="col-sm">
                         <label class="form-label" for="nacionalidad">NACIONALIDAD</label>
                         <select name="nacionalidad" class="form-select employee-select" id="nacionalidad">
-                            <option selected>NACIONALIDAD</option>
+                            <option selected value="">NACIONALIDAD</option>
                             <option value="V">V</option>
                             <option value="E">E</option>
                         </select>
@@ -140,8 +158,8 @@ require_once '../../back/sistema_global/session.php';
             </div>
 
             <div class="form-group">
-                <label class="form-label" for="id_dependencia">DEPENDENCIAS LABORALES</label>
                 <div class="row">
+                    <label class="form-label" for="id_dependencia">DEPENDENCIAS LABORALES</label>
                     <div class="col-sm">
                         <select class="form-select employee-select" name="id_dependencia"
                             id="search-select-dependencias">
@@ -151,9 +169,16 @@ require_once '../../back/sistema_global/session.php';
                     <div class="col-sm-1">
                         <button type="button" id="add-dependency" class="btn btn-primary">+</button>
                     </div>
-
                 </div>
             </div>
+
+
+            <div class="form-group">
+                <label for="observacion">OBSERVACIONES</label>
+                <textarea class="form-control" name="observacion" placeholder="Observación sobre el empleado..."
+                    id="observacion" style="height: 50px"></textarea>
+            </div>
+
 
             <!-- <div class="form-group">
                 <div class="row">
@@ -176,19 +201,20 @@ require_once '../../back/sistema_global/session.php';
                 <button class="btn btn-primary w-100" id="tabulator-btn">GUARDAR</button>
             </div>
             <div id="modal-dependency" class="modal-window hide">
-                <div class="modal-box short">
+                <div class="modal-box short slide-up-animation">
 
                     <div class="row">
                         <header class="modal-box-header">
-                            <h4>MATRIZ DE TABULADOR</h4>
+                            <h4>AÑADIR NUEVA DEPENDENCIA</h4>
                             <button id="btn-close-dependency" type="button" class="btn btn-danger" aria-label="Close">
                                 &times;
                             </button>
+                        </header>
                     </div>
 
                     <input class="employee-input form-control" type="text" name="dependencia"
                         placeholder="0000 0000 00 0000" id="dependencia">
-                    <button class="btn-form btn btn-primary" id="dependency-save-btn">ENVIAR TABULADOR</button>
+                    <button class="btn-form btn btn-primary" id="dependency-save-btn">GUARDAR DEPENDENCIA</button>
                 </div>
             </div>
         </form>

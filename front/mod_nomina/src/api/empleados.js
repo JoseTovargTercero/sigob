@@ -12,6 +12,9 @@ const profesionesUrl =
 const sendEmployeeUrl =
   '../../../../../sigob/back/modulo_nomina/nom_empleados_registro.php'
 
+const updateEmployeeUrl =
+  '../../../../../sigob/back/modulo_nomina/nom_empleados_modif.php'
+
 const getEmployeesUrl =
   '../../../../../sigob/back/modulo_nomina/nom_empleados_datos.php'
 
@@ -53,7 +56,7 @@ const getEmployeeData = async (id) => {
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
 
     const json = await res.json()
-    console.log(json)
+
     return json
   } catch (e) {
     return confirmNotification({
@@ -79,10 +82,41 @@ const sendEmployeeData = async ({ data }) => {
       console.log(res)
       confirmNotification({
         type: NOTIFICATIONS_TYPES.done,
-        message: 'Datos enviados',
+        message: 'Datos guardados',
       })
       setTimeout(() => {
-        location.reload()
+        location.assign('nom_empleados_tabla')
+      }, 2000)
+    }
+    const json = await res.text()
+    console.log(json)
+  } catch (e) {
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al guardar datos del empleado',
+    })
+  }
+}
+
+const updateEmployeeData = async ({ data }) => {
+  try {
+    const res = await fetch(updateEmployeeUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+    else {
+      console.log(res)
+      confirmNotification({
+        type: NOTIFICATIONS_TYPES.done,
+        message: 'Datos guardados',
+      })
+      setTimeout(() => {
+        location.assign('nom_empleados_tabla.php')
       }, 2000)
     }
     const json = await res.text()
@@ -114,7 +148,7 @@ const deleteEmployee = async (id) => {
       })
     }
     const json = await res.text()
-    console.log(json)
+    return json
   } catch (e) {
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
@@ -123,7 +157,7 @@ const deleteEmployee = async (id) => {
   }
 }
 
-const getCargoData = async () => {
+const getJobData = async () => {
   try {
     const res = await fetch(cargosUrl)
 
@@ -139,7 +173,7 @@ const getCargoData = async () => {
   }
 }
 
-const getProfesionesData = async () => {
+const getProfessionData = async () => {
   try {
     const res = await fetch(profesionesUrl)
 
@@ -155,7 +189,7 @@ const getProfesionesData = async () => {
   }
 }
 
-const getDependenciasData = async () => {
+const getDependencyData = async () => {
   try {
     const res = await fetch(depdendenciasUrl)
 
@@ -174,7 +208,7 @@ const getDependenciasData = async () => {
 
 const sendDependencyData = async ({ newDependency }) => {
   try {
-    const dependencyData = await getDependenciasData()
+    const dependencyData = await getDependencyData()
     if (
       dependencyData.some(
         (el) =>
@@ -214,9 +248,10 @@ export {
   getEmployeesData,
   getEmployeeData,
   sendEmployeeData,
+  updateEmployeeData,
   deleteEmployee,
-  getCargoData,
-  getProfesionesData,
-  getDependenciasData,
+  getJobData,
+  getProfessionData,
+  getDependencyData,
   sendDependencyData,
 }

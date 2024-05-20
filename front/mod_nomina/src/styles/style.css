@@ -1,7 +1,7 @@
 @import './animations.css';
 
 :root {
-  --modal-height: calc(100% + 61px);
+  --modal-height: calc(100vh - 74px);
   --bluegray: #3f4d67;
   --lightgray: #f4f7fa;
 }
@@ -17,6 +17,7 @@ table {
 table,
 th,
 td {
+  text-align: center !important;
   padding: 5px;
 }
 
@@ -26,6 +27,11 @@ td {
   justify-content: center;
 }
 
+a {
+  display: inline-flex !important;
+  border-radius: 10px !important;
+}
+
 .modal-window {
   padding: 1rem;
   display: flex;
@@ -33,12 +39,12 @@ td {
   justify-content: center;
   align-items: center;
   overflow: auto;
-  top: 0;
+  top: 74px;
   left: 0;
   width: 100%;
 
   height: var(--modal-height);
-  position: absolute;
+  position: fixed;
   z-index: 20;
   background-color: rgba(0, 0, 0, 0.5);
 
@@ -89,6 +95,16 @@ td {
   display: flex;
   align-items: center;
   margin-bottom: 2rem;
+}
+
+.form-header {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  background-color: white;
+  padding: 1em 0;
+  border-radius: 1rem;
+  margin-bottom: 1rem;
 }
 
 .input-error-message {

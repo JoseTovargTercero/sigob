@@ -34,13 +34,9 @@
                 href="<?php echo constant('URL') ?>front/mod_nomina/nom_tabulador">Tabuladores</a></li>
             <li class="pc-item"><a class="pc-link"
                 href="<?php echo constant('URL') ?>front/mod_nomina/nom_conceptos">Conceptos</a></li>
+
             <li class="pc-item"><a class="pc-link"
-                href="<?php echo constant('URL') ?>front/mod_nomina/nom_personal">Personal</a></li>
-            <li class="pc-item"><a class="pc-link"
-                href="<?php echo constant('URL') ?>front/mod_nomina/nom_empleados_vista">Empleados</a>
-            </li>
-            <li class="pc-item"><a class="pc-link"
-                href="<?php echo constant('URL') ?>front/mod_nomina/nom_empleados_registrar">Registrar Personal</a>
+                href="<?php echo constant('URL') ?>front/mod_nomina/nom_empleados_tabla">Empleados</a>
             </li>
           </ul>
         </li>

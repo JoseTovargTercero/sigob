@@ -1,10 +1,11 @@
 import {
-  getCargoData,
-  getDependenciasData,
+  getDependencyData,
   getEmployeeData,
-  getProfesionesData,
+  getJobData,
+  getProfessionData,
   sendDependencyData,
   sendEmployeeData,
+  updateEmployeeData,
 } from '../api/empleados.js'
 import {
   closeModal,
@@ -41,15 +42,18 @@ function validateEmployeeForm({
   let employeeSelectElement2 = [...employeeSelectElement]
 
   const loadEmployeeData = async () => {
-    let cargos = await getCargoData()
-    let profesiones = await getProfesionesData()
-    let dependencias = await getDependenciasData()
+    let cargos = await getJobData()
+    let profesiones = await getProfessionData()
+    let dependencias = await getDependencyData()
     insertOptions({ input: 'cargo', data: cargos })
     insertOptions({ input: 'instruccion_academica', data: profesiones })
     insertOptions({ input: 'dependencias', data: dependencias })
 
+    // CÓDIGO PARA OBTENER EMPLEADO EN CASO DE EDITAR
     if (id) {
       let employeeData = await getEmployeeData(id)
+
+      console.log(employeeData)
 
       employeeInputElement2.forEach((input) => {
         input.value = employeeData[0][input.name]
@@ -58,6 +62,8 @@ function validateEmployeeForm({
       employeeSelectElement2.forEach((select) => {
         select.value = employeeData[0][select.name]
       })
+
+      employeeData[0].id = employeeData[0].id_empleado
 
       fieldList = employeeData[0]
     }
@@ -122,13 +128,15 @@ function validateEmployeeForm({
     }
 
     if (e.target === btnElement) {
-      if (id) return sendEmployeeData({ data: fieldList })
+      if (id) return updateEmployeeData({ data: fieldList })
       if (Object.values(fieldListErrors).some((el) => el.value)) {
         return confirmNotification({
           type: NOTIFICATIONS_TYPES.fail,
           message: 'Complete todo el formulario antes de avanzar',
         })
       }
+
+      // ENVÍO DE INFORMACIÓN
       sendEmployeeData({ data: fieldList })
     }
   })
@@ -151,7 +159,7 @@ function insertOptions({ input, data }) {
 async function validateNewDependency({ newDependency }) {
   let isSend = await sendDependencyData({ newDependency })
   if (isSend) {
-    getDependenciasData().then((res) => {
+    getDependencyData().then((res) => {
       insertOptions({ input: 'dependencias', data: res })
     })
   }

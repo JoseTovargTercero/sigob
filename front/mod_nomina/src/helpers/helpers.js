@@ -43,6 +43,20 @@ function validateInput({ e, fieldList = {}, fieldListErrors = {}, type }) {
       e.target.classList.remove('input-error')
     }
   }
+  if (type === 'number') {
+    let isNumber = regularExpressions.NUMBER.test(value)
+
+    if (!isNumber || value < 0) {
+      console.log('a')
+
+      e.target.classList.add('input-error')
+      fieldListErrors[e.target.name].value = true
+      errorMessage(e.target, message)
+    } else {
+      fieldListErrors[e.target.name].value = false
+      e.target.classList.remove('input-error')
+    }
+  }
 
   if (type === 'text') {
     let isText = regularExpressions.TEXT.test(value)
@@ -85,17 +99,10 @@ function validarFecha(valorInput) {
   var fechaIngresada = new Date(valorInput)
   // Obtener la fecha actual
   var fechaActual = new Date()
-
   // Comprobar si el valor ingresado es una fecha válida
-  if (isNaN(fechaIngresada)) {
-    return false
-  }
-
+  if (isNaN(fechaIngresada)) return false
   // Comprobar si la fecha ingresada es mayor que la fecha actual
-  if (fechaIngresada > fechaActual) {
-    return false
-  }
-
+  if (fechaIngresada > fechaActual) return false
   // Si pasa ambas validaciones, la fecha es válida y no es mayor que la fecha actual
   return true
 }
@@ -117,6 +124,7 @@ const errorMessage = (target, message) => {
 }
 
 function validateModal({ e, btnId, modalId }) {
+  console.log(modalId)
   const modalElement = d.getElementById(modalId)
   if (e.target.matches(`#${btnId}`)) {
     if (modalElement.classList.contains('hide')) {
@@ -149,7 +157,7 @@ function confirmNotification({
       return successFunction(successFunctionParams)
     }
     if (successFunction) {
-      successFunction()
+      return successFunction()
     }
     return
   }
@@ -207,8 +215,11 @@ function confirmNotification({
       confirmButtonText: 'ELIMINAR',
       denyButtonText: 'CANCELAR',
     }).then((result) => {
-      if (result.isConfirmed)
+      if (result.isConfirmed) {
+        console.log(result)
         notificationAction({ successFunction, successFunctionParams })
+        return true
+      }
     })
   }
 }

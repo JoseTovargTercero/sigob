@@ -1,6 +1,11 @@
 .slide-up-animation {
   animation: slide-up;
-  animation-duration: 0.5s;
+  animation-duration: 0.2s;
+}
+
+.size-change-animation {
+  animation: size-change;
+  animation-duration: 2s;
 }
 
 @keyframes slide-up {
@@ -11,5 +16,14 @@
   to {
     left: 0;
     opacity: 0.8;
+  }
+}
+
+@keyframes size-change {
+  0% {
+    transform: scale(0.5);
+  }
+  100% {
+    transform: scale(1);
   }
 }

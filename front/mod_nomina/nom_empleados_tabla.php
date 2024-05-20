@@ -17,7 +17,7 @@ require_once '../../back/sistema_global/session.php';
     <?php require_once '../includes/top-bar.php' ?>
     <!-- [ top bar ] -->
 
-    <div class="pc-container flex-container">
+    <div class="pc-container flex-container" id="employee-table-view">
         <div class="card w-90 mx-auto">
             <div class="card-header">
                 <div>
@@ -26,7 +26,7 @@ require_once '../../back/sistema_global/session.php';
             </div>
             <div class="card-body">
                 <table id="employee-table" class="table table-striped" style="width:100%">
-                    <thead>
+                    <thead class="w-100">
                         <th>NOMBRES</th>
                         <th>CEDULA</th>
                         <th>DEPENDENCIA</th>

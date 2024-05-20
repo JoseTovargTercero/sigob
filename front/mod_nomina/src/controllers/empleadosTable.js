@@ -1,5 +1,6 @@
 import { deleteEmployee, getEmployeesData } from '../api/empleados.js'
-import { confirmNotification } from '../helpers/helpers.js'
+import { employeeCard } from '../components/nom_empleado_card.js'
+import { confirmNotification, validateModal } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 
 const d = document
@@ -34,6 +35,7 @@ let employeeTable = new DataTable('#employee-table', {
   responsive: true,
   scrollY: 300,
   language: tableLanguage,
+  order: [],
   layout: {
     topEnd: function () {
       let toolbar = document.createElement('div')
@@ -50,16 +52,19 @@ let employeeTable = new DataTable('#employee-table', {
     { data: 'cedula', width: '10%' },
     { data: 'dependencia', width: '10%' },
     { data: 'nomina', width: '10%' },
-    { data: 'acciones', width: '100%' },
+    { data: 'acciones', width: '10%' },
   ],
 })
 
 const loadTable = async () => {
-  employeeTable.clear()
+  employeeTable.clear().draw()
 
   let empleados = await getEmployeesData()
+  let empleadosOrdenados = [...empleados].sort(
+    (a, b) => b.id_empleado - a.id_empleado
+  )
 
-  let data = empleados.map((empleado) => {
+  let data = empleadosOrdenados.map((empleado) => {
     return {
       nombres: empleado.nombres,
       cedula: empleado.cedula,
@@ -87,20 +92,49 @@ const loadTable = async () => {
   // })
 }
 
-export const confirmDeleteEmployee = ({ id }) => {
-  confirmNotification({
+// var filteredRows = table.rows(function (idx, data, node) {
+//   // Aquí define tu criterio de filtrado
+//   return data.nombre === 'Juan'; // Por ejemplo, eliminar filas con el nombre 'Juan'
+// });
+
+// filteredRows.remove().draw();
+
+export const confirmDeleteEmployee = async ({ id, row }) => {
+  let userConfirm = await confirmNotification({
     type: NOTIFICATIONS_TYPES.delete,
     successFunction: deleteEmployee,
     successFunctionParams: id,
   })
+
+  // ELIMINAR FILA DE LA TABLA CON LA API DE DATATABLES
+  if (userConfirm) {
+    let filteredRows = employeeTable.rows(function (idx, data, node) {
+      return node === row
+    })
+    filteredRows.remove().draw()
+  }
 }
+
 d.addEventListener('click', (e) => {
   if (e.target.classList.contains('btn-delete')) {
-    confirmDeleteEmployee({ id: e.target.dataset.id })
+    let fila = e.target.closest('tr')
+    confirmDeleteEmployee({ id: e.target.dataset.id, row: fila })
+    employeeTable.draw()
   }
 
   if (e.target.classList.contains('btn-edit')) {
     w.location.assign(`nom_empleados_registrar.php?id=${e.target.dataset.id}`)
+  }
+
+  if (e.target.classList.contains('btn-view')) {
+    employeeCard({
+      id: e.target.dataset.id,
+      elementToInsert: 'employee-table-view',
+    })
+  }
+
+  if (e.target.id === 'btn-close-employee-card') {
+    d.getElementById('modal-employee').remove()
   }
 })
 

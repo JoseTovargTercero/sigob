@@ -76,7 +76,8 @@ d.addEventListener('DOMContentLoaded', (e) => {
         cuenta_bancaria: 0,
         tipo_cuenta: 0,
         id_dependencia: '',
-        tipo_nomina: '',
+        tipo_nomina: 0,
+        observacion: '',
       },
       fieldListErrors: {
         nombres: {
@@ -97,7 +98,7 @@ d.addEventListener('DOMContentLoaded', (e) => {
         status: {
           value: false,
           message: 'Introducir un campo válido',
-          type: 'text',
+          type: 'number2',
         },
         instruccion_academica: {
           value: true,
@@ -117,12 +118,12 @@ d.addEventListener('DOMContentLoaded', (e) => {
         otros_años: {
           value: true,
           message: 'Introducir un campo válido',
-          type: 'date',
+          type: 'number2',
         },
         hijos: {
           value: true,
           message: 'Introducir un campo válido',
-          type: 'number',
+          type: 'number2',
         },
         discapacidades: {
           value: true,
@@ -142,17 +143,22 @@ d.addEventListener('DOMContentLoaded', (e) => {
         tipo_cuenta: {
           value: true,
           message: 'Introducir un campo válido',
-          type: 'text',
+          type: 'number',
         },
         id_dependencia: {
           value: true,
           message: 'Introducir un campo válido',
-          type: 'text',
+          type: 'number',
         },
         dependencia: {
           value: false,
           message: 'Introducir un campo válido',
           type: 'text',
+        },
+        tipo_nomina: {
+          value: true,
+          message: 'Introducir un campo válido',
+          type: 'number',
         },
       },
     })
