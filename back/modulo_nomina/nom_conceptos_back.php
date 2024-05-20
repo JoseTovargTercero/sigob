@@ -23,7 +23,6 @@ if (isset($_POST["tabla"])) {
     $tipo_calculo = clear($_POST["tipo_calculo"]);
     $valor = clear($_POST["valor"]);
 
-
     //Comprobar que no exist
     $stmt = mysqli_prepare($conexion, "SELECT * FROM `conceptos` WHERE nom_concepto = ? LIMIT 1");
     $stmt->bind_param("s", $nombre);
@@ -43,7 +42,6 @@ function evaluar_expresion($expresion) {
 
     return $expresion;
 }
-
 
 $stmt->close();
 $stmt = mysqli_prepare($conexion, "INSERT INTO `conceptos` (nom_concepto, tipo_concepto, cod_partida, tipo_calculo, valor) VALUES (?, ?, ?, ?, ?)");
@@ -96,12 +94,6 @@ $stmt->close();
 
 
 } elseif (isset($_POST["validarConceptoFormulado"])) {
-
-
-
-
-
-
 
     // Obtener datos POST
     $condicion = $_POST["condicion"];
