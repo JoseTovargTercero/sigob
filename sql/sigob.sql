@@ -509,39 +509,24 @@ INSERT INTO `cargos_grados` (`id`, `cargo`, `cod_cargo`, `grado`) VALUES
 --
 -- Estructura de tabla para la tabla `conceptos`
 --
-
 CREATE TABLE `conceptos` (
   `id` int(11) NOT NULL,
   `nom_concepto` varchar(255) DEFAULT NULL,
   `cod_partida` varchar(255) DEFAULT NULL,
-  `tipo_concepto` varchar(2) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+  `tipo_concepto` varchar(2) DEFAULT NULL,
+  `tipo_calculo` int(1) NOT NULL,
+  `valor` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Volcado de datos para la tabla `conceptos`
 --
 
-INSERT INTO `conceptos` (`id`, `nom_concepto`, `cod_partida`, `tipo_concepto`) VALUES
-(1, 'SUELDO', '401-01-01-00-0000', 'A'),
-(2, 'PRIMA POR HIJO EMPLEADOS', '401-03-04-00-0000', 'A'),
-(3, 'PRIMA POR TRANSPORTE', '401-03-02-00-0000', 'A'),
-(4, 'PRIMA POR ANTIGUEDAD EMPLEADOS', '401-03-49-00-0000', 'A'),
-(5, 'PRIMA POR ESCALAFON', '401-03-98-00-0001', 'A'),
-(6, 'PRIMA POR FRONTERA', '401-03-97-00-0001', 'A'),
-(7, 'PRIMA POR ANTIGUEDAD (ESPECIAL)', '401-03-09-00-0000', 'A'),
-(8, 'PRIMA P/DED AL S/PUBLICO UNICO DE SALUD', '401-03-98-00-0005', 'A'),
-(9, 'PRIMA POR PROFESIONALES', '401-03-08-00-0000', 'A'),
-(10, 'CONTRIBUCION POR DISCAPACIDAD', '401-03-98-00-0006', 'A'),
-(11, 'PAGO DE BECA', '401-07-18-00-0000', 'A'),
-(12, 'S. S. O', '401-01-01-00-0000', 'D'),
-(13, 'RPE', '401-01-02-00-0000', 'D'),
-(14, 'A/P S.S.O', '401-06-01-00-0000', 'P'),
-(15, 'A/P RPE', '401-06-12-00-0000', 'P');
-
--- --------------------------------------------------------
+INSERT INTO `conceptos` (`id`, `nom_concepto`, `cod_partida`, `tipo_concepto`, `tipo_calculo`, `valor`) VALUES
+(21, 'CONTRIBUCION POR DISCAPACIDAD', '4.01.03.40.00', 'A', 6, '');
 
 --
--- Estructura de tabla para la tabla `dependencias`
+-- Índices para tablas volcadas
 --
 
 CREATE TABLE `dependencias` (
@@ -786,6 +771,27 @@ INSERT INTO `tabuladores_estr` (`id`, `paso`, `grado`, `monto`, `tabulador_id`) 
 -- Índices para tablas volcadas
 --
 
+
+
+CREATE TABLE `conceptos_formulacion` (
+  `id` int(11) NOT NULL,
+  `tipo_calculo` varchar(10) COLLATE latin1_spanish_ci NOT NULL,
+  `condicion` varchar(255) COLLATE latin1_spanish_ci NOT NULL,
+  `valor` varchar(50) COLLATE latin1_spanish_ci NOT NULL,
+  `concepto_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+
+--
+-- Volcado de datos para la tabla `conceptos_formulacion`
+--
+
+INSERT INTO `conceptos_formulacion` (`id`, `tipo_calculo`, `condicion`, `valor`, `concepto_id`) VALUES
+(4, '1', 'discapacidades=\'Si\' ', '15', 21);
+
+
+ALTER TABLE `conceptos_formulacion`
+  ADD PRIMARY KEY (`id`);
+
 --
 -- Indices de la tabla `cargos_grados`
 --
@@ -856,7 +862,8 @@ ALTER TABLE `tabuladores_estr`
 --
 -- AUTO_INCREMENT de las tablas volcadas
 --
-
+ALTER TABLE `conceptos_formulacion`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 --
 -- AUTO_INCREMENT de la tabla `cargos_grados`
 --
