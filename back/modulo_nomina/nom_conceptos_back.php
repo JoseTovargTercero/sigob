@@ -32,35 +32,49 @@ if (isset($_POST["tabla"])) {
     if ($result->num_rows > 0) {
         echo 'ye';
     } else {
-        $stmt->close();
-        $stmt = mysqli_prepare($conexion, "INSERT INTO `conceptos` (nom_concepto, tipo_concepto, cod_partida, tipo_calculo, valor) VALUES (?, ?, ?, ?, ?)");
-        $stmt->bind_param("sssss", $nombre, $tipo, $partida, $tipo_calculo, $valor);
+function evaluar_expresion($expresion) {
+    // Definir arrays de variaciones de "si" y "no"
+    $si_variations = ['si', 'sí', 'yes', 'affirmative', 'Si', 'SI'];
+    $no_variations = ['no', 'not', 'negative', 'No', 'NO', 'N0'];
 
-        if ($stmt->execute()) {
-            echo 'ok';
-            $concepto_id = $stmt->insert_id;
+    // Reemplazar las variaciones de 'Si' y 'No' en la expresión
+    $expresion = str_ireplace($si_variations, '1', $expresion);
+    $expresion = str_ireplace($no_variations, '0', $expresion);
 
-            if ($tipo_calculo == '6') {
-                $tipo_calculo_aplicado = clear($_POST["tipo_calculo_aplicado"]);
-                $condiciones = $_POST["condiciones"];
-                $valores = $_POST["valores"];
-
-                // recorre $condiciones e inserta con el insert_id del stmt anterior
-                for ($i = 0; $i < count($condiciones); $i++) {
-                    $stmt = mysqli_prepare($conexion, "INSERT INTO `conceptos_formulacion` (tipo_calculo,condicion, valor, concepto_id) VALUES (?, ?, ?, ?)");
-                    $stmt->bind_param("sssi", $tipo_calculo_aplicado, $condiciones[$i], $valores[$i], $concepto_id);
-                    $stmt->execute();
-                }
-
-            }
+    return $expresion;
+}
 
 
-        } else {
-            print_r($stmt);
+$stmt->close();
+$stmt = mysqli_prepare($conexion, "INSERT INTO `conceptos` (nom_concepto, tipo_concepto, cod_partida, tipo_calculo, valor) VALUES (?, ?, ?, ?, ?)");
+$stmt->bind_param("sssss", $nombre, $tipo, $partida, $tipo_calculo, $valor);
 
+if ($stmt->execute()) {
+    echo 'ok';
+    $concepto_id = $stmt->insert_id;
+
+    if ($tipo_calculo == '6') {
+        $tipo_calculo_aplicado = clear($_POST["tipo_calculo_aplicado"]);
+        $condiciones = $_POST["condiciones"];
+        $valores = $_POST["valores"];
+
+        // Recorrer $condiciones y convertir "si" a 1 y "no" a 0
+        for ($i = 0; $i < count($condiciones); $i++) {
+            // Analizar la expresión y evaluarla
+            $resultado_evaluacion = evaluar_expresion($condiciones[$i]);
+
+            // Preparar e insertar en `conceptos_formulacion`
+            $stmt = mysqli_prepare($conexion, "INSERT INTO `conceptos_formulacion` (tipo_calculo, condicion, valor, concepto_id) VALUES (?, ?, ?, ?)");
+            $stmt->bind_param("ssii", $tipo_calculo_aplicado, $resultado_evaluacion, $valores[$i], $concepto_id);
+            $stmt->execute();
         }
+    }
+} else {
+    print_r($stmt);
+}
 
-        $stmt->close();
+$stmt->close();
+
     }
 } elseif (isset($_POST["eliminar"])) {
     $id = $_POST["id"];
