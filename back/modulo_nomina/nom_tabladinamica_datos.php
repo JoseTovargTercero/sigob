@@ -43,24 +43,23 @@ if ($tipo_filtro == 3) {
     $conexion->close();
     exit();
 } elseif ($tipo_filtro == 2) {
+    // Analizar el filtro para determinar las condiciones
     if (preg_match('/^antiguedad([<>]=?)(\d+)$/', $filtro, $matches)) {
         $operator = $matches[1];
-        $anios = (int) $matches[2];
-        $sql = "SELECT *, TIMESTAMPDIFF(YEAR, fecha_ingreso, CURDATE()) AS anios_actuales, TIMESTAMPDIFF(YEAR, fecha_ingreso, CURDATE()) + otros_años AS anios_totales FROM empleados HAVING anios_actuales $operator ?";
-        $params[] = $anios;
+        $anios_antiguedad = (int)$matches[2];
+        $sql = "SELECT *, TIMESTAMPDIFF(YEAR, fecha_ingreso, CURDATE()) AS antiguedad, 0 AS otros_años, TIMESTAMPDIFF(YEAR, fecha_ingreso, CURDATE()) AS anios_totales FROM empleados WHERE TIMESTAMPDIFF(YEAR, fecha_ingreso, CURDATE()) $operator ?";
+        $params[] = $anios_antiguedad;
     } elseif (preg_match('/^antiguedad_total([<>]=?)(\d+)$/', $filtro, $matches)) {
         $operator = $matches[1];
-        $anios_total = (int) $matches[2];
-        $sql = "SELECT *, TIMESTAMPDIFF(YEAR, fecha_ingreso, CURDATE()) AS anios_actuales, TIMESTAMPDIFF(YEAR, fecha_ingreso, CURDATE()) + otros_años AS anios_totales FROM empleados HAVING anios_totales $operator ?";
+        $anios_total = (int)$matches[2];
+        $sql = "SELECT *, 0 AS antiguedad, otros_años, TIMESTAMPDIFF(YEAR, fecha_ingreso, CURDATE()) + otros_años AS anios_totales FROM empleados WHERE TIMESTAMPDIFF(YEAR, fecha_ingreso, CURDATE()) + otros_años $operator ?";
         $params[] = $anios_total;
     } else {
-        echo json_encode("error: filtro no válido");
-        $conexion->close();
-        exit();
+        $sql = "SELECT *, TIMESTAMPDIFF(YEAR, fecha_ingreso, CURDATE()) AS antiguedad, otros_años, TIMESTAMPDIFF(YEAR, fecha_ingreso, CURDATE()) + otros_años AS anios_totales FROM empleados WHERE $filtro";
     }
 } else {
     // Todos los empleados
-    $sql = "SELECT *, TIMESTAMPDIFF(YEAR, fecha_ingreso, CURDATE()) AS anios_actuales, TIMESTAMPDIFF(YEAR, fecha_ingreso, CURDATE()) + otros_años AS anios_totales FROM empleados";
+    $sql = "SELECT *, TIMESTAMPDIFF(YEAR, fecha_ingreso, CURDATE()) AS antiguedad, otros_años, TIMESTAMPDIFF(YEAR, fecha_ingreso, CURDATE()) + otros_años AS anios_totales FROM empleados";
 }
 
 // Depuración: Mostrar la consulta y los parámetros
@@ -79,7 +78,8 @@ if (!empty($sql)) {
 
     // Bind parameters si existen
     if (!empty($params)) {
-        $stmt->bind_param(str_repeat("i", count($params)), ...$params);
+        $types = str_repeat('i', count($params)); // Todos los parámetros son tratados como enteros
+        $stmt->bind_param($types, ...$params);
     }
 
     $stmt->execute();
@@ -90,13 +90,20 @@ if (!empty($sql)) {
     } else {
         $empleados = array();
         while ($row = $result->fetch_assoc()) {
+            // Calcular años actuales
+            if ($row["otros_años"] !== null) {
+                $anios_actuales = $row["anios_totales"] - $row["otros_años"];
+            } else {
+                $anios_actuales = $row["antiguedad"];
+            }
+
             $empleados[] = array(
                 "nacionalidad" => $row["nacionalidad"],
                 "cedula" => $row["cedula"],
                 "cod_empleado" => $row["cod_empleado"],
                 "nombres" => $row["nombres"],
                 "fecha_ingreso" => $row["fecha_ingreso"],
-                "anios_actuales" => $row["anios_actuales"],
+                "anios_actuales" => $anios_actuales,
                 "otros_anios" => $row["otros_años"],
                 "anios_totales" => $row["anios_totales"],
                 "status" => $row["status"],

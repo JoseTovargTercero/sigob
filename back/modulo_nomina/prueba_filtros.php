@@ -7,7 +7,7 @@ $url = 'http://localhost/sigob/back/modulo_nomina/nom_tabladinamica_datos.php/';
 // Datos a enviar (el objeto JSON)
 $data = array(
     "tipo_filtro" => 2,
-    "filtro" => "antiguedad>5",
+    "filtro" => "discapacidades=0",
 );
 
 // Convertir el array a formato JSON
