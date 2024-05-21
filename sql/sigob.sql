@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 18-05-2024 a las 03:57:04
+-- Tiempo de generación: 21-05-2024 a las 15:59:55
 -- Versión del servidor: 10.4.27-MariaDB
 -- Versión de PHP: 7.4.33
 
@@ -509,6 +509,7 @@ INSERT INTO `cargos_grados` (`id`, `cargo`, `cod_cargo`, `grado`) VALUES
 --
 -- Estructura de tabla para la tabla `conceptos`
 --
+
 CREATE TABLE `conceptos` (
   `id` int(11) NOT NULL,
   `nom_concepto` varchar(255) DEFAULT NULL,
@@ -516,7 +517,7 @@ CREATE TABLE `conceptos` (
   `tipo_concepto` varchar(2) DEFAULT NULL,
   `tipo_calculo` int(1) NOT NULL,
   `valor` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
 -- Volcado de datos para la tabla `conceptos`
@@ -525,8 +526,31 @@ CREATE TABLE `conceptos` (
 INSERT INTO `conceptos` (`id`, `nom_concepto`, `cod_partida`, `tipo_concepto`, `tipo_calculo`, `valor`) VALUES
 (21, 'CONTRIBUCION POR DISCAPACIDAD', '4.01.03.40.00', 'A', 6, '');
 
+-- --------------------------------------------------------
+
 --
--- Índices para tablas volcadas
+-- Estructura de tabla para la tabla `conceptos_formulacion`
+--
+
+CREATE TABLE `conceptos_formulacion` (
+  `id` int(11) NOT NULL,
+  `tipo_calculo` varchar(10) NOT NULL,
+  `condicion` varchar(255) NOT NULL,
+  `valor` varchar(50) NOT NULL,
+  `concepto_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+
+--
+-- Volcado de datos para la tabla `conceptos_formulacion`
+--
+
+INSERT INTO `conceptos_formulacion` (`id`, `tipo_calculo`, `condicion`, `valor`, `concepto_id`) VALUES
+(4, '1', 'discapacidades=\'Si\' ', '15', 21);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `dependencias`
 --
 
 CREATE TABLE `dependencias` (
@@ -563,7 +587,7 @@ CREATE TABLE `empleados` (
   `observacion` varchar(255) DEFAULT NULL,
   `cod_cargo` varchar(10) NOT NULL,
   `banco` varchar(255) NOT NULL,
-  `cuenta_bancaria` varchar(25) DEFAULT NULL,
+  `cuenta_bancaria` varchar(255) DEFAULT NULL,
   `hijos` int(11) NOT NULL DEFAULT 0,
   `instruccion_academica` int(11) NOT NULL DEFAULT 0,
   `discapacidades` int(2) NOT NULL DEFAULT 0,
@@ -771,27 +795,6 @@ INSERT INTO `tabuladores_estr` (`id`, `paso`, `grado`, `monto`, `tabulador_id`) 
 -- Índices para tablas volcadas
 --
 
-
-
-CREATE TABLE `conceptos_formulacion` (
-  `id` int(11) NOT NULL,
-  `tipo_calculo` varchar(10) COLLATE latin1_spanish_ci NOT NULL,
-  `condicion` varchar(255) COLLATE latin1_spanish_ci NOT NULL,
-  `valor` varchar(50) COLLATE latin1_spanish_ci NOT NULL,
-  `concepto_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
-
---
--- Volcado de datos para la tabla `conceptos_formulacion`
---
-
-INSERT INTO `conceptos_formulacion` (`id`, `tipo_calculo`, `condicion`, `valor`, `concepto_id`) VALUES
-(4, '1', 'discapacidades=\'Si\' ', '15', 21);
-
-
-ALTER TABLE `conceptos_formulacion`
-  ADD PRIMARY KEY (`id`);
-
 --
 -- Indices de la tabla `cargos_grados`
 --
@@ -802,6 +805,12 @@ ALTER TABLE `cargos_grados`
 -- Indices de la tabla `conceptos`
 --
 ALTER TABLE `conceptos`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `conceptos_formulacion`
+--
+ALTER TABLE `conceptos_formulacion`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -862,8 +871,7 @@ ALTER TABLE `tabuladores_estr`
 --
 -- AUTO_INCREMENT de las tablas volcadas
 --
-ALTER TABLE `conceptos_formulacion`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
 --
 -- AUTO_INCREMENT de la tabla `cargos_grados`
 --
@@ -875,6 +883,12 @@ ALTER TABLE `cargos_grados`
 --
 ALTER TABLE `conceptos`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+
+--
+-- AUTO_INCREMENT de la tabla `conceptos_formulacion`
+--
+ALTER TABLE `conceptos_formulacion`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `dependencias`

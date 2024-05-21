@@ -6,7 +6,7 @@ $data = json_decode(file_get_contents('php://input'), true);
 
 // Verificar si algún campo está vacío
 foreach ($data as $key => $value) {
-    if ($value !== '') {
+    if ($value == '') {
         echo "Error: el campo $key no puede estar vacío.";
         exit;
     }
