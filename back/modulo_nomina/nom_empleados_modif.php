@@ -26,7 +26,7 @@ $stmt = $conexion->prepare($sql);
 
 // Vincular parámetros y ejecutar la consulta
 $stmt->bind_param(
-    "sssssissssisiiiiis", 
+    "sssssissssssiiiiis", 
     $data["nacionalidad"], 
     $data["cedula"], 
     $data["cod_empleado"], 

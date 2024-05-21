@@ -12,7 +12,7 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 $stmt = $conexion->prepare($sql);
 
 // Vincular parámetros y ejecutar la consulta
-$stmt->bind_param("sssssissssisiiiii", $data["nacionalidad"], $data["cedula"], $data["cod_empleado"], $data["nombres"], $data["fecha_ingreso"], $data["otros_años"], $data["status"], $data["observacion"], $data["cod_cargo"], $data["banco"], $data["cuenta_bancaria"], $data["hijos"], $data["instruccion_academica"], $data["discapacidades"], $data["tipo_cuenta"], $data["tipo_nomina"], $data["id_dependencia"]);
+$stmt->bind_param("sssssissssssiiiii", $data["nacionalidad"], $data["cedula"], $data["cod_empleado"], $data["nombres"], $data["fecha_ingreso"], $data["otros_años"], $data["status"], $data["observacion"], $data["cod_cargo"], $data["banco"], $data["cuenta_bancaria"], $data["hijos"], $data["instruccion_academica"], $data["discapacidades"], $data["tipo_cuenta"], $data["tipo_nomina"], $data["id_dependencia"]);
 
 // Ejecutar la consulta preparada
 if ($stmt->execute()) {
