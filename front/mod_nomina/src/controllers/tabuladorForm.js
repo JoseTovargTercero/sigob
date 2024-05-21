@@ -37,7 +37,7 @@ function validateTabulatorForm({
   formElement.addEventListener('input', (e) => {
     if (e.target.classList.contains(tabulatorInputClass)) {
       fieldList = validateInput({
-        e: e,
+        target: e.target,
         fieldList,
         fieldListErrors,
         type: fieldListErrors[e.target.name].type,
@@ -48,7 +48,7 @@ function validateTabulatorForm({
   formElement.addEventListener('change', (e) => {
     if (e.target.classList.contains(tabulatorInputClass))
       fieldList = validateInput({
-        e: e,
+        target: e.target,
         fieldList,
         fieldListErrors,
         type: fieldListErrors[e.target.name].type,
@@ -57,7 +57,7 @@ function validateTabulatorForm({
 
   formElementSecondary.addEventListener('input', (e) => {
     if (e.target.classList.contains(matrixInputsClass))
-      validateInput({ e: e, type: 'matrixCell' })
+      validateInput({ target: e.target, type: 'matrixCell' })
   })
 
   d.addEventListener('click', (e) => {

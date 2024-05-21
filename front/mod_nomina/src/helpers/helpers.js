@@ -3,89 +3,207 @@ import { regularExpressions } from './regExp.js'
 
 const d = document
 
-function validateInput({ e, fieldList = {}, fieldListErrors = {}, type }) {
-  console.log(fieldList)
-  let value = e.target.value
-  if (type === 'matrixCell') {
-    let isFloat = regularExpressions.FLOAT.test(value)
-
-    if (!isFloat || value <= 0) {
-      return e.target.classList.add('input-error')
-    } else {
-      return e.target.classList.remove('input-error')
-    }
-  }
-
-  let message = fieldListErrors[e.target.name].message
-    ? fieldListErrors[e.target.name].message
+function validateInput({ target, fieldList = {}, fieldListErrors = {}, type }) {
+  let value = target.value
+  let message = fieldListErrors[target.name].message
+    ? fieldListErrors[target.name].message
     : 'Contenido inválido'
+  let errorValue = fieldListErrors[target.name].value
+  try {
+    if (type === 'matrixCell') {
+      let isFloat = regularExpressions.FLOAT.test(value)
 
-  if (!e.target.checkValidity() || value === '') {
-    e.target.classList.add('input-error')
-    fieldListErrors[e.target.name].value = true
-    errorMessage(e.target, message)
-  } else {
-    fieldListErrors[e.target.name].value = false
-    e.target.classList.remove('input-error')
-  }
-
-  if (type === 'number') {
-    let isNumber = regularExpressions.NUMBER.test(value)
-
-    if (!isNumber || value <= 0) {
-      console.log('a')
-
-      e.target.classList.add('input-error')
-      fieldListErrors[e.target.name].value = true
-      errorMessage(e.target, message)
-    } else {
-      fieldListErrors[e.target.name].value = false
-      e.target.classList.remove('input-error')
+      if (!isFloat || value <= 0 || value === undefined) {
+        return target.classList.add('input-error')
+      } else {
+        return target.classList.remove('input-error')
+      }
     }
-  }
-  if (type === 'number') {
-    let isNumber = regularExpressions.NUMBER.test(value)
 
-    if (!isNumber || value < 0) {
-      console.log('a')
-
-      e.target.classList.add('input-error')
-      fieldListErrors[e.target.name].value = true
-      errorMessage(e.target, message)
+    // VALIDAR QUE EL INPUT NO ESTÉ VACÍO
+    if (!target.checkValidity() || value === '') {
+      target.classList.add('input-error')
+      fieldListErrors[target.name].value = true
+      errorMessage(target, message)
+      fieldList = {
+        ...fieldList,
+        [target.name]: target.value,
+      }
     } else {
-      fieldListErrors[e.target.name].value = false
-      e.target.classList.remove('input-error')
+      fieldListErrors[target.name].value = false
+      target.classList.remove('input-error')
+      errorMessage(target, message)
+      fieldList = {
+        ...fieldList,
+        [target.name]: target.value,
+      }
     }
-  }
 
-  if (type === 'text') {
-    let isText = regularExpressions.TEXT.test(value)
-    if (!isText) {
-      e.target.classList.add('input-error')
-      fieldListErrors[e.target.name].value = true
-      errorMessage(e.target, message)
-    } else {
-      fieldListErrors[e.target.name].value = false
-      e.target.classList.remove('input-error')
+    // VALIDACIÓN PARA CUENTAS BANCARIAS Y QUE CORRESPONDA AL BANCO SELECCIONADO
+
+    if (type === 'cuenta_bancaria') {
+      let isNumber = regularExpressions.NUMBER.test(value)
+      let secuenciaBanco = fieldList['banco']
+      let isBank = regularExpressions.NUMBER.test(secuenciaBanco)
+      let numeroCuenta = fieldList['cuenta_bancaria']
+      let isBankSelected = ['0102', '0163', '0175'].some((el) =>
+        numeroCuenta.startsWith(el)
+      )
+      if (!isBank) {
+        target.classList.add('input-error')
+        fieldListErrors[target.name].value = true
+        errorMessage(target, `Elija un banco`)
+        fieldList = {
+          ...fieldList,
+          [target.name]: target.value,
+        }
+      } else if (!isBankSelected) {
+        target.classList.add('input-error')
+        fieldListErrors[target.name].value = true
+        errorMessage(target, `La cuenta debe empezar por ${secuenciaBanco}`)
+        fieldList = {
+          ...fieldList,
+          [target.name]: target.value,
+        }
+      } else if (!isNumber) {
+        target.classList.add('input-error')
+        fieldListErrors[target.name].value = true
+        errorMessage(target, message)
+
+        fieldList = {
+          ...fieldList,
+          [target.name]: target.value,
+        }
+      } else if (!numeroCuenta.startsWith(secuenciaBanco)) {
+        target.classList.add('input-error')
+        fieldListErrors[target.name].value = true
+        errorMessage(target, `El numero debe empezar por ${secuenciaBanco}`)
+        fieldList = {
+          ...fieldList,
+          [target.name]: target.value,
+        }
+      } else {
+        fieldListErrors[target.name].value = false
+        target.classList.remove('input-error')
+        errorMessage(target, message)
+        fieldList = {
+          ...fieldList,
+          [target.name]: target.value,
+        }
+      }
     }
-  }
 
-  if (type === 'date') {
-    if (!validarFecha(value)) {
-      e.target.classList.add('input-error')
-      fieldListErrors[e.target.name].value = true
-      errorMessage(e.target, message)
-    } else {
-      fieldListErrors[e.target.name].value = false
-      e.target.classList.remove('input-error')
+    if (type === 'number') {
+      let isNumber = regularExpressions.NUMBER.test(value)
+
+      if (!isNumber || value <= 0) {
+        target.classList.add('input-error')
+        fieldListErrors[target.name].value = true
+        errorMessage(target, message)
+        fieldList = {
+          ...fieldList,
+          [target.name]: target.value,
+        }
+      } else {
+        fieldListErrors[target.name].value = false
+        target.classList.remove('input-error')
+        errorMessage(target, message)
+        fieldList = {
+          ...fieldList,
+          [target.name]: target.value,
+        }
+      }
     }
-  }
 
-  errorMessage(e.target, message)
+    if (type === 'cedula') {
+      let isNumber = regularExpressions.NUMBER.test(value)
 
-  fieldList = {
-    ...fieldList,
-    [e.target.name]: convertStringOrNumber(e.target.value),
+      if (!isNumber || value <= 0) {
+        target.classList.add('input-error')
+        fieldListErrors[target.name].value = true
+        errorMessage(target, message)
+        fieldList = {
+          ...fieldList,
+          [target.name]: target.value,
+        }
+      } else {
+        fieldListErrors[target.name].value = false
+        target.classList.remove('input-error')
+        errorMessage(target, message)
+        fieldList = {
+          ...fieldList,
+          [target.name]: target.value,
+        }
+      }
+    }
+
+    // VALIDACIÓN NUMÉRICA IGUAL A 0 O MAYOR
+
+    if (type === 'number2') {
+      let isNumber = regularExpressions.NUMBER.test(value)
+
+      if (!isNumber || value < 0) {
+        target.classList.add('input-error')
+        fieldListErrors[target.name].value = true
+        errorMessage(target, message)
+        fieldList = {
+          ...fieldList,
+          [target.name]: target.value,
+        }
+      } else {
+        fieldListErrors[target.name].value = false
+        target.classList.remove('input-error')
+        errorMessage(target, message)
+        fieldList = {
+          ...fieldList,
+          [target.name]: target.value,
+        }
+      }
+    }
+
+    if (type === 'text') {
+      let isText = regularExpressions.TEXT.test(value)
+      if (!isText) {
+        target.classList.add('input-error')
+        fieldListErrors[target.name].value = true
+        errorMessage(target, message)
+        fieldList = {
+          ...fieldList,
+          [target.name]: target.value,
+        }
+      } else {
+        fieldListErrors[target.name].value = false
+        target.classList.remove('input-error')
+        errorMessage(target, message)
+        fieldList = {
+          ...fieldList,
+          [target.name]: target.value,
+        }
+      }
+    }
+
+    if (type === 'date') {
+      if (!validarFecha(value)) {
+        target.classList.add('input-error')
+        fieldListErrors[target.name].value = true
+        errorMessage(target, message)
+        fieldList = {
+          ...fieldList,
+          [target.name]: target.value,
+        }
+      } else {
+        fieldListErrors[target.name].value = false
+        target.classList.remove('input-error')
+        errorMessage(target, message)
+        fieldList = {
+          ...fieldList,
+          [target.name]: target.value,
+        }
+      }
+    }
+  } catch (error) {
+    console.error(error)
+    return fieldList
   }
 
   return fieldList
@@ -124,7 +242,6 @@ const errorMessage = (target, message) => {
 }
 
 function validateModal({ e, btnId, modalId }) {
-  console.log(modalId)
   const modalElement = d.getElementById(modalId)
   if (e.target.matches(`#${btnId}`)) {
     if (modalElement.classList.contains('hide')) {
@@ -216,7 +333,6 @@ function confirmNotification({
       denyButtonText: 'CANCELAR',
     }).then((result) => {
       if (result.isConfirmed) {
-        console.log(result)
         notificationAction({ successFunction, successFunctionParams })
         return true
       }

@@ -38,8 +38,8 @@ function validateEmployeeForm({
   const employeeInputElement = d.querySelectorAll(`.${employeeInputClass}`)
   const employeeSelectElement = d.querySelectorAll(`.${employeeSelectClass}`)
 
-  let employeeInputElement2 = [...employeeInputElement]
-  let employeeSelectElement2 = [...employeeSelectElement]
+  let employeeInputElementCopy = [...employeeInputElement]
+  let employeeSelectElementCopy = [...employeeSelectElement]
 
   const loadEmployeeData = async () => {
     let cargos = await getJobData()
@@ -53,19 +53,19 @@ function validateEmployeeForm({
     if (id) {
       let employeeData = await getEmployeeData(id)
 
-      console.log(employeeData)
-
-      employeeInputElement2.forEach((input) => {
-        input.value = employeeData[0][input.name]
+      // console.log(employeeData)
+      employeeSelectElementCopy.forEach((select) => {
+        select.value = employeeData[0][select.name]
       })
 
-      employeeSelectElement2.forEach((select) => {
-        select.value = employeeData[0][select.name]
+      employeeInputElementCopy.forEach((input) => {
+        input.value = employeeData[0][input.name]
       })
 
       employeeData[0].id = employeeData[0].id_empleado
 
       fieldList = employeeData[0]
+      console.log(fieldList, fieldListErrors)
     }
   }
 
@@ -76,24 +76,43 @@ function validateEmployeeForm({
   setTimeout(() => {}, 3000)
 
   formElement.addEventListener('input', (e) => {
-    if (e.target.classList.contains('employee-input')) {
+    if (e.target.classList.contains(employeeInputClass)) {
       fieldList = validateInput({
-        e,
+        target: e.target,
         fieldList,
         fieldListErrors,
         type: fieldListErrors[e.target.name].type,
       })
     }
 
-    if (e.target.classList.contains('employee-select')) {
+    if (e.target.classList.contains(employeeSelectClass)) {
       fieldList = validateInput({
-        e,
+        target: e.target,
         fieldList,
         fieldListErrors,
         type: fieldListErrors[e.target.name].type,
       })
     }
-    console.log(fieldList)
+  })
+
+  formElement.addEventListener('focusout', (e) => {
+    if (e.target.classList.contains(employeeInputClass)) {
+      fieldList = validateInput({
+        target: e.target,
+        fieldList,
+        fieldListErrors,
+        type: fieldListErrors[e.target.name].type,
+      })
+    }
+
+    if (e.target.classList.contains(employeeSelectClass)) {
+      fieldList = validateInput({
+        target: e.target,
+        fieldList,
+        fieldListErrors,
+        type: fieldListErrors[e.target.name].type,
+      })
+    }
   })
 
   // selectSearchInputElement.forEach((input) => {
@@ -128,13 +147,31 @@ function validateEmployeeForm({
     }
 
     if (e.target === btnElement) {
-      if (id) return updateEmployeeData({ data: fieldList })
+      employeeSelectElementCopy.forEach((input) => {
+        validateInput({
+          target: input,
+          fieldList,
+          fieldListErrors,
+          type: fieldListErrors[input.name].type,
+        })
+      })
+      employeeInputElementCopy.forEach((input) => {
+        validateInput({
+          target: input,
+          fieldList,
+          fieldListErrors,
+          type: fieldListErrors[input.name].type,
+        })
+      })
+
       if (Object.values(fieldListErrors).some((el) => el.value)) {
         return confirmNotification({
           type: NOTIFICATIONS_TYPES.fail,
           message: 'Complete todo el formulario antes de avanzar',
         })
       }
+      delete fieldList.dependencia
+      if (id) return updateEmployeeData({ data: fieldList })
 
       // ENVÍO DE INFORMACIÓN
       sendEmployeeData({ data: fieldList })

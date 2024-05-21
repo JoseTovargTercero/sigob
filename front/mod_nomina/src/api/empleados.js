@@ -86,7 +86,7 @@ const sendEmployeeData = async ({ data }) => {
       })
       setTimeout(() => {
         location.assign('nom_empleados_tabla')
-      }, 2000)
+      }, 1500)
     }
     const json = await res.text()
     console.log(json)
@@ -99,6 +99,7 @@ const sendEmployeeData = async ({ data }) => {
 }
 
 const updateEmployeeData = async ({ data }) => {
+  console.log(data)
   try {
     const res = await fetch(updateEmployeeUrl, {
       method: 'POST',
@@ -107,6 +108,8 @@ const updateEmployeeData = async ({ data }) => {
       },
       body: JSON.stringify(data),
     })
+
+    console.log(data)
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
     else {
@@ -117,7 +120,7 @@ const updateEmployeeData = async ({ data }) => {
       })
       setTimeout(() => {
         location.assign('nom_empleados_tabla.php')
-      }, 2000)
+      }, 1500)
     }
     const json = await res.text()
     console.log(json)

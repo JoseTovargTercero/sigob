@@ -35,7 +35,7 @@ require_once '../../back/sistema_global/session.php';
                     <div class="col-sm-4">
                         <label class="form-label" for="nacionalidad">TIPO NÓMINA</label>
                         <select name="tipo_nomina" class="form-select employee-select" id="tipo_nomina">
-                            <option selected>ELEGIR...</option>
+                            <option selected value="">ELEGIR...</option>
                             <option value="1">OPCIÓN 1</option>
                             <option value="2">OPCIÓN 2</option>
                         </select>
@@ -57,11 +57,11 @@ require_once '../../back/sistema_global/session.php';
                     </div>
                     <div class="col-sm">
                         <label class="form-label" for="cedula">CÉDULA</label>
-                        <input class="employee-input form-control" type="number" name="cedula" id="cedula"
-                            placeholder="CEDULA..." />
+                        <input class="employee-input form-control" type="text" name="cedula" id="cedula"
+                            placeholder="CEDULA..." maxlength="9" />
                     </div>
                     <div class="col-sm">
-                        <label class="form-label" for="grados">ESTADO DEL TRABAJADOR</label>
+                        <label class="form-label" for="status">ESTADO DEL TRABAJADOR</label>
                         <select name="status" id="status" class="form-select employee-select">
                             <option value="">ELEGIR...</option>
                             <option value="1" selected>ACTIVO</option>
@@ -90,12 +90,6 @@ require_once '../../back/sistema_global/session.php';
                         <select class="form-select employee-select" name="cod_cargo" id="search-select-cargo">
                             <option value="" selected>ELEGIR...</option>
                         </select>
-                        <!-- <select name="cargo" class="form-select employee-select" id="cargo">
-                            <option value="activo" selected>ELEGIR...</option>
-                            <option value="inactivo">OPERADOR</option>
-                            <option value="inactivo">ADMINISTRATIVO</option>
-                            <option value="inactivo">MANTENIMIENTO</option>
-                        </select> -->
                     </div>
                     <div class="col-sm">
                         <label class="form-label" for="fecha_ingreso">FECHA DE INGRESO</label>
@@ -115,7 +109,7 @@ require_once '../../back/sistema_global/session.php';
                     <div class="col-sm">
                         <label class="form-label" for="">HIJOS</label>
                         <input class="employee-input form-control " type="number" name="hijos"
-                            placeholder="CANTIDAD DE HIJOS">
+                            placeholder="CANTIDAD DE HIJOS...">
                     </div>
                     <div class="col-sm">
                         <label class="form-label" for="discapacidades">DISCAPACIDAD</label>
@@ -131,26 +125,26 @@ require_once '../../back/sistema_global/session.php';
 
             <div class="form-group">
                 <div class="row">
-                    <div class="col-sm-3">
+                    <div class="col-sm">
                         <label class="form-label" for="banco">BANCO</label>
                         <select name="banco" class="form-select employee-select" id="banco">
                             <option value="" selected>ELEGIR...</option>
-                            <option value="VENEZUELA">VENEZUELA</option>
-                            <option value="BICENTENARIO">BICENTENARIO</option>
-                            <option value="TESORO">TESORO</option>
+                            <option value="0102">VENEZUELA</option>
+                            <option value="0175">BICENTENARIO</option>
+                            <option value="0163">TESORO</option>
                         </select>
                     </div>
                     <div class="col-sm">
                         <label class="form-label" for="cuenta_bancaria">N° DE CUENTA</label>
-                        <input class="employee-input form-control" type="number" name="cuenta_bancaria"
-                            placeholder="0000 0000 00 0000" id="cuenta_bancaria">
+                        <input class="employee-input form-control" type="text" name="cuenta_bancaria"
+                            placeholder="0000 0000 00 0000" id="cuenta_bancaria" maxlength="20">
                     </div>
-                    <div class="col-sm-3">
+                    <div class="col-sm">
                         <label class="form-label" for="tipo_cuenta">TIPO DE CUENTA</label>
                         <select name="tipo_cuenta" class="form-select employee-select" id="tipo_cuenta">
                             <option value="activo" selected>ELEGIR...</option>
-                            <option value=0>CORRIENTE</option>
-                            <option value=1>AHORRO</option>
+                            <option value="0">CORRIENTE</option>
+                            <option value="1">AHORRO</option>
 
                         </select>
                     </div>
@@ -175,8 +169,8 @@ require_once '../../back/sistema_global/session.php';
 
             <div class="form-group">
                 <label for="observacion">OBSERVACIONES</label>
-                <textarea class="form-control" name="observacion" placeholder="Observación sobre el empleado..."
-                    id="observacion" style="height: 50px"></textarea>
+                <textarea class="form-control employee-input" name="observacion"
+                    placeholder="Observación sobre el empleado..." id="observacion" style="height: 50px"></textarea>
             </div>
 
 
@@ -213,7 +207,7 @@ require_once '../../back/sistema_global/session.php';
                     </div>
 
                     <input class="employee-input form-control" type="text" name="dependencia"
-                        placeholder="0000 0000 00 0000" id="dependencia">
+                        placeholder="NUEVA DEPENDENCIA..." id="dependencia">
                     <button class="btn-form btn btn-primary" id="dependency-save-btn">GUARDAR DEPENDENCIA</button>
                 </div>
             </div>
