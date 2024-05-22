@@ -18,8 +18,11 @@ require_once '../../back/sistema_global/session.php';
 
   <div class="pc-container flex-container">
 
-    <div>
-      <h2 class="text-uppercase text-center">TABULADOR</h2>
+    <div class="form-header w-75 mx-auto">
+      <a class="btn btn-outline-info btn-sm" href="nom_tabulador_tabla"><box-icon name='arrow-back'></box-icon></a>
+      <h2 class="text-uppercase text-center">NUEVO TABULADOR</h2>
+      <box-icon name=''></box-icon>
+
     </div>
     <form class="row w-75 mx-auto form-container" id="tabulator-primary-form" autocomplete="off">
 

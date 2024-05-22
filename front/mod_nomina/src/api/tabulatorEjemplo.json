@@ -1,0 +1,34 @@
+[
+  {
+    "id": "34",
+    "nombre": "2",
+    "grados": "2",
+    "pasos": "2",
+    "aniosPasos": "2",
+    "tabulador": { "grado": "G1", "paso": "P1", "monto": "2" }
+  },
+  {
+    "id": "34",
+    "nombre": "2",
+    "grados": "2",
+    "pasos": "2",
+    "aniosPasos": "2",
+    "tabulador": { "grado": "G1", "paso": "P2", "monto": "2" }
+  },
+  {
+    "id": "34",
+    "nombre": "2",
+    "grados": "2",
+    "pasos": "2",
+    "aniosPasos": "2",
+    "tabulador": { "grado": "G2", "paso": "P1", "monto": "2" }
+  },
+  {
+    "id": "34",
+    "nombre": "2",
+    "grados": "2",
+    "pasos": "2",
+    "aniosPasos": "2",
+    "tabulador": { "grado": "G2", "paso": "P2", "monto": "0" }
+  }
+]

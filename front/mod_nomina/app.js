@@ -1,13 +1,13 @@
 import { validateEmployeeForm } from './src/controllers/empleadosForm.js'
 import { validateTabulatorForm } from './src/controllers/tabuladorForm.js'
 import { validateModal } from './src/helpers/helpers.js'
-import { loadTable } from './src/controllers/empleadosTable.js'
 const d = document
 
 const tabulatorForm = d.getElementById('tabulator-primary-form')
 const employeeForm = d.getElementById('employee-form')
 
 const employeeTableElement = d.getElementById('employee-table')
+const tabulatorTableElement = d.getElementById('tabulator-table')
 d.addEventListener('DOMContentLoaded', (e) => {
   if (tabulatorForm) {
     validateTabulatorForm({
@@ -170,9 +170,13 @@ d.addEventListener('DOMContentLoaded', (e) => {
     })
   }
 
-  if (employeeTableElement) {
-    loadTable()
-  }
+  // if (employeeTableElement) {
+  //   loadTable()
+  // }
+
+  // if (tabulatorTableElement) {
+  //   loadTabulatorTable()
+  // }
 })
 
 d.addEventListener('click', (e) => {

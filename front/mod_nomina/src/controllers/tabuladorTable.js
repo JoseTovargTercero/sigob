@@ -1,4 +1,5 @@
 import { deleteEmployee, getEmployeesData } from '../api/empleados.js'
+import { deleteTabulator, getTabulatorsData } from '../api/tabulator.js'
 import { employeeCard } from '../components/nom_empleado_card.js'
 import { confirmNotification, validateModal } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
@@ -31,7 +32,7 @@ const tableLanguage = {
   },
 }
 
-let employeeTable = new DataTable('#employee-table', {
+let tabulatorTable = new DataTable('#tabulator-table', {
   responsive: true,
   scrollY: 300,
   language: tableLanguage,
@@ -40,7 +41,7 @@ let employeeTable = new DataTable('#employee-table', {
     topEnd: function () {
       let toolbar = document.createElement('div')
       toolbar.innerHTML = `<a class="btn btn-primary"
-      href="nom_empleados_registrar">Registrar Personal</a>`
+      href="nom_tabulador_registrar">Añadir Tabulador</a>`
       return toolbar
     },
     topStart: { search: { placeholder: 'Buscar...' } },
@@ -48,67 +49,46 @@ let employeeTable = new DataTable('#employee-table', {
     bottomEnd: 'paging',
   },
   columns: [
-    { data: 'nombres', width: '10%' },
-    { data: 'cedula', width: '10%' },
-    { data: 'dependencia', width: '10%' },
-    { data: 'nomina', width: '10%' },
+    { data: 'nombre', width: '10%' },
+    { data: 'grados', width: '10%' },
+    { data: 'pasos', width: '10%' },
+    { data: 'aniosPasos', width: '10%' },
     { data: 'acciones', width: '10%' },
   ],
 })
 
-const loadTable = async () => {
-  employeeTable.clear().draw()
+const loadTabulatorTable = async () => {
+  tabulatorTable.clear().draw()
 
-  let empleados = await getEmployeesData()
-  let empleadosOrdenados = [...empleados].sort(
-    (a, b) => b.id_empleado - a.id_empleado
-  )
+  let tabuladores = await getTabulatorsData()
+  let tabuladoresOrdenados = [...tabuladores].sort((a, b) => b.id - a.id)
 
-  let data = empleadosOrdenados.map((empleado) => {
+  let data = tabuladoresOrdenados.map((tabulador) => {
     return {
-      nombres: empleado.nombres,
-      cedula: empleado.cedula,
-      dependencia: empleado.dependencia,
-      nomina: empleado.tipo_nomina,
+      nombre: tabulador.nombre,
+      grados: tabulador.grados,
+      pasos: tabulador.pasos,
+      aniosPasos: tabulador.aniosPasos,
       acciones: `
-      <button class="btn btn-info btn-sm btn-view" data-id="${empleado.id_empleado}">MOSTRAR</button>
-      <button class="btn btn-warning btn-sm btn-edit" data-id="${empleado.id_empleado}">EDITAR</button>
-      <button class="btn btn-danger btn-sm btn-delete" data-id="${empleado.id_empleado}">ELIMINAR</button>`,
+      <button class="btn btn-info btn-sm btn-view" data-id="${tabulador.id}">MOSTRAR</button>
+      <button class="btn btn-warning btn-sm btn-edit" data-id="${tabulador.id}">EDITAR</button>
+      <button class="btn btn-danger btn-sm btn-delete" data-id="${tabulador.id}">ELIMINAR</button>`,
     }
   })
 
-  employeeTable.rows.add(data).draw()
-
-  // employeeTable.rows.delete({
-  //   buttons: [
-  //     {
-  //       label: 'Cancel',
-  //       fn: function () {
-  //         this.close()
-  //       },
-  //     },
-  //     'Delete',
-  //   ],
-  // })
+  tabulatorTable.rows.add(data).draw()
 }
-
-// var filteredRows = table.rows(function (idx, data, node) {
-//   // Aquí define tu criterio de filtrado
-//   return data.nombre === 'Juan'; // Por ejemplo, eliminar filas con el nombre 'Juan'
-// });
-
-// filteredRows.remove().draw();
 
 export const confirmDelete = async ({ id, row }) => {
   let userConfirm = await confirmNotification({
     type: NOTIFICATIONS_TYPES.delete,
-    successFunction: deleteEmployee,
+    successFunction: deleteTabulator,
     successFunctionParams: id,
   })
 
   // ELIMINAR FILA DE LA TABLA CON LA API DE DATATABLES
   if (userConfirm) {
-    let filteredRows = employeeTable.rows(function (idx, data, node) {
+    let filteredRows = tabulatorTable.rows(function (idx, data, node) {
       return node === row
     })
     filteredRows.remove().draw()
@@ -119,23 +99,23 @@ d.addEventListener('click', (e) => {
   if (e.target.classList.contains('btn-delete')) {
     let fila = e.target.closest('tr')
     confirmDelete({ id: e.target.dataset.id, row: fila })
-    employeeTable.draw()
+    tabulatorTable.draw()
   }
 
   if (e.target.classList.contains('btn-edit')) {
-    w.location.assign(`nom_empleados_registrar.php?id=${e.target.dataset.id}`)
+    w.location.assign(`nom_tabulador_registrar.php?id=${e.target.dataset.id}`)
   }
 
-  if (e.target.classList.contains('btn-view')) {
-    employeeCard({
-      id: e.target.dataset.id,
-      elementToInsert: 'employee-table-view',
-    })
-  }
+  // if (e.target.classList.contains('btn-view')) {
+  //   employeeCard({
+  //     id: e.target.dataset.id,
+  //     elementToInsert: 'employee-table-view',
+  //   })
+  // }
 
-  if (e.target.id === 'btn-close-employee-card') {
-    d.getElementById('modal-employee').remove()
-  }
+  //   if (e.target.id === 'btn-close-employee-card') {
+  //     d.getElementById('modal-employee').remove()
+  //   }
 })
 
-loadTable()
+loadTabulatorTable()

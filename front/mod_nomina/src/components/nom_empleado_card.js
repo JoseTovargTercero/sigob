@@ -69,6 +69,28 @@ export async function employeeCard({ id, elementToInsert }) {
     return dependencias.filter((el) => el.id == dependencia)[0].name
   }
 
+  const calcularAniosLaborales = (fechaIngreso, otrosAnios) => {
+    // Crear objetos Date para la fecha de ingreso y la fecha actual
+    let fechaIngresoObj = new Date(fechaIngreso)
+    let fechaActual = new Date()
+
+    // Calcular la diferencia en milisegundos entre las dos fechas
+    let diferenciaMilisegundos = fechaActual - fechaIngresoObj
+
+    // Convertir la diferencia de milisegundos a años y meses
+    let aniosDiferencia = Math.floor(diferenciaMilisegundos / 31536000000) // 1000 * 60 * 60 * 24 * 365.25
+    let mesesDiferencia = Math.floor(
+      (diferenciaMilisegundos % 31536000000) / 2628000000
+    ) // 1000 * 60 * 60 * 24 * 30.44
+
+    // Generar el texto de salida
+    let textoSalida = `${
+      aniosDiferencia + otrosAnios
+    } años y ${mesesDiferencia} meses.`
+
+    return textoSalida
+  }
+
   let employeeCardElement = `<div class='modal-window slide-up-animation' id="modal-employee">
   <div class='modal-box card w-90 h-80 overflow-auto' >
     <div class="row">
@@ -85,7 +107,7 @@ export async function employeeCard({ id, elementToInsert }) {
         <div class='col'>
           <h3>${nombres}</h3>
           <p>Cargo: ${await getCargo()}</p>
-          <p>Fecha de Ingreso:${fecha_ingreso}</p>
+          <p>Fecha de Ingreso: ${fecha_ingreso}</p>
           <p>Cédula: ${cedula}</p>
           <p>Nacionalidad: ${
             nacionalidad === 'V' ? 'Venezolano' : 'Extranjero'
@@ -96,7 +118,6 @@ export async function employeeCard({ id, elementToInsert }) {
           <p>Hijos: ${hijos} hijo/as</p>
           <p>Educación: ${await getIntrusccionAcademica()} </p>
           <p>Discapacidad: ${discapacidades === 0 ? 'No posee' : 'Si posee'}</p>
-          <p>Teléfono: Teléfono del Empleado</p>
           <!-- Agregar más campos --> 
         </div>
       </div>
@@ -104,7 +125,10 @@ export async function employeeCard({ id, elementToInsert }) {
         
         <div class='col-md-6'>
           <h4>Información Laboral</h4>
-          <p>Experiencia laboral: ${otros_años}</p>
+          <p>Experiencia laboral: ${calcularAniosLaborales(
+            fecha_ingreso,
+            otros_años
+          )}</p>
           <p>Dependencia laboral: ${dependencia}</p>
           <p>Banco: ${banco} - ${
     tipo_cuenta === 0 ? 'Correiente' : 'Ahorro'

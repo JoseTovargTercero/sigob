@@ -1,4 +1,4 @@
-import { sendTabulatorData } from '../api/tabulator.js'
+import { getTabulatorData, sendTabulatorData } from '../api/tabulator.js'
 import {
   confirmNotification,
   validateInput,
@@ -10,7 +10,10 @@ import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 const d = document
 const w = window
 
-function validateTabulatorForm({
+const urlParameters = new URLSearchParams(w.location.search)
+const id = urlParameters.get('id')
+
+async function validateTabulatorForm({
   formId,
   secondaryFormId,
   tabulatorInputClass,
@@ -29,10 +32,29 @@ function validateTabulatorForm({
   const btnElement = d.getElementById(btnId)
   const btnSaveElement = d.getElementById(btnSaveId)
 
+  const tabulatorInputElement = d.querySelectorAll(`.${tabulatorInputClass}`)
+  const tabulatorInputElementCopy = [...tabulatorInputElement]
+
+  if (id) {
+    let tabulatorData = await getTabulatorData(id)
+
+    console.log(tabulatorData)
+
+    tabulatorInputElementCopy.forEach((input) => {
+      input.value = tabulatorData[0][input.name]
+    })
+
+    fieldList = tabulatorData[0]
+    fieldList.tabulador = tabulatorData
+    console.log(fieldList, fieldListErrors)
+  }
+
   formElement.addEventListener('submit', (e) => {
     e.preventDefault()
   })
   formElementSecondary.addEventListener('submit', (e) => e.preventDefault())
+
+  // VALIDAR INPUTS
 
   formElement.addEventListener('input', (e) => {
     if (e.target.classList.contains(tabulatorInputClass)) {
@@ -60,10 +82,22 @@ function validateTabulatorForm({
       validateInput({ target: e.target, type: 'matrixCell' })
   })
 
+  // VALIDAR ACCIONES DEL FORMULARIO
+
   d.addEventListener('click', (e) => {
     // PRIMER FORMULARIO
     if (e.target === btnElement) {
       // Si hay errores en el primer formulario, no continuar
+
+      tabulatorInputElementCopy.forEach((input) => {
+        validateInput({
+          fieldList,
+          fieldListErrors,
+          target: input,
+          type: fieldListErrors[input.name].type,
+        })
+      })
+
       if (Object.values(fieldListErrors).some((el) => el.value)) {
         confirmNotification({
           type: NOTIFICATIONS_TYPES.fail,
@@ -84,6 +118,7 @@ function validateTabulatorForm({
         matrixRowClass,
         matrixCellClass,
         matrixInputsClass,
+        tabulador: fieldList.tabulador,
       })
     }
 
@@ -161,9 +196,10 @@ function generateMatrix({
 }
 
 function generateMatrixData({ fieldList, matrixInputsClass }) {
-  const inputsElements = d.querySelectorAll(`.${matrixInputsClass}`)
+  const matrixInputsElement = d.querySelectorAll(`.${matrixInputsClass}`)
+  const matrixInputsElementCopy = [...matrixInputsElement]
   if (
-    [...inputsElements].some(
+    matrixInputsElementCopy.some(
       (el) =>
         el.value <= 0 ||
         el.value === '' ||
@@ -175,10 +211,15 @@ function generateMatrixData({ fieldList, matrixInputsClass }) {
       message: 'Complete el tabulario correctamente',
       // successFunction: location.reload(),
     })
+
+    matrixInputsElementCopy.forEach((input) => {
+      validateInput({ target: input, type: 'matrixCell' })
+    })
+
     return
   }
 
-  const tabulatorData = [...inputsElements].map((el) => {
+  const tabulatorData = matrixInputsElementCopy.map((el) => {
     let grado = `G${el.dataset.grado}`
     let paso = `P${el.dataset.paso}`
     let value = Number(el.value)

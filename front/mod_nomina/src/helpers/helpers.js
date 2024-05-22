@@ -5,10 +5,7 @@ const d = document
 
 function validateInput({ target, fieldList = {}, fieldListErrors = {}, type }) {
   let value = target.value
-  let message = fieldListErrors[target.name].message
-    ? fieldListErrors[target.name].message
-    : 'Contenido inválido'
-  let errorValue = fieldListErrors[target.name].value
+
   try {
     if (type === 'matrixCell') {
       let isFloat = regularExpressions.FLOAT.test(value)
@@ -19,6 +16,10 @@ function validateInput({ target, fieldList = {}, fieldListErrors = {}, type }) {
         return target.classList.remove('input-error')
       }
     }
+    let message = fieldListErrors[target.name].message
+      ? fieldListErrors[target.name].message
+      : 'Contenido inválido'
+    let errorValue = fieldListErrors[target.name].value
 
     // VALIDAR QUE EL INPUT NO ESTÉ VACÍO
     if (!target.checkValidity() || value === '') {

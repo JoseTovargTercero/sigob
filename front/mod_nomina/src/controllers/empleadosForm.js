@@ -73,8 +73,6 @@ function validateEmployeeForm({
 
   formElement.addEventListener('submit', (e) => e.preventDefault())
 
-  setTimeout(() => {}, 3000)
-
   formElement.addEventListener('input', (e) => {
     if (e.target.classList.contains(employeeInputClass)) {
       fieldList = validateInput({
