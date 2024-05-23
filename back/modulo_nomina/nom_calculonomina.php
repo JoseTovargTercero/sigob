@@ -49,68 +49,159 @@ function datosEmpleados($conexion) {
     }
 }
 
+/// Función para obtener el valor de un concepto según su tipo de cálculo
+function obtenerValorConcepto($conexion, $nom_concepto) {
+    $sql = "SELECT tipo_calculo, valor FROM conceptos WHERE nom_concepto = ?";
+    $stmt = $conexion->prepare($sql);
+    $stmt->bind_param("s", $nom_concepto);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $tipo_calculo = $row["tipo_calculo"];
+        $valor = $row["valor"];
+
+        // Calcular valor según el tipo de cálculo
+        switch ($tipo_calculo) {
+            case 1:
+                return $valor;
+            case 2:
+                return $valor + 10;
+            case 3:
+                return $valor * 1.2;
+            case 4:
+                return $valor - 5;
+            case 5:
+                return $valor / 2;
+            case 6:
+                return $valor * 2;
+            default:
+                echo "Tipo de cálculo no reconocido.";
+                return 0;
+        }
+    } else {
+        echo "No se encontró el concepto.";
+        return 0;
+    }
+}
+
+// Función para calcular la prima por profesionales
+function calcularPrimaPorProfesionales($conexion) {
+    return obtenerValorConcepto($conexion, "PRIMA POR PROFESIONALES");
+}
+
+// Función para calcular la prima por antigüedad
+function calcularPrimaPorAntiguedad($conexion) {
+    return obtenerValorConcepto($conexion, "PRIMA POR ANTIGUEDAD EMPLEADOS");
+}
+
+// Función para calcular la prima por transporte
+function calcularPrimaPorTransporte($conexion) {
+    return obtenerValorConcepto($conexion, "PRIMA POR TRANSPORTE");
+}
+
+// Función para calcular la prima por escalafón
+function calcularPrimaPorEscalafon($conexion) {
+    return obtenerValorConcepto($conexion, "PRIMA POR ESCALAFON");
+}
+
+// Función para calcular la prima por frontera
+function calcularPrimaPorFrontera($conexion) {
+    return obtenerValorConcepto($conexion, "PRIMA POR FRONTERA");
+}
+
+// Función para calcular la prima por hijos
+function calcularPrimaPorHijos($conexion) {
+    return obtenerValorConcepto($conexion, "PRIMA POR HIJO EMPLEADOS");
+}
+function calcularPrimaDiscapacidad($conexion) {
+    return obtenerValorConcepto($conexion, "CONTRIBUCION POR DISCAPACIDAD");
+}
+function calcularPrimaBeca($conexion) {
+    return obtenerValorConcepto($conexion, "PAGO DE BECA");
+}
+function calcularPrimaSalud($conexion) {
+    return obtenerValorConcepto($conexion, "PRIMA P/DED AL S/PUBLICO UNICO DE SALUD");
+}
+function calcularPrimaAntiguedadEspecial($conexion) {
+    return obtenerValorConcepto($conexion, "PRIMA POR ANTIGUEDAD (ESPECIAL)");
+}
+function calcularDeduccionSSO($conexion) {
+    return obtenerValorConcepto($conexion, "S. S. O");
+}
+function calcularDeduccionRPE($conexion) {
+    return obtenerValorConcepto($conexion, "RPE");
+}
+function calcularDeduccionAPSSO($conexion) {
+    return obtenerValorConcepto($conexion, "A/P S.S.O");
+}
+function calcularDeduccionAPRPE($conexion) {
+    return obtenerValorConcepto($conexion, "A/P RPE");
+}
+
 // Función para calcular la nómina
 function calcularNomina($conexion, $empleado) {
     // Calculo del salario base
     $salarioBase = calculoSalarioBase($conexion, $empleado);
 
-    // Obtener instrucción académica
-    $instruccionAcademica2 = buscarProfesiones($conexion, $empleado['instruccion_academica']);
-    $primaProfesion = round(($salarioBase * $instruccionAcademica2['porcentaje'])/100);
+    // Obtener prima por profesionales
+    $primaProfesionales = calcularPrimaPorProfesionales($conexion);
 
-    // Calcular la prima de antigüedad
-    $primaAntiguedad = calcularPrimaAntiguedad($conexion, $empleado);
-    $primaAntiguedad2 = round(($salarioBase * $primaAntiguedad)/100);
+    // Calcular la prima por antigüedad
+    $primaAntiguedad = calcularPrimaPorAntiguedad($conexion);
 
-    // Calcular cuántos lunes tiene el mes actual
-    $lunesMesActual = calcularLunesMesActual();
+    // Calcular la prima por transporte
+    $primaTransporte = calcularPrimaPorTransporte($conexion);
 
-    // Calcular la prima por hijos
-    $primaPorHijos = calcularPrimaPorHijos($empleado['hijos']);
+    // Calcular la prima por escalafón
+    $primaEscalafon = calcularPrimaPorEscalafon($conexion);
 
-    $sueldototal2 = round($salarioBase + ($primaProfesion + $primaAntiguedad2 + $primaPorHijos),2);
-    $asignaciones1 = ($primaAntiguedad2 + $primaProfesion + $primaPorHijos);
+    // Calcular la prima por frontera
+    $primaFrontera = calcularPrimaPorFrontera($conexion);
 
+    // Calcular la prima por frontera
+    $primaDiscapacidad = calcularPrimaDiscapacidad($conexion);
 
+    // Calcular la prima por frontera
+    $primaBeca = calcularPrimaBeca($conexion);
 
-    $bonovacacional = round((145/360)*($sueldototal2/30),2);
-    $aguinaldo = round((120/360)*($sueldototal2/30),2);
-    $salariointegral = round((($sueldototal2/30) + $bonovacacional + $aguinaldo)*30,2);
-      $PH = $salariointegral * 0.01;
-      $aportePH = round($salariointegral * 0.02,2);
-      $IVSS = round(((($salarioBase * 12)/52)*0.04)*$lunesMesActual,2);
-      $aporteIVSS = round(((($salarioBase * 12)/52)*0.09)*$lunesMesActual,2);
-      $RPE = round(((($salarioBase*12)/52)*0.005)*$lunesMesActual,2);
-      $aporteRPE = round(((($salarioBase*12)/52)*0.02)*$lunesMesActual,2);
-      $pensionjubilacion = round($sueldototal2 * 0.03,2);
-      $aportepension = round($sueldototal2 * 0.03,2);
-      $quincena = ($salarioBase / 30)*15;
-      $deducciones = round(($PH + $IVSS + $RPE + $pensionjubilacion)/2,2);
-      $asignaciones = ($primaAntiguedad2 + $primaProfesion + $primaPorHijos) / 2;
-      $asignaciones2 = ($primaAntiguedad2 + $primaProfesion + $primaPorHijos) / 2;
-      $sueldototal = round($quincena + $asignaciones2 - $deducciones,2);
+    // Calcular la prima por frontera
+    $primaSalud = calcularPrimaSalud($conexion);
 
+    // Calcular la prima por frontera
+    $primaAntiguedadEspecial = calcularPrimaAntiguedadEspecial($conexion);
+
+    // Calcular la prima por frontera
+    $deduccionSSO = calcularDeduccionSSO($conexion);
+    // Calcular la prima por frontera
+    $deduccionRPE = calcularDeduccionRPE($conexion);
+    // Calcular la prima por frontera
+    $deduccionAPSSO = calcularDeduccionAPSSO($conexion);
+    // Calcular la prima por frontera
+    $deduccionAPRPE = calcularDeduccionAPRPE($conexion);
+
+    // Calcular la prima por hijos solo si se especifica la cantidad de hijos
+    $primaPorHijos = calcularPrimaPorHijos($conexion) * $empleado['hijos'];
 
     echo "Empleado: " . $empleado['nombres'] . " (ID: " . $empleado['id_empleado'] . ")\n<br>";
     echo "Salario Base: $salarioBase Bs\n<br>";
-    echo "Instrucción Académica: $primaProfesion Bs\n<br>";
-    echo "Prima de Antigüedad: $primaAntiguedad2 Bs\n<br>";
-    echo "Lunes en el Mes Actual: $lunesMesActual\n<br>";
-    echo "El aporte de bonovacacional: $bonovacacional Bs\n<br>";
-    echo "El aporte de aguinaldo: $aguinaldo Bs\n<br>";
-    echo "El salario integral: $salariointegral\n<br>";
-    echo "El sueldo total es: $sueldototal2\n<br>";
-    echo "La quincena total es: $sueldototal\n<br>";
-    echo "Prima por Hijos: $primaPorHijos\n<br>";
-    echo "Bonos: $asignaciones1\n<br>";
-    echo "Deducciones: $deducciones\n<br>";
-    echo "PH: $PH\n<br>";
-    echo "aporteIVSS: $aportePH\n<br>";
-    echo "IVSS: $IVSS\n<br>";
-    echo "aporteIVSS: $aporteIVSS\n<br>";
-    echo "RPE: $RPE\n<br>";
-    echo "aporteRPE: $aporteRPE\n\n<br><br><br>";
+    echo "Prima Profesionales: $primaProfesionales Bs\n<br>";
+    echo "Prima Antigüedad: $primaAntiguedad Bs\n<br>";
+    echo "Prima de Transporte: $primaTransporte Bs\n<br>";
+    echo "Prima de Escalafón: $primaEscalafon Bs\n<br>";
+    echo "Prima de Frontera: $primaFrontera Bs\n<br>";
+    echo "Prima de discapacidades: $primaDiscapacidad Bs\n<br>";
+    echo "Prima de Beca: $primaBeca Bs\n<br>";
+    echo "Prima de Salud: $primaSalud Bs\n<br>";
+    echo "Prima de Antiguedad Especial: $primaAntiguedadEspecial Bs\n<br>";
+    echo "S.S.O: $deduccionSSO Bs\n<br>";
+    echo "RPE: $deduccionRPE Bs\n<br>";
+    echo "AP S.S.O: $deduccionAPSSO Bs\n<br>";
+    echo "AP RPE: $deduccionAPRPE Bs\n<br>";
+    echo "Prima por Hijos: $primaPorHijos Bs\n<br><br><br>";
 }
+
 
 // Función para calcular el salario base
 function calculoSalarioBase($conexion, $empleado) {
@@ -164,78 +255,10 @@ function obtenerMonto($conexion, $grado, $paso) {
     }
 }
 
-// Nueva función para buscar profesiones
-function buscarProfesiones($conexion, $id_profesion) {
-    $sql = "SELECT profesion, porcentaje FROM profesiones WHERE id_profesion = " . $id_profesion;
-    $result = $conexion->query($sql);
 
-    if ($result === false) {
-        echo "Error en la consulta: " . $conexion->error . "\n";
-        return array("profesion" => "No disponible", "porcentaje" => "No disponible");
-    }
 
-    if ($result->num_rows > 0) {
-        $row = $result->fetch_assoc();
-        return array("profesion" => $row["profesion"], "porcentaje" => $row["porcentaje"]);
-    } else {
-        return array("profesion" => "No disponible", "porcentaje" => "No disponible");
-    }
-}
 
-// Nueva función para calcular la prima de antigüedad
-function calcularPrimaAntiguedad($conexion, $empleado) {
-    $fechaIngreso = $empleado['fecha_ingreso'];
-    $otrosAños = $empleado['otros_años'];
 
-    // Calcular los años desde la fecha de ingreso hasta la fecha actual
-    $fechaIngresoDate = new DateTime($fechaIngreso);
-    $fechaActualDate = new DateTime();
-    $interval = $fechaActualDate->diff($fechaIngresoDate);
-    $añosDesdeIngreso = $interval->y;
-
-    // Sumar los años adicionales
-    $antiguedadTotal = $añosDesdeIngreso + $otrosAños;
-
-    // Consultar la tabla primantiguedad para obtener el porcentaje correspondiente
-    $sql = "SELECT porcentaje FROM primantiguedad WHERE tiempo = " . $antiguedadTotal;
-    $result = $conexion->query($sql);
-
-    if ($result === false) {
-        echo "Error en la consulta: " . $conexion->error . "\n";
-        return 0;
-    }
-
-    if ($result->num_rows > 0) {
-        $row = $result->fetch_assoc();
-        return $row["porcentaje"];
-    } else {
-        return 0; // No se encontró un porcentaje correspondiente, devolver 0
-    }
-}
-
-// Nueva función para calcular cuántos lunes tiene el mes actual
-function calcularLunesMesActual() {
-    $mes = date('m');
-    $ano = date('Y');
-    $lunes = 0;
-    $dia = 1;
-    $maximoDias = cal_days_in_month(CAL_GREGORIAN, $mes, $ano);
-
-    while ($dia <= $maximoDias) {
-        $diaSemana = date('N', strtotime("$ano-$mes-$dia"));
-        if ($diaSemana == 1) {
-            $lunes++;
-        }
-        $dia++;
-    }
-    return $lunes;
-}
-
-// Nueva función para calcular la prima por hijos
-function calcularPrimaPorHijos($cantidadHijos) {
-    $montoPorHijo = 12.50;
-    return $cantidadHijos * $montoPorHijo;
-}
 
 // Llamada a la función principal
 datosEmpleados($conexion);

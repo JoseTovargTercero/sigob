@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 22-05-2024 a las 18:49:39
+-- Tiempo de generación: 23-05-2024 a las 05:03:51
 -- Versión del servidor: 10.4.27-MariaDB
 -- Versión de PHP: 7.4.33
 
@@ -524,7 +524,20 @@ CREATE TABLE `conceptos` (
 --
 
 INSERT INTO `conceptos` (`id`, `nom_concepto`, `cod_partida`, `tipo_concepto`, `tipo_calculo`, `valor`) VALUES
-(21, 'CONTRIBUCION POR DISCAPACIDAD', '4.01.03.40.00', 'A', 6, '');
+(21, 'CONTRIBUCION POR DISCAPACIDAD', '4.01.03.40.00', 'A', 1, '10'),
+(24, 'PRIMA POR HIJO EMPLEADOS', '4.01.03.04.00', 'A', 1, '12.50'),
+(25, 'PRIMA POR TRANSPORTE', '4.01.04.09.00', 'A', 1, '50'),
+(26, 'PRIMA POR ANTIGUEDAD EMPLEADOS', '4.01.03.09.00', 'A', 1, '10'),
+(27, 'PRIMA POR ESCALAFON', '4.01.02.00.00', 'A', 1, '5'),
+(28, 'PRIMA POR FRONTERA', '4.01.03.30.00', 'A', 1, '5'),
+(29, 'PRIMA POR PROFESIONALES', '4.01.03.08.00', 'A', 1, '20'),
+(30, 'S. S. O', '3.12.02.01.00', 'D', 1, '5'),
+(31, 'RPE', '3.12.02.10.00', 'D', 1, '5'),
+(32, 'A/P S.S.O', '4.01.06.25.00', 'D', 1, '5'),
+(33, 'A/P RPE', '4.01.06.19.00', 'D', 1, '5'),
+(34, 'PAGO DE BECA', '4.01.07.02.00', 'A', 1, '10'),
+(35, 'PRIMA P/DED AL S/PUBLICO UNICO DE SALUD', '4.01.07.08.00', 'A', 1, '5'),
+(36, 'PRIMA POR ANTIGUEDAD (ESPECIAL)', '4.01.03.09.00', 'A', 1, '10');
 
 -- --------------------------------------------------------
 
@@ -1311,7 +1324,7 @@ ALTER TABLE `cargos_grados`
 -- AUTO_INCREMENT de la tabla `conceptos`
 --
 ALTER TABLE `conceptos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- AUTO_INCREMENT de la tabla `conceptos_formulacion`
