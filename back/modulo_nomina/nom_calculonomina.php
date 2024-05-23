@@ -3,13 +3,13 @@
 require_once '../sistema_global/conexion.php';
 require_once '../sistema_global/session.php';
 
-// Verificar conexión
-if ($conexion->connect_error) {
-    die("Conexión fallida: " . $conexion->connect_error);
-}
-
+$api_key = "4bfc66a740d312008475dded";
+    $url = "https://v6.exchangerate-api.com/v6/{$api_key}/pair/USD/VES";
+    $response = file_get_contents($url);
+    $data = json_decode($response, true);
+    $precio_dolar = $data['conversion_rate'];            
 // Función para obtener datos de los empleados
-function datosEmpleados($conexion) {
+function datosEmpleados($conexion,$precio_dolar) {
     $sql = "SELECT id, cedula, nombres, tipo_nomina, id_dependencia, nacionalidad, cod_empleado, fecha_ingreso, otros_años, status, observacion, cod_cargo, banco, cuenta_bancaria, hijos, instruccion_academica, discapacidades, tipo_cuenta FROM empleados";
     
     $result = $conexion->query($sql);
@@ -42,15 +42,15 @@ function datosEmpleados($conexion) {
                 "tipo_cuenta" => $row["tipo_cuenta"]
             );
             // Llamada a la función calcularNomina
-            calcularNomina($conexion, $empleado);
+            calcularNomina($conexion, $empleado,$precio_dolar);
         }
     } else {
         echo "0 resultados";
     }
 }
 
-/// Función para obtener el valor de un concepto según su tipo de cálculo
-function obtenerValorConcepto($conexion, $nom_concepto) {
+// Función para obtener el valor de un concepto según su tipo de cálculo
+function obtenerValorConcepto($conexion, $nom_concepto, $salarioBase, $precio_dolar, $salarioIntegral) {
     $sql = "SELECT tipo_calculo, valor FROM conceptos WHERE nom_concepto = ?";
     $stmt = $conexion->prepare($sql);
     $stmt->bind_param("s", $nom_concepto);
@@ -67,11 +67,21 @@ function obtenerValorConcepto($conexion, $nom_concepto) {
             case 1:
                 return $valor;
             case 2:
-                return $valor + 10;
+                return round($precio_dolar * $valor, 2);
             case 3:
-                return $valor * 1.2;
+                if ($valor < 100) {
+                    return round($salarioBase * ($valor / 100), 2);
+                } else {
+                    echo "El valor del porcentaje no es válido.";
+                    return 0;
+                }
             case 4:
-                return $valor - 5;
+                if ($valor < 100) {
+                    return round($salarioIntegral * ($valor / 100), 2);
+                } else {
+                    echo "El valor del porcentaje no es válido.";
+                    return 0;
+                }
             case 5:
                 return $valor / 2;
             case 6:
@@ -86,104 +96,100 @@ function obtenerValorConcepto($conexion, $nom_concepto) {
     }
 }
 
-// Función para calcular la prima por profesionales
-function calcularPrimaPorProfesionales($conexion) {
-    return obtenerValorConcepto($conexion, "PRIMA POR PROFESIONALES");
+// Modificar las funciones de cálculo de primas y deducciones para aceptar salario integral
+function calcularPrimaPorProfesionales($conexion, $salarioBase, $precio_dolar, $salarioIntegral) {
+    return obtenerValorConcepto($conexion, "PRIMA POR PROFESIONALES", $salarioBase, $precio_dolar, $salarioIntegral);
 }
 
-// Función para calcular la prima por antigüedad
-function calcularPrimaPorAntiguedad($conexion) {
-    return obtenerValorConcepto($conexion, "PRIMA POR ANTIGUEDAD EMPLEADOS");
+function calcularPrimaPorAntiguedad($conexion, $salarioBase, $precio_dolar, $salarioIntegral) {
+    return obtenerValorConcepto($conexion, "PRIMA POR ANTIGUEDAD EMPLEADOS", $salarioBase, $precio_dolar, $salarioIntegral);
 }
 
-// Función para calcular la prima por transporte
-function calcularPrimaPorTransporte($conexion) {
-    return obtenerValorConcepto($conexion, "PRIMA POR TRANSPORTE");
+function calcularPrimaPorTransporte($conexion, $salarioBase, $precio_dolar, $salarioIntegral) {
+    return obtenerValorConcepto($conexion, "PRIMA POR TRANSPORTE", $salarioBase, $precio_dolar, $salarioIntegral);
 }
 
-// Función para calcular la prima por escalafón
-function calcularPrimaPorEscalafon($conexion) {
-    return obtenerValorConcepto($conexion, "PRIMA POR ESCALAFON");
+function calcularPrimaPorEscalafon($conexion, $salarioBase, $precio_dolar, $salarioIntegral) {
+    return obtenerValorConcepto($conexion, "PRIMA POR ESCALAFON", $salarioBase, $precio_dolar, $salarioIntegral);
 }
 
-// Función para calcular la prima por frontera
-function calcularPrimaPorFrontera($conexion) {
-    return obtenerValorConcepto($conexion, "PRIMA POR FRONTERA");
+function calcularPrimaPorFrontera($conexion, $salarioBase, $precio_dolar, $salarioIntegral) {
+    return obtenerValorConcepto($conexion, "PRIMA POR FRONTERA", $salarioBase, $precio_dolar, $salarioIntegral);
 }
 
-// Función para calcular la prima por hijos
-function calcularPrimaPorHijos($conexion) {
-    return obtenerValorConcepto($conexion, "PRIMA POR HIJO EMPLEADOS");
+function calcularPrimaPorHijos($conexion, $salarioBase, $precio_dolar, $salarioIntegral) {
+    return obtenerValorConcepto($conexion, "PRIMA POR HIJO EMPLEADOS", $salarioBase, $precio_dolar, $salarioIntegral);
 }
-function calcularPrimaDiscapacidad($conexion) {
-    return obtenerValorConcepto($conexion, "CONTRIBUCION POR DISCAPACIDAD");
+
+function calcularPrimaDiscapacidad($conexion, $salarioBase, $precio_dolar, $salarioIntegral) {
+    return obtenerValorConcepto($conexion, "CONTRIBUCION POR DISCAPACIDAD", $salarioBase, $precio_dolar, $salarioIntegral);
 }
-function calcularPrimaBeca($conexion) {
-    return obtenerValorConcepto($conexion, "PAGO DE BECA");
+
+function calcularPrimaBeca($conexion, $salarioBase, $precio_dolar, $salarioIntegral) {
+    return obtenerValorConcepto($conexion, "PAGO DE BECA", $salarioBase, $precio_dolar, $salarioIntegral);
 }
-function calcularPrimaSalud($conexion) {
-    return obtenerValorConcepto($conexion, "PRIMA P/DED AL S/PUBLICO UNICO DE SALUD");
+
+function calcularPrimaSalud($conexion, $salarioBase, $precio_dolar, $salarioIntegral) {
+    return obtenerValorConcepto($conexion, "PRIMA P/DED AL S/PUBLICO UNICO DE SALUD", $salarioBase, $precio_dolar, $salarioIntegral);
 }
-function calcularPrimaAntiguedadEspecial($conexion) {
-    return obtenerValorConcepto($conexion, "PRIMA POR ANTIGUEDAD (ESPECIAL)");
+
+function calcularPrimaAntiguedadEspecial($conexion, $salarioBase, $precio_dolar, $salarioIntegral) {
+    return obtenerValorConcepto($conexion, "PRIMA POR ANTIGUEDAD (ESPECIAL)", $salarioBase, $precio_dolar, $salarioIntegral);
 }
-function calcularDeduccionSSO($conexion) {
-    return obtenerValorConcepto($conexion, "S. S. O");
+
+function calcularDeduccionSSO($conexion, $salarioBase, $precio_dolar, $salarioIntegral) {
+    return obtenerValorConcepto($conexion, "S. S. O", $salarioBase, $precio_dolar, $salarioIntegral);
 }
-function calcularDeduccionRPE($conexion) {
-    return obtenerValorConcepto($conexion, "RPE");
+
+function calcularDeduccionRPE($conexion, $salarioBase, $precio_dolar, $salarioIntegral) {
+    return obtenerValorConcepto($conexion, "RPE", $salarioBase, $precio_dolar, $salarioIntegral);
 }
-function calcularDeduccionAPSSO($conexion) {
-    return obtenerValorConcepto($conexion, "A/P S.S.O");
+
+function calcularDeduccionAPSSO($conexion, $salarioBase, $precio_dolar, $salarioIntegral) {
+    return obtenerValorConcepto($conexion, "A/P S.S.O", $salarioBase, $precio_dolar, $salarioIntegral);
 }
-function calcularDeduccionAPRPE($conexion) {
-    return obtenerValorConcepto($conexion, "A/P RPE");
+
+function calcularDeduccionAPRPE($conexion, $salarioBase, $precio_dolar, $salarioIntegral) {
+    return obtenerValorConcepto($conexion, "A/P RPE", $salarioBase, $precio_dolar, $salarioIntegral);
 }
 
 // Función para calcular la nómina
-function calcularNomina($conexion, $empleado) {
+function calcularNomina($conexion, $empleado, $precio_dolar) {
+
+
     // Calculo del salario base
     $salarioBase = calculoSalarioBase($conexion, $empleado);
 
-    // Obtener prima por profesionales
-    $primaProfesionales = calcularPrimaPorProfesionales($conexion);
+    // Calcular el salario integral inicialmente sin las deducciones
+    $primaProfesionales = calcularPrimaPorProfesionales($conexion, $salarioBase, $precio_dolar, $salarioBase);
+    $primaAntiguedad = calcularPrimaPorAntiguedad($conexion, $salarioBase, $precio_dolar, $salarioBase);
+    $primaTransporte = calcularPrimaPorTransporte($conexion, $salarioBase, $precio_dolar, $salarioBase);
+    $primaEscalafon = calcularPrimaPorEscalafon($conexion, $salarioBase, $precio_dolar, $salarioBase);
+    $primaFrontera = calcularPrimaPorFrontera($conexion, $salarioBase, $precio_dolar, $salarioBase);
+    $primaDiscapacidad = calcularPrimaDiscapacidad($conexion, $salarioBase, $precio_dolar, $salarioBase);
+    $primaBeca = calcularPrimaBeca($conexion, $salarioBase, $precio_dolar, $salarioBase);
+    $primaSalud = calcularPrimaSalud($conexion, $salarioBase, $precio_dolar, $salarioBase);
+    $primaAntiguedadEspecial = calcularPrimaAntiguedadEspecial($conexion, $salarioBase, $precio_dolar, $salarioBase);
+    $primaPorHijos = calcularPrimaPorHijos($conexion, $salarioBase, $precio_dolar, $salarioBase) * $empleado['hijos'];
 
-    // Calcular la prima por antigüedad
-    $primaAntiguedad = calcularPrimaPorAntiguedad($conexion);
+    // Calcular el salario integral provisionalmente
+    $salarioIntegral = ($salarioBase + $primaProfesionales + $primaAntiguedad + $primaTransporte +
+        $primaEscalafon + $primaFrontera + $primaDiscapacidad + $primaBeca +
+        $primaSalud + $primaAntiguedadEspecial + $primaPorHijos);
 
-    // Calcular la prima por transporte
-    $primaTransporte = calcularPrimaPorTransporte($conexion);
+    // Ahora calcular las deducciones con el salario integral provisional
+    $deduccionSSO = calcularDeduccionSSO($conexion, $salarioBase, $precio_dolar, $salarioIntegral);
+    $deduccionRPE = calcularDeduccionRPE($conexion, $salarioBase, $precio_dolar, $salarioIntegral);
+    $deduccionAPSSO = calcularDeduccionAPSSO($conexion, $salarioBase, $precio_dolar, $salarioIntegral);
+    $deduccionAPRPE = calcularDeduccionAPRPE($conexion, $salarioBase, $precio_dolar, $salarioIntegral);
 
-    // Calcular la prima por escalafón
-    $primaEscalafon = calcularPrimaPorEscalafon($conexion);
+    // Calcular el salario integral definitivo
+    $salarioTotal = $salarioBase + $primaProfesionales + $primaAntiguedad + $primaTransporte +
+        $primaEscalafon + $primaFrontera + $primaDiscapacidad + $primaBeca +
+        $primaSalud + $primaAntiguedadEspecial + $primaPorHijos - ($deduccionSSO + $deduccionRPE + $deduccionAPSSO + $deduccionAPRPE);
+    $salarioQuincena = ($salarioTotal/30) * 15;
 
-    // Calcular la prima por frontera
-    $primaFrontera = calcularPrimaPorFrontera($conexion);
-
-    // Calcular la prima por frontera
-    $primaDiscapacidad = calcularPrimaDiscapacidad($conexion);
-
-    // Calcular la prima por frontera
-    $primaBeca = calcularPrimaBeca($conexion);
-
-    // Calcular la prima por frontera
-    $primaSalud = calcularPrimaSalud($conexion);
-
-    // Calcular la prima por frontera
-    $primaAntiguedadEspecial = calcularPrimaAntiguedadEspecial($conexion);
-
-    // Calcular la prima por frontera
-    $deduccionSSO = calcularDeduccionSSO($conexion);
-    // Calcular la prima por frontera
-    $deduccionRPE = calcularDeduccionRPE($conexion);
-    // Calcular la prima por frontera
-    $deduccionAPSSO = calcularDeduccionAPSSO($conexion);
-    // Calcular la prima por frontera
-    $deduccionAPRPE = calcularDeduccionAPRPE($conexion);
-
-    // Calcular la prima por hijos solo si se especifica la cantidad de hijos
-    $primaPorHijos = calcularPrimaPorHijos($conexion) * $empleado['hijos'];
-
+    // Mostrar los detalles de la nómina
     echo "Empleado: " . $empleado['nombres'] . " (ID: " . $empleado['id_empleado'] . ")\n<br>";
     echo "Salario Base: $salarioBase Bs\n<br>";
     echo "Prima Profesionales: $primaProfesionales Bs\n<br>";
@@ -191,7 +197,7 @@ function calcularNomina($conexion, $empleado) {
     echo "Prima de Transporte: $primaTransporte Bs\n<br>";
     echo "Prima de Escalafón: $primaEscalafon Bs\n<br>";
     echo "Prima de Frontera: $primaFrontera Bs\n<br>";
-    echo "Prima de discapacidades: $primaDiscapacidad Bs\n<br>";
+    echo "Prima de Discapacidad: $primaDiscapacidad Bs\n<br>";
     echo "Prima de Beca: $primaBeca Bs\n<br>";
     echo "Prima de Salud: $primaSalud Bs\n<br>";
     echo "Prima de Antiguedad Especial: $primaAntiguedadEspecial Bs\n<br>";
@@ -199,8 +205,18 @@ function calcularNomina($conexion, $empleado) {
     echo "RPE: $deduccionRPE Bs\n<br>";
     echo "AP S.S.O: $deduccionAPSSO Bs\n<br>";
     echo "AP RPE: $deduccionAPRPE Bs\n<br>";
-    echo "Prima por Hijos: $primaPorHijos Bs\n<br><br><br>";
+    echo "Prima por Hijos: $primaPorHijos Bs\n<br>";
+    echo "Salario Total: $salarioTotal Bs\n<br>";
+    echo "Salario Quincena: $salarioQuincena Bs\n<br>";
+    echo "Salario Integral: $salarioIntegral Bs\n<br><br><br>";
+
+
+    // Retornar el salario integral
+    return $salarioIntegral;
 }
+
+
+
 
 
 // Función para calcular el salario base
@@ -261,5 +277,5 @@ function obtenerMonto($conexion, $grado, $paso) {
 
 
 // Llamada a la función principal
-datosEmpleados($conexion);
+datosEmpleados($conexion,$precio_dolar);
 ?>
