@@ -45,7 +45,10 @@ async function validateTabulatorForm({
     })
 
     fieldList = tabulatorData[0]
-    fieldList.tabulador = tabulatorData
+    fieldList.tabulador = tabulatorData.map((data) => {
+      let tdata = data.tabulador
+      return [tdata.grado, tdata.paso, tdata.monto]
+    })
     console.log(fieldList, fieldListErrors)
   }
 
@@ -136,14 +139,30 @@ async function validateTabulatorForm({
   // Funciones
 }
 
-function generateCellContent({ row, col, matrixInputsClass }) {
+function generateCellContent({ row, col, matrixInputsClass, monto }) {
   if (col === 0 && row === 0)
     return `<span class="tabulator-matrix-cell tabulator-matrix-span">INICIO</span>`
   if (col === 0)
     return `<span class="tabulator-matrix-cell tabulator-matrix-span">GRADO ${row}</span>`
   if (row === 0)
     return `<span class="tabulator-matrix-cell tabulator-matrix-span">PASO${col}</span>`
+
   let inputText = `G${row} - P${col}`
+  let cellValue = 0
+  if (monto) {
+    return `<input
+  class="${matrixInputsClass} form-control form-control-sm"
+  type="number"
+  step="0.01"
+  min="0.00"
+  placeholder="${inputText}"
+  name="g${row}p${col}"
+  data-grado="${row}"
+  data-paso="${col}"
+  value="${monto[row + col][2]}"
+/>`
+  }
+
   return `<input
   class="${matrixInputsClass} form-control form-control-sm"
   type="number"
@@ -170,6 +189,9 @@ function generateMatrix({
 
   let rows = fieldList.grados
   let columns = fieldList.pasos
+  let tabulador = fieldList.tabulador || []
+
+  console.log(tabulador)
 
   matrixElement.style.display = 'grid'
   matrixElement.style.gridTemplateRows = `repeat(${rows + 1}, 1fr)`
@@ -181,12 +203,21 @@ function generateMatrix({
     for (let j = 0; j <= columns; j++) {
       const matrixCell = d.createElement('div')
       matrixCell.classList.add(matrixCellClass)
+      if (fieldList.tabulador.length === 0) {
+        matrixCell.innerHTML = generateCellContent({
+          row: i,
+          col: j,
+          matrixInputsClass,
+        })
+      } else {
+        matrixCell.innerHTML = generateCellContent({
+          row: i,
+          col: j,
+          matrixInputsClass,
+          monto: fieldList.tabulador,
+        })
+      }
 
-      matrixCell.innerHTML = generateCellContent({
-        row: i,
-        col: j,
-        matrixInputsClass,
-      })
       matrixRow.appendChild(matrixCell)
     }
     cellsFragment.appendChild(matrixRow)
