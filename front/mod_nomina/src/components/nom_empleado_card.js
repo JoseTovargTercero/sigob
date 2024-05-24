@@ -84,9 +84,9 @@ export async function employeeCard({ id, elementToInsert }) {
     ) // 1000 * 60 * 60 * 24 * 30.44
 
     // Generar el texto de salida
-    let textoSalida = `${
-      aniosDiferencia + otrosAnios
-    } años y ${mesesDiferencia} meses.`
+    let textoSalida = `${aniosDiferencia + otrosAnios} años ${
+      mesesDiferencia && 'y'
+    } ${mesesDiferencia || ''} meses.`
 
     return textoSalida
   }
@@ -116,8 +116,9 @@ export async function employeeCard({ id, elementToInsert }) {
               <p>Fecha de Ingreso: ${fecha_ingreso}</p>
               <p>Cédula: ${cedula}</p>
               <p>
-                Nacionalidad: $
-                {nacionalidad === 'V' ? 'Venezolano' : 'Extranjero'}
+                Nacionalidad: ${
+                  nacionalidad === 'V' ? 'Venezolano' : 'Extranjero'
+                }
               </p>
             </div>
             <div class='col-md-6'>
@@ -133,8 +134,10 @@ export async function employeeCard({ id, elementToInsert }) {
             <div class='col-md-6'>
               <h4>Información Laboral</h4>
               <p>
-                Experiencia laboral: $
-                {calcularAniosLaborales(fecha_ingreso, otros_años)}
+                Experiencia laboral: ${calcularAniosLaborales(
+                  fecha_ingreso,
+                  otros_años
+                )}
               </p>
               <p>Dependencia laboral: ${dependencia}</p>
               <p>
