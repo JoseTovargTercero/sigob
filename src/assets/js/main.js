@@ -19,6 +19,7 @@ function setVistaRegistro(param = null) {
 
 
 
+
  /**
      * Adds a condition to a textarea based on the provided field, operator, and value.
      *
@@ -26,40 +27,61 @@ function setVistaRegistro(param = null) {
      * @param {string} operador - The operator to be used in the condition.
      * @param {string} valor - The value to be used in the condition.
      */
- function addCondicion(campo, operador, valor) {
-  let t_area = document.getElementById(textarea);
 
+ const space_areas = {
+  'result-em_nomina' : 't_area-2',
+  'result' : 't_area-1',
+ }
+ 
+ function addCondicion(campo, operador, valor, div = null) {
+
+   let t_area = document.getElementById(textarea);
+   if (div != 'null') {
+    t_area = document.getElementById(space_areas[div]);
+    }
+
+
+  let areaValue = t_area.value
+  let value = valor
+
+
+  if (operador != '>' && operador != '<') {
+    value =  `'` + valor + `'`
+  }
   // verifies if t_area has text, if true, using a swal, asks if the user wants to use OR or AND before the condition, depending on the selection, adds them before
   // if it doesn't have text, adds the condition directly
-  if (t_area.value != '') {
+  if (areaValue != '' && areaValue != null) {
     Swal.fire({
       title: "Operador lógico",
       text: "¿Qué operador lógico quieres usar?",
       icon: "question",
-      showCancelButton: true,
+      showCancelButton: false,
+      showDenyButton: true,
       confirmButtonColor: "#04a9f5",
-      cancelButtonColor: "#d33",
+      denyButtonColor: "#d33",
       confirmButtonText: "AND",
-      cancelButtonText: "OR",
+      denyButtonText: "OR",
     }).then((result) => {
+
+
       if (result.isConfirmed) {
         let cursor = t_area.selectionStart;
         let text = t_area.value;
         let textBefore = text.substring(0, cursor);
         let textAfter = text.substring(cursor, text.length);
-        t_area.value = textBefore + ` AND ` + campo + operador + `'` + valor + `'` + textAfter + ` `;
+        t_area.value = textBefore + ` AND ` + campo + operador + value + textAfter + ` `;
         t_area.focus();
-        t_area.selectionStart = cursor + 5 + campo.length + operador.length + valor.length + 3;
-        t_area.selectionEnd = cursor + 5 + campo.length + operador.length + valor.length + 3;
-      } else {
+        t_area.selectionStart = cursor + 5 + campo.length + operador.length + value.length;
+        t_area.selectionEnd = cursor + 5 + campo.length + operador.length + value.length;
+      } else if (result.isDenied) {
         let cursor = t_area.selectionStart;
         let text = t_area.value;
         let textBefore = text.substring(0, cursor);
         let textAfter = text.substring(cursor, text.length);
-        t_area.value = textBefore + ` OR ` + campo + operador + `'` + valor + `'` + textAfter + ` `;
+        t_area.value = textBefore + ` OR ` + campo + operador + value + textAfter + ` `;
         t_area.focus();
-        t_area.selectionStart = cursor + 4 + campo.length + operador.length + valor.length + 3;
-        t_area.selectionEnd = cursor + 4 + campo.length + operador.length + valor.length + 3;
+        t_area.selectionStart = cursor + 4 + campo.length + operador.length + value.length;
+        t_area.selectionEnd = cursor + 4 + campo.length + operador.length + value.length;
       }
     });
 
@@ -68,10 +90,10 @@ function setVistaRegistro(param = null) {
     let text = t_area.value;
     let textBefore = text.substring(0, cursor);
     let textAfter = text.substring(cursor, text.length);
-    t_area.value = textBefore + campo + operador + `'` + valor + `'` + textAfter + ` `;
+    t_area.value = textBefore + campo + operador + value + textAfter + ` `;
     t_area.focus();
-    t_area.selectionStart = cursor + campo.length + operador.length + valor.length + 3;
-    t_area.selectionEnd = cursor + campo.length + operador.length + valor.length + 3;
+    t_area.selectionStart = cursor + campo.length + operador.length + value.length;
+    t_area.selectionEnd = cursor + campo.length + operador.length + value.length;
   }
 }
 
@@ -85,24 +107,24 @@ const booleans = {
   1: 'Si',
   0: 'No'
 }
-function setCondicionante(value) {
-  if (value == '') {
+function setCondicionante(condicionante, div = null) {
+  if (condicionante == '') {
     return
   }
-  const resultDiv = document.getElementById('result');
+  const resultDiv = div == null ? document.getElementById('result') : document.getElementById(div);
 
 
-  if (value == 'antiguedad' || value == 'antiguedad_total') {
-    resultDiv.innerHTML = `<p>` + (value == 'antiguedad' ? 'Antiguedad (desde la fecha de ingreso)' : 'Antiguedad (Sumando años anteriores)') + `:</p>`
+  if (condicionante == 'antiguedad' || condicionante == 'antiguedad_total') {
+    resultDiv.innerHTML = `<p>` + (condicionante == 'antiguedad' ? 'Antiguedad (desde la fecha de ingreso)' : 'Antiguedad (Sumando años anteriores)') + `:</p>`
 
     resultDiv.innerHTML += `<li class="list-group-item d-flex justify-content-between align-items-start">
       <div class="ms-2 me-auto">
-        <div class="fw-bold">`+value+`</div>
+        <div class="fw-bold">`+condicionante+`</div>
       </div>
-      <button onclick="addCondicion('` + value + `', '<', 'N')" type="button" class="btn btn-sm btn-info  me-2" title="Menor"><</button>
-      <button onclick="addCondicion('` + value + `', '>', 'N')" type="button" class="btn btn-sm btn-success  me-2" title="Mayor">></button>
-      <button onclick="addCondicion('` + value + `', '=', 'N')" type="button" class="btn btn-sm btn-primary  me-2" title="Igual">==</button>
-      <button onclick="addCondicion('` + value + `', '!=', 'N')" type="button" id="miBoton" class="btn btn-sm btn-danger " title="Diferente">!=</button>
+      <button onclick="addCondicion('` + condicionante + `', '<', 'N', `+div+`)" type="button" class="btn btn-sm btn-info  me-2" title="Menor"><</button>
+      <button onclick="addCondicion('` + condicionante + `', '>', 'N', `+div+`)" type="button" class="btn btn-sm btn-success  me-2" title="Mayor">></button>
+      <button onclick="addCondicion('` + condicionante + `', '=', 'N', `+div+`)" type="button" class="btn btn-sm btn-primary  me-2" title="Igual">==</button>
+      <button onclick="addCondicion('` + condicionante + `', '!=', 'N', `+div+`)" type="button" id="miBoton" class="btn btn-sm btn-danger " title="Diferente">!=</button>
     </li>`;
 
     return
@@ -115,7 +137,7 @@ function setCondicionante(value) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        columna: value
+        columna: condicionante
       })
     })
     .then(response => response.json())
@@ -126,7 +148,7 @@ function setCondicionante(value) {
 
         // toma el html del option seleccionado en el campo tipo_calculo
         let html = document.getElementById('campo_condiciona').options[document.getElementById('campo_condiciona').selectedIndex].innerHTML;
-        let option = document.getElementById('campo_condiciona').value;
+
 
         resultDiv.innerHTML = `<p>` + html + `:</p>`
 
@@ -143,10 +165,10 @@ function setCondicionante(value) {
                     <div class="ms-2 me-auto">
                       <div class="fw-bold">${val}</div>
                     </div>
-                    <button onclick="addCondicion('` + option + `', '<', '${val}')" type="button" class="btn btn-sm btn-primary  me-2" title="Menor"><</button>
-                    <button onclick="addCondicion('` + option + `', '>', '${val}')" type="button" class="btn btn-sm btn-primary  me-2" title="Mayor">></button>
-                    <button onclick="addCondicion('` + option + `', '=', '${val}')" type="button" class="btn btn-sm btn-primary  me-2" title="Igual">==</button>
-                    <button onclick="addCondicion('` + option + `', '!=', '${val}')" type="button" id="miBoton" class="btn btn-sm btn-danger " title="Diferente">!=</button>
+                    <button onclick="addCondicion('` + condicionante + `', '<', '${val}', '${div}')" type="button" class="btn btn-sm btn-primary  me-2" title="Menor"><</button>
+                    <button onclick="addCondicion('` + condicionante + `', '>', '${val}', '${div}')" type="button" class="btn btn-sm btn-primary  me-2" title="Mayor">></button>
+                    <button onclick="addCondicion('` + condicionante + `', '=', '${val}', '${div}')" type="button" class="btn btn-sm btn-primary  me-2" title="Igual">==</button>
+                    <button onclick="addCondicion('` + condicionante + `', '!=', '${val}', '${div}')" type="button" id="miBoton" class="btn btn-sm btn-danger " title="Diferente">!=</button>
                   </li>`;
 
         });

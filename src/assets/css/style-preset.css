@@ -2668,9 +2668,19 @@ div.dt-container .dt-paging .dt-paging-button{
 .w-90{
   width: 90%;
 }
+
+.mh-60{
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
 .mh-70{
   max-height: 70vh;
-    overflow-y: auto;
+  overflow-y: auto;
+}
+
+.reload-icon{
+  font-size: 20px;
 }
 
 .icon{

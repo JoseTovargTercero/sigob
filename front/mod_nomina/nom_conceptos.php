@@ -71,7 +71,6 @@ require_once '../../back/sistema_global/session.php';
 
                   <section class="section-formulado hide">
 
-
                     <div class="mb-3">
                       <label class="form-label" for="tipo_calculo_aplicado">Tipo de Calculo aplicado</label>
                       <select class="form-control" name="tipo_calculo_aplicado" id="tipo_calculo_aplicado">
@@ -80,10 +79,8 @@ require_once '../../back/sistema_global/session.php';
                         <option value="2">Monto neto indexado</option>
                         <option value="3">Porcentaje al sueldo base</option>
                         <option value="4">Porcentaje al integral</option>
-                        <option value="5">Porcentaje a N conceptos</option>
                       </select>
                     </div>
-
 
                     <div class="mb-3" id="forms"><label class="form-label">Formulación</label>
                       <div class="input-group mb-3" id="form-1">
@@ -126,7 +123,7 @@ require_once '../../back/sistema_global/session.php';
               </div>
 
               <div class="d-flex justify-content-end">
-                <button type="button" id="btn-registrar" class="btn btn-primary d-inline-flex btn-sm rounded"><box-icon class="icon" name='save'></box-icon> &nbsp; Guardar concepto</button>
+                <button type="button" id="btn-registrar" class="btn btn-primary d-inline-flex btn-sm rounded"> <i class="bx bx-dave"></i> &nbsp; Guardar concepto</button>
 
               </div>
             </div>
@@ -521,6 +518,12 @@ require_once '../../back/sistema_global/session.php';
       }
     })
 
+    /**
+     * Validates a condition by making an AJAX request to the server.
+     *
+     * @param {string} condicion - The condition to be validated.
+     * @param {string} textArea - The ID of the textarea element to be updated.
+     */
     function validarCondicion(condicion, textArea) {
       $.ajax({
         url: url_back,
@@ -529,15 +532,16 @@ require_once '../../back/sistema_global/session.php';
           validarConceptoFormulado: true,
           condicion: condicion
         },
-        success: function(response) {
-          if (response.trim() == 'prohibido') {
-            toast_s('error', 'Se detectaron palabras reservadas')
-            $('#textArea').addClass('invalidate');
-          } else if (response.trim() == 'error') {
-            toast_s('error', 'Error en la condición')
-            $('#textArea').addClass('invalidate');
+        success: function(response) { 
+          const trimmedResponse = response.trim();
+          const textAreaElement = $('#' + textArea);
+
+          if (trimmedResponse === 'prohibido' || trimmedResponse === 'error') {
+            const errorMessage = trimmedResponse === 'prohibido' ? 'Se detectaron palabras reservadas' : 'Error en la condición';
+            toast_s('error', errorMessage);
+            textAreaElement.addClass('invalidate');
           } else {
-            toast_s('success', 'Se encontraron ' + response + ' coincidencias')
+            toast_s('success', 'Se encontraron ' + trimmedResponse + ' coincidencias');
           }
         }
       });
@@ -570,12 +574,10 @@ require_once '../../back/sistema_global/session.php';
      * @returns {void}
      */
     function removeForm(id) {
-
       // el form-1 no se puede eliminar
       if (id == 'form-1') {
         return;
       }
-
       // si el text area tiene texto, se debe preguntar primero al usuario usando un swal
       if ($('#t_area-' + id).val() != '') {
         Swal.fire({
