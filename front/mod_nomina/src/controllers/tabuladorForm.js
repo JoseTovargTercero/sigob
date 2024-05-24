@@ -1,4 +1,8 @@
-import { getTabulatorData, sendTabulatorData } from '../api/tabulator.js'
+import {
+  getTabulatorData,
+  sendTabulatorData,
+  updateTabulatorData,
+} from '../api/tabulator.js'
 import {
   confirmNotification,
   validateInput,
@@ -85,6 +89,10 @@ async function validateTabulatorForm({
       validateInput({ target: e.target, type: 'matrixCell' })
   })
 
+  formElementSecondary.addEventListener('keydown', (e) => {
+    moveBetweenInputs({ e, matrixCellClass, rows: fieldList.grados })
+  })
+
   // VALIDAR ACCIONES DEL FORMULARIO
 
   d.addEventListener('click', (e) => {
@@ -115,7 +123,7 @@ async function validateTabulatorForm({
         modalId: 'modal-secondary-form-tabulator',
       })
 
-      return generateMatrix({
+      generateMatrix({
         fieldList,
         matrixElement,
         matrixRowClass,
@@ -123,6 +131,11 @@ async function validateTabulatorForm({
         matrixInputsClass,
         tabulador: fieldList.tabulador,
       })
+      if (id)
+        fillCellContent({
+          matrixValues: fieldList.tabulador,
+          matrixInputsClass,
+        })
     }
 
     // SEGUNDO FORMULARIO - Enviar datos
@@ -138,43 +151,6 @@ async function validateTabulatorForm({
 
   // Funciones
 }
-
-function generateCellContent({ row, col, matrixInputsClass, monto }) {
-  if (col === 0 && row === 0)
-    return `<span class="tabulator-matrix-cell tabulator-matrix-span">INICIO</span>`
-  if (col === 0)
-    return `<span class="tabulator-matrix-cell tabulator-matrix-span">GRADO ${row}</span>`
-  if (row === 0)
-    return `<span class="tabulator-matrix-cell tabulator-matrix-span">PASO${col}</span>`
-
-  let inputText = `G${row} - P${col}`
-  let cellValue = 0
-  if (monto) {
-    return `<input
-  class="${matrixInputsClass} form-control form-control-sm"
-  type="number"
-  step="0.01"
-  min="0.00"
-  placeholder="${inputText}"
-  name="g${row}p${col}"
-  data-grado="${row}"
-  data-paso="${col}"
-  value="${monto[row + col][2]}"
-/>`
-  }
-
-  return `<input
-  class="${matrixInputsClass} form-control form-control-sm"
-  type="number"
-  step="0.01"
-  min="0.00"
-  placeholder="${inputText}"
-  name="g${row}p${col}"
-  data-grado="${row}"
-  data-paso="${col}"
-/>`
-}
-
 function generateMatrix({
   fieldList,
   matrixElement,
@@ -191,8 +167,6 @@ function generateMatrix({
   let columns = fieldList.pasos
   let tabulador = fieldList.tabulador || []
 
-  console.log(tabulador)
-
   matrixElement.style.display = 'grid'
   matrixElement.style.gridTemplateRows = `repeat(${rows + 1}, 1fr)`
 
@@ -203,20 +177,11 @@ function generateMatrix({
     for (let j = 0; j <= columns; j++) {
       const matrixCell = d.createElement('div')
       matrixCell.classList.add(matrixCellClass)
-      if (fieldList.tabulador.length === 0) {
-        matrixCell.innerHTML = generateCellContent({
-          row: i,
-          col: j,
-          matrixInputsClass,
-        })
-      } else {
-        matrixCell.innerHTML = generateCellContent({
-          row: i,
-          col: j,
-          matrixInputsClass,
-          monto: fieldList.tabulador,
-        })
-      }
+      matrixCell.innerHTML = generateCellContent({
+        row: i,
+        col: j,
+        matrixInputsClass,
+      })
 
       matrixRow.appendChild(matrixCell)
     }
@@ -224,6 +189,42 @@ function generateMatrix({
   }
 
   matrixElement.appendChild(cellsFragment)
+}
+
+function generateCellContent({ row, col, matrixInputsClass }) {
+  if (col === 0 && row === 0)
+    return `<span class="tabulator-matrix-cell tabulator-matrix-span">INICIO</span>`
+  if (col === 0)
+    return `<span class="tabulator-matrix-cell tabulator-matrix-span">GRADO ${row}</span>`
+  if (row === 0)
+    return `<span class="tabulator-matrix-cell tabulator-matrix-span">PASO${col}</span>`
+
+  let inputText = `G${row} - P${col}`
+
+  return `<input
+  class="${matrixInputsClass} form-control form-control-sm"
+  type="number"
+  step="0.01"
+  min="0.00"
+  placeholder="${inputText}"
+  name="g${row}p${col}"
+  data-grado="${row}"
+  data-paso="${col}"
+/>`
+}
+
+function fillCellContent({ matrixValues, matrixInputsClass }) {
+  const matrixInputsElement = d.querySelectorAll(`.${matrixInputsClass}`)
+  const matrixInputsElementCopy = [...matrixInputsElement]
+
+  matrixInputsElementCopy.forEach((input, i) => {
+    if (
+      input.dataset.grado === matrixValues[i][0].charAt(1) &&
+      input.dataset.paso === matrixValues[i][1].charAt(1)
+    ) {
+      input.value = matrixValues[i][2]
+    }
+  })
 }
 
 function generateMatrixData({ fieldList, matrixInputsClass }) {
@@ -240,7 +241,6 @@ function generateMatrixData({ fieldList, matrixInputsClass }) {
     confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
       message: 'Complete el tabulario correctamente',
-      // successFunction: location.reload(),
     })
 
     matrixInputsElementCopy.forEach((input) => {
@@ -260,8 +260,40 @@ function generateMatrixData({ fieldList, matrixInputsClass }) {
 
   fieldList.tabulador = tabulatorData
 
+  if (id) return updateTabulatorData({ tabulatorData: fieldList })
+
   // Enviar datos
   sendTabulatorData({ tabulatorData: fieldList })
+}
+
+function moveBetweenInputs({ e, matrixCellClass, rows }) {
+  const matrix = document.getElementsByClassName('tabulator-matrix-cell-input')
+  let currentIndex = Array.prototype.indexOf.call(
+    matrix,
+    document.activeElement
+  )
+
+  if (e.ctrlKey && e.keyCode >= 37 && e.keyCode <= 40) {
+    e.preventDefault()
+    switch (e.keyCode) {
+      case 37: // Flecha izquierda
+        currentIndex = (currentIndex - 1 + matrix.length) % matrix.length
+        break
+      case 38: // Flecha arriba
+        currentIndex = (currentIndex - rows + matrix.length) % matrix.length
+        break
+      case 39: // Flecha derecha
+        currentIndex = (currentIndex + 1) % matrix.length
+        break
+      case 40: // Flecha abajo
+        // Código para la flecha abajo: Ajusta la lógica según la estructura de tu matriz
+
+        currentIndex = (currentIndex + rows) % matrix.length
+        break
+    }
+
+    matrix[currentIndex].focus()
+  }
 }
 
 export { validateTabulatorForm }

@@ -62,12 +62,12 @@ export async function employeeCard({ id, elementToInsert }) {
     return profesiones.filter((el) => el.id == instruccion_academica)[0].name
   }
 
-  const getDependencia = async () => {
-    let dependencias = await getDependencyData()
-    console.log()
+  // const getDependencia = async () => {
+  //   let dependencias = await getDependencyData()
+  //   console.log()
 
-    return dependencias.filter((el) => el.id == dependencia)[0].name
-  }
+  //   return dependencias.filter((el) => el.id == dependencia)[0].name
+  // }
 
   const calcularAniosLaborales = (fechaIngreso, otrosAnios) => {
     // Crear objetos Date para la fecha de ingreso y la fecha actual
@@ -91,55 +91,61 @@ export async function employeeCard({ id, elementToInsert }) {
     return textoSalida
   }
 
-  let employeeCardElement = `<div class='modal-window slide-up-animation' id="modal-employee">
-  <div class='modal-box card w-90 h-80 overflow-auto' >
-    <div class="row">
-        <div class='modal-box-header'>
-        <h2 class='card-title'>Perfil de Empleado</h2>
-        <button id="btn-close-employee-card" type="button" class="btn btn-danger" aria-label="Close">
-        &times;
+  let employeeCardElement = `
+    <div class='modal-window slide-up-animation' id='modal-employee'>
+      <div class='modal-box card w-90 h-80 overflow-auto'>
+        <div class='row'>
+          <div class='modal-box-header'>
+            <h2 class='card-title'>Perfil de Empleado</h2>
+            <button
+              id='btn-close-employee-card'
+              type='button'
+              class='btn btn-danger'
+              aria-label='Close'
+            >
+              &times;
             </button>
+          </div>
         </div>
-    </div>
-    
-    <div class='card-body'>
-      <div class='row'>
-        <div class='col'>
-          <h3>${nombres}</h3>
-          <p>Cargo: ${await getCargo()}</p>
-          <p>Fecha de Ingreso: ${fecha_ingreso}</p>
-          <p>Cédula: ${cedula}</p>
-          <p>Nacionalidad: ${
-            nacionalidad === 'V' ? 'Venezolano' : 'Extranjero'
-          }</p>
-        </div>
-        <div class='col-md-6'>
-          <h4>Información Personal</h4>
-          <p>Hijos: ${hijos} hijo/as</p>
-          <p>Educación: ${await getIntrusccionAcademica()} </p>
-          <p>Discapacidad: ${discapacidades === 0 ? 'No posee' : 'Si posee'}</p>
-          <!-- Agregar más campos --> 
+
+        <div class='card-body'>
+          <div class='row'>
+            <div class='col'>
+              <h3>${nombres}</h3>
+              <p>Cargo: ${await getCargo()}</p>
+              <p>Fecha de Ingreso: ${fecha_ingreso}</p>
+              <p>Cédula: ${cedula}</p>
+              <p>
+                Nacionalidad: $
+                {nacionalidad === 'V' ? 'Venezolano' : 'Extranjero'}
+              </p>
+            </div>
+            <div class='col-md-6'>
+              <h4>Información Personal</h4>
+              <p>Hijos: ${hijos} hijo/as</p>
+              <p>Educación: ${await getIntrusccionAcademica()} </p>
+              <p>
+                Discapacidad: ${discapacidades === 0 ? 'No posee' : 'Si posee'}
+              </p>
+            </div>
+          </div>
+          <div class='row'>
+            <div class='col-md-6'>
+              <h4>Información Laboral</h4>
+              <p>
+                Experiencia laboral: $
+                {calcularAniosLaborales(fecha_ingreso, otros_años)}
+              </p>
+              <p>Dependencia laboral: ${dependencia}</p>
+              <p>
+                Banco: ${banco} - ${tipo_cuenta === 0 ? 'Correiente' : 'Ahorro'}
+              </p>
+            </div>
+          </div>
         </div>
       </div>
-      <div class='row'>
-        
-        <div class='col-md-6'>
-          <h4>Información Laboral</h4>
-          <p>Experiencia laboral: ${calcularAniosLaborales(
-            fecha_ingreso,
-            otros_años
-          )}</p>
-          <p>Dependencia laboral: ${dependencia}</p>
-          <p>Banco: ${banco} - ${
-    tipo_cuenta === 0 ? 'Correiente' : 'Ahorro'
-  }</p>
-           <!-- Agregar más información laboral --> 
-        </div>
-      </div>
     </div>
-   
-  </div>
-  </div>`
+  `
 
   container.insertAdjacentHTML('beforeend', employeeCardElement)
   return

@@ -4,6 +4,9 @@ import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 const sendTabulatorUrl =
   '../../../../../sigob/back/modulo_nomina/nom_tabulador_registro.php'
 
+const updateTabulatorUrl =
+  '../../../../../sigob/back/modulo_nomina/nom_tabulador_modif.php'
+
 const getTabulatorsDataUrl =
   '../../../../../sigob/back/modulo_nomina/nom_tabulador_datos.php'
 
@@ -30,12 +33,11 @@ const sendTabulatorData = async ({ tabulatorData }) => {
       })
 
       setTimeout(() => {
-        location.reload()
+        location.assign('nom_tabulador_tabla.php')
       }, 1000)
     }
 
-    const json = await res.json()
-    console.log(json)
+    const json = await res.text()
   } catch (e) {
     console.error(e)
   }
@@ -60,7 +62,6 @@ const getTabulatorsData = async () => {
 const getTabulatorData = async (id) => {
   try {
     const res = await fetch(`${getTabulatorDataUrl}?id=${id}`)
-    console.log(res)
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
 
@@ -74,8 +75,39 @@ const getTabulatorData = async (id) => {
   }
 }
 
+const updateTabulatorData = async ({ tabulatorData }) => {
+  console.log(tabulatorData)
+  try {
+    const res = await fetch(`${updateTabulatorUrl}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(tabulatorData),
+    })
+    console.log(res)
+    let resText = await res.text()
+    console.log(resText)
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+    else {
+      confirmNotification({
+        type: NOTIFICATIONS_TYPES.done,
+        message: 'Tabulador actualizado',
+      })
+      setTimeout(() => {
+        location.assign('nom_tabulador_tabla.php')
+      }, 1500)
+    }
+  } catch (e) {
+    console.log(e)
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al enviar datos del empleado',
+    })
+  }
+}
+
 const deleteTabulator = async (id) => {
-  console.log(id)
   try {
     const res = await fetch(`${deleteTabulatorUrl}?id=${id}`, {
       method: 'GET',
@@ -104,5 +136,6 @@ export {
   sendTabulatorData,
   getTabulatorsData,
   getTabulatorData,
+  updateTabulatorData,
   deleteTabulator,
 }

@@ -26,9 +26,9 @@ if ($conexion->query($sql_tabuladores) !== TRUE) {
     } else {
         // Insertar los nuevos registros en tabuladores_estr
         foreach ($tabulador as $data) {
-            $grado = $data["grado"];
-            $paso = $data["paso"];
-            $monto = $data["monto"];
+            $grado = $data[0];
+            $paso = $data[1];
+            $monto = $data[2];
 
             $sql_estr = "INSERT INTO tabuladores_estr (grado, paso, monto, tabulador_id) VALUES ('$grado', '$paso', $monto, $id)";
 

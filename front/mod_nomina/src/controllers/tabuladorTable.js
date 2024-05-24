@@ -1,6 +1,7 @@
 import { deleteEmployee, getEmployeesData } from '../api/empleados.js'
 import { deleteTabulator, getTabulatorsData } from '../api/tabulator.js'
 import { employeeCard } from '../components/nom_empleado_card.js'
+import { tabulatorCard } from '../components/nom_tabulador_card.js'
 import { confirmNotification, validateModal } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 
@@ -106,16 +107,16 @@ d.addEventListener('click', (e) => {
     w.location.assign(`nom_tabulador_registrar.php?id=${e.target.dataset.id}`)
   }
 
-  // if (e.target.classList.contains('btn-view')) {
-  //   employeeCard({
-  //     id: e.target.dataset.id,
-  //     elementToInsert: 'employee-table-view',
-  //   })
-  // }
+  if (e.target.classList.contains('btn-view')) {
+    tabulatorCard({
+      id: e.target.dataset.id,
+      elementToInsert: 'tabulator-table-view',
+    })
+  }
 
-  //   if (e.target.id === 'btn-close-employee-card') {
-  //     d.getElementById('modal-employee').remove()
-  //   }
+  if (e.target.id === 'btn-close-tabulator-card') {
+    d.getElementById('modal-tabulator').remove()
+  }
 })
 
 loadTabulatorTable()
