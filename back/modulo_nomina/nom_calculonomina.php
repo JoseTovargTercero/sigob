@@ -161,16 +161,16 @@ function calcularNomina($conexion, $empleado, $precio_dolar) {
     $salarioBase = calculoSalarioBase($conexion, $empleado);
 
     // Calcular el salario integral inicialmente sin las deducciones
-    $primaProfesionales = calcularPrimaPorProfesionales($conexion, $salarioBase, $precio_dolar, $salarioBase);
-    $primaAntiguedad = calcularPrimaPorAntiguedad($conexion, $salarioBase, $precio_dolar, $salarioBase);
-    $primaTransporte = calcularPrimaPorTransporte($conexion, $salarioBase, $precio_dolar, $salarioBase);
-    $primaEscalafon = calcularPrimaPorEscalafon($conexion, $salarioBase, $precio_dolar, $salarioBase);
-    $primaFrontera = calcularPrimaPorFrontera($conexion, $salarioBase, $precio_dolar, $salarioBase);
-    $primaDiscapacidad = calcularPrimaDiscapacidad($conexion, $salarioBase, $precio_dolar, $salarioBase);
-    $primaBeca = calcularPrimaBeca($conexion, $salarioBase, $precio_dolar, $salarioBase);
-    $primaSalud = calcularPrimaSalud($conexion, $salarioBase, $precio_dolar, $salarioBase);
-    $primaAntiguedadEspecial = calcularPrimaAntiguedadEspecial($conexion, $salarioBase, $precio_dolar, $salarioBase);
-    $primaPorHijos = calcularPrimaPorHijos($conexion, $salarioBase, $precio_dolar, $salarioBase) * $empleado['hijos'];
+    $primaProfesionales = calcularPrimaPorProfesionales($conexion, $salarioBase, $precio_dolar, $salarioIntegral);
+    $primaAntiguedad = calcularPrimaPorAntiguedad($conexion, $salarioBase, $precio_dolar, $salarioIntegral);
+    $primaTransporte = calcularPrimaPorTransporte($conexion, $salarioBase, $precio_dolar, $salarioIntegral);
+    $primaEscalafon = calcularPrimaPorEscalafon($conexion, $salarioBase, $precio_dolar, $salarioIntegral);
+    $primaFrontera = calcularPrimaPorFrontera($conexion, $salarioBase, $precio_dolar, $salarioIntegral);
+    $primaDiscapacidad = calcularPrimaDiscapacidad($conexion, $salarioBase, $precio_dolar, $salarioIntegral);
+    $primaBeca = calcularPrimaBeca($conexion, $salarioBase, $precio_dolar, $salarioIntegral);
+    $primaSalud = calcularPrimaSalud($conexion, $salarioBase, $precio_dolar, $salarioIntegral);
+    $primaAntiguedadEspecial = calcularPrimaAntiguedadEspecial($conexion, $salarioBase, $precio_dolar, $salarioIntegral);
+    $primaPorHijos = calcularPrimaPorHijos($conexion, $salarioBase, $precio_dolar, $salarioIntegral) * $empleado['hijos'];
 
     // Calcular el salario integral provisionalmente
     $salarioIntegral = ($salarioBase + $primaProfesionales + $primaAntiguedad + $primaTransporte +
@@ -188,6 +188,8 @@ function calcularNomina($conexion, $empleado, $precio_dolar) {
         $primaEscalafon + $primaFrontera + $primaDiscapacidad + $primaBeca +
         $primaSalud + $primaAntiguedadEspecial + $primaPorHijos - ($deduccionSSO + $deduccionRPE + $deduccionAPSSO + $deduccionAPRPE);
     $salarioQuincena = ($salarioTotal/30) * 15;
+    $salarioSemanal = ($salarioTotal/30) * 7;
+    $salarioDiario = ($salarioTotal/30) * 1;
 
     // Mostrar los detalles de la nómina
     echo "Empleado: " . $empleado['nombres'] . " (ID: " . $empleado['id_empleado'] . ")\n<br>";
@@ -208,6 +210,8 @@ function calcularNomina($conexion, $empleado, $precio_dolar) {
     echo "Prima por Hijos: $primaPorHijos Bs\n<br>";
     echo "Salario Total: $salarioTotal Bs\n<br>";
     echo "Salario Quincena: $salarioQuincena Bs\n<br>";
+    echo "Salario Semanal: $salarioSemanal Bs\n<br>";
+    echo "Salario Diario: $salarioDiario Bs\n<br>";
     echo "Salario Integral: $salarioIntegral Bs\n<br><br><br>";
 
 
