@@ -531,20 +531,21 @@ while ($r = $query->fetch_object()) {
      * @param {Event} event - The event object.
      * @returns {void}
      */
-    function validarFormula(area, result_list) {
-      let condicion = $('#' + area).val();
-      if (condicion == '') {
-        toast_s('error', 'Debe indicar una condición');
-        return;
-      } else {
-        if (result_list == 'empleados-list') { 
-          aplicar_filtro(2, condicion, result_list);
-        }else{
-          tbl_emp_seleccionados(condicion)
-        }
-      }
+function validarFormula(area, result_list) {
+  let condicion = $('#' + area).val();
+  if (condicion == '') {
+    toast_s('error', 'Debe indicar una condición');
+    return;
+  } else {
+    if (result_list == 'empleados-list') { 
+      aplicar_filtro(2, condicion, result_list);
+    } else {
+      let accion = 'todos'; // Definir 'accion' aquí si es necesario
+      tbl_emp_seleccionados(condicion, accion); // Pasar 'accion' como parámetro
     }
- 
+  }
+}
+
 
 
     /**
@@ -816,19 +817,21 @@ while ($r = $query->fetch_object()) {
      * Handles the change event of the select element for tipo de aplicación.
      * Shows or hides certain elements based on the selected value.
      */
-    function tipoAplicacion() {
-      $('#formulacion-conceptos').addClass('hide');
-      $('#tabla_empleados-conceptos').addClass('hide');
+ function tipoAplicacion() {
+  $('#formulacion-conceptos').addClass('hide');
+  $('#tabla_empleados-conceptos').addClass('hide');
 
-      if (this.value == '1') {
-        $('#formulacion-conceptos').removeClass('hide');
-      } else if (this.value == '2') {
-       tbl_emp_seleccionados('todos')
-      }
-    }
+  if (this.value == '1') {
+    $('#formulacion-conceptos').removeClass('hide');
+  } else if (this.value == '2') {
+    // Aquí pasamos el valor de 'condicion' como un parámetro adicional
+    tbl_emp_seleccionados('todos', condicion);
+  }
+}
+
     document.getElementById('tipo_aplicacion_concept').addEventListener('change', tipoAplicacion);
 
-    function tbl_emp_seleccionados(accion){
+    function tbl_emp_seleccionados(condicion, accion) {
       // TODO: aca se deben aplicar los filtros
 
 

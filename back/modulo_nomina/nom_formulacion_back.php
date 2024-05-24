@@ -26,6 +26,21 @@ if (isset($_POST["tabla_empleados"])) {
         }
     }
 
+    // Verificar si se recibe 'tabla_seleccionados'
+    if (isset($_POST["tabla_seleccionados"])) {
+        $ids = $_POST['ids'];
+        if (!is_array($ids)) {
+            echo json_encode("error: ids no es un arreglo");
+            $conexion->close();
+            exit();
+        }
+
+        // Construir la condición IN
+        $ids_str = implode(',', array_map('intval', $ids));
+        $filtro .= " AND id IN ($ids_str)";
+    }
+
+
     // Inicializar la consulta SQL
     $sql = "";
     $params = array();
