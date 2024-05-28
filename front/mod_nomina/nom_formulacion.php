@@ -90,7 +90,7 @@ while ($r = $query->fetch_object()) {
           <div class="card">
             <div class="card-body p-3">
               <ul class="nav nav-pills nav-justified">
-                <span id="link_basico" class="nav-item nav-link item-wizard" active><i class="ph-duotone ph-user-circle"></i> <span class="d-none d-sm-inline">Basico</span></span>
+                <span id="link_basico" class="nav-item nav-link item-wizard active"><i class="ph-duotone ph-user-circle"></i> <span class="d-none d-sm-inline">Basico</span></span>
                 <span id="link_empleados" class="nav-item nav-link item-wizard"><i class="ph-duotone ph-graduation-cap"></i> <span class="d-none d-sm-inline">Empleados</span></span>
                 <span id="link_conceptos" class="nav-item nav-link item-wizard"><i class="ph-duotone ph-map-pin"></i> <span class="d-none d-sm-inline">Conceptos</span></span>
                 <span id="link_resumen" class="nav-item nav-link item-wizard"><i class="ph-duotone ph-check-circle"></i> <span class="d-none d-sm-inline">Resumen general</span></span>
@@ -107,7 +107,7 @@ while ($r = $query->fetch_object()) {
 
               <div class="tab-content">
 
-                <section class="tab-pane" id="tab_basico">
+                <section class="tab-pane show active" id="tab_basico">
                   <div id="contactForm" method="post" action="#">
                     <div class="text-center">
                       <h3 class="mb-2">Comencemos con la información básica.</h3>
@@ -419,7 +419,7 @@ while ($r = $query->fetch_object()) {
                     </div>
                   </div>
                 </section>
-                <section class="tab-pane show active" id="tab_resumen">
+                <section class="tab-pane" id="tab_resumen">
                   <div class="row d-flex justify-content-center">
                     <div class="col-lg-6">
                       <div class="text-center"><i class="ph-duotone ph-gift f-50 text-danger"></i>
@@ -437,7 +437,7 @@ while ($r = $query->fetch_object()) {
                     <div class="d-flex m-a">
                       <div class="me-2"><button class="previous btn btn-secondary" onclick="beforeStep('3')">Regresar</button=>
                       </div>
-                      <div class="next"><button onclick="guardarNomina()" class="btn btn-secondary mt-3 mt-md-0">Siguiente</button></div>
+                      <div class="next"><button onclick="guardarNomina()" class="btn btn-primary mt-3 mt-md-0"> <i class="bx bx-save"></i> Guardar</button></div>
                     </div>
                   </div>
                 </section>
@@ -726,11 +726,7 @@ while ($r = $query->fetch_object()) {
     document.getElementById('tipo_aplicacion_concept').addEventListener('change', tipoAplicacion);
 
     function tbl_emp_seleccionados(condicion, accion) {
-      // TODO: aca se deben aplicar los filtros
-
-
-
-      if (accion == 'todos') {
+          if (accion == 'todos') {
         $('#tabla_empleados-conceptos').removeClass('hide');
         let tabla = '';
         empleadosSeleccionados.forEach(e => {
@@ -789,7 +785,7 @@ while ($r = $query->fetch_object()) {
      * performs validation checks, and saves the concept in the 'conceptosAplicados' object.
      * It also updates the UI by adding the concept to the select options and the table.
      */
-    function guardar_concepto() {
+    async function guardar_concepto() {
       const concepto_aplicar = $('#concepto_aplicar').val();
       const fechas_aplicar = $('#fechas_aplicar').val();
       const concepto_aplicados = $('#concepto_aplicados').val();
@@ -840,7 +836,19 @@ while ($r = $query->fetch_object()) {
         }
       }
 
-      const cantidad_t = (tipoCalculo !== 6 ? empleadosDelConcepto.length : cantidadFormulada(concepto_aplicar, empleadosDelConcepto))
+
+      let cantidad_t
+      let valor = 0
+      let subCalculo = '0'
+
+      if (tipoCalculo !== 6) {
+        cantidad_t = empleadosDelConcepto.length;
+      }else{
+        infoResolve = await cantidadFormulada(concepto_aplicar, Object.keys(empleadosFiltro))
+        cantidad_t = infoResolve.length
+        console.log(cantidad_t)
+      }
+
 
       conceptosAplicados[concepto_aplicar] = {
         'concepto_id': concepto_aplicar,
@@ -947,17 +955,11 @@ while ($r = $query->fetch_object()) {
      */
     async function cantidadFormulada(concepto, empleados) {
       try {
-        console.log(await cargarCantidad(concepto, empleados));
         return await cargarCantidad(concepto, empleados);
-        
-
-        
       } catch (error) {
         console.error('Error loading data:', error);
       }
     }
-
-
 
     /**
      * Loads the quantity of a concept for a given set of employees.
@@ -969,13 +971,14 @@ while ($r = $query->fetch_object()) {
     function cargarCantidad(c, e) {
       return new Promise((resolve, reject) => {
         $.ajax({
-          url: '../../back/modulo_nomina/prueba.php',
+          url: '../../back/modulo_nomina/nom_formulacion_emp_tc_6.php',
           type: 'POST',
           data: {
             concepto: c,
             empleados: e
           },
           success: function(response) {
+            console.log(response)
             try {
               resolve(JSON.parse(response));
             } catch (parseError) {
@@ -988,24 +991,6 @@ while ($r = $query->fetch_object()) {
         });
       });
     }
-
-    function en(){
-      $.ajax({
-          url: '../../back/modulo_nomina/prueba.php',
-          type: 'POST',
-          data: {
-            concepto: 21,
-            empleados: [26,27,28,29,30]
-          },
-          success: function(response) {
-            alert(response)
-           console.log(response)
-          }
-        });
-    }
-    en()
-    
-
 
     /**
      * Deletes a concept and performs related operations.
@@ -1048,43 +1033,6 @@ while ($r = $query->fetch_object()) {
     }
 
 
-    /*
-
-    Total en Primas
-    Total en Deducciones
-    Total en Aportes
-
-    */
-
-
-    conceptosAplicados = {
-      'concepto1': {
-        'concepto_id': 'concepto1',
-        'nom_concepto': 'Vacaciones',
-        'fecha_aplicar': '2023-05-28',
-        'formulacionConcepto': {
-          'TipoCalculo': 1,
-          'n_conceptos': 3,
-          'emp_cantidad': 50
-        },
-        'tabulador': 5,
-        'empleados': ['Empleado1', 'Empleado2']
-      },
-      'concepto2': {
-        'concepto_id': 'concepto2',
-        'nom_concepto': 'Alimentacion',
-        'fecha_aplicar': '2023-06-15',
-        'formulacionConcepto': {
-          'TipoCalculo': 2,
-          'n_conceptos': 1,
-          'emp_cantidad': 100
-        },
-        'tabulador': 3,
-        'empleados': ['Empleado3', 'Empleado4']
-      }
-      // Añade más conceptos según sea necesario
-    };
-
     function resumenDeNomina() {
       const nombre = $('#nombre_nomina').val()
       const frecuencia = $('#frecuencia_pago').val()
@@ -1121,10 +1069,7 @@ while ($r = $query->fetch_object()) {
         }
       }
       $('#nomina_resumen').append('</ul>')
-
-
-
-
+      /*
       return
 
       let tabla = '';
@@ -1152,14 +1097,8 @@ while ($r = $query->fetch_object()) {
             totalAportes += total;
           }
         }
-      }
+      }*/
     }
-
-    resumenDeNomina()
-
-
-
-
 
 
     /**
@@ -1289,6 +1228,32 @@ while ($r = $query->fetch_object()) {
       $('conceptos_aplicados-list').removeClass('hide')
       $('#fechas_aplicar').val([])
       $('#concepto_aplicados').val([])
+    }
+
+
+    function guardarNomina(){
+      const nombre = $('#nombre_nomina').val()
+      const frecuencia = $('#frecuencia_pago').val()
+      const tipo = $('#tipo_nomina').val()
+
+      console.log(conceptosAplicados)
+
+      $.ajax({
+        url: url_back,
+        type: 'POST',
+        data: {
+          nombre: nombre,
+          frecuencia: frecuencia,
+          tipo: tipo,
+          conceptosAplicados: conceptosAplicados
+        },
+        success: function(response) {
+         
+        }
+      });
+
+
+
     }
   </script>
 </body>
