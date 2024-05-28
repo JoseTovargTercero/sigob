@@ -195,5 +195,4 @@ if (isset($_POST["tabla_empleados"])) {
     echo json_encode($response);
 }
 
-
 $conexion->close();

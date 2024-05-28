@@ -1185,13 +1185,14 @@ while ($r = $query->fetch_object()) {
     function cargarCantidad(c, e) {
       return new Promise((resolve, reject) => {
         $.ajax({
-          url: url_back,
+          url: '../../back/modulo_nomina/prueba.php',
           type: 'POST',
           data: {
             concepto: c,
             empleados: e
           },
           success: function(response) {
+             console.log('Response from server:', response);
             try {
               resolve(JSON.parse(response));
             } catch (parseError) {
@@ -1204,7 +1205,6 @@ while ($r = $query->fetch_object()) {
         });
       });
     }
-
 
 /*Cambios y Mejoras
 Función Auxiliar: Creé una función auxiliar actualizarOpciones para evitar la duplicación de código.
