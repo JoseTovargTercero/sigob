@@ -1,14 +1,23 @@
 <?php
 require_once '../sistema_global/conexion.php';
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
-
-
     // Recibe los datos del concepto y empleados
     $concepto = $_POST['concepto'];
     $empleados = $_POST['empleados'];
 
+    // Asegúrate de que $empleados sea un array y no esté vacío
+    if (!is_array($empleados) || empty($empleados)) {
+        echo json_encode(array('error' => 'No se proporcionaron empleados válidos.'));
+        exit();
+    }
+
+    // Escapa los IDs de empleados para prevenir inyección SQL
+    $empleados = array_map('intval', $empleados);
+    $empleados_list = implode(',', $empleados);
+
     // Consulta la tabla conceptos_formulacion
-    $sql = "SELECT condicion, valor FROM conceptos_formulacion WHERE concepto_id = '$concepto'";
+    $sql = "SELECT condicion, valor, tipo_calculo FROM conceptos_formulacion WHERE concepto_id = '$concepto'";
     $result = $conexion->query($sql);
 
     if ($result && $result->num_rows > 0) {
@@ -17,24 +26,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
         $condicion = $row['condicion'];
         $valor = $row['valor'];
 
-        // Consulta la tabla empleados utilizando las condiciones y el valor del concepto
-        $sql_empleados = "SELECT * FROM empleados WHERE $condicion ";
+        // Consulta la tabla empleados utilizando las condiciones y el valor del concepto y restringiendo a los IDs proporcionados
+        $sql_empleados = "SELECT id FROM empleados WHERE $condicion AND id IN ($empleados_list)";
         $result_empleados = $conexion->query($sql_empleados);
 
         if ($result_empleados->num_rows > 0) {
-            // Si hay empleados que cumplen con las condiciones, devuelve los datos
+            // Si hay empleados que cumplen con las condiciones, devuelve los IDs
             $empleados_cumplen = array();
             while ($row_empleado = $result_empleados->fetch_assoc()) {
-                $empleados_cumplen[] = $row_empleado;
+                $empleados_cumplen[] = $row_empleado['id'];
             }
             echo json_encode($empleados_cumplen);
         } else {
             // Si no hay empleados que cumplen con las condiciones, devuelve un mensaje de error
-            echo "No se encontraron empleados que cumplan con las condiciones.";
+            echo json_encode(array('error' => 'No se encontraron empleados que cumplan con las condiciones.'));
         }
     } else {
         // Si no se encuentra el concepto en la tabla, devuelve un mensaje de error
-        echo "No se encontró el concepto en la base de datos.";
+        echo json_encode(array('error' => 'No se encontró el concepto en la base de datos.'));
     }
 
     // Cierra la conexión a la base de datos
@@ -42,8 +51,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
     exit(); // Termina la ejecución del script PHP después de procesar la petición AJAX
 }
 
-
-    // Cierra la conexión a la base de datos
-    $conexion->close();
-
+// Cierra la conexión a la base de datos (esto es redundante aquí y puede ser eliminado)
+// $conexion->close();
 ?>

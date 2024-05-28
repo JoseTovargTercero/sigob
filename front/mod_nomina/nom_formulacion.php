@@ -994,7 +994,7 @@ while ($r = $query->fetch_object()) {
           url: '../../back/modulo_nomina/prueba.php',
           type: 'POST',
           data: {
-            concepto: 24,
+            concepto: 21,
             empleados: [26,27,28,29,30]
           },
           success: function(response) {
