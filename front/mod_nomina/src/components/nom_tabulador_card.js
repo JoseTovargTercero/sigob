@@ -111,7 +111,7 @@ function generateCellContent({ row, col, matrixInputsClass }) {
   let inputText = `G${row} - P${col}`
 
   return `<input
-    class="${matrixInputsClass} form-control form-control-sm"
+    class="${matrixInputsClass} form-control form-input form-control-sm"
     type="number"
     step="0.01"
     min="0.00"

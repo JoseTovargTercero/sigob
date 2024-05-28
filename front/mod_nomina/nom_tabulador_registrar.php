@@ -19,41 +19,44 @@ require_once '../../back/sistema_global/session.php';
   <div class="pc-container flex-container">
 
     <div class="form-header w-75 mx-auto">
-      <a class="btn btn-outline-info btn-sm" href="nom_tabulador_tabla"><box-icon name='arrow-back'></box-icon></a>
+      <a class="btn btn-outline-secondary btn-sm" href="nom_tabulador_tabla"><box-icon name='arrow-back'></box-icon></a>
       <h2 class="text-uppercase text-center">NUEVO TABULADOR</h2>
       <box-icon name=''></box-icon>
 
     </div>
     <form class="row w-75 mx-auto form-container" id="tabulator-primary-form" autocomplete="off">
-
-      <div class="form-group">
-        <label class="form-label" class="form-label" for="nombre">NOMBRE</label>
-        <input class="tabulator-input form-control" type="text" name="nombre" id="nombre"
-          placeholder="NOMBRE DE TABULADOR" />
+      <div class="row">
+        <div class="form-group">
+          <label class="form-label" class="form-label" for="nombre">NOMBRE</label>
+          <input class="tabulator-input form-control form-input" type="text" name="nombre" id="nombre"
+            placeholder="NOMBRE DE TABULADOR" />
+        </div>
       </div>
 
       <div class="row">
-        <div class="col">
+        <div class="col-sm">
           <div class="form-group">
             <label class="form-label" for="grados">GRADOS</label>
-            <input class="tabulator-input form-control" type="number" name="grados" id="grados" placeholder="GRADOS" />
+            <input class="tabulator-input form-control form-input" type="number" name="grados" id="grados"
+              placeholder="GRADOS" />
           </div>
         </div>
 
-        <div class="col">
+        <div class="col-sm">
           <div class="form-group">
             <label class="form-label" for="pasos">PASOS</label>
-            <input class="tabulator-input form-control" type="number" name="pasos" id="pasos" placeholder="PASOS" />
+            <input class="tabulator-input form-control form-input" type="number" name="pasos" id="pasos"
+              placeholder="PASOS" />
+          </div>
+        </div>
+        <div class="col-sm">
+          <div class="form-group">
+            <label class="form-label" for="aniosPasos">AÑOS POR PASO</label>
+            <input class="tabulator-input form-control form-input" type="number" name="aniosPasos" id="aniosPasos"
+              placeholder="AÑOS POR PASO" />
           </div>
         </div>
       </div>
-
-      <div class="form-group">
-        <label class="form-label" for="aniosPasos">AÑOS POR PASO</label>
-        <input class="tabulator-input form-control" type="number" name="aniosPasos" id="aniosPasos"
-          placeholder="AÑOS POR PASO" />
-      </div>
-
       <div clas="form-group">
         <button class="btn btn-primary w-100" id="tabulator-btn">SIGUIENTE</button>
       </div>

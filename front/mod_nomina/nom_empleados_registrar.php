@@ -17,8 +17,8 @@ require_once '../../back/sistema_global/session.php';
     <!-- [ top bar ] -->
 
     <div class="pc-container flex-container">
-        <div class="form-header w-75 mx-auto">
-            <a class="btn btn-outline-info btn-sm" href="nom_empleados_tabla"><box-icon
+        <div class="form-header shadow-sm bg-body-tertiary rounded w-75 mx-auto">
+            <a class="btn btn-outline-secondary btn-sm" href="nom_empleados_tabla"><box-icon
                     name='arrow-back'></box-icon></a>
             <h2 class="text-uppercase text-center">REGISTRAR EMPLEADO</h2>
             <box-icon name=''></box-icon>
@@ -29,11 +29,11 @@ require_once '../../back/sistema_global/session.php';
                 <div class="row">
                     <div class="col-sm">
                         <label class="form-label" class="form-label" for="nombres">NOMBRE COMPLETO</label>
-                        <input class="form-control employee-input" type="text" name="nombres" id="nombres"
+                        <input class="form-control employee-input form-input" type="text" name="nombres" id="nombres"
                             placeholder="NOMBRE COMPLETO" />
                     </div>
                     <div class="col-sm-4">
-                        <label class="form-label" for="nacionalidad">TIPO NÓMINA</label>
+                        <label class="form-label" for="tipo_nomina">TIPO NÓMINA</label>
                         <select name="tipo_nomina" class="form-select employee-select" id="tipo_nomina">
                             <option selected value="">ELEGIR...</option>
                             <option value="1">OPCIÓN 1</option>
@@ -57,7 +57,7 @@ require_once '../../back/sistema_global/session.php';
                     </div>
                     <div class="col-sm">
                         <label class="form-label" for="cedula">CÉDULA</label>
-                        <input class="employee-input form-control" type="text" name="cedula" id="cedula"
+                        <input class="employee-input form-input form-control" type="text" name="cedula" id="cedula"
                             placeholder="CEDULA..." maxlength="9" />
                     </div>
                     <div class="col-sm">
@@ -84,7 +84,7 @@ require_once '../../back/sistema_global/session.php';
 
                     <div class="col-sm" tabindex="0">
                         <label class="form-label" for="cargo">CARGO AL QUE OPTA</label>
-                        <!-- <input class="employee-input form-control select-search-input" type="text" name="cargo"
+                        <!-- <input class="employee-input form-input form-control select-search-input" type="text" name="cargo"
                             placeholder="Buscar cargo..." id="cargo" /> -->
 
                         <select class="form-select employee-select" name="cod_cargo" id="search-select-cargo">
@@ -93,7 +93,7 @@ require_once '../../back/sistema_global/session.php';
                     </div>
                     <div class="col-sm">
                         <label class="form-label" for="fecha_ingreso">FECHA DE INGRESO</label>
-                        <input class="employee-input form-control" type="date" name="fecha_ingreso"
+                        <input class="employee-input form-input form-control" type="date" name="fecha_ingreso"
                             placeholder="Fecha de ingreso" id="fecha_ingreso" />
                     </div>
                 </div>
@@ -103,12 +103,12 @@ require_once '../../back/sistema_global/session.php';
                 <div class="row">
                     <div class="col-sm">
                         <label class="form-label" for="otros_años">AÑOS LABORALES</label>
-                        <input class="employee-input form-control" type="number" name="otros_años"
+                        <input class="employee-input form-input form-control" type="number" name="otros_años"
                             placeholder="Cantidad de años" id="otros_años" />
                     </div>
                     <div class="col-sm">
                         <label class="form-label" for="">HIJOS</label>
-                        <input class="employee-input form-control " type="number" name="hijos"
+                        <input class="employee-input form-input form-control " type="number" name="hijos"
                             placeholder="CANTIDAD DE HIJOS...">
                     </div>
                     <div class="col-sm">
@@ -136,7 +136,7 @@ require_once '../../back/sistema_global/session.php';
                     </div>
                     <div class="col-sm">
                         <label class="form-label" for="cuenta_bancaria">N° DE CUENTA</label>
-                        <input class="employee-input form-control" type="text" name="cuenta_bancaria"
+                        <input class="employee-input form-input form-control" type="text" name="cuenta_bancaria"
                             placeholder="0000 0000 00 0000" id="cuenta_bancaria" maxlength="20">
                     </div>
                     <div class="col-sm">
@@ -169,7 +169,7 @@ require_once '../../back/sistema_global/session.php';
 
             <div class="form-group">
                 <label for="observacion">OBSERVACIONES</label>
-                <textarea class="form-control employee-input" name="observacion"
+                <textarea class="form-control employee-input form-input" name="observacion"
                     placeholder="Observación sobre el empleado..." id="observacion" style="height: 50px"></textarea>
             </div>
 
@@ -206,7 +206,7 @@ require_once '../../back/sistema_global/session.php';
                         </header>
                     </div>
 
-                    <input class="employee-input form-control" type="text" name="dependencia"
+                    <input class="employee-input form-input form-control" type="text" name="dependencia"
                         placeholder="NUEVA DEPENDENCIA..." id="dependencia">
                     <button class="btn-form btn btn-primary" id="dependency-save-btn">GUARDAR DEPENDENCIA</button>
                 </div>

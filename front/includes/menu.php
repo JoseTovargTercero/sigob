@@ -55,7 +55,7 @@
             <li class="pc-item"><a class="pc-link"
                 href="<?php echo constant('URL') ?>front/mod_nomina/nom_grupos">Registro de nominas</a></li>
             <li class="pc-item"><a class="pc-link"
-                href="<?php echo constant('URL') ?>front/mod_nomina/nom_Pagar">Pagar</a></li>
+                href="<?php echo constant('URL') ?>front/mod_nomina/nom_empleados_pagar">Pagar</a></li>
           </ul>
         </li>
 

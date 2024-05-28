@@ -19,10 +19,12 @@ require_once '../../back/sistema_global/session.php';
 
     <div class="pc-container flex-container" id="tabulator-table-view">
         <div class="card w-90 mx-auto">
-            <div class="card-header">
-                <div>
-                    <h3 class="text-uppercase text-center">TABULADORES</h3>
-                </div>
+            <div class="card-header ">
+
+                <h3 class="text-uppercase text-center">
+                    TABULADORES
+                </h3>
+
             </div>
             <div class="card-body">
                 <table id="tabulator-table" class="table table-striped" style="width:100%">

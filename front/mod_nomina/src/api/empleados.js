@@ -33,6 +33,8 @@ const mapData = ({ obj, name, id }) => {
   })
 }
 
+// const mapEmployee = ({ obj, name, id }) => {}
+
 const getEmployeesData = async () => {
   try {
     const res = await fetch(getEmployeesUrl)
