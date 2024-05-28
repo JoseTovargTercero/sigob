@@ -93,7 +93,7 @@ while ($r = $query->fetch_object()) {
                 <span id="link_basico" class="nav-item nav-link item-wizard"><i class="ph-duotone ph-user-circle"></i> <span class="d-none d-sm-inline">Basico</span></span>
                 <span id="link_empleados" class="nav-item nav-link item-wizard active"><i class="ph-duotone ph-graduation-cap"></i> <span class="d-none d-sm-inline">Empleados</span></span>
                 <span id="link_conceptos" class="nav-item nav-link item-wizard"><i class="ph-duotone ph-map-pin"></i> <span class="d-none d-sm-inline">Conceptos</span></span>
-                <span id="link_resmune" class="nav-item nav-link item-wizard"><i class="ph-duotone ph-check-circle"></i> <span class="d-none d-sm-inline">Resumen general</span></span>
+                <span id="link_resumen" class="nav-item nav-link item-wizard"><i class="ph-duotone ph-check-circle"></i> <span class="d-none d-sm-inline">Resumen general</span></span>
               </ul>
             </div>
           </div>
@@ -272,12 +272,10 @@ while ($r = $query->fetch_object()) {
                     <div class="row mt-4">
 
 
-                      <section class="hidex" id="nuevo_concepto-sec">
+                      <section class="hide" id="nuevo_concepto-sec">
                         <div class="mb-3">
                           <label class="form-label" for="concepto_aplicar">Seleccione el concepto de desea agregar</label>
-
                           <div class="input-group">
-
                             <select class="form-control" id="concepto_aplicar">
                               <option value="">Seleccione</option>
                               <option value="sueldo_base">Sueldo</option>
@@ -289,7 +287,7 @@ while ($r = $query->fetch_object()) {
 
 
                         <div class="mb-3" id="section_fechas">
-                          <label class="form-label" for="fechas_aplicar">Cuando se debe aplicar el conceto?</label>
+                          <label class="form-label" for="fechas_aplicar">¿Cuando se debe aplicar el conceto?</label>
                           <select multiple="" class="form-select" id="fechas_aplicar">
                             <option value="1">Primera semana</option>
                           </select>
@@ -324,43 +322,43 @@ while ($r = $query->fetch_object()) {
                             <label class="form-label" for="tipo_aplicacion_concept">¿Como desea aplicar el concepto?</label>
                             <select class="form-control" id="tipo_aplicacion_concept">
                               <option value="">Seleccione</option>
-                              <option value="1">Por sus características (Formulación)</option>
                               <option value="2">Enlistar todos los empleados de la nomina</option>
+                              <option value="1">Por sus características (Formulación)</option>
                             </select>
                           </div>
 
                           <div id="formulacion-conceptos" class="hide">
-                       
-                        <!-- HERRAMIENTA PARA FILTRAR SEGUN FORMULA-->
-                        <div class="row">
 
-                          <div class="col-lg-6">
-                            <div class="mb-3"><label class="form-label">Formulación</label>
-                              <div class="input-group mb-3">
-                                <textarea class="form-control condicion" rows="1" id="t_area-2"></textarea>
-                                <button class="btn btn-primary" onclick="validarFormula('t_area-2', 'emp_pre_seleccionados-list')" type="button">Obtener</button>
+                            <!-- HERRAMIENTA PARA FILTRAR SEGUN FORMULA-->
+                            <div class="row">
+
+                              <div class="col-lg-6">
+                                <div class="mb-3"><label class="form-label">Formulación</label>
+                                  <div class="input-group mb-3">
+                                    <textarea class="form-control condicion" rows="1" id="t_area-2"></textarea>
+                                    <button class="btn btn-primary" onclick="validarFormula('t_area-2', 'emp_pre_seleccionados-list')" type="button">Obtener</button>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="col-lg-6">
+
+                                <div class="mb-3">
+                                  <label class="form-label" for="campo_condiciona">Condicionantes</label>
+                                  <select name="campo_condiciona" onchange="setCondicionante(this.value, 'result-em_nomina')" id="campo_condiciona_epNomina" class="form-control">
+                                    <option value="">Seleccione</option>
+                                    <option value="cod_cargo">Código de cargo</option>
+                                    <option value="discapacidades">Discapacidades</option>
+                                    <option value="instruccion_academica">Instrucción académica</option>
+                                    <option value="hijos">Hijos</option>
+                                    <option value="antiguedad">Antigüedad (desde la fecha de ingreso)</option>
+                                    <option value="antiguedad_total">Antigüedad (Sumando años anteriores)</option>
+
+                                  </select>
+                                </div>
+                                <ol class="list-group list-group-numbered" id="result-em_nomina">
+                                </ol>
                               </div>
                             </div>
-                          </div>
-                          <div class="col-lg-6">
-
-                            <div class="mb-3">
-                              <label class="form-label" for="campo_condiciona">Condicionantes</label>
-                              <select name="campo_condiciona" onchange="setCondicionante(this.value, 'result-em_nomina')" id="campo_condiciona_epNomina" class="form-control">
-                                <option value="">Seleccione</option>
-                                <option value="cod_cargo">Código de cargo</option>
-                                <option value="discapacidades">Discapacidades</option>
-                                <option value="instruccion_academica">Instrucción académica</option>
-                                <option value="hijos">Hijos</option>
-                                <option value="antiguedad">Antigüedad (desde la fecha de ingreso)</option>
-                                <option value="antiguedad_total">Antigüedad (Sumando años anteriores)</option>
-
-                              </select>
-                            </div>
-                            <ol class="list-group list-group-numbered" id="result-em_nomina">
-                            </ol>
-                          </div>
-                        </div>
 
 
 
@@ -390,46 +388,28 @@ while ($r = $query->fetch_object()) {
 
 
 
-                        <div class="text-end mt-3">
+
+                        <div class="d-flex justify-content-between mt-3">
+                          <button class="btn btn-secondary" onclick="setViewRegistro()">Cancelar</button>
                           <button class="btn btn-primary" id="guardar_concepto">Guardar concepto</button>
                         </div>
 
                       </section>
 
-                      <div class="col-lg-12 mh-60 hide" id="conceptos_aplicados-list">
+                      <div class="col-lg-12 mh-60" id="conceptos_aplicados-list">
                         <table class="table table-striped table-hover">
                           <thead>
                             <tr>
                               <th class="w-40">Nombre del concepto</th>
                               <th class="w-40">Empleados</th>
-                              <th class="w-auto text-center"><button class="btn btn-sm btn-primary" id="btn_agg_concepto"><i class='bx bx-folder-plus'> Agregar concepto</i> </button></th>
+                              <th class="w-auto text-center"><button class="btn btn-sm btn-primary" onclick="setViewRegistro()"><i class='bx bx-folder-plus'> Agregar concepto</i> </button></th>
                             </tr>
                           </thead>
-                          <tbody>
+                          <tbody id="table-conceptos">
 
                           </tbody>
                         </table>
                       </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                     </div>
                     <div class="d-flex w-100 mt-3">
                       <div class="d-flex m-a">
@@ -439,7 +419,7 @@ while ($r = $query->fetch_object()) {
                     </div>
                   </div>
                 </section>
-                <section class="tab-pane" id="tab_resmune">
+                <section class="tab-pane" id="tab_resumen">
                   <div class="row d-flex justify-content-center">
                     <div class="col-lg-6">
                       <div class="text-center"><i class="ph-duotone ph-gift f-50 text-danger"></i>
@@ -484,7 +464,7 @@ while ($r = $query->fetch_object()) {
      * @param {Event} event - The event object.
      */
 
-     function seleccion_empleados(value, result_list){
+    function seleccion_empleados(value, result_list) {
 
       const filtro = value;
       const empleadosList = document.getElementById('empleados-list');
@@ -508,7 +488,7 @@ while ($r = $query->fetch_object()) {
           herramientaFormulacion.addClass('hide');
           break;
       }
-  }
+    }
 
 
 
@@ -531,20 +511,19 @@ while ($r = $query->fetch_object()) {
      * @param {Event} event - The event object.
      * @returns {void}
      */
-function validarFormula(area, result_list) {
-  let condicion = $('#' + area).val();
-  if (condicion == '') {
-    toast_s('error', 'Debe indicar una condición');
-    return;
-  } else {
-    if (result_list == 'empleados-list') { 
-      aplicar_filtro(2, condicion, result_list);
-    } else {
-      let accion = 'todos'; // Definir 'accion' aquí si es necesario
-      tbl_emp_seleccionados(condicion, accion); // Pasar 'accion' como parámetro
+    function validarFormula(area, result_list) {
+      let condicion = $('#' + area).val();
+      if (condicion == '') {
+        return toast_s('error', 'Debe indicar una condición');
+      } else {
+        if (result_list == 'empleados-list') {
+          aplicar_filtro(2, condicion, result_list);
+        } else {
+          let accion = 'todos'; // Definir 'accion' aquí si es necesario
+          tbl_emp_seleccionados(condicion, accion); // Pasar 'accion' como parámetro
+        }
+      }
     }
-  }
-}
 
 
 
@@ -626,19 +605,27 @@ function validarFormula(area, result_list) {
       if (step == '1') {
         const inputs = ['nombre_nomina', 'frecuencia_pago', 'tipo_nomina'];
         if (inputs.some(id => !document.getElementById(id).value)) {
-          toast_s('error', 'Debe completar todos los campos');
-          return;
+          return toast_s('error', 'Debe completar todos los campos');
         }
         toggleStep('basico', 'empleados');
         document.getElementById('progressbar').style.width = '50%';
 
       } else if (step == '2') {
         if (empleadosSeleccionados.length === 0) {
-          toast_s('error', 'Debe seleccionar al menos un empleado');
-          return;
+          return toast_s('error', 'Debe seleccionar al menos un empleado');
         }
         toggleStep('empleados', 'conceptos');
         document.getElementById('progressbar').style.width = '75%';
+      } else if (step == '3') {
+
+
+        if (Object.keys(conceptosAplicados).length === 0) {
+          return toast_s('error', 'Debe seleccionar al menos un concepto');
+        } else {
+          toggleStep('conceptos', 'resumen');
+          document.getElementById('progressbar').style.width = '100%';
+        }
+
       }
     }
     /**
@@ -678,8 +665,8 @@ function validarFormula(area, result_list) {
           progressbar: 75
         },
         '4': {
-          link: 'link_resmune',
-          tab: 'tab_resmune',
+          link: 'link_resumen',
+          tab: 'tab_resumen',
           progressbar: 100
         }
       };
@@ -709,15 +696,44 @@ function validarFormula(area, result_list) {
      * When the button is clicked, it hides the 'conceptos_aplicados-list' element
      * and shows the 'nuevo_concepto-sec' element.
      */
-    document.getElementById('btn_agg_concepto').addEventListener('click', function() {
-      $('#conceptos_aplicados-list').addClass('hide');
-      $('#nuevo_concepto-sec').removeClass('hide');
-    });
+    function setViewRegistro() {
+      $('#concepto_aplicar').val('')
+      resetValsConceptos()
+      $('#conceptos_aplicados-list').toggleClass('hide');
+      $('#nuevo_concepto-sec').toggleClass('hide');
+    }
+
+
+    /**
+     * Resets the values of various elements in the form.
+     * This function is typically called when a reset action is triggered.
+     */
+    function resetValsConceptos() {
+      document.querySelector("#tabulador option[value='']").selected = true;
+      document.querySelector("#tipo_aplicacion_concept option[value='']").selected = true;
+      document.getElementById('selectAllC').checked = false;
+
+      $('#sueldo-options').addClass('hide')
+      $('#n_conceptos_porcentajes').addClass('hide')
+      $('#aplicacion_conceptos-options').addClass('hide')
+      $('#formulacion-conceptos').addClass('hide')
+      $('#tabla_empleados-conceptos').addClass('hide')
+      $('#emp_pre_seleccionados-list').html('')
+      $('nuevo_concepto-sec').addClass('hide')
+      $('conceptos_aplicados-list').removeClass('hide')
+      $('#fechas_aplicar').val([])
+      $('#concepto_aplicados').val([])
+    }
 
 
 
 
-
+    /**
+     * Loads data from the server using AJAX.
+     *
+     * @param {string} value - The value to be sent to the server.
+     * @returns {Promise} - A promise that resolves with the parsed JSON response from the server.
+     */
     function loadData(value) {
       return new Promise((resolve, reject) => {
         $.ajax({
@@ -739,7 +755,7 @@ function validarFormula(area, result_list) {
 
 
     var conceptos = []
-    let concetos_formulacion = []
+    let conceptos_formulacion = []
 
 
     /**
@@ -797,7 +813,7 @@ function validarFormula(area, result_list) {
       const aplicacionConceptosOptions = $('#aplicacion_conceptos-options');
       const n_conceptos_porcentajes = $('#n_conceptos_porcentajes');
       const tipoCalculo = (this.value == 'sueldo_base' ? null : conceptos[this.value]['tipo_calculo']);
-
+      resetValsConceptos()
       sueldoOptions.addClass('hide');
 
       if (this.value == 'sueldo_base') {
@@ -805,11 +821,17 @@ function validarFormula(area, result_list) {
         sueldoOptions.removeClass('hide');
       } else if (tipoCalculo == '5') {
         n_conceptos_porcentajes.toggleClass('hide', false);
+        aplicacionConceptosOptions.removeClass('hide');
+      } else if (tipoCalculo != '6') {
+        aplicacionConceptosOptions.removeClass('hide');
       } else {
         n_conceptos_porcentajes.toggleClass('hide', true);
         aplicacionConceptosOptions.toggleClass('hide', tipoCalculo == '6');
       }
     }
+
+
+
     document.getElementById('concepto_aplicar').addEventListener('change', tipoConcepto);
 
 
@@ -817,17 +839,17 @@ function validarFormula(area, result_list) {
      * Handles the change event of the select element for tipo de aplicación.
      * Shows or hides certain elements based on the selected value.
      */
- function tipoAplicacion() {
-  $('#formulacion-conceptos').addClass('hide');
-  $('#tabla_empleados-conceptos').addClass('hide');
+    function tipoAplicacion() {
+      $('#formulacion-conceptos').addClass('hide');
+      $('#tabla_empleados-conceptos').addClass('hide');
 
-  if (this.value == '1') {
-    $('#formulacion-conceptos').removeClass('hide');
-  } else if (this.value == '2') {
-    // Aquí pasamos el valor de 'condicion' como un parámetro adicional
-    tbl_emp_seleccionados('todos', condicion);
-  }
-}
+      if (this.value == '1') {
+        $('#formulacion-conceptos').removeClass('hide');
+      } else if (this.value == '2') {
+        // Aquí pasamos el valor de 'condicion' como un parámetro adicional
+        tbl_emp_seleccionados(null, 'todos');
+      }
+    }
 
     document.getElementById('tipo_aplicacion_concept').addEventListener('change', tipoAplicacion);
 
@@ -840,7 +862,6 @@ function validarFormula(area, result_list) {
         $('#tabla_empleados-conceptos').removeClass('hide');
         let tabla = '';
         empleadosSeleccionados.forEach(e => {
-          console.log(e)
           tabla += '<tr>';
           tabla += '<td>' + e[1] + '</td>';
           tabla += '<td>' + e[3] + '</td>';
@@ -848,21 +869,22 @@ function validarFormula(area, result_list) {
           tabla += '</tr>';
         });
         document.getElementById('emp_pre_seleccionados-list').innerHTML = tabla;
-      }else{
+      } else {
 
         // saca el index 0 del arreglo 'empleadosSeleccionados'
         let seleccionados_id = []
         empleadosSeleccionados.forEach(e => {
           seleccionados_id.push(e[0])
         });
-    
 
-          $.ajax({
+
+        $.ajax({
           url: url_back,
           type: 'POST',
           data: {
             condicion: condicion,
             ids: seleccionados_id,
+            tabla_empleados: tabla_empleados,
             tabla_seleccionados: true
           },
           success: function(response) {
@@ -870,10 +892,10 @@ function validarFormula(area, result_list) {
             let tabla = '';
 
             empleados.forEach(e => {
-              empleadosFiltro[e.id] = [e.id, e.nacionalidad, e.cedula, e.cod_empleado, e.nombres, e.fecha_ingreso, e.anios_actuales, e.otros_anios, e.anios_totales, e.status, e.observacion, e.cod_cargo, e.hijos, e.instruccion_academica, e.discapacidades, e.id_dependencia];
+              //console.log(e)
               tabla += '<tr>';
-              tabla += '<td>' + e.cedula + '</td>';
-              tabla += '<td>' + e.nombres + '</td>';
+              tabla += '<td>' + e[2] + '</td>';
+              tabla += '<td>' + e[4] + '</td>';
               tabla += '<td class="text-center"><input class="form-check-input itemCheckbox" type="checkbox" value="' + e.id + '"></td>';
               tabla += '</tr>';
             });
@@ -887,105 +909,399 @@ function validarFormula(area, result_list) {
 
     let conceptosAplicados = {}
 
+    /*
+        function guardar_concepto() {
+          let concepto_aplicar = $('#concepto_aplicar').val();
+          let fechas_aplicar = $('#fechas_aplicar').val();
+          let concepto_aplicados = $('#concepto_aplicados').val();
+
+          let tipoCalculo = (concepto_aplicar == 'sueldo_base' ? null : conceptos[concepto_aplicar]['tipo_calculo']);
+          let nombreConcepto = (concepto_aplicar == 'sueldo_base' ? 'Sueldo Base' : conceptos[concepto_aplicar]['nom_concepto']);
+          let tabulador = null;
+          let tipo_aplicacion = null;
+
+          // verifica si concepto_aplicar ya existe
+          if (conceptosAplicados[concepto_aplicar]) {
+            toast_s('error', 'No puede agregar el mismo concepto mas de una vez')
+            return
+          }
+
+          if (concepto_aplicar == '' || fechas_aplicar == '') {
+            toast_s('error', 'Debe rellenar todos los campos');
+            return;
+          } // SIEMPRE SE VALIDAN
+
+          if (tipoCalculo != 6 && tipo_aplicacion == '') {
+            toast_s('error', 'Debe seleccionar un tipo de aplicación');
+            return;
+          } // VALIDAN EN LOS CASOS NO FORMULADOS
+
+          if (tipoCalculo == 5 && concepto_aplicados == '') {
+            toast_s('error', 'Debe seleccionar al menos un concepto al cual aplicar el porcentaje');
+            return;
+          } // SE VALIDA QUE SE HAYA SELECCIONADO ALGUN CONCEPTO -- CASO DE PORCENTAJE APLICADOS A N CONCEPTOS 
+
+          if (tipoCalculo == 'sueldo_base' && tabulador == '') {
+            toast_s('error', 'Debe seleccionar el tabulador');
+            return;
+          } // SI ES EL SUELDO BASE, SE VALIDA QUE SE HAYA SELECCIONADO EL TABULADOR
+          else {
+            tabulador = $('#tabulador').val()
+          }
+
+          let empleadosDelConcepto = []
 
 
 
+          if (tipoCalculo != 6) {
+            let itemCheckboxes = document.querySelectorAll('.itemCheckbox_C');
+            itemCheckboxes.forEach(checkbox => {
+              if (checkbox.checked) {
+                empleadosDelConcepto.push(checkbox.value);
+              }
+            });
+
+            if (empleadosDelConcepto.length < 1) {
+              toast_s('error', 'Debe seleccionar al menos un empleado');
+              return;
+            }
+          }
+
+          conceptosAplicados[concepto_aplicar] = {
+            'concepto_id': concepto_aplicar,
+            'nom_concepto': nombreConcepto,
+            'fecha_aplicar': fechas_aplicar,
+            'formulacionConcepto': {
+              'TipoCalculo': tipoCalculo,
+              'n_conceptos': concepto_aplicados, // Solo en caso de que tipo_caluclo == 5
+              'emp_cantidad': (tipoCalculo != 6 ? empleadosDelConcepto.length : cantidadFormulada(concepto_aplicar, empleadosDelConcepto))
+            },
+            'tabulador': tabulador, // solo en caso de que sea sueldo_base
+            'empleados': empleadosDelConcepto
+          }
 
 
+
+          // restear el select concepto_aplicados y agregar las opciones de conceptos del obj conceptosAplicados
+          $('#concepto_aplicados').append(`<option value="${concepto_aplicar}">${nombreConcepto}</option>`);
+          toast_s('success', 'Agregado con éxito')
+
+
+
+          $('#table-conceptos').append(`<tr id="row_` + concepto_aplicar + `">
+            <td>${nombreConcepto}</td>
+            <td>${empleadosDelConcepto.length}</td>
+            <td><a onclick="borrarConcepto('` + concepto_aplicar + `')"><i class='bx bx-trash-alt'></i></a></td>
+            </tr>`)
+          setViewRegistro()
+        }
+    */
+
+
+    /**
+     * Function to save a concept.
+     * 
+     * This function retrieves the values of the concept to be saved from the form inputs,
+     * performs validation checks, and saves the concept in the 'conceptosAplicados' object.
+     * It also updates the UI by adding the concept to the select options and the table.
+     */
     function guardar_concepto() {
-      let concepto = $('#concepto_aplicar').val();
-      let fechas_aplicar = $('#fechas_aplicar').val();
-      let concepto_aplicados = $('#concepto_aplicados').val();
-      const tipoCalculo = this.value == 'sueldo_base' ? null : conceptos[this.value]['tipo_calculo'];
-      let tabulador = null;
-      let tipo_aplicacion = null;
+      const concepto_aplicar = $('#concepto_aplicar').val();
+      const fechas_aplicar = $('#fechas_aplicar').val();
+      const concepto_aplicados = $('#concepto_aplicados').val();
 
-      if (concepto == '' || fechas_aplicar == '') {
-        toast_s('error', 'Debe rellenar todos los campos');
-        return;
-      } // SIEMPRE SE VALIDAN
+      if (conceptosAplicados[concepto_aplicar]) {
+        return toast_s('error', 'No puede agregar el mismo concepto más de una vez');
+      }
 
-      if (concepto != 6 && tipo_aplicacion == '') {
-        toast_s('error', 'Debe seleccionar un tipo de aplicación');
-        return;
-      } // VALIDAN EN LOS CASOS NO FORMULADOS
+      if (!concepto_aplicar || !fechas_aplicar) {
+        return toast_s('error', 'Debe rellenar todos los campos');
+      }
 
-      if (tipoCalculo == 5 && concepto_aplicados == '') {
-        toast_s('error', 'Debe seleccionar al menos un concepto al cual aplicar el porcentaje');
-        return;
-      } // SE VALIDA QUE SE HAYA SELECCIONADO ALGUN CONCEPTO -- CASO DE PORCENTAJE APLICADOS A N CONCEPTOS 
+      let tipoCalculo, nombreConcepto, tabulador = null;
 
-      if (tipo_calculo == 'sueldo_base' && tabulador == '') {
-        toast_s('error', 'Debe seleccionar el tabulador');
-        return;
-      } // SI ES EL SUELDO BASE, SE VALIDA QUE SE HAYA SELECCIONADO EL TABULADOR
+      if (concepto_aplicar === 'sueldo_base') {
+        tipoCalculo = null;
+        nombreConcepto = 'Sueldo Base';
+      } else {
+        tipoCalculo = conceptos[concepto_aplicar].tipo_calculo;
+        nombreConcepto = conceptos[concepto_aplicar].nom_concepto;
+      }
 
+      if (tipoCalculo != 6 && !$('#tipo_aplicacion_concept').val()) {
+        return toast_s('error', 'Debe seleccionar un tipo de aplicación');
+      }
 
+      if (tipoCalculo === 5 && !concepto_aplicados) {
+        return toast_s('error', 'Debe seleccionar al menos un concepto al cual aplicar el porcentaje');
+      }
 
-      // asignar a empleados itemCheckbox_C
+      if (concepto_aplicar === 'sueldo_base' && !$('#tabulador').val()) {
+        return toast_s('error', 'Debe seleccionar el tabulador');
+      } else if (concepto_aplicar === 'sueldo_base') {
+        tabulador = $('#tabulador').val();
+      }
+
+      let empleadosDelConcepto = [];
+
+      if (tipoCalculo !== 6) {
+        document.querySelectorAll('.itemCheckbox_C').forEach(checkbox => {
+          if (checkbox.checked) {
+            empleadosDelConcepto.push(checkbox.value);
+          }
+        });
+
+        if (empleadosDelConcepto.length < 1) {
+          return toast_s('error', 'Debe seleccionar al menos un empleado');
+        }
+      }
+
+      const cantidad_t = (tipoCalculo !== 6 ? empleadosDelConcepto.length : cantidadFormulada(concepto_aplicar, empleadosDelConcepto))
+
+      conceptosAplicados[concepto_aplicar] = {
+        'concepto_id': concepto_aplicar,
+        'nom_concepto': nombreConcepto,
+        'fecha_aplicar': fechas_aplicar,
+        'formulacionConcepto': {
+          'TipoCalculo': tipoCalculo,
+          'n_conceptos': concepto_aplicados, // Solo en caso de que tipoCalculo == 5
+          'emp_cantidad': cantidad_t
+        },
+        'tabulador': tabulador, // solo en caso de que sea sueldo_base
+        'empleados': empleadosDelConcepto
+      };
+      console.log(conceptosAplicados)
+
+      $('#concepto_aplicados').append(`<option value="${concepto_aplicar}">${nombreConcepto}</option>`);
+      toast_s('success', 'Agregado con éxito');
+
+      $('#table-conceptos').append(`
+        <tr id="row_${concepto_aplicar}">
+          <td>${nombreConcepto}</td>
+          <td>${cantidad_t}</td>
+          <td><a class="pointer" onclick="borrarConcepto('${concepto_aplicar}')"><i class='bx bx-trash-alt'></i></a></td>
+        </tr>
+      `);
+
+      setViewRegistro();
     }
 
 
 
     document.getElementById('guardar_concepto').addEventListener('click', guardar_concepto);
 
-
-
-    /*
-
-          conceptosAplicados[concepto] = [concepto, fechas_aplicar, tabulador, tipo_aplicacion]
-
-          console.log(conceptosAplicados)
-    */
-
-
-
+    let valorPrevio_frecuencia_pago;
     /**
      * Sets the frequency of payment options based on the selected value.
      * @returns {void}
      */
     function setFrecueciaPago() {
+
       const opciones = {
-        '1': `
-          <option value="1">Primera semana</option>
-          <option value="2">Segunda semana</option>
-          <option value="3">Tercera semana</option>
-          <option value="4">Cuarta semana</option>
-        `,
-        '2': `
-          <option value="1">Primera quincena</option>
-          <option value="2">Segunda quincena</option>
-        `
-      };
+              '1': `
+              <option value="1">Primera semana</option>
+              <option value="2">Segunda semana</option>
+              <option value="3">Tercera semana</option>
+              <option value="4">Cuarta semana</option>
+            `,
+              '2': `
+              <option value="1">Primera quincena</option>
+              <option value="2">Segunda quincena</option>
+            `
+            };
 
-      const value = this.value;
-      const fechasAplicar = $('#fechas_aplicar');
-      const sectionFechas = $('#section_fechas');
+            const value = this.value;
+            const fechasAplicar = $('#fechas_aplicar');
+            const sectionFechas = $('#section_fechas');
 
-      if (opciones[value]) {
-        fechasAplicar.html(opciones[value]);
-        sectionFechas.removeClass('hide');
+      if (Object.keys(conceptosAplicados).length === 0) {
+
+
+        if (opciones[value]) {
+          fechasAplicar.html(opciones[value]);
+          sectionFechas.removeClass('hide');
+        } else {
+          sectionFechas.addClass('hide');
+        }
+
+        valorPrevio_frecuencia_pago = this.value
+
       } else {
-        sectionFechas.addClass('hide');
+
+
+
+        Swal.fire({
+          title: "¿Estás seguro?",
+          text: "Esta accion borrara los concetos registrados y debera agregarlos nuevamente",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#04a9f5",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Sí, eliminarlo!",
+          cancelButtonText: "Cancelar",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            conceptosAplicados = {};
+            $('#table-conceptos').html('')
+            $('#concepto_aplicados').html('');
+
+
+
+            if (opciones[value]) {
+              fechasAplicar.html(opciones[value]);
+              sectionFechas.removeClass('hide');
+            } else {
+              sectionFechas.addClass('hide');
+            }
+
+            valorPrevio_frecuencia_pago = this.value
+
+          } else {
+            document.querySelector("#tipo_aplicacion_concept option[value='" + valorPrevio_frecuencia_pago + "']").selected = true;
+          }
+        });
+
+
+
+
       }
+
+
+
+
     }
     document.getElementById('frecuencia_pago').addEventListener('change', setFrecueciaPago);
 
 
-    /*
+
+    async function cantidadFormulada(concepto, empleados) {
+      try {
+        return await cargarCantidad(concepto, empleados);
+      } catch (error) {
+        console.error('Error loading data:', error);
+      }
+    }
+
+    function cargarCantidad(c, e) {
+      return new Promise((resolve, reject) => {
+        $.ajax({
+          url: url_back,
+          type: 'POST',
+          data: {
+            concepto: c,
+            empleados: e
+          },
+          success: function(response) {
+            try {
+              resolve(JSON.parse(response));
+            } catch (parseError) {
+              reject('Error parsing JSON response: ' + parseError);
+            }
+          },
+          error: function(xhr, status, error) {
+            reject(`AJAX error - Status: ${status}, Error: ${error}`);
+          }
+        });
+      });
+    }
 
 
+/*Cambios y Mejoras
+Función Auxiliar: Creé una función auxiliar actualizarOpciones para evitar la duplicación de código.
+Variables Constantes: Las constantes opciones, value, fechasAplicar, y sectionFechas se declaran una vez y se utilizan en toda la función.
+Selector de Eventos: Agregué la asignación del evento change para el elemento select frecuencia_pago al final del código.
+Plantillas Literales: Utilicé plantillas literales (template literals) para mejorar la legibilidad de las cadenas de opciones.
+Comentarios Redundantes Eliminados: Se eliminaron los comentarios redundantes para hacer el código más limpio y fácil de leer.
+Esta versión es más fácil de mantener y entender, ya que evita la duplicación de código y organiza mejor la lógica.
+function setFrecueciaPago() {
+  const opciones = {
+    '1': `
+      <option value="1">Primera semana</option>
+      <option value="2">Segunda semana</option>
+      <option value="3">Tercera semana</option>
+      <option value="4">Cuarta semana</option>
+    `,
+    '2': `
+      <option value="1">Primera quincena</option>
+      <option value="2">Segunda quincena</option>
+    `
+  };
 
+  const value = this.value;
+  const fechasAplicar = $('#fechas_aplicar');
+  const sectionFechas = $('#section_fechas');
 
-    Mostrar tabla todos los concepto con un filtro por tipo
-    Al aplicar, si corresponde, mostra el tipo de aplicacion
-    Antes de aplicar se contabilizaran el total de empleados a los que se aplicaran
-    Seleccionar en que fecha se desea pagar el concepto
+  function actualizarOpciones() {
+    if (opciones[value]) {
+      fechasAplicar.html(opciones[value]);
+      sectionFechas.removeClass('hide');
+    } else {
+      sectionFechas.addClass('hide');
+    }
+  }
 
+  if (Object.keys(conceptosAplicados).length === 0) {
+    actualizarOpciones();
+    valorPrevio_frecuencia_pago = this.value;
+  } else {
+    Swal.fire({
+      title: "¿Estás seguro?",
+      text: "Esta acción borrará los conceptos registrados y deberá agregarlos nuevamente",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#04a9f5",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, eliminarlo!",
+      cancelButtonText: "Cancelar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        conceptosAplicados = {};
+        $('#table-conceptos').html('');
+        $('#concepto_aplicados').html('');
 
-    Resumen de nomina tal cual
+        actualizarOpciones();
+        valorPrevio_frecuencia_pago = value;
+      } else {
+        document.querySelector(`#tipo_aplicacion_concept option[value='${valorPrevio_frecuencia_pago}']`).selected = true;
+      }
+    });
+  }
+}
 
     */
+    function borrarConcepto(id) {
+      // swal preguntando si esta seguro
+
+      Swal.fire({
+        title: "¿Estás seguro?",
+        text: "¡No podrás revertir esto!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#04a9f5",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Sí, eliminarlo!",
+        cancelButtonText: "Cancelar",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          delete conceptosAplicados[id]
+          $('#concepto_aplicados option[value="' + id + '"]').remove();
+          toast_s('success', 'Concepto eliminado con éxito')
+          $('#row_' + id).remove()
+
+          // recorrer todas la propiedades del objeto 'conceptosAplicados.formulacionConcepto.n_conceptos' y eliminar el concepto si existe
+          for (const key in conceptosAplicados) {
+            if (conceptosAplicados[key].formulacionConcepto.n_conceptos) {
+              let index = conceptosAplicados[key].formulacionConcepto.n_conceptos.indexOf(id);
+              if (index > -1) {
+                conceptosAplicados[key].formulacionConcepto.n_conceptos.splice(index, 1);
+              }
+            }
+          }
+
+          console.log(conceptosAplicados)
+        }
+      });
+    }
   </script>
 
 
