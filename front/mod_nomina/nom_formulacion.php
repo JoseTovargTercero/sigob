@@ -785,101 +785,119 @@ while ($r = $query->fetch_object()) {
      * performs validation checks, and saves the concept in the 'conceptosAplicados' object.
      * It also updates the UI by adding the concept to the select options and the table.
      */
-    async function guardar_concepto() {
-      const concepto_aplicar = $('#concepto_aplicar').val();
-      const fechas_aplicar = $('#fechas_aplicar').val();
-      const concepto_aplicados = $('#concepto_aplicados').val();
+async function guardar_concepto() {
+    const concepto_aplicar = $('#concepto_aplicar').val();
+    const fechas_aplicar = $('#fechas_aplicar').val();
+    const concepto_aplicados = $('#concepto_aplicados').val();
 
-      if (conceptosAplicados[concepto_aplicar]) {
+    if (conceptosAplicados[concepto_aplicar]) {
         return toast_s('error', 'No puede agregar el mismo concepto más de una vez');
-      }
+    }
 
-      if (!concepto_aplicar || !fechas_aplicar) {
+    if (!concepto_aplicar || !fechas_aplicar) {
         return toast_s('error', 'Debe rellenar todos los campos');
-      }
+    }
 
-      let tipoCalculo, nombreConcepto, tabulador = null;
+    let tipoCalculo, nombreConcepto, tabulador = null;
 
-      if (concepto_aplicar === 'sueldo_base') {
+    if (concepto_aplicar === 'sueldo_base') {
         tipoCalculo = null;
         nombreConcepto = 'Sueldo Base';
-      } else {
+    } else {
         tipoCalculo = conceptos[concepto_aplicar].tipo_calculo;
         nombreConcepto = conceptos[concepto_aplicar].nom_concepto;
-      }
+    }
 
-      if (tipoCalculo != 6 && !$('#tipo_aplicacion_concept').val()) {
+    if (tipoCalculo != 6 && !$('#tipo_aplicacion_concept').val()) {
         return toast_s('error', 'Debe seleccionar un tipo de aplicación');
-      }
+    }
 
-      if (tipoCalculo === 5 && !concepto_aplicados) {
+    if (tipoCalculo === 5 && !concepto_aplicados) {
         return toast_s('error', 'Debe seleccionar al menos un concepto al cual aplicar el porcentaje');
-      }
+    }
 
-      if (concepto_aplicar === 'sueldo_base' && !$('#tabulador').val()) {
+    if (concepto_aplicar === 'sueldo_base' && !$('#tabulador').val()) {
         return toast_s('error', 'Debe seleccionar el tabulador');
-      } else if (concepto_aplicar === 'sueldo_base') {
+    } else if (concepto_aplicar === 'sueldo_base') {
         tabulador = $('#tabulador').val();
-      }
+    }
 
-      let empleadosDelConcepto = [];
+    let empleadosDelConcepto = [];
 
-      if (tipoCalculo !== 6) {
+    if (tipoCalculo !== 6) {
         document.querySelectorAll('.itemCheckbox_C').forEach(checkbox => {
-          if (checkbox.checked) {
-            empleadosDelConcepto.push(checkbox.value);
-          }
+            if (checkbox.checked) {
+                empleadosDelConcepto.push(checkbox.value);
+            }
         });
 
         if (empleadosDelConcepto.length < 1) {
-          return toast_s('error', 'Debe seleccionar al menos un empleado');
+            return toast_s('error', 'Debe seleccionar al menos un empleado');
         }
-      }
+    }
 
+    let cantidad_t;
+    let valor = 0;
+    let subCalculo = '0';
 
-      let cantidad_t
-      let valor = 0
-      let subCalculo = '0'
-
-      if (tipoCalculo !== 6) {
+    if (tipoCalculo !== 6) {
         cantidad_t = empleadosDelConcepto.length;
-      }else{
-        infoResolve = await cantidadFormulada(concepto_aplicar, Object.keys(empleadosFiltro))
-        cantidad_t = infoResolve.length
-        console.log(cantidad_t)
-      }
+    } else {
+        let infoResolve = await cantidadFormulada(concepto_aplicar, Object.keys(empleadosFiltro));
+        cantidad_t = infoResolve.length;
+        console.log(cantidad_t);
+    }
 
-
-      conceptosAplicados[concepto_aplicar] = {
+    let concepto = {
         'concepto_id': concepto_aplicar,
         'nom_concepto': nombreConcepto,
         'fecha_aplicar': fechas_aplicar,
         'formulacionConcepto': {
-          'TipoCalculo': tipoCalculo,
-          'n_conceptos': concepto_aplicados, // Solo en caso de que tipoCalculo == 5
-          'emp_cantidad': cantidad_t
+            'TipoCalculo': tipoCalculo,
+            'n_conceptos': concepto_aplicados, // Solo en caso de que tipoCalculo == 5
+            'emp_cantidad': cantidad_t
         },
         'tabulador': tabulador, // solo en caso de que sea sueldo_base
         'empleados': empleadosDelConcepto
-      };
+    };
 
-      $('#concepto_aplicados').append(`<option value="${concepto_aplicar}">${nombreConcepto}</option>`);
-      toast_s('success', 'Agregado con éxito');
+    conceptosAplicados[concepto_aplicar] = concepto;
 
-      $('#table-conceptos').append(`
+    // Enviar los datos al archivo PHP mediante AJAX
+    $.ajax({
+        url: '../../back/modulo_nomina/guardar_concepto.php',
+        type: 'POST',
+        data: JSON.stringify(concepto),
+        contentType: 'application/json',
+        success: function(response) {
+        // Analizar la respuesta JSON
+        var jsonResponse = JSON.parse(response);
+        
+        // Acceder a las propiedades de jsonResponse
+        console.log(jsonResponse.status);
+        console.log(jsonResponse.message);
+    },
+    error: function(xhr, textStatus, errorThrown) {
+        console.error("Error al procesar la solicitud AJAX:", errorThrown);
+    }
+        
+    });
+
+    $('#concepto_aplicados').append(`<option value="${concepto_aplicar}">${nombreConcepto}</option>`);
+    toast_s('success', 'Agregado con éxito');
+
+    $('#table-conceptos').append(`
         <tr id="row_${concepto_aplicar}">
           <td>${nombreConcepto}</td>
           <td>${cantidad_t}</td>
           <td><a class="pointer" onclick="borrarConcepto('${concepto_aplicar}')"><i class='bx bx-trash-alt'></i></a></td>
         </tr>
-      `);
+    `);
 
-      setViewRegistro();
-    }
+    setViewRegistro();
+}
 
-
-
-    document.getElementById('guardar_concepto').addEventListener('click', guardar_concepto);
+document.getElementById('guardar_concepto').addEventListener('click', guardar_concepto);
 
     let valorPrevio_frecuencia_pago;
 
