@@ -1242,12 +1242,16 @@ while ($r = $query->fetch_object()) {
         url: url_back,
         type: 'POST',
         data: {
+          grupo_nomina: "<?php echo $i ?>",
           nombre: nombre,
           frecuencia: frecuencia,
           tipo: tipo,
           conceptosAplicados: conceptosAplicados
         },
         success: function(response) {
+          if (response == 'ok') {
+            toast_s('success', 'Creado con exito')
+          }
          
         }
       });
