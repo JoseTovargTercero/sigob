@@ -2716,3 +2716,10 @@ div.dt-container .dt-paging .dt-paging-button{
 .invalidate{
   border: 1px solid #f44236 !important
 }
+
+a{
+  transition: 1s !important;
+}
+a:hover{
+  color: #04a9f5 !important;
+}

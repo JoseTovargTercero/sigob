@@ -90,8 +90,8 @@ while ($r = $query->fetch_object()) {
           <div class="card">
             <div class="card-body p-3">
               <ul class="nav nav-pills nav-justified">
-                <span id="link_basico" class="nav-item nav-link item-wizard"><i class="ph-duotone ph-user-circle"></i> <span class="d-none d-sm-inline">Basico</span></span>
-                <span id="link_empleados" class="nav-item nav-link item-wizard active"><i class="ph-duotone ph-graduation-cap"></i> <span class="d-none d-sm-inline">Empleados</span></span>
+                <span id="link_basico" class="nav-item nav-link item-wizard" active><i class="ph-duotone ph-user-circle"></i> <span class="d-none d-sm-inline">Basico</span></span>
+                <span id="link_empleados" class="nav-item nav-link item-wizard"><i class="ph-duotone ph-graduation-cap"></i> <span class="d-none d-sm-inline">Empleados</span></span>
                 <span id="link_conceptos" class="nav-item nav-link item-wizard"><i class="ph-duotone ph-map-pin"></i> <span class="d-none d-sm-inline">Conceptos</span></span>
                 <span id="link_resumen" class="nav-item nav-link item-wizard"><i class="ph-duotone ph-check-circle"></i> <span class="d-none d-sm-inline">Resumen general</span></span>
               </ul>
@@ -158,7 +158,7 @@ while ($r = $query->fetch_object()) {
                   </div>
 
                 </section>
-                <section class="tab-pane show active" id="tab_empleados">
+                <section class="tab-pane" id="tab_empleados">
                   <div id="educationForm" method="post" action="#">
                     <div class="text-center">
                       <h3 class="mb-2">Continua agregando los empleados</h3>
@@ -419,13 +419,17 @@ while ($r = $query->fetch_object()) {
                     </div>
                   </div>
                 </section>
-                <section class="tab-pane" id="tab_resumen">
+                <section class="tab-pane show active" id="tab_resumen">
                   <div class="row d-flex justify-content-center">
                     <div class="col-lg-6">
                       <div class="text-center"><i class="ph-duotone ph-gift f-50 text-danger"></i>
                         <h3 class="mt-4 mb-3">Verifica que todo este correcto</h3>
-
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsam cupiditate possimus deserunt esse necessitatibus sint aspernatur laboriosam dolore consequatur perspiciatis nulla fuga beatae assumenda voluptatum, est libero saepe autem fugit.
+                      </div>
+                    </div>
+                  </div>
+                  <div class="p-3">
+                    <div class="row">
+                      <div class="col-lg-6" id="nomina_resumen">
                       </div>
                     </div>
                   </div>
@@ -594,138 +598,6 @@ while ($r = $query->fetch_object()) {
     }
 
     document.getElementById('guardar_empleados_nomina').addEventListener('click', guardar_empleados_nomina);
-
-
-    /**
-     * Function to navigate to the next step based on the provided step value.
-     *
-     * @param {string} step - The current step value.
-     */
-    function nextStep(step) {
-      if (step == '1') {
-        const inputs = ['nombre_nomina', 'frecuencia_pago', 'tipo_nomina'];
-        if (inputs.some(id => !document.getElementById(id).value)) {
-          return toast_s('error', 'Debe completar todos los campos');
-        }
-        toggleStep('basico', 'empleados');
-        document.getElementById('progressbar').style.width = '50%';
-
-      } else if (step == '2') {
-        if (empleadosSeleccionados.length === 0) {
-          return toast_s('error', 'Debe seleccionar al menos un empleado');
-        }
-        toggleStep('empleados', 'conceptos');
-        document.getElementById('progressbar').style.width = '75%';
-      } else if (step == '3') {
-
-
-        if (Object.keys(conceptosAplicados).length === 0) {
-          return toast_s('error', 'Debe seleccionar al menos un concepto');
-        } else {
-          toggleStep('conceptos', 'resumen');
-          document.getElementById('progressbar').style.width = '100%';
-        }
-
-      }
-    }
-    /**
-     * Function to toggle between steps by hiding and showing the corresponding elements.
-     *
-     * @param {string} hideId - The ID of the element to hide.
-     * @param {string} showId - The ID of the element to show.
-     */
-    function toggleStep(hideId, showId) {
-      document.getElementById('tab_' + hideId).classList.remove('show', 'active');
-      document.getElementById('tab_' + showId).classList.add('show', 'active');
-      document.getElementById('link_' + hideId).classList.remove('active');
-      document.getElementById('link_' + showId).classList.add('active');
-    }
-
-    /**
-     * This function is called before transitioning to a new step in a wizard.
-     * It updates the active and show classes of the wizard items and tabs based on the given step.
-     *
-     * @param {string} step - The step to transition to.
-     */
-    function beforeStep(step) {
-      const stepMap = {
-        '1': {
-          link: 'link_basico',
-          tab: 'tab_basico',
-          progressbar: 25
-        },
-        '2': {
-          link: 'link_empleados',
-          tab: 'tab_empleados',
-          progressbar: 50
-        },
-        '3': {
-          link: 'link_conceptos',
-          tab: 'tab_conceptos',
-          progressbar: 75
-        },
-        '4': {
-          link: 'link_resumen',
-          tab: 'tab_resumen',
-          progressbar: 100
-        }
-      };
-
-      // Eliminar las clases 'active' y 'show' de todos los elementos
-      document.querySelectorAll('.item-wizard, .tab-pane').forEach(item => {
-        item.classList.remove('active', 'show');
-      });
-
-      // Establecer las clases 'active' y 'show' según el paso
-      if (stepMap[step]) {
-        const {
-          link,
-          tab,
-          progressbar
-        } = stepMap[step];
-        document.getElementById(link).classList.add('active');
-        document.getElementById(tab).classList.add('active', 'show');
-        document.getElementById('progressbar').style.width = progressbar + '%';
-      }
-    }
-
-
-
-    /**
-     * Adds an event listener to the 'btn_agg_concepto' element.
-     * When the button is clicked, it hides the 'conceptos_aplicados-list' element
-     * and shows the 'nuevo_concepto-sec' element.
-     */
-    function setViewRegistro() {
-      $('#concepto_aplicar').val('')
-      resetValsConceptos()
-      $('#conceptos_aplicados-list').toggleClass('hide');
-      $('#nuevo_concepto-sec').toggleClass('hide');
-    }
-
-
-    /**
-     * Resets the values of various elements in the form.
-     * This function is typically called when a reset action is triggered.
-     */
-    function resetValsConceptos() {
-      document.querySelector("#tabulador option[value='']").selected = true;
-      document.querySelector("#tipo_aplicacion_concept option[value='']").selected = true;
-      document.getElementById('selectAllC').checked = false;
-
-      $('#sueldo-options').addClass('hide')
-      $('#n_conceptos_porcentajes').addClass('hide')
-      $('#aplicacion_conceptos-options').addClass('hide')
-      $('#formulacion-conceptos').addClass('hide')
-      $('#tabla_empleados-conceptos').addClass('hide')
-      $('#emp_pre_seleccionados-list').html('')
-      $('nuevo_concepto-sec').addClass('hide')
-      $('conceptos_aplicados-list').removeClass('hide')
-      $('#fechas_aplicar').val([])
-      $('#concepto_aplicados').val([])
-    }
-
-
 
 
     /**
@@ -909,94 +781,6 @@ while ($r = $query->fetch_object()) {
 
     let conceptosAplicados = {}
 
-    /*
-        function guardar_concepto() {
-          let concepto_aplicar = $('#concepto_aplicar').val();
-          let fechas_aplicar = $('#fechas_aplicar').val();
-          let concepto_aplicados = $('#concepto_aplicados').val();
-
-          let tipoCalculo = (concepto_aplicar == 'sueldo_base' ? null : conceptos[concepto_aplicar]['tipo_calculo']);
-          let nombreConcepto = (concepto_aplicar == 'sueldo_base' ? 'Sueldo Base' : conceptos[concepto_aplicar]['nom_concepto']);
-          let tabulador = null;
-          let tipo_aplicacion = null;
-
-          // verifica si concepto_aplicar ya existe
-          if (conceptosAplicados[concepto_aplicar]) {
-            toast_s('error', 'No puede agregar el mismo concepto mas de una vez')
-            return
-          }
-
-          if (concepto_aplicar == '' || fechas_aplicar == '') {
-            toast_s('error', 'Debe rellenar todos los campos');
-            return;
-          } // SIEMPRE SE VALIDAN
-
-          if (tipoCalculo != 6 && tipo_aplicacion == '') {
-            toast_s('error', 'Debe seleccionar un tipo de aplicación');
-            return;
-          } // VALIDAN EN LOS CASOS NO FORMULADOS
-
-          if (tipoCalculo == 5 && concepto_aplicados == '') {
-            toast_s('error', 'Debe seleccionar al menos un concepto al cual aplicar el porcentaje');
-            return;
-          } // SE VALIDA QUE SE HAYA SELECCIONADO ALGUN CONCEPTO -- CASO DE PORCENTAJE APLICADOS A N CONCEPTOS 
-
-          if (tipoCalculo == 'sueldo_base' && tabulador == '') {
-            toast_s('error', 'Debe seleccionar el tabulador');
-            return;
-          } // SI ES EL SUELDO BASE, SE VALIDA QUE SE HAYA SELECCIONADO EL TABULADOR
-          else {
-            tabulador = $('#tabulador').val()
-          }
-
-          let empleadosDelConcepto = []
-
-
-
-          if (tipoCalculo != 6) {
-            let itemCheckboxes = document.querySelectorAll('.itemCheckbox_C');
-            itemCheckboxes.forEach(checkbox => {
-              if (checkbox.checked) {
-                empleadosDelConcepto.push(checkbox.value);
-              }
-            });
-
-            if (empleadosDelConcepto.length < 1) {
-              toast_s('error', 'Debe seleccionar al menos un empleado');
-              return;
-            }
-          }
-
-          conceptosAplicados[concepto_aplicar] = {
-            'concepto_id': concepto_aplicar,
-            'nom_concepto': nombreConcepto,
-            'fecha_aplicar': fechas_aplicar,
-            'formulacionConcepto': {
-              'TipoCalculo': tipoCalculo,
-              'n_conceptos': concepto_aplicados, // Solo en caso de que tipo_caluclo == 5
-              'emp_cantidad': (tipoCalculo != 6 ? empleadosDelConcepto.length : cantidadFormulada(concepto_aplicar, empleadosDelConcepto))
-            },
-            'tabulador': tabulador, // solo en caso de que sea sueldo_base
-            'empleados': empleadosDelConcepto
-          }
-
-
-
-          // restear el select concepto_aplicados y agregar las opciones de conceptos del obj conceptosAplicados
-          $('#concepto_aplicados').append(`<option value="${concepto_aplicar}">${nombreConcepto}</option>`);
-          toast_s('success', 'Agregado con éxito')
-
-
-
-          $('#table-conceptos').append(`<tr id="row_` + concepto_aplicar + `">
-            <td>${nombreConcepto}</td>
-            <td>${empleadosDelConcepto.length}</td>
-            <td><a onclick="borrarConcepto('` + concepto_aplicar + `')"><i class='bx bx-trash-alt'></i></a></td>
-            </tr>`)
-          setViewRegistro()
-        }
-    */
-
 
     /**
      * Function to save a concept.
@@ -1070,7 +854,6 @@ while ($r = $query->fetch_object()) {
         'tabulador': tabulador, // solo en caso de que sea sueldo_base
         'empleados': empleadosDelConcepto
       };
-      console.log(conceptosAplicados)
 
       $('#concepto_aplicados').append(`<option value="${concepto_aplicar}">${nombreConcepto}</option>`);
       toast_s('success', 'Agregado con éxito');
@@ -1091,48 +874,47 @@ while ($r = $query->fetch_object()) {
     document.getElementById('guardar_concepto').addEventListener('click', guardar_concepto);
 
     let valorPrevio_frecuencia_pago;
+
     /**
      * Sets the frequency of payment options based on the selected value.
-     * @returns {void}
+     * Updates the options in the 'fechas_aplicar' select element and shows/hides the 'section_fechas' section accordingly.
+     * If there are already applied concepts, it prompts the user for confirmation before clearing the concepts and updating the options.
      */
     function setFrecueciaPago() {
-
       const opciones = {
-              '1': `
-              <option value="1">Primera semana</option>
-              <option value="2">Segunda semana</option>
-              <option value="3">Tercera semana</option>
-              <option value="4">Cuarta semana</option>
-            `,
-              '2': `
-              <option value="1">Primera quincena</option>
-              <option value="2">Segunda quincena</option>
-            `
-            };
+        '1': `
+      <option value="1">Primera semana</option>
+      <option value="2">Segunda semana</option>
+      <option value="3">Tercera semana</option>
+      <option value="4">Cuarta semana</option>`,
+        '2': `
+      <option value="1">Primera quincena</option>
+      <option value="2">Segunda quincena</option>`
+      };
 
-            const value = this.value;
-            const fechasAplicar = $('#fechas_aplicar');
-            const sectionFechas = $('#section_fechas');
+      const value = this.value;
+      const fechasAplicar = $('#fechas_aplicar');
+      const sectionFechas = $('#section_fechas');
 
-      if (Object.keys(conceptosAplicados).length === 0) {
-
-
+      /**
+       * Updates the options in the 'fechas_aplicar' select element and shows/hides the 'section_fechas' section based on the selected value.
+       */
+      function actualizarOpciones() {
         if (opciones[value]) {
           fechasAplicar.html(opciones[value]);
           sectionFechas.removeClass('hide');
         } else {
           sectionFechas.addClass('hide');
         }
+      }
 
-        valorPrevio_frecuencia_pago = this.value
-
+      if (Object.keys(conceptosAplicados).length === 0) {
+        actualizarOpciones();
+        valorPrevio_frecuencia_pago = this.value;
       } else {
-
-
-
         Swal.fire({
           title: "¿Estás seguro?",
-          text: "Esta accion borrara los concetos registrados y debera agregarlos nuevamente",
+          text: "Esta acción borrará los conceptos registrados y deberá agregarlos nuevamente",
           icon: "warning",
           showCancelButton: true,
           confirmButtonColor: "#04a9f5",
@@ -1142,46 +924,48 @@ while ($r = $query->fetch_object()) {
         }).then((result) => {
           if (result.isConfirmed) {
             conceptosAplicados = {};
-            $('#table-conceptos').html('')
+            $('#table-conceptos').html('');
             $('#concepto_aplicados').html('');
 
-
-
-            if (opciones[value]) {
-              fechasAplicar.html(opciones[value]);
-              sectionFechas.removeClass('hide');
-            } else {
-              sectionFechas.addClass('hide');
-            }
-
-            valorPrevio_frecuencia_pago = this.value
-
+            actualizarOpciones();
+            valorPrevio_frecuencia_pago = value;
           } else {
-            document.querySelector("#tipo_aplicacion_concept option[value='" + valorPrevio_frecuencia_pago + "']").selected = true;
+            document.querySelector(`#tipo_aplicacion_concept option[value='${valorPrevio_frecuencia_pago}']`).selected = true;
           }
         });
-
-
-
-
       }
-
-
-
-
     }
     document.getElementById('frecuencia_pago').addEventListener('change', setFrecueciaPago);
 
 
-
+    /**
+     * Calculates the formulated quantity for a given concept and employees.
+     *
+     * @param {string} concepto - The concept for which the quantity is being calculated.
+     * @param {array} empleados - The list of employees for whom the quantity is being calculated.
+     * @returns {Promise<number>} - A promise that resolves to the formulated quantity.
+     */
     async function cantidadFormulada(concepto, empleados) {
       try {
+        console.log(await cargarCantidad(concepto, empleados));
         return await cargarCantidad(concepto, empleados);
+        
+
+        
       } catch (error) {
         console.error('Error loading data:', error);
       }
     }
 
+
+
+    /**
+     * Loads the quantity of a concept for a given set of employees.
+     *
+     * @param {string} c - The concept to load the quantity for.
+     * @param {array} e - The array of employees to load the quantity for.
+     * @returns {Promise} - A promise that resolves with the parsed JSON response or rejects with an error message.
+     */
     function cargarCantidad(c, e) {
       return new Promise((resolve, reject) => {
         $.ajax({
@@ -1192,7 +976,6 @@ while ($r = $query->fetch_object()) {
             empleados: e
           },
           success: function(response) {
-             console.log('Response from server:', response);
             try {
               resolve(JSON.parse(response));
             } catch (parseError) {
@@ -1206,69 +989,30 @@ while ($r = $query->fetch_object()) {
       });
     }
 
-/*Cambios y Mejoras
-Función Auxiliar: Creé una función auxiliar actualizarOpciones para evitar la duplicación de código.
-Variables Constantes: Las constantes opciones, value, fechasAplicar, y sectionFechas se declaran una vez y se utilizan en toda la función.
-Selector de Eventos: Agregué la asignación del evento change para el elemento select frecuencia_pago al final del código.
-Plantillas Literales: Utilicé plantillas literales (template literals) para mejorar la legibilidad de las cadenas de opciones.
-Comentarios Redundantes Eliminados: Se eliminaron los comentarios redundantes para hacer el código más limpio y fácil de leer.
-Esta versión es más fácil de mantener y entender, ya que evita la duplicación de código y organiza mejor la lógica.
-function setFrecueciaPago() {
-  const opciones = {
-    '1': `
-      <option value="1">Primera semana</option>
-      <option value="2">Segunda semana</option>
-      <option value="3">Tercera semana</option>
-      <option value="4">Cuarta semana</option>
-    `,
-    '2': `
-      <option value="1">Primera quincena</option>
-      <option value="2">Segunda quincena</option>
-    `
-  };
-
-  const value = this.value;
-  const fechasAplicar = $('#fechas_aplicar');
-  const sectionFechas = $('#section_fechas');
-
-  function actualizarOpciones() {
-    if (opciones[value]) {
-      fechasAplicar.html(opciones[value]);
-      sectionFechas.removeClass('hide');
-    } else {
-      sectionFechas.addClass('hide');
+    function en(){
+      $.ajax({
+          url: '../../back/modulo_nomina/prueba.php',
+          type: 'POST',
+          data: {
+            concepto: [26,27,28,29,30],
+            empleados: 24
+          },
+          success: function(response) {
+            alert(response)
+           console.log(response)
+          }
+        });
     }
-  }
+    en()
+    
 
-  if (Object.keys(conceptosAplicados).length === 0) {
-    actualizarOpciones();
-    valorPrevio_frecuencia_pago = this.value;
-  } else {
-    Swal.fire({
-      title: "¿Estás seguro?",
-      text: "Esta acción borrará los conceptos registrados y deberá agregarlos nuevamente",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#04a9f5",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Sí, eliminarlo!",
-      cancelButtonText: "Cancelar",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        conceptosAplicados = {};
-        $('#table-conceptos').html('');
-        $('#concepto_aplicados').html('');
 
-        actualizarOpciones();
-        valorPrevio_frecuencia_pago = value;
-      } else {
-        document.querySelector(`#tipo_aplicacion_concept option[value='${valorPrevio_frecuencia_pago}']`).selected = true;
-      }
-    });
-  }
-}
-
-    */
+    /**
+     * Deletes a concept and performs related operations.
+     *
+     * @param int id The ID of the concept to be deleted.
+     * @return void
+     */
     function borrarConcepto(id) {
       // swal preguntando si esta seguro
 
@@ -1302,9 +1046,251 @@ function setFrecueciaPago() {
         }
       });
     }
+
+
+    /*
+
+    Total en Primas
+    Total en Deducciones
+    Total en Aportes
+
+    */
+
+
+    conceptosAplicados = {
+      'concepto1': {
+        'concepto_id': 'concepto1',
+        'nom_concepto': 'Vacaciones',
+        'fecha_aplicar': '2023-05-28',
+        'formulacionConcepto': {
+          'TipoCalculo': 1,
+          'n_conceptos': 3,
+          'emp_cantidad': 50
+        },
+        'tabulador': 5,
+        'empleados': ['Empleado1', 'Empleado2']
+      },
+      'concepto2': {
+        'concepto_id': 'concepto2',
+        'nom_concepto': 'Alimentacion',
+        'fecha_aplicar': '2023-06-15',
+        'formulacionConcepto': {
+          'TipoCalculo': 2,
+          'n_conceptos': 1,
+          'emp_cantidad': 100
+        },
+        'tabulador': 3,
+        'empleados': ['Empleado3', 'Empleado4']
+      }
+      // Añade más conceptos según sea necesario
+    };
+
+    function resumenDeNomina() {
+      const nombre = $('#nombre_nomina').val()
+      const frecuencia = $('#frecuencia_pago').val()
+      const tipo = $('#tipo_nomina').val()
+
+
+      $('#nomina_resumen').html(`<h5>Datos de la nómina:</h5>
+       <p>Nombre: <b>` + nombre + `</b><br>
+       Frecuencia de pago: <b>` + frecuencia + `</b><br>
+       Tipo de nómina: <b>` + tipo + `</b>
+       </p>
+     `)
+
+
+      let totalPrimas = 0;
+      let totalDeducciones = 0;
+      let totalAportes = 0;
+
+
+
+      $('#nomina_resumen').append(`<h5> Conceptos aplicados:</h5>
+      <ul class="list-group">`)
+
+      for (let concepto_aplicar in conceptosAplicados) {
+        if (conceptosAplicados.hasOwnProperty(concepto_aplicar)) {
+          let concepto = conceptosAplicados[concepto_aplicar];
+          let nombreConcepto = concepto.nom_concepto;
+          let cantidadEmpleados = concepto.formulacionConcepto.emp_cantidad;
+          $('#nomina_resumen').append(`
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+            <a class="pointer" onclick="verTrabajadoresConcepto('`+concepto+`')">${nombreConcepto}</a>
+             <span class="badge bg-primary rounded-pill">${cantidadEmpleados} Empleados</span>
+          </li>`)
+        }
+      }
+      $('#nomina_resumen').append('</ul>')
+
+
+
+
+      return
+
+      let tabla = '';
+
+      for (const key in conceptosAplicados) {
+        if (conceptosAplicados.hasOwnProperty(key)) {
+          const element = conceptosAplicados[key];
+          let cantidad = element.formulacionConcepto.emp_cantidad;
+          let concepto = conceptos[key];
+          let total = cantidad * concepto.valor;
+          tabla += `
+         
+            <p>${concepto.nom_concepto}</p>
+            <p>${cantidad}</p>
+            <p>${concepto.valor}</p>
+            <p>${total}</p>
+
+          `;
+
+          if (concepto.tipo_concepto == 1) {
+            totalPrimas += total;
+          } else if (concepto.tipo_concepto == 2) {
+            totalDeducciones += total;
+          } else if (concepto.tipo_concepto == 3) {
+            totalAportes += total;
+          }
+        }
+      }
+    }
+
+    resumenDeNomina()
+
+
+
+
+
+
+    /**
+     * Function to navigate to the next step based on the provided step value.
+     *
+     * @param {string} step - The current step value.
+     */
+    function nextStep(step) {
+      if (step == '1') {
+        const inputs = ['nombre_nomina', 'frecuencia_pago', 'tipo_nomina'];
+        if (inputs.some(id => !document.getElementById(id).value)) {
+          return toast_s('error', 'Debe completar todos los campos');
+        }
+        toggleStep('basico', 'empleados');
+        document.getElementById('progressbar').style.width = '50%';
+
+      } else if (step == '2') {
+        if (empleadosSeleccionados.length === 0) {
+          return toast_s('error', 'Debe seleccionar al menos un empleado');
+        }
+        toggleStep('empleados', 'conceptos');
+        document.getElementById('progressbar').style.width = '75%';
+      } else if (step == '3') {
+
+
+        if (Object.keys(conceptosAplicados).length === 0) {
+          return toast_s('error', 'Debe seleccionar al menos un concepto');
+        } else {
+          toggleStep('conceptos', 'resumen');
+          document.getElementById('progressbar').style.width = '100%';
+          resumenDeNomina()
+        }
+
+      }
+    }
+    /**
+     * Function to toggle between steps by hiding and showing the corresponding elements.
+     *
+     * @param {string} hideId - The ID of the element to hide.
+     * @param {string} showId - The ID of the element to show.
+     */
+    function toggleStep(hideId, showId) {
+      document.getElementById('tab_' + hideId).classList.remove('show', 'active');
+      document.getElementById('tab_' + showId).classList.add('show', 'active');
+      document.getElementById('link_' + hideId).classList.remove('active');
+      document.getElementById('link_' + showId).classList.add('active');
+    }
+
+    /**
+     * This function is called before transitioning to a new step in a wizard.
+     * It updates the active and show classes of the wizard items and tabs based on the given step.
+     *
+     * @param {string} step - The step to transition to.
+     */
+    function beforeStep(step) {
+      const stepMap = {
+        '1': {
+          link: 'link_basico',
+          tab: 'tab_basico',
+          progressbar: 25
+        },
+        '2': {
+          link: 'link_empleados',
+          tab: 'tab_empleados',
+          progressbar: 50
+        },
+        '3': {
+          link: 'link_conceptos',
+          tab: 'tab_conceptos',
+          progressbar: 75
+        },
+        '4': {
+          link: 'link_resumen',
+          tab: 'tab_resumen',
+          progressbar: 100
+        }
+      };
+
+      // Eliminar las clases 'active' y 'show' de todos los elementos
+      document.querySelectorAll('.item-wizard, .tab-pane').forEach(item => {
+        item.classList.remove('active', 'show');
+      });
+
+      // Establecer las clases 'active' y 'show' según el paso
+      if (stepMap[step]) {
+        const {
+          link,
+          tab,
+          progressbar
+        } = stepMap[step];
+        document.getElementById(link).classList.add('active');
+        document.getElementById(tab).classList.add('active', 'show');
+        document.getElementById('progressbar').style.width = progressbar + '%';
+      }
+    }
+
+
+
+    /**
+     * Adds an event listener to the 'btn_agg_concepto' element.
+     * When the button is clicked, it hides the 'conceptos_aplicados-list' element
+     * and shows the 'nuevo_concepto-sec' element.
+     */
+    function setViewRegistro() {
+      $('#concepto_aplicar').val('');
+      resetValsConceptos();
+      toggleVisibility('#conceptos_aplicados-list', '#nuevo_concepto-sec');
+    }
+
+
+    /**
+     * Resets the values of various elements in the form.
+     * This function is typically called when a reset action is triggered.
+     */
+    function resetValsConceptos() {
+      document.querySelector("#tabulador option[value='']").selected = true;
+      document.querySelector("#tipo_aplicacion_concept option[value='']").selected = true;
+      document.getElementById('selectAllC').checked = false;
+
+      $('#sueldo-options').addClass('hide')
+      $('#n_conceptos_porcentajes').addClass('hide')
+      $('#aplicacion_conceptos-options').addClass('hide')
+      $('#formulacion-conceptos').addClass('hide')
+      $('#tabla_empleados-conceptos').addClass('hide')
+      $('#emp_pre_seleccionados-list').html('')
+      $('nuevo_concepto-sec').addClass('hide')
+      $('conceptos_aplicados-list').removeClass('hide')
+      $('#fechas_aplicar').val([])
+      $('#concepto_aplicados').val([])
+    }
   </script>
-
-
 </body>
 
 </html>
