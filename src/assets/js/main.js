@@ -178,3 +178,15 @@ function setCondicionante(condicionante, div = null) {
       console.error('Error:', error);
     });
 }
+
+
+
+/**
+ * Toggles the visibility of the specified elements.
+ * @param {...string} selectors - The CSS selectors of the elements to toggle.
+ */
+function toggleVisibility(...selectors) {
+  selectors.forEach(selector => {
+    $(selector).toggleClass('hide');
+  });
+}
