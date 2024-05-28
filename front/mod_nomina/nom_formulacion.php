@@ -842,11 +842,12 @@ async function guardar_concepto() {
 
     if (tipoCalculo !== 6) {
         cantidad_t = empleadosDelConcepto.length;
-    } else {
-        let infoResolve = await cantidadFormulada(concepto_aplicar, Object.keys(empleadosFiltro));
-        cantidad_t = infoResolve.length;
-        console.log(cantidad_t);
-    }
+      }else{
+        infoResolve = await cantidadFormulada(concepto_aplicar, Object.keys(empleadosFiltro))
+        empleadosDelConcepto =  infoResolve
+        cantidad_t = infoResolve.length
+        console.log(cantidad_t)
+      }
 
     let concepto = {
         'concepto_id': concepto_aplicar,
