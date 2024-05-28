@@ -289,7 +289,6 @@ while ($r = $query->fetch_object()) {
                         <div class="mb-3" id="section_fechas">
                           <label class="form-label" for="fechas_aplicar">¿Cuando se debe aplicar el conceto?</label>
                           <select multiple="" class="form-select" id="fechas_aplicar">
-                            <option value="1">Primera semana</option>
                           </select>
                           <small>Mantén presionada la tecla shift o presiona ctrl para selección múltiple.</small>
                         </div>
@@ -794,8 +793,14 @@ async function guardar_concepto() {
         return toast_s('error', 'No puede agregar el mismo concepto más de una vez');
     }
 
-    if (!concepto_aplicar || !fechas_aplicar) {
-        return toast_s('error', 'Debe rellenar todos los campos');
+    if (!concepto_aplicar) {
+        return toast_s('error', 'Debe seleccionar algún concepto');
+    }
+
+    if ($('#frecuencia_pago').val() == '1' || $('#frecuencia_pago').val() == '2') {
+      if (fechas_aplicar == '') {
+        return toast_s('error', 'Debe indicar una fecha a aplicar');
+      }
     }
 
     let tipoCalculo, nombreConcepto, tabulador = null;
