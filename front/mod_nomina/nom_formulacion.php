@@ -845,6 +845,7 @@ while ($r = $query->fetch_object()) {
         cantidad_t = empleadosDelConcepto.length;
       }else{
         infoResolve = await cantidadFormulada(concepto_aplicar, Object.keys(empleadosFiltro))
+        empleadosDelConcepto =  infoResolve
         cantidad_t = infoResolve.length
         console.log(cantidad_t)
       }
