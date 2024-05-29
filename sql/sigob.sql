@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 23-05-2024 a las 05:03:51
+-- Tiempo de generación: 29-05-2024 a las 19:08:12
 -- Versión del servidor: 10.4.27-MariaDB
 -- Versión de PHP: 7.4.33
 
@@ -542,6 +542,33 @@ INSERT INTO `conceptos` (`id`, `nom_concepto`, `cod_partida`, `tipo_concepto`, `
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `conceptos_aplicados`
+--
+
+CREATE TABLE `conceptos_aplicados` (
+  `id` int(255) NOT NULL,
+  `concepto_id` varchar(255) NOT NULL,
+  `nom_concepto` varchar(255) NOT NULL,
+  `fecha_aplicar` varchar(255) NOT NULL,
+  `tipo_calculo` varchar(255) NOT NULL,
+  `n_conceptos` varchar(255) NOT NULL,
+  `emp_cantidad` varchar(255) NOT NULL,
+  `tabulador` varchar(255) NOT NULL,
+  `empleados` varchar(255) NOT NULL,
+  `nombre_nomina` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `conceptos_aplicados`
+--
+
+INSERT INTO `conceptos_aplicados` (`id`, `concepto_id`, `nom_concepto`, `fecha_aplicar`, `tipo_calculo`, `n_conceptos`, `emp_cantidad`, `tabulador`, `empleados`, `nombre_nomina`) VALUES
+(19, '21', 'CONTRIBUCION POR DISCAPACIDAD', '[\"s1\"]', '1', '[]', '3', '', '[\"26\",\"27\",\"28\"]', 'Obreros'),
+(20, '24', 'PRIMA POR HIJO EMPLEADOS', '[\"s1\"]', '1', '[]', '3', '', '[\"26\",\"27\",\"28\"]', 'Obreros');
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `conceptos_formulacion`
 --
 
@@ -558,7 +585,7 @@ CREATE TABLE `conceptos_formulacion` (
 --
 
 INSERT INTO `conceptos_formulacion` (`id`, `tipo_calculo`, `condicion`, `valor`, `concepto_id`) VALUES
-(4, '1', 'discapacidades=\'Si\' ', '15', 21);
+(4, '3', 'hijos=\'3\'', '10', 21);
 
 -- --------------------------------------------------------
 
@@ -638,9 +665,19 @@ INSERT INTO `empleados` (`id`, `nacionalidad`, `cedula`, `cod_empleado`, `nombre
 
 CREATE TABLE `nominas` (
   `id` int(11) NOT NULL,
-  `codigo` int(20) NOT NULL,
-  `nombre` varchar(255) NOT NULL
+  `grupo_nomina` varchar(255) NOT NULL,
+  `nombre` varchar(255) NOT NULL,
+  `frecuencia` varchar(255) NOT NULL,
+  `tipo` varchar(255) NOT NULL,
+  `conceptos_aplicados` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+
+--
+-- Volcado de datos para la tabla `nominas`
+--
+
+INSERT INTO `nominas` (`id`, `grupo_nomina`, `nombre`, `frecuencia`, `tipo`, `conceptos_aplicados`) VALUES
+(4, '3', 'Obreros', '1', '1', '[19,20]');
 
 -- --------------------------------------------------------
 
@@ -1244,6 +1281,12 @@ ALTER TABLE `conceptos`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indices de la tabla `conceptos_aplicados`
+--
+ALTER TABLE `conceptos_aplicados`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indices de la tabla `conceptos_formulacion`
 --
 ALTER TABLE `conceptos_formulacion`
@@ -1324,7 +1367,13 @@ ALTER TABLE `cargos_grados`
 -- AUTO_INCREMENT de la tabla `conceptos`
 --
 ALTER TABLE `conceptos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+
+--
+-- AUTO_INCREMENT de la tabla `conceptos_aplicados`
+--
+ALTER TABLE `conceptos_aplicados`
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT de la tabla `conceptos_formulacion`
@@ -1348,7 +1397,7 @@ ALTER TABLE `empleados`
 -- AUTO_INCREMENT de la tabla `nominas`
 --
 ALTER TABLE `nominas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `nominas_conceptos`

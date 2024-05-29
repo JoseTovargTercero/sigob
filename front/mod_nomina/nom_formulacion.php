@@ -90,7 +90,7 @@ while ($r = $query->fetch_object()) {
           <div class="card">
             <div class="card-body p-3">
               <ul class="nav nav-pills nav-justified">
-                <span id="link_basico" class="nav-item nav-link item-wizard" active><i class="ph-duotone ph-user-circle"></i> <span class="d-none d-sm-inline">Basico</span></span>
+                <span id="link_basico" class="nav-item nav-link item-wizard active"><i class="ph-duotone ph-user-circle"></i> <span class="d-none d-sm-inline">Basico</span></span>
                 <span id="link_empleados" class="nav-item nav-link item-wizard"><i class="ph-duotone ph-graduation-cap"></i> <span class="d-none d-sm-inline">Empleados</span></span>
                 <span id="link_conceptos" class="nav-item nav-link item-wizard"><i class="ph-duotone ph-map-pin"></i> <span class="d-none d-sm-inline">Conceptos</span></span>
                 <span id="link_resumen" class="nav-item nav-link item-wizard"><i class="ph-duotone ph-check-circle"></i> <span class="d-none d-sm-inline">Resumen general</span></span>
@@ -107,7 +107,7 @@ while ($r = $query->fetch_object()) {
 
               <div class="tab-content">
 
-                <section class="tab-pane" id="tab_basico">
+                <section class="tab-pane show active" id="tab_basico">
                   <div id="contactForm" method="post" action="#">
                     <div class="text-center">
                       <h3 class="mb-2">Comencemos con la información básica.</h3>
@@ -289,7 +289,6 @@ while ($r = $query->fetch_object()) {
                         <div class="mb-3" id="section_fechas">
                           <label class="form-label" for="fechas_aplicar">¿Cuando se debe aplicar el conceto?</label>
                           <select multiple="" class="form-select" id="fechas_aplicar">
-                            <option value="1">Primera semana</option>
                           </select>
                           <small>Mantén presionada la tecla shift o presiona ctrl para selección múltiple.</small>
                         </div>
@@ -419,7 +418,7 @@ while ($r = $query->fetch_object()) {
                     </div>
                   </div>
                 </section>
-                <section class="tab-pane show active" id="tab_resumen">
+                <section class="tab-pane" id="tab_resumen">
                   <div class="row d-flex justify-content-center">
                     <div class="col-lg-6">
                       <div class="text-center"><i class="ph-duotone ph-gift f-50 text-danger"></i>
@@ -437,7 +436,7 @@ while ($r = $query->fetch_object()) {
                     <div class="d-flex m-a">
                       <div class="me-2"><button class="previous btn btn-secondary" onclick="beforeStep('3')">Regresar</button=>
                       </div>
-                      <div class="next"><button onclick="guardarNomina()" class="btn btn-secondary mt-3 mt-md-0">Siguiente</button></div>
+                      <div class="next"><button onclick="guardarNomina()" class="btn btn-primary mt-3 mt-md-0"> <i class="bx bx-save"></i> Guardar</button></div>
                     </div>
                   </div>
                 </section>
@@ -726,11 +725,7 @@ while ($r = $query->fetch_object()) {
     document.getElementById('tipo_aplicacion_concept').addEventListener('change', tipoAplicacion);
 
     function tbl_emp_seleccionados(condicion, accion) {
-      // TODO: aca se deben aplicar los filtros
-
-
-
-      if (accion == 'todos') {
+          if (accion == 'todos') {
         $('#tabla_empleados-conceptos').removeClass('hide');
         let tabla = '';
         empleadosSeleccionados.forEach(e => {
@@ -789,89 +784,128 @@ while ($r = $query->fetch_object()) {
      * performs validation checks, and saves the concept in the 'conceptosAplicados' object.
      * It also updates the UI by adding the concept to the select options and the table.
      */
-    function guardar_concepto() {
-      const concepto_aplicar = $('#concepto_aplicar').val();
-      const fechas_aplicar = $('#fechas_aplicar').val();
-      const concepto_aplicados = $('#concepto_aplicados').val();
+async function guardar_concepto() {
+    const concepto_aplicar = $('#concepto_aplicar').val();
+    const fechas_aplicar = $('#fechas_aplicar').val();
+    const concepto_aplicados = $('#concepto_aplicados').val();
 
-      if (conceptosAplicados[concepto_aplicar]) {
+    if (conceptosAplicados[concepto_aplicar]) {
         return toast_s('error', 'No puede agregar el mismo concepto más de una vez');
+    }
+
+    if (!concepto_aplicar) {
+        return toast_s('error', 'Debe seleccionar algún concepto');
+    }
+
+    if ($('#frecuencia_pago').val() == '1' || $('#frecuencia_pago').val() == '2') {
+      if (fechas_aplicar == '') {
+        return toast_s('error', 'Debe indicar una fecha a aplicar');
       }
+    }
 
-      if (!concepto_aplicar || !fechas_aplicar) {
-        return toast_s('error', 'Debe rellenar todos los campos');
-      }
+    let tipoCalculo, nombreConcepto, tabulador = null;
 
-      let tipoCalculo, nombreConcepto, tabulador = null;
-
-      if (concepto_aplicar === 'sueldo_base') {
+    if (concepto_aplicar === 'sueldo_base') {
         tipoCalculo = null;
         nombreConcepto = 'Sueldo Base';
-      } else {
+    } else {
         tipoCalculo = conceptos[concepto_aplicar].tipo_calculo;
         nombreConcepto = conceptos[concepto_aplicar].nom_concepto;
-      }
+    }
 
-      if (tipoCalculo != 6 && !$('#tipo_aplicacion_concept').val()) {
+    if (tipoCalculo != 6 && !$('#tipo_aplicacion_concept').val()) {
         return toast_s('error', 'Debe seleccionar un tipo de aplicación');
-      }
+    }
 
-      if (tipoCalculo === 5 && !concepto_aplicados) {
+    if (tipoCalculo === 5 && !concepto_aplicados) {
         return toast_s('error', 'Debe seleccionar al menos un concepto al cual aplicar el porcentaje');
-      }
+    }
 
-      if (concepto_aplicar === 'sueldo_base' && !$('#tabulador').val()) {
+    if (concepto_aplicar === 'sueldo_base' && !$('#tabulador').val()) {
         return toast_s('error', 'Debe seleccionar el tabulador');
-      } else if (concepto_aplicar === 'sueldo_base') {
+    } else if (concepto_aplicar === 'sueldo_base') {
         tabulador = $('#tabulador').val();
-      }
+    }
 
-      let empleadosDelConcepto = [];
+    let empleadosDelConcepto = [];
 
-      if (tipoCalculo !== 6) {
+    if (tipoCalculo !== 6) {
         document.querySelectorAll('.itemCheckbox_C').forEach(checkbox => {
-          if (checkbox.checked) {
-            empleadosDelConcepto.push(checkbox.value);
-          }
+            if (checkbox.checked) {
+                empleadosDelConcepto.push(checkbox.value);
+            }
         });
 
         if (empleadosDelConcepto.length < 1) {
-          return toast_s('error', 'Debe seleccionar al menos un empleado');
+            return toast_s('error', 'Debe seleccionar al menos un empleado');
         }
+    }
+
+    let cantidad_t;
+    let valor = 0;
+    let subCalculo = '0';
+    let nombre_nomina = document.getElementById('nombre_nomina').value;
+
+    if (tipoCalculo !== 6) {
+        cantidad_t = empleadosDelConcepto.length;
+      }else{
+        infoResolve = await cantidadFormulada(concepto_aplicar, Object.keys(empleadosFiltro))
+        empleadosDelConcepto =  infoResolve
+        cantidad_t = infoResolve.length
+        console.log(cantidad_t)
       }
 
-      const cantidad_t = (tipoCalculo !== 6 ? empleadosDelConcepto.length : cantidadFormulada(concepto_aplicar, empleadosDelConcepto))
-
-      conceptosAplicados[concepto_aplicar] = {
+    let concepto = {
         'concepto_id': concepto_aplicar,
         'nom_concepto': nombreConcepto,
         'fecha_aplicar': fechas_aplicar,
         'formulacionConcepto': {
-          'TipoCalculo': tipoCalculo,
-          'n_conceptos': concepto_aplicados, // Solo en caso de que tipoCalculo == 5
-          'emp_cantidad': cantidad_t
+            'TipoCalculo': tipoCalculo,
+            'n_conceptos': concepto_aplicados, // Solo en caso de que tipoCalculo == 5
+            'emp_cantidad': cantidad_t
         },
         'tabulador': tabulador, // solo en caso de que sea sueldo_base
-        'empleados': empleadosDelConcepto
-      };
+        'empleados': empleadosDelConcepto,
+        'nombre_nomina': nombre_nomina
+    };
 
-      $('#concepto_aplicados').append(`<option value="${concepto_aplicar}">${nombreConcepto}</option>`);
-      toast_s('success', 'Agregado con éxito');
+    conceptosAplicados[concepto_aplicar] = concepto;
 
-      $('#table-conceptos').append(`
+    // Enviar los datos al archivo PHP mediante AJAX
+    $.ajax({
+        url: '../../back/modulo_nomina/guardar_concepto.php',
+        type: 'POST',
+        data: JSON.stringify(concepto),
+        contentType: 'application/json',
+        success: function(response) {
+        // Analizar la respuesta JSON
+        var jsonResponse = JSON.parse(response);
+        
+        // Acceder a las propiedades de jsonResponse
+        console.log(jsonResponse.status);
+        console.log(jsonResponse.message);
+    },
+    error: function(xhr, textStatus, errorThrown) {
+        console.error("Error al procesar la solicitud AJAX:", errorThrown);
+    }
+        
+    });
+
+    $('#concepto_aplicados').append(`<option value="${concepto_aplicar}">${nombreConcepto}</option>`);
+    toast_s('success', 'Agregado con éxito');
+
+    $('#table-conceptos').append(`
         <tr id="row_${concepto_aplicar}">
           <td>${nombreConcepto}</td>
           <td>${cantidad_t}</td>
           <td><a class="pointer" onclick="borrarConcepto('${concepto_aplicar}')"><i class='bx bx-trash-alt'></i></a></td>
         </tr>
-      `);
+    `);
 
-      setViewRegistro();
-    }
+    setViewRegistro();
+}
 
-
-
-    document.getElementById('guardar_concepto').addEventListener('click', guardar_concepto);
+document.getElementById('guardar_concepto').addEventListener('click', guardar_concepto);
 
     let valorPrevio_frecuencia_pago;
 
@@ -883,13 +917,17 @@ while ($r = $query->fetch_object()) {
     function setFrecueciaPago() {
       const opciones = {
         '1': `
-      <option value="1">Primera semana</option>
-      <option value="2">Segunda semana</option>
-      <option value="3">Tercera semana</option>
-      <option value="4">Cuarta semana</option>`,
+      <option value="s1">Primera semana</option>
+      <option value="s2">Segunda semana</option>
+      <option value="s3">Tercera semana</option>
+      <option value="s4">Cuarta semana</option>`,
         '2': `
-      <option value="1">Primera quincena</option>
-      <option value="2">Segunda quincena</option>`
+      <option value="q1">Primera quincena</option>
+      <option value="q2">Segunda quincena</option>`,
+      '3': `
+      <option value="m">Pago Mensual</option>`,
+      '4': `
+      <option value="um">Pago Unico Mensual</option>`,
       };
 
       const value = this.value;
@@ -947,17 +985,11 @@ while ($r = $query->fetch_object()) {
      */
     async function cantidadFormulada(concepto, empleados) {
       try {
-        console.log(await cargarCantidad(concepto, empleados));
         return await cargarCantidad(concepto, empleados);
-        
-
-        
       } catch (error) {
         console.error('Error loading data:', error);
       }
     }
-
-
 
     /**
      * Loads the quantity of a concept for a given set of employees.
@@ -969,13 +1001,14 @@ while ($r = $query->fetch_object()) {
     function cargarCantidad(c, e) {
       return new Promise((resolve, reject) => {
         $.ajax({
-          url: '../../back/modulo_nomina/prueba.php',
+          url: '../../back/modulo_nomina/nom_formulacion_emp_tc_6.php',
           type: 'POST',
           data: {
             concepto: c,
             empleados: e
           },
           success: function(response) {
+            console.log(response)
             try {
               resolve(JSON.parse(response));
             } catch (parseError) {
@@ -988,24 +1021,6 @@ while ($r = $query->fetch_object()) {
         });
       });
     }
-
-    function en(){
-      $.ajax({
-          url: '../../back/modulo_nomina/prueba.php',
-          type: 'POST',
-          data: {
-            concepto: 24,
-            empleados: [26,27,28,29,30]
-          },
-          success: function(response) {
-            alert(response)
-           console.log(response)
-          }
-        });
-    }
-    en()
-    
-
 
     /**
      * Deletes a concept and performs related operations.
@@ -1048,43 +1063,6 @@ while ($r = $query->fetch_object()) {
     }
 
 
-    /*
-
-    Total en Primas
-    Total en Deducciones
-    Total en Aportes
-
-    */
-
-
-    conceptosAplicados = {
-      'concepto1': {
-        'concepto_id': 'concepto1',
-        'nom_concepto': 'Vacaciones',
-        'fecha_aplicar': '2023-05-28',
-        'formulacionConcepto': {
-          'TipoCalculo': 1,
-          'n_conceptos': 3,
-          'emp_cantidad': 50
-        },
-        'tabulador': 5,
-        'empleados': ['Empleado1', 'Empleado2']
-      },
-      'concepto2': {
-        'concepto_id': 'concepto2',
-        'nom_concepto': 'Alimentacion',
-        'fecha_aplicar': '2023-06-15',
-        'formulacionConcepto': {
-          'TipoCalculo': 2,
-          'n_conceptos': 1,
-          'emp_cantidad': 100
-        },
-        'tabulador': 3,
-        'empleados': ['Empleado3', 'Empleado4']
-      }
-      // Añade más conceptos según sea necesario
-    };
-
     function resumenDeNomina() {
       const nombre = $('#nombre_nomina').val()
       const frecuencia = $('#frecuencia_pago').val()
@@ -1121,10 +1099,7 @@ while ($r = $query->fetch_object()) {
         }
       }
       $('#nomina_resumen').append('</ul>')
-
-
-
-
+      /*
       return
 
       let tabla = '';
@@ -1152,14 +1127,8 @@ while ($r = $query->fetch_object()) {
             totalAportes += total;
           }
         }
-      }
+      }*/
     }
-
-    resumenDeNomina()
-
-
-
-
 
 
     /**
@@ -1289,6 +1258,36 @@ while ($r = $query->fetch_object()) {
       $('conceptos_aplicados-list').removeClass('hide')
       $('#fechas_aplicar').val([])
       $('#concepto_aplicados').val([])
+    }
+
+
+    function guardarNomina(){
+      const nombre = $('#nombre_nomina').val()
+      const frecuencia = $('#frecuencia_pago').val()
+      const tipo = $('#tipo_nomina').val()
+
+      console.log(conceptosAplicados)
+
+      $.ajax({
+        url: '../../back/modulo_nomina/guardar_nominas.php',
+        type: 'POST',
+        data: {
+          grupo_nomina: "<?php echo $i ?>",
+          nombre: nombre,
+          frecuencia: frecuencia,
+          tipo: tipo,
+          conceptosAplicados: conceptosAplicados
+        },
+        success: function(response) {
+          if (response == 'ok') {
+            toast_s('success', 'Creado con exito')
+          }
+         
+        }
+      });
+
+
+
     }
   </script>
 </body>
