@@ -844,6 +844,7 @@ async function guardar_concepto() {
     let cantidad_t;
     let valor = 0;
     let subCalculo = '0';
+    let nombre_nomina = document.getElementById('nombre_nomina').value;
 
     if (tipoCalculo !== 6) {
         cantidad_t = empleadosDelConcepto.length;
@@ -864,7 +865,8 @@ async function guardar_concepto() {
             'emp_cantidad': cantidad_t
         },
         'tabulador': tabulador, // solo en caso de que sea sueldo_base
-        'empleados': empleadosDelConcepto
+        'empleados': empleadosDelConcepto,
+        'nombre_nomina': nombre_nomina
     };
 
     conceptosAplicados[concepto_aplicar] = concepto;
@@ -915,13 +917,17 @@ document.getElementById('guardar_concepto').addEventListener('click', guardar_co
     function setFrecueciaPago() {
       const opciones = {
         '1': `
-      <option value="1">Primera semana</option>
-      <option value="2">Segunda semana</option>
-      <option value="3">Tercera semana</option>
-      <option value="4">Cuarta semana</option>`,
+      <option value="s1">Primera semana</option>
+      <option value="s2">Segunda semana</option>
+      <option value="s3">Tercera semana</option>
+      <option value="s4">Cuarta semana</option>`,
         '2': `
-      <option value="1">Primera quincena</option>
-      <option value="2">Segunda quincena</option>`
+      <option value="q1">Primera quincena</option>
+      <option value="q2">Segunda quincena</option>`,
+      '3': `
+      <option value="m">Pago Mensual</option>`,
+      '4': `
+      <option value="um">Pago Unico Mensual</option>`,
       };
 
       const value = this.value;
@@ -1263,7 +1269,7 @@ document.getElementById('guardar_concepto').addEventListener('click', guardar_co
       console.log(conceptosAplicados)
 
       $.ajax({
-        url: url_back,
+        url: '../../back/modulo_nomina/guardar_nominas.php',
         type: 'POST',
         data: {
           grupo_nomina: "<?php echo $i ?>",
