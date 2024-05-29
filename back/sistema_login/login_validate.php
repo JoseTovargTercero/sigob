@@ -11,7 +11,7 @@ $email = mysqli_real_escape_string($conexion,  $email);
 $contrasena = mysqli_real_escape_string($conexion,  $contrasena);
 
 
-$stmt = mysqli_prepare($conexion, "SELECT * FROM `system_users` WHERE u_email = ? AND u_contrasena!='' LIMIT 1");
+$stmt = mysqli_prepare($conexion, "SELECT * FROM `system_users` WHERE u_email = ? AND u_contrasena!='' AND u_status='1' LIMIT 1");
 $stmt->bind_param("s", $email);
 $stmt->execute();
 $result = $stmt->get_result();
