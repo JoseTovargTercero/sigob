@@ -22,6 +22,7 @@ document.getElementById('formLogin').addEventListener('submit', function (e) {
         // convierte el texto de la respuesta a un json
 
         text = JSON.stringify(text)
+        console.log(text)
 
         if (text.val == true) {
           location.href = 'front/' + text.of
