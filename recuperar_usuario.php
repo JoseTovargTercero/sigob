@@ -37,36 +37,54 @@
       <div class="auth-form">
         <div class="position-relative my-5">
           <div class="auth-bg">
-            <span class="r"></span>
+
             <span class="r s"></span>
             <span class="r s"></span>
-            <span class="r"></span>
           </div>
           <div class="card mb-0">
-            <form action="back/global/login_validate.php" id="formLogin" method="POST" class="card-body">
+            <form id="recovery-form" method="POST" class="card-body">
               <div class="text-center">
                 <a href="#"><img src="src/assets/images/logo.png" width="60px" alt="img"></a>
               </div>
-              <h4 class="text-center f-w-500 mt-4 mb-3">Inicio</h4>
-              <div class="form-group mb-3">
-                <input value="corro@correo.com" type="email" name="email" class="form-control"
-                  placeholder="Correo Electrónico">
-              </div>
-              <div class="form-group mb-3">
-                <input value="123456" type="password" name="password" class="form-control" placeholder="Contraseña">
-              </div>
-              <div class="d-flex mt-1 justify-content-between align-items-center">
 
-                <a href="recuperar_usuario.php" class="text-secondary f-w-400 mb-0">Olvidó su contraseña?</a>
+              <h4 class="text-center f-w-500 mt-4 mb-3">Recuperar contraseña</h4>
+              <!-- <h4 class="text-center fs-6 f-w-500 mt-4 mb-3">Recuperar contraseña</h4> -->
+
+              <div class="form-floating" id="recovery-form-part-1">
+                <input type="email" name="email" class="form-control" placeholder="Consultar Electrónico"
+                  id="consultar-correo">
+                <label for="consultar-correo">Consultar correo</label>
               </div>
-              <div class="text-center mt-4">
-                <button type="submit" class="btn btn-primary shadow px-sm-4">Verificar</button>
+
+              <div class="form-floating d-none" id="recovery-form-part-2">
+                <input type="email" name="email" class="form-control" placeholder="Consultar Electrónico"
+                  id="validar-token">
+                <label for="validar-token">Validar Token</label>
               </div>
+
+              <div class="form-floating d-none" id="recovery-form-part-3">
+                <input type="email" name="email" class="form-control" placeholder="Consultar Electrónico"
+                  id="consultar-correo">
+                <label for="consultar-correo">Nueva contraseña</label>
+                <input type="email" name="email" class="form-control" placeholder="Consultar Electrónico"
+                  id="consultar-correo">
+                <label for="consultar-correo">Confirmar contraseña</label>
+              </div>
+
+              <hr class="border border-secondary border-2 opacity-50">
+
+              <div class="form-group d-flex justify-content-between">
+                <button class="btn btn-info hide" id="btn-previus">Anterior</button>
+                <button class="btn btn-info hide" id="btn-next">SIGUIENTE</button>
+                <button class="btn btn-info" id="btn-consult">Consultar</button>
+              </div>
+
+              <!-- 
               <div class="d-flex justify-content-between align-items-end mt-4">
                 Copy
 
 
-              </div>
+              </div> -->
             </form>
           </div>
         </div>
@@ -78,7 +96,7 @@
   preset-3
   -->
 
-  <script src="src/form.js"></script>
+  <script src="src/recoveryForm.js"></script>
 </body>
 
 </html>

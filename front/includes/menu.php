@@ -70,18 +70,21 @@
         -->
 
 
-        <li class="pc-item pc-caption">
-          <label>Usuarios</label>
-          <i data-feather="sidebar"></i>
-        </li>
 
-        <li class="pc-item">
-          <a href="<?php echo constant('URL') ?>/adm_usuarios" class="pc-link">
-            <span class="pc-micon"><i data-feather="sidebar"></i></span>
-            <span class="pc-mtext">Usuarios</span>
-          </a>
-        </li>
+        <?php if ($_SESSION["u_nivel"] == '1') { ?>
 
+          <li class="pc-item pc-caption">
+            <label>Usuarios</label>
+            <i data-feather="sidebar"></i>
+          </li>
+          <li class="pc-item">
+            <a href="<?php echo constant('URL') ?>front/mod_global/global_users" class="pc-link">
+              <span class="pc-micon"><i data-feather="sidebar"></i></span>
+              <span class="pc-mtext">Usuarios</span>
+            </a>
+          </li>
+
+          <?php } ?>
 
 
 

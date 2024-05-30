@@ -53,24 +53,11 @@ require_once '../../back/sistema_global/session.php';
                 <div>
                   <h5 class="mb-0">Grupo de nominas</h5>
                   <small class="text-muded">Cree y configure sus grupos de nominas</small>
-                </div>  
+                </div>
                 <button class="btn btn-light" id="btn-svr" onclick="setVistaRegistro()"> Nuevo grupo</button>
               </div>
             </div>
             <div class="card-body">
-
-
-
-
-
-
-
-
-
-
-
-
-
 
               <div class="table-responsive p-1">
                 <table id="table" class="table table-hover">
@@ -78,7 +65,8 @@ require_once '../../back/sistema_global/session.php';
                     <tr>
                       <th class="w-5"></th>
                       <th class="w-10">Código</th>
-                      <th class="w-60">Nombre del grupo</th>
+                      <th class="w-50">Nombre del grupo</th>
+                      <th class="w-10"></th>
                       <th class="w-10"></th>
                       <th class="w-10"></th>
                     </tr>
@@ -106,10 +94,66 @@ require_once '../../back/sistema_global/session.php';
       <!-- [ Main Content ] end -->
     </div>
   </div>
+
+
+  <div class="dialogs">
+    <div class="dialogs-content">
+      <span class="close-button">×</span>
+
+      <h5 class="card-header">
+        Nominas
+      </h5>
+      <div class="mt-3">
+
+
+        <ol class="list-group list-group-numbered">
+          <li class="list-group-item d-flex justify-content-between align-items-start">
+            <div class="ms-2 me-auto">
+              <div class="fw-bold">003 Nacional </div> <small>Normal</small> 
+            </div>
+            <button type="button" class="btn btn-icon btn-light-danger avtar-sm"><i class="bx bx-trash"></i></button>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-start">
+            <div class="ms-2 me-auto">
+              <div class="fw-bold">033 Regional </div> <small>Normal</small> 
+            </div>
+            <button type="button" class="btn btn-icon btn-light-danger avtar-sm"><i class="bx bx-trash"></i></button>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-start">
+            <div class="ms-2 me-auto">
+              <div class="fw-bold">003 Cesta ticket </div> <small>Especial</small> 
+            </div>
+            <button type="button" class="btn btn-icon btn-light-danger avtar-sm"><i class="bx bx-trash"></i></button>
+          </li>
+        </ol>
+
+
+
+      </div>
+    </div>
+  </div>
+  <script>
+    var dialogs = document.querySelector(".dialogs");
+    var closeButton = document.querySelector(".close-button");
+
+    function toggleDialogs() {
+      dialogs.classList.toggle("show-dialogs");
+    }
+
+    function windowOnClick(event) {
+      if (event.target === dialogs) {
+        toggleDialogs();
+      }
+    }
+
+    closeButton.addEventListener("click", toggleDialogs);
+    window.addEventListener("click", windowOnClick);
+  </script>
+
+
   <!-- [ Main Content ] end -->
   <script src="../../src/assets/js/plugins/simplebar.min.js"></script>
   <script src="../../src/assets/js/plugins/bootstrap.min.js"></script>
-  <script src="../../src/assets/js/fonts/custom-font.js"></script>
   <script src="../../src/assets/js/pcoded.js"></script>
   <script src="../../src/assets/js/plugins/feather.min.js"></script>
   <script src="../../src/assets/js/main.js"></script>
@@ -137,13 +181,20 @@ require_once '../../back/sistema_global/session.php';
               var nombre = data[i].nombre;
               var id = data[i].id;
 
-              $('#table tbody').append(`
-              <tr>
+              $('#table tbody').append(`<tr>
               <td><img class="rounded-circle" src="../../src/assets/images/icons-png/folder.png" alt="activity-user"></td>
               <td>` + codigo + `</td>
               <td>` + nombre + `</td>
-              <td><a href="nom_formulacion?i=`+id+`" class="pointer btn-wicon badge me-2 bg-brand-color-1 text-white f-12" onclick="addNomina(` + id + `)"> <box-icon class="icon" name='add-to-queue'></box-icon> Agregar</a></td>
-              <td><a class="pointer btn-wicon badge me-2 bg-brand-color-2 text-white f-12" onclick="eliminar(` + id + `)">Eliminar</a></td>
+
+    
+
+              <td><a class="pointer btn-wicon badge me-2 bg-light-dark  f-12" onclick="verGrupo(` + id + `)"> <i class="bx bx-detail"></i> Detalles</a></td>
+
+
+
+              <td><a href="nom_formulacion?i=` + id + `" class="pointer btn-wicon badge me-2 bg-brand-color-1 text-white f-12" onclick="addNomina(` + id + `)"> <i class="bx bx-add-to-queue"></i> Agregar</a></td>
+
+              <td><a class="pointer btn-wicon badge me-2 bg-brand-color-2 text-white f-12" onclick="eliminar(` + id + `)"><i class="bx bx-trash"></i> Eliminar</a></td>
               </tr>`);
             }
           }
@@ -154,6 +205,12 @@ require_once '../../back/sistema_global/session.php';
     }
     // ready function
     cargarTabla()
+
+
+    function verGrupo(gurpo) {
+      toggleDialogs()
+
+    }
 
 
 
