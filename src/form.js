@@ -22,9 +22,9 @@ document.getElementById('formLogin').addEventListener('submit', function (e) {
         // convierte el texto de la respuesta a un json
 
         text = JSON.stringify(text)
-        console.log(text)
+        console.log(text.val)
 
-        if (text.val == true) {
+        if (text.val == true || text.val == 'true') {
           location.href = 'front/' + text.of
         } else if (text.val == false) {
           toast_s('error', 'Error: verifique sus credenciales')
