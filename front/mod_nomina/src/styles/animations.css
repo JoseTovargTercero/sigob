@@ -5,7 +5,7 @@
 
 .size-change-animation {
   animation: size-change;
-  animation-duration: 2s;
+  animation-duration: 1s;
 }
 
 @keyframes slide-up {
@@ -21,7 +21,10 @@
 
 @keyframes size-change {
   0% {
-    transform: scale(0.5);
+    transform: scale(0.8);
+  }
+  30% {
+    transform: scale(1.1);
   }
   100% {
     transform: scale(1);

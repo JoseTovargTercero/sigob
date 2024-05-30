@@ -43,7 +43,7 @@
             <span class="r s"></span>
           </div>
           <div class="card mb-0">
-            <form id="recovery-form" class="card-body" autocomplete="off">
+            <form id="recovery-form" class="card-body size-change-animation" autocomplete="off">
               <div class="text-center">
                 <a href="#"><img src="src/assets/images/logo.png" width="60px" alt="img"></a>
               </div>
@@ -51,26 +51,26 @@
               <h4 class="text-center f-w-500 mt-4 mb-3">Recuperar contraseña</h4>
 
 
-              <div class="form-floating" id="recovery-form-part-1">
+              <div class="form-floating slide-up-animation" id="recovery-form-part-1">
                 <input type="email" name="email" class="form-control" placeholder="Consultar Electrónico"
                   id="consultar-correo">
                 <label for="consultar-correo">Consultar correo</label>
               </div>
 
-              <div class="form-floating d-none" id="recovery-form-part-2">
+              <div class="form-floating d-none slide-up-animation" id="recovery-form-part-2">
                 <input type="text" name="token" class="form-control" placeholder="Consultar Electrónico"
                   id="validar-token">
                 <label for="validar-token">Validar Token</label>
               </div>
 
-              <div class="d-none" id="recovery-form-part-3">
+              <div class="d-none slide-up-animation" id="recovery-form-part-3">
                 <div class="form-floating" id="recovery-form-part-3">
                   <input type="password" name="nuevaContraseña" class="form-control" placeholder="Consultar Electrónico"
                     id="nueva-contraseña">
                   <label for="nueva-contraseña">Nueva contraseña</label>
                 </div>
-                <div class="form-floating" id="recovery-form-part-3">
-                  <input type="password" name="confirmarContraseña" class="form-control"
+                <div class="form-floating">
+                  <input type=" password" name="confirmarContraseña" class="form-control"
                     placeholder="Consultar Electrónico" id="confirmar-contraseña">
                   <label for="confirmar-contraseña">Confirmar contraseña</label>
                 </div>
