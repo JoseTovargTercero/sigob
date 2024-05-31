@@ -220,10 +220,10 @@ elseif ($accion == 'pass' && isset($_SESSION['email']) && isset($_POST['token'])
     if ($validationResult['valid']) {
         // Token válido, actualizar la contraseña
         if (updatePassword($conexion, $validationResult['email'], $password)) {
-             echo json_encode(["response" =>  'contraseña actualiza']);
+             echo json_encode(["response" =>  'contraseña actualizada']);
             // Aquí puedes redirigir al usuario a la página de inicio de sesión o a otra página
         } else {
-            echo json_encode(["response" =>  'No se pudo actualizar la contraseña']);
+            echo json_encode(["response" =>  'no se pudo actualizar la contraseña']);
         }
     } else {
         // Token no válido o expirado
