@@ -109,7 +109,7 @@ function validateToken($conexion, $email, $token) {
             $stmt2->execute();
             $stmt2->close();
 
-            return ['valid' => true, 'email' => 'token valido'];
+            return ['valid' => true, 'message' => 'token valido'];
         } else {
             // Incrementar el número de intentos aunque el token sea incorrecto
             $attempts++;
