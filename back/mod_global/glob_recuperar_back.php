@@ -109,7 +109,7 @@ function validateToken($conexion, $email, $token) {
             $stmt2->execute();
             $stmt2->close();
 
-            return ['valid' => true, 'email' => $email];
+            return ['valid' => true, 'email' => 'token valido'];
         } else {
             // Incrementar el número de intentos aunque el token sea incorrecto
             $attempts++;
@@ -119,10 +119,10 @@ function validateToken($conexion, $email, $token) {
             $stmt2->execute();
             $stmt2->close();
 
-            return ['valid' => false, 'message' => 'Token invalido o expirado'];
+            return ['valid' => false, 'message' => 'token invalido o expirado'];
         }
     } else {
-        return ['valid' => false, 'message' => 'Email invalido'];
+        return ['valid' => false, 'message' => 'email invalido'];
     }
 
     $stmt->close();
