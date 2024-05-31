@@ -152,8 +152,7 @@ function updatePassword($conexion, $email, $new_password) {
 
 
 if (isset($accion) && $accion == 'consulta') {
-    //$email = $_POST["email"];
-    $email = 'jose.2710.ricardo@gmail.com';
+    $email = $_POST["email"];
 
     $stmt = mysqli_prepare($conexion, "SELECT u_id FROM `system_users` WHERE u_email = ?");
     $stmt->bind_param('s', $email);
