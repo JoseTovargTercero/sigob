@@ -1272,6 +1272,34 @@ INSERT INTO `tabuladores_estr` (`id`, `paso`, `grado`, `monto`, `tabulador_id`) 
 -- Índices para tablas volcadas
 --
 
+CREATE TABLE `password_resets` (
+  `id` int(11) NOT NULL,
+  `email` varchar(255) COLLATE latin1_spanish_ci NOT NULL,
+  `token` varchar(255) COLLATE latin1_spanish_ci NOT NULL,
+  `expires` varchar(255) COLLATE latin1_spanish_ci NOT NULL,
+  `attempts` int(11) DEFAULT '0',
+  `last_attempt` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+
+--
+-- Índices para tablas volcadas
+--
+
+--
+-- Indices de la tabla `password_resets`
+--
+ALTER TABLE `password_resets`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- AUTO_INCREMENT de las tablas volcadas
+--
+
+--
+-- AUTO_INCREMENT de la tabla `password_resets`
+--
+ALTER TABLE `password_resets`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 --
 -- Indices de la tabla `cargos_grados`
 --
