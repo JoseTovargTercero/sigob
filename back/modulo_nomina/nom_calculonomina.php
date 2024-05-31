@@ -1,51 +1,68 @@
 <?php
-// Incluir la conexión a la base de datos y la sesión
 require_once '../sistema_global/conexion.php';
-require_once '../sistema_global/session.php';
-
 $api_key = "4bfc66a740d312008475dded";
-    $url = "https://v6.exchangerate-api.com/v6/{$api_key}/pair/USD/VES";
-    $response = file_get_contents($url);
-    $data = json_decode($response, true);
-    $precio_dolar = $data['conversion_rate'];            
-// Función para obtener datos de los empleados
-function datosEmpleados($conexion,$precio_dolar) {
-    $sql = "SELECT id, cedula, nombres, tipo_nomina, id_dependencia, nacionalidad, cod_empleado, fecha_ingreso, otros_años, status, observacion, cod_cargo, banco, cuenta_bancaria, hijos, instruccion_academica, discapacidades, tipo_cuenta FROM empleados";
-    
-    $result = $conexion->query($sql);
+$url = "https://v6.exchangerate-api.com/v6/{$api_key}/pair/USD/VES";
+$response = file_get_contents($url);
+$data = json_decode($response, true);
+$precio_dolar = $data['conversion_rate'];
+
+// Función para calcular el salario base de un empleado
+function calculoSalarioBase($conexion, $empleado) {
+    // Consulta SQL con LEFT JOIN
+    $sql = "SELECT empleados.*, cargos_grados.grado,
+            TIMESTAMPDIFF(YEAR, empleados.fecha_ingreso, CURDATE()) + empleados.otros_años AS paso
+            FROM empleados
+            LEFT JOIN cargos_grados ON empleados.cod_cargo = cargos_grados.cod_cargo
+            WHERE empleados.id = ?";
+
+    $stmt = $conexion->prepare($sql);
+    $stmt->bind_param("i", $empleado['id']);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
     if ($result === false) {
         echo "Error en la consulta: " . $conexion->error . "\n";
-        return;
+        return "No disponible";
     }
 
     if ($result->num_rows > 0) {
-        while($row = $result->fetch_assoc()) {
-            $empleado = array(
-                "id_empleado" => $row["id"],
-                "cedula" => $row["cedula"],
-                "nombres" => $row["nombres"],
-                "tipo_nomina" => $row["tipo_nomina"],
-                "id_dependencia" => $row["id_dependencia"],
-                "nacionalidad" => $row["nacionalidad"],
-                "cod_empleado" => $row["cod_empleado"],
-                "fecha_ingreso" => $row["fecha_ingreso"],
-                "otros_años" => $row["otros_años"],
-                "status" => $row["status"],
-                "observacion" => $row["observacion"],
-                "cod_cargo" => $row["cod_cargo"],
-                "banco" => $row["banco"],
-                "cuenta_bancaria" => $row["cuenta_bancaria"],
-                "hijos" => $row["hijos"],
-                "instruccion_academica" => $row["instruccion_academica"],
-                "discapacidades" => $row["discapacidades"],
-                "tipo_cuenta" => $row["tipo_cuenta"]
-            );
-            // Llamada a la función calcularNomina
-            calcularNomina($conexion, $empleado,$precio_dolar);
-        }
+        $row = $result->fetch_assoc();
+
+        // Obtener el monto correspondiente a este empleado
+        $monto = obtenerMonto($conexion, $row["grado"], $row["paso"]);
+
+        return $monto;
     } else {
-        echo "0 resultados";
+        return "No disponible";
+    }
+}
+
+// Función para obtener el monto del salario base
+function obtenerMonto($conexion, $grado, $paso) {
+    // Consulta SQL para obtener el monto
+    $grado = "G" . $grado; // Agregar el prefijo 'G' al grado
+    $paso = "P" . $paso;   // Agregar el prefijo 'P' al paso
+
+    // Encerrar los valores entre comillas
+    $grado = $conexion->real_escape_string($grado);
+    $paso = $conexion->real_escape_string($paso);
+
+    $sql = "SELECT monto FROM tabuladores_estr WHERE grado = ? AND paso = ?";
+    $stmt = $conexion->prepare($sql);
+    $stmt->bind_param("ss", $grado, $paso);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result === false) {
+        echo "Error en la consulta: " . $conexion->error . "\n";
+        return "No disponible";
+    }
+
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        return $row["monto"];
+    } else {
+        return "No disponible";
     }
 }
 
@@ -96,190 +113,179 @@ function obtenerValorConcepto($conexion, $nom_concepto, $salarioBase, $precio_do
     }
 }
 
-// Modificar las funciones de cálculo de primas y deducciones para aceptar salario integral
-function calcularPrimaPorProfesionales($conexion, $salarioBase, $precio_dolar, $salarioIntegral) {
-    return obtenerValorConcepto($conexion, "PRIMA POR PROFESIONALES", $salarioBase, $precio_dolar, $salarioIntegral);
+// Obtener el contenido JSON enviado en la solicitud POST
+$json = file_get_contents('php://input');
+$data = json_decode($json, true);
+
+// Verificar si el array contiene el nombre
+if (!isset($data['nombre'])) {
+    echo json_encode(array('error' => 'No se recibió el nombre en el array.'));
+    exit();
 }
 
-function calcularPrimaPorAntiguedad($conexion, $salarioBase, $precio_dolar, $salarioIntegral) {
-    return obtenerValorConcepto($conexion, "PRIMA POR ANTIGUEDAD EMPLEADOS", $salarioBase, $precio_dolar, $salarioIntegral);
+$nombre = $data['nombre'];
+
+// Consultar la tabla 'conceptos_aplicados' para obtener los registros con el mismo nombre_nomina
+$queryConceptos = "
+    SELECT 
+        ca.*,
+        c.tipo_concepto
+    FROM 
+        conceptos_aplicados ca
+    JOIN
+        conceptos c ON ca.concepto_id = c.id
+    WHERE 
+        ca.nombre_nomina = ?
+";
+$stmtConceptos = $conexion->prepare($queryConceptos);
+
+// Verificar si la preparación de la consulta fue exitosa
+if (!$stmtConceptos) {
+    echo json_encode(array('error' => 'Error al preparar la consulta de conceptos_aplicados: ' . $conexion->error));
+    exit();
 }
 
-function calcularPrimaPorTransporte($conexion, $salarioBase, $precio_dolar, $salarioIntegral) {
-    return obtenerValorConcepto($conexion, "PRIMA POR TRANSPORTE", $salarioBase, $precio_dolar, $salarioIntegral);
+$stmtConceptos->bind_param("s", $nombre);
+
+// Verificar si ocurrió un error al vincular los parámetros
+if ($stmtConceptos->errno) {
+    echo json_encode(array('error' => 'Error al vincular parámetros de la consulta de conceptos_aplicados: ' . $stmtConceptos->error));
+    exit();
 }
 
-function calcularPrimaPorEscalafon($conexion, $salarioBase, $precio_dolar, $salarioIntegral) {
-    return obtenerValorConcepto($conexion, "PRIMA POR ESCALAFON", $salarioBase, $precio_dolar, $salarioIntegral);
+$stmtConceptos->execute();
+
+// Verificar si ocurrió un error al ejecutar la consulta
+if ($stmtConceptos->errno) {
+    echo json_encode(array('error' => 'Error al ejecutar la consulta de conceptos_aplicados: ' . $stmtConceptos->error));
+    exit();
 }
 
-function calcularPrimaPorFrontera($conexion, $salarioBase, $precio_dolar, $salarioIntegral) {
-    return obtenerValorConcepto($conexion, "PRIMA POR FRONTERA", $salarioBase, $precio_dolar, $salarioIntegral);
-}
+$resultConceptos = $stmtConceptos->get_result();
+$conceptos_aplicados = $resultConceptos->fetch_all(MYSQLI_ASSOC);
 
-function calcularPrimaPorHijos($conexion, $salarioBase, $precio_dolar, $salarioIntegral) {
-    return obtenerValorConcepto($conexion, "PRIMA POR HIJO EMPLEADOS", $salarioBase, $precio_dolar, $salarioIntegral);
-}
+// Array asociativo para mantener un registro de empleados únicos
+$empleados_unicos = array();
 
-function calcularPrimaDiscapacidad($conexion, $salarioBase, $precio_dolar, $salarioIntegral) {
-    return obtenerValorConcepto($conexion, "CONTRIBUCION POR DISCAPACIDAD", $salarioBase, $precio_dolar, $salarioIntegral);
-}
+// Array para almacenar asignaciones y deducciones
+$asignaciones = array();
+$deducciones = array();
 
-function calcularPrimaBeca($conexion, $salarioBase, $precio_dolar, $salarioIntegral) {
-    return obtenerValorConcepto($conexion, "PAGO DE BECA", $salarioBase, $precio_dolar, $salarioIntegral);
-}
+// Variable para almacenar el total a pagar
+$total_a_pagar = 0;
 
-function calcularPrimaSalud($conexion, $salarioBase, $precio_dolar, $salarioIntegral) {
-    return obtenerValorConcepto($conexion, "PRIMA P/DED AL S/PUBLICO UNICO DE SALUD", $salarioBase, $precio_dolar, $salarioIntegral);
-}
+// Iterar sobre cada registro de conceptos_aplicados
+foreach ($conceptos_aplicados as &$concepto) { // Añadir el & para permitir modificar directamente el array original
+    // Verificar el tipo de concepto
+    $tipo_concepto = $concepto['tipo_concepto'];
 
-function calcularPrimaAntiguedadEspecial($conexion, $salarioBase, $precio_dolar, $salarioIntegral) {
-    return obtenerValorConcepto($conexion, "PRIMA POR ANTIGUEDAD (ESPECIAL)", $salarioBase, $precio_dolar, $salarioIntegral);
-}
-
-function calcularDeduccionSSO($conexion, $salarioBase, $precio_dolar, $salarioIntegral) {
-    return obtenerValorConcepto($conexion, "S. S. O", $salarioBase, $precio_dolar, $salarioIntegral);
-}
-
-function calcularDeduccionRPE($conexion, $salarioBase, $precio_dolar, $salarioIntegral) {
-    return obtenerValorConcepto($conexion, "RPE", $salarioBase, $precio_dolar, $salarioIntegral);
-}
-
-function calcularDeduccionAPSSO($conexion, $salarioBase, $precio_dolar, $salarioIntegral) {
-    return obtenerValorConcepto($conexion, "A/P S.S.O", $salarioBase, $precio_dolar, $salarioIntegral);
-}
-
-function calcularDeduccionAPRPE($conexion, $salarioBase, $precio_dolar, $salarioIntegral) {
-    return obtenerValorConcepto($conexion, "A/P RPE", $salarioBase, $precio_dolar, $salarioIntegral);
-}
-
-// Función para calcular la nómina
-function calcularNomina($conexion, $empleado, $precio_dolar) {
-
-
-    // Calculo del salario base
-    $salarioBase = calculoSalarioBase($conexion, $empleado);
-
-    // Calcular el salario integral inicialmente sin las deducciones
-    $primaProfesionales = calcularPrimaPorProfesionales($conexion, $salarioBase, $precio_dolar, $salarioIntegral);
-    $primaAntiguedad = calcularPrimaPorAntiguedad($conexion, $salarioBase, $precio_dolar, $salarioIntegral);
-    $primaTransporte = calcularPrimaPorTransporte($conexion, $salarioBase, $precio_dolar, $salarioIntegral);
-    $primaEscalafon = calcularPrimaPorEscalafon($conexion, $salarioBase, $precio_dolar, $salarioIntegral);
-    $primaFrontera = calcularPrimaPorFrontera($conexion, $salarioBase, $precio_dolar, $salarioIntegral);
-    $primaDiscapacidad = calcularPrimaDiscapacidad($conexion, $salarioBase, $precio_dolar, $salarioIntegral);
-    $primaBeca = calcularPrimaBeca($conexion, $salarioBase, $precio_dolar, $salarioIntegral);
-    $primaSalud = calcularPrimaSalud($conexion, $salarioBase, $precio_dolar, $salarioIntegral);
-    $primaAntiguedadEspecial = calcularPrimaAntiguedadEspecial($conexion, $salarioBase, $precio_dolar, $salarioIntegral);
-    $primaPorHijos = calcularPrimaPorHijos($conexion, $salarioBase, $precio_dolar, $salarioIntegral) * $empleado['hijos'];
-
-    // Calcular el salario integral provisionalmente
-    $salarioIntegral = ($salarioBase + $primaProfesionales + $primaAntiguedad + $primaTransporte +
-        $primaEscalafon + $primaFrontera + $primaDiscapacidad + $primaBeca +
-        $primaSalud + $primaAntiguedadEspecial + $primaPorHijos);
-
-    // Ahora calcular las deducciones con el salario integral provisional
-    $deduccionSSO = calcularDeduccionSSO($conexion, $salarioBase, $precio_dolar, $salarioIntegral);
-    $deduccionRPE = calcularDeduccionRPE($conexion, $salarioBase, $precio_dolar, $salarioIntegral);
-    $deduccionAPSSO = calcularDeduccionAPSSO($conexion, $salarioBase, $precio_dolar, $salarioIntegral);
-    $deduccionAPRPE = calcularDeduccionAPRPE($conexion, $salarioBase, $precio_dolar, $salarioIntegral);
-
-    // Calcular el salario integral definitivo
-    $salarioTotal = $salarioBase + $primaProfesionales + $primaAntiguedad + $primaTransporte +
-        $primaEscalafon + $primaFrontera + $primaDiscapacidad + $primaBeca +
-        $primaSalud + $primaAntiguedadEspecial + $primaPorHijos - ($deduccionSSO + $deduccionRPE + $deduccionAPSSO + $deduccionAPRPE);
-    $salarioQuincena = ($salarioTotal/30) * 15;
-    $salarioSemanal = ($salarioTotal/30) * 7;
-    $salarioDiario = ($salarioTotal/30) * 1;
-
-    // Mostrar los detalles de la nómina
-    echo "Empleado: " . $empleado['nombres'] . " (ID: " . $empleado['id_empleado'] . ")\n<br>";
-    echo "Salario Base: $salarioBase Bs\n<br>";
-    echo "Prima Profesionales: $primaProfesionales Bs\n<br>";
-    echo "Prima Antigüedad: $primaAntiguedad Bs\n<br>";
-    echo "Prima de Transporte: $primaTransporte Bs\n<br>";
-    echo "Prima de Escalafón: $primaEscalafon Bs\n<br>";
-    echo "Prima de Frontera: $primaFrontera Bs\n<br>";
-    echo "Prima de Discapacidad: $primaDiscapacidad Bs\n<br>";
-    echo "Prima de Beca: $primaBeca Bs\n<br>";
-    echo "Prima de Salud: $primaSalud Bs\n<br>";
-    echo "Prima de Antiguedad Especial: $primaAntiguedadEspecial Bs\n<br>";
-    echo "S.S.O: $deduccionSSO Bs\n<br>";
-    echo "RPE: $deduccionRPE Bs\n<br>";
-    echo "AP S.S.O: $deduccionAPSSO Bs\n<br>";
-    echo "AP RPE: $deduccionAPRPE Bs\n<br>";
-    echo "Prima por Hijos: $primaPorHijos Bs\n<br>";
-    echo "Salario Total: $salarioTotal Bs\n<br>";
-    echo "Salario Quincena: $salarioQuincena Bs\n<br>";
-    echo "Salario Semanal: $salarioSemanal Bs\n<br>";
-    echo "Salario Diario: $salarioDiario Bs\n<br>";
-    echo "Salario Integral: $salarioIntegral Bs\n<br><br><br>";
-
-
-    // Retornar el salario integral
-    return $salarioIntegral;
-}
-
-
-
-
-
-// Función para calcular el salario base
-function calculoSalarioBase($conexion, $empleado) {
-    // Consulta SQL con LEFT JOIN
-    $sql = "SELECT empleados.*, cargos_grados.grado,
-            TIMESTAMPDIFF(YEAR, empleados.fecha_ingreso, CURDATE()) + empleados.otros_años AS paso
-            FROM empleados
-            LEFT JOIN cargos_grados ON empleados.cod_cargo = cargos_grados.cod_cargo
-            WHERE empleados.id = " . $empleado['id_empleado'];
-
-    $result = $conexion->query($sql);
-
-    if ($result === false) {
-        echo "Error en la consulta: " . $conexion->error . "\n";
-        return "No disponible";
+    // Si el tipo de concepto es "A" (Asignación)
+    if ($tipo_concepto === "A") {
+        $asignaciones[] = $concepto;
+    }
+    // Si el tipo de concepto es "D" (Deducción)
+    elseif ($tipo_concepto === "D") {
+        $deducciones[] = $concepto;
     }
 
-    if ($result->num_rows > 0) {
-        $row = $result->fetch_assoc();
+    // Obtener los IDs de empleados de este concepto
+    $ids_empleados = json_decode($concepto['empleados'], true);
 
-        // Obtener el monto correspondiente a este empleado
-        $monto = obtenerMonto($conexion, $row["grado"], $row["paso"]);
+    // Consultar la tabla 'empleados' para cada ID de empleado
+    foreach ($ids_empleados as $id_empleado) {
+        // Verificar si este empleado ya ha sido agregado
+        if (!isset($empleados_unicos[$id_empleado])) {
+            $queryEmpleado = "SELECT * FROM empleados WHERE id = ?";
+            $stmtEmpleado = $conexion->prepare($queryEmpleado);
 
-        return $monto;
-    } else {
-        return "No disponible";
+            if (!$stmtEmpleado) {
+                echo json_encode(array('error' => 'Error al preparar la consulta de empleados: ' . $conexion->error));
+                exit();
+            }
+
+            $stmtEmpleado->bind_param("i", $id_empleado);
+
+            if ($stmtEmpleado->errno) {
+                echo json_encode(array('error' => 'Error al vincular parámetros de la consulta de empleados: ' . $stmtEmpleado->error));
+                exit();
+            }
+
+            $stmtEmpleado->execute();
+
+            if ($stmtEmpleado->errno) {
+                echo json_encode(array('error' => 'Error al ejecutar la consulta de empleados: ' . $stmtEmpleado->error));
+                exit();
+            }
+
+            $resultEmpleado = $stmtEmpleado->get_result();
+            $empleado = $resultEmpleado->fetch_assoc();
+
+            // Calcular el salario base del empleado
+            $empleado['salario_base'] = calculoSalarioBase($conexion, $empleado);
+
+            // Inicializar el salario integral con el salario base
+            $empleado['salario_integral'] = $empleado['salario_base'];
+
+            // Agregar el empleado al array de empleados únicos
+            $empleados_unicos[$id_empleado] = $empleado;
+
+            $stmtEmpleado->close();
+        }
+
+        // Calcular el valor del concepto para este empleado
+        $valor_concepto = obtenerValorConcepto($conexion, $concepto['nom_concepto'], $empleados_unicos[$id_empleado]['salario_base'], $precio_dolar, $empleados_unicos[$id_empleado]['salario_integral']);
+
+        // Agregar el valor del concepto al array del empleado
+        $empleados_unicos[$id_empleado][$concepto['nom_concepto']] = $valor_concepto;
+
+        // Si el tipo de concepto es "A" y no es el salario base, sumarlo al salario integral
+        if ($tipo_concepto === "A" && $concepto['nom_concepto'] !== "salario_base") {
+            $empleados_unicos[$id_empleado]['salario_integral'] += $valor_concepto;
+        }
     }
 }
 
-function obtenerMonto($conexion, $grado, $paso) {
-    // Consulta SQL para obtener el monto
-    $grado = "G".$grado; // Agregar el prefijo 'G' al grado
-    $paso = "P".$paso;   // Agregar el prefijo 'P' al paso
-    
-    // Encerrar los valores entre comillas
-    $grado = $conexion->real_escape_string($grado);
-    $paso = $conexion->real_escape_string($paso);
+// Calcular el total a pagar para cada empleado
+foreach ($empleados_unicos as &$empleado) {
+    // Sumar el salario base con las asignaciones
+    $total_a_pagar = $empleado['salario_base'];
+    foreach ($asignaciones as $asignacion) {
+        $valorAsignacion = obtenerValorConcepto($conexion, $asignacion['nom_concepto'], $empleado['salario_base'], $precio_dolar, $empleado['salario_integral']);
+        $total_a_pagar += $valorAsignacion;
+    }
 
-    $sql = "SELECT monto FROM tabuladores_estr WHERE grado = '$grado' AND paso = '$paso'";
-    $result = $conexion->query($sql);
-    if ($result === false) {
-        echo "Error en la consulta: " . $conexion->error . "\n";
-        return "No disponible";
+    // Restar las deducciones
+    foreach ($deducciones as $deduccion) {
+        $valorDeduccion = obtenerValorConcepto($conexion, $deduccion['nom_concepto'], $empleado['salario_base'], $precio_dolar, $empleado['salario_integral']);
+        $total_a_pagar -= $valorDeduccion;
     }
-    
-    if ($result->num_rows > 0) {
-        $row = $result->fetch_assoc();
-        return $row["monto"];
-    } else {
-        return "No disponible";
-    }
+
+    // Almacenar el total a pagar en el array del empleado
+    $empleado['total_a_pagar'] = $total_a_pagar;
+}
+
+// Cerrar la conexión
+$stmtConceptos->close();
+$conexion->close();
+// Crear un nuevo array para almacenar el ID del empleado junto con el total a pagar
+$total_a_pagar_empleados = array();
+
+// Iterar sobre los empleados únicos
+foreach ($empleados_unicos as $id_empleado => $empleado) {
+    // Agregar el ID del empleado junto con el total a pagar al nuevo array
+    $total_a_pagar_empleados[] = array(
+        'id_empleado' => $id_empleado,
+        'total_a_pagar' => $empleado['total_a_pagar']
+    );
 }
 
 
+// Preparar la respuesta con los resultados
+$response = array(
+    'empleados' => array_values($empleados_unicos), // Reindexar el array para eliminar claves no numéricas
+    'total_pagar' => $total_a_pagar_empleados,
+);
 
-
-
-
-// Llamada a la función principal
-datosEmpleados($conexion,$precio_dolar);
-?>
+// Enviar la respuesta como JSON
+header('Content-Type: application/json');
+echo json_encode($response);

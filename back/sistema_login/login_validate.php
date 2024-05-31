@@ -24,6 +24,7 @@ if ($result->num_rows > 0) {
 			$_SESSION['u_nombre'] = $row['u_nombre'];
 			$_SESSION['u_oficina_id'] = $row['u_oficina_id'];
 			$_SESSION['u_oficina'] = $row['u_oficina'];
+			$_SESSION['u_nivel'] = $row['u_nivel'];
 
 			// regresa una respuesta al fetch
 			$folder = '';
