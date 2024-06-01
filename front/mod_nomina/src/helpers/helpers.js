@@ -204,6 +204,47 @@ function validateInput({ target, fieldList = {}, fieldListErrors = {}, type }) {
       }
     }
 
+    if (type === 'password') {
+      let isText = regularExpressions.PASSWORD.test(value)
+      if (!isText) {
+        target.classList.add('input-error')
+        fieldListErrors[target.name].value = true
+        errorMessage(target, message)
+        fieldList = {
+          ...fieldList,
+          [target.name]: target.value,
+        }
+      } else {
+        fieldListErrors[target.name].value = false
+        target.classList.remove('input-error')
+        errorMessage(target, message)
+        fieldList = {
+          ...fieldList,
+          [target.name]: target.value,
+        }
+      }
+    }
+
+    if (type === 'confirm_password') {
+      if (value !== fieldList.password) {
+        target.classList.add('input-error')
+        fieldListErrors[target.name].value = true
+        errorMessage(target, message)
+        fieldList = {
+          ...fieldList,
+          [target.name]: target.value,
+        }
+      } else {
+        fieldListErrors[target.name].value = false
+        target.classList.remove('input-error')
+        errorMessage(target, message)
+        fieldList = {
+          ...fieldList,
+          [target.name]: target.value,
+        }
+      }
+    }
+
     if (type === 'date') {
       if (!validarFecha(value)) {
         target.classList.add('input-error')

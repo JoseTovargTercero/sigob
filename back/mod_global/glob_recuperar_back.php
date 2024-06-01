@@ -195,12 +195,12 @@ elseif ($accion == 'token' && isset($_POST['token'])) {
 
     if ($validationResult['valid']) {
         // Token válido, proceder con la recuperación de la cuenta o el restablecimiento de la contraseña
-        echo json_encode(["response" => $validationResult['message']]);
+        echo json_encode(["response" => $validationResult['message'], "valid" => $validationResult['valid']]);
         $_SESSION['email'] = $email;
         // Aquí puedes redirigir al usuario a la página de restablecimiento de contraseña
     } else {
         // Token no válido o expirado
-        echo json_encode(["response" => $validationResult['message']]);
+        echo json_encode(["response" => $validationResult['message'], "valid" => $validationResult['valid']]);
     }
 } elseif ($accion == 'pass' && isset($_SESSION['email']) && isset($_POST['token']) && isset($_POST['password']) && isset($_POST['confirm_password'])) {
     $email = $_SESSION['email'];
@@ -220,11 +220,13 @@ elseif ($accion == 'token' && isset($_POST['token'])) {
 
     if ($validationResult['valid']) {
         // Token válido, actualizar la contraseña
-        if (updatePassword($conexion, $validationResult['email'], $password)) {
-            echo json_encode(["response" => 'contraseña actualizada']);
+        // if (updatePassword($conexion, $validationResult['email'], $password)) {
+
+        if (updatePassword($conexion, $email, $password)) {
+            echo json_encode(["response" => 'contraseña actualizada', "valid" => $validationResult['valid']]);
             // Aquí puedes redirigir al usuario a la página de inicio de sesión o a otra página
         } else {
-            echo json_encode(["response" => 'no se pudo actualizar la contraseña']);
+            echo json_encode(["response" => 'no se pudo actualizar la contraseña', "valid" => $validationResult['valid']]);
         }
     } else {
         // Token no válido o expirado

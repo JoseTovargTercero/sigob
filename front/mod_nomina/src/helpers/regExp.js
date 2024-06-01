@@ -3,6 +3,7 @@ const regularExpressions = {
   FLOAT: /^\d+(\.\d{1,2})?$/,
   NUMBER: /^\d+(\.\d{0,0})?$/,
   EMAIL: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+  PASSWORD: /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).+/,
 }
 
 export { regularExpressions }

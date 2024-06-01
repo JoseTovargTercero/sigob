@@ -58,22 +58,30 @@
               </div>
 
               <div class="form-floating d-none slide-up-animation" id="recovery-form-part-2">
-                <input type="text" name="token" class="form-control" placeholder="Consultar Electrónico"
-                  id="validar-token">
-                <label for="validar-token">Validar Token</label>
+                <input type="text" name="token" class="form-control" placeholder="Escriba el código..." id="token">
+                <label for="token">Validar Token</label>
               </div>
 
               <div class="d-none slide-up-animation" id="recovery-form-part-3">
+                <!-- <ul class="fs-6">
+                  <li>Debe contener al menos una letra mayúscula</li>
+                  <li>Debe contener al menos un dígito numérico.</li>
+                  <li>Debe contener al menos un carácter especial de la lista "!@#$%^&*".</li>
+                  <li>Puede contener cualquier otro carácter después de cumplir las condiciones anteriores.</li>
+                </ul> -->
+
                 <div class="form-floating" id="recovery-form-part-3">
-                  <input type="password" name="password" class="form-control" placeholder="Consultar Electrónico"
+                  <input type="password" name="password" class="form-control" placeholder="Nueva contraseña..."
                     id="nueva-contraseña">
                   <label for="nueva-contraseña">Nueva contraseña</label>
                 </div>
+                <hr class="border border-secondary border-1 opacity-50">
                 <div class="form-floating">
-                  <input type=" password" name="confirm_password" class="form-control"
-                    placeholder="Consultar Electrónico" id="confirmar-contraseña">
+                  <input type="password" name="confirm_password" class="form-control"
+                    placeholder="Repetir contraseña..." id="confirmar-contraseña">
                   <label for="confirmar-contraseña">Confirmar contraseña</label>
                 </div>
+
               </div>
 
               <hr class="border border-secondary border-2 opacity-50">

@@ -2,6 +2,7 @@ import {
   confirmNotification,
   validateInput,
 } from '../front/mod_nomina/src/helpers/helpers.js'
+import { NOTIFICATIONS_TYPES } from '../front/mod_nomina/src/helpers/types.js'
 const recoveryUrl = '../../sigob/back/mod_global/glob_recuperar_back.php'
 
 const d = document
@@ -18,28 +19,28 @@ let formFocus = 1
 
 let fieldList = {
   email: '',
-  nuevaContraseña: '',
-  confirmarContraseña: '',
+  password: '',
+  confirm_password: '',
   token: '',
 }
 let fieldListErrors = {
   email: {
     type: 'email',
-    mesasage: 'Introduzca un email correcto',
+    message: 'Introduzca un email correcto',
     value: true,
   },
   token: {
-    mesasage: 'No puede haber un token vacío',
+    message: 'No puede haber un token vacío',
     value: true,
   },
-  nuevaContraseña: {
+  password: {
     type: 'password',
-    mesasage: 'Introduzca un email correcto',
+    message: 'No cumple los requisitos',
     value: true,
   },
-  confirmarContraseña: {
-    type: 'password',
-    mesasage: '',
+  confirm_password: {
+    type: 'confirm_password',
+    message: 'Contraseñas no coinciden',
     value: true,
   },
 }
@@ -48,16 +49,15 @@ recoveryForm.addEventListener('submit', (e) => {
   e.preventDefault()
 })
 
-// recoveryFormPart1.addEventListener('input', (e) => {
-//   if (formFocus === 1) {
-//     validateInput({
-//       target: e.target,
-//       fieldList,
-//       fieldListErrors,
-//       type: fieldListErrors[e.target.name].type,
-//     })
-//   }
-// })
+recoveryForm.addEventListener('input', (e) => {
+  fieldList = validateInput({
+    target: e.target,
+    fieldList,
+    fieldListErrors,
+    type: fieldListErrors[e.target.name].type,
+  })
+  console.log(fieldList)
+})
 
 d.addEventListener('click', (e) => {
   if (e.target === consultBtn) {
@@ -77,7 +77,7 @@ d.addEventListener('click', (e) => {
 
       if (fieldListErrors.email.value) return
 
-      validateEmail(recoveryForm.email.value).then((res) => {
+      validateEmail(fieldList.email).then((res) => {
         if (res) {
           recoveryFormPart1.classList.add('d-none')
           recoveryFormPart2.classList.remove('d-none')
@@ -109,17 +109,15 @@ d.addEventListener('click', (e) => {
       // SI EL TOKEN ES VALIDADO SE PASA AL SIGUIENTE
       // SINO DAR UN MENSAJE DE ERROR
 
-      validateToken(recoveryForm.email.value, recoveryForm.token.value).then(
-        (res) => {
-          if (res) {
-            recoveryFormPart2.classList.add('d-none')
-            recoveryFormPart3.classList.remove('d-none')
+      validateToken(fieldList.email, fieldList.token).then((res) => {
+        if (res) {
+          recoveryFormPart2.classList.add('d-none')
+          recoveryFormPart3.classList.remove('d-none')
 
-            formFocus++
-            e.target.textContent = 'Guardar'
-          }
+          formFocus++
+          e.target.textContent = 'Guardar'
         }
-      )
+      })
 
       return
     }
@@ -127,6 +125,33 @@ d.addEventListener('click', (e) => {
       console.log(3)
 
       // FUNCIÓN PARA GUARDAR NUEVA CONTRASEÑA
+
+      validateInput({
+        target: recoveryForm.password,
+        fieldList,
+        fieldListErrors,
+        type: fieldListErrors.password.type,
+      })
+
+      validateInput({
+        target: recoveryForm.confirm_password,
+        fieldList,
+        fieldListErrors,
+        type: fieldListErrors.confirm_password.type,
+      })
+
+      console.log(fieldListErrors)
+      if (
+        fieldListErrors.password.value ||
+        fieldListErrors.confirm_password.value
+      )
+        return
+
+      validateNewPassword(
+        fieldList.password,
+        fieldList.confirm_password,
+        fieldList.token
+      )
     }
   }
   if (e.target === previusBtn) {
@@ -189,9 +214,8 @@ const validateToken = async (email, token) => {
       body: data,
     })
 
-    let text = await res.text()
-    console.log(text)
     let json = await res.json()
+    console.log(json)
     if (json.valid) {
       toast_s('success', json.response)
       return true
@@ -211,17 +235,23 @@ const validateNewPassword = async (password, confirmPassword, token) => {
   data.append('token', token)
   data.append('password', password)
   data.append('confirm_password', confirmPassword)
+
+  console
   try {
     let res = await fetch(recoveryUrl, {
       method: 'POST',
       body: data,
     })
 
-    let text = await res.text()
-    console.log(text)
     let json = await res.json()
     if (json.valid) {
-      toast_s('success', json.response)
+      confirmNotification({
+        type: NOTIFICATIONS_TYPES.done,
+        message: json.response,
+      })
+      setTimeout(() => {
+        location.assign('/sigob')
+      }, 2000)
       return true
     } else {
       toast_s('error', json.response)
