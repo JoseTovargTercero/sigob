@@ -1,4 +1,8 @@
-import { validateInput } from '../front/mod_nomina/src/helpers/helpers.js'
+import {
+  confirmNotification,
+  validateInput,
+} from '../front/mod_nomina/src/helpers/helpers.js'
+const recoveryUrl = '../../sigob/back/mod_global/glob_recuperar_back.php'
 
 const d = document
 
@@ -29,12 +33,12 @@ let fieldListErrors = {
     value: true,
   },
   nuevaContraseña: {
-    type: 'email',
+    type: 'password',
     mesasage: 'Introduzca un email correcto',
     value: true,
   },
   confirmarContraseña: {
-    type: 'email',
+    type: 'password',
     mesasage: '',
     value: true,
   },
@@ -73,15 +77,18 @@ d.addEventListener('click', (e) => {
 
       if (fieldListErrors.email.value) return
 
-      recoveryFormPart1.classList.add('d-none')
-      recoveryFormPart2.classList.remove('d-none')
-      previusBtn.classList.remove('d-none')
+      validateEmail(recoveryForm.email.value).then((res) => {
+        if (res) {
+          recoveryFormPart1.classList.add('d-none')
+          recoveryFormPart2.classList.remove('d-none')
+          previusBtn.classList.remove('d-none')
 
-      nextBtn.classList.remove('d-none')
-      consultBtn.classList.add('d-none')
-      return formFocus++
+          nextBtn.classList.remove('d-none')
+          consultBtn.classList.add('d-none')
+          return formFocus++
+        }
+      })
     }
-    formFocus++
   }
 
   // SIGUIENTE FORMULARIO
@@ -97,16 +104,23 @@ d.addEventListener('click', (e) => {
 
       if (fieldListErrors.token.value) return
 
-      recoveryFormPart2.classList.add('d-none')
-      recoveryFormPart3.classList.remove('d-none')
-
       // LÓGICA PARA VALIDAR TOKKEN
       // IF VALIDATETOKEN()
       // SI EL TOKEN ES VALIDADO SE PASA AL SIGUIENTE
       // SINO DAR UN MENSAJE DE ERROR
 
-      formFocus++
-      e.target.textContent = 'Guardar'
+      validateToken(recoveryForm.email.value, recoveryForm.token.value).then(
+        (res) => {
+          if (res) {
+            recoveryFormPart2.classList.add('d-none')
+            recoveryFormPart3.classList.remove('d-none')
+
+            formFocus++
+            e.target.textContent = 'Guardar'
+          }
+        }
+      )
+
       return
     }
     if (formFocus === 3) {
@@ -138,15 +152,82 @@ d.addEventListener('click', (e) => {
   }
 })
 
-const searchEmail = async (email) => {
-  // try {
-  //   let res = await fetch('consultar_correo.php', { method: 'POST' })
-  //   if (!res.ok) return false
-  //   else return true
-  // } catch (e) {
-  //   return confirmNotification({
-  //     type: NOTIFICATIONS_TYPES.fail,
-  //     message: 'Error al obtener empleados',
-  //   })
-  // }
+const validateEmail = async (email) => {
+  let data = new FormData()
+
+  data.append('accion', 'consulta')
+  data.append('email', email)
+  try {
+    let res = await fetch(recoveryUrl, {
+      method: 'POST',
+      body: data,
+    })
+
+    let json = await res.json()
+
+    if (json.valid) {
+      toast_s('success', json.response)
+      return true
+    } else {
+      toast_s('error', json.response)
+      return false
+    }
+  } catch (e) {
+    return toast_s('error', 'Error: verifique sus credenciales')
+  }
+}
+
+const validateToken = async (email, token) => {
+  let data = new FormData()
+
+  data.append('accion', 'token')
+  data.append('token', token)
+  data.append('email', email)
+  try {
+    let res = await fetch(recoveryUrl, {
+      method: 'POST',
+      body: data,
+    })
+
+    let text = await res.text()
+    console.log(text)
+    let json = await res.json()
+    if (json.valid) {
+      toast_s('success', json.response)
+      return true
+    } else {
+      toast_s('error', json.response)
+      return false
+    }
+  } catch (e) {
+    return toast_s('error', 'Error: verifique sus credenciales')
+  }
+}
+
+const validateNewPassword = async (password, confirmPassword, token) => {
+  let data = new FormData()
+
+  data.append('accion', 'pass')
+  data.append('token', token)
+  data.append('password', password)
+  data.append('confirm_password', confirmPassword)
+  try {
+    let res = await fetch(recoveryUrl, {
+      method: 'POST',
+      body: data,
+    })
+
+    let text = await res.text()
+    console.log(text)
+    let json = await res.json()
+    if (json.valid) {
+      toast_s('success', json.response)
+      return true
+    } else {
+      toast_s('error', json.response)
+      return false
+    }
+  } catch (e) {
+    return toast_s('error', 'Error: verifique sus credenciales')
+  }
 }

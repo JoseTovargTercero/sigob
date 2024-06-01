@@ -65,12 +65,12 @@
 
               <div class="d-none slide-up-animation" id="recovery-form-part-3">
                 <div class="form-floating" id="recovery-form-part-3">
-                  <input type="password" name="nuevaContraseña" class="form-control" placeholder="Consultar Electrónico"
+                  <input type="password" name="password" class="form-control" placeholder="Consultar Electrónico"
                     id="nueva-contraseña">
                   <label for="nueva-contraseña">Nueva contraseña</label>
                 </div>
                 <div class="form-floating">
-                  <input type=" password" name="confirmarContraseña" class="form-control"
+                  <input type=" password" name="confirm_password" class="form-control"
                     placeholder="Consultar Electrónico" id="confirmar-contraseña">
                   <label for="confirmar-contraseña">Confirmar contraseña</label>
                 </div>

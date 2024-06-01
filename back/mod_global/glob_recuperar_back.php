@@ -6,13 +6,15 @@ require_once '../sistema_global/session.php';
 $accion = $_POST["accion"];
 
 // Función para generar un token único
-function generateToken() {
+function generateToken()
+{
     //return bin2hex(random_bytes(32));
     return '123456';
 }
 
 // Función para guardar el token en la base de datos
-function storeToken($conexion, $userEmail, $token) {
+function storeToken($conexion, $userEmail, $token)
+{
     // Establecer el tiempo de expiración (por ejemplo, 1 hora a partir de ahora)
     $expires = date('Y-m-d H:i:s', strtotime('+1 hour'));
 
@@ -29,13 +31,14 @@ function storeToken($conexion, $userEmail, $token) {
     $stmt->close();
 }
 // Función para enviar el token por correo electrónico
-function sendTokenByEmail($userEmail, $token) {
+function sendTokenByEmail($userEmail, $token)
+{
     $resetLink = "https://yourwebsite.com/reset_password.php?token=" . $token;
     $subject = "Solicitud de restablecimiento de contraseña";
     $message = "Haga clic en el siguiente enlace para restablecer su contraseña: " . $resetLink;
     $headers = "From: no-reply@yourwebsite.com";
 
-  //  mail($userEmail, $subject, $message, $headers);
+    //  mail($userEmail, $subject, $message, $headers);
     return true;
 }
 
@@ -65,7 +68,8 @@ if (isset($_POST["email"])) {
 
 
 // Función para validar el token con límite de intentos
-function validateToken($conexion, $email, $token) {
+function validateToken($conexion, $email, $token)
+{
     $max_attempts = 5;  // Número máximo de intentos permitidos
 
     $stmt = $conexion->prepare("SELECT token, expires, attempts, last_attempt FROM password_resets WHERE email = ?");
@@ -86,7 +90,7 @@ function validateToken($conexion, $email, $token) {
             $stmt2 = $conexion->prepare("UPDATE `system_users` SET `u_status`='0' WHERE u_email=?");
             $stmt2->bind_param("s", $email);
             $stmt2->execute();
-            $stmt2-> close();
+            $stmt2->close();
 
             $stmt_d = $conexion->prepare("DELETE FROM `password_resets` WHERE email = ?");
             $stmt_d->bind_param("i", $email);
@@ -132,7 +136,8 @@ function validateToken($conexion, $email, $token) {
 
 
 // Función para actualizar la contraseña
-function updatePassword($conexion, $email, $new_password) {
+function updatePassword($conexion, $email, $new_password)
+{
     $hashed_password = password_hash($new_password, PASSWORD_BCRYPT);
     $stmt = $conexion->prepare("UPDATE system_users SET u_contrasena = ? WHERE u_email = ?");
     $stmt->bind_param('ss', $hashed_password, $email);
@@ -166,14 +171,14 @@ if (isset($accion) && $accion == 'consulta') {
         if (sendTokenByEmail($email, $token)) {
             // Guardar el token en la base de datos
             storeToken($conexion, $email, $token);
-            echo json_encode(["response" => "email valido"]);
-        }else {
+            echo json_encode(["response" => "email valido", 'valid' => true]);
+        } else {
             echo json_encode(["response" => "error conexion"]);
         }
 
 
-        }else {
-            echo json_encode(["response" => "email no existe"]);
+    } else {
+        echo json_encode(["response" => "email no existe", 'valid' => false]);
     }
     $stmt->close();
 
@@ -190,17 +195,15 @@ elseif ($accion == 'token' && isset($_POST['token'])) {
 
     if ($validationResult['valid']) {
         // Token válido, proceder con la recuperación de la cuenta o el restablecimiento de la contraseña
-        echo json_encode(["response" =>  $validationResult['message']]);
+        echo json_encode(["response" => $validationResult['message']]);
         session_start();
         $_SESSION['email'] = $email;
         // Aquí puedes redirigir al usuario a la página de restablecimiento de contraseña
     } else {
         // Token no válido o expirado
-        echo json_encode(["response" =>  $validationResult['message']]);
+        echo json_encode(["response" => $validationResult['message']]);
     }
-}
-
-elseif ($accion == 'pass' && isset($_SESSION['email']) && isset($_POST['token']) && isset($_POST['password']) && isset($_POST['confirm_password'])) {
+} elseif ($accion == 'pass' && isset($_SESSION['email']) && isset($_POST['token']) && isset($_POST['password']) && isset($_POST['confirm_password'])) {
     session_start();
     $email = $_SESSION['email'];
     $token = $_POST['token'];
@@ -209,7 +212,7 @@ elseif ($accion == 'pass' && isset($_SESSION['email']) && isset($_POST['token'])
 
     // Validar si las contraseñas coinciden
     if ($password !== $confirm_password) {
-        echo json_encode(["response" =>  'contraseñas no coinciden']);
+        echo json_encode(["response" => 'contraseñas no coinciden']);
 
         exit();
     }
@@ -220,10 +223,10 @@ elseif ($accion == 'pass' && isset($_SESSION['email']) && isset($_POST['token'])
     if ($validationResult['valid']) {
         // Token válido, actualizar la contraseña
         if (updatePassword($conexion, $validationResult['email'], $password)) {
-             echo json_encode(["response" =>  'contraseña actualiza']);
+            echo json_encode(["response" => 'contraseña actualiza']);
             // Aquí puedes redirigir al usuario a la página de inicio de sesión o a otra página
         } else {
-            echo json_encode(["response" =>  'No se pudo actualizar la contraseña']);
+            echo json_encode(["response" => 'No se pudo actualizar la contraseña']);
         }
     } else {
         // Token no válido o expirado
