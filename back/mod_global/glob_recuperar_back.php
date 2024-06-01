@@ -196,7 +196,6 @@ elseif ($accion == 'token' && isset($_POST['token'])) {
     if ($validationResult['valid']) {
         // Token válido, proceder con la recuperación de la cuenta o el restablecimiento de la contraseña
         echo json_encode(["response" => $validationResult['message']]);
-        session_start();
         $_SESSION['email'] = $email;
         // Aquí puedes redirigir al usuario a la página de restablecimiento de contraseña
     } else {
@@ -204,7 +203,6 @@ elseif ($accion == 'token' && isset($_POST['token'])) {
         echo json_encode(["response" => $validationResult['message']]);
     }
 } elseif ($accion == 'pass' && isset($_SESSION['email']) && isset($_POST['token']) && isset($_POST['password']) && isset($_POST['confirm_password'])) {
-    session_start();
     $email = $_SESSION['email'];
     $token = $_POST['token'];
     $password = $_POST['password'];
