@@ -16,7 +16,7 @@ require_once '../../back/sistema_global/session.php';
 
 
   <!-- MATRIZ MODAL DE INPUTS  -->
-  <div id="modal-secondary-form-tabulator" class="modal-window hidex">
+  <div id="modal-secondary-form-tabulator" class="modal-window hide">
     <div id="tabulator-secundary-form" class="modal-box">
 
       <header class="modal-box-header">
