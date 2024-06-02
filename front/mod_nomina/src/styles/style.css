@@ -1,10 +1,12 @@
 @import './animations.css';
+@import './tabulator.css';
 
 :root {
   --modal-height: calc(100vh - 74px);
   --bluegray: #3f4d67;
   --light-bluegray: #3f4d67ab;
   --lightgray: #f4f7fa;
+  --error-red: rgb(255, 128, 128);
 }
 
 * {
@@ -38,6 +40,8 @@ a {
   display: inline-flex !important;
   border-radius: 10px !important;
 }
+
+/* MODAL STYLES */
 
 .modal-window {
   padding: 1rem;
@@ -91,6 +95,42 @@ a {
 }
 
 /* FORM STYLES */
+
+.recovery-form-container {
+  margin: auto;
+  width: 90%;
+  max-width: 350px;
+}
+
+#recovery-form-part-3 ul {
+  width: 100%;
+  background-color: rgb(239, 238, 255);
+  list-style: none;
+  padding: 1rem;
+
+  border-radius: 0.5rem;
+}
+
+#recovery-form-part-3 li {
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  border-radius: 0.5rem;
+  padding: 0 1rem;
+}
+
+#recovery-form-part-3 li.valid {
+  color: green;
+}
+
+#recovery-form-part-3 li.invalid {
+  color: crimson;
+}
+
+.recovery-form-part-3-inputs {
+  width: 100%;
+}
+
 .form-input,
 .form-select {
   border-left: 2px solid var(--light-bluegray);
@@ -101,9 +141,9 @@ a {
   color: #3f4d67a6;
 }
 .form-control.input-error {
-  border: 1px solid rgb(255, 93, 93);
-  border-left: 2px solid rgb(255, 93, 93);
-  border-right: 2px solid rgb(255, 93, 93);
+  border: 1px solid var(--error-red);
+  border-left: 2px solid var(--error-red);
+  border-right: 2px solid var(--error-red);
   opacity: 0.8;
 }
 
@@ -149,45 +189,4 @@ a {
 .btn-form {
   margin: 1rem auto;
   max-width: 200px;
-}
-
-/* TABULATOR STYLES */
-
-.tabulator-matrix {
-  margin: auto;
-  width: 100%;
-  gap: 6px;
-  overflow: auto;
-  /* background-color: rgb(255, 225, 225); */
-}
-
-/* GRADO 3 FILAS */
-/* PASO 2 COLUMNAS */
-
-.tabulator-matrix .tabulator-matrix-row {
-  display: flex;
-  gap: 6px;
-  /* grid-template-columns: repeat(auto-fit, minmax(40px, 100px)); */
-}
-
-.tabulator-matrix-cell {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 64px;
-  height: 100%;
-  font-size: 12px;
-}
-
-.tabulator-matrix-cell .tabulator-matrix-span {
-  background-color: var(--bluegray);
-  color: rgb(255, 242, 128);
-}
-
-.tabulator-matrix-cell-input {
-  width: 100%;
-}
-.tabulator-matrix-cell-input::placeholder {
-  font-size: 10px;
-  text-align: center;
 }

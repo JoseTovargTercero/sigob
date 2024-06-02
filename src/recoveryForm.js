@@ -1,9 +1,9 @@
+import { validateInput } from '../front/mod_nomina/src/helpers/helpers.js'
 import {
-  confirmNotification,
-  validateInput,
-} from '../front/mod_nomina/src/helpers/helpers.js'
-import { NOTIFICATIONS_TYPES } from '../front/mod_nomina/src/helpers/types.js'
-const recoveryUrl = '../../sigob/back/mod_global/glob_recuperar_back.php'
+  validateEmail,
+  validateNewPassword,
+  validateToken,
+} from './assets/api/recoveryFormApi.js'
 
 const d = document
 
@@ -18,10 +18,10 @@ const consultBtn = d.getElementById('btn-consult')
 let formFocus = 1
 
 let fieldList = {
-  email: '',
+  email: 'corro@correo.com',
   password: '',
   confirm_password: '',
-  token: '',
+  token: '123456',
 }
 let fieldListErrors = {
   email: {
@@ -57,17 +57,15 @@ recoveryForm.addEventListener('input', (e) => {
     type: fieldListErrors[e.target.name].type,
   })
   console.log(fieldList)
+
+  if (e.target.name === 'password') {
+    validatePassword(e.target.value)
+  }
 })
 
 d.addEventListener('click', (e) => {
   if (e.target === consultBtn) {
-    // LÓGICA PARA CONSULTAR CORREO
-    // IF VALIDATECORREO()
-    // SI EL CORREO ESTÁ REGISTRADO, MOSTRAR BOTON DE SIGUIENTE
-    // SINO, DAR MENSAJE DE ERROR
-
     if (formFocus === 1) {
-      // Validar si la estructura del Email es correcta
       validateInput({
         target: recoveryForm.email,
         fieldList,
@@ -77,6 +75,7 @@ d.addEventListener('click', (e) => {
 
       if (fieldListErrors.email.value) return
 
+      // VALIDAR SI EL EMAIL ES VÁLIDO Y EXISTE
       validateEmail(fieldList.email).then((res) => {
         if (res) {
           recoveryFormPart1.classList.add('d-none')
@@ -104,11 +103,7 @@ d.addEventListener('click', (e) => {
 
       if (fieldListErrors.token.value) return
 
-      // LÓGICA PARA VALIDAR TOKKEN
-      // IF VALIDATETOKEN()
-      // SI EL TOKEN ES VALIDADO SE PASA AL SIGUIENTE
-      // SINO DAR UN MENSAJE DE ERROR
-
+      //  VALIDAR SI EL TOKEN ES CORRECTO
       validateToken(fieldList.email, fieldList.token).then((res) => {
         if (res) {
           recoveryFormPart2.classList.add('d-none')
@@ -122,10 +117,6 @@ d.addEventListener('click', (e) => {
       return
     }
     if (formFocus === 3) {
-      console.log(3)
-
-      // FUNCIÓN PARA GUARDAR NUEVA CONTRASEÑA
-
       validateInput({
         target: recoveryForm.password,
         fieldList,
@@ -140,13 +131,16 @@ d.addEventListener('click', (e) => {
         type: fieldListErrors.confirm_password.type,
       })
 
-      console.log(fieldListErrors)
+      validatePassword(fieldList.password)
+
+      // console.log(fieldListErrors)
       if (
         fieldListErrors.password.value ||
         fieldListErrors.confirm_password.value
       )
         return
 
+      // ENVIAR NUEVA CONTRASEÑA
       validateNewPassword(
         fieldList.password,
         fieldList.confirm_password,
@@ -167,7 +161,6 @@ d.addEventListener('click', (e) => {
       return
     }
     if (formFocus === 3) {
-      console.log(3)
       recoveryFormPart3.classList.add('d-none')
       recoveryFormPart2.classList.remove('d-none')
       nextBtn.textContent = 'Siguiente'
@@ -177,87 +170,53 @@ d.addEventListener('click', (e) => {
   }
 })
 
-const validateEmail = async (email) => {
-  let data = new FormData()
+const listValidateMayus = d.querySelector('.password-validations-mayus')
+const listValidateNumber = d.querySelector('.password-validations-number')
+const listValidateEspecial = d.querySelector('.password-validations-especial')
+const listValidateLength = d.querySelector('.password-validations-length')
 
-  data.append('accion', 'consulta')
-  data.append('email', email)
-  try {
-    let res = await fetch(recoveryUrl, {
-      method: 'POST',
-      body: data,
-    })
+function validatePassword(password) {
+  const hasMayus = /^(?=.*[A-Z])/.test(password)
+  const hasNumber = /^(?=.*\d)/.test(password)
+  const hasEspecial = /^(?=.*[!@#$%^&*])/.test(password)
+  const hasLength = password.length >= 8
 
-    let json = await res.json()
-
-    if (json.valid) {
-      toast_s('success', json.response)
-      return true
-    } else {
-      toast_s('error', json.response)
-      return false
-    }
-  } catch (e) {
-    return toast_s('error', 'Error: verifique sus credenciales')
+  if (hasMayus) {
+    listValidateMayus.classList.add('valid')
+    listValidateMayus.classList.remove('invalid')
+  } else {
+    listValidateMayus.classList.add('invalid')
+    listValidateMayus.classList.remove('valid')
   }
-}
 
-const validateToken = async (email, token) => {
-  let data = new FormData()
-
-  data.append('accion', 'token')
-  data.append('token', token)
-  data.append('email', email)
-  try {
-    let res = await fetch(recoveryUrl, {
-      method: 'POST',
-      body: data,
-    })
-
-    let json = await res.json()
-    console.log(json)
-    if (json.valid) {
-      toast_s('success', json.response)
-      return true
-    } else {
-      toast_s('error', json.response)
-      return false
-    }
-  } catch (e) {
-    return toast_s('error', 'Error: verifique sus credenciales')
+  if (hasNumber) {
+    listValidateNumber.classList.add('valid')
+    listValidateNumber.classList.remove('invalid')
+  } else {
+    listValidateNumber.classList.add('invalid')
+    listValidateNumber.classList.remove('valid')
   }
-}
 
-const validateNewPassword = async (password, confirmPassword, token) => {
-  let data = new FormData()
+  if (hasEspecial) {
+    listValidateEspecial.classList.add('valid')
+    listValidateEspecial.classList.remove('invalid')
+  } else {
+    listValidateEspecial.classList.add('invalid')
+    listValidateEspecial.classList.remove('valid')
+  }
 
-  data.append('accion', 'pass')
-  data.append('token', token)
-  data.append('password', password)
-  data.append('confirm_password', confirmPassword)
+  if (hasLength) {
+    listValidateLength.classList.add('valid')
+    listValidateLength.classList.remove('invalid')
+  } else {
+    listValidateLength.classList.add('invalid')
+    listValidateLength.classList.remove('valid')
+  }
 
-  console
-  try {
-    let res = await fetch(recoveryUrl, {
-      method: 'POST',
-      body: data,
-    })
-
-    let json = await res.json()
-    if (json.valid) {
-      confirmNotification({
-        type: NOTIFICATIONS_TYPES.done,
-        message: json.response,
-      })
-      setTimeout(() => {
-        location.assign('/sigob')
-      }, 2000)
-      return true
-    } else {
-      toast_s('error', json.response)
-      return false
-    }
-  } catch (e) {
-    return toast_s('error', 'Error: verifique sus credenciales')
+  return {
+    contieneMayuscula,
+    contieneNumero,
+    contieneCaracterEspecial,
+    tieneLongitudMinima,
   }
 }

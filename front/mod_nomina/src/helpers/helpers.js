@@ -214,6 +214,14 @@ function validateInput({ target, fieldList = {}, fieldListErrors = {}, type }) {
           ...fieldList,
           [target.name]: target.value,
         }
+      } else if (value.length < 8) {
+        target.classList.add('input-error')
+        fieldListErrors[target.name].value = true
+        errorMessage(target, 'Mínimo 8 carácteres')
+        fieldList = {
+          ...fieldList,
+          [target.name]: target.value,
+        }
       } else {
         fieldListErrors[target.name].value = false
         target.classList.remove('input-error')

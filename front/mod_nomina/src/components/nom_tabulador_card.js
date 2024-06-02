@@ -66,7 +66,7 @@ function generateMatrix({
   let tabulador = fieldList.tabulador || []
 
   matrixElement.style.display = 'grid'
-  matrixElement.style.gridTemplateRows = `repeat(${rows + 1}, 1fr)`
+  matrixElement.style.gridTemplateRows = `repeat(${Number(rows) + 1}, 1fr)`
 
   for (let i = 0; i <= rows; i++) {
     const matrixRow = d.createElement('div')

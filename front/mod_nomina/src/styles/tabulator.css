@@ -1,0 +1,37 @@
+/* TABULATOR STYLES */
+
+.tabulator-matrix {
+  margin: auto;
+  width: 100%;
+  gap: 6px;
+  overflow: auto;
+  /* background-color: rgb(255, 225, 225); */
+}
+
+.tabulator-matrix .tabulator-matrix-row {
+  display: flex;
+  gap: 6px;
+  /* grid-template-columns: repeat(auto-fit, minmax(40px, 100px)); */
+}
+
+.tabulator-matrix-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 100%;
+  font-size: 12px;
+}
+
+.tabulator-matrix-cell .tabulator-matrix-span {
+  background-color: var(--bluegray);
+  color: rgb(255, 242, 128);
+}
+
+.tabulator-matrix-cell-input {
+  width: 100%;
+}
+.tabulator-matrix-cell-input::placeholder {
+  font-size: 10px;
+  text-align: center;
+}
