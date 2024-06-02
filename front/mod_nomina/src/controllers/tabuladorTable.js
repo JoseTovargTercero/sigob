@@ -71,9 +71,9 @@ const loadTabulatorTable = async () => {
       pasos: tabulador.pasos,
       aniosPasos: tabulador.aniosPasos,
       acciones: `
-      <button class="btn btn-info btn-sm btn-view" data-id="${tabulador.id}">MOSTRAR</button>
-      <button class="btn btn-warning btn-sm btn-edit" data-id="${tabulador.id}">EDITAR</button>
-      <button class="btn btn-danger btn-sm btn-delete" data-id="${tabulador.id}">ELIMINAR</button>`,
+      <button class="btn btn-info btn-sm btn-view" data-id="${tabulador.id}"><i class="bx bx-detail me-1"></i>Detalles</button>
+      <button class="btn btn-warning btn-sm btn-edit" data-id="${tabulador.id}"><i class="bx bx-edit me-1"></i>Editar</button>
+      <button class="btn btn-danger btn-sm btn-delete" data-id="${tabulador.id}"><i class="bx bx-trash me-1"></i>Eliminar</button>`,
     }
   })
 

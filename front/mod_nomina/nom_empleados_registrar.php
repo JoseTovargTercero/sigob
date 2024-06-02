@@ -16,15 +16,42 @@ require_once '../../back/sistema_global/session.php';
     <?php require_once '../includes/top-bar.php' ?>
     <!-- [ top bar ] -->
 
-    <div class="pc-container flex-container">
-        <div class="form-header shadow-sm bg-body-tertiary rounded w-75 mx-auto">
-            <a class="btn btn-outline-secondary btn-sm" href="nom_empleados_tabla"><box-icon
-                    name='arrow-back'></box-icon></a>
-            <h2 class="text-uppercase text-center">REGISTRAR EMPLEADO</h2>
-            <box-icon name=''></box-icon>
 
+
+
+
+
+
+
+  <!-- [ Main Content ] start -->
+  <div class="pc-container">
+    <div class="pc-content">
+      <div class="page-header">
+        <div class="page-block">
+          <div class="row align-items-center">
+            <div class="col-md-12">
+              <div class="page-header-title">
+                <h5 class="mb-0">Conceptos</h5>
+              </div>
+            </div>
+          </div>
         </div>
-        <form class="row w-90 mx-auto form-container employee-form" id="employee-form" autocomplete="off">
+      </div>
+      <!-- [ Main Content ] start -->
+      <div class="row mb3">
+        <!-- [ worldLow section ] start -->
+        <div class="col-xl-12 col-md-6 mb-3" id="section-tabla">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h5 class="mb-0">Nuevo empleado</h5>
+                <small class="text-muted mt-0">Registre la información del empleado</small>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive p-1">
+               
+              <form class="row employee-form" id="employee-form" autocomplete="off">
             <div class="form-group">
                 <div class="row">
                     <div class="col-sm">
@@ -212,9 +239,43 @@ require_once '../../back/sistema_global/session.php';
                 </div>
             </div>
         </form>
-
-
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- [ worldLow section ] end -->
+        <!-- [ Recent Users ] end -->
+      </div>
+      <!-- [ Main Content ] end -->
     </div>
+  </div>
+  <!-- [ Main Content ] end -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 </body>

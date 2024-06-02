@@ -17,17 +17,37 @@ require_once '../../back/sistema_global/session.php';
     <?php require_once '../includes/top-bar.php' ?>
     <!-- [ top bar ] -->
 
-    <div class="pc-container flex-container" id="tabulator-table-view">
-        <div class="card w-90 mx-auto">
-            <div class="card-header ">
 
-                <h3 class="text-uppercase text-center">
-                    TABULADORES
-                </h3>
+    
 
+    <div class="pc-container">
+    <div class="pc-content">
+      <div class="page-header">
+        <div class="page-block">
+          <div class="row align-items-center">
+            <div class="col-md-12">
+              <div class="page-header-title">
+                <h5 class="mb-0">Tabuladores</h5>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- [ Main Content ] start -->
+      <div class="row mb3">
+     
+        <div class="col-xl-12 col-md-6 mb-3"id="tabulator-table-view">
+          <div class="card">
+            <div class="card-header">
+              <div class="">
+                <h5 class="mb-0">Lista de tabuladores registrados
+                </h5>
+                <small class="mt-0 text-muted">Cree y administre los tabuladores</small>
+              </div>
             </div>
             <div class="card-body">
-                <table id="tabulator-table" class="table table-striped" style="width:100%">
+              <div class="table-responsive p-1">
+                 <table id="tabulator-table" class="table table-striped" style="width:100%">
                     <thead class="w-100">
                         <th>NOMBRES</th>
                         <th>PASOS</th>
@@ -39,9 +59,32 @@ require_once '../../back/sistema_global/session.php';
 
                     </tbody>
                 </table>
+              </div>
             </div>
+          </div>
         </div>
+        <!-- [ worldLow section ] end -->
+        <!-- [ Recent Users ] end -->
+      </div>
+      <!-- [ Main Content ] end -->
     </div>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 </body>
