@@ -214,9 +214,9 @@ function validatePassword(password) {
   }
 
   return {
-    contieneMayuscula,
-    contieneNumero,
-    contieneCaracterEspecial,
-    tieneLongitudMinima,
+    hasMayus,
+    hasNumber,
+    hasEspecial,
+    hasLength,
   }
 }
