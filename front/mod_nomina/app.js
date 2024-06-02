@@ -76,6 +76,7 @@ d.addEventListener('DOMContentLoaded', (e) => {
         cuenta_bancaria: '',
         tipo_cuenta: 0,
         id_dependencia: '',
+        dependencia: '',
         tipo_nomina: 0,
         observacion: '',
         cod_empleado: '441151',
@@ -152,7 +153,7 @@ d.addEventListener('DOMContentLoaded', (e) => {
           type: 'number',
         },
         dependencia: {
-          value: true,
+          value: false,
           message: 'No puede estar vacío',
           type: 'text',
         },

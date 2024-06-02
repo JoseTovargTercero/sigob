@@ -145,6 +145,11 @@ function validateEmployeeForm({
     }
 
     if (e.target === btnElement) {
+      if (fieldList.dependencia.length <= 0) delete fieldListErrors.dependencia
+
+      console.log(fieldListErrors)
+      console.log(fieldList)
+
       employeeSelectElementCopy.forEach((input) => {
         validateInput({
           target: input,
