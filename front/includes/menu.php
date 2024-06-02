@@ -12,7 +12,8 @@
         <li class="pc-item">
           <a href="dashboard" class="pc-link">
             <span class="pc-micon">
-              <i data-feather="home"></i>
+            <i class="bx bx-home"></i>
+
             </span>
             <span class="pc-mtext">Dashboard</span>
           </a>
@@ -25,7 +26,7 @@
         <li class="pc-item pc-hasmenu">
           <a href="#!" class="pc-link">
             <span class="pc-micon">
-              <i data-feather="align-right"></i>
+            <i class='bx bx-objects-vertical-bottom'></i>
             </span>
             <span class="pc-mtext">Movimientos</span><span class="pc-arrow"><i class="ti ti-chevron-right"></i></span>
           </a>
@@ -47,7 +48,8 @@
         <li class="pc-item pc-hasmenu">
           <a href="#!" class="pc-link">
             <span class="pc-micon">
-              <i data-feather="align-right"></i>
+            <i class='bx bx-wallet-alt'></i>
+             
             </span>
             <span class="pc-mtext">Nómina</span><span class="pc-arrow"><i class="ti ti-chevron-right"></i></span>
           </a>
@@ -79,7 +81,7 @@
           </li>
           <li class="pc-item">
             <a href="<?php echo constant('URL') ?>front/mod_global/global_users" class="pc-link">
-              <span class="pc-micon"><i data-feather="sidebar"></i></span>
+              <span class="pc-micon"><i class='bx bx-user'></i></span>
               <span class="pc-mtext">Usuarios</span>
             </a>
           </li>

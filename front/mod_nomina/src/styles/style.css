@@ -59,6 +59,11 @@ a {
   opacity: 1;
 
   transition: opacity 0.5s ease;
+
+
+  top: 0;
+  height: 100%;
+  z-index: 9999;
 }
 .modal-window.hide {
   visibility: hidden;
@@ -69,7 +74,7 @@ a {
 .modal-box {
   background-color: var(--lightgray);
   width: 100%;
-  max-width: 1000px;
+  max-width: 75%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -91,7 +96,7 @@ a {
 }
 
 /* FORM STYLES */
-.form-input,
+/*.form-input,
 .form-select {
   border-left: 2px solid var(--light-bluegray);
   border-right: 2px solid var(--light-bluegray);
@@ -99,7 +104,7 @@ a {
 
 .form-input::placeholder {
   color: #3f4d67a6;
-}
+}*/
 .form-control.input-error {
   border: 1px solid rgb(255, 93, 93);
   border-left: 2px solid rgb(255, 93, 93);

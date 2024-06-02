@@ -17,15 +17,35 @@ require_once '../../back/sistema_global/session.php';
     <?php require_once '../includes/top-bar.php' ?>
     <!-- [ top bar ] -->
 
-    <div class="pc-container flex-container" id="employee-table-view">
-        <div class="card w-90 mx-auto">
+
+
+    
+  <div class="pc-container">
+    <div class="pc-content">
+      <div class="page-header">
+        <div class="page-block">
+          <div class="row align-items-center">
+            <div class="col-md-12">
+              <div class="page-header-title">
+                <h5 class="mb-0">Empleados</h5>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- [ Main Content ] start -->
+      <div class="row mb3">
+        <!-- [ worldLow section ] start -->
+        <div class="col-xl-12 col-md-6 mb-3" id="employee-table-view">
+          <div class="card">
             <div class="card-header">
-                <div>
-                    <h3 class="text-uppercase text-center">PERSONAL</h3>
-                </div>
+              <div>
+                <h5 class="mb-0">Empleados</h5>
+                <small class="mt-0 text-muted">Administre su personal</small>
+              </div>
             </div>
             <div class="card-body">
-                <table id="employee-table" class="table table-striped" style="width:100%">
+            <table id="employee-table" class="table table-striped" style="width:100%">
                     <thead class="w-100">
                         <th>NOMBRES</th>
                         <th>CEDULA</th>
@@ -37,9 +57,34 @@ require_once '../../back/sistema_global/session.php';
 
                     </tbody>
                 </table>
+
+
+
             </div>
+          </div>
         </div>
+
+        <!-- [ worldLow section ] end -->
+        <!-- [ Recent Users ] end -->
+      </div>
+      <!-- [ Main Content ] end -->
     </div>
+
+
+
+
+
+    
+
+
+
+
+
+  </div>
+
+
+
+
 
 
 </body>
