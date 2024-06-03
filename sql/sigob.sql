@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 02-06-2024 a las 08:35:49
+-- Tiempo de generación: 03-06-2024 a las 06:25:13
 -- Versión del servidor: 10.4.27-MariaDB
 -- Versión de PHP: 7.4.33
 
@@ -524,8 +524,8 @@ CREATE TABLE `conceptos` (
 --
 
 INSERT INTO `conceptos` (`id`, `nom_concepto`, `cod_partida`, `tipo_concepto`, `tipo_calculo`, `valor`) VALUES
-(21, 'CONTRIBUCION POR DISCAPACIDAD', '4.01.03.40.00', 'A', 1, '5'),
-(24, 'PRIMA POR HIJO EMPLEADOS', '4.01.03.04.00', 'A', 1, '12.50'),
+(21, 'CONTRIBUCION POR DISCAPACIDAD', '4.01.03.40.00', 'A', 6, '5'),
+(24, 'PRIMA POR HIJO EMPLEADOS', '4.01.03.04.00', 'A', 1, '5'),
 (25, 'PRIMA POR TRANSPORTE', '4.01.04.09.00', 'A', 1, '50'),
 (26, 'PRIMA POR ANTIGUEDAD EMPLEADOS', '4.01.03.09.00', 'A', 1, '10'),
 (27, 'PRIMA POR ESCALAFON', '4.01.02.00.00', 'A', 1, '5'),
@@ -564,7 +564,7 @@ CREATE TABLE `conceptos_aplicados` (
 
 INSERT INTO `conceptos_aplicados` (`id`, `concepto_id`, `nom_concepto`, `fecha_aplicar`, `tipo_calculo`, `n_conceptos`, `emp_cantidad`, `tabulador`, `empleados`, `nombre_nomina`) VALUES
 (21, 'sueldo_base', 'Sueldo Base', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '', '[]', '3', '32', '[\"26\",\"27\",\"28\"]', 'Obreros'),
-(22, '21', 'CONTRIBUCION POR DISCAPACIDAD', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '1', '[]', '3', '', '[\"26\",\"27\",\"28\"]', 'Obreros'),
+(22, '21', 'CONTRIBUCION POR DISCAPACIDAD', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '6', '[]', '3', '', '[\"26\",\"27\",\"28\"]', 'Obreros'),
 (23, '24', 'PRIMA POR HIJO EMPLEADOS', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '1', '[]', '3', '', '[\"26\",\"27\",\"28\"]', 'Obreros'),
 (24, '25', 'PRIMA POR TRANSPORTE', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '1', '[]', '3', '', '[\"26\",\"27\",\"28\"]', 'Obreros'),
 (25, '26', 'PRIMA POR ANTIGUEDAD EMPLEADOS', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '1', '[]', '3', '', '[\"26\",\"27\",\"28\"]', 'Obreros'),
@@ -655,7 +655,7 @@ CREATE TABLE `empleados` (
 INSERT INTO `empleados` (`id`, `nacionalidad`, `cedula`, `cod_empleado`, `nombres`, `fecha_ingreso`, `otros_años`, `status`, `observacion`, `cod_cargo`, `banco`, `cuenta_bancaria`, `hijos`, `instruccion_academica`, `discapacidades`, `tipo_cuenta`, `tipo_nomina`, `id_dependencia`) VALUES
 (26, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 2, 0, 0, 0, 0),
 (27, '1', '123456789', '441151', 'Pedro Pablo', '2010-05-02', 0, '1', 'N/A', '25212', 'Tesoro', '1002555541124', 3, 3, 0, 0, 0, 0),
-(28, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', 'Bicentenario', '1002555541124', 2, 2, 0, 0, 0, 0),
+(28, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', 'Bicentenario', '1002555541124', 3, 2, 0, 0, 0, 0),
 (29, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 3, 0, 0, 0, 0),
 (30, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 2, 0, 0, 0, 0),
 (31, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 3, 0, 0, 0, 0),
@@ -1310,33 +1310,6 @@ CREATE TABLE `txt` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `txt`
---
-
-INSERT INTO `txt` (`id`, `id_empleado`, `total_a_pagar`, `nombre_nomina`, `identificador`, `fecha_pagar`) VALUES
-(598, 26, '57.03', 'Obreros', 's1', '06-2024'),
-(599, 26, '57.03', 'Obreros', 's2', '06-2024'),
-(600, 26, '57.03', 'Obreros', 's3', '06-2024'),
-(601, 26, '57.03', 'Obreros', 's4', '06-2024'),
-(602, 27, '87.8', 'Obreros', 's1', '06-2024'),
-(603, 27, '87.8', 'Obreros', 's2', '06-2024'),
-(604, 27, '87.8', 'Obreros', 's3', '06-2024'),
-(605, 27, '87.8', 'Obreros', 's4', '06-2024'),
-(606, 28, '57.03', 'Obreros', 's1', '06-2024'),
-(607, 28, '57.03', 'Obreros', 's2', '06-2024'),
-(608, 28, '57.03', 'Obreros', 's3', '06-2024'),
-(609, 28, '57.03', 'Obreros', 's4', '06-2024'),
-(610, 26, '114.06', 'Obreros', 'q1', '06-2024'),
-(611, 26, '114.06', 'Obreros', 'q2', '06-2024'),
-(612, 27, '175.59', 'Obreros', 'q1', '06-2024'),
-(613, 27, '175.59', 'Obreros', 'q2', '06-2024'),
-(614, 28, '114.06', 'Obreros', 'q1', '06-2024'),
-(615, 28, '114.06', 'Obreros', 'q2', '06-2024'),
-(616, 26, '228.12', 'Obreros', 'unico', '06-2024'),
-(617, 27, '351.18', 'Obreros', 'unico', '06-2024'),
-(618, 28, '228.12', 'Obreros', 'unico', '06-2024');
-
---
 -- Índices para tablas volcadas
 --
 
@@ -1535,7 +1508,7 @@ ALTER TABLE `tabuladores_estr`
 -- AUTO_INCREMENT de la tabla `txt`
 --
 ALTER TABLE `txt`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=619;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=727;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

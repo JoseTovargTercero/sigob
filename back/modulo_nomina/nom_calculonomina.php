@@ -324,9 +324,6 @@ $deducciones = array();
 // Variable para almacenar el total a pagar
 $total_a_pagar = 0;
 
-// Array asociativo para mantener un registro de empleados únicos
-$empleados_unicos = array();
-
 // Función para obtener los datos de un empleado por su ID
 function obtenerEmpleadoPorID($conexion, $id_empleado) {
     $queryEmpleado = "SELECT * FROM empleados WHERE id = ?";
@@ -353,6 +350,13 @@ foreach ($conceptos_aplicados as &$concepto) {
     // Obtener los IDs de empleados de este concepto
     $ids_empleados = json_decode($concepto['empleados'], true);
 
+    // Clasificar los conceptos en asignaciones o deducciones
+    if ($concepto['tipo_concepto'] === "A") {
+        $asignaciones[] = $concepto;
+    } elseif ($concepto['tipo_concepto'] === "D") {
+        $deducciones[] = $concepto;
+    }
+
     // Consultar la tabla 'empleados' para cada ID de empleado
     foreach ($ids_empleados as $id_empleado) {
         // Verificar si este empleado ya ha sido agregado
@@ -369,7 +373,6 @@ foreach ($conceptos_aplicados as &$concepto) {
 
                 // Agregar el empleado al array de empleados únicos
                 $empleados_unicos[$id_empleado] = $empleado;
-
             }
         }
 
@@ -389,28 +392,36 @@ foreach ($conceptos_aplicados as &$concepto) {
     }
 }
 
-
 // Calcular el total a pagar para cada empleado
 $id_empleados_detalles = array();
 $total_a_pagar_empleados = array();
 
 foreach ($empleados_unicos as &$empleado) {
-    // Inicializar el total a pagar para este empleado
-    $total_a_pagar_empleado = 0;
-
-    // Sumar el salario base con las asignaciones
-    $total_a_pagar_empleado += $empleado['salario_base'];
+    // Inicializar el total a pagar para este empleado con el salario base
+    $total_a_pagar_empleado = $empleado['salario_base'];
 
     // Sumar las asignaciones
     foreach ($asignaciones as $asignacion) {
-        $valorAsignacion = obtenerValorConcepto($conexion, $asignacion['nom_concepto'], $empleado['salario_base'], $precio_dolar, $empleado['salario_integral'], array($empleado['id']));
-        $total_a_pagar_empleado += $valorAsignacion;
+        $nom_concepto = $asignacion['nom_concepto'];
+        if (isset($empleado[$nom_concepto])) {
+            $total_a_pagar_empleado += $empleado[$nom_concepto];
+        } else {
+            // Calcular el valor de la asignación si no está previamente calculado
+            $valorAsignacion = obtenerValorConcepto($conexion, $nom_concepto, $empleado['salario_base'], $precio_dolar, $empleado['salario_integral'], array($empleado['id']));
+            $total_a_pagar_empleado += $valorAsignacion;
+        }
     }
 
     // Restar las deducciones
     foreach ($deducciones as $deduccion) {
-        $valorDeduccion = obtenerValorConcepto($conexion, $deduccion['nom_concepto'], $empleado['salario_base'], $precio_dolar, $empleado['salario_integral'], array($empleado['id']));
-        $total_a_pagar_empleado -= $valorDeduccion;
+        $nom_concepto = $deduccion['nom_concepto'];
+        if (isset($empleado[$nom_concepto])) {
+            $total_a_pagar_empleado -= $empleado[$nom_concepto];
+        } else {
+            // Calcular el valor de la deducción si no está previamente calculado
+            $valorDeduccion = obtenerValorConcepto($conexion, $nom_concepto, $empleado['salario_base'], $precio_dolar, $empleado['salario_integral'], array($empleado['id']));
+            $total_a_pagar_empleado -= $valorDeduccion;
+        }
     }
 
     // Almacenar el total a pagar para este empleado en el array del empleado
@@ -433,6 +444,7 @@ $response = array(
     'total_pagar' => $total_a_pagar_empleados,
     'nombre_nomina' => $nombre_nomina,
 );
+
 
 
 // Enviar la respuesta como JSON
