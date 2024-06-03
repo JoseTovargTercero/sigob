@@ -12,6 +12,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $tipo = $_POST['tipo'];
     $conceptosAplicados = isset($_POST['conceptosAplicados']) ? $_POST['conceptosAplicados'] : [];
 
+    // Verificar si el nombre ya existe en la tabla nominas
+    $stmt = $conexion->prepare("SELECT COUNT(*) FROM nominas WHERE nombre = ?");
+    $stmt->bind_param("s", $nombre);
+    $stmt->execute();
+    $stmt->bind_result($count);
+    $stmt->fetch();
+    $stmt->close();
+
+    if ($count > 0) {
+        echo json_encode(['status' => 'error', 'message' => 'El nombre de la nomina ya existe']);
+        exit;
+    }
+
     // Array para almacenar los IDs de los conceptos aplicados
     $conceptosAplicadosIds = [];
 
@@ -44,9 +57,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt->bind_param("issss", $grupo_nomina, $nombre, $frecuencia, $tipo, $conceptosAplicadosJson);
 
     if ($stmt->execute()) {
-        echo 'ok';
+        echo json_encode(['status' => 'ok']);
     } else {
-        echo 'error';
+        echo json_encode(['status' => 'error', 'message' => 'Error al insertar los datos']);
     }
 
     // Cerrar la declaración

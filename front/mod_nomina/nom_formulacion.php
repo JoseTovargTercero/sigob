@@ -1136,34 +1136,66 @@ document.getElementById('guardar_concepto').addEventListener('click', guardar_co
      *
      * @param {string} step - The current step value.
      */
-    function nextStep(step) {
-      if (step == '1') {
+
+function checkNombreNominaExists(nombre_nomina) {
+    return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', '../../back/modulo_nomina/check_nombre_nomina.php', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    const response = JSON.parse(xhr.responseText);
+                    if (response.exists) {
+                        resolve(true);
+                    } else {
+                        resolve(false);
+                    }
+                } else {
+                    reject('Error al verificar el nombre de la nómina');
+                }
+            }
+        };
+        xhr.send(`nombre_nomina=${encodeURIComponent(nombre_nomina)}`);
+    });
+}
+
+async function nextStep(step) {
+    if (step == '1') {
         const inputs = ['nombre_nomina', 'frecuencia_pago', 'tipo_nomina'];
         if (inputs.some(id => !document.getElementById(id).value)) {
-          return toast_s('error', 'Debe completar todos los campos');
+            return toast_s('error', 'Debe completar todos los campos');
         }
-        toggleStep('basico', 'empleados');
-        document.getElementById('progressbar').style.width = '50%';
 
-      } else if (step == '2') {
+        const nombreNomina = document.getElementById('nombre_nomina').value;
+        try {
+            const exists = await checkNombreNominaExists(nombreNomina);
+            if (exists) {
+                return toast_s('error', 'El nombre de la nómina ya existe');
+            } else {
+                toggleStep('basico', 'empleados');
+                document.getElementById('progressbar').style.width = '50%';
+            }
+        } catch (error) {
+            return toast_s('error', error);
+        }
+    } else if (step == '2') {
         if (empleadosSeleccionados.length === 0) {
-          return toast_s('error', 'Debe seleccionar al menos un empleado');
+            return toast_s('error', 'Debe seleccionar al menos un empleado');
         }
         toggleStep('empleados', 'conceptos');
         document.getElementById('progressbar').style.width = '75%';
-      } else if (step == '3') {
-
-
+    } else if (step == '3') {
         if (Object.keys(conceptosAplicados).length === 0) {
-          return toast_s('error', 'Debe seleccionar al menos un concepto');
+            return toast_s('error', 'Debe seleccionar al menos un concepto');
         } else {
-          toggleStep('conceptos', 'resumen');
-          document.getElementById('progressbar').style.width = '100%';
-          resumenDeNomina()
+            toggleStep('conceptos', 'resumen');
+            document.getElementById('progressbar').style.width = '100%';
+            resumenDeNomina()
         }
-
-      }
     }
+}
+
     /**
      * Function to toggle between steps by hiding and showing the corresponding elements.
      *
