@@ -6,8 +6,9 @@ $response = file_get_contents($url);
 $data = json_decode($response, true);
 $precio_dolar = $data['conversion_rate'];
 
+
 // Función para calcular el salario base de un empleado
-function calculoSalarioBase($conexion, $empleado, $nombre) {
+function calculoSalarioBase($conexion, $empleado) {
     // Consulta SQL con LEFT JOIN
     $sql = "SELECT empleados.*, cargos_grados.grado,
             TIMESTAMPDIFF(YEAR, empleados.fecha_ingreso, CURDATE()) + empleados.otros_años AS paso
@@ -28,36 +29,17 @@ function calculoSalarioBase($conexion, $empleado, $nombre) {
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
 
-        // Consulta SQL para obtener el tabulador correspondiente al nombre_nomina
-        $sqlTabulador = "SELECT tabulador FROM conceptos_aplicados WHERE nombre_nomina = ?";
-        $stmtTabulador = $conexion->prepare($sqlTabulador);
-        $stmtTabulador->bind_param("s", $nombre);
-        $stmtTabulador->execute();
-        $resultTabulador = $stmtTabulador->get_result();
+        // Obtener el monto correspondiente a este empleado
+        $monto = obtenerMonto($conexion, $row["grado"], $row["paso"]);
 
-        if ($resultTabulador === false) {
-            echo "Error en la consulta: " . $conexion->error . "\n";
-            return "No disponible";
-        }
-
-        if ($resultTabulador->num_rows > 0) {
-            $rowTabulador = $resultTabulador->fetch_assoc();
-            $tabulador = $rowTabulador["tabulador"];
-
-            // Obtener el monto correspondiente a este empleado usando el tabulador
-            $monto = obtenerMonto($conexion, $row["grado"], $row["paso"], $tabulador);
-
-            return $monto;
-        } else {
-            return "No disponible";
-        }
+        return $monto;
     } else {
         return "No disponible";
     }
 }
 
 // Función para obtener el monto del salario base
-function obtenerMonto($conexion, $grado, $paso, $tabulador) {
+function obtenerMonto($conexion, $grado, $paso) {
     // Consulta SQL para obtener el monto
     $grado = "G" . $grado; // Agregar el prefijo 'G' al grado
     $paso = "P" . $paso;   // Agregar el prefijo 'P' al paso
@@ -65,11 +47,10 @@ function obtenerMonto($conexion, $grado, $paso, $tabulador) {
     // Encerrar los valores entre comillas
     $grado = $conexion->real_escape_string($grado);
     $paso = $conexion->real_escape_string($paso);
-    $tabulador = $conexion->real_escape_string($tabulador);
 
-    $sql = "SELECT monto FROM tabuladores_estr WHERE grado = ? AND paso = ? AND tabulador_id = ?";
+    $sql = "SELECT monto FROM tabuladores_estr WHERE grado = ? AND paso = ?";
     $stmt = $conexion->prepare($sql);
-    $stmt->bind_param("sss", $grado, $paso, $tabulador);
+    $stmt->bind_param("ss", $grado, $paso);
     $stmt->execute();
     $result = $stmt->get_result();
 
@@ -289,6 +270,7 @@ $data = json_decode($json, true);
 
 // Verificar si el array contiene el nombre
 if (!isset($data['nombre'])) {
+    header('Content-Type: application/json');
     echo json_encode(array('error' => 'No se recibió el nombre en el array.'));
     exit();
 }
@@ -311,6 +293,7 @@ $stmtConceptos = $conexion->prepare($queryConceptos);
 
 // Verificar si la preparación de la consulta fue exitosa
 if (!$stmtConceptos) {
+    header('Content-Type: application/json');
     echo json_encode(array('error' => 'Error al preparar la consulta de conceptos_aplicados: ' . $conexion->error));
     exit();
 }
@@ -319,6 +302,7 @@ $stmtConceptos->bind_param("s", $nombre);
 
 // Verificar si ocurrió un error al vincular los parámetros
 if ($stmtConceptos->errno) {
+    header('Content-Type: application/json');
     echo json_encode(array('error' => 'Error al vincular parámetros de la consulta de conceptos_aplicados: ' . $stmtConceptos->error));
     exit();
 }
@@ -327,6 +311,7 @@ $stmtConceptos->execute();
 
 // Verificar si ocurrió un error al ejecutar la consulta
 if ($stmtConceptos->errno) {
+    header('Content-Type: application/json');
     echo json_encode(array('error' => 'Error al ejecutar la consulta de conceptos_aplicados: ' . $stmtConceptos->error));
     exit();
 }
@@ -386,7 +371,7 @@ foreach ($conceptos_aplicados as &$concepto) {
 
             if ($empleado) {
                 // Calcular el salario base del empleado
-                $empleado['salario_base'] = calculoSalarioBase($conexion, $empleado,$nombre);
+                $empleado['salario_base'] = calculoSalarioBase($conexion, $empleado);
 
                 // Inicializar el salario integral con el salario base
                 $empleado['salario_integral'] = $empleado['salario_base'];
@@ -465,8 +450,6 @@ $response = array(
     'nombre_nomina' => $nombre_nomina,
 );
 
-
-
 // Enviar la respuesta como JSON
 header('Content-Type: application/json');
 echo json_encode($response);
@@ -485,6 +468,4 @@ curl_setopt($ch, CURLOPT_HTTPHEADER, array(
 ));
 $result = curl_exec($ch);
 curl_close($ch);
-
-
 ?>
