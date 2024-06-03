@@ -16,13 +16,6 @@ require_once '../../back/sistema_global/session.php';
     <?php require_once '../includes/top-bar.php' ?>
     <!-- [ top bar ] -->
 
-
-
-
-
-
-
-
   <!-- [ Main Content ] start -->
   <div class="pc-container">
     <div class="pc-content">
@@ -250,33 +243,6 @@ require_once '../../back/sistema_global/session.php';
     </div>
   </div>
   <!-- [ Main Content ] end -->
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 </body>
 

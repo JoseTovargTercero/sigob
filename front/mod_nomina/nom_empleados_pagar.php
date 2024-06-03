@@ -1,78 +1,182 @@
 <?php
+require_once '../../back/sistema_global/conexion.php';
 require_once '../../back/sistema_global/session.php';
 ?>
-
-<?php require_once '../includes/header.php' ?>
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
-    <link rel="stylesheet" href="src/styles/style.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.1/css/dataTables.dataTables.css" />
-    <title>TABULADORES</title>
-</head>
+    <title>Pago de nómina</title>
+    <!-- [Meta] -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-<body>
+</head>
+<?php require_once '../includes/header.php' ?>
+
+<body data-pc-preset="preset-1" data-pc-sidebar-caption="true" data-pc-direction="ltr" data-pc-theme="light">
+    <div class="loader-bg">
+        <div class="loader-track">
+            <div class="loader-fill"></div>
+        </div>
+    </div>
+
     <?php require_once '../includes/menu.php' ?>
     <!-- [ MENU ] -->
 
     <?php require_once '../includes/top-bar.php' ?>
     <!-- [ top bar ] -->
 
-    <div class="pc-container flex-container" id="employee-pay-view">
-        <div class="form-header w-75 mx-auto">
-            <a class="btn btn-outline-info btn-sm" href="nom_empleados_tabla"><box-icon
-                    name='arrow-back'></box-icon></a>
-            <h2 class="text-uppercase text-center">REALIZAR PAGO</h2>
-            <box-icon name=''></box-icon>
-        </div>
-        <form class="row w-75 mx-auto form-container employee-form" id="employee-pay-form" autocomplete="off">
-            <div class="form-group">
-                <div class="row">
-                    <label class="form-label" for="tipo_nomina">TIPO NÓMINA</label>
-                    <select name="tipo_nomina" class="form-select employee-select" id="tipo_nomina">
-                        <option selected value="">ELEGIR...</option>
-                        <option value="1">NOMINA 1</option>
-                        <option value="2">NOMINA 2</option>
-                    </select>
+
+
+    <!-- [ Main Content ] start -->
+    <div class="pc-container">
+        <div class="pc-content">
+            <div class="page-header">
+                <div class="page-block">
+                    <div class="row align-items-center">
+                        <div class="col-md-12">
+                            <div class="page-header-title">
+                                <h5 class="mb-0">Pagar</h5>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="form-group">
-                <div class="row">
-                    <label class="form-label" for="tipo_nomina">TIPO DE PAGO</label>
-                    <select name="tipo_pago" class="form-select employee-select" id="tipo_pago">
-                        <option selected value="">ELEGIR...</option>
-                        <option value="1">1RA SEMANA</option>
-                        <option value="2">1RA QUINCENA</option>
-                        <option value="3">3RA QUINCENA</option>
-                    </select>
+            <!-- [ Main Content ] start -->
+            <div class="row mb3">
+                <!-- [ worldLow section ] start -->
+                <div class="col-xl-12 col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="d-flex align-items-start justify-content-between">
+                                <div>
+                                    <h5 class="mb-0">Pago de nómina</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+
+                            <div class="mb-3">
+                                <label for="grupo" class="form-label">Grupo de nomina</label>
+                                <select id="grupo" class="form-control">
+                                    <option value="">Selección</option>
+                                    <?php
+                                    $stmt = mysqli_prepare($conexion, "SELECT id, codigo, nombre FROM `nominas_grupos` ORDER BY codigo");
+                                    $stmt->execute();
+                                    $result = $stmt->get_result();
+                                    if ($result->num_rows > 0) {
+                                        while ($row = $result->fetch_assoc()) {
+                                            echo '<option value="' . $row['id'] . '">' . $row['codigo'] . ' - ' . $row['nombre'] . '</option>';
+                                        }
+                                    }
+                                    $stmt->close();
+                                    ?>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="nomina" class="form-label">Nómina</label>
+                                <select id="nomina" class="form-control">
+                                    <option value="">Selección</option>
+                                </select>
+                            </div>
+
+
+
+                        </div>
+                    </div>
                 </div>
+                <!-- [ worldLow section ] end -->
+                <!-- [ Recent Users ] end -->
             </div>
-        </form>
-
-        <div class="card-body w-75 mx-auto">
-            <table id="employee-table" class="table table-striped" style="width:100%">
-                <thead class="w-100">
-                    <th>NOMBRES</th>
-                    <th>CEDULA</th>
-                    <th>DEPENDENCIA</th>
-                    <th>NOMINA</th>
-                    <th>ACCIONES</th>
-                </thead>
-                <tbody>
-
-                </tbody>
-            </table>
+            <!-- [ Main Content ] end -->
         </div>
     </div>
 
 
-</body>
+    <!-- [ Main Content ] end -->
+    <script src="../../src/assets/js/plugins/simplebar.min.js"></script>
+    <script src="../../src/assets/js/plugins/bootstrap.min.js"></script>
+    <script src="../../src/assets/js/pcoded.js"></script>
+    <script src="../../src/assets/js/plugins/feather.min.js"></script>
+    <script src="../../src/assets/js/main.js"></script>
+    <script>
+        const url_back = '../../back/modulo_nomina/nom_empleados_pagar_back.php';
 
-<script type="module" src="app.js"></script>
-<!-- DATATABLES -->
-<script src="../../src/assets/js/plugins/simplebar.min.js"></script>
-<script src="../../src/assets/js/plugins/bootstrap.min.js"></script>
-<script src="../../src/assets/js/fonts/custom-font.js"></script>
-<script src="../../src/assets/js/pcoded.js"></script>
-<script src="../../src/assets/js/plugins/feather.min.js"></script>
+
+        function obt_nominas() {
+            let grupo = this.value
+            if (grupo == '') {
+                return
+            }
+            $.ajax({
+                url: url_back,
+                type: 'POST',
+                data: {
+                    select: true,
+                    grupo: grupo
+                },
+                success: function(response) {
+                    $('#nomina').html('<option value="">Selección</option>');
+                    if (response) {
+                        var data = JSON.parse(response);
+
+
+                        for (var i = 0; i < data.length; i++) {
+                            $('#nomina').append('<option value="' + data[i] + '">' + data[i] + '</option>');
+                        }
+                    }
+                }
+            });
+        }
+
+
+
+
+        function obt_nomina() {
+            let nomina = this.value
+            console.log(nomina)
+            if (nomina == '') {
+                return
+            }
+
+
+            $.ajax({
+                url: '../../back/modulo_nomina/nom_calculonomina.php',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    nombre: nomina
+                }),
+                success: function(response) {
+                    console.log('Respuesta del servidor:', response);
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.log('Error en la petición:', textStatus, errorThrown);
+                }
+            });
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+        $(document).ready(function() {
+            document.getElementById('grupo').addEventListener('change', obt_nominas);
+            document.getElementById('nomina').addEventListener('change', obt_nomina);
+        });
+    </script>
+
+</body>
 
 </html>
