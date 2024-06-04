@@ -415,6 +415,7 @@ foreach ($conceptos_aplicados as &$concepto) {
 // Calcular el total a pagar para cada empleado
 $id_empleados_detalles = array();
 $total_a_pagar_empleados = array();
+$informacion_empleados = array();
 
 foreach ($empleados_unicos as &$empleado) {
     // Inicializar el total a pagar para este empleado con el salario base
@@ -446,7 +447,7 @@ foreach ($empleados_unicos as &$empleado) {
 
     // Almacenar el total a pagar para este empleado en el array del empleado
     $empleado['total_a_pagar'] = $total_a_pagar_empleado;
-
+    $informacion_empleados[] = $empleado;
     // Almacenar el ID del empleado y el total a pagar en los arrays correspondientes
     $id_empleados_detalles[] = $empleado['id'];
     $total_a_pagar_empleados[] = $total_a_pagar_empleado;
@@ -463,6 +464,7 @@ header('Content-Type: application/json');
 
 // Preparar la respuesta con los resultados
 $response = array(
+    'informacion_empleados' => $informacion_empleados,
     'empleados' => $id_empleados_detalles,
     'total_pagar' => $total_a_pagar_empleados,
     'nombre_nomina' => $nombre_nomina,
