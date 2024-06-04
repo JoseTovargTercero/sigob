@@ -28,8 +28,6 @@ require_once '../../back/sistema_global/session.php';
     <?php require_once '../includes/top-bar.php' ?>
     <!-- [ top bar ] -->
 
-
-
     <!-- [ Main Content ] start -->
     <div class="pc-container">
         <div class="pc-content">
@@ -132,16 +130,12 @@ require_once '../../back/sistema_global/session.php';
             });
         }
 
-
-
-
         function obt_nomina() {
             let nomina = this.value
             console.log(nomina)
             if (nomina == '') {
                 return
             }
-
 
             $.ajax({
                 url: '../../back/modulo_nomina/nom_calculonomina.php',
@@ -159,17 +153,6 @@ require_once '../../back/sistema_global/session.php';
             });
 
         }
-
-
-
-
-
-
-
-
-
-
-
 
         $(document).ready(function() {
             document.getElementById('grupo').addEventListener('change', obt_nominas);

@@ -458,6 +458,9 @@ $conexion->close();
 
 $nombre_nomina = $data['nombre'];
 
+
+header('Content-Type: application/json');
+
 // Preparar la respuesta con los resultados
 $response = array(
     'empleados' => $id_empleados_detalles,
@@ -465,11 +468,7 @@ $response = array(
     'nombre_nomina' => $nombre_nomina,
 );
 
-
-
-// Enviar la respuesta como JSON
-header('Content-Type: application/json');
-echo json_encode($response);
+array_push($data, $response);
 
 // Enviar los datos al archivo nom_calculonomina_registro.php usando cURL
 $url = 'http://localhost/sigob/back/modulo_nomina/nom_calculonomina_registro.php';
@@ -483,8 +482,17 @@ curl_setopt($ch, CURLOPT_HTTPHEADER, array(
     'Content-Type: application/json',
     'Content-Length: ' . strlen($data_string)
 ));
-$result = curl_exec($ch);
+$result =curl_exec($ch);
 curl_close($ch);
 
+// Verificar el resultado de la solicitud cURL
+if ($result === false) {
+    array_push($response, array('error' => 'Error al enviar los datos a nom_calculonomina_registro.php'));
+} else {
+    array_push($response, json_decode($result));
+}
+
+
+echo json_encode($response);
 
 ?>
