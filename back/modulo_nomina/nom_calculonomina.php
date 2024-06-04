@@ -468,7 +468,6 @@ $response = array(
     'nombre_nomina' => $nombre_nomina,
 );
 
-array_push($data, $response);
 
 // Enviar los datos al archivo nom_calculonomina_registro.php usando cURL
 $url = 'http://localhost/sigob/back/modulo_nomina/nom_calculonomina_registro.php';
