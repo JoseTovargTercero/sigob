@@ -5,21 +5,21 @@ require_once '../../back/sistema_global/session.php';
 <?php require_once '../includes/header.php' ?>
 
 <head>
-    <link rel="stylesheet" href="src/styles/style.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.1/css/dataTables.dataTables.css" />
-    <title>PERSONAL</title>
+  <link rel="stylesheet" href="src/styles/style.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/2.0.1/css/dataTables.dataTables.css" />
+  <title>PERSONAL</title>
 </head>
 
 <body>
-    <?php require_once '../includes/menu.php' ?>
-    <!-- [ MENU ] -->
+  <?php require_once '../includes/menu.php' ?>
+  <!-- [ MENU ] -->
 
-    <?php require_once '../includes/top-bar.php' ?>
-    <!-- [ top bar ] -->
+  <?php require_once '../includes/top-bar.php' ?>
+  <!-- [ top bar ] -->
 
 
 
-    
+
   <div class="pc-container">
     <div class="pc-content">
       <div class="page-header">
@@ -45,18 +45,18 @@ require_once '../../back/sistema_global/session.php';
               </div>
             </div>
             <div class="card-body">
-            <table id="employee-table" class="table table-striped" style="width:100%">
-                    <thead class="w-100">
-                        <th>NOMBRES</th>
-                        <th>CEDULA</th>
-                        <th>DEPENDENCIA</th>
-                        <th>NOMINA</th>
-                        <th>ACCIONES</th>
-                    </thead>
-                    <tbody>
+              <table id="employee-table" class="table table-striped" style="width:100%">
+                <thead class="w-100">
+                  <th>NOMBRES</th>
+                  <th>CEDULA</th>
+                  <th>DEPENDENCIA</th>
+                  <th>NOMINA</th>
+                  <th>ACCIONES</th>
+                </thead>
+                <tbody>
 
-                    </tbody>
-                </table>
+                </tbody>
+              </table>
 
 
 
@@ -74,7 +74,7 @@ require_once '../../back/sistema_global/session.php';
 
 
 
-    
+
 
 
 

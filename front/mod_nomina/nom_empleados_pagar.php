@@ -11,6 +11,7 @@ require_once '../../back/sistema_global/session.php';
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.1/css/dataTables.dataTables.css" />
 
 </head>
 <?php require_once '../includes/header.php' ?>
@@ -46,7 +47,7 @@ require_once '../../back/sistema_global/session.php';
             <div class="row mb3">
                 <!-- [ worldLow section ] start -->
                 <div class="col-xl-12 col-md-6">
-                    <div class="card">
+                    <div class="card" id="employee-pay-form">
                         <div class="card-header">
                             <div class="d-flex align-items-start justify-content-between">
                                 <div>
@@ -58,7 +59,7 @@ require_once '../../back/sistema_global/session.php';
 
                             <div class="mb-3">
                                 <label for="grupo" class="form-label">Grupo de nomina</label>
-                                <select id="grupo" class="form-control">
+                                <select id="grupo" name="grupo" class="form-control">
                                     <option value="">Selección</option>
                                     <?php
                                     $stmt = mysqli_prepare($conexion, "SELECT id, codigo, nombre FROM `nominas_grupos` ORDER BY codigo");
@@ -76,7 +77,7 @@ require_once '../../back/sistema_global/session.php';
 
                             <div class="mb-3">
                                 <label for="nomina" class="form-label">Nómina</label>
-                                <select id="nomina" class="form-control">
+                                <select id="nomina" name="nomina" class="form-control">
                                     <option value="">Selección</option>
                                 </select>
                             </div>
@@ -95,12 +96,16 @@ require_once '../../back/sistema_global/session.php';
 
 
     <!-- [ Main Content ] end -->
+    <script type="module" src="src/controllers/empleadosPagarForm.js"></script>
+    <!-- <script type="module" src="app.js"></script> -->
+    <script src="https://cdn.datatables.net/2.0.1/js/dataTables.js"></script>
+    <script src="https://cdn.datatables.net/2.0.1/js/dataTables.bootstrap5.js"></script>
     <script src="../../src/assets/js/plugins/simplebar.min.js"></script>
     <script src="../../src/assets/js/plugins/bootstrap.min.js"></script>
     <script src="../../src/assets/js/pcoded.js"></script>
     <script src="../../src/assets/js/plugins/feather.min.js"></script>
     <script src="../../src/assets/js/main.js"></script>
-    <script>
+    <!-- <script>
         const url_back = '../../back/modulo_nomina/nom_empleados_pagar_back.php';
 
 
@@ -109,6 +114,7 @@ require_once '../../back/sistema_global/session.php';
             if (grupo == '') {
                 return
             }
+            console.log('grupo')
             $.ajax({
                 url: url_back,
                 type: 'POST',
@@ -116,7 +122,7 @@ require_once '../../back/sistema_global/session.php';
                     select: true,
                     grupo: grupo
                 },
-                success: function(response) {
+                success: function (response) {
                     $('#nomina').html('<option value="">Selección</option>');
                     if (response) {
                         var data = JSON.parse(response);
@@ -138,27 +144,27 @@ require_once '../../back/sistema_global/session.php';
             }
 
             $.ajax({
-                url: '../../back/modulo_nomina/nom_calculonomina.php',
+                url: '../../../sigob/back/modulo_nomina/nom_calculonomina.php',
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify({
                     nombre: nomina
                 }),
-                success: function(response) {
+                success: function (response) {
                     console.log('Respuesta del servidor:', response);
                 },
-                error: function(jqXHR, textStatus, errorThrown) {
+                error: function (jqXHR, textStatus, errorThrown) {
                     console.log('Error en la petición:', textStatus, errorThrown);
                 }
             });
 
         }
 
-        $(document).ready(function() {
+        $(document).ready(function () {
             document.getElementById('grupo').addEventListener('change', obt_nominas);
             document.getElementById('nomina').addEventListener('change', obt_nomina);
         });
-    </script>
+    </script> -->
 
 </body>
 
