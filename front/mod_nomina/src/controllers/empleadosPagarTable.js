@@ -1,4 +1,10 @@
-import { deleteEmployee, getEmployeesData } from '../api/empleados.js'
+import {
+  deleteEmployee,
+  getDependencyData,
+  getEmployeesData,
+  getJobData,
+  getProfessionData,
+} from '../api/empleados.js'
 import { employeeCard } from '../components/nom_empleado_card.js'
 import { confirmNotification, validateModal } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
@@ -31,8 +37,8 @@ const tableLanguage = {
   },
 }
 
-export function createTable({ nominaData }) {
-  new DataTable('#employee-pay-table', {
+export async function createTable({ nominaData }) {
+  let employeePayTable = new DataTable('#employee-pay-table', {
     responsive: true,
     scrollY: 300,
     language: tableLanguage,
@@ -41,7 +47,7 @@ export function createTable({ nominaData }) {
       topEnd: function () {
         let toolbar = document.createElement('div')
         toolbar.innerHTML = `<a class="btn btn-primary"
-          href="#">Pagar</a>`
+        href="#">Pagar</a>`
         return toolbar
       },
       topStart: { search: { placeholder: 'Buscar...' } },
@@ -55,12 +61,38 @@ export function createTable({ nominaData }) {
       { data: 'columna', width: '10%' },
     ],
   })
+
+  employeePayTable.clear().draw()
+
+  let { informacion_empleados, nombre_nomina } = nominaData
+
+  console.log(informacion_empleados)
+
+  let datosOrdenados = [...informacion_empleados].sort((a, b) => b.id - a.id)
+
+  console.log(datosOrdenados)
+  let data = datosOrdenados.map((empleado) => {
+    return {
+      columa: empleado.nombres,
+      columa: empleado.nombre,
+      columa: empleado.nombres,
+      columa: empleado.nombres,
+      acciones: `
+        <button class="btn btn-info btn-sm btn-view" data-id="${empleado.id_empleado}"><i class="bx bx-detail me-1"></i>Detalles</button>
+        <button class="btn btn-warning btn-sm btn-edit" data-id="${empleado.id_empleado}"><i class="bx bx-edit me-1"></i>Editar</button>
+        <button class="btn btn-danger btn-sm btn-delete" data-id="${empleado.id_empleado}"><i class="bx bx-trash me-1"></i>Eliminar</button>`,
+    }
+  })
+
+  console.log(data)
+
+  employeePayTable.rows.add(data).draw()
 }
 
 export function employeePayTableHTML({ nominaData }) {
   let { informacion_empleados, nombre_nomina } = nominaData
-
-  let {} = informacion_empleados
+  console.log(informacion_empleados)
+  let columns = Object.keys(informacion_empleados)
   let table = `
     <div class='card' id='employee-pay-table-card'>
       <div class='card-header'>
@@ -78,10 +110,10 @@ export function employeePayTableHTML({ nominaData }) {
           style='width:100%'
         >
           <thead class='w-100'>
-            <th>columna</th>
-            <th>columna</th>
-            <th>columna</th>
-            <th>columna</th>
+            ${columns.map((column) => {
+              console.log(column)
+              return `<th>${column}</th>`
+            })}
           </thead>
           <tbody></tbody>
         </table>

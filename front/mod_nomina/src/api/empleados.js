@@ -3,7 +3,7 @@ import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 
 const cargosUrl = '../../../../../sigob/back/modulo_nomina/nom_cargos_info.php'
 
-const depdendenciasUrl =
+const dependenciasUrl =
   '../../../../../sigob/back/modulo_nomina/nom_dependencias_datos.php'
 
 const profesionesUrl =
@@ -196,7 +196,7 @@ const getProfessionData = async () => {
 
 const getDependencyData = async () => {
   try {
-    const res = await fetch(depdendenciasUrl)
+    const res = await fetch(dependenciasUrl)
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
 

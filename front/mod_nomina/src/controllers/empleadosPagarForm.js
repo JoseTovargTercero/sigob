@@ -53,7 +53,7 @@ function validateEmployeePayForm() {
     let nomina = await getEmpleadosNomina(e.target.value)
     let employeePayTableCard = d.getElementById('employee-pay-table-card')
     if (employeePayTableCard) employeePayTableCard.remove()
-    console.log(nomina)
+
     if (nomina['0']) {
       employeePayForm.insertAdjacentHTML(
         'beforeend',
