@@ -33,7 +33,6 @@ const getNominas = async (grupo) => {
 }
 
 const getEmpleadosNomina = async (data) => {
-  console.log(data)
   try {
     let res = await fetch(calculoNominaUrl, {
       method: 'POST',
@@ -55,9 +54,9 @@ const getEmpleadosNomina = async (data) => {
 }
 
 async function mapData(data) {
-  let cargos = await getJobData()
-  let dependencias = await getDependencyData()
-  let profesiones = await getProfessionData()
+  // let cargos = await getJobData()
+  // let dependencias = await getDependencyData()
+  // let profesiones = await getProfessionData()
 
   return data.map((empleado) => {
     let {
@@ -85,16 +84,16 @@ async function mapData(data) {
       RPE,
     } = empleado
 
-    let cargo = cargos.filter((el) => el.id == empleado.cod_cargo)[0].name
-    console.log(id_dependencia)
-    let dependencia = dependencias.filter(
-      (el) => el.id == empleado.id_dependencia
-    )[0].name
+    // let cargo = cargos.filter((el) => el.id == empleado.cod_cargo)[0].name
+    // console.log(id_dependencia)
+    // let dependencia = dependencias.filter(
+    //   (el) => el.id == empleado.id_dependencia
+    // )[0].name
 
-    let profesion = profesiones.filter(
-      (el) => el.id == instruccion_academica
-    )[0].name
-    console.log(cargo, dependencia, profesion)
+    // let profesion = profesiones.filter(
+    //   (el) => el.id == instruccion_academica
+    // )[0].name
+    // console.log(cargo, dependencia, profesion)
 
     let CONTRIBUCION_POR_DISCAPACIDAD =
         empleado['CONTRIBUCION POR DISCAPACIDAD'],
@@ -146,9 +145,6 @@ async function mapData(data) {
       PAGO_DE_BECA,
       PRIMA_P_DED_AL_S_PUBLICO_UNICO_DE_SALUD,
       total_a_pagar,
-      cargo,
-      dependencia,
-      profesion,
     }
   })
 }

@@ -55,6 +55,7 @@ function validateEmployeePayForm() {
     if (employeePayTableCard) employeePayTableCard.remove()
 
     if (nomina['0']) {
+      console.log(nomina)
       employeePayForm.insertAdjacentHTML(
         'beforeend',
         employeePayTableHTML({ nominaData: nomina })
