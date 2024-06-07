@@ -66,21 +66,18 @@ export async function createTable({ nominaData }) {
 
   let { informacion_empleados, nombre_nomina } = nominaData
 
-  console.log(informacion_empleados)
-
   let datosOrdenados = [...informacion_empleados].sort((a, b) => b.id - a.id)
 
-  console.log(datosOrdenados)
   let data = datosOrdenados.map((empleado) => {
     return {
       columa: empleado.nombres,
       columa: empleado.nombre,
       columa: empleado.nombres,
       columa: empleado.nombres,
-      acciones: `
-        <button class="btn btn-info btn-sm btn-view" data-id="${empleado.id_empleado}"><i class="bx bx-detail me-1"></i>Detalles</button>
-        <button class="btn btn-warning btn-sm btn-edit" data-id="${empleado.id_empleado}"><i class="bx bx-edit me-1"></i>Editar</button>
-        <button class="btn btn-danger btn-sm btn-delete" data-id="${empleado.id_empleado}"><i class="bx bx-trash me-1"></i>Eliminar</button>`,
+      // acciones: `
+      //   <button class="btn btn-info btn-sm btn-view" data-id="${empleado.id_empleado}"><i class="bx bx-detail me-1"></i>Detalles</button>
+      //   <button class="btn btn-warning btn-sm btn-edit" data-id="${empleado.id_empleado}"><i class="bx bx-edit me-1"></i>Editar</button>
+      //   <button class="btn btn-danger btn-sm btn-delete" data-id="${empleado.id_empleado}"><i class="bx bx-trash me-1"></i>Eliminar</button>`,
     }
   })
 
@@ -91,7 +88,7 @@ export async function createTable({ nominaData }) {
 
 export function employeePayTableHTML({ nominaData }) {
   let { informacion_empleados, nombre_nomina } = nominaData
-  console.log(informacion_empleados)
+
   let columns = Object.keys(informacion_empleados)
   let table = `
     <div class='card' id='employee-pay-table-card'>
@@ -110,10 +107,8 @@ export function employeePayTableHTML({ nominaData }) {
           style='width:100%'
         >
           <thead class='w-100'>
-            ${columns.map((column) => {
-              console.log(column)
-              return `<th>${column}</th>`
-            })}
+          <th>Columna</th><th>Columna</th><th>Columna</th><th>Columna</th>
+          
           </thead>
           <tbody></tbody>
         </table>
