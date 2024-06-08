@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 07-06-2024 a las 17:53:31
+-- Tiempo de generación: 08-06-2024 a las 17:08:35
 -- Versión del servidor: 10.4.27-MariaDB
 -- Versión de PHP: 7.4.33
 
@@ -783,16 +783,17 @@ CREATE TABLE `peticiones` (
   `deducciones` varchar(2000) NOT NULL,
   `total_pagar` varchar(255) NOT NULL,
   `correlativo` varchar(255) NOT NULL,
-  `status` varchar(255) NOT NULL
+  `status` varchar(255) NOT NULL,
+  `nombre_nomina` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `peticiones`
 --
 
-INSERT INTO `peticiones` (`id`, `empleados`, `asignaciones`, `deducciones`, `total_pagar`, `correlativo`, `status`) VALUES
-(2, '[26,27,28]', '{\"CONTRIBUCION POR DISCAPACIDAD\":30,\"PRIMA POR HIJO EMPLEADOS\":15,\"PRIMA POR TRANSPORTE\":150,\"PRIMA POR ANTIGUEDAD EMPLEADOS\":30,\"PRIMA POR ESCALAFON\":15,\"PRIMA POR FRONTERA\":15,\"PRIMA POR PROFESIONALES\":60,\"PAGO DE BECA\":30,\"PRIMA P\\/DED AL S\\/PUBLICO UNICO DE SALUD\":15}', '{\"S. S. O\":15,\"RPE\":15,\"A\\/P S.S.O\":15,\"A\\/P RPE\":15}', '[328.12,451.18,328.12]', '00001', 'En revision'),
-(3, '[26,27,28]', '{\"CONTRIBUCION POR DISCAPACIDAD\":30,\"PRIMA POR HIJO EMPLEADOS\":15,\"PRIMA POR TRANSPORTE\":150,\"PRIMA POR ANTIGUEDAD EMPLEADOS\":30,\"PRIMA POR ESCALAFON\":15,\"PRIMA POR FRONTERA\":15,\"PRIMA POR PROFESIONALES\":60,\"PAGO DE BECA\":30,\"PRIMA P\\/DED AL S\\/PUBLICO UNICO DE SALUD\":15}', '{\"S. S. O\":15,\"RPE\":15,\"A\\/P S.S.O\":15,\"A\\/P RPE\":15}', '[328.12,451.18,328.12]', '00002', 'En revision');
+INSERT INTO `peticiones` (`id`, `empleados`, `asignaciones`, `deducciones`, `total_pagar`, `correlativo`, `status`, `nombre_nomina`) VALUES
+(4, '[26,27,28]', '{\"CONTRIBUCION POR DISCAPACIDAD\":30,\"PRIMA POR HIJO EMPLEADOS\":15,\"PRIMA POR TRANSPORTE\":150,\"PRIMA POR ANTIGUEDAD EMPLEADOS\":30,\"PRIMA POR ESCALAFON\":15,\"PRIMA POR FRONTERA\":15,\"PRIMA POR PROFESIONALES\":60,\"PAGO DE BECA\":30,\"PRIMA P\\/DED AL S\\/PUBLICO UNICO DE SALUD\":15}', '{\"S. S. O\":15,\"RPE\":15,\"A\\/P S.S.O\":15,\"A\\/P RPE\":15}', '[328.12,451.18,328.12]', '00001', 'En revision', 'Obreros'),
+(5, '[26,27,28]', '{\"CONTRIBUCION POR DISCAPACIDAD\":30,\"PRIMA POR HIJO EMPLEADOS\":15,\"PRIMA POR TRANSPORTE\":150,\"PRIMA POR ANTIGUEDAD EMPLEADOS\":30,\"PRIMA POR ESCALAFON\":15,\"PRIMA POR FRONTERA\":15,\"PRIMA POR PROFESIONALES\":60,\"PAGO DE BECA\":30,\"PRIMA P\\/DED AL S\\/PUBLICO UNICO DE SALUD\":15}', '{\"S. S. O\":15,\"RPE\":15,\"A\\/P S.S.O\":15,\"A\\/P RPE\":15}', '[328.12,451.18,328.12]', '00002', 'En revision', 'Obreros');
 
 -- --------------------------------------------------------
 
@@ -1339,12 +1340,12 @@ CREATE TABLE `txt` (
 --
 
 INSERT INTO `txt` (`id`, `id_empleado`, `total_a_pagar`, `nombre_nomina`, `identificador`, `fecha_pagar`, `correlativo`) VALUES
-(757, 26, '328.12', 'Obreros', 'unico', '06-2024', '00001'),
-(758, 27, '451.18', 'Obreros', 'unico', '06-2024', '00001'),
-(759, 28, '328.12', 'Obreros', 'unico', '06-2024', '00001'),
-(760, 26, '328.12', 'Obreros', 'unico', '06-2024', '00002'),
-(761, 27, '451.18', 'Obreros', 'unico', '06-2024', '00002'),
-(762, 28, '328.12', 'Obreros', 'unico', '06-2024', '00002');
+(772, 26, '328.12', 'Obreros', 'unico', '06-2024', '00001'),
+(773, 27, '451.18', 'Obreros', 'unico', '06-2024', '00001'),
+(774, 28, '328.12', 'Obreros', 'unico', '06-2024', '00001'),
+(775, 26, '328.12', 'Obreros', 'unico', '06-2024', '00002'),
+(776, 27, '451.18', 'Obreros', 'unico', '06-2024', '00002'),
+(777, 28, '328.12', 'Obreros', 'unico', '06-2024', '00002');
 
 --
 -- Índices para tablas volcadas
@@ -1521,7 +1522,7 @@ ALTER TABLE `password_resets`
 -- AUTO_INCREMENT de la tabla `peticiones`
 --
 ALTER TABLE `peticiones`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `primantiguedad`
@@ -1557,7 +1558,7 @@ ALTER TABLE `tabuladores_estr`
 -- AUTO_INCREMENT de la tabla `txt`
 --
 ALTER TABLE `txt`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=763;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=778;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

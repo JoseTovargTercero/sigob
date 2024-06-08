@@ -491,39 +491,8 @@ $response = array(
     'suma_deducciones' => $suma_deducciones
 );
 
+ 
 
-
-
-   function enviarDatosNomina($response) {
-    // URL del archivo al que se enviarán los datos
-    $url = 'http://localhost/sigob/back/modulo_nomina/nom_calculonomina_registro.php';
-    $data_string = json_encode($response);
-
-    // Inicializar cURL
-    $ch = curl_init($url);
-    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-        'Content-Type: application/json',
-        'Content-Length: ' . strlen($data_string)
-    ));
-
-    // Ejecutar la solicitud cURL
-    $result = curl_exec($ch);
-    curl_close($ch);
-
-    // Verificar el resultado de la solicitud cURL
-    if ($result === false) {
-        array_push($response, array('error' => 'Error al enviar los datos a nom_calculonomina_registro.php'));
-    } else {
-        array_push($response, json_decode($result, true));
-    }
-
-    // Retornar la respuesta actualizada
-    return $response;
-}
-   
 
 
 
