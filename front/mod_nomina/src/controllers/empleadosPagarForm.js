@@ -1,5 +1,6 @@
 import { getEmpleadosNomina, getNominas } from '../api/empleadosPagar.js'
-import { validateInput } from '../helpers/helpers.js'
+import { confirmNotification, validateInput } from '../helpers/helpers.js'
+import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 import { createTable, employeePayTableHTML } from './empleadosPagarTable.js'
 
 const d = document
@@ -42,26 +43,39 @@ function validateEmployeePayForm() {
     let nominas = await getNominas(e.target.value)
 
     selectNomina.innerHTML = ''
-    selectNomina.innerHTML = "<option value=''>Selección</option>"
 
-    nominas.forEach((nomina) => {
-      let option = `<option value="${nomina}">${nomina}</option>`
-      selectNomina.insertAdjacentHTML('beforeend', option)
-    })
+    if (nominas.length > 0)
+      nominas.forEach((nomina) => {
+        let option = `<option value="${nomina}">${
+          nomina || 'Grupo de nómina vacío'
+        }</option>`
+        selectNomina.insertAdjacentHTML('beforeend', option)
+      })
+    else
+      selectNomina.insertAdjacentHTML(
+        'beforeend',
+        `<option value="">Grupo de nómina vacío</option>`
+      )
   })
   selectNomina.addEventListener('change', async (e) => {
+    if (!e.target.value) return
     let nomina = await getEmpleadosNomina(e.target.value)
     let employeePayTableCard = d.getElementById('employee-pay-table-card')
     if (employeePayTableCard) employeePayTableCard.remove()
-
-    if (nomina['0']) {
-      console.log(nomina)
-      employeePayForm.insertAdjacentHTML(
-        'beforeend',
-        employeePayTableHTML({ nominaData: nomina })
-      )
-      createTable({ nominaData: nomina })
+    console.log(nomina)
+    if (!nomina || nomina.empleados.length < 1) {
+      confirmNotification({
+        type: NOTIFICATIONS_TYPES.fail,
+        message: 'Esta nómina no aplica para ningún empleado',
+      })
+      return
     }
+
+    employeePayForm.insertAdjacentHTML(
+      'beforeend',
+      employeePayTableHTML({ nominaData: nomina })
+    )
+    createTable({ nominaData: nomina })
   })
 }
 

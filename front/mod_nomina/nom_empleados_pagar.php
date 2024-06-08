@@ -12,6 +12,7 @@ require_once '../../back/sistema_global/session.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link rel="stylesheet" href="https://cdn.datatables.net/2.0.1/css/dataTables.dataTables.css" />
+    <link rel="stylesheet" href="src/styles/style.css">
 
 </head>
 <?php require_once '../includes/header.php' ?>
@@ -35,9 +36,9 @@ require_once '../../back/sistema_global/session.php';
             <div class="page-header">
                 <div class="page-block">
                     <div class="row align-items-center">
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             <div class="page-header-title">
-                                <h5 class="mb-0">Pagar</h5>
+                                <h5 class="mb-0">Petición de nomina</h5>
                             </div>
                         </div>
                     </div>
@@ -46,21 +47,20 @@ require_once '../../back/sistema_global/session.php';
             <!-- [ Main Content ] start -->
             <div class="row mb3">
                 <!-- [ worldLow section ] start -->
-                <div class="col-xl-12 col-md-6">
+                <div class="col-xl-12">
                     <div class="card" id="employee-pay-form">
                         <div class="card-header">
                             <div class="d-flex align-items-start justify-content-between">
                                 <div>
-                                    <h5 class="mb-0">Pago de nómina</h5>
+                                    <h5 class="mb-0">Petición de nómina a pagar</h5>
                                 </div>
                             </div>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body employee-nom-group">
 
                             <div class="mb-3">
                                 <label for="grupo" class="form-label">Grupo de nomina</label>
-                                <select id="grupo" name="grupo" class="form-control">
-                                    <option value="">Selección</option>
+                                <select id="grupo" name="grupo" class="form-control" size="6">
                                     <?php
                                     $stmt = mysqli_prepare($conexion, "SELECT id, codigo, nombre FROM `nominas_grupos` ORDER BY codigo");
                                     $stmt->execute();
@@ -74,13 +74,19 @@ require_once '../../back/sistema_global/session.php';
                                     ?>
                                 </select>
                             </div>
+                            <box-icon type='solid' color="gray" name='right-arrow'></box-icon>
 
                             <div class="mb-3">
                                 <label for="nomina" class="form-label">Nómina</label>
-                                <select id="nomina" name="nomina" class="form-control">
-                                    <option value="">Selección</option>
+                                <select id="nomina" name="nomina" class="form-control" size="6">
+                                    <option value="">Seleccionar grupo de nómina</option>
                                 </select>
                             </div>
+
+                            <div class="mb-3">
+                                <button class="btn btn-info">REALIZAR PETICIÓN</button>
+                            </div>
+
 
 
 

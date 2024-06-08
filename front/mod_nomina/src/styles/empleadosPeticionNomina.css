@@ -1,0 +1,23 @@
+.employee-nom-group {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.employee-nom-group button {
+  font-size: 12px;
+}
+
+.employee-nom-group th {
+  font-size: 10px;
+}
+
+.employee-nom-group select {
+  width: 280px;
+  text-overflow: ellipsis;
+
+  /* scrollbar-width: none; */
+  scrollbar-color: red;
+}

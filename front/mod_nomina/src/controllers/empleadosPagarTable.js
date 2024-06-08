@@ -41,6 +41,7 @@ export async function createTable({ nominaData }) {
   let employeePayTable = new DataTable('#employee-pay-table', {
     responsive: true,
     scrollY: 300,
+    scrollX: 300,
     language: tableLanguage,
     order: [],
     layout: {
@@ -67,29 +68,32 @@ export async function createTable({ nominaData }) {
   let { informacion_empleados, nombre_nomina } = nominaData
 
   let datosOrdenados = [...informacion_empleados].sort((a, b) => b.id - a.id)
-
-  let data = datosOrdenados.map((empleado) => {
-    return {
-      columa: empleado.nombres,
-      columa: empleado.nombre,
-      columa: empleado.nombres,
-      columa: empleado.nombres,
-      // acciones: `
-      //   <button class="btn btn-info btn-sm btn-view" data-id="${empleado.id_empleado}"><i class="bx bx-detail me-1"></i>Detalles</button>
-      //   <button class="btn btn-warning btn-sm btn-edit" data-id="${empleado.id_empleado}"><i class="bx bx-edit me-1"></i>Editar</button>
-      //   <button class="btn btn-danger btn-sm btn-delete" data-id="${empleado.id_empleado}"><i class="bx bx-trash me-1"></i>Eliminar</button>`,
-    }
+  let columnsText = Object.keys(datosOrdenados[0]).map((column) => {
+    let obj = {}
+    obj[column] = column
+    return obj
   })
 
-  console.log(data)
+  console.log(columnsText)
 
-  employeePayTable.rows.add(data).draw()
+  // let data = datosOrdenados.map((empleado) => {
+  //   columnsText
+  //   return {
+
+  //   }
+  // })
+
+  // console.log(data)
+  // employeePayTable.rows.add(data).draw()
 }
 
 export function employeePayTableHTML({ nominaData }) {
   let { informacion_empleados, nombre_nomina } = nominaData
 
-  let columns = Object.keys(informacion_empleados)
+  let columnsText = Object.keys(informacion_empleados[0])
+
+  let columns = columnsText.map((el) => `<th>${el}</th>`)
+
   let table = `
     <div class='card' id='employee-pay-table-card'>
       <div class='card-header'>
@@ -103,13 +107,12 @@ export function employeePayTableHTML({ nominaData }) {
       <div class='card-body'>
         <table
           id='employee-pay-table'
-          class='table table-striped'
+          class='table table-striped responsive'
           style='width:100%'
         >
           <thead class='w-100'>
-          <th>Columna</th><th>Columna</th><th>Columna</th><th>Columna</th>
-          
-          </thead>
+        
+                    </thead>
           <tbody></tbody>
         </table>
       </div>

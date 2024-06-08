@@ -1,5 +1,6 @@
-@import './animations.css';
-@import './tabulator.css';
+@import './animaciones.css';
+@import './tabulador.css';
+@import './empleadosPeticionNomina.css';
 
 :root {
   --modal-height: calc(100vh - 74px);
@@ -13,6 +14,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  scrollbar-width: thin;
 }
 table {
   border-collapse: collapse;
@@ -138,6 +140,11 @@ a {
 .form-select {
   border-left: 2px solid var(--light-bluegray);
   border-right: 2px solid var(--light-bluegray);
+}
+option {
+  padding: 0.5rem 0.5rem;
+  border-radius: 0.5rem;
+  overflow: hidden;
 }
 
 .form-input::placeholder {
