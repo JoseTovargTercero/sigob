@@ -1,6 +1,7 @@
 @import './animaciones.css';
 @import './tabulador.css';
 @import './empleadosPeticionNomina.css';
+@import './loader.css';
 
 :root {
   --modal-height: calc(100vh - 74px);

@@ -1,14 +1,10 @@
-import { getEmpleadosNomina, getNominas } from '../api/empleadosPagar.js'
-import { confirmNotification, validateInput } from '../helpers/helpers.js'
-import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
-import { createTable, employeePayTableHTML } from './empleadosPagarTable.js'
+import { getGruposNomina, getNominas } from '../api/peticionesNomina.js'
+import { validateInput } from '../helpers/helpers.js'
+import { createTable, employeePayTableHTML } from './peticionesNominaTable.js'
 
 const d = document
 const w = window
-const urlParameters = new URLSearchParams(w.location.search)
-const id = urlParameters.get('id')
 
-console.log('a')
 const selectGrupo = d.getElementById('grupo')
 const selectNomina = d.getElementById('nomina')
 const employeePayForm = d.getElementById('employee-pay-form')
@@ -43,6 +39,9 @@ function validateEmployeePayForm() {
     let nominas = await getNominas(e.target.value)
 
     selectNomina.innerHTML = ''
+    let employeePayTableCard = d.getElementById('employee-pay-table-card')
+
+    if (employeePayTableCard) employeePayTableCard.remove()
 
     if (nominas.length > 0)
       nominas.forEach((nomina) => {
@@ -59,18 +58,12 @@ function validateEmployeePayForm() {
   })
   selectNomina.addEventListener('change', async (e) => {
     if (!e.target.value) return
-    let nomina = await getEmpleadosNomina(e.target.value)
+    let nomina = await getGruposNomina(e.target.value)
+
     let employeePayTableCard = d.getElementById('employee-pay-table-card')
     if (employeePayTableCard) employeePayTableCard.remove()
-    console.log(nomina)
-    if (!nomina || nomina.empleados.length < 1) {
-      confirmNotification({
-        type: NOTIFICATIONS_TYPES.fail,
-        message: 'Esta nómina no aplica para ningún empleado',
-      })
-      return
-    }
 
+    // Insertar tabla en formulario
     employeePayForm.insertAdjacentHTML(
       'beforeend',
       employeePayTableHTML({ nominaData: nomina })

@@ -54,19 +54,19 @@ export async function employeeCard({ id, elementToInsert }) {
   const getCargo = async () => {
     let cargos = await getJobData()
 
-    return cargos.filter((el) => el.id === cargo)[0].name
+    return cargos.find((el) => el.id === cargo)[0].name
   }
 
   const getIntrusccionAcademica = async () => {
     let profesiones = await getProfessionData()
-    return profesiones.filter((el) => el.id == instruccion_academica)[0].name
+    return profesiones.find((el) => el.id == instruccion_academica)[0].name
   }
 
   // const getDependencia = async () => {
   //   let dependencias = await getDependencyData()
   //   console.log()
 
-  //   return dependencias.filter((el) => el.id == dependencia)[0].name
+  //   return dependencias.find((el) => el.id == dependencia)[0].name
   // }
 
   const calcularAniosLaborales = (fechaIngreso, otrosAnios) => {

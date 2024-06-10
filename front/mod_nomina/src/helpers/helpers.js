@@ -312,6 +312,8 @@ const errorMessage = (target, message) => {
   }
 }
 
+// FUNCIÓN PARA MODALES
+
 function validateModal({ e, btnId, modalId }) {
   const modalElement = d.getElementById(modalId)
   if (e.target.matches(`#${btnId}`)) {
@@ -331,6 +333,15 @@ function closeModal({ modalId }) {
   } else {
     modalElement.classList.add('hide')
   }
+}
+
+// FUNCIÓNES PARA LOADERS
+
+function showLoader(loaderId) {
+  d.getElementById(loaderId).style.display = 'block'
+}
+function hideLoader(loaderId) {
+  d.getElementById(loaderId).style.display = 'none'
 }
 
 function confirmNotification({
@@ -415,6 +426,8 @@ export {
   validateInput,
   validateModal,
   closeModal,
+  showLoader,
+  hideLoader,
   confirmNotification,
   errorMessage,
 }

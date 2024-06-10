@@ -77,6 +77,7 @@ const loadTable = async () => {
     }
   })
 
+  console.log(data)
   employeeTable.rows.add(data).draw()
 
   // employeeTable.rows.delete({

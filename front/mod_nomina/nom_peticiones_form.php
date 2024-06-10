@@ -58,8 +58,10 @@ require_once '../../back/sistema_global/session.php';
                         </div>
                         <div class="card-body employee-nom-group">
 
-                            <div class="mb-3">
+                            <div class="mb-2">
                                 <label for="grupo" class="form-label">Grupo de nomina</label>
+                                <small class="text-muted mt-0 d-block mb-2">Seleccione un grupo de nomina</small>
+
                                 <select id="grupo" name="grupo" class="form-control" size="6">
                                     <?php
                                     $stmt = mysqli_prepare($conexion, "SELECT id, codigo, nombre FROM `nominas_grupos` ORDER BY codigo");
@@ -76,20 +78,23 @@ require_once '../../back/sistema_global/session.php';
                             </div>
                             <box-icon type='solid' color="gray" name='right-arrow'></box-icon>
 
-                            <div class="mb-3">
+                            <div class="mb-2">
                                 <label for="nomina" class="form-label">Nómina</label>
+                                <small class="text-muted mt-0 d-block mb-2">Seleccione la nómina a registrar</small>
                                 <select id="nomina" name="nomina" class="form-control" size="6">
                                     <option value="">Seleccionar grupo de nómina</option>
                                 </select>
                             </div>
 
-                            <div class="mb-3">
+                            <!-- <div class="mb-3">
                                 <button class="btn btn-info">REALIZAR PETICIÓN</button>
-                            </div>
+
+                            </div> -->
+                        </div>
 
 
-
-
+                        <div class="loader-container card-footer py-4" id="employee-pay-loader">
+                            <div class="loader"></div>
                         </div>
                     </div>
                 </div>
@@ -102,7 +107,7 @@ require_once '../../back/sistema_global/session.php';
 
 
     <!-- [ Main Content ] end -->
-    <script type="module" src="src/controllers/empleadosPagarForm.js"></script>
+    <script type="module" src="src/controllers/peticionesNominaForm.js"></script>
     <!-- <script type="module" src="app.js"></script> -->
     <script src="https://cdn.datatables.net/2.0.1/js/dataTables.js"></script>
     <script src="https://cdn.datatables.net/2.0.1/js/dataTables.bootstrap5.js"></script>

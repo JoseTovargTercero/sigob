@@ -12,7 +12,7 @@
         <li class="pc-item">
           <a href="dashboard" class="pc-link">
             <span class="pc-micon">
-            <i class="bx bx-home"></i>
+              <i class="bx bx-home"></i>
 
             </span>
             <span class="pc-mtext">Dashboard</span>
@@ -26,7 +26,7 @@
         <li class="pc-item pc-hasmenu">
           <a href="#!" class="pc-link">
             <span class="pc-micon">
-            <i class='bx bx-objects-vertical-bottom'></i>
+              <i class='bx bx-objects-vertical-bottom'></i>
             </span>
             <span class="pc-mtext">Movimientos</span><span class="pc-arrow"><i class="ti ti-chevron-right"></i></span>
           </a>
@@ -48,8 +48,8 @@
         <li class="pc-item pc-hasmenu">
           <a href="#!" class="pc-link">
             <span class="pc-micon">
-            <i class='bx bx-wallet-alt'></i>
-             
+              <i class='bx bx-wallet-alt'></i>
+
             </span>
             <span class="pc-mtext">Nómina</span><span class="pc-arrow"><i class="ti ti-chevron-right"></i></span>
           </a>
@@ -57,7 +57,9 @@
             <li class="pc-item"><a class="pc-link"
                 href="<?php echo constant('URL') ?>front/mod_nomina/nom_grupos">Registro de nominas</a></li>
             <li class="pc-item"><a class="pc-link"
-                href="<?php echo constant('URL') ?>front/mod_nomina/nom_empleados_pagar">Pagar</a></li>
+                href="<?php echo constant('URL') ?>front/mod_nomina/nom_peticiones_form">Peticiones</a></li>
+            <li class="pc-item"><a class="pc-link"
+                href="<?php echo constant('URL') ?>front/mod_nomina/nom_peticiones_consulta_form">Revision</a></li>
           </ul>
         </li>
 
@@ -86,7 +88,7 @@
             </a>
           </li>
 
-          <?php } ?>
+        <?php } ?>
 
 
 
