@@ -1,16 +1,18 @@
-import { getPeticionesNomina } from '../api/peticionesNomina.js'
+import {
+  getComparacionNomina,
+  getPeticionesNomina,
+} from '../api/peticionesNomina.js'
 import { validateInput } from '../helpers/helpers.js'
 
 const d = document
 const w = window
 
 let fieldList = {
-  consultar_nomina: '',
-  grupo: '',
+  select_nomina: '',
 }
 
 let fieldListErrors = {
-  consultar_nomina: {
+  'select-nomina': {
     value: true,
     message: 'Seleccione una nómina a consultar',
     type: 'text',
@@ -19,8 +21,9 @@ let fieldListErrors = {
 
 let nominas = {}
 
-export async function validateRequestNomForm({ selectId }) {
+export async function validateRequestNomForm({ selectId, consultBtnId }) {
   let selectNom = d.getElementById(selectId)
+  let consultNom = d.getElementById(consultBtnId)
   let requestInfo = await getPeticionesNomina()
 
   let selectValues = await requestInfo
@@ -33,5 +36,25 @@ export async function validateRequestNomForm({ selectId }) {
 
   selectNom.insertAdjacentHTML('beforeend', selectValues)
 
-  selectNom.addEventListener('change', (e) => {})
+  selectNom.addEventListener('change', (e) => {
+    console.log(e.target.value)
+    fieldList = validateInput({
+      target: e.target,
+      fieldList,
+      fieldListErrors,
+      type: fieldListErrors[e.target.name].type,
+    })
+  })
+
+  d.addEventListener('click', (e) => {
+    if (e.target === consultNom) {
+      let result = requestInfo.find(
+        (el) => el.correlativo === fieldList['select-nomina']
+      )
+
+      console.log(result)
+
+      getComparacionNomina(result)
+    }
+  })
 }

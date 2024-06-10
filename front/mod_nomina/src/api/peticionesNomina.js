@@ -101,11 +101,16 @@ const getPeticionesNomina = async () => {
 
 const getComparacionNomina = async (obj) => {
   let { correlativo, nombre_nomina } = obj
+
+  console.log(correlativo, nombre_nomina)
   showLoader('employee-pay-loader')
   try {
-    let res = await fetch(comparacionNominaUrl, { method: 'POST', body: obj })
+    let res = await fetch(comparacionNominaUrl, {
+      method: 'POST',
+      body: { correlativo, nombre_nomina },
+    })
 
-    let data = await res.json()
+    let data = await res.text()
     // data.forEach((el) => {
     //   el.empleados = JSON.parse(el.empleados)
     //   el.asignaciones = JSON.parse(el.asignaciones)
@@ -119,7 +124,6 @@ const getComparacionNomina = async (obj) => {
 
     return data
   } catch (e) {
-    console.log(e)
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
       message: 'Error al obtener nominas',
@@ -155,7 +159,13 @@ const sendCalculoNomina = async (requestInfo) => {
   }
 }
 
-export { getNominas, getGruposNomina, getPeticionesNomina, sendCalculoNomina }
+export {
+  getNominas,
+  getGruposNomina,
+  getPeticionesNomina,
+  sendCalculoNomina,
+  getComparacionNomina,
+}
 
 async function mapData(data) {
   let cargos = await getJobData()
