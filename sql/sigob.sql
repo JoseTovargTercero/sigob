@@ -1350,7 +1350,34 @@ INSERT INTO `txt` (`id`, `id_empleado`, `total_a_pagar`, `nombre_nomina`, `ident
 --
 -- Índices para tablas volcadas
 --
+CREATE TABLE `bancos` (
+  `id` int(11) NOT NULL,
+  `prefijo` varchar(50) COLLATE latin1_spanish_ci NOT NULL,
+  `nombre` varchar(255) COLLATE latin1_spanish_ci NOT NULL,
+  `matriz` varchar(255) COLLATE latin1_spanish_ci NOT NULL,
+  `afiliado` varchar(20) COLLATE latin1_spanish_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
+
+INSERT INTO `bancos` (`id`, `prefijo`, `nombre`, `matriz`, `afiliado`) VALUES
+(2, '0175', 'Bicentenario', '0175054151515050518185', '151'),
+(4, '0128', 'CARONI', '0128987979879879879856', '');
+
+--
+-- Indices de la tabla `bancos`
+--
+ALTER TABLE `bancos`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- AUTO_INCREMENT de las tablas volcadas
+--
+
+--
+-- AUTO_INCREMENT de la tabla `bancos`
+--
+ALTER TABLE `bancos`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 --
 -- Indices de la tabla `cargos_grados`
 --
