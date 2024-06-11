@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 08-06-2024 a las 17:08:35
+-- Tiempo de generación: 11-06-2024 a las 02:32:07
 -- Versión del servidor: 10.4.27-MariaDB
 -- Versión de PHP: 7.4.33
 
@@ -20,6 +20,28 @@ SET time_zone = "+00:00";
 --
 -- Base de datos: `sigob`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `bancos`
+--
+
+CREATE TABLE `bancos` (
+  `id` int(11) NOT NULL,
+  `prefijo` varchar(50) NOT NULL,
+  `nombre` varchar(255) NOT NULL,
+  `matriz` varchar(255) NOT NULL,
+  `afiliado` varchar(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+
+--
+-- Volcado de datos para la tabla `bancos`
+--
+
+INSERT INTO `bancos` (`id`, `prefijo`, `nombre`, `matriz`, `afiliado`) VALUES
+(2, '0175', 'Bicentenario', '0175054151515050518185', '151'),
+(4, '0128', 'CARONI', '0128987979879879879856', '');
 
 -- --------------------------------------------------------
 
@@ -563,20 +585,20 @@ CREATE TABLE `conceptos_aplicados` (
 --
 
 INSERT INTO `conceptos_aplicados` (`id`, `concepto_id`, `nom_concepto`, `fecha_aplicar`, `tipo_calculo`, `n_conceptos`, `emp_cantidad`, `tabulador`, `empleados`, `nombre_nomina`) VALUES
-(21, 'sueldo_base', 'Sueldo Base', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '', '[]', '3', '32', '[\"26\",\"27\",\"28\"]', 'Obreros'),
-(22, '21', 'CONTRIBUCION POR DISCAPACIDAD', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '6', '[]', '3', '', '[\"26\",\"27\",\"28\"]', 'Obreros'),
-(23, '24', 'PRIMA POR HIJO EMPLEADOS', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '1', '[]', '3', '', '[\"26\",\"27\",\"28\"]', 'Obreros'),
-(24, '25', 'PRIMA POR TRANSPORTE', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '1', '[]', '3', '', '[\"26\",\"27\",\"28\"]', 'Obreros'),
-(25, '26', 'PRIMA POR ANTIGUEDAD EMPLEADOS', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '1', '[]', '3', '', '[\"26\",\"27\",\"28\"]', 'Obreros'),
-(26, '27', 'PRIMA POR ESCALAFON', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '1', '[\"24\",\"25\",\"26\"]', '3', '', '[\"26\",\"27\",\"28\"]', 'Obreros'),
-(27, '28', 'PRIMA POR FRONTERA', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '1', '[]', '3', '', '[\"26\",\"27\",\"28\"]', 'Obreros'),
-(28, '29', 'PRIMA POR PROFESIONALES', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '1', '[]', '3', '', '[\"26\",\"27\",\"28\"]', 'Obreros'),
-(29, '30', 'S. S. O', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '1', '[]', '3', '', '[\"26\",\"27\",\"28\"]', 'Obreros'),
-(30, '31', 'RPE', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '1', '[]', '3', '', '[\"26\",\"27\",\"28\"]', 'Obreros'),
-(31, '32', 'A/P S.S.O', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '1', '[]', '3', '', '[\"26\",\"27\",\"28\"]', 'Obreros'),
-(32, '33', 'A/P RPE', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '1', '[]', '3', '', '[\"26\",\"27\",\"28\"]', 'Obreros'),
-(33, '34', 'PAGO DE BECA', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '1', '[]', '3', '', '[\"26\",\"27\",\"28\"]', 'Obreros'),
-(34, '35', 'PRIMA P/DED AL S/PUBLICO UNICO DE SALUD', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '1', '[]', '3', '', '[\"26\",\"27\",\"28\"]', 'Obreros');
+(21, 'sueldo_base', 'Sueldo Base', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '', '[]', '3', '32', '[\"27\",\"28\",\"29\"]', 'Obreros'),
+(22, '21', 'CONTRIBUCION POR DISCAPACIDAD', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '6', '[]', '3', '', '[\"27\",\"28\",\"29\"]', 'Obreros'),
+(23, '24', 'PRIMA POR HIJO EMPLEADOS', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '1', '[]', '3', '', '[\"27\",\"28\",\"29\"]', 'Obreros'),
+(24, '25', 'PRIMA POR TRANSPORTE', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '1', '[]', '3', '', '[\"27\",\"28\",\"29\"]', 'Obreros'),
+(25, '26', 'PRIMA POR ANTIGUEDAD EMPLEADOS', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '1', '[]', '3', '', '[\"27\",\"28\",\"29\"]', 'Obreros'),
+(26, '27', 'PRIMA POR ESCALAFON', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '1', '[\"24\",\"25\",\"26\"]', '3', '', '[\"27\",\"28\",\"29\"]', 'Obreros'),
+(27, '28', 'PRIMA POR FRONTERA', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '1', '[]', '3', '', '[\"27\",\"28\",\"29\"]', 'Obreros'),
+(28, '29', 'PRIMA POR PROFESIONALES', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '1', '[]', '3', '', '[\"27\",\"28\",\"29\"]', 'Obreros'),
+(29, '30', 'S. S. O', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '1', '[]', '3', '', '[\"27\",\"28\",\"29\"]', 'Obreros'),
+(30, '31', 'RPE', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '1', '[]', '3', '', '[\"27\",\"28\",\"29\"]', 'Obreros'),
+(31, '32', 'A/P S.S.O', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '1', '[]', '3', '', '[\"27\",\"28\",\"29\"]', 'Obreros'),
+(32, '33', 'A/P RPE', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '1', '[]', '3', '', '[\"27\",\"28\",\"29\"]', 'Obreros'),
+(33, '34', 'PAGO DE BECA', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '1', '[]', '3', '', '[\"27\",\"28\",\"29\"]', 'Obreros'),
+(34, '35', 'PRIMA P/DED AL S/PUBLICO UNICO DE SALUD', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '1', '[]', '3', '', '[\"27\",\"28\",\"29\"]', 'Obreros');
 
 -- --------------------------------------------------------
 
@@ -629,37 +651,38 @@ INSERT INTO `dependencias` (`id_dependencia`, `dependencia`) VALUES
 
 CREATE TABLE `empleados` (
   `id` int(11) NOT NULL,
-  `nacionalidad` varchar(255) COLLATE latin1_spanish_ci NOT NULL,
-  `cedula` varchar(20) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `cod_empleado` varchar(20) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `nombres` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `nacionalidad` varchar(255) NOT NULL,
+  `cedula` varchar(20) DEFAULT NULL,
+  `cod_empleado` varchar(20) DEFAULT NULL,
+  `nombres` varchar(255) DEFAULT NULL,
   `fecha_ingreso` date DEFAULT NULL,
-  `otros_años` int(11) NOT NULL DEFAULT '0',
-  `status` varchar(5) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `observacion` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `cod_cargo` varchar(10) COLLATE latin1_spanish_ci NOT NULL,
-  `banco` varchar(255) COLLATE latin1_spanish_ci NOT NULL,
-  `cuenta_bancaria` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `hijos` int(11) NOT NULL DEFAULT '0',
-  `instruccion_academica` int(11) NOT NULL DEFAULT '0',
-  `discapacidades` int(2) NOT NULL DEFAULT '0',
+  `otros_años` int(11) NOT NULL DEFAULT 0,
+  `status` varchar(5) DEFAULT NULL,
+  `observacion` varchar(255) DEFAULT NULL,
+  `cod_cargo` varchar(10) NOT NULL,
+  `banco` varchar(255) NOT NULL,
+  `cuenta_bancaria` varchar(255) DEFAULT NULL,
+  `hijos` int(11) NOT NULL DEFAULT 0,
+  `instruccion_academica` int(11) NOT NULL DEFAULT 0,
+  `discapacidades` int(2) NOT NULL DEFAULT 0,
   `tipo_cuenta` int(10) NOT NULL,
   `tipo_nomina` int(10) NOT NULL,
   `id_dependencia` int(255) NOT NULL,
-  `verificado` int(1) NOT NULL DEFAULT '0'
+  `verificado` int(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+
 --
 -- Volcado de datos para la tabla `empleados`
 --
 
 INSERT INTO `empleados` (`id`, `nacionalidad`, `cedula`, `cod_empleado`, `nombres`, `fecha_ingreso`, `otros_años`, `status`, `observacion`, `cod_cargo`, `banco`, `cuenta_bancaria`, `hijos`, `instruccion_academica`, `discapacidades`, `tipo_cuenta`, `tipo_nomina`, `id_dependencia`, `verificado`) VALUES
-(27, '1', '123456789', '441151', 'Pedro Pablo', '2010-05-02', 0, '1', 'N/A', '25212', 'Tesoro', '1002555541124', 3, 3, 0, 0, 0, 0, 0),
-(28, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', 'Bicentenario', '1002555541124', 3, 2, 0, 0, 0, 0, 0),
-(29, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 3, 0, 0, 0, 0, 0),
-(30, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 2, 0, 0, 0, 0, 0),
-(31, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 3, 0, 0, 0, 0, 0),
-(32, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 2, 0, 0, 0, 0, 0),
-(33, '1', '123456789', '441151', 'Pedro Pablo', '2022-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 3, 0, 0, 0, 0, 0),
+(27, '1', '123456789', '441151', 'Pedro Pablo', '2010-05-02', 0, '1', 'N/A', '25212', 'Tesoro', '1002555541124', 3, 3, 0, 0, 0, 6, 0),
+(28, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', 'Bicentenario', '1002555541124', 3, 2, 0, 0, 0, 6, 0),
+(29, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 3, 0, 0, 0, 6, 0),
+(30, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 2, 0, 0, 0, 6, 0),
+(31, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 3, 0, 0, 0, 6, 0),
+(32, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 2, 0, 0, 0, 6, 0),
+(33, '1', '123456789', '441151', 'Pedro Pablo', '2022-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 3, 0, 0, 0, 6, 0),
 (34, '1', '123456789', '441151', 'Pedro Pablo', '2010-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 2, 0, 1, 2, 6, 0),
 (35, '1', '123456789', '441151', 'Pedro Pablo', '2010-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 3, 0, 1, 2, 6, 0),
 (37, '1', '123456789', '441151', 'Pedro Pablo', '2010-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 2, 0, 1, 2, 6, 0),
@@ -791,8 +814,8 @@ CREATE TABLE `peticiones` (
 --
 
 INSERT INTO `peticiones` (`id`, `empleados`, `asignaciones`, `deducciones`, `total_pagar`, `correlativo`, `status`, `nombre_nomina`) VALUES
-(4, '[26,27,28]', '{\"CONTRIBUCION POR DISCAPACIDAD\":30,\"PRIMA POR HIJO EMPLEADOS\":15,\"PRIMA POR TRANSPORTE\":150,\"PRIMA POR ANTIGUEDAD EMPLEADOS\":30,\"PRIMA POR ESCALAFON\":15,\"PRIMA POR FRONTERA\":15,\"PRIMA POR PROFESIONALES\":60,\"PAGO DE BECA\":30,\"PRIMA P\\/DED AL S\\/PUBLICO UNICO DE SALUD\":15}', '{\"S. S. O\":15,\"RPE\":15,\"A\\/P S.S.O\":15,\"A\\/P RPE\":15}', '[328.12,451.18,328.12]', '00001', 'En revision', 'Obreros'),
-(5, '[26,27,28]', '{\"CONTRIBUCION POR DISCAPACIDAD\":30,\"PRIMA POR HIJO EMPLEADOS\":15,\"PRIMA POR TRANSPORTE\":150,\"PRIMA POR ANTIGUEDAD EMPLEADOS\":30,\"PRIMA POR ESCALAFON\":15,\"PRIMA POR FRONTERA\":15,\"PRIMA POR PROFESIONALES\":60,\"PAGO DE BECA\":30,\"PRIMA P\\/DED AL S\\/PUBLICO UNICO DE SALUD\":15}', '{\"S. S. O\":15,\"RPE\":15,\"A\\/P S.S.O\":15,\"A\\/P RPE\":15}', '[328.12,451.18,328.12]', '00002', 'En revision', 'Obreros');
+(4, '[27,28,29]', '{\"CONTRIBUCION POR DISCAPACIDAD\":30,\"PRIMA POR HIJO EMPLEADOS\":15,\"PRIMA POR TRANSPORTE\":150,\"PRIMA POR ANTIGUEDAD EMPLEADOS\":30,\"PRIMA POR ESCALAFON\":15,\"PRIMA POR FRONTERA\":15,\"PRIMA POR PROFESIONALES\":60,\"PAGO DE BECA\":30,\"PRIMA P\\/DED AL S\\/PUBLICO UNICO DE SALUD\":15}', '{\"S. S. O\":15,\"RPE\":15,\"A\\/P S.S.O\":15,\"A\\/P RPE\":15}', '[328.12,451.18,328.12]', '00001', 'En revision', 'Obreros'),
+(5, '[27,28,29]', '{\"CONTRIBUCION POR DISCAPACIDAD\":30,\"PRIMA POR HIJO EMPLEADOS\":15,\"PRIMA POR TRANSPORTE\":150,\"PRIMA POR ANTIGUEDAD EMPLEADOS\":30,\"PRIMA POR ESCALAFON\":15,\"PRIMA POR FRONTERA\":15,\"PRIMA POR PROFESIONALES\":60,\"PAGO DE BECA\":30,\"PRIMA P\\/DED AL S\\/PUBLICO UNICO DE SALUD\":15}', '{\"S. S. O\":15,\"RPE\":15,\"A\\/P S.S.O\":15,\"A\\/P RPE\":15}', '[328.12,451.18,328.12]', '00002', 'En revision', 'Obreros');
 
 -- --------------------------------------------------------
 
@@ -1339,28 +1362,16 @@ CREATE TABLE `txt` (
 --
 
 INSERT INTO `txt` (`id`, `id_empleado`, `total_a_pagar`, `nombre_nomina`, `identificador`, `fecha_pagar`, `correlativo`) VALUES
-(772, 26, '328.12', 'Obreros', 'unico', '06-2024', '00001'),
-(773, 27, '451.18', 'Obreros', 'unico', '06-2024', '00001'),
-(774, 28, '328.12', 'Obreros', 'unico', '06-2024', '00001'),
-(775, 26, '328.12', 'Obreros', 'unico', '06-2024', '00002'),
-(776, 27, '451.18', 'Obreros', 'unico', '06-2024', '00002'),
-(777, 28, '328.12', 'Obreros', 'unico', '06-2024', '00002');
+(772, 27, '328.12', 'Obreros', 'unico', '06-2024', '00001'),
+(773, 28, '451.18', 'Obreros', 'unico', '06-2024', '00001'),
+(774, 29, '328.12', 'Obreros', 'unico', '06-2024', '00001'),
+(775, 27, '328.12', 'Obreros', 'unico', '06-2024', '00002'),
+(776, 28, '451.18', 'Obreros', 'unico', '06-2024', '00002'),
+(777, 29, '328.12', 'Obreros', 'unico', '06-2024', '00002');
 
 --
 -- Índices para tablas volcadas
 --
-CREATE TABLE `bancos` (
-  `id` int(11) NOT NULL,
-  `prefijo` varchar(50) COLLATE latin1_spanish_ci NOT NULL,
-  `nombre` varchar(255) COLLATE latin1_spanish_ci NOT NULL,
-  `matriz` varchar(255) COLLATE latin1_spanish_ci NOT NULL,
-  `afiliado` varchar(20) COLLATE latin1_spanish_ci NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
-
-
-INSERT INTO `bancos` (`id`, `prefijo`, `nombre`, `matriz`, `afiliado`) VALUES
-(2, '0175', 'Bicentenario', '0175054151515050518185', '151'),
-(4, '0128', 'CARONI', '0128987979879879879856', '');
 
 --
 -- Indices de la tabla `bancos`
@@ -1368,15 +1379,6 @@ INSERT INTO `bancos` (`id`, `prefijo`, `nombre`, `matriz`, `afiliado`) VALUES
 ALTER TABLE `bancos`
   ADD PRIMARY KEY (`id`);
 
---
--- AUTO_INCREMENT de las tablas volcadas
---
-
---
--- AUTO_INCREMENT de la tabla `bancos`
---
-ALTER TABLE `bancos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 --
 -- Indices de la tabla `cargos_grados`
 --
@@ -1483,6 +1485,12 @@ ALTER TABLE `txt`
 --
 -- AUTO_INCREMENT de las tablas volcadas
 --
+
+--
+-- AUTO_INCREMENT de la tabla `bancos`
+--
+ALTER TABLE `bancos`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `cargos_grados`
