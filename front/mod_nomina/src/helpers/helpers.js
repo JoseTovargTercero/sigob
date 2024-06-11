@@ -47,9 +47,8 @@ function validateInput({ target, fieldList = {}, fieldListErrors = {}, type }) {
       let secuenciaBanco = fieldList['banco']
       let isBank = regularExpressions.NUMBER.test(secuenciaBanco)
       let numeroCuenta = fieldList['cuenta_bancaria']
-      let isBankSelected = ['0102', '0163', '0175'].some((el) =>
-        numeroCuenta.startsWith(el)
-      )
+      let isBankSelected = numeroCuenta.startsWith(secuenciaBanco)
+
       if (!isBank) {
         target.classList.add('input-error')
         fieldListErrors[target.name].value = true

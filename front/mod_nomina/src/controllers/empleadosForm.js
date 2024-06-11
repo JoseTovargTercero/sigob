@@ -1,4 +1,5 @@
 import {
+  getBankData,
   getDependencyData,
   getEmployeeData,
   getJobData,
@@ -45,9 +46,12 @@ function validateEmployeeForm({
     let cargos = await getJobData()
     let profesiones = await getProfessionData()
     let dependencias = await getDependencyData()
+    let bancos = await getBankData()
     insertOptions({ input: 'cargo', data: cargos })
     insertOptions({ input: 'instruccion_academica', data: profesiones })
     insertOptions({ input: 'dependencias', data: dependencias })
+    insertOptions({ input: 'bancos', data: bancos })
+    console.log(bancos)
 
     // CÓDIGO PARA OBTENER EMPLEADO EN CASO DE EDITAR
     if (id) {
@@ -147,9 +151,6 @@ function validateEmployeeForm({
     if (e.target === btnElement) {
       if (fieldList.dependencia.length <= 0) delete fieldListErrors.dependencia
 
-      console.log(fieldListErrors)
-      console.log(fieldList)
-
       employeeSelectElementCopy.forEach((input) => {
         validateInput({
           target: input,
@@ -158,13 +159,15 @@ function validateEmployeeForm({
           type: fieldListErrors[input.name].type,
         })
       })
+
       employeeInputElementCopy.forEach((input) => {
-        validateInput({
-          target: input,
-          fieldList,
-          fieldListErrors,
-          type: fieldListErrors[input.name].type,
-        })
+        if (fieldListErrors[input.name])
+          validateInput({
+            target: input,
+            fieldList,
+            fieldListErrors,
+            type: fieldListErrors[input.name].type,
+          })
       })
 
       if (Object.values(fieldListErrors).some((el) => el.value)) {
