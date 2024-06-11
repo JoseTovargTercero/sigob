@@ -210,15 +210,17 @@ async function mapData(data) {
       RPE,
     } = empleado
 
+    // Datos dinámicos
+
     nacionalidad = 'V' ? 'VENEZOLANO' : 'E'
     status = 1 ? 'ACTIVO' : 'INACTIVO'
     discapacidades = 1 ? 'SI' : 'NO'
     tipo_cuenta = 1 ? 'AHORRO' : 'CORRIENTE'
-    id_dependencia = dependencias.find((el) => el.id == id_dependencia).name
+    id_dependencia = dependencias.find((el) => el.id == id_dependencia)
     instruccion_academica = profesiones.find(
       (el) => el.id == instruccion_academica
-    ).name
-    cod_cargo = cargos.find((el) => el.id === cod_cargo).name
+    )
+    cod_cargo = cargos.find((el) => el.id == cod_cargo)
 
     let CONTRIBUCION_POR_DISCAPACIDAD =
         empleado['CONTRIBUCION POR DISCAPACIDAD'],
@@ -244,15 +246,19 @@ async function mapData(data) {
       fecha_ingreso,
       otros_años,
       status,
-      cod_cargo,
+      cod_cargo: cod_cargo ? cod_cargo.name : 'Cargo no disponible',
       banco,
       cuenta_bancaria,
       hijos,
-      instruccion_academica,
+      instruccion_academica: instruccion_academica
+        ? instruccion_academica.name
+        : 'Profesión no disponible',
       discapacidades,
       tipo_cuenta,
       tipo_nomina,
-      id_dependencia,
+      id_dependencia: id_dependencia
+        ? id_dependencia.name
+        : 'Dependencia no disponible',
       salario_base,
       salario_integral,
       CONTRIBUCION_POR_DISCAPACIDAD,
