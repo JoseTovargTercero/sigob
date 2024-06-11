@@ -6,6 +6,8 @@ const cargosUrl = '../../../../../sigob/back/modulo_nomina/nom_cargos_info.php'
 const dependenciasUrl =
   '../../../../../sigob/back/modulo_nomina/nom_dependencias_datos.php'
 
+const bancosUrl = '../../../../../sigob/back/modulo_nomina/nom_bamcos_datos.php'
+
 const profesionesUrl =
   '../../../../../sigob/back/modulo_nomina/nom_profesion_info.php'
 
@@ -195,6 +197,23 @@ const getProfessionData = async () => {
 }
 
 const getDependencyData = async () => {
+  try {
+    const res = await fetch(dependenciasUrl)
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    const json = await res.json()
+
+    return mapData({ obj: json, name: 'dependencia', id: 'id_dependencia' })
+  } catch (e) {
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener dependencias',
+    })
+  }
+}
+
+const getBank = async () => {
   try {
     const res = await fetch(dependenciasUrl)
 

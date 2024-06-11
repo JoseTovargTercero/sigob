@@ -53,13 +53,18 @@ export async function employeeCard({ id, elementToInsert }) {
 
   const getCargo = async () => {
     let cargos = await getJobData()
-
-    return cargos.find((el) => el.id === cargo)[0].name
+    let cargoEncontrado = cargos.find((el) => el.id == cargo)
+    return cargoEncontrado ? cargoEncontrado.name : 'Cargo no disponible'
   }
 
   const getIntrusccionAcademica = async () => {
     let profesiones = await getProfessionData()
-    return profesiones.find((el) => el.id == instruccion_academica)[0].name
+    let profesionEncontrada = profesiones.find(
+      (el) => el.id == instruccion_academica
+    )
+    return profesionEncontrada
+      ? profesionEncontrada.name
+      : 'Profesión no disponible'
   }
 
   // const getDependencia = async () => {
