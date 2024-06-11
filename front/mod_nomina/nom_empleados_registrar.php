@@ -33,7 +33,7 @@ require_once '../../back/sistema_global/session.php';
             <!-- [ Main Content ] start -->
             <div class="row mb3">
                 <!-- [ worldLow section ] start -->
-                <div class="col-xl-12 col-md-6 mb-3" id="section-tabla">
+                <div class="col-lg-12 mb-3" id="section-tabla">
                     <div class="card">
                         <div class="card-header">
                             <div>

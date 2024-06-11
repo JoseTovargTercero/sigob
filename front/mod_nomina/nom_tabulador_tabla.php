@@ -36,12 +36,11 @@ require_once '../../back/sistema_global/session.php';
       <!-- [ Main Content ] start -->
       <div class="row mb3">
      
-        <div class="col-xl-12 col-md-6 mb-3"id="tabulator-table-view">
+        <div class="col-lg-12 mb-3"id="tabulator-table-view">
           <div class="card">
             <div class="card-header">
               <div class="">
-                <h5 class="mb-0">Lista de tabuladores registrados
-                </h5>
+                <h5 class="mb-0">Lista de tabuladores registrados</h5>
                 <small class="mt-0 text-muted">Cree y administre los tabuladores</small>
               </div>
             </div>

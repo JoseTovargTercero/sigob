@@ -9,18 +9,37 @@ if (!$_SESSION["u_oficina"]) {
 	
 	$url = $_SERVER['REQUEST_URI'];
 
-	/**
-	 * Checks if the user's office ID is not equal to '1' and if the URL contains the string 'mod_nomina'.
-	 * If both conditions are true, it redirects the user to the constant URL.
-	 *
-	 * @param string $url The URL to check for the presence of 'mod_nomina'.
-	 * @return void
-	 */
-	if ($_SESSION["u_oficina_id"] != '1' && strpos($url, '_nomina')) {
+
+
+
+
+	$u_oficina_id = $_SESSION['u_oficina_id'];
+
+	// Asociar las oficinas con sus respectivos casos
+	$casos = array(
+		1 => '_nomina',
+		2 => '_registro_control',
+		3 => '_relaciones_laborales',
+		4 => '_atencion_trabajador'
+	);
+
+	// Verificar si la oficina del usuario coincide con la URL
+	if (isset($casos[$u_oficina_id])) {
+		$caso = $casos[$u_oficina_id];
+		if (strpos($url, $caso) === false) {
+			header("Location: " . constant('URL'));
+			exit;
+		}
+	} else {
+		// Si el id de oficina no es válido, redirigir también
 		header("Location: " . constant('URL'));
+		exit;
 	}
 
 
+
+
 }
+
 
 ?>

@@ -46,7 +46,7 @@ require_once '../../back/sistema_global/session.php';
       <!-- [ Main Content ] start -->
       <div class="row mb3">
         <!-- [ worldLow section ] start -->
-        <div class="col-xl-12 col-md-6">
+        <div class="col-lg-12">
           <div class="card">
             <div class="card-header">
               <div class="d-flex align-items-start justify-content-between">
