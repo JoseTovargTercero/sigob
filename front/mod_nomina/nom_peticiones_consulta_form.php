@@ -38,7 +38,7 @@ require_once '../../back/sistema_global/session.php';
       <div class="row mb3">
         <!-- [ worldLow section ] start -->
         <div class="col-xl-12 mb-3" id="request-nom-form">
-          <div class="card mxauto">
+          <div class="card mx-auto">
             <div class="card-header">
               <div>
                 <h5 class="mb-0">Peticiones de pago</h5>
