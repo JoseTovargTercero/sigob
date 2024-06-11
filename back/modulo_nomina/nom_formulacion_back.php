@@ -67,7 +67,7 @@ if (isset($_POST["tabla_empleados"])) {
     }
 } else {
     // Todos los empleados
-    $sql = "SELECT *, TIMESTAMPDIFF(YEAR, fecha_ingreso, CURDATE()) AS antiguedad, otros_años, TIMESTAMPDIFF(YEAR, fecha_ingreso, CURDATE()) + otros_años AS anios_totales FROM empleados WHERE verificado = 1 LIMIT 3";
+    $sql = "SELECT *, TIMESTAMPDIFF(YEAR, fecha_ingreso, CURDATE()) AS antiguedad, otros_años, TIMESTAMPDIFF(YEAR, fecha_ingreso, CURDATE()) + otros_años AS anios_totales FROM empleados WHERE verificado = 1 ";
 }
     // Depuración: Mostrar la consulta y los parámetros
     error_log("SQL: $sql");

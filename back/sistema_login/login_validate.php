@@ -33,16 +33,13 @@ if ($result->num_rows > 0) {
 					$folder = 'mod_nomina';
 					break;
 				case '2':
-					$folder = 'mod_compras';
+					$folder = 'mod_registro_control';
 					break;
 				case '3':
-					$folder = 'mod_administracion';
+					$folder = 'mod_relaciones_laborales';
 					break;
 				case '4':
-					$folder = 'mod_planificacion';
-					break;
-				case '5':
-					$folder = 'mod_tesoreria';
+					$folder = 'mod_atencion_trabajador';
 					break;
 			}
 			echo json_encode(array('of' => $folder, 'val' => true));
