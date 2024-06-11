@@ -6,18 +6,8 @@
     </div>
     <div class="navbar-content">
       <ul class="pc-navbar">
-        <li class="pc-item pc-caption">
-          <label>Inicio</label>
-        </li>
-        <li class="pc-item">
-          <a href="dashboard" class="pc-link">
-            <span class="pc-micon">
-              <i class="bx bx-home"></i>
-
-            </span>
-            <span class="pc-mtext">Dashboard</span>
-          </a>
-        </li>
+    
+     
 
         <li class="pc-item pc-caption">
           <label>Nómina</label>
@@ -61,7 +51,7 @@
             <li class="pc-item"><a class="pc-link"
                 href="<?php echo constant('URL') ?>front/mod_nomina/nom_peticiones_form">Peticiones</a></li>
             <li class="pc-item"><a class="pc-link"
-                href="<?php echo constant('URL') ?>front/mod_nomina/nom_peticiones_consulta_form">Revision</a></li>
+                href="<?php echo constant('URL') ?>front/mod_nomina/nom_peticiones_consulta_form">Revision de nominas</a></li>
           </ul>
         </li>
 
