@@ -19,7 +19,6 @@
   text-overflow: ellipsis;
 
   /* scrollbar-width: none; */
-  scrollbar-color: red;
 }
 
 /* COMPARACIÓN DE PETICIONES */
@@ -27,14 +26,12 @@
 .request-comparation-container {
   width: 100%;
   padding: 1rem;
-  display: flex;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
   gap: 1rem;
+  min-height: 300px;
 }
 
 .request-comparation-container div {
-  background-color: aqua;
-  min-height: 200px;
-
   width: 100%;
 }

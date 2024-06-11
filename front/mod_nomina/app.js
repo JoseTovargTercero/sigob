@@ -177,6 +177,7 @@ d.addEventListener('DOMContentLoaded', (e) => {
     validateRequestNomForm({
       selectId: 'select-nomina',
       consultBtnId: 'consultar-nomina',
+      formId: 'request-nom-form',
     })
   }
 

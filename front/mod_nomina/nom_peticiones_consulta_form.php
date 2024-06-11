@@ -60,10 +60,10 @@ require_once '../../back/sistema_global/session.php';
                   </div>
                 </div>
               </div>
-              <div class="request-comparation-container">
-                <div></div>
-                <div></div>
+              <div class="loader-container card-footer py-4" id="employee-pay-loader">
+                <div class="loader"></div>
               </div>
+
               <!-- <table id="employee-table" class="table table-striped" style="width:100%">
                 <thead class="w-100">
                   <th>NOMBRES</th>
@@ -80,9 +80,7 @@ require_once '../../back/sistema_global/session.php';
 
 
             </div>
-            <div class="loader-container card-footer py-4" id="employee-pay-loader">
-              <div class="loader"></div>
-            </div>
+
           </div>
         </div>
 

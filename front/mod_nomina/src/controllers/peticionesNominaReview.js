@@ -2,6 +2,7 @@ import {
   getComparacionNomina,
   getPeticionesNomina,
 } from '../api/peticionesNomina.js'
+import { createComparationContainer } from '../components/nom_comparation_container.js'
 import { validateInput } from '../helpers/helpers.js'
 
 const d = document
@@ -21,10 +22,17 @@ let fieldListErrors = {
 
 let nominas = {}
 
-export async function validateRequestNomForm({ selectId, consultBtnId }) {
+export async function validateRequestNomForm({
+  selectId,
+  consultBtnId,
+  formId,
+}) {
+  let requestInfo = await getPeticionesNomina()
+
   let selectNom = d.getElementById(selectId)
   let consultNom = d.getElementById(consultBtnId)
-  let requestInfo = await getPeticionesNomina()
+  let requestComparationForm = d.getElementById(formId)
+  let comparationContainer = d.getElementById('request-comparation-container')
 
   let selectValues = await requestInfo
     .map((el) => {
@@ -37,7 +45,6 @@ export async function validateRequestNomForm({ selectId, consultBtnId }) {
   selectNom.insertAdjacentHTML('beforeend', selectValues)
 
   selectNom.addEventListener('change', (e) => {
-    console.log(e.target.value)
     fieldList = validateInput({
       target: e.target,
       fieldList,
@@ -46,15 +53,21 @@ export async function validateRequestNomForm({ selectId, consultBtnId }) {
     })
   })
 
-  d.addEventListener('click', (e) => {
+  d.addEventListener('click', async (e) => {
+    let comparationContainer = d.getElementById('request-comparation-container')
+
     if (e.target === consultNom) {
       let result = requestInfo.find(
         (el) => el.correlativo === fieldList['select-nomina']
       )
+      if (comparationContainer) comparationContainer.remove()
 
-      console.log(result)
+      let peticiones = await getComparacionNomina(result)
 
-      getComparacionNomina(result)
+      requestComparationForm.insertAdjacentHTML(
+        'beforeend',
+        createComparationContainer({ data: peticiones })
+      )
     }
   })
 }
