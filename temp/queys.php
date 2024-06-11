@@ -62,4 +62,24 @@ $stmt_o->close();
 
 header("Location: ../../public/index.php");
 
+
+
+
+
+function contar($condicion)
+{
+  global $conexion;
+
+  //$condicion = "SELECT count(*) FROM $table WHERE $condicion";
+  $stmt = $conexion->prepare("SELECT count(*) FROM go_planes WHERE tipo='2' AND cerrado='1' AND ano='$ano' AND trimestre='1'");
+  $stmt->execute();
+  $row = $stmt->get_result()->fetch_row();
+  $galTotal = $row[0];
+
+  return $galTotal;
+}
+
+
+contar("SELECT count(*) FROM go_planes WHERE tipo='2' AND cerrado='1' AND ano='$ano' AND trimestre='1'")
+
 ?>

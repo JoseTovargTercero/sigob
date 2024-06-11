@@ -41,6 +41,9 @@
             <li class="pc-item"><a class="pc-link"
                 href="<?php echo constant('URL') ?>front/mod_nomina/nom_empleados_registrar">Registrar Personal</a>
             </li>
+            <li class="pc-item"><a class="pc-link"
+                href="<?php echo constant('URL') ?>front/mod_nomina/nom_bancos">Bancos</a>
+            </li>
           </ul>
         </li>
 
@@ -49,7 +52,6 @@
           <a href="#!" class="pc-link">
             <span class="pc-micon">
               <i class='bx bx-wallet-alt'></i>
-
             </span>
             <span class="pc-mtext">Nómina</span><span class="pc-arrow"><i class="ti ti-chevron-right"></i></span>
           </a>

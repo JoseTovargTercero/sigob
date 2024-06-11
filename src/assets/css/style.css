@@ -3285,6 +3285,11 @@ textarea.form-control-lg {
   --bs-gradient: none;
 }
 
+
+.border-danger{
+  border: 1px solid #ff9a93;
+}
+
 .btn-outline-light {
   --bs-btn-color: #f8f9fa;
   --bs-btn-border-color: #f8f9fa;

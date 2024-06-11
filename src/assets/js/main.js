@@ -107,6 +107,7 @@ const booleans = {
   1: 'Si',
   0: 'No'
 }
+
 function setCondicionante(condicionante, div = null) {
   if (condicionante == '') {
     return
@@ -190,3 +191,59 @@ function toggleVisibility(...selectors) {
     $(selector).toggleClass('hide');
   });
 }
+
+
+
+/**
+ * Select all elements with the class 'form-control' and attach an 'input' event listener
+ * Check if the element that triggered the event has the 'border-danger' class
+ * If it does, remove the 'border-danger' class from the element
+*/
+
+$(document).ready(function() {
+  $('.form-control').on('input', function() {
+    if ($(this).hasClass('border-danger')) {
+      $(this).removeClass('border-danger');
+    }
+  });
+});
+
+
+
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Select all inputs with the 'check-length' class
+  const inputs = document.querySelectorAll('.check-length');
+
+  // Iterate over each selected input
+  inputs.forEach(input => {
+    // Add classes to the parent container
+    const parent = input.parentElement;
+    parent.classList.add('input-group', 'input-group-merge');
+
+    // Get the maximum number of characters from the 'data-max' attribute
+    const maxCharacters = parseInt(input.getAttribute('data-max'));
+
+    // Create a new 'span' element to display the remaining characters
+    const textRest = document.createElement('span');
+    textRest.id = 'res_' + input.name;
+    textRest.classList.add('input-group-text');
+    textRest.innerHTML = maxCharacters
+    parent.appendChild(textRest);
+
+    // Add an 'input' event listener to the current input
+    input.addEventListener('input', function() {
+      let value = input.value;
+      let remaining = maxCharacters - value.length;
+
+      // If the value length exceeds the allowed maximum, truncate the value
+      if (remaining <= 0) {
+        input.value = value.substring(0, maxCharacters);
+        remaining = 0;
+      }
+
+      // Update the 'span' content to display the remaining characters
+      textRest.textContent = remaining;
+    });
+  });
+});
