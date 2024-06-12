@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 11-06-2024 a las 16:36:12
+-- Tiempo de generación: 13-06-2024 a las 00:39:39
 -- Versión del servidor: 10.4.27-MariaDB
 -- Versión de PHP: 7.4.33
 
@@ -806,16 +806,16 @@ CREATE TABLE `peticiones` (
   `total_pagar` varchar(255) NOT NULL,
   `correlativo` varchar(255) NOT NULL,
   `status` varchar(255) NOT NULL,
-  `nombre_nomina` varchar(255) NOT NULL
+  `nombre_nomina` varchar(255) NOT NULL,
+  `creacion` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `peticiones`
 --
 
-INSERT INTO `peticiones` (`id`, `empleados`, `asignaciones`, `deducciones`, `total_pagar`, `correlativo`, `status`, `nombre_nomina`) VALUES
-(4, '[27,28,29]', '{\"CONTRIBUCION POR DISCAPACIDAD\":30,\"PRIMA POR HIJO EMPLEADOS\":15,\"PRIMA POR TRANSPORTE\":150,\"PRIMA POR ANTIGUEDAD EMPLEADOS\":30,\"PRIMA POR ESCALAFON\":15,\"PRIMA POR FRONTERA\":15,\"PRIMA POR PROFESIONALES\":60,\"PAGO DE BECA\":30,\"PRIMA P\\/DED AL S\\/PUBLICO UNICO DE SALUD\":15}', '{\"S. S. O\":15,\"RPE\":15,\"A\\/P S.S.O\":15,\"A\\/P RPE\":15}', '[328.12,451.18,328.12]', '00001', 'En revision', 'Obreros'),
-(5, '[27,28,29]', '{\"CONTRIBUCION POR DISCAPACIDAD\":30,\"PRIMA POR HIJO EMPLEADOS\":15,\"PRIMA POR TRANSPORTE\":150,\"PRIMA POR ANTIGUEDAD EMPLEADOS\":30,\"PRIMA POR ESCALAFON\":15,\"PRIMA POR FRONTERA\":15,\"PRIMA POR PROFESIONALES\":60,\"PAGO DE BECA\":30,\"PRIMA P\\/DED AL S\\/PUBLICO UNICO DE SALUD\":15}', '{\"S. S. O\":15,\"RPE\":15,\"A\\/P S.S.O\":15,\"A\\/P RPE\":15}', '[328.12,451.18,328.12]', '00002', 'En revision', 'Obreros');
+INSERT INTO `peticiones` (`id`, `empleados`, `asignaciones`, `deducciones`, `total_pagar`, `correlativo`, `status`, `nombre_nomina`, `creacion`) VALUES
+(9, '[27,28,29]', '{\"CONTRIBUCION POR DISCAPACIDAD\":30,\"PRIMA POR HIJO EMPLEADOS\":15,\"PRIMA POR TRANSPORTE\":150,\"PRIMA POR ANTIGUEDAD EMPLEADOS\":30,\"PRIMA POR ESCALAFON\":15,\"PRIMA POR FRONTERA\":15,\"PRIMA POR PROFESIONALES\":60,\"PAGO DE BECA\":30,\"PRIMA P\\/DED AL S\\/PUBLICO UNICO DE SALUD\":15}', '{\"S. S. O\":15,\"RPE\":15,\"A\\/P S.S.O\":15,\"A\\/P RPE\":15}', '[451.18,328.12,328.12]', '00001', '0', 'Obreros', '2024-06-12');
 
 -- --------------------------------------------------------
 
@@ -1362,12 +1362,9 @@ CREATE TABLE `txt` (
 --
 
 INSERT INTO `txt` (`id`, `id_empleado`, `total_a_pagar`, `nombre_nomina`, `identificador`, `fecha_pagar`, `correlativo`) VALUES
-(772, 27, '328.12', 'Obreros', 'unico', '06-2024', '00001'),
-(773, 28, '451.18', 'Obreros', 'unico', '06-2024', '00001'),
-(774, 29, '328.12', 'Obreros', 'unico', '06-2024', '00001'),
-(775, 27, '328.12', 'Obreros', 'unico', '06-2024', '00002'),
-(776, 28, '451.18', 'Obreros', 'unico', '06-2024', '00002'),
-(777, 29, '328.12', 'Obreros', 'unico', '06-2024', '00002');
+(787, 27, '451.18', 'Obreros', 'unico', '06-2024', '00001'),
+(788, 28, '328.12', 'Obreros', 'unico', '06-2024', '00001'),
+(789, 29, '328.12', 'Obreros', 'unico', '06-2024', '00001');
 
 --
 -- Índices para tablas volcadas
@@ -1556,7 +1553,7 @@ ALTER TABLE `password_resets`
 -- AUTO_INCREMENT de la tabla `peticiones`
 --
 ALTER TABLE `peticiones`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de la tabla `primantiguedad`
@@ -1592,7 +1589,7 @@ ALTER TABLE `tabuladores_estr`
 -- AUTO_INCREMENT de la tabla `txt`
 --
 ALTER TABLE `txt`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=778;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=790;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
