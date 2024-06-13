@@ -11,7 +11,7 @@ if (!$data) {
 }
 
 // Verificar si el array contiene los datos necesarios
-if (!isset($data['nombre_nomina']) || !isset($data['empleados']) || !isset($data['total_pagar']) || !isset($data['suma_asignaciones']) || !isset($data['suma_deducciones'])) {
+if (!isset($data['nombre_nomina']) || !isset($data['empleados']) || !isset($data['total_pagar']) || !isset($data['suma_asignaciones']) || !isset($data['suma_deducciones']) || !isset($data['suma_aportes'])) {
     echo json_encode(array('error' => 'Faltan datos en el JSON recibido.'));
     exit();
 }
@@ -94,11 +94,12 @@ for ($i = 0; $i < count($data['empleados']); $i++) {
 $empleados_json = json_encode($data['empleados']);
 $suma_asignaciones_json = json_encode($data['suma_asignaciones']);
 $suma_deducciones_json = json_encode($data['suma_deducciones']);
+$suma_aportes_json = json_encode($data['suma_aportes']);
 $total_pagar_json = json_encode($data['total_pagar']);
 $status = "0";
 $creacion = Date('Y-m-d');
 
-$sql_peticiones = "INSERT INTO peticiones (empleados, asignaciones, deducciones, total_pagar, correlativo, status, nombre_nomina, creacion) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+$sql_peticiones = "INSERT INTO peticiones (empleados, asignaciones, deducciones, aportes, total_pagar, correlativo, status, nombre_nomina, creacion) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 $stmt_peticiones = $conexion->prepare($sql_peticiones);
 
 if (!$stmt_peticiones) {
@@ -106,7 +107,7 @@ if (!$stmt_peticiones) {
     exit();
 }
 
-$stmt_peticiones->bind_param("ssssssss", $empleados_json, $suma_asignaciones_json, $suma_deducciones_json, $total_pagar_json, $correlativo_formateado, $status, $nombre_nomina, $creacion);
+$stmt_peticiones->bind_param("sssssssss", $empleados_json, $suma_asignaciones_json, $suma_deducciones_json, $suma_aportes_json, $total_pagar_json, $correlativo_formateado, $status, $nombre_nomina, $creacion);
 $stmt_peticiones->execute();
 
 if ($stmt_peticiones->affected_rows === 0) {

@@ -340,10 +340,12 @@ $empleados_unicos = array();
 // Array para almacenar asignaciones y deducciones
 $asignaciones = array();
 $deducciones = array();
+$aportes = array();
 
 // Arrays para almacenar las sumas de cada asignación y deducción
 $suma_asignaciones = array();
 $suma_deducciones = array();
+$suma_aportes = array();
 
 // Variable para almacenar el total a pagar
 $total_a_pagar = 0;
@@ -379,6 +381,8 @@ foreach ($conceptos_aplicados as &$concepto) {
         $asignaciones[] = $concepto;
     } elseif ($concepto['tipo_concepto'] === "D") {
         $deducciones[] = $concepto;
+    }elseif($concepto['tipo_concepto'] === "P") {
+        $aportes[] = $concepto;
     }
 
     // Consultar la tabla 'empleados' para cada ID de empleado
@@ -422,6 +426,12 @@ foreach ($conceptos_aplicados as &$concepto) {
             } else {
                 $suma_deducciones[$concepto['nom_concepto']] = $valor_concepto;
             }
+        }elseif ($tipo_concepto === "P"){
+            if (isset($suma_aportes[$concepto['nom_concepto']])) {
+                $suma_aportes[$concepto['nom_concepto']] += $valor_concepto;
+            } else {
+                $suma_aportes[$concepto['nom_concepto']] = $valor_concepto;
+            }
         }
 
         // Si el tipo de concepto es "A" y no es el salario base, sumarlo al salario integral
@@ -464,6 +474,18 @@ foreach ($empleados_unicos as &$empleado) {
         }
     }
 
+    // Restar los aportes
+    foreach ($aportes as $aporte) {
+        $nom_concepto = $aporte['nom_concepto'];
+        if (isset($empleado[$nom_concepto])) {
+            $total_a_pagar_empleado -= $empleado[$nom_concepto];
+        } else {
+            // Calcular el valor de la deducción si no está previamente calculado
+            $valorAporte = obtenerValorConcepto($conexion, $nom_concepto, $empleado['salario_base'], $precio_dolar, $empleado['salario_integral'], array($empleado['id']));
+            $total_a_pagar_empleado -= $valorAporte;
+        }
+    }
+
     // Almacenar el total a pagar para este empleado en el array del empleado
     $empleado['total_a_pagar'] = $total_a_pagar_empleado;
     $informacion_empleados[] = $empleado;
@@ -488,7 +510,8 @@ $response = array(
     'total_pagar' => $total_a_pagar_empleados,
     'nombre_nomina' => $nombre_nomina,
     'suma_asignaciones' => $suma_asignaciones,
-    'suma_deducciones' => $suma_deducciones
+    'suma_deducciones' => $suma_deducciones,
+    'suma_aportes' => $suma_aportes,
 );
 
  

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 13-06-2024 a las 00:39:39
+-- Tiempo de generación: 14-06-2024 a las 01:19:38
 -- Versión del servidor: 10.4.27-MariaDB
 -- Versión de PHP: 7.4.33
 
@@ -555,8 +555,8 @@ INSERT INTO `conceptos` (`id`, `nom_concepto`, `cod_partida`, `tipo_concepto`, `
 (29, 'PRIMA POR PROFESIONALES', '4.01.03.08.00', 'A', 1, '20'),
 (30, 'S. S. O', '3.12.02.01.00', 'D', 1, '5'),
 (31, 'RPE', '3.12.02.10.00', 'D', 1, '5'),
-(32, 'A/P S.S.O', '4.01.06.25.00', 'D', 1, '5'),
-(33, 'A/P RPE', '4.01.06.19.00', 'D', 1, '5'),
+(32, 'A/P S.S.O', '4.01.06.25.00', 'P', 1, '5'),
+(33, 'A/P RPE', '4.01.06.19.00', 'P', 1, '5'),
 (34, 'PAGO DE BECA', '4.01.07.02.00', 'A', 1, '10'),
 (35, 'PRIMA P/DED AL S/PUBLICO UNICO DE SALUD', '4.01.07.08.00', 'A', 1, '5'),
 (36, 'PRIMA POR ANTIGUEDAD (ESPECIAL)', '4.01.03.09.00', 'A', 1, '10');
@@ -803,6 +803,7 @@ CREATE TABLE `peticiones` (
   `empleados` varchar(255) NOT NULL,
   `asignaciones` varchar(2000) NOT NULL,
   `deducciones` varchar(2000) NOT NULL,
+  `aportes` varchar(2000) NOT NULL,
   `total_pagar` varchar(255) NOT NULL,
   `correlativo` varchar(255) NOT NULL,
   `status` varchar(255) NOT NULL,
@@ -814,8 +815,9 @@ CREATE TABLE `peticiones` (
 -- Volcado de datos para la tabla `peticiones`
 --
 
-INSERT INTO `peticiones` (`id`, `empleados`, `asignaciones`, `deducciones`, `total_pagar`, `correlativo`, `status`, `nombre_nomina`, `creacion`) VALUES
-(9, '[27,28,29]', '{\"CONTRIBUCION POR DISCAPACIDAD\":30,\"PRIMA POR HIJO EMPLEADOS\":15,\"PRIMA POR TRANSPORTE\":150,\"PRIMA POR ANTIGUEDAD EMPLEADOS\":30,\"PRIMA POR ESCALAFON\":15,\"PRIMA POR FRONTERA\":15,\"PRIMA POR PROFESIONALES\":60,\"PAGO DE BECA\":30,\"PRIMA P\\/DED AL S\\/PUBLICO UNICO DE SALUD\":15}', '{\"S. S. O\":15,\"RPE\":15,\"A\\/P S.S.O\":15,\"A\\/P RPE\":15}', '[451.18,328.12,328.12]', '00001', '0', 'Obreros', '2024-06-12');
+INSERT INTO `peticiones` (`id`, `empleados`, `asignaciones`, `deducciones`, `aportes`, `total_pagar`, `correlativo`, `status`, `nombre_nomina`, `creacion`) VALUES
+(11, '[27,28,29]', '{\"CONTRIBUCION POR DISCAPACIDAD\":30,\"PRIMA POR HIJO EMPLEADOS\":15,\"PRIMA POR TRANSPORTE\":150,\"PRIMA POR ANTIGUEDAD EMPLEADOS\":30,\"PRIMA POR ESCALAFON\":15,\"PRIMA POR FRONTERA\":15,\"PRIMA POR PROFESIONALES\":60,\"PAGO DE BECA\":30,\"PRIMA P\\/DED AL S\\/PUBLICO UNICO DE SALUD\":15}', '{\"S. S. O\":15,\"RPE\":15}', '{\"A\\/P S.S.O\":15,\"A\\/P RPE\":15}', '[451.18,328.12,328.12]', '00003', '0', 'Obreros', '2024-06-13'),
+(12, '[27,28,29]', '{\"CONTRIBUCION POR DISCAPACIDAD\":30,\"PRIMA POR HIJO EMPLEADOS\":15,\"PRIMA POR TRANSPORTE\":150,\"PRIMA POR ANTIGUEDAD EMPLEADOS\":30,\"PRIMA POR ESCALAFON\":15,\"PRIMA POR FRONTERA\":15,\"PRIMA POR PROFESIONALES\":60,\"PAGO DE BECA\":30,\"PRIMA P\\/DED AL S\\/PUBLICO UNICO DE SALUD\":15}', '{\"S. S. O\":15,\"RPE\":15}', '{\"A\\/P S.S.O\":15,\"A\\/P RPE\":15}', '[451.18,328.12,328.12]', '00004', '0', 'Obreros', '2024-06-13');
 
 -- --------------------------------------------------------
 
@@ -1364,7 +1366,16 @@ CREATE TABLE `txt` (
 INSERT INTO `txt` (`id`, `id_empleado`, `total_a_pagar`, `nombre_nomina`, `identificador`, `fecha_pagar`, `correlativo`) VALUES
 (787, 27, '451.18', 'Obreros', 'unico', '06-2024', '00001'),
 (788, 28, '328.12', 'Obreros', 'unico', '06-2024', '00001'),
-(789, 29, '328.12', 'Obreros', 'unico', '06-2024', '00001');
+(789, 29, '328.12', 'Obreros', 'unico', '06-2024', '00001'),
+(790, 27, '451.18', 'Obreros', 'unico', '06-2024', '00002'),
+(791, 28, '328.12', 'Obreros', 'unico', '06-2024', '00002'),
+(792, 29, '328.12', 'Obreros', 'unico', '06-2024', '00002'),
+(793, 27, '451.18', 'Obreros', 'unico', '06-2024', '00003'),
+(794, 28, '328.12', 'Obreros', 'unico', '06-2024', '00003'),
+(795, 29, '328.12', 'Obreros', 'unico', '06-2024', '00003'),
+(796, 27, '451.18', 'Obreros', 'unico', '06-2024', '00004'),
+(797, 28, '328.12', 'Obreros', 'unico', '06-2024', '00004'),
+(798, 29, '328.12', 'Obreros', 'unico', '06-2024', '00004');
 
 --
 -- Índices para tablas volcadas
@@ -1553,7 +1564,7 @@ ALTER TABLE `password_resets`
 -- AUTO_INCREMENT de la tabla `peticiones`
 --
 ALTER TABLE `peticiones`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT de la tabla `primantiguedad`
@@ -1589,7 +1600,7 @@ ALTER TABLE `tabuladores_estr`
 -- AUTO_INCREMENT de la tabla `txt`
 --
 ALTER TABLE `txt`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=790;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=799;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
