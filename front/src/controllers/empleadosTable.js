@@ -60,6 +60,8 @@ const loadTable = async () => {
   employeeTable.clear().draw()
 
   let empleados = await getEmployeesData()
+
+  console.log(empleados)
   let empleadosOrdenados = [...empleados].sort(
     (a, b) => b.id_empleado - a.id_empleado
   )

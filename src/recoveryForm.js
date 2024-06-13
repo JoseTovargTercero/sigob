@@ -1,4 +1,4 @@
-import { validateInput } from '../front/mod_nomina/src/helpers/helpers.js'
+import { validateInput } from '../front/src/helpers/helpers.js'
 import {
   validateEmail,
   validateNewPassword,

@@ -5,7 +5,7 @@ require_once '../../back/sistema_global/session.php';
 <?php require_once '../includes/header.php' ?>
 
 <head>
-    <link rel="stylesheet" href="src/styles/style.css">
+    <link rel="stylesheet" href="../src/styles/style.css">
     <title>Registrar Personal</title>
 </head>
 
@@ -261,7 +261,7 @@ require_once '../../back/sistema_global/session.php';
 
 </body>
 
-<script type="module" src="app.js"></script>
+<script type="module" src="../app.js"></script>
 <script src="https://cdn.datatables.net/2.0.1/js/dataTables.js"></script>
 <script src="https://cdn.datatables.net/2.0.1/js/dataTables.bootstrap5.js"></script>
 <script src="../../src/assets/js/plugins/simplebar.min.js"></script>

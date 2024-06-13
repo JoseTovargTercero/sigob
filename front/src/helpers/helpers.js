@@ -421,6 +421,10 @@ function confirmNotification({
   }
 }
 
+const validateStatusText = ({ value, confirmText, NegativeText }) => {
+  return value ? confirmText : NegativeText
+}
+
 export {
   validateInput,
   validateModal,
@@ -429,4 +433,5 @@ export {
   hideLoader,
   confirmNotification,
   errorMessage,
+  validateStatusText,
 }

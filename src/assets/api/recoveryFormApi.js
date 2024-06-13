@@ -1,5 +1,5 @@
-import { confirmNotification } from '../../../front/mod_nomina/src/helpers/helpers.js'
-import { NOTIFICATIONS_TYPES } from '../../../front/mod_nomina/src/helpers/types.js'
+import { confirmNotification } from '../../../front/src/helpers/helpers.js'
+import { NOTIFICATIONS_TYPES } from '../../../front/src/helpers/types.js'
 
 const recoveryUrl = '../../../../sigob/back/mod_global/glob_recuperar_back.php'
 

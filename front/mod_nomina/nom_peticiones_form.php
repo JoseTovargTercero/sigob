@@ -12,7 +12,7 @@ require_once '../../back/sistema_global/session.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link rel="stylesheet" href="https://cdn.datatables.net/2.0.1/css/dataTables.dataTables.css" />
-    <link rel="stylesheet" href="src/styles/style.css">
+    <link rel="stylesheet" href="../src/styles/style.css">
 
 </head>
 <?php require_once '../includes/header.php' ?>
@@ -50,10 +50,11 @@ require_once '../../back/sistema_global/session.php';
                 <div class="col-xl-12">
                     <div class="card" id="employee-pay-form">
                         <div class="card-header">
-                            <div class="d-flex align-items-start justify-content-between">
+                            <div class="d-flex align-items-center justify-content-between">
                                 <div>
                                     <h5 class="mb-0">Petición de nómina a pagar</h5>
                                 </div>
+                                <button class="btn btn-success" id="show-request-list">Mostrar peticiones</button>
                             </div>
                         </div>
                         <div class="card-body employee-nom-group">
@@ -107,7 +108,7 @@ require_once '../../back/sistema_global/session.php';
 
 
     <!-- [ Main Content ] end -->
-    <script type="module" src="src/controllers/peticionesNominaForm.js"></script>
+    <script type="module" src="../src/controllers/peticionesNominaForm.js"></script>
     <!-- <script type="module" src="app.js"></script> -->
     <script src="https://cdn.datatables.net/2.0.1/js/dataTables.js"></script>
     <script src="https://cdn.datatables.net/2.0.1/js/dataTables.bootstrap5.js"></script>

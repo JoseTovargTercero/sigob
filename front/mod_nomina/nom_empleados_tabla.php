@@ -5,7 +5,7 @@ require_once '../../back/sistema_global/session.php';
 <?php require_once '../includes/header.php' ?>
 
 <head>
-  <link rel="stylesheet" href="src/styles/style.css">
+  <link rel="stylesheet" href="../src/styles/style.css">
   <link rel="stylesheet" href="https://cdn.datatables.net/2.0.1/css/dataTables.dataTables.css" />
   <title>PERSONAL</title>
 </head>
@@ -83,15 +83,11 @@ require_once '../../back/sistema_global/session.php';
   </div>
 
 
-
-
-
-
 </body>
 
-<script type="module" src="app.js"></script>
+<script type="module" src="../app.js"></script>
 
-<script type="module" src="src/controllers/empleadosTable.js">
+<script type="module" src="../src/controllers/empleadosTable.js">
 </script>
 <!-- DATATABLES -->
 <script src="https://cdn.datatables.net/2.0.1/js/dataTables.js"></script>

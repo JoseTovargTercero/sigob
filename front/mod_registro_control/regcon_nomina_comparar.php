@@ -5,7 +5,7 @@ require_once '../../back/sistema_global/session.php';
 <?php require_once '../includes/header.php' ?>
 
 <head>
-  <link rel="stylesheet" href="src/styles/style.css">
+  <link rel="stylesheet" href="../src/styles/style.css">
   <link rel="stylesheet" href="https://cdn.datatables.net/2.0.1/css/dataTables.dataTables.css" />
   <title>PERSONAL</title>
 </head>
@@ -27,7 +27,7 @@ require_once '../../back/sistema_global/session.php';
           <div class="row align-items-center">
             <div class="col-md-12">
               <div class="page-header-title">
-                <h5 class="mb-0">Revisión de peticiones de nómina</h5>
+                <h5 class="mb-0">Control de peticiones de nómina</h5>
                 <small class="text-muted mt-0 d-block mb-2">Consulte la nómina a revisar</small>
               </div>
             </div>
@@ -52,7 +52,7 @@ require_once '../../back/sistema_global/session.php';
                     <label for="nomina" class="form-label">Seleccionar nómina</label>
                     <!-- <small class="text-muted mt-0 d-block mb-2">Seleccione la nómina a registrar</small> -->
                     <select id="select-nomina" name="select-nomina" class="form-control">
-                      <option value="">Seleccionar grupo de nómina</option>
+                      <option value="">Seleccionar petición de nómina</option>
                     </select>
                   </div>
                   <div class="col-sm">
@@ -63,22 +63,6 @@ require_once '../../back/sistema_global/session.php';
               <div class="loader-container card-footer py-4" id="employee-pay-loader">
                 <div class="loader"></div>
               </div>
-
-              <!-- <table id="employee-table" class="table table-striped" style="width:100%">
-                <thead class="w-100">
-                  <th>NOMBRES</th>
-                  <th>CEDULA</th>
-                  <th>DEPENDENCIA</th>
-                  <th>NOMINA</th>
-                  <th>ACCIONES</th>
-                </thead>
-                <tbody>
-
-                </tbody>
-              </table> -->
-
-
-
             </div>
 
           </div>
@@ -109,7 +93,7 @@ require_once '../../back/sistema_global/session.php';
 
 </body>
 
-<script type="module" src="app.js"></script>
+<script type="module" src="../app.js"></script>
 
 </script>
 <!-- DATATABLES -->

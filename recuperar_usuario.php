@@ -18,7 +18,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="src/assets/css/style.css" id="main-style-link">
   <link rel="stylesheet" href="src/assets/css/style-preset.css">
-  <link rel="stylesheet" href="front/mod_nomina/src/styles/style.css">
+  <link rel="stylesheet" href="front/src/styles/style.css">
   <script src="src/assets/js/sweetalert2.all.min.js"></script>
   <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
@@ -38,7 +38,7 @@
   <div class="auth-main">
     <div class="auth-wrapper v1">
 
-      <div class="position-relative my-5 recovery-form-container">
+      <div class="position-relative mx-auto my-5 recovery-form-container">
         <div class="auth-bg">
 
           <span class="r s"></span>

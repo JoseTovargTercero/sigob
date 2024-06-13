@@ -51,7 +51,6 @@ function validateEmployeeForm({
     insertOptions({ input: 'instruccion_academica', data: profesiones })
     insertOptions({ input: 'dependencias', data: dependencias })
     insertOptions({ input: 'bancos', data: bancos })
-    console.log(bancos)
 
     // CÓDIGO PARA OBTENER EMPLEADO EN CASO DE EDITAR
     if (id) {
@@ -69,7 +68,7 @@ function validateEmployeeForm({
       employeeData[0].id = employeeData[0].id_empleado
 
       fieldList = employeeData[0]
-      console.log(fieldList, fieldListErrors)
+      // console.log(fieldList, fieldListErrors)
     }
   }
 

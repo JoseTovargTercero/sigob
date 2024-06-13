@@ -1,4 +1,9 @@
-import { getGruposNomina, getNominas } from '../api/peticionesNomina.js'
+import {
+  getGruposNomina,
+  getNominas,
+  getPeticionesNomina,
+} from '../api/peticionesNomina.js'
+import { tableListCard } from '../components/tabla_lista_card.js'
 import { validateInput } from '../helpers/helpers.js'
 import { createTable, employeePayTableHTML } from './peticionesNominaTable.js'
 
@@ -7,6 +12,8 @@ const w = window
 
 const selectGrupo = d.getElementById('grupo')
 const selectNomina = d.getElementById('nomina')
+const showRequestListBtn = d.getElementById('show-request-list')
+const closeRequestListBtn = d.getElementById('close-request-list')
 const employeePayForm = d.getElementById('employee-pay-form')
 
 let fieldList = {
@@ -69,6 +76,36 @@ function validateEmployeePayForm() {
       employeePayTableHTML({ nominaData: nomina })
     )
     createTable({ nominaData: nomina })
+  })
+
+  d.addEventListener('click', async (e) => {
+    let tableListCardElement = d.getElementById('table-list-card')
+
+    if (e.target === showRequestListBtn) {
+      let requestInfo = await getPeticionesNomina()
+      let requestInfoMaped = requestInfo.map((request) => {
+        return {
+          correlativo: request.correlativo,
+          nombre: request.nombre_nomina,
+          status: request.status == 0 ? 'En revisión' : 'Revisado',
+          fecha: request.creacion,
+        }
+      })
+      if (tableListCardElement) tableListCardElement.remove()
+
+      employeePayForm.insertAdjacentHTML(
+        'beforebegin',
+        tableListCard({
+          data: requestInfoMaped,
+          columms: ['correlativo', 'nombre', 'status', 'fecha'],
+        })
+      )
+    }
+
+    if (e.target.id === 'close-request-list') {
+      console.log('e')
+      if (tableListCardElement) tableListCardElement.remove()
+    }
   })
 }
 

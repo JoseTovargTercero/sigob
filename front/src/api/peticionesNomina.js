@@ -25,6 +25,9 @@ const obtenerPeticionesNominaUrl =
 const enviarCalculoNominaUrl =
   '../../../../../sigob/back/modulo_nomina/nom_calculonomina_registro.php'
 
+const confirmarPeticionNominaUrl =
+  '../../../../../sigob/back/modulo_nomina/nom_status_peticiones.php'
+
 const getNominas = async (grupo) => {
   const data = new FormData()
   data.append('select', true)
@@ -99,6 +102,7 @@ const getPeticionesNomina = async () => {
 }
 
 const getComparacionNomina = async (obj) => {
+  if (!obj) return
   let { correlativo, nombre_nomina } = obj
 
   showLoader('employee-pay-loader')
@@ -158,12 +162,41 @@ const sendCalculoNomina = async (requestInfo) => {
   }
 }
 
+const confirmarPeticionNomina = async (correlativo) => {
+  let formData = new FormData()
+  formData.append('correlativo', correlativo)
+  try {
+    let res = await fetch(confirmarPeticionNominaUrl, {
+      method: 'POST',
+      body: formData,
+    })
+
+    let text = await res.text()
+
+    await confirmNotification({
+      type: NOTIFICATIONS_TYPES.done,
+      message: text,
+    })
+    setTimeout(() => {
+      location.reload()
+    }, 1000)
+    return
+  } catch (e) {
+    console.log(e)
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener nominas',
+    })
+  }
+}
+
 export {
   getNominas,
   getGruposNomina,
   getPeticionesNomina,
   sendCalculoNomina,
   getComparacionNomina,
+  confirmarPeticionNomina,
 }
 
 async function mapComparationRequest(obj) {

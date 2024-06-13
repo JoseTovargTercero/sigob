@@ -5,7 +5,7 @@ require_once '../../back/sistema_global/session.php';
 <?php require_once '../includes/header.php' ?>
 
 <head>
-  <link rel="stylesheet" href="src/styles/style.css">
+  <link rel="stylesheet" href="../src/styles/style.css">
   <title>Tabuladores</title>
 </head>
 
@@ -74,77 +74,45 @@ require_once '../../back/sistema_global/session.php';
             <div class="card-body">
 
               <form id="tabulator-primary-form" autocomplete="off">
-                  
-              <div class="mb-3">
-                    <label class="form-label" class="form-label" for="nombre">NOMBRE</label>
-                    <input class="tabulator-input form-control form-input" type="text" name="nombre" id="nombre" placeholder="NOMBRE DE TABULADOR" />
-                  </div>
 
-                  <div class="mb-3">
-                    <div class="form-group">
-                      <label class="form-label" for="grados">GRADOS</label>
-                      <input class="tabulator-input form-control form-input" type="number" name="grados" id="grados" placeholder="GRADOS" />
-                    </div>
-                  </div>
+                <div class="mb-3">
+                  <label class="form-label" class="form-label" for="nombre">NOMBRE</label>
+                  <input class="tabulator-input form-control form-input" type="text" name="nombre" id="nombre"
+                    placeholder="NOMBRE DE TABULADOR" />
+                </div>
 
-                  <div class="mb-3">
-                    <div class="form-group">
-                      <label class="form-label" for="pasos">PASOS</label>
-                      <input class="tabulator-input form-control form-input" type="number" name="pasos" id="pasos" placeholder="PASOS" />
-                    </div>
+                <div class="mb-3">
+                  <div class="form-group">
+                    <label class="form-label" for="grados">GRADOS</label>
+                    <input class="tabulator-input form-control form-input" type="number" name="grados" id="grados"
+                      placeholder="GRADOS" />
                   </div>
-                  <div class="mb-3">
-                    <div class="form-group">
-                      <label class="form-label" for="aniosPasos">AÑOS POR PASO</label>
-                      <input class="tabulator-input form-control form-input" type="number" name="aniosPasos" id="aniosPasos" placeholder="AÑOS POR PASO" />
-                    </div>
+                </div>
+
+                <div class="mb-3">
+                  <div class="form-group">
+                    <label class="form-label" for="pasos">PASOS</label>
+                    <input class="tabulator-input form-control form-input" type="number" name="pasos" id="pasos"
+                      placeholder="PASOS" />
                   </div>
+                </div>
+                <div class="mb-3">
+                  <div class="form-group">
+                    <label class="form-label" for="aniosPasos">AÑOS POR PASO</label>
+                    <input class="tabulator-input form-control form-input" type="number" name="aniosPasos"
+                      id="aniosPasos" placeholder="AÑOS POR PASO" />
+                  </div>
+                </div>
                 <div class="text-end">
                   <button class="btn btn-primary" id="tabulator-btn">SIGUIENTE</button>
                 </div>
               </form>
-
-
-
-
             </div>
           </div>
         </div>
-
-        <!-- [ worldLow section ] end -->
-        <!-- [ Recent Users ] end -->
       </div>
-      <!-- [ Main Content ] end -->
     </div>
-
-
-
-
-
-    
-
-
-
-
-
   </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -158,7 +126,7 @@ require_once '../../back/sistema_global/session.php';
 
 
 
-<script type="module" src="app.js"></script>
+<script type="module" src="../app.js"></script>
 <script src="https://cdn.datatables.net/2.0.1/js/dataTables.js"></script>
 <script src="https://cdn.datatables.net/2.0.1/js/dataTables.bootstrap5.js"></script>
 <script src="../../src/assets/js/plugins/simplebar.min.js"></script>
