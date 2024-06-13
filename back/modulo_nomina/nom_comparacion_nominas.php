@@ -1,7 +1,6 @@
 <?php
 require_once '../sistema_global/conexion.php';
 
-
 // Obtener el contenido JSON de la solicitud POST
 $data = json_decode(file_get_contents('php://input'), true);
 
@@ -24,10 +23,10 @@ if ($result->num_rows > 0) {
     exit();
 }
 
-// Consultar el registro anterior al correlativo actual que tenga el mismo nombre_nomina
+// Consultar el registro anterior al correlativo actual que tenga el mismo nombre_nomina y status = 1
 $sql_anterior = "
     SELECT * FROM peticiones 
-    WHERE nombre_nomina = ? AND correlativo < ? 
+    WHERE nombre_nomina = ? AND correlativo < ? AND status = 1
     ORDER BY correlativo DESC 
     LIMIT 1";
 $stmt_anterior = $conexion->prepare($sql_anterior);
@@ -38,16 +37,7 @@ $result_anterior = $stmt_anterior->get_result();
 if ($result_anterior->num_rows > 0) {
     $registro_anterior = $result_anterior->fetch_assoc();
 } else {
-    $registro_anterior = [
-        "id" => 0,
-        "empleados" => 0,
-        "asignaciones" => 0,
-        "deducciones" => 0,
-        "total_pagar" => 0,
-        "correlativo" => 0,
-        "status" => "",
-        "nombre_nomina" => ""
-    ];
+    $registro_anterior = false;
 }
 
 // Respuesta JSON con ambos registros
@@ -60,5 +50,4 @@ echo json_encode($response);
 
 // Cerrar la conexión
 $conexion->close();
-
 ?>
