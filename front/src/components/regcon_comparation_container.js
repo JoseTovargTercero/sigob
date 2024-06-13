@@ -26,7 +26,7 @@ const createCard = ({ actual, anterior, confirmBtn }) => {
     totalEmpleadosAnterior,
     totalPagarAnterior
 
-  if (anterior.status == 1) anterior = false
+  if (anterior.status == 0) anterior = false
   if (anterior) {
     correlativoAnterior = anterior.correlativo
     nombreNominaAnterior = anterior.nombre_nomina
