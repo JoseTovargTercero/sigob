@@ -16,6 +16,7 @@
   padding: 0;
   box-sizing: border-box;
   scrollbar-width: thin;
+  scroll-behavior: smooth;
 }
 table {
   border-collapse: collapse;
@@ -40,7 +41,6 @@ tr:hover {
 }
 
 a {
-  display: inline-flex !important;
   border-radius: 10px !important;
 }
 

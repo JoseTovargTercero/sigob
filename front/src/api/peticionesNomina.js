@@ -74,7 +74,11 @@ const getGruposNomina = async (data) => {
 }
 
 const getPeticionesNomina = async () => {
-  showLoader('employee-pay-loader')
+  let loader = document.getElementById('select-request-loader')
+  if (loader) {
+    showLoader('select-request-loader')
+  }
+
   try {
     let res = await fetch(obtenerPeticionesNominaUrl)
 
@@ -97,7 +101,9 @@ const getPeticionesNomina = async () => {
       message: 'Error al obtener nominas',
     })
   } finally {
-    hideLoader('employee-pay-loader')
+    if (loader) {
+      hideLoader('select-request-loader')
+    }
   }
 }
 
@@ -219,95 +225,138 @@ async function mapData(data) {
   let profesiones = await getProfessionData()
   return data.map((empleado) => {
     let {
-      id,
       nacionalidad,
-      cedula,
-      cod_empleado,
-      nombres,
-      fecha_ingreso,
-      otros_años,
       status,
-      observacion,
-      cod_cargo,
-      banco,
-      cuenta_bancaria,
-      hijos,
-      instruccion_academica,
       discapacidades,
       tipo_cuenta,
-      tipo_nomina,
       id_dependencia,
-      salario_base,
-      salario_integral,
-      total_a_pagar,
-      RPE,
+      instruccion_academica,
+      cod_cargo,
     } = empleado
 
     // Datos dinámicos
 
-    nacionalidad = 'V' ? 'VENEZOLANO' : 'E'
-    status = 1 ? 'ACTIVO' : 'INACTIVO'
-    discapacidades = 1 ? 'SI' : 'NO'
-    tipo_cuenta = 1 ? 'AHORRO' : 'CORRIENTE'
+    empleado.nacionalidad = nacionalidad == 1 ? 'VENEZOLANO' : 'EXTRANJERO'
+    empleado.status = status == 1 ? 'ACTIVO' : 'INACTIVO'
+    discapacidades = discapacidades == 1 ? 'SI' : 'NO'
+    empleado.tipo_cuenta = tipo_cuenta = 1 ? 'AHORRO' : 'CORRIENTE'
+
     id_dependencia = dependencias.find((el) => el.id == id_dependencia)
     instruccion_academica = profesiones.find(
       (el) => el.id == instruccion_academica
     )
     cod_cargo = cargos.find((el) => el.id == cod_cargo)
 
-    let CONTRIBUCION_POR_DISCAPACIDAD =
-        empleado['CONTRIBUCION POR DISCAPACIDAD'],
-      PRIMA_POR_HIJO_EMPLEADOS = empleado['PRIMA POR HIJO EMPLEADOS'],
-      PRIMA_POR_TRANSPORTE = empleado['PRIMA POR TRANSPORTE'],
-      PRIMA_POR_ANTIGUEDAD_EMPLEADOS =
-        empleado['PRIMA POR ANTIGUEDAD EMPLEADOS'],
-      PRIMA_POR_ESCALAFON = empleado['PRIMA POR ESCALAFON'],
-      PRIMA_POR_FRONTERA = empleado['PRIMA POR FRONTERA'],
-      PRIMA_POR_PROFESIONALES = empleado['PRIMA POR PROFESIONALES'],
-      S_S_O = empleado['S. S. O'],
-      A_P_S_S_O = empleado['A/P S.S.O'],
-      A_P_RPE = empleado['A/P RPE'],
-      PAGO_DE_BECA = empleado['PAGO DE BECA'],
-      PRIMA_P_DED_AL_S_PUBLICO_UNICO_DE_SALUD =
-        empleado['PRIMA P/DED AL S/PUBLICO UNICO DE SALUD']
-    return {
-      id,
-      nacionalidad,
-      cedula,
-      cod_empleado,
-      nombres,
-      fecha_ingreso,
-      otros_años,
-      status,
-      cod_cargo: cod_cargo ? cod_cargo.name : 'Cargo no disponible',
-      banco,
-      cuenta_bancaria,
-      hijos,
-      instruccion_academica: instruccion_academica
-        ? instruccion_academica.name
-        : 'Profesión no disponible',
-      discapacidades,
-      tipo_cuenta,
-      tipo_nomina,
-      id_dependencia: id_dependencia
-        ? id_dependencia.name
-        : 'Dependencia no disponible',
-      salario_base,
-      salario_integral,
-      CONTRIBUCION_POR_DISCAPACIDAD,
-      PRIMA_POR_HIJO_EMPLEADOS,
-      PRIMA_POR_TRANSPORTE,
-      PRIMA_POR_ANTIGUEDAD_EMPLEADOS,
-      PRIMA_POR_ESCALAFON,
-      PRIMA_POR_FRONTERA,
-      PRIMA_POR_PROFESIONALES,
-      S_S_O,
-      RPE,
-      A_P_S_S_O,
-      A_P_RPE,
-      PAGO_DE_BECA,
-      PRIMA_P_DED_AL_S_PUBLICO_UNICO_DE_SALUD,
-      total_a_pagar,
-    }
+    empleado.id_dependencia = id_dependencia
+      ? id_dependencia.name
+      : 'No disponible'
+
+    empleado.instruccion_academica = instruccion_academica
+      ? instruccion_academica.name
+      : 'No disponible'
+
+    empleado.cod_cargo = cod_cargo ? cod_cargo.name : 'No disponible'
+
+    return empleado
   })
 }
+
+// async function mapData(data) {
+//   let cargos = await getJobData()
+
+//   let dependencias = await getDependencyData()
+//   let profesiones = await getProfessionData()
+//   return data.map((empleado) => {
+//     let {
+//       id,
+//       nacionalidad,
+//       cedula,
+//       cod_empleado,
+//       nombres,
+//       fecha_ingreso,
+//       otros_años,
+//       status,
+//       observacion,
+//       cod_cargo,
+//       banco,
+//       cuenta_bancaria,
+//       hijos,
+//       instruccion_academica,
+//       discapacidades,
+//       tipo_cuenta,
+//       tipo_nomina,
+//       id_dependencia,
+//       salario_base,
+//       salario_integral,
+//       total_a_pagar,
+//       RPE,
+//     } = empleado
+
+//     // Datos dinámicos
+
+//     nacionalidad = 'V' ? 'VENEZOLANO' : 'E'
+//     status = 1 ? 'ACTIVO' : 'INACTIVO'
+//     discapacidades = 1 ? 'SI' : 'NO'
+//     tipo_cuenta = 1 ? 'AHORRO' : 'CORRIENTE'
+//     id_dependencia = dependencias.find((el) => el.id == id_dependencia)
+//     instruccion_academica = profesiones.find(
+//       (el) => el.id == instruccion_academica
+//     )
+//     cod_cargo = cargos.find((el) => el.id == cod_cargo)
+
+//     let CONTRIBUCION_POR_DISCAPACIDAD =
+//         empleado['CONTRIBUCION POR DISCAPACIDAD'],
+//       PRIMA_POR_HIJO_EMPLEADOS = empleado['PRIMA POR HIJO EMPLEADOS'],
+//       PRIMA_POR_TRANSPORTE = empleado['PRIMA POR TRANSPORTE'],
+//       PRIMA_POR_ANTIGUEDAD_EMPLEADOS =
+//         empleado['PRIMA POR ANTIGUEDAD EMPLEADOS'],
+//       PRIMA_POR_ESCALAFON = empleado['PRIMA POR ESCALAFON'],
+//       PRIMA_POR_FRONTERA = empleado['PRIMA POR FRONTERA'],
+//       PRIMA_POR_PROFESIONALES = empleado['PRIMA POR PROFESIONALES'],
+//       S_S_O = empleado['S. S. O'],
+//       A_P_S_S_O = empleado['A/P S.S.O'],
+//       A_P_RPE = empleado['A/P RPE'],
+//       PAGO_DE_BECA = empleado['PAGO DE BECA'],
+//       PRIMA_P_DED_AL_S_PUBLICO_UNICO_DE_SALUD =
+//         empleado['PRIMA P/DED AL S/PUBLICO UNICO DE SALUD']
+//     return {
+//       id,
+//       nacionalidad,
+//       cedula,
+//       cod_empleado,
+//       nombres,
+//       fecha_ingreso,
+//       otros_años,
+//       status,
+//       cod_cargo: cod_cargo ? cod_cargo.name : 'Cargo no disponible',
+//       banco,
+//       cuenta_bancaria,
+//       hijos,
+//       instruccion_academica: instruccion_academica
+//         ? instruccion_academica.name
+//         : 'Profesión no disponible',
+//       discapacidades,
+//       tipo_cuenta,
+//       tipo_nomina,
+//       id_dependencia: id_dependencia
+//         ? id_dependencia.name
+//         : 'Dependencia no disponible',
+//       salario_base,
+//       salario_integral,
+//       CONTRIBUCION_POR_DISCAPACIDAD,
+//       PRIMA_POR_HIJO_EMPLEADOS,
+//       PRIMA_POR_TRANSPORTE,
+//       PRIMA_POR_ANTIGUEDAD_EMPLEADOS,
+//       PRIMA_POR_ESCALAFON,
+//       PRIMA_POR_FRONTERA,
+//       PRIMA_POR_PROFESIONALES,
+//       S_S_O,
+//       RPE,
+//       A_P_S_S_O,
+//       A_P_RPE,
+//       PAGO_DE_BECA,
+//       PRIMA_P_DED_AL_S_PUBLICO_UNICO_DE_SALUD,
+//       total_a_pagar,
+//     }
+//   })
+// }

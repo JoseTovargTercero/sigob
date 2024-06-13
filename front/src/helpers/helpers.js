@@ -337,10 +337,13 @@ function closeModal({ modalId }) {
 // FUNCIÓNES PARA LOADERS
 
 function showLoader(loaderId) {
-  d.getElementById(loaderId).style.display = 'block'
+  let loader = d.getElementById(loaderId)
+  loader.style.display = 'block'
+  loader.focus()
 }
 function hideLoader(loaderId) {
-  d.getElementById(loaderId).style.display = 'none'
+  let loader = d.getElementById(loaderId)
+  loader.style.display = 'none'
 }
 
 function confirmNotification({

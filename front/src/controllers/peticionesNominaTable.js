@@ -32,17 +32,18 @@ const tableLanguage = {
   },
 }
 
-export async function createTable({ nominaData }) {
+export async function createTable({ nominaData, columns }) {
   let { informacion_empleados, nombre_nomina } = nominaData
 
   let datosOrdenados = [...informacion_empleados].sort((a, b) => a.id - b.id)
-
-  let columnsText = Object.keys(datosOrdenados[0]).map((el) => {
+  console.log(columns[28])
+  let columnsTable = columns.map((el) => {
     return { data: el }
   })
+  console.log(columnsTable)
 
-  let employeePayTable = new DataTable('#employee-pay-table', {
-    columns: columnsText,
+  let employeePayTable = new DataTable('#request-employee-table', {
+    columns: columnsTable,
     responsive: true,
     scrollY: 300,
     language: tableLanguage,
@@ -62,16 +63,14 @@ export async function createTable({ nominaData }) {
 
   employeePayTable.clear().draw()
 
-  // console.log(datosOrdenados)
+  console.log(datosOrdenados)
   employeePayTable.rows.add(datosOrdenados).draw()
 }
 
-export function employeePayTableHTML({ nominaData }) {
+export function employeePayTableHTML({ nominaData, columns }) {
   requestInfo = nominaData
 
   let { informacion_empleados, nombre_nomina } = nominaData
-
-  let columnsText = Object.keys(informacion_empleados[0])
 
   let cantidad_emplados = informacion_empleados.length
   let total_a_pagar = informacion_empleados.reduce(
@@ -79,17 +78,20 @@ export function employeePayTableHTML({ nominaData }) {
     0
   )
 
-  let columns = columnsText
+  let columnsTh = columns
     .map((el) => {
       return `<th>${el}</th>`
     })
-    .join('')
+    .join(' ')
+  console.log(columnsTh)
 
-  let table = `<div class='card' id='employee-pay-table-card'>
+  console.log(columns)
+
+  let table = `<div class='card' id='request-employee-table-card'>
       <div class='card-header'>
         <div class=''>
           <div>
-            <h5 class='mb-0'>Nómina ${nombre_nomina}</h5>
+            <h5 class='mb-2'>Nómina ${nombre_nomina}</h5>
           
             <ul class='d-block'>
               <li><strong>Empleados en nómina:</strong> ${cantidad_emplados} empleado/s</li>
@@ -105,11 +107,11 @@ export function employeePayTableHTML({ nominaData }) {
       </div>
       <div class='card-body'>
         <table
-          id='employee-pay-table'
+          id='request-employee-table'
           class='table table-striped'
           style='width:100%'
         >
-          <thead>${columns}</thead>
+          <thead>${columnsTh}</thead>
           <tbody></tbody>
         </table>
       </div>

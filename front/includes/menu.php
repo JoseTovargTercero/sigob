@@ -55,7 +55,7 @@
               <li class="pc-item"><a class="pc-link"
                   href="<?php echo constant('URL') ?>front/mod_nomina/nom_peticiones_form">Peticiones</a></li>
               <li class="pc-item"><a class="pc-link"
-                  href="<?php echo constant('URL') ?>front/mod_registro_control/regcon_nomina_comparar">Solicitud de
+                  href="<?php echo constant('URL') ?>front/mod_registro_control/regcon_nomina_comparar">Revision de
                   nominas</a></li>
             </ul>
           </li>
@@ -78,9 +78,7 @@
               <li class="pc-item"><a class="pc-link"
                   href="<?php echo constant('URL') ?>front/mod_registro_control/regcon_empleados_verificar">Nuevos
                   empleados</a></li>
-              <li class="pc-item"><a class="pc-link"
-                  href="<?php echo constant('URL') ?>front/mod_registro_control/regcon_nomina_comparar">Solicitud de
-                  nominas</a></li>
+
             </ul>
           </li>
 

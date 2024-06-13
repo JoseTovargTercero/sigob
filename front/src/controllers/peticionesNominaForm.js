@@ -12,7 +12,8 @@ const w = window
 
 const selectGrupo = d.getElementById('grupo')
 const selectNomina = d.getElementById('nomina')
-const showRequestListBtn = d.getElementById('show-request-list')
+const requestSelectContainer = d.getElementById('request-employee-container')
+const showRequestGroupBtn = d.getElementById('show-request-group')
 const closeRequestListBtn = d.getElementById('close-request-list')
 const employeePayForm = d.getElementById('employee-pay-form')
 
@@ -46,7 +47,7 @@ function validateEmployeePayForm() {
     let nominas = await getNominas(e.target.value)
 
     selectNomina.innerHTML = ''
-    let employeePayTableCard = d.getElementById('employee-pay-table-card')
+    let employeePayTableCard = d.getElementById('request-employee-table-card')
 
     if (employeePayTableCard) employeePayTableCard.remove()
 
@@ -67,39 +68,25 @@ function validateEmployeePayForm() {
     if (!e.target.value) return
     let nomina = await getGruposNomina(e.target.value)
 
-    let employeePayTableCard = d.getElementById('employee-pay-table-card')
+    let employeePayTableCard = d.getElementById('request-employee-table-card')
     if (employeePayTableCard) employeePayTableCard.remove()
+
+    let columns = Object.keys(nomina.informacion_empleados[0]).map((el) => {
+      return el
+    })
 
     // Insertar tabla en formulario
     employeePayForm.insertAdjacentHTML(
       'beforeend',
-      employeePayTableHTML({ nominaData: nomina })
+      employeePayTableHTML({ nominaData: nomina, columns })
     )
-    createTable({ nominaData: nomina })
+    createTable({ nominaData: nomina, columns })
   })
 
   d.addEventListener('click', async (e) => {
-    let tableListCardElement = d.getElementById('table-list-card')
-
-    if (e.target === showRequestListBtn) {
+    if (e.target === showRequestGroupBtn) {
       let requestInfo = await getPeticionesNomina()
-      let requestInfoMaped = requestInfo.map((request) => {
-        return {
-          correlativo: request.correlativo,
-          nombre: request.nombre_nomina,
-          status: request.status == 0 ? 'En revisión' : 'Revisado',
-          fecha: request.creacion,
-        }
-      })
-      if (tableListCardElement) tableListCardElement.remove()
-
-      employeePayForm.insertAdjacentHTML(
-        'beforebegin',
-        tableListCard({
-          data: requestInfoMaped,
-          columms: ['correlativo', 'nombre', 'status', 'fecha'],
-        })
-      )
+      requestSelectContainer.classList.remove('hide')
     }
 
     if (e.target.id === 'close-request-list') {

@@ -52,46 +52,62 @@ require_once '../../back/sistema_global/session.php';
                         <div class="card-header">
                             <div class="d-flex align-items-center justify-content-between">
                                 <div>
-                                    <h5 class="mb-0">Petición de nómina a pagar</h5>
+                                    <h5 class="mb-0">Peticion de nomina</h5>
+                                    <small class="text-muted mt-0">Administre las peticiones de nomina</small>
                                 </div>
-                                <button class="btn btn-success" id="show-request-list">Mostrar peticiones</button>
+                                <button class="btn btn-primary" id="show-request-group">Nueva petición</button>
+
                             </div>
                         </div>
-                        <div class="card-body employee-nom-group">
+                        <div class="card-body request-table-container">
 
-                            <div class="mb-2">
-                                <label for="grupo" class="form-label">Grupo de nomina</label>
-                                <small class="text-muted mt-0 d-block mb-2">Seleccione un grupo de nomina</small>
+                            <div class="mb-2 mx-auto">
+                                <table id='request-nom-table' class='table table-striped mx-auto' style='width:100%'>
+                                    <thead>
+                                        <th class="">CORRELATIVO</th>
+                                        <th class="">NOMBRE</th>
+                                        <th class="">STATUS</th>
+                                        <th class="">FECHA</th>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                            <div class="employee-nom-group hide slide-up-animation" id="request-employee-container">
+                                <div class="loader-container card-footer py-4" id="select-request-loader">
+                                    <div class="loader"></div>
+                                </div>
+                                <div class="mb-2 w-100">
+                                    <label for="grupo" class="form-label">Grupo de nomina</label>
+                                    <small class="text-muted mt-0 d-block mb-2">Seleccione un grupo de nomina</small>
 
-                                <select id="grupo" name="grupo" class="form-control" size="6">
-                                    <?php
-                                    $stmt = mysqli_prepare($conexion, "SELECT id, codigo, nombre FROM `nominas_grupos` ORDER BY codigo");
-                                    $stmt->execute();
-                                    $result = $stmt->get_result();
-                                    if ($result->num_rows > 0) {
-                                        while ($row = $result->fetch_assoc()) {
-                                            echo '<option value="' . $row['id'] . '">' . $row['codigo'] . ' - ' . $row['nombre'] . '</option>';
+                                    <select id="grupo" name="grupo" class="form-control" size="3">
+                                        <?php
+                                        $stmt = mysqli_prepare($conexion, "SELECT id, codigo, nombre FROM `nominas_grupos` ORDER BY codigo");
+                                        $stmt->execute();
+                                        $result = $stmt->get_result();
+                                        if ($result->num_rows > 0) {
+                                            while ($row = $result->fetch_assoc()) {
+                                                echo '<option value="' . $row['id'] . '">' . $row['codigo'] . ' - ' . $row['nombre'] . '</option>';
+                                            }
                                         }
-                                    }
-                                    $stmt->close();
-                                    ?>
-                                </select>
+                                        $stmt->close();
+                                        ?>
+                                    </select>
+                                </div>
+
+
+                                <div class="mb-2 w-100">
+                                    <label for="nomina" class="form-label">Nómina</label>
+                                    <small class="text-muted mt-0 d-block mb-2">Seleccione la nómina a registrar</small>
+                                    <select id="nomina" name="nomina" class="form-control" size="3">
+                                        <option value="">Seleccionar grupo de nómina</option>
+                                    </select>
+                                </div>
                             </div>
-                            <box-icon type='solid' color="gray" name='right-arrow'></box-icon>
 
-                            <div class="mb-2">
-                                <label for="nomina" class="form-label">Nómina</label>
-                                <small class="text-muted mt-0 d-block mb-2">Seleccione la nómina a registrar</small>
-                                <select id="nomina" name="nomina" class="form-control" size="6">
-                                    <option value="">Seleccionar grupo de nómina</option>
-                                </select>
-                            </div>
 
-                            <!-- <div class="mb-3">
-                                <button class="btn btn-info">REALIZAR PETICIÓN</button>
-
-                            </div> -->
                         </div>
+
 
 
                         <div class="loader-container card-footer py-4" id="employee-pay-loader">
@@ -109,7 +125,7 @@ require_once '../../back/sistema_global/session.php';
 
     <!-- [ Main Content ] end -->
     <script type="module" src="../src/controllers/peticionesNominaForm.js"></script>
-    <!-- <script type="module" src="app.js"></script> -->
+    <script type="module" src="../src/controllers/peticionesTable.js"></script>
     <script src="https://cdn.datatables.net/2.0.1/js/dataTables.js"></script>
     <script src="https://cdn.datatables.net/2.0.1/js/dataTables.bootstrap5.js"></script>
     <script src="../../src/assets/js/plugins/simplebar.min.js"></script>

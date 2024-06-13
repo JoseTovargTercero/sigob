@@ -1,7 +1,7 @@
 .employee-nom-group {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+
   gap: 1rem;
   flex-wrap: wrap;
 }
@@ -10,15 +10,24 @@
   font-size: 12px;
 }
 
-.employee-nom-group th {
-  font-size: 10px;
-}
-
 .employee-nom-group select {
-  width: 280px;
+  width: 100%;
   text-overflow: ellipsis;
 
   /* scrollbar-width: none; */
+}
+
+.request-table-container {
+  width: 100%;
+  padding: 1rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+  gap: 1rem;
+  min-height: 300px;
+}
+
+.request-table-container div:nth-child(1) {
+  max-width: 1024px;
 }
 
 /* COMPARACIÓN DE PETICIONES */
@@ -27,7 +36,7 @@
   width: 100%;
   padding: 1rem;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1rem;
   min-height: 300px;
 }

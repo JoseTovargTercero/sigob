@@ -47,15 +47,15 @@ require_once '../../back/sistema_global/session.php';
             </div>
             <div class="card-body">
               <div class="forum-group">
-                <div class="row">
-                  <div class="mb-2">
+                <div class="row mx-auto align-items-end">
+                  <div class="col-sm">
                     <label for="nomina" class="form-label">Seleccionar nómina</label>
                     <!-- <small class="text-muted mt-0 d-block mb-2">Seleccione la nómina a registrar</small> -->
                     <select id="select-nomina" name="select-nomina" class="form-control">
                       <option value="">Seleccionar petición de nómina</option>
                     </select>
                   </div>
-                  <div class="col-sm">
+                  <div class="col-sm align-items-center">
                     <button class="btn btn-primary" id="consultar-nomina">Consultar</button>
                   </div>
                 </div>
