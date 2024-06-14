@@ -32,41 +32,6 @@ const tableLanguage = {
   },
 }
 
-export async function createTable({ nominaData, columns }) {
-  let { informacion_empleados, nombre_nomina } = nominaData
-
-  let datosOrdenados = [...informacion_empleados].sort((a, b) => a.id - b.id)
-  console.log(columns[28])
-  let columnsTable = columns.map((el) => {
-    return { data: el }
-  })
-  console.log(columnsTable)
-
-  let employeePayTable = new DataTable('#request-employee-table', {
-    columns: columnsTable,
-    responsive: true,
-    scrollY: 300,
-    language: tableLanguage,
-    layout: {
-      topEnd: function () {
-        let toolbar = document.createElement('div')
-        toolbar.innerHTML = `<button id="employee-pay-request" class="btn btn-info">REALIZAR PETICIÓN</button>
-        `
-
-        return toolbar
-      },
-      topStart: { search: { placeholder: 'Buscar...' } },
-      bottomStart: 'info',
-      bottomEnd: 'paging',
-    },
-  })
-
-  employeePayTable.clear().draw()
-
-  console.log(datosOrdenados)
-  employeePayTable.rows.add(datosOrdenados).draw()
-}
-
 export function employeePayTableHTML({ nominaData, columns }) {
   requestInfo = nominaData
 
@@ -78,14 +43,23 @@ export function employeePayTableHTML({ nominaData, columns }) {
     0
   )
 
+  let rowsTr = informacion_empleados
+    .map((row) => {
+      let td = ''
+
+      Object.values(row).map((el) => {
+        td += `<td>${el}</td>`
+      })
+
+      return `<tr>${td}</tr>`
+    })
+    .join('')
+
   let columnsTh = columns
     .map((el) => {
       return `<th>${el}</th>`
     })
-    .join(' ')
-  console.log(columnsTh)
-
-  console.log(columns)
+    .join('')
 
   let table = `<div class='card' id='request-employee-table-card'>
       <div class='card-header'>
@@ -112,12 +86,42 @@ export function employeePayTableHTML({ nominaData, columns }) {
           style='width:100%'
         >
           <thead>${columnsTh}</thead>
-          <tbody></tbody>
+          <tbody>
+          ${rowsTr}</tbody>
         </table>
       </div>
     </div>`
 
   return table
+}
+
+export async function createTable({ nominaData, columns }) {
+  let { informacion_empleados, nombre_nomina } = nominaData
+
+  // let datosOrdenados = [...informacion_empleados].sort((a, b) => a.id - b.id)
+
+  let columnTable = columns.map((el) => {
+    return { data: el }
+  })
+
+  let employeePayTable = new DataTable('#request-employee-table', {
+    columns: columnTable,
+    responsive: true,
+    scrollY: 300,
+    language: tableLanguage,
+    layout: {
+      topEnd: function () {
+        let toolbar = document.createElement('div')
+        toolbar.innerHTML = `<button id="employee-pay-request" class="btn btn-info">REALIZAR PETICIÓN</button>
+        `
+
+        return toolbar
+      },
+      topStart: { search: { placeholder: 'Buscar...' } },
+      bottomStart: 'info',
+      bottomEnd: 'paging',
+    },
+  })
 }
 
 d.addEventListener('click', (e) => {
@@ -131,70 +135,3 @@ d.addEventListener('click', (e) => {
     })
   }
 })
-
-// .map((empleados) => {
-//   let {
-//     id,
-//     nombres,
-//     nacionalidad,
-//     cedula,
-//     banco,
-//     tipo_banco,
-//     cod_cargo,
-//     otros_años,
-//     discapacidades,
-//     hijos,
-//     instruccion_academica,
-//     id_dependencia,
-//     fecha_ingreso,
-//     tipo_nomina,
-//     salario_base,
-//     salario_integral,
-//     CONTRIBUCION_POR_DISCAPACIDAD,
-//     PRIMA_POR_HIJO_EMPLEADOS,
-//     PRIMA_POR_TRANSPORTE,
-//     PRIMA_POR_ANTIGUEDAD_EMPLEADOS,
-//     PRIMA_POR_ESCALAFON,
-//     PRIMA_POR_FRONTERA,
-//     PRIMA_POR_PROFESIONALES,
-//     S_S_O,
-//     RPE,
-//     A_P_S_S_O,
-//     A_P_RPE,
-//     PAGO_DE_BECA,
-//     PRIMA_P_DED_AL_S_PUBLICO_UNICO_DE_SALUD,
-//     total_a_pagar,
-//   } = empleados
-//   return {
-//     id,
-//     nombres,
-//     nacionalidad,
-//     cedula,
-//     banco,
-//     tipo_banco,
-//     cod_cargo,
-//     otros_años,
-//     discapacidades,
-//     hijos,
-//     instruccion_academica,
-//     id_dependencia,
-//     fecha_ingreso,
-//     tipo_nomina,
-//     salario_base,
-//     salario_integral,
-//     CONTRIBUCION_POR_DISCAPACIDAD,
-//     PRIMA_POR_HIJO_EMPLEADOS,
-//     PRIMA_POR_TRANSPORTE,
-//     PRIMA_POR_ANTIGUEDAD_EMPLEADOS,
-//     PRIMA_POR_ESCALAFON,
-//     PRIMA_POR_FRONTERA,
-//     PRIMA_POR_PROFESIONALES,
-//     S_S_O,
-//     RPE,
-//     A_P_S_S_O,
-//     A_P_RPE,
-//     PAGO_DE_BECA,
-//     PRIMA_P_DED_AL_S_PUBLICO_UNICO_DE_SALUD,
-//     total_a_pagar,
-//   }
-// })

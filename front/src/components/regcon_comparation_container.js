@@ -47,6 +47,12 @@ const createCard = ({ actual, anterior, confirmBtn }) => {
     'Deducciones'
   )
 
+  let listaAportes = createObjectList(
+    anterior.aportes,
+    actual.aportes,
+    'Aportes'
+  )
+
   return `
     <div class='card p-2 slide-up-animation'>
       <div class='card-header row py-2'>
@@ -91,11 +97,13 @@ const createCard = ({ actual, anterior, confirmBtn }) => {
     </div>
       </div>
 
-      <div class='card-body table-responsive'>
-       
+      <div class='card-body request-list-container'>
+      
         ${listaAsignaciones}
         
         ${listaDeducciones}
+
+        ${listaAportes}
 
       
       </div>
@@ -144,7 +152,7 @@ const createObjectList = (anterior, actual, title) => {
 
   let totalDiferencia = totalListAnterior - totalListActual
 
-  tr += `<tr class="table-primary">
+  tr += `<tr class="p-0 table-primary">
       <td>TOTAL</td>
       ${
         totalListAnterior
@@ -159,15 +167,12 @@ const createObjectList = (anterior, actual, title) => {
   console.log(totalListActual, totalListAnterior)
 
   return `
-    <table class="table table-sm table-responsive mx-auto" style='width: fit-content'>
-    <h5 class='card-title text-center'>
-    <b>${title}</b>
-  </h5>
-      <thead>
+    <table class="table" style='width: 100%'>
+          <thead>
         <th class="">Propiedad</th>
-        ${anterior ? `<th>Anterior</th>` : ''}
-        <th>Actual</th>
-        ${anterior ? `<th>Diferencia</th>` : ''}
+        ${anterior ? `<th class="">Anterior</th>` : ''}
+        <th class="">Actual</th>
+        ${anterior ? `<th class="">Diferencia</th>` : ''}
       </thead>
       <tbody>${tr}</tbody>
     </table>`

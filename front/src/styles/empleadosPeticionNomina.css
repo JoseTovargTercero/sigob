@@ -41,6 +41,12 @@
   min-height: 300px;
 }
 
-.request-comparation-container div {
-  width: 100%;
+.request-list-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(480px, 1fr));
+  align-items: start;
+  justify-items: center;
+}
+.request-list-container table {
+  max-width: 450px;
 }

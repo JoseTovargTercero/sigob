@@ -71,9 +71,7 @@ function validateEmployeePayForm() {
     let employeePayTableCard = d.getElementById('request-employee-table-card')
     if (employeePayTableCard) employeePayTableCard.remove()
 
-    let columns = Object.keys(nomina.informacion_empleados[0]).map((el) => {
-      return el
-    })
+    let columns = Object.keys(nomina.informacion_empleados[0])
 
     // Insertar tabla en formulario
     employeePayForm.insertAdjacentHTML(
