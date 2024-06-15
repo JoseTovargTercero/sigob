@@ -1,3 +1,4 @@
+import { loadRequestTable } from '../controllers/peticionesTable.js'
 import {
   confirmNotification,
   hideLoader,
@@ -156,16 +157,18 @@ const sendCalculoNomina = async (requestInfo) => {
       type: NOTIFICATIONS_TYPES.done,
       message: json.success,
     })
-    setTimeout(() => {
-      location.reload()
-    }, 1000)
-    return
+
+    // RECARGAR TABLA DE PETICIONES AL ENVIAR PETICIÓN DE CÁLCULO DE NOMINA
+    // loadRequestTable()
+
+    return json
   } catch (e) {
-    console.log(e)
-    return confirmNotification({
+    confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
       message: 'Error al obtener nominas',
     })
+
+    return false
   }
 }
 

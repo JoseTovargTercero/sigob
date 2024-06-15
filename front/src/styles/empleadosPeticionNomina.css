@@ -27,7 +27,8 @@
 }
 
 .request-table-container div:nth-child(1) {
-  max-width: 1024px;
+  width: 100%;
+  max-width: 600px;
 }
 
 /* COMPARACIÓN DE PETICIONES */
@@ -43,10 +44,14 @@
 
 .request-list-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(480px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
   align-items: start;
   justify-items: center;
 }
 .request-list-container table {
-  max-width: 450px;
+  max-width: 420px;
+}
+
+.request-list-container table td {
+  padding: 0.4rem;
 }

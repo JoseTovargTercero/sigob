@@ -64,18 +64,16 @@ require_once '../../back/sistema_global/session.php';
                             <div class="mb-2 mx-auto">
                                 <table id='request-nom-table' class='table table-striped mx-auto' style='width:100%'>
                                     <thead>
-                                        <th class="">CORRELATIVO</th>
-                                        <th class="">NOMBRE</th>
-                                        <th class="">STATUS</th>
-                                        <th class="">FECHA</th>
+                                        <th class="w-5">CORRELATIVO</th>
+                                        <th class="w-30">NOMBRE</th>
+                                        <th class="w-30">STATUS</th>
+                                        <th class="w-5">FECHA</th>
                                     </thead>
                                     <tbody></tbody>
                                 </table>
                             </div>
                             <div class="employee-nom-group hide slide-up-animation" id="request-employee-container">
-                                <div class="loader-container card-footer py-4" id="select-request-loader">
-                                    <div class="loader"></div>
-                                </div>
+
                                 <div class="mb-2 w-100">
                                     <label for="grupo" class="form-label">Grupo de nomina</label>
                                     <small class="text-muted mt-0 d-block mb-2">Seleccione un grupo de nomina</small>
@@ -93,6 +91,9 @@ require_once '../../back/sistema_global/session.php';
                                         $stmt->close();
                                         ?>
                                     </select>
+                                    <div class="loader-container card-footer py-4" id="select-request-loader">
+                                        <div class="loader"></div>
+                                    </div>
                                 </div>
 
 

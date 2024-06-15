@@ -1,11 +1,13 @@
 import {
   getGruposNomina,
   getNominas,
-  getPeticionesNomina,
+  sendCalculoNomina,
 } from '../api/peticionesNomina.js'
 import { tableListCard } from '../components/tabla_lista_card.js'
-import { validateInput } from '../helpers/helpers.js'
+import { confirmNotification, validateInput } from '../helpers/helpers.js'
+import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 import { createTable, employeePayTableHTML } from './peticionesNominaTable.js'
+import { loadRequestTable } from './peticionesTable.js'
 
 const d = document
 const w = window
@@ -35,7 +37,12 @@ let fieldListErrors = {
   },
 }
 
+let requestInfo
+
 function validateEmployeePayForm() {
+  // Cargar tabla de peticiones
+  loadRequestTable()
+
   selectGrupo.addEventListener('change', async (e) => {
     fieldList = validateInput({
       target: e.target,
@@ -68,6 +75,11 @@ function validateEmployeePayForm() {
     if (!e.target.value) return
     let nomina = await getGruposNomina(e.target.value)
 
+    requestInfo = nomina
+
+    selectGrupo.value = ''
+    selectNomina.value = ''
+
     let employeePayTableCard = d.getElementById('request-employee-table-card')
     if (employeePayTableCard) employeePayTableCard.remove()
 
@@ -83,15 +95,27 @@ function validateEmployeePayForm() {
 
   d.addEventListener('click', async (e) => {
     if (e.target === showRequestGroupBtn) {
-      let requestInfo = await getPeticionesNomina()
       requestSelectContainer.classList.remove('hide')
     }
 
-    if (e.target.id === 'close-request-list') {
-      console.log('e')
-      if (tableListCardElement) tableListCardElement.remove()
+    if (e.target.id === 'send-nom-request') {
+      e.preventDefault()
+      confirmNotification({
+        type: NOTIFICATIONS_TYPES.send,
+        message: 'Deseas realizar esta petición?',
+        successFunction: sendCalculoNomina,
+        successFunctionParams: requestInfo,
+        othersFunctions: [loadRequestTable, resetSelect],
+      })
     }
   })
+}
+
+function resetSelect() {
+  let employeePayTableCard = d.getElementById('request-employee-table-card')
+  if (employeePayTableCard) employeePayTableCard.remove()
+  selectNomina.value = ''
+  selectGrupo.value = ''
 }
 
 validateEmployeePayForm()

@@ -1,9 +1,4 @@
-import {
-  getPeticionesNomina,
-  sendCalculoNomina,
-} from '../api/peticionesNomina.js'
-import { confirmNotification, validateModal } from '../helpers/helpers.js'
-import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
+import { getPeticionesNomina } from '../api/peticionesNomina.js'
 
 const d = document
 const w = window
@@ -35,37 +30,35 @@ const tableLanguage = {
   },
 }
 
+let requestTable = new DataTable('#request-nom-table', {
+  columns: [
+    { data: 'correlativo' },
+    { data: 'nombre' },
+    { data: 'status' },
+    { data: 'fecha' },
+  ],
+  responsive: true,
+  scrollY: 150,
+  language: tableLanguage,
+  layout: {
+    topEnd: function () {
+      let toolbar = document.createElement('div')
+      toolbar.innerHTML = `
+      `
+
+      return toolbar
+    },
+    topStart: { search: { placeholder: 'Buscar...' } },
+    bottomStart: 'info',
+    bottomEnd: 'paging',
+  },
+})
+
 export async function loadRequestTable() {
   let peticiones = await getPeticionesNomina()
   let datosOrdenados = [...peticiones].sort(
     (a, b) => a.correlativo - b.correlativo
   )
-
-  console.log(peticiones)
-
-  let requestTable = new DataTable('#request-nom-table', {
-    columns: [
-      { data: 'correlativo' },
-      { data: 'nombre' },
-      { data: 'status' },
-      { data: 'fecha' },
-    ],
-    responsive: true,
-    scrollY: 150,
-    language: tableLanguage,
-    layout: {
-      topEnd: function () {
-        let toolbar = document.createElement('div')
-        toolbar.innerHTML = `
-        `
-
-        return toolbar
-      },
-      topStart: { search: { placeholder: 'Buscar...' } },
-      bottomStart: 'info',
-      bottomEnd: 'paging',
-    },
-  })
 
   let data = datosOrdenados.map((peticion) => {
     return {
@@ -85,11 +78,3 @@ export async function loadRequestTable() {
   // console.log(datosOrdenados)
   requestTable.rows.add(data).draw()
 }
-
-d.addEventListener('click', (e) => {
-  if (e.target.id === 'request-show-select') {
-    e.preventDefault()
-  }
-})
-
-loadRequestTable()

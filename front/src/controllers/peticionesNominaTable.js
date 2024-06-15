@@ -1,6 +1,7 @@
 import { sendCalculoNomina } from '../api/peticionesNomina.js'
 import { confirmNotification, validateModal } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
+import { loadRequestTable } from './peticionesTable.js'
 
 const d = document
 const w = window
@@ -72,7 +73,7 @@ export function employeePayTableHTML({ nominaData, columns }) {
               <li><strong>Total a pagar:</strong> ${total_a_pagar} Bs</li>
             </ul>
 
-            <small class='d-block text-center'>
+            <small class='d-block text-center py-0'>
             Utilice la barra horizontal para observar la información de la
             nómina
           </small>
@@ -106,13 +107,13 @@ export async function createTable({ nominaData, columns }) {
 
   let employeePayTable = new DataTable('#request-employee-table', {
     columns: columnTable,
+    scrollY: 200,
     responsive: true,
-    scrollY: 300,
     language: tableLanguage,
     layout: {
       topEnd: function () {
         let toolbar = document.createElement('div')
-        toolbar.innerHTML = `<button id="employee-pay-request" class="btn btn-info">REALIZAR PETICIÓN</button>
+        toolbar.innerHTML = `<button id="send-nom-request" class="btn btn-info">REALIZAR PETICIÓN</button>
         `
 
         return toolbar
@@ -123,15 +124,3 @@ export async function createTable({ nominaData, columns }) {
     },
   })
 }
-
-d.addEventListener('click', (e) => {
-  if (e.target.id === 'employee-pay-request') {
-    e.preventDefault()
-    confirmNotification({
-      type: NOTIFICATIONS_TYPES.send,
-      message: 'Deseas realizar esta petición?',
-      successFunction: sendCalculoNomina,
-      successFunctionParams: requestInfo,
-    })
-  }
-})

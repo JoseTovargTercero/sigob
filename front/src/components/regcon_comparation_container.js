@@ -53,6 +53,12 @@ const createCard = ({ actual, anterior, confirmBtn }) => {
     'Aportes'
   )
 
+  let listaEmpleados = createObjectList(
+    { 'CANTIDAD EMPLEADOS': anterior.empleados.length },
+    { 'CANTIDAD EMPLEADOS': actual.empleados.length },
+    'Empleados'
+  )
+
   return `
     <div class='card p-2 slide-up-animation'>
       <div class='card-header row py-2'>
@@ -100,10 +106,14 @@ const createCard = ({ actual, anterior, confirmBtn }) => {
       <div class='card-body request-list-container'>
       
         ${listaAsignaciones}
-        
+
+        <div class="d-flex flex-column">
         ${listaDeducciones}
 
         ${listaAportes}
+        ${listaEmpleados}
+        </div>
+        
 
       
       </div>
@@ -131,6 +141,8 @@ const createObjectList = (anterior, actual, title) => {
   let totalListActual = 0
   let totalListAnterior = 0
 
+  let cantidadPropiedades = Object.values(actual).length
+
   const celdaDiferencia = (diferencia) => {
     if (diferencia > 0) return `<td class="table-success">+${diferencia}</td>`
     if (diferencia < 0) return `<td class="table-danger">${diferencia}</td>`
@@ -152,24 +164,24 @@ const createObjectList = (anterior, actual, title) => {
 
   let totalDiferencia = totalListAnterior - totalListActual
 
-  tr += `<tr class="p-0 table-primary">
-      <td>TOTAL</td>
-      ${
-        totalListAnterior
-          ? `<td class="table-secondary">${totalListAnterior}</td>`
-          : ''
-      }
-      <td class='table-secondary'>${totalListActual}</td>${
-    totalListAnterior ? celdaDiferencia(totalDiferencia) : ''
+  if (Object.values > 1) {
+    tr += `<tr class="p-0 table-primary">
+    <td>TOTAL</td>
+    ${
+      totalListAnterior
+        ? `<td class="table-secondary">${totalListAnterior}</td>`
+        : ''
+    }
+    <td class='table-secondary'>${totalListActual}</td>${
+      totalListAnterior ? celdaDiferencia(totalDiferencia) : ''
+    }
+  </tr>`
   }
-    </tr>`
-
-  console.log(totalListActual, totalListAnterior)
 
   return `
     <table class="table" style='width: 100%'>
           <thead>
-        <th class="">Propiedad</th>
+        <th class="table-warning"><i>${title}</i></th>
         ${anterior ? `<th class="">Anterior</th>` : ''}
         <th class="">Actual</th>
         ${anterior ? `<th class="">Diferencia</th>` : ''}

@@ -351,15 +351,34 @@ function confirmNotification({
   successFunction,
   successFunctionParams,
   message = '',
+  othersFunctions = [],
 }) {
   // Manejar las acciones de las notificaciones
-  const notificationAction = ({ successFunction, successFunctionParams }) => {
+  const notificationAction = async ({
+    successFunction,
+    successFunctionParams,
+  }) => {
     if (successFunctionParams) {
-      return successFunction(successFunctionParams)
+      await successFunction(successFunctionParams)
+      if (othersFunctions.length > 0) {
+        othersFunctions.forEach((functions) => {
+          functions()
+        })
+      }
+
+      return
     }
     if (successFunction) {
-      return successFunction()
+      await successFunction()
+      if (othersFunctions.length > 0) {
+        othersFunctions.forEach((functions) => {
+          functions()
+        })
+      }
+
+      return
     }
+
     return
   }
 
@@ -373,8 +392,15 @@ function confirmNotification({
       confirmButtonText: 'ENVIAR',
       denyButtonText: 'CANCELAR',
     }).then((result) => {
-      if (result.isConfirmed)
-        notificationAction({ successFunction, successFunctionParams })
+      if (result.isConfirmed) {
+        notificationAction({
+          successFunction,
+          successFunctionParams,
+          othersFunctions,
+        })
+
+        return result.isConfirmed
+      }
     })
 
   if (type === NOTIFICATIONS_TYPES.done) {
@@ -387,8 +413,10 @@ function confirmNotification({
       confirmButtonText: 'ACEPTAR',
       denyButtonText: 'CANCELAR',
     }).then((result) => {
-      if (result.isConfirmed)
+      if (result.isConfirmed) {
         notificationAction({ successFunction, successFunctionParams })
+        return result.isConfirmed
+      }
     })
   }
   if (type === NOTIFICATIONS_TYPES.fail) {
