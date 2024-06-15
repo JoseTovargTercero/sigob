@@ -152,7 +152,7 @@ const createObjectList = (anterior, actual, title) => {
   }
 
   for (const key in actual) {
-    let diferencia = anterior ? anterior[key] - actual[key] : ''
+    let diferencia = anterior ? actual[key] - anterior[key] : ''
     totalListActual += actual[key]
     if (anterior) totalListAnterior += anterior[key]
     tr += `
@@ -164,7 +164,7 @@ const createObjectList = (anterior, actual, title) => {
       </tr>`
   }
 
-  let totalDiferencia = totalListAnterior - totalListActual
+  let totalDiferencia = totalListActual - totalListAnterior
 
   if (cantidadPropiedades > 1) {
     tr += `<tr class="p-0 table-primary">
