@@ -26,7 +26,6 @@ const createCard = ({ actual, anterior, confirmBtn }) => {
     totalEmpleadosAnterior,
     totalPagarAnterior
 
-  if (anterior.status == 0) anterior = false
   if (anterior) {
     correlativoAnterior = anterior.correlativo
     nombreNominaAnterior = anterior.nombre_nomina
@@ -54,7 +53,11 @@ const createCard = ({ actual, anterior, confirmBtn }) => {
   )
 
   let listaEmpleados = createObjectList(
-    { 'CANTIDAD EMPLEADOS': anterior.empleados.length },
+    anterior
+      ? {
+          'CANTIDAD EMPLEADOS': anterior.empleados.length,
+        }
+      : false,
     { 'CANTIDAD EMPLEADOS': actual.empleados.length },
     'Empleados'
   )
@@ -109,7 +112,6 @@ const createCard = ({ actual, anterior, confirmBtn }) => {
 
         <div class="d-flex flex-column">
         ${listaDeducciones}
-
         ${listaAportes}
         ${listaEmpleados}
         </div>
@@ -164,7 +166,7 @@ const createObjectList = (anterior, actual, title) => {
 
   let totalDiferencia = totalListAnterior - totalListActual
 
-  if (Object.values > 1) {
+  if (cantidadPropiedades > 1) {
     tr += `<tr class="p-0 table-primary">
     <td>TOTAL</td>
     ${
