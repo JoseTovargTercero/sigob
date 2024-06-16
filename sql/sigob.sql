@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 14-06-2024 a las 01:19:38
+-- Tiempo de generación: 16-06-2024 a las 19:46:05
 -- Versión del servidor: 10.4.27-MariaDB
 -- Versión de PHP: 7.4.33
 
@@ -585,20 +585,20 @@ CREATE TABLE `conceptos_aplicados` (
 --
 
 INSERT INTO `conceptos_aplicados` (`id`, `concepto_id`, `nom_concepto`, `fecha_aplicar`, `tipo_calculo`, `n_conceptos`, `emp_cantidad`, `tabulador`, `empleados`, `nombre_nomina`) VALUES
-(21, 'sueldo_base', 'Sueldo Base', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '', '[]', '3', '32', '[\"27\",\"28\",\"29\"]', 'Obreros'),
-(22, '21', 'CONTRIBUCION POR DISCAPACIDAD', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '6', '[]', '3', '', '[\"27\",\"28\",\"29\"]', 'Obreros'),
-(23, '24', 'PRIMA POR HIJO EMPLEADOS', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '1', '[]', '3', '', '[\"27\",\"28\",\"29\"]', 'Obreros'),
-(24, '25', 'PRIMA POR TRANSPORTE', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '1', '[]', '3', '', '[\"27\",\"28\",\"29\"]', 'Obreros'),
-(25, '26', 'PRIMA POR ANTIGUEDAD EMPLEADOS', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '1', '[]', '3', '', '[\"27\",\"28\",\"29\"]', 'Obreros'),
-(26, '27', 'PRIMA POR ESCALAFON', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '1', '[\"24\",\"25\",\"26\"]', '3', '', '[\"27\",\"28\",\"29\"]', 'Obreros'),
-(27, '28', 'PRIMA POR FRONTERA', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '1', '[]', '3', '', '[\"27\",\"28\",\"29\"]', 'Obreros'),
-(28, '29', 'PRIMA POR PROFESIONALES', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '1', '[]', '3', '', '[\"27\",\"28\",\"29\"]', 'Obreros'),
-(29, '30', 'S. S. O', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '1', '[]', '3', '', '[\"27\",\"28\",\"29\"]', 'Obreros'),
-(30, '31', 'RPE', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '1', '[]', '3', '', '[\"27\",\"28\",\"29\"]', 'Obreros'),
-(31, '32', 'A/P S.S.O', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '1', '[]', '3', '', '[\"27\",\"28\",\"29\"]', 'Obreros'),
-(32, '33', 'A/P RPE', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '1', '[]', '3', '', '[\"27\",\"28\",\"29\"]', 'Obreros'),
-(33, '34', 'PAGO DE BECA', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '1', '[]', '3', '', '[\"27\",\"28\",\"29\"]', 'Obreros'),
-(34, '35', 'PRIMA P/DED AL S/PUBLICO UNICO DE SALUD', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '1', '[]', '3', '', '[\"27\",\"28\",\"29\"]', 'Obreros');
+(21, 'sueldo_base', 'Sueldo Base', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '', '[]', '3', '32', '[\"27\",\"28\",\"29\",\"30\"]', 'Obreros'),
+(22, '21', 'CONTRIBUCION POR DISCAPACIDAD', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '6', '[]', '3', '', '[\"27\",\"28\",\"29\",\"30\"]', 'Obreros'),
+(23, '24', 'PRIMA POR HIJO EMPLEADOS', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '1', '[]', '3', '', '[\"27\",\"28\",\"29\",\"30\"]', 'Obreros'),
+(24, '25', 'PRIMA POR TRANSPORTE', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '1', '[]', '3', '', '[\"27\",\"28\",\"29\",\"30\"]', 'Obreros'),
+(25, '26', 'PRIMA POR ANTIGUEDAD EMPLEADOS', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '1', '[]', '3', '', '[\"27\",\"28\",\"29\",\"30\"]', 'Obreros'),
+(26, '27', 'PRIMA POR ESCALAFON', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '1', '[\"24\",\"25\",\"26\"]', '3', '', '[\"27\",\"28\",\"29\",\"30\"]', 'Obreros'),
+(27, '28', 'PRIMA POR FRONTERA', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '1', '[]', '3', '', '[\"27\",\"28\",\"29\",\"30\"]', 'Obreros'),
+(28, '29', 'PRIMA POR PROFESIONALES', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '1', '[]', '3', '', '[\"27\",\"28\",\"29\",\"30\"]', 'Obreros'),
+(29, '30', 'S. S. O', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '1', '[]', '3', '', '[\"27\",\"28\",\"29\",\"30\"]', 'Obreros'),
+(30, '31', 'RPE', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '1', '[]', '3', '', '[\"27\",\"28\",\"29\",\"30\"]', 'Obreros'),
+(31, '32', 'A/P S.S.O', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '1', '[]', '3', '', '[\"27\",\"28\",\"29\",\"30\"]', 'Obreros'),
+(32, '33', 'A/P RPE', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '1', '[]', '3', '', '[\"27\",\"28\",\"29\",\"30\"]', 'Obreros'),
+(33, '34', 'PAGO DE BECA', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '1', '[]', '3', '', '[\"27\",\"28\",\"29\",\"30\"]', 'Obreros'),
+(34, '35', 'PRIMA P/DED AL S/PUBLICO UNICO DE SALUD', '[\"s1\",\"s2\",\"s3\",\"s4\"]', '1', '[]', '3', '', '[\"27\",\"28\",\"29\",\"30\"]', 'Obreros');
 
 -- --------------------------------------------------------
 
@@ -676,10 +676,10 @@ CREATE TABLE `empleados` (
 --
 
 INSERT INTO `empleados` (`id`, `nacionalidad`, `cedula`, `cod_empleado`, `nombres`, `fecha_ingreso`, `otros_años`, `status`, `observacion`, `cod_cargo`, `banco`, `cuenta_bancaria`, `hijos`, `instruccion_academica`, `discapacidades`, `tipo_cuenta`, `tipo_nomina`, `id_dependencia`, `verificado`) VALUES
-(27, '1', '123456789', '441151', 'Pedro Pablo', '2010-05-02', 0, '1', 'N/A', '25212', 'Tesoro', '1002555541124', 3, 3, 0, 0, 0, 6, 1),
-(28, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', 'Bicentenario', '1002555541124', 3, 2, 0, 0, 0, 6, 1),
-(29, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 3, 0, 0, 0, 6, 1),
-(30, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 2, 0, 0, 0, 6, 1),
+(27, 'V', '23987719', '441151', 'ORQUIDEA JOSE BOSSIO ALDANA', '2010-05-02', 0, '1', 'N/A', '25212', 'Tesoro', '01630409334091000513', 3, 3, 0, 0, 0, 6, 1),
+(28, 'V', '4781808', '441151', 'BOSSIO CORREA, HERNAN ARSENIO', '2021-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '01020457790100627238', 3, 2, 0, 0, 0, 6, 1),
+(29, 'V', '1566323', '441151', 'LARA, ALIDA DEL VALLE', '2021-05-02', 0, '1', 'N/A', '25212', 'Caroni', '01280027402712476304', 3, 3, 0, 1, 0, 6, 1),
+(30, 'V', '642362', '441151', 'NANCY GISELA AGUILAR DE MENOTTI', '2021-05-02', 0, '1', 'N/A', '25212', 'Bicentenario', '01750575120077277895', 3, 2, 0, 0, 0, 6, 1),
 (31, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 3, 0, 0, 0, 6, 0),
 (32, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 2, 0, 0, 0, 6, 0),
 (33, '1', '123456789', '441151', 'Pedro Pablo', '2022-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 3, 0, 0, 0, 6, 0),
@@ -816,8 +816,8 @@ CREATE TABLE `peticiones` (
 --
 
 INSERT INTO `peticiones` (`id`, `empleados`, `asignaciones`, `deducciones`, `aportes`, `total_pagar`, `correlativo`, `status`, `nombre_nomina`, `creacion`) VALUES
-(11, '[27,28,29]', '{\"CONTRIBUCION POR DISCAPACIDAD\":30,\"PRIMA POR HIJO EMPLEADOS\":15,\"PRIMA POR TRANSPORTE\":150,\"PRIMA POR ANTIGUEDAD EMPLEADOS\":30,\"PRIMA POR ESCALAFON\":15,\"PRIMA POR FRONTERA\":15,\"PRIMA POR PROFESIONALES\":60,\"PAGO DE BECA\":30,\"PRIMA P\\/DED AL S\\/PUBLICO UNICO DE SALUD\":15}', '{\"S. S. O\":15,\"RPE\":15}', '{\"A\\/P S.S.O\":15,\"A\\/P RPE\":15}', '[451.18,328.12,328.12]', '00003', '0', 'Obreros', '2024-06-13'),
-(12, '[27,28,29]', '{\"CONTRIBUCION POR DISCAPACIDAD\":30,\"PRIMA POR HIJO EMPLEADOS\":15,\"PRIMA POR TRANSPORTE\":150,\"PRIMA POR ANTIGUEDAD EMPLEADOS\":30,\"PRIMA POR ESCALAFON\":15,\"PRIMA POR FRONTERA\":15,\"PRIMA POR PROFESIONALES\":60,\"PAGO DE BECA\":30,\"PRIMA P\\/DED AL S\\/PUBLICO UNICO DE SALUD\":15}', '{\"S. S. O\":15,\"RPE\":15}', '{\"A\\/P S.S.O\":15,\"A\\/P RPE\":15}', '[451.18,328.12,328.12]', '00004', '0', 'Obreros', '2024-06-13');
+(13, '[27,28,29,30]', '{\"CONTRIBUCION POR DISCAPACIDAD\":40,\"PRIMA POR HIJO EMPLEADOS\":20,\"PRIMA POR TRANSPORTE\":200,\"PRIMA POR ANTIGUEDAD EMPLEADOS\":40,\"PRIMA POR ESCALAFON\":20,\"PRIMA POR FRONTERA\":20,\"PRIMA POR PROFESIONALES\":80,\"PAGO DE BECA\":40,\"PRIMA P\\/DED AL S\\/PUBLICO UNICO DE SALUD\":20}', '{\"S. S. O\":20,\"RPE\":20}', '{\"A\\/P S.S.O\":20,\"A\\/P RPE\":20}', '[451.18,328.12,328.12,328.12]', '00001', '0', 'Obreros', '2024-06-16'),
+(14, '[27,28,29,30]', '{\"CONTRIBUCION POR DISCAPACIDAD\":40,\"PRIMA POR HIJO EMPLEADOS\":20,\"PRIMA POR TRANSPORTE\":200,\"PRIMA POR ANTIGUEDAD EMPLEADOS\":40,\"PRIMA POR ESCALAFON\":20,\"PRIMA POR FRONTERA\":20,\"PRIMA POR PROFESIONALES\":80,\"PAGO DE BECA\":40,\"PRIMA P\\/DED AL S\\/PUBLICO UNICO DE SALUD\":20}', '{\"S. S. O\":20,\"RPE\":20}', '{\"A\\/P S.S.O\":20,\"A\\/P RPE\":20}', '[451.18,328.12,328.12,328.12]', '00002', '0', 'Obreros', '2024-06-16');
 
 -- --------------------------------------------------------
 
@@ -1364,18 +1364,14 @@ CREATE TABLE `txt` (
 --
 
 INSERT INTO `txt` (`id`, `id_empleado`, `total_a_pagar`, `nombre_nomina`, `identificador`, `fecha_pagar`, `correlativo`) VALUES
-(787, 27, '451.18', 'Obreros', 'unico', '06-2024', '00001'),
-(788, 28, '328.12', 'Obreros', 'unico', '06-2024', '00001'),
-(789, 29, '328.12', 'Obreros', 'unico', '06-2024', '00001'),
-(790, 27, '451.18', 'Obreros', 'unico', '06-2024', '00002'),
-(791, 28, '328.12', 'Obreros', 'unico', '06-2024', '00002'),
-(792, 29, '328.12', 'Obreros', 'unico', '06-2024', '00002'),
-(793, 27, '451.18', 'Obreros', 'unico', '06-2024', '00003'),
-(794, 28, '328.12', 'Obreros', 'unico', '06-2024', '00003'),
-(795, 29, '328.12', 'Obreros', 'unico', '06-2024', '00003'),
-(796, 27, '451.18', 'Obreros', 'unico', '06-2024', '00004'),
-(797, 28, '328.12', 'Obreros', 'unico', '06-2024', '00004'),
-(798, 29, '328.12', 'Obreros', 'unico', '06-2024', '00004');
+(799, 27, '451.18', 'Obreros', 'unico', '06-2024', '00001'),
+(800, 28, '328.12', 'Obreros', 'unico', '06-2024', '00001'),
+(801, 29, '328.12', 'Obreros', 'unico', '06-2024', '00001'),
+(802, 30, '328.12', 'Obreros', 'unico', '06-2024', '00001'),
+(803, 27, '451.18', 'Obreros', 'unico', '06-2024', '00002'),
+(804, 28, '328.12', 'Obreros', 'unico', '06-2024', '00002'),
+(805, 29, '328.12', 'Obreros', 'unico', '06-2024', '00002'),
+(806, 30, '328.12', 'Obreros', 'unico', '06-2024', '00002');
 
 --
 -- Índices para tablas volcadas
@@ -1564,7 +1560,7 @@ ALTER TABLE `password_resets`
 -- AUTO_INCREMENT de la tabla `peticiones`
 --
 ALTER TABLE `peticiones`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT de la tabla `primantiguedad`
@@ -1600,7 +1596,7 @@ ALTER TABLE `tabuladores_estr`
 -- AUTO_INCREMENT de la tabla `txt`
 --
 ALTER TABLE `txt`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=799;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=807;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
