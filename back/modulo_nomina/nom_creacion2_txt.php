@@ -15,6 +15,7 @@ if (isset($data['Venezuela']) && isset($data['Tesoro']) && isset($data['Bicenten
         $correlativo = $data['correlativo'];
         // Ruta del archivo a generar
         $file_path = 'venezuela'.$correlativo.'.txt';
+        $direccion = "C:/xampp/htdocs/sigob/".$file_path;
         $dia = date('d');
    $mes = date('m');
    $ano = date('y');
@@ -234,14 +235,17 @@ if (isset($data['Venezuela']) && isset($data['Tesoro']) && isset($data['Bicenten
         // Escribir el contenido al archivo
         
         
-        // Forzar la descarga del archivo
-        header('Content-Type: text/plain');
-        header('Content-Disposition: attachment; filename=$file_path');
-        header('Content-Length: ' . filesize($file_path));
-        readfile($file_path);
-        
+
+         header('Content-Description: File Transfer');
+header('Content-Type: application/octet-stream');
+header('Content-Disposition: attachment;'.'filename=$file_path');
+header('Content-Transfer-Encoding: binary');
+header('Expires: 0');
+header('Cache-Control: must-revalidate');
+header('Pragma: public');
+header('Content-Length: ' . filesize($file_path));
         // Terminar el script para que no se envíe más salida
-       
+       readfile($file_path);
     }
     // Función para procesar el array del banco Tesoro
     function txt_Tesoro($data) {
@@ -249,7 +253,8 @@ if (isset($data['Venezuela']) && isset($data['Tesoro']) && isset($data['Bicenten
         $total_a_pagar = $data['total_a_pagar'];
         $correlativo = $data['correlativo'];
         // Ruta del archivo a generar
-        $file_path = 'tesoro'.$correlativo.'.txt';;   
+        $file_path = 'tesoro'.$correlativo.'.txt';
+        $direccion = "C:/xampp/htdocs/sigob/".$file_path;   
         // Cuerpo del archivo
          // Abrir el archivo para escritura
     $file = fopen($file_path, 'w');
@@ -284,12 +289,17 @@ if (isset($data['Venezuela']) && isset($data['Tesoro']) && isset($data['Bicenten
         // Escribir el contenido al archivo
         
         
-        // Forzar la descarga del archivo
-        header('Content-Type: text/plain');
-        header('Content-Disposition: attachment; filename=$file_path');
-        header('Content-Length: ' . filesize($file_path));
-        readfile($file_path);
+
         
+         header('Content-Description: File Transfer');
+header('Content-Type: application/octet-stream');
+header('Content-Disposition: attachment;'.'filename=$file_path');
+header('Content-Transfer-Encoding: binary');
+header('Expires: 0');
+header('Cache-Control: must-revalidate');
+header('Pragma: public');
+header('Content-Length: ' . filesize($file_path));
+   readfile($file_path);     
         // Terminar el script para que no se envíe más salida
    
     }
@@ -301,7 +311,8 @@ if (isset($data['Venezuela']) && isset($data['Tesoro']) && isset($data['Bicenten
         $correlativo = $data['correlativo'];
         $cantidad_bincentenario = $data['cantidad_bincentenario'];
         // Ruta del archivo a generar
-        $file_path = 'bicentenario'.$correlativo.'.txt';;
+        $file_path = 'bicentenario'.$correlativo.'.txt';
+        $direccion = "C:/xampp/htdocs/sigob/".$file_path;
         $dia = date('d');
    $mes = date('m');
    $ano = date('Y');
@@ -515,13 +526,19 @@ if (isset($data['Venezuela']) && isset($data['Tesoro']) && isset($data['Bicenten
         }
          fclose($file);
         // Escribir el contenido al archivo
-        echo strlen($line);
+     
         
-        // Forzar la descarga del archivo
-        header('Content-Type: text/plain');
-        header('Content-Disposition: attachment; filename=$file_path');
-        header('Content-Length: ' . filesize($file_path));
-        readfile($file_path);
+
+       
+         header('Content-Description: File Transfer');
+header('Content-Type: application/octet-stream');
+header('Content-Disposition: attachment;'.'filename=$file_path');
+header('Content-Transfer-Encoding: binary');
+header('Expires: 0');
+header('Cache-Control: must-revalidate');
+header('Pragma: public');
+header('Content-Length: ' . filesize($file_path));
+ readfile($file_path);
     }
 
     // Función para procesar el array del banco Caroni
@@ -530,7 +547,8 @@ if (isset($data['Venezuela']) && isset($data['Tesoro']) && isset($data['Bicenten
         $total_a_pagar = $data['total_a_pagar'];
         $correlativo = $data['correlativo'];
         // Ruta del archivo a generar
-        $file_path = 'caroni'.$correlativo.'.txt';;
+        $file_path = 'caroni'.$correlativo.'.txt';
+        $direccion = "C:/xampp/htdocs/sigob/".$file_path;
      
         // Cuerpo del archivo
          // Abrir el archivo para escritura
@@ -642,14 +660,18 @@ if (isset($data['Venezuela']) && isset($data['Tesoro']) && isset($data['Bicenten
         }
          fclose($file);
         // Escribir el contenido al archivo
-        echo strlen($line);
         
         // Forzar la descarga del archivo
-        header('Content-Type: text/plain');
-        header('Content-Disposition: attachment; filename=$file_path');
-        header('Content-Length: ' . filesize($file_path));
-        readfile($file_path);
-        
+      
+        header('Content-Description: File Transfer');
+header('Content-Type: application/octet-stream');
+header('Content-Disposition: attachment;'.'filename=$file_path');
+header('Content-Transfer-Encoding: binary');
+header('Expires: 0');
+header('Cache-Control: must-revalidate');
+header('Pragma: public');
+header('Content-Length: ' . filesize($file_path));
+readfile($file_path);
         // Terminar el script para que no se envíe más salida
     }
 
