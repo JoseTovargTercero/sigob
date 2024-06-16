@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 14-06-2024 a las 01:19:38
+-- Tiempo de generación: 16-06-2024 a las 05:34:20
 -- Versión del servidor: 10.4.27-MariaDB
 -- Versión de PHP: 7.4.33
 
@@ -676,9 +676,9 @@ CREATE TABLE `empleados` (
 --
 
 INSERT INTO `empleados` (`id`, `nacionalidad`, `cedula`, `cod_empleado`, `nombres`, `fecha_ingreso`, `otros_años`, `status`, `observacion`, `cod_cargo`, `banco`, `cuenta_bancaria`, `hijos`, `instruccion_academica`, `discapacidades`, `tipo_cuenta`, `tipo_nomina`, `id_dependencia`, `verificado`) VALUES
-(27, '1', '123456789', '441151', 'Pedro Pablo', '2010-05-02', 0, '1', 'N/A', '25212', 'Tesoro', '1002555541124', 3, 3, 0, 0, 0, 6, 1),
-(28, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', 'Bicentenario', '1002555541124', 3, 2, 0, 0, 0, 6, 1),
-(29, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 3, 0, 0, 0, 6, 1),
+(27, 'V', '23987719', '441151', 'ORQUIDEA JOSE BOSSIO ALDANA', '2010-05-02', 0, '1', 'N/A', '25212', 'Tesoro', '01630409334091000513', 3, 3, 0, 0, 0, 6, 1),
+(28, 'V', '4781808', '441151', 'BOSSIO CORREA, HERNAN ARSENIO', '2021-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '01020457790100627238', 3, 2, 0, 0, 0, 6, 1),
+(29, 'V', '1566323', '441151', 'LARA, ALIDA DEL VALLE', '2021-05-02', 0, '1', 'N/A', '25212', 'Caroni', '01280027402712476304', 3, 3, 0, 1, 0, 6, 1),
 (30, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 2, 0, 0, 0, 6, 1),
 (31, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 3, 0, 0, 0, 6, 0),
 (32, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 2, 0, 0, 0, 6, 0),
