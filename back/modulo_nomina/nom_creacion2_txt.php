@@ -682,13 +682,7 @@ readfile($file_path);
     $result_bicentenario = txt_Bicentenario($data['Bicentenario']);
 
     // Devolver los resultados en formato JSON (excepto Venezuela)
-    header('Content-Type: application/json');
-    echo json_encode([
-        "Venezuela" => $result_venezuela,
-        "Tesoro" => $result_tesoro,
-        "Bicentenario" => $result_bicentenario,
-        "Caroni" => $result_caroni
-    ]);
+    
 } else {
     echo json_encode(['mensaje' => 'Datos insuficientes en la solicitud.']);
 }
