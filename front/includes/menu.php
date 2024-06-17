@@ -38,6 +38,7 @@
               <li class="pc-item"><a class="pc-link"
                   href="<?php echo constant('URL') ?>front/mod_nomina/nom_bancos">Bancos</a>
               </li>
+
             </ul>
           </li>
 
@@ -57,6 +58,9 @@
               <li class="pc-item"><a class="pc-link"
                   href="<?php echo constant('URL') ?>front/mod_registro_control/regcon_nomina_comparar">Revision de
                   nominas</a></li>
+              <li class="pc-item"><a class="pc-link"
+                  href="<?php echo constant('URL') ?>front/mod_nomina/nom_pago_nomina">Pago de nomina</a>
+              </li>
             </ul>
           </li>
         <?php } elseif ($_SESSION["u_oficina_id"] == 2) { //_registro_control ?>

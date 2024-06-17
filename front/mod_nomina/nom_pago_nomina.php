@@ -27,7 +27,7 @@ require_once '../../back/sistema_global/session.php';
           <div class="row align-items-center">
             <div class="col-md-12">
               <div class="page-header-title">
-                <h5 class="mb-0">Control de peticiones de nómina</h5>
+                <h5 class="mb-0">Pago de nómina</h5>
                 <small class="text-muted mt-0 d-block mb-2">Consulte la nómina a revisar</small>
               </div>
             </div>
@@ -37,30 +37,29 @@ require_once '../../back/sistema_global/session.php';
       <!-- [ Main Content ] start -->
       <div class="row mb3">
         <!-- [ worldLow section ] start -->
-        <div class="col-xl-12 mb-3" id="request-nom-form">
+        <div class="col-xl-12 mb-3" id="pay-nom-form">
           <div class="card mx-auto">
             <div class="card-header">
               <div>
-                <h5 class="mb-0">Peticiones de pago</h5>
-                <small class="mt-0 text-muted">Revisar las peticiones de nómina</small>
+                <h5 class="mb-0">Pago de nómina</h5>
+                <small class="mt-0 text-muted">Gestione la generación de txt de nóminas</small>
               </div>
             </div>
             <div class="card-body">
               <div class="forum-group">
                 <div class="row mx-auto align-items-end">
                   <div class="col-sm-9">
-                    <label for="nomina" class="form-label">Seleccionar nómina</label>
-                    <!-- <small class="text-muted mt-0 d-block mb-2">Seleccione la nómina a registrar</small> -->
-                    <select id="select-nomina" name="select-nomina" class="form-control">
-                      <option value="">Seleccionar petición de nómina</option>
+                    <label for="select-correlativo" class="form-label">Selecciona el correlativo</label>
+                    <select id="select-correlativo" name="select-correlativo" class="form-control">
+                      <option value="">Seleccionar correlativo</option>
                     </select>
                   </div>
                   <div class="col-sm align-items-center">
-                    <button class="btn btn-primary" id="consultar-nomina">Consultar</button>
+                    <button class="btn btn-primary" id="consultar-correlativo">Consultar</button>
                   </div>
                 </div>
               </div>
-              <div class="loader-container card-footer py-4" id="request-comparation-loader">
+              <div class="loader-container card-footer py-4" id="pay-nom-loader">
                 <div class="loader"></div>
               </div>
             </div>

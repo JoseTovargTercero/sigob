@@ -1,6 +1,8 @@
 import {
   confirmarPeticionNomina,
+  generarNominaTxt,
   getComparacionNomina,
+  getNominaTxt,
   getPeticionesNomina,
 } from '../api/peticionesNomina.js'
 import { createComparationContainer } from '../components/regcon_comparation_container.js'
@@ -11,11 +13,11 @@ const d = document
 const w = window
 
 let fieldList = {
-  'select-nomina': '',
+  'select-correlativo': '',
 }
 
 let fieldListErrors = {
-  'select-nomina': {
+  'select-correlativo': {
     value: true,
     message: 'Seleccione una nómina a consultar',
     type: 'text',
@@ -24,23 +26,19 @@ let fieldListErrors = {
 
 let nominas = {}
 
-export async function validateRequestNomForm({
-  selectId,
-  consultBtnId,
-  formId,
-}) {
+export async function validatePayNomForm({ selectId, consultBtnId, formId }) {
   let requestInfo = await getPeticionesNomina()
 
   console.log(requestInfo)
 
-  let selectNom = d.getElementById(selectId)
-  let consultNom = d.getElementById(consultBtnId)
-  let requestComparationForm = d.getElementById(formId)
+  let selectCorrelativo = d.getElementById(selectId)
+  let consultCorrelativo = d.getElementById(consultBtnId)
+  let payNomForm = d.getElementById(formId)
   // let comparationContainer = d.getElementById('request-comparation-container')
 
   let selectValues = await requestInfo
     .map((el) => {
-      if (el.status == 0) {
+      if (Number(el.status) === 1) {
         nominas.correlativo = el.correlativo
         nominas.nombre_nomina = el.nombre_nomina
         return `<option value="${el.correlativo}">${el.correlativo} - ${el.nombre_nomina}</option>`
@@ -48,9 +46,9 @@ export async function validateRequestNomForm({
     })
     .join('')
 
-  selectNom.insertAdjacentHTML('beforeend', selectValues)
+  selectCorrelativo.insertAdjacentHTML('beforeend', selectValues)
 
-  selectNom.addEventListener('change', (e) => {
+  selectCorrelativo.addEventListener('change', (e) => {
     fieldList = validateInput({
       target: e.target,
       fieldList,
@@ -61,22 +59,25 @@ export async function validateRequestNomForm({
   })
 
   d.addEventListener('click', async (e) => {
-    if (fieldList['select-nomina'] === '') return
+    if (fieldList['select-correlativo'] === '') return
 
     let comparationContainer = d.getElementById('request-comparation-container')
 
-    if (e.target === consultNom) {
-      let result = requestInfo.find(
-        (el) => el.correlativo === fieldList['select-nomina']
-      )
+    if (e.target === consultCorrelativo) {
       if (comparationContainer) comparationContainer.remove()
 
-      let peticiones = await getComparacionNomina(result)
+      let identificador = await getNominaTxt({
+        correlativo: fieldList['select-correlativo'],
+      })
 
-      requestComparationForm.insertAdjacentHTML(
-        'beforeend',
-        createComparationContainer({ data: peticiones })
+      let result = requestInfo.find(
+        (el) => el.correlativo === identificador[0].correlativo
       )
+
+      crearNominaTxt({
+        correlativo: result.correlativo,
+        identificador: identificador[0].identificador,
+      })
     }
 
     if (e.target.id === 'confirm-request') {
@@ -96,6 +97,15 @@ export async function validateRequestNomForm({
 
     if (comparationContainer) comparationContainer.remove()
 
-    selectNom.value = ''
+    selectCorrelativo.value = ''
   }
+}
+
+async function crearNominaTxt({ correlativo, identificador }) {
+  let archivostxt2 = await generarNominaTxt({
+    correlativo,
+    identificador,
+  })
+
+  console.log(archivostxt2)
 }

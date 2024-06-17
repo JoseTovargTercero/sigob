@@ -91,9 +91,6 @@ require_once '../../back/sistema_global/session.php';
                                         $stmt->close();
                                         ?>
                                     </select>
-                                    <div class="loader-container card-footer py-4" id="select-request-loader">
-                                        <div class="loader"></div>
-                                    </div>
                                 </div>
 
 
