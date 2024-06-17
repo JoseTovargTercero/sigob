@@ -14,8 +14,8 @@ if (isset($data['Venezuela']) && isset($data['Tesoro']) && isset($data['Bicenten
         $total_a_pagar = $data['total_a_pagar'];
         $correlativo = $data['correlativo'];
         // Ruta del archivo a generar
-        $file_path = 'venezuela'.$correlativo.'.txt';
-        $direccion = "C:/xampp/htdocs/sigob/".$file_path;
+        $file_path = '../../txt/venezuela'.$correlativo.'.txt';
+        $direccion = "C:/xampp/htdocs/sigob/txt/".$file_path;
         $dia = date('d');
    $mes = date('m');
    $ano = date('y');
@@ -238,7 +238,7 @@ if (isset($data['Venezuela']) && isset($data['Tesoro']) && isset($data['Bicenten
 
          header('Content-Description: File Transfer');
 header('Content-Type: application/octet-stream');
-header('Content-Disposition: attachment;'.'filename=$file_path');
+header('Content-Disposition: attachment;'.'filename=$direccion');
 header('Content-Transfer-Encoding: binary');
 header('Expires: 0');
 header('Cache-Control: must-revalidate');
@@ -253,7 +253,7 @@ header('Content-Length: ' . filesize($file_path));
         $total_a_pagar = $data['total_a_pagar'];
         $correlativo = $data['correlativo'];
         // Ruta del archivo a generar
-        $file_path = 'tesoro'.$correlativo.'.txt';
+        $file_path = '../../txt/tesoro'.$correlativo.'.txt';
         $direccion = "C:/xampp/htdocs/sigob/".$file_path;   
         // Cuerpo del archivo
          // Abrir el archivo para escritura
@@ -311,7 +311,7 @@ header('Content-Length: ' . filesize($file_path));
         $correlativo = $data['correlativo'];
         $cantidad_bincentenario = $data['cantidad_bincentenario'];
         // Ruta del archivo a generar
-        $file_path = 'bicentenario'.$correlativo.'.txt';
+        $file_path = '../../txt/bicentenario'.$correlativo.'.txt';
         $direccion = "C:/xampp/htdocs/sigob/".$file_path;
         $dia = date('d');
    $mes = date('m');
@@ -547,7 +547,7 @@ header('Content-Length: ' . filesize($file_path));
         $total_a_pagar = $data['total_a_pagar'];
         $correlativo = $data['correlativo'];
         // Ruta del archivo a generar
-        $file_path = 'caroni'.$correlativo.'.txt';
+        $file_path = '../../txt/caroni'.$correlativo.'.txt';
         $direccion = "C:/xampp/htdocs/sigob/".$file_path;
      
         // Cuerpo del archivo
