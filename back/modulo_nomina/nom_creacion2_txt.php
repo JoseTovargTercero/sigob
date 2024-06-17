@@ -4,7 +4,6 @@ $input = file_get_contents('php://input');
 
 // Decodificar el JSON recibido
 $data = json_decode($input, true);
-
 // Validar que se hayan recibido los arrays necesarios
 if (isset($data['Venezuela']) && isset($data['Tesoro']) && isset($data['Bicentenario']) && isset($data['Caroni'])) {
     
@@ -238,7 +237,7 @@ if (isset($data['Venezuela']) && isset($data['Tesoro']) && isset($data['Bicenten
 
          header('Content-Description: File Transfer');
 header('Content-Type: application/octet-stream');
-header('Content-Disposition: attachment;'.'filename=$direccion');
+header('Content-Disposition: attachment;'.'filename=$file_path');
 header('Content-Transfer-Encoding: binary');
 header('Expires: 0');
 header('Cache-Control: must-revalidate');
@@ -656,7 +655,9 @@ header('Content-Length: ' . filesize($file_path));
    }
              
             fwrite($file, $line);
-         
+         echo '<script type="text/javascript">
+            window.location.href = "nom_txt_descargas.php?correlativo=' . $correlativo . '";
+          </script>';
         }
          fclose($file);
         // Escribir el contenido al archivo
@@ -683,7 +684,16 @@ readfile($file_path);
 
     // Devolver los resultados en formato JSON (excepto Venezuela)
     
+    
 } else {
     echo json_encode(['mensaje' => 'Datos insuficientes en la solicitud.']);
 }
+
+
+
+
+        
 ?>
+
+
+   
