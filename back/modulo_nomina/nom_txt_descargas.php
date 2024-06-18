@@ -14,7 +14,7 @@ $files = [
 ];
 
 // Ruta donde se encuentran los archivos
-$base_dir = "C:/xampp/htdocs/sigob/txt/";
+$base_dir = "../../txt/";
 
 // Nombre del archivo ZIP que se generará
 $zip_filename = "txt_{$correlativo}.zip";

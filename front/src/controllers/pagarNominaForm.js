@@ -1,5 +1,6 @@
 import {
   confirmarPeticionNomina,
+  descargarNominaTxt,
   generarNominaTxt,
   getComparacionNomina,
   getNominaTxt,
@@ -71,22 +72,25 @@ export async function validatePayNomForm({ selectId, consultBtnId, formId }) {
       let result = requestInfo.find(
         (el) => el.correlativo === identificador[0].correlativo
       )
+      crearNominaTxt({
+        correlativo: identificador[0].correlativo,
+        identificador: identificador[0].identificador,
+      })
 
       payNomForm.insertAdjacentHTML(
         'beforeend',
         nomReportCard({
           data: result,
-          identificador: identificador[0].identificador,
         })
       )
-
-      crearNominaTxt({
-        correlativo: result.correlativo,
-        identificador: identificador[0].identificador,
-      })
     }
 
-    if (e.target.id === 'confirm-request') {
+    if (e.target.id === 'generar-txt') {
+      let descargatxt = await descargarNominaTxt(
+        fieldList['select-correlativo']
+      )
+
+      console.log(descargatxt)
       // console.log(e.target.dataset.correlativo)
       // confirmNotification({
       //   type: NOTIFICATIONS_TYPES.send,
@@ -98,13 +102,13 @@ export async function validatePayNomForm({ selectId, consultBtnId, formId }) {
     }
   })
 
-  function resetInput() {
-    let comparationContainer = d.getElementById('request-comparation-container')
+  // function resetInput() {
+  //   let comparationContainer = d.getElementById('request-comparation-container')
 
-    if (comparationContainer) comparationContainer.remove()
+  //   if (comparationContainer) comparationContainer.remove()
 
-    selectCorrelativo.value = ''
-  }
+  //   selectCorrelativo.value = ''
+  // }
 }
 
 async function crearNominaTxt({ correlativo, identificador }) {

@@ -1,11 +1,10 @@
 export const nomReportCard = ({ data, identificador }) => {
   if (!data) return `<div class="card"><h2>DATOS NO ESPECIFICADOS</h2></div>`
-  if (!identificador)
-    return `<div class="card"><h2>IDENTIFICADOR NO ESPECIFICADOS</h2></div>`
-
+  console.log(data)
   let nombre_nomina = data.nombre_nomina
   let totalEmpleados = data.empleados.length
   let fechaCreacion = data.creacion
+  let correlativo = data.correlativo
   let totalPagar = data.total_a_pagar.reduce((value, acc) => value + acc, 0)
 
   return ` <div
@@ -17,35 +16,25 @@ export const nomReportCard = ({ data, identificador }) => {
           Generar reportes (PDF, TXT, ETC)
         </small>
         <p class=' mb-0'>CORRELATIVO: </p>
-        <h5 class=' mb-2'>${identificador}</h5>
-
+        ${identificador ? `<h5 class=' mb-2'>${identificador}</h5>` : ''}
         <p class=' mb-0'>NOMBRE DE NOMINA: </p>
         <h5 class=' mb-2'>${nombre_nomina}</h5>
-
         <p class=' mb-0'>TOTAL A PAGAR: </p>
         <h5 class=' mb-2'>${totalPagar}Bs.</h5>
-
         <p class=' mb-0'>Total de empleados: </p>
         <h5 class=' mb-2'>${totalEmpleados} empleado/s</h5>
-
         <p class=' mb-0'>Fecha de creación: </p>
         <h5 class=' mb-2'>${fechaCreacion}</h5>
       </div>
       <div class='card-body'>
-      <h5 class='text-center mb-2'>Generar reportes:</h5>
+        <h5 class='text-center mb-2'>Generar reportes:</h5>
         <div class='btn-report-actions'>
-          <button class='mx-0 btn btn-danger' id='generar-txt'>
+          <a href='' class='mx-0 btn btn-danger' id='generar-pdf'>
             <i class='bx bxs-file-pdf bx-sm'></i>
-          </button>
-          <button class='mx-auto btn btn-secondary' id='generar-pdf'>
+          </a>
+          <a target="_blank" href="../../../../../sigob/back/modulo_nomina/nom_txt_descargas.php?correlativo=${correlativo}" class='mx-auto btn btn-secondary' id='generar-txt'>
             <i class='bx bxs-file-txt bx-sm'></i>
-          </button><button class='mx-auto btn btn-secondary' id='generar-pdf'>
-          <i class='bx bxs-file-txt bx-sm'></i>
-        </button><button class='mx-auto btn btn-secondary' id='generar-pdf'>
-        <i class='bx bxs-file-txt bx-sm'></i>
-      </button><button class='mx-auto btn btn-secondary' id='generar-pdf'>
-      <i class='bx bxs-file-txt bx-sm'></i>
-    </button>
+          </a>
         </div>
       </div>
     </div>`
