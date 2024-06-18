@@ -59,7 +59,6 @@ const getEmployeeData = async (id) => {
     const res = await fetch(`${getEmployeeUrl}?id=${id}`)
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
-
     const json = await res.json()
 
     return json

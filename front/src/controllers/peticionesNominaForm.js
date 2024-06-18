@@ -1,8 +1,10 @@
 import {
   getGruposNomina,
   getNominas,
+  getPeticionesNomina,
   sendCalculoNomina,
 } from '../api/peticionesNomina.js'
+import { nomReportCard } from '../components/nom_report_card.js'
 import { tableListCard } from '../components/tabla_lista_card.js'
 import { confirmNotification, validateInput } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
@@ -110,6 +112,23 @@ export function validateEmployeePayForm({
   d.addEventListener('click', async (e) => {
     if (e.target === showRequestGroupBtn) {
       requestSelectContainer.classList.remove('hide')
+    }
+
+    if (e.target.id === 'btn-show-request') {
+      e.preventDefault()
+      let peticiones = await getPeticionesNomina()
+      let peticion = peticiones.find(
+        (el) => el.correlativo === e.target.dataset.correlativo
+      )
+      employeePayForm.insertAdjacentHTML(
+        'beforeend',
+        nomReportCard({ data: peticion })
+      )
+    }
+
+    if (e.target.id === 'btn-close-report') {
+      let reportCard = d.getElementById('modal-report')
+      reportCard.remove()
     }
 
     if (e.target.id === 'send-nom-request') {
