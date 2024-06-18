@@ -18,8 +18,22 @@ if (empty($data['id'])) {
     exit;
 }
 
+
+
+// verificar el status del empleado
+$stmt_emp = $conexion->prepare("SELECT * FROM `empleados` WHERE id = ?");
+$stmt_emp->bind_param('s', $data["id"]);
+$stmt_emp->execute();
+$result = $stmt_emp->get_result();
+if ($row = $result->fetch_assoc()) {
+    $verificado = ($row["verificado"] == '2') ? '0' : $row["verificado"];
+}
+$stmt_emp->close();
+
+
+
 // Construir la consulta SQL para actualizar datos
-$sql = "UPDATE empleados SET nacionalidad = ?, cedula = ?, cod_empleado = ?, nombres = ?, fecha_ingreso = ?, otros_años = ?, status = ?, observacion = ?, cod_cargo = ?, banco = ?, cuenta_bancaria = ?, hijos = ?, instruccion_academica = ?, discapacidades = ?, tipo_cuenta = ?, tipo_nomina = ?, id_dependencia = ? WHERE id = ?";
+$sql = "UPDATE empleados SET nacionalidad = ?, cedula = ?, cod_empleado = ?, nombres = ?, fecha_ingreso = ?, otros_años = ?, status = ?, observacion = ?, cod_cargo = ?, banco = ?, cuenta_bancaria = ?, hijos = ?, instruccion_academica = ?, discapacidades = ?, tipo_cuenta = ?, tipo_nomina = ?, id_dependencia = ?, verificado='$verificado' WHERE id = ?";
 
 // Preparar la declaración SQL
 $stmt = $conexion->prepare($sql);

@@ -80,8 +80,7 @@
             </a>
             <ul class="pc-submenu">
               <li class="pc-item"><a class="pc-link"
-                  href="<?php echo constant('URL') ?>front/mod_registro_control/regcon_empleados_verificar">Nuevos
-                  empleados</a></li>
+                  href="<?php echo constant('URL') ?>front/mod_registro_control/regcon_empleados_verificar">Gestión de empleados</a></li>
 
             </ul>
           </li>

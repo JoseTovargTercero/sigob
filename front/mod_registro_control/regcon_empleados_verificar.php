@@ -37,7 +37,7 @@ require_once '../../back/sistema_global/session.php';
           <div class="row align-items-center">
             <div class="col-md-12">
               <div class="page-header-title">
-                <h5 class="mb-0">Empleados</h5>
+                <h5 class="mb-0">Gestión de empleados</h5>
               </div>
             </div>
           </div>
@@ -105,19 +105,6 @@ require_once '../../back/sistema_global/session.php';
   <div class="dialogs">
     <div class="dialogs-content " style="width: 75%;">
       <span class="close-button">×</span>
-
-
-
-
-
-
-
-
-
-
-
-
-
 
       <div class="row">
         <div class="col-lg-4 pt-3 pb-3">
@@ -230,7 +217,7 @@ require_once '../../back/sistema_global/session.php';
       <div class="w-100 text-center pt-3">
         <button class="btn btn-danger" id="eliminar-btn">Eliminar solicitud</button>
         <button class="btn btn-secondary" id="enviar_correcion-btn" onclick="mostrarSectionComentario()">Enviar a corrección</button>
-        <button class="btn btn-primary" id="aceptar-btn">Aceptar</button>
+        <button class="btn btn-primary" id="aceptar-btn">Aceptar empleado</button>
       </div>
     </div>
   </div>
@@ -257,12 +244,38 @@ require_once '../../back/sistema_global/session.php';
       $('#sectionComentario').addClass('hide')
       $('#eliminar-btn').removeClass('hide')
       $('#aceptar-btn').removeClass('hide')
+      $('#comentario').val('')
       $('#enviar_correcion-btn').attr('onclick', 'mostrarSectionComentario()')
     }
 
 
     function enviarCorreccion() {
-      
+      const comentario = $('#comentario').val()
+      if (comentario == '' || comentario.length < 10) {
+        toast_s('error', 'Debe indicar un comentario valido');
+        return
+      }
+      $.ajax({
+        url: url_back + 'regcon_correccion_empleado.php',
+        type: 'POST',
+        data: {
+          id: id_revision,
+          comentario: comentario
+        },
+        cache: false,
+        success: function(data) {
+          const result = JSON.parse(data)
+          if (result == 'ok') {
+            toast_s('success', 'Se envió a corrección')
+            cargarTabla()
+            toggleDialogs()
+            cancelarRegistro()
+          }else{
+              toast_s('error', result);
+              return
+          }
+        }
+      });
     }
 
     function aceptarSolicitud() {

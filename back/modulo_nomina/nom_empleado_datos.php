@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id'])) {
     $sql = "SELECT e.id, e.cedula, e.nombres, e.tipo_nomina, d.id_dependencia, d.dependencia,
                    e.nacionalidad, e.cod_empleado, e.fecha_ingreso, e.otros_años, e.status, 
                    e.observacion, e.cod_cargo, e.banco, e.cuenta_bancaria, e.hijos, 
-                   e.instruccion_academica, e.discapacidades, e.tipo_cuenta, e.tipo_nomina
+                   e.instruccion_academica, e.discapacidades, e.tipo_cuenta, e.tipo_nomina, e.correcion
             FROM empleados AS e
             INNER JOIN dependencias AS d ON e.id_dependencia = d.id_dependencia
             WHERE e.id = ?";
