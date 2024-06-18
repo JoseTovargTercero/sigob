@@ -48,7 +48,7 @@ require_once '../../back/sistema_global/session.php';
             <div class="row mb3">
                 <!-- [ worldLow section ] start -->
                 <div class="col-xl-12">
-                    <div class="card" id="employee-pay-form">
+                    <div class="card" id="request-form">
                         <div class="card-header">
                             <div class="d-flex align-items-center justify-content-between">
                                 <div>
@@ -122,7 +122,8 @@ require_once '../../back/sistema_global/session.php';
 
 
     <!-- [ Main Content ] end -->
-    <script type="module" src="../src/controllers/peticionesNominaForm.js"></script>
+    <script type="module" src="../app.js"></script>
+    <!-- <script type="module" src="../src/controllers/peticionesNominaForm.js"></script> -->
     <script type="module" src="../src/controllers/peticionesTable.js"></script>
     <script src="https://cdn.datatables.net/2.0.1/js/dataTables.js"></script>
     <script src="https://cdn.datatables.net/2.0.1/js/dataTables.bootstrap5.js"></script>

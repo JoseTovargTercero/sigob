@@ -121,8 +121,6 @@ const getNominaTxt = async (data) => {
     showLoader('pay-nom-loader')
   }
 
-  console.log(data)
-
   try {
     let res = await fetch(obtenerNominasTxtUrl, {
       method: 'POST',

@@ -12,12 +12,12 @@ import { loadRequestTable } from './peticionesTable.js'
 const d = document
 const w = window
 
-const selectGrupo = d.getElementById('grupo')
-const selectNomina = d.getElementById('nomina')
-const requestSelectContainer = d.getElementById('request-employee-container')
-const showRequestGroupBtn = d.getElementById('show-request-group')
-const closeRequestListBtn = d.getElementById('close-request-list')
-const employeePayForm = d.getElementById('employee-pay-form')
+// const selectGrupo = d.getElementById('grupo')
+// const selectNomina = d.getElementById('nomina')
+// const requestSelectContainer = d.getElementById('request-employee-container')
+// const showRequestGroupBtn = d.getElementById('show-request-group')
+// const closeRequestListBtn = d.getElementById('close-request-list')
+// const employeePayForm = d.getElementById('employee-pay-form')
 
 let fieldList = {
   nomina: '',
@@ -39,9 +39,23 @@ let fieldListErrors = {
 
 let requestInfo
 
-function validateEmployeePayForm() {
+export function validateEmployeePayForm({
+  selectIdNomina,
+  selectIdGrupo,
+  requestSelectContainerId,
+  showRequestGroupBtnId,
+  formId,
+}) {
   // Cargar tabla de peticiones
   loadRequestTable()
+
+  let selectGrupo = d.getElementById(selectIdGrupo)
+  let selectNomina = d.getElementById(selectIdNomina)
+  let requestSelectContainer = d.getElementById(requestSelectContainerId)
+  let showRequestGroupBtn = d.getElementById(showRequestGroupBtnId)
+  let employeePayForm = d.getElementById(formId)
+
+  console.log(requestSelectContainer)
 
   selectGrupo.addEventListener('change', async (e) => {
     fieldList = validateInput({
@@ -109,13 +123,11 @@ function validateEmployeePayForm() {
       })
     }
   })
-}
 
-function resetSelect() {
-  let employeePayTableCard = d.getElementById('request-employee-table-card')
-  if (employeePayTableCard) employeePayTableCard.remove()
-  selectNomina.value = ''
-  selectGrupo.value = ''
+  function resetSelect() {
+    let employeePayTableCard = d.getElementById('request-employee-table-card')
+    if (employeePayTableCard) employeePayTableCard.remove()
+    selectNomina.value = ''
+    selectGrupo.value = ''
+  }
 }
-
-validateEmployeePayForm()
