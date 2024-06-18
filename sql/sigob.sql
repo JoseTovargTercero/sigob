@@ -651,45 +651,42 @@ INSERT INTO `dependencias` (`id_dependencia`, `dependencia`) VALUES
 
 CREATE TABLE `empleados` (
   `id` int(11) NOT NULL,
-  `nacionalidad` varchar(255) NOT NULL,
-  `cedula` varchar(20) DEFAULT NULL,
-  `cod_empleado` varchar(20) DEFAULT NULL,
-  `nombres` varchar(255) DEFAULT NULL,
+  `nacionalidad` varchar(255) COLLATE latin1_spanish_ci NOT NULL,
+  `cedula` varchar(20) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `cod_empleado` varchar(20) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `nombres` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
   `fecha_ingreso` date DEFAULT NULL,
   `otros_años` int(11) NOT NULL DEFAULT 0,
-  `status` varchar(5) DEFAULT NULL,
-  `observacion` varchar(255) DEFAULT NULL,
-  `cod_cargo` varchar(10) NOT NULL,
-  `banco` varchar(255) NOT NULL,
-  `cuenta_bancaria` varchar(255) DEFAULT NULL,
+  `status` varchar(5) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `observacion` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `cod_cargo` varchar(10) COLLATE latin1_spanish_ci NOT NULL,
+  `banco` varchar(255) COLLATE latin1_spanish_ci NOT NULL,
+  `cuenta_bancaria` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
   `hijos` int(11) NOT NULL DEFAULT 0,
   `instruccion_academica` int(11) NOT NULL DEFAULT 0,
   `discapacidades` int(2) NOT NULL DEFAULT 0,
   `tipo_cuenta` int(10) NOT NULL,
   `tipo_nomina` int(10) NOT NULL,
   `id_dependencia` int(255) NOT NULL,
-  `verificado` int(1) NOT NULL DEFAULT 0
+  `verificado` int(1) NOT NULL DEFAULT 0,
+  `correcion` varchar(255) COLLATE latin1_spanish_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 --
 -- Volcado de datos para la tabla `empleados`
 --
 
-INSERT INTO `empleados` (`id`, `nacionalidad`, `cedula`, `cod_empleado`, `nombres`, `fecha_ingreso`, `otros_años`, `status`, `observacion`, `cod_cargo`, `banco`, `cuenta_bancaria`, `hijos`, `instruccion_academica`, `discapacidades`, `tipo_cuenta`, `tipo_nomina`, `id_dependencia`, `verificado`) VALUES
-(27, 'V', '23987719', '441151', 'ORQUIDEA JOSE BOSSIO ALDANA', '2010-05-02', 0, '1', 'N/A', '25212', 'Tesoro', '01630409334091000513', 3, 3, 0, 0, 0, 6, 1),
-(28, 'V', '4781808', '441151', 'BOSSIO CORREA, HERNAN ARSENIO', '2021-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '01020457790100627238', 3, 2, 0, 0, 0, 6, 1),
-(29, 'V', '1566323', '441151', 'LARA, ALIDA DEL VALLE', '2021-05-02', 0, '1', 'N/A', '25212', 'Caroni', '01280027402712476304', 3, 3, 0, 1, 0, 6, 1),
-(30, 'V', '642362', '441151', 'NANCY GISELA AGUILAR DE MENOTTI', '2021-05-02', 0, '1', 'N/A', '25212', 'Bicentenario', '01750575120077277895', 3, 2, 0, 0, 0, 6, 1),
-(31, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 3, 0, 0, 0, 6, 0),
-(32, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 2, 0, 0, 0, 6, 0),
-(33, '1', '123456789', '441151', 'Pedro Pablo', '2022-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 3, 0, 0, 0, 6, 0),
-(34, '1', '123456789', '441151', 'Pedro Pablo', '2010-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 2, 0, 1, 2, 6, 0),
-(35, '1', '123456789', '441151', 'Pedro Pablo', '2010-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 3, 0, 1, 2, 6, 0),
-(37, '1', '123456789', '441151', 'Pedro Pablo', '2010-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 2, 0, 1, 2, 6, 0),
-(38, 'V', '123456789', '441151', 'Pedro Pablo', '2010-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 3, 0, 1, 2, 6, 0),
-(39, 'V', '123456789', '441151', 'Pedro Pablo', '2010-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 2, 0, 1, 2, 6, 0),
-(40, 'V', '123456789', '441151', 'Pedro Pablo', '2010-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 3, 0, 1, 2, 6, 0),
-(41, 'V123456', '123456789', '441151', 'Pedro Pablo', '2010-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 2, 0, 1, 2, 6, 0);
+INSERT INTO `empleados` (`id`, `nacionalidad`, `cedula`, `cod_empleado`, `nombres`, `fecha_ingreso`, `otros_años`, `status`, `observacion`, `cod_cargo`, `banco`, `cuenta_bancaria`, `hijos`, `instruccion_academica`, `discapacidades`, `tipo_cuenta`, `tipo_nomina`, `id_dependencia`, `verificado`, `correcion`) VALUES
+(27, 'V', '23987719', '441151', 'ORQUIDEA JOSE BOSSIO ALDANA', '2010-05-02', 0, '1', 'N/A', '25212', 'Tesoro', '01630409334091000513', 3, 3, 0, 0, 0, 6, 1, ''),
+(28, 'V', '4781808', '441151', 'BOSSIO CORREA, HERNAN ARSENIO', '2021-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '01020457790100627238', 3, 2, 0, 0, 0, 6, 1, ''),
+(29, 'V', '1566323', '441151', 'LARA, ALIDA DEL VALLE', '2021-05-02', 0, '1', 'N/A', '25212', 'Caroni', '01280027402712476304', 3, 3, 0, 1, 0, 6, 1, ''),
+(30, 'V', '642362', '441151', 'NANCY GISELA AGUILAR DE MENOTTI', '2021-05-02', 0, '1', 'N/A', '25212', 'Bicentenario', '01750575120077277895', 3, 2, 0, 0, 0, 6, 1, ''),
+(35, '1', '123456789', '441151', 'Pedro Pablo', '2010-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '01020457790100627238', 3, 3, 0, 1, 2, 6, 0, ''),
+(37, '1', '123456789', '441151', 'Pedro Pablo', '2010-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '01020457790100627238', 3, 2, 0, 1, 2, 6, 0, ''),
+(38, 'V', '123456789', '441151', 'Pedro Pablo', '2010-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '01020457790100627238', 3, 3, 0, 1, 2, 6, 0, ''),
+(39, 'V', '123456789', '441151', 'Pedro Pablo', '2010-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '01020457790100627238', 3, 2, 0, 1, 2, 6, 0, ''),
+(40, 'V', '123456789', '441151', 'Pedro Pablo', '2010-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '01020457790100627238', 3, 3, 0, 1, 2, 6, 0, ''),
+(41, 'V123456', '123456789', '441151', 'Pedro Pablo', '2010-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '01020457790100627238', 3, 2, 0, 1, 2, 6, 0, '');
 
 -- --------------------------------------------------------
 

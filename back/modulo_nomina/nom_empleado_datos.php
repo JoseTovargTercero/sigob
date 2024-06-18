@@ -53,7 +53,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id'])) {
                 "hijos" => $row["hijos"],
                 "instruccion_academica" => $row["instruccion_academica"],
                 "discapacidades" => $row["discapacidades"],
-                "tipo_cuenta" => $row["tipo_cuenta"]
+                "tipo_cuenta" => $row["tipo_cuenta"],
+                "correcion" => $row["correcion"]
             );
             $datos[] = $empleado;
         }
