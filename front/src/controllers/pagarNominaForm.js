@@ -70,10 +70,10 @@ export async function validatePayNomForm({ selectId, consultBtnId, formId }) {
       })
 
       let result = requestInfo.find(
-        (el) => el.correlativo === identificador[0].correlativo
+        (el) => el.correlativo === fieldList['select-correlativo']
       )
       crearNominaTxt({
-        correlativo: identificador[0].correlativo,
+        correlativo: fieldList['select-correlativo'],
         identificador: identificador[0].identificador,
       })
 
@@ -116,6 +116,4 @@ async function crearNominaTxt({ correlativo, identificador }) {
     correlativo,
     identificador,
   })
-
-  console.log(archivostxt2)
 }

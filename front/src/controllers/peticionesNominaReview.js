@@ -1,17 +1,18 @@
 import {
   confirmarPeticionNomina,
+  generarNominaTxt,
   getComparacionNomina,
   getPeticionesNomina,
 } from '../api/peticionesNomina.js'
 import { createComparationContainer } from '../components/regcon_comparation_container.js'
 import { confirmNotification, validateInput } from '../helpers/helpers.js'
-import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
+import { FRECUENCY_TYPES, NOTIFICATIONS_TYPES } from '../helpers/types.js'
 
 const d = document
 const w = window
 
 let fieldList = {
-  'select-nomina': '',
+  fieldList: '',
 }
 
 let fieldListErrors = {
@@ -36,7 +37,7 @@ export async function validateRequestNomForm({
   let selectNom = d.getElementById(selectId)
   let consultNom = d.getElementById(consultBtnId)
   let requestComparationForm = d.getElementById(formId)
-  // let comparationContainer = d.getElementById('request-comparation-container')
+  let comparationContainer = d.getElementById('request-comparation-container')
 
   let selectValues = await requestInfo
     .map((el) => {
@@ -63,12 +64,14 @@ export async function validateRequestNomForm({
   d.addEventListener('click', async (e) => {
     if (fieldList['select-nomina'] === '') return
 
-    let comparationContainer = d.getElementById('request-comparation-container')
+    comparationContainer = d.getElementById('request-comparation-container')
 
     if (e.target === consultNom) {
       let result = requestInfo.find(
         (el) => el.correlativo === fieldList['select-nomina']
       )
+      fieldList.frecuencia = result.frecuencia
+      console.log(fieldList)
       if (comparationContainer) comparationContainer.remove()
 
       let peticiones = await getComparacionNomina(result)
@@ -81,13 +84,15 @@ export async function validateRequestNomForm({
 
     if (e.target.id === 'confirm-request') {
       // console.log(e.target.dataset.correlativo)
-      confirmNotification({
-        type: NOTIFICATIONS_TYPES.send,
-        successFunction: confirmarPeticionNomina,
-        successFunctionParams: e.target.dataset.correlativo,
-        othersFunctions: [resetInput],
-        message: '¿Seguro de aceptar esta petición?',
-      })
+      // confirmNotification({
+      //   type: NOTIFICATIONS_TYPES.send,
+      //   successFunction: confirmarPeticionNomina,
+      //   successFunctionParams: e.target.dataset.correlativo,
+      //   othersFunctions: [resetInput, validateRequestFrecuency],
+      //   message: '¿Seguro de aceptar esta petición?',
+      // })
+
+      validateRequestFrecuency()
     }
   })
 
@@ -98,4 +103,53 @@ export async function validateRequestNomForm({
 
     selectNom.value = ''
   }
+
+  async function validateRequestFrecuency() {
+    let generarNomina
+    if (Number(fieldList.frecuencia) === 1) {
+      generarNomina = FRECUENCY_TYPES[1].map((el) =>
+        generarNominaTxt({
+          correlativo: fieldList['select-nomina'],
+          identificador: el,
+        })
+      )
+    }
+
+    if (Number(fieldList.frecuencia) === 2) {
+      generarNomina = FRECUENCY_TYPES[2].map((el) =>
+        generarNominaTxt({
+          correlativo: fieldList['select-nomina'],
+          identificador: el,
+        })
+      )
+    }
+
+    if (Number(fieldList.frecuencia) === 3) {
+      generarNomina = FRECUENCY_TYPES[3].map((el) =>
+        generarNominaTxt({
+          correlativo: fieldList['select-nomina'],
+          identificador: el,
+        })
+      )
+    }
+
+    if (Number(fieldList.frecuencia) === 4) {
+      generarNomina = FRECUENCY_TYPES[4].map((el) =>
+        generarNominaTxt({
+          correlativo: fieldList['select-nomina'],
+          identificador: el,
+        })
+      )
+    }
+
+    let resultados = await Promise.all(generarNomina)
+
+    console.log(resultados)
+  }
 }
+
+// FRECUENCIAS
+// 1: 4 PETICIONES
+// 2: 2 PETICIONES
+// 3: 1 PETICION
+// 4 ???

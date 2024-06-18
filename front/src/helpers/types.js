@@ -5,4 +5,11 @@ const NOTIFICATIONS_TYPES = {
   fail: 'FAIL',
 }
 
-export { NOTIFICATIONS_TYPES }
+const FRECUENCY_TYPES = {
+  1: ['s1', 's2', 's3', 's4'],
+  2: ['q1', 'q2'],
+  3: ['unico'],
+  4: ['unico'],
+}
+
+export { NOTIFICATIONS_TYPES, FRECUENCY_TYPES }
