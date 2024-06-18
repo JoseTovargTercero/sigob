@@ -1,0 +1,25 @@
+.pay-nom-form {
+  width: 100%;
+}
+.nom-report-card {
+  max-width: 600px;
+}
+
+.nom-report-card .card-header {
+  background-color: var(--lightgray);
+  width: 100%;
+  border-radius: 1rem;
+}
+
+.nom-report-card .card-body {
+  background-color: var(--lightgray);
+  border-radius: 1rem;
+  width: 50%;
+}
+
+.btn-report-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+  gap: 1rem;
+  justify-items: center;
+}

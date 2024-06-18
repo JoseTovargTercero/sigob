@@ -35,37 +35,38 @@ require_once '../../back/sistema_global/session.php';
         </div>
       </div>
       <!-- [ Main Content ] start -->
-      <div class="row mb3">
+      <div class="row mb-3 align-items-center" id="pay-nom-form">
         <!-- [ worldLow section ] start -->
-        <div class="col-xl-12 mb-3" id="pay-nom-form">
-          <div class="card mx-auto">
-            <div class="card-header">
-              <div>
-                <h5 class="mb-0">Pago de nómina</h5>
-                <small class="mt-0 text-muted">Gestione la generación de txt de nóminas</small>
-              </div>
+
+        <div class="card col-lg-6 mx-auto">
+          <div class="card-header">
+            <div>
+              <h5 class="mb-0">Pago de nómina</h5>
+              <small class="mt-0 text-muted">Gestione la generación de txt de nóminas</small>
             </div>
-            <div class="card-body">
-              <div class="forum-group">
-                <div class="row mx-auto align-items-end">
-                  <div class="col-sm-9">
-                    <label for="select-correlativo" class="form-label">Selecciona el correlativo</label>
-                    <select id="select-correlativo" name="select-correlativo" class="form-control">
-                      <option value="">Seleccionar correlativo</option>
-                    </select>
-                  </div>
-                  <div class="col-sm align-items-center">
-                    <button class="btn btn-primary" id="consultar-correlativo">Consultar</button>
-                  </div>
+          </div>
+          <div class="card-body">
+            <div class="forum-group">
+              <div class="row mx-auto align-items-end">
+                <div class="col-lg-8">
+                  <label for="select-correlativo" class="form-label">Selecciona el correlativo</label>
+                  <select id="select-correlativo" name="select-correlativo" class="form-control">
+                    <option value="">Seleccionar correlativo</option>
+                  </select>
                 </div>
-              </div>
-              <div class="loader-container card-footer py-4" id="pay-nom-loader">
-                <div class="loader"></div>
+                <div class="col-lg-2 align-items-center">
+                  <button class="btn btn-primary" id="consultar-correlativo">Consultar</button>
+                </div>
               </div>
             </div>
 
+            <div class="loader-container card-footer py-4" id="pay-nom-loader">
+              <div class="loader"></div>
+            </div>
           </div>
         </div>
+
+
 
         <!-- [ worldLow section ] end -->
         <!-- [ Recent Users ] end -->

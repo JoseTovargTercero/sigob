@@ -1,10 +1,12 @@
 import {
   confirmarPeticionNomina,
+  descargarNominaTxt,
   generarNominaTxt,
   getComparacionNomina,
   getNominaTxt,
   getPeticionesNomina,
 } from '../api/peticionesNomina.js'
+import { nomReportCard } from '../components/nom_report_card.js'
 import { createComparationContainer } from '../components/regcon_comparation_container.js'
 import { confirmNotification, validateInput } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
@@ -28,8 +30,6 @@ let nominas = {}
 
 export async function validatePayNomForm({ selectId, consultBtnId, formId }) {
   let requestInfo = await getPeticionesNomina()
-
-  console.log(requestInfo)
 
   let selectCorrelativo = d.getElementById(selectId)
   let consultCorrelativo = d.getElementById(consultBtnId)
@@ -61,10 +61,9 @@ export async function validatePayNomForm({ selectId, consultBtnId, formId }) {
   d.addEventListener('click', async (e) => {
     if (fieldList['select-correlativo'] === '') return
 
-    let comparationContainer = d.getElementById('request-comparation-container')
-
     if (e.target === consultCorrelativo) {
-      if (comparationContainer) comparationContainer.remove()
+      let nomReportCardElement = d.getElementById('nom-report-card')
+      if (nomReportCardElement) nomReportCardElement.remove()
 
       let identificador = await getNominaTxt({
         correlativo: fieldList['select-correlativo'],
@@ -73,32 +72,43 @@ export async function validatePayNomForm({ selectId, consultBtnId, formId }) {
       let result = requestInfo.find(
         (el) => el.correlativo === identificador[0].correlativo
       )
-
       crearNominaTxt({
-        correlativo: result.correlativo,
+        correlativo: identificador[0].correlativo,
         identificador: identificador[0].identificador,
       })
+
+      payNomForm.insertAdjacentHTML(
+        'beforeend',
+        nomReportCard({
+          data: result,
+        })
+      )
     }
 
-    if (e.target.id === 'confirm-request') {
+    if (e.target.id === 'generar-txt') {
+      let descargatxt = await descargarNominaTxt(
+        fieldList['select-correlativo']
+      )
+
+      console.log(descargatxt)
       // console.log(e.target.dataset.correlativo)
-      confirmNotification({
-        type: NOTIFICATIONS_TYPES.send,
-        successFunction: confirmarPeticionNomina,
-        successFunctionParams: e.target.dataset.correlativo,
-        othersFunctions: [resetInput],
-        message: '¿Seguro de aceptar esta petición?',
-      })
+      // confirmNotification({
+      //   type: NOTIFICATIONS_TYPES.send,
+      //   successFunction: confirmarPeticionNomina,
+      //   successFunctionParams: e.target.dataset.correlativo,
+      //   othersFunctions: [resetInput],
+      //   message: '¿Seguro de aceptar esta petición?',
+      // })
     }
   })
 
-  function resetInput() {
-    let comparationContainer = d.getElementById('request-comparation-container')
+  // function resetInput() {
+  //   let comparationContainer = d.getElementById('request-comparation-container')
 
-    if (comparationContainer) comparationContainer.remove()
+  //   if (comparationContainer) comparationContainer.remove()
 
-    selectCorrelativo.value = ''
-  }
+  //   selectCorrelativo.value = ''
+  // }
 }
 
 async function crearNominaTxt({ correlativo, identificador }) {

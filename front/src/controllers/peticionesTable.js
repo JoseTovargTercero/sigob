@@ -64,7 +64,7 @@ export async function loadRequestTable() {
     return {
       correlativo: peticion.correlativo,
       nombre: peticion.nombre_nomina,
-      status: peticion.status,
+      status: peticion.status == 1 ? 'Revisado' : 'Pendiente',
       fecha: peticion.creacion,
       //   acciones: `
       //   <button class="btn btn-info btn-sm btn-view" data-id="${empleado.id_empleado}"><i class="bx bx-detail me-1"></i>Detalles</button>

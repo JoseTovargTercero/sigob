@@ -29,6 +29,9 @@ const obtenerNominasTxtUrl =
 const creacionNominasTxtUrl =
   '../../../../../sigob/back/modulo_nomina/nom_creacion_txt.php'
 
+const descargarNominaTxtUrl = (correlativo) =>
+  `../../../../../sigob/back/modulo_nomina/nom_txt_descargas.php?correlativo=${correlativo}`
+
 const enviarCalculoNominaUrl =
   '../../../../../sigob/back/modulo_nomina/nom_calculonomina_registro.php'
 
@@ -121,8 +124,6 @@ const getNominaTxt = async (data) => {
     showLoader('pay-nom-loader')
   }
 
-  console.log(data)
-
   try {
     let res = await fetch(obtenerNominasTxtUrl, {
       method: 'POST',
@@ -139,6 +140,61 @@ const getNominaTxt = async (data) => {
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
       message: 'Error al obtener nominas',
+    })
+  } finally {
+    if (loader) {
+      hideLoader('pay-nom-loader')
+    }
+  }
+}
+
+const generarNominaTxt = async (data) => {
+  let loader = document.getElementById('pay-nom-loader')
+  if (loader) {
+    showLoader('pay-nom-loader')
+  }
+
+  console.log(data)
+  try {
+    let res = await fetch(creacionNominasTxtUrl, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+
+    let json = await res.text()
+
+    return json
+  } catch (e) {
+    console.log(e)
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error en descargat TXT',
+    })
+  } finally {
+    if (loader) {
+      hideLoader('pay-nom-loader')
+    }
+  }
+}
+
+const descargarNominaTxt = async (correlativo) => {
+  let loader = document.getElementById('pay-nom-loader')
+  if (loader) {
+    showLoader('pay-nom-loader')
+  }
+
+  console.log(correlativo)
+  try {
+    let res = await fetch(descargarNominaTxtUrl(correlativo))
+
+    let json = await res.text()
+
+    return json
+  } catch (e) {
+    console.log(e)
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error en descargat TXT',
     })
   } finally {
     if (loader) {
@@ -179,35 +235,6 @@ const getComparacionNomina = async (obj) => {
     })
   } finally {
     hideLoader('request-comparation-loader')
-  }
-}
-
-const generarNominaTxt = async (data) => {
-  let loader = document.getElementById('pay-nom-loader')
-  if (loader) {
-    showLoader('pay-nom-loader')
-  }
-
-  console.log(data)
-  try {
-    let res = await fetch(creacionNominasTxtUrl, {
-      method: 'POST',
-      body: JSON.stringify(data),
-    })
-
-    let json = await res.text()
-
-    return json
-  } catch (e) {
-    console.log(e)
-    return confirmNotification({
-      type: NOTIFICATIONS_TYPES.fail,
-      message: 'Error en descargat TXT',
-    })
-  } finally {
-    if (loader) {
-      hideLoader('pay-nom-loader')
-    }
   }
 }
 
@@ -269,6 +296,7 @@ export {
   getPeticionesNomina,
   getNominaTxt,
   generarNominaTxt,
+  descargarNominaTxt,
   sendCalculoNomina,
   getComparacionNomina,
   confirmarPeticionNomina,
