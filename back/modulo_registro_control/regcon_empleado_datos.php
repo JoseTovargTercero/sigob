@@ -10,9 +10,10 @@ if (isset($_POST['id'])) {
     $sql = "SELECT e.id, e.cedula, e.nombres, e.tipo_nomina, d.id_dependencia, d.dependencia,
                    e.nacionalidad, e.cod_empleado, e.fecha_ingreso, e.otros_años, e.status, 
                    e.observacion, e.cod_cargo, e.banco, e.cuenta_bancaria, e.hijos, 
-                   e.instruccion_academica, e.discapacidades, e.tipo_cuenta, e.tipo_nomina
+                   e.instruccion_academica, e.discapacidades, e.tipo_cuenta, e.tipo_nomina, c.cargo 
             FROM empleados AS e
             INNER JOIN dependencias AS d ON e.id_dependencia = d.id_dependencia
+            LEFT JOIN cargos_grados AS c ON e.cod_cargo = c.cod_cargo
             WHERE e.id = ?";
 
     // Preparar la declaración SQL
@@ -36,24 +37,25 @@ if (isset($_POST['id'])) {
         while ($row = $result->fetch_assoc()) {
             $empleado = array(
                 "id_empleado" => $row["id"],
-                "cedula" => $row["cedula"],
-                "nombres" => $row["nombres"],
+                "cedula" => $row["cedula"], // LISTO
+                "nombres" => $row["nombres"], // LISTO
                 "tipo_nomina" => $row["tipo_nomina"],
                 "id_dependencia" => $row["id_dependencia"],
-                "dependencia" => $row["dependencia"],
-                "nacionalidad" => $row["nacionalidad"],
+                "dependencia" => $row["dependencia"], // LISTO
+                "nacionalidad" => $row["nacionalidad"], // LISTO
                 "cod_empleado" => $row["cod_empleado"],
-                "fecha_ingreso" => $row["fecha_ingreso"],
-                "otros_años" => $row["otros_años"],
-                "status" => $row["status"],
-                "observacion" => $row["observacion"],
-                "cod_cargo" => $row["cod_cargo"],
-                "banco" => $row["banco"],
-                "cuenta_bancaria" => $row["cuenta_bancaria"],
-                "hijos" => $row["hijos"],
-                "instruccion_academica" => $row["instruccion_academica"],
-                "discapacidades" => $row["discapacidades"],
-                "tipo_cuenta" => $row["tipo_cuenta"]
+                "fecha_ingreso" => $row["fecha_ingreso"], // LISTO
+                "otros_años" => $row["otros_años"], // LISTO
+                "status" => $row["status"], 
+                "observacion" => $row["observacion"], //listo
+                "cod_cargo" => $row["cod_cargo"], // LISTO
+                "cargo" => $row["cargo"], // CARGO
+                "banco" => $row["banco"], //LISTO
+                "cuenta_bancaria" => $row["cuenta_bancaria"], //LISTO
+                "hijos" => $row["hijos"], // LISTO
+                "instruccion_academica" => $row["instruccion_academica"], // listo
+                "discapacidades" => $row["discapacidades"], // lISTO
+                "tipo_cuenta" => $row["tipo_cuenta"] //LISTO
             );
             $datos[] = $empleado;
         }

@@ -403,6 +403,8 @@ require_once '../../back/sistema_global/session.php';
           registro: true
         },
         success: function(text) {
+
+          console.log(nombre + ' - ' + tipo + ' - ' + partida + ' - ' + tipo_calculo + ' - ' + valor + ' - ' + tipo_calculo_aplicado)
           $('#cargando').hide();
 
           if (text == 'ok') {

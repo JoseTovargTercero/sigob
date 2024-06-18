@@ -2746,7 +2746,7 @@ left: 50%;
 transform: translate(-50%, -50%);
 background-color: white;
 padding: 1rem 1.5rem;
-width: 24rem;
+width: 50%;
 border-radius: 0.5rem;
 }
 .close-button {
@@ -2770,4 +2770,12 @@ transition: visibility 0s linear 0s, opacity 0.25s 0s, transform 0.25s;
 
 .pc-micon > i {
   color: rgb(169, 183, 208)
+}
+
+.fs-4{
+  font-size: 4rem !important;
+}
+
+.fs-3{
+  font-size: 3rem !important;
 }

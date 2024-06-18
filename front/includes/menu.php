@@ -87,13 +87,11 @@
           </li>
 
 
-
         <?php } elseif ($_SESSION["u_oficina_id"] == 3) {  //_relaciones_laborales ?>
 
         <?php } elseif ($_SESSION["u_oficina_id"] == 4) { //_atencion_trabajador ?>
 
         <?php } ?>
-
 
 
 

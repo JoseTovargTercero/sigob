@@ -132,23 +132,6 @@ require_once '../../back/sistema_global/session.php';
       </div>
     </div>
   </div>
-  <script>
-    var dialogs = document.querySelector(".dialogs");
-    var closeButton = document.querySelector(".close-button");
-
-    function toggleDialogs() {
-      dialogs.classList.toggle("show-dialogs");
-    }
-
-    function windowOnClick(event) {
-      if (event.target === dialogs) {
-        toggleDialogs();
-      }
-    }
-
-    closeButton.addEventListener("click", toggleDialogs);
-    window.addEventListener("click", windowOnClick);
-  </script>
 
 
   <!-- [ Main Content ] end -->

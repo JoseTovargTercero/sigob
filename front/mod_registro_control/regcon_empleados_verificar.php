@@ -43,36 +43,12 @@ require_once '../../back/sistema_global/session.php';
           </div>
         </div>
       </div>
+
+
       <!-- [ Main Content ] start -->
       <div class="row mb3">
         <!-- [ worldLow section ] start -->
-
-
-
-
-        <div class="col-lg-12 mb-3 hide" id="informacionPersona">
-          <div class="card">
-            <div class="card-header">
-              <div class="d-flex align-items-start justify-content-between">
-                <div>
-                  <h5 class="mb-0">Detalles</h5>
-                  <small class="text-muded">Información de la solicitud</small>
-                </div>
-                <button class="btn btn-light" onclick="setVista()"> Cancelar</button>
-              </div>
-            </div>
-            <div class="card-body">
-
-              <div class="table-responsive p-1">
-               Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolores nostrum possimus quia eos eaque, enim ipsam vero? Placeat, quod cupiditate laborum illum assumenda error tempore soluta sapiente similique, optio quibusdam.
-              </div>
-            </div>
-          </div>
-        </div>
-
-
-
-        <div class="col-lg-12" id="vistaPrincipal">
+        <div class="col-lg-12">
           <div class="card">
             <div class="card-header">
               <div class="d-flex align-items-start justify-content-between">
@@ -127,7 +103,156 @@ require_once '../../back/sistema_global/session.php';
     </div>
   </div>
 
+  <div class="dialogs" >
+    <div class="dialogs-content " style="width: 54%;">
+      <span class="close-button">×</span>
 
+      
+
+      
+
+
+
+
+
+
+
+
+
+
+      <div class="row">
+        <div class="col-lg-4 p-3">
+              <div class="d-flex user-about-block align-items-center mt-0 mb-3">
+                <div class="flex-shrink-0">
+                  <div class="position-relative d-inline-block">
+                    
+            
+
+                    <i class='bx bx-user text-primary fs-3'></i>
+
+
+
+                    <div class="certificated-badge"><i class="fas fa-certificate text-primary bg-icon"></i> <i class="fas fa-check front-icon text-white"></i></div>
+                  </div>
+                </div>
+                <div class="flex-grow-1 ms-3">
+                  <h6 class="mb-1" id="info_nombre"></h6>
+                  <p class="mb-0 text-muted" id="info_cargo"></p>
+                </div>
+              </div>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item"><span class="f-w-500">
+                <i class="bx bx-calendar m-r-10"></i>Ingreso</span>
+              <span id="info_fIngreso" class="float-end"></span>
+            
+            </li>
+              <li class="list-group-item"><span class="f-w-500">
+                <i class="bx bx-calendar-plus m-r-10"></i>Otros años</span> 
+              <span id="info_otrosAnos" class="float-end"></span>
+            
+            </li>
+              <li class="list-group-item border-bottom-0" title="Instrucción académica"><span class="f-w-500">
+                <i class="bx bxs-graduation m-r-10"></i>IA: </span> 
+              <span id="info_instruccion_academica" class="float-end"></span>
+            
+            </li>
+            </ul>
+            <div class="card-body">
+              <div class="row text-center">
+                <div class="col">
+                  <h6 class="mb-1" id="info_hijos"></h6>
+                  <p class="mb-0">Hijos</p>
+                </div>
+                <div class="col border-start">
+                  <h6 class="mb-1" id="info_discapacidad"></h6>
+                  <p class="mb-0">Discapacidad</p>
+                </div>
+              </div>
+            </div>
+
+        </div>
+        <div class="col-lg-8 border-start p-3">
+
+                <div class="card-body">
+                  <p> <b>Observaciones: </b> <span id="info_observacion"></span></p>
+                  <h5 class="mt-5 mb-3">Personal Details</h5>
+                  <div class="table-responsive">
+                    <table class="table table-borderless">
+                      <tbody>
+                        <tr>
+                          <td>Nombre completo</td>
+                          <td>:</td>
+                          <td id="info_full_name"></td>
+                        </tr>
+                        <tr>
+                          <td>Cédula</td>
+                          <td>:</td>
+                          <td id="info_cedula"></td>
+                        </tr>
+                        <tr>
+                          <td>Dependencia</td>
+                          <td>:</td>
+                          <td id="info_dependencia"></td>
+                        </tr>
+                        <tr>
+                          <td>Código del cargo</td>
+                          <td>:</td>
+                          <td id="info_cod_cargo"></td>
+                        </tr>
+
+                        <tr>
+                          <td>Banco</td>
+                          <td>:</td>
+                          <td id="info_banco"></td>
+                        </tr>
+                        <tr>
+                          <td>Cuenta</td>
+                          <td>:</td>
+                          <td id="info_cuenta_bancaria"></td>
+                        </tr>
+                        <tr>
+                          <td>Tipo de cuenta</td>
+                          <td>:</td>
+                          <td id="info_tipo_cuenta"></td>
+                        </tr>
+                       
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+        </div>
+      </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+        <div class="w-100 text-center pt-3">
+
+
+          <button class="btn btn-danger">Eliminar solicitud</button>
+          <button class="btn btn-secondary">Enviar a corrección</button>
+          <button class="btn btn-primary">Aceptar</button>
+
+        </div>
+
+        
+    </div>
+  </div>
 
   <!-- [ Main Content ] end -->
   <script src="../../src/assets/js/plugins/simplebar.min.js"></script>
@@ -177,12 +302,6 @@ require_once '../../back/sistema_global/session.php';
     // ready function
     cargarTabla()
 
-
-    function verGrupo(gurpo) {
-      toggleDialogs()
-
-    }
-
     /**
      * Deletes a record with the specified ID.
      * @param {number} id - The ID of the record to be deleted.
@@ -211,9 +330,9 @@ require_once '../../back/sistema_global/session.php';
               if (text == "ok") {
                 cargarTabla();
                 toast_s("success", "Eliminado con éxito");
-              }else if(text == 'negado'){
+              } else if (text == 'negado') {
                 toast_s("error", "No se puede eliminar el banco, existen empleados asociados.");
-              }  else {
+              } else {
                 toast_s("error", text);
               }
             },
@@ -223,7 +342,7 @@ require_once '../../back/sistema_global/session.php';
     }
 
 
-    function revisar(id){
+    function revisar(id) {
       $('#cargando').show()
 
 
@@ -235,38 +354,42 @@ require_once '../../back/sistema_global/session.php';
         },
         cache: false,
         success: function(data) {
-          //$('#table tbody').html('');
-          console.log(data)
+          const datosEmpleado = data[0]
           if (data) {
-            for (var i = 0; i < data.length; i++) {
-              setVista()
-              $('#cargando').hide()
 
-            /*  const cedula = data[i].cedula;
-              const nombres = data[i].nombres;
-              const dependencia = data[i].dependencia;
-              const id = data[i].id;*/
+            
+            $('#info_nombre').html(datosEmpleado['nombres'])
+            $('#info_full_name').html(datosEmpleado['nombres'])
+            $('#info_cedula').html((datosEmpleado['nacionalidad'] == 1 ? 'V':'E') + '-' + datosEmpleado['cedula'])
+            $('#info_fIngreso').html(datosEmpleado['fecha_ingreso'])
+            $('#info_otrosAnos').html(datosEmpleado['otros_años'])
+            $('#info_discapacidad').html((datosEmpleado['discapacidades'] == '1' ? 'Si':'No'))
+            $('#info_hijos').html(datosEmpleado['hijos'])
+            $('#info_instruccion_academica').html(datosEmpleado['instruccion_academica'])
+            $('#info_observacion').html(datosEmpleado['observacion'])
+            $('#info_cargo').html(datosEmpleado['cargo'])
+            $('#info_cod_cargo').html(datosEmpleado['cod_cargo'])
+            
+            $('#info_dependencia').html(datosEmpleado['dependencia'])
+            $('#info_banco').html(datosEmpleado['banco'])
+            $('#info_cuenta_bancaria').html(datosEmpleado['cuenta_bancaria'])
+            $('#info_tipo_cuenta').html((datosEmpleado['tipo_cuenta'] == 1 ? 'Ahorro' : 'Corriente'))
+          
+            $('#cargando').hide()
 
-            }
+
+
+
+            toggleDialogs()
           }
-
         }
-
       });
-
-
     }
-
-    function setVista(){
-      $('#informacionPersona').toggleClass('hide')
-      $('#vistaPrincipal').toggleClass('hide')
-    }
- 
 
     // cuando el boton btn-guardar sea pulsado, se ejecuta la funcion anterior
-   /* $(document).ready(function() {
-      
-    });*/
+    /* $(document).ready(function() {
+       
+     });*/
   </script>
 
 </body>

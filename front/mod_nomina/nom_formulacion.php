@@ -220,7 +220,7 @@ while ($r = $query->fetch_object()) {
                           <select class="form-select" id="otra_nominas">
                             <option>Seleccione</option>
                             <?php foreach ($nominas as $n) : ?>
-                              <option value="<?php echo $n->id; ?>">&nbsp;<?php echo $n->nombre; ?></option>
+                              <option value="<?php echo $n->nombre; ?>">&nbsp;<?php echo $n->nombre; ?></option>
                             <?php endforeach; ?>
                           </select>
                         </div>
@@ -501,9 +501,9 @@ while ($r = $query->fetch_object()) {
      * @param {Event} event - The event object.
      */
     document.getElementById('otra_nominas').addEventListener('change', function(event) {
-      let id = this.value;
-      if (id != '') {
-        aplicar_filtro(3, id);
+      let nombre = this.value;
+      if (nombre != '') {
+        aplicar_filtro(3, nombre, 'empleados-list');
       }
     });
 
