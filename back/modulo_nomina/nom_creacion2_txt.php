@@ -12,8 +12,9 @@ if (isset($data['Venezuela']) && isset($data['Tesoro']) && isset($data['Bicenten
         $empleados = $data['empleados'];
         $total_a_pagar = $data['total_a_pagar'];
         $correlativo = $data['correlativo'];
+        $identificador = $data['identificador'];
         // Ruta del archivo a generar
-        $file_path = '../../txt/venezuela'.$correlativo.'.txt';
+        $file_path = '../../txt/venezuela_'.$correlativo.'_'.$identificador.'.txt';
         $direccion = "C:/xampp/htdocs/sigob/txt/".$file_path;
         $dia = date('d');
    $mes = date('m');
@@ -251,8 +252,9 @@ header('Content-Length: ' . filesize($file_path));
         $empleados = $data['empleados'];
         $total_a_pagar = $data['total_a_pagar'];
         $correlativo = $data['correlativo'];
+        $identificador = $data['identificador'];
         // Ruta del archivo a generar
-        $file_path = '../../txt/tesoro'.$correlativo.'.txt';
+        $file_path = '../../txt/tesoro_'.$correlativo.'_'.$identificador.'.txt';
         $direccion = "C:/xampp/htdocs/sigob/".$file_path;   
         // Cuerpo del archivo
          // Abrir el archivo para escritura
@@ -309,8 +311,9 @@ header('Content-Length: ' . filesize($file_path));
         $total_a_pagar = $data['total_a_pagar'];
         $correlativo = $data['correlativo'];
         $cantidad_bincentenario = $data['cantidad_bincentenario'];
+        $identificador = $data['identificador'];
         // Ruta del archivo a generar
-        $file_path = '../../txt/bicentenario'.$correlativo.'.txt';
+        $file_path = '../../txt/bicentenario_'.$correlativo.'_'.$identificador.'.txt';
         $direccion = "C:/xampp/htdocs/sigob/".$file_path;
         $dia = date('d');
    $mes = date('m');
@@ -545,8 +548,9 @@ header('Content-Length: ' . filesize($file_path));
         $empleados = $data['empleados'];
         $total_a_pagar = $data['total_a_pagar'];
         $correlativo = $data['correlativo'];
+        $identificador = $data['identificador'];
         // Ruta del archivo a generar
-        $file_path = '../../txt/caroni'.$correlativo.'.txt';
+        $file_path = '../../txt/caroni_'.$correlativo.'_'.$identificador.'.txt';
         $direccion = "C:/xampp/htdocs/sigob/".$file_path;
      
         // Cuerpo del archivo
@@ -655,9 +659,7 @@ header('Content-Length: ' . filesize($file_path));
    }
              
             fwrite($file, $line);
-         echo '<script type="text/javascript">
-            window.location.href = "nom_txt_descargas.php?correlativo=' . $correlativo . '";
-          </script>';
+         
         }
          fclose($file);
         // Escribir el contenido al archivo

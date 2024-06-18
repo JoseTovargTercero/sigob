@@ -3,21 +3,22 @@
 
 
 $correlativo = $_GET['correlativo'];
+$identificador = $_GET['identificador'];
 
 
 // Lista de archivos a incluir en el ZIP, utilizando la variable 'correlativo'
 $files = [
-    "tesoro{$correlativo}.txt",
-    "venezuela{$correlativo}.txt",
-    "bicentenario{$correlativo}.txt",
-    "caroni{$correlativo}.txt"
+    "tesoro_{$correlativo}_{$identificador}.txt",
+    "venezuela_{$correlativo}_{$identificador}.txt",
+    "bicentenario_{$correlativo}_{$identificador}.txt",
+    "caroni_{$correlativo}_{$identificador}.txt"
 ];
 
 // Ruta donde se encuentran los archivos
 $base_dir = "../../txt/";
 
 // Nombre del archivo ZIP que se generará
-$zip_filename = "txt_{$correlativo}.zip";
+$zip_filename = "txt__{$correlativo}_{$identificador}.zip";
 
 // Crear una instancia de la clase ZipArchive
 $zip = new ZipArchive();

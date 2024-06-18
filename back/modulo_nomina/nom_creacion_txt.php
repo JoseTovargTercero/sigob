@@ -144,22 +144,26 @@ if (isset($data['correlativo']) && isset($data['identificador'])) {
                 "empleados" => $venezuela,
                 "total_a_pagar" => $sum_venezuela,
                 "correlativo" => $correlativo_venezuela,
+                "identificador" => $data['identificador'],
             ],
             "Tesoro" => [
                 "empleados" => $tesoro,
                 "total_a_pagar" => $sum_tesoro,
                 "correlativo" => $correlativo_tesoro,
+                "identificador" => $data['identificador'],
             ],
             "Bicentenario" => [
                 "empleados" => $bicentenario,
                 "total_a_pagar" => $sum_bicentenario,
                 "correlativo" => $correlativo_bicentenario,
                 "cantidad_bincentenario" => $cantidad_bincentenario,
+                "identificador" => $data['identificador'],
             ],
             "Caroni" => [
                 "empleados" => $caroni,
                 "total_a_pagar" => $sum_caroni,
                 "correlativo" => $correlativo_caroni,
+                "identificador" => $data['identificador'],
             ]
         ];
 
