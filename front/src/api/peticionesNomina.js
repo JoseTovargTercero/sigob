@@ -148,17 +148,16 @@ const getNominaTxt = async (data) => {
   }
 }
 
-const generarNominaTxt = async (data) => {
+const generarNominaTxt = async ({ correlativo, identificador }) => {
   let loader = document.getElementById('pay-nom-loader')
   if (loader) {
     showLoader('pay-nom-loader')
   }
 
-  console.log(data)
   try {
     let res = await fetch(creacionNominasTxtUrl, {
       method: 'POST',
-      body: JSON.stringify(data),
+      body: JSON.stringify({ correlativo, identificador }),
     })
 
     let json = await res.text()
