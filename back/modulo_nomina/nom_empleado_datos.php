@@ -42,7 +42,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id'])) {
                 "id_dependencia" => $row["id_dependencia"],
                 "dependencia" => $row["dependencia"],
                 "nacionalidad" => $row["nacionalidad"],
-                "cod_empleado" => $row["cod_empleado"],
                 "fecha_ingreso" => $row["fecha_ingreso"],
                 "otros_años" => $row["otros_años"],
                 "status" => $row["status"],

@@ -3,16 +3,49 @@
 
 
 $correlativo = $_GET['correlativo'];
-$identificador = $_GET['identificador'];
+$frecuencia = $_GET['frecuencia'];
 
 
 // Lista de archivos a incluir en el ZIP, utilizando la variable 'correlativo'
-$files = [
-    "tesoro_{$correlativo}_{$identificador}.txt",
-    "venezuela_{$correlativo}_{$identificador}.txt",
-    "bicentenario_{$correlativo}_{$identificador}.txt",
-    "caroni_{$correlativo}_{$identificador}.txt"
+if ($frecuencia == 1) {
+    $files = [
+    "tesoro_{$correlativo}_s1.txt",
+    "tesoro_{$correlativo}_s2.txt",
+    "tesoro_{$correlativo}_s3.txt",
+    "tesoro_{$correlativo}_s4.txt",
+    "venezuela_{$correlativo}_s1.txt",
+    "venezuela_{$correlativo}_s2.txt",
+    "venezuela_{$correlativo}_s3.txt",
+    "venezuela_{$correlativo}_s4.txt",
+    "bicentenario_{$correlativo}_s1.txt",
+    "bicentenario_{$correlativo}_s2.txt",
+    "bicentenario_{$correlativo}_s3.txt",
+    "bicentenario_{$correlativo}_s4.txt",
+    "caroni_{$correlativo}_s1.txt",
+    "caroni_{$correlativo}_s2.txt",
+    "caroni_{$correlativo}_s3.txt",
+    "caroni_{$correlativo}_s4.txt",
 ];
+}elseif ($frecuencia == 2) {
+    $files = [
+    "tesoro_{$correlativo}_q1.txt",
+    "tesoro_{$correlativo}_q2.txt",
+    "venezuela_{$correlativo}_q1.txt",
+    "venezuela_{$correlativo}_q2.txt",
+    "bicentenario_{$correlativo}_q1.txt",
+    "bicentenario_{$correlativo}_q2.txt",
+    "caroni_{$correlativo}_q1.txt",
+    "caroni_{$correlativo}_q2.txt",
+];
+}elseif ($frecuencia == 3 OR $frecuencia == 4) {
+    $files = [
+    "tesoro_{$correlativo}_unico.txt",
+    "venezuela_{$correlativo}_unico.txt",
+    "bicentenario_{$correlativo}_unico.txt",
+    "caroni_{$correlativo}_unico.txt",
+];
+}
+
 
 // Ruta donde se encuentran los archivos
 $base_dir = "../../txt/";

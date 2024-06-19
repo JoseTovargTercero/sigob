@@ -9,6 +9,7 @@ if (isset($data['Venezuela']) && isset($data['Tesoro']) && isset($data['Bicenten
     
     // Función para procesar el array del banco Venezuela y generar un archivo TXT
     function txt_Venezuela($data) {
+      $conexion=mysqli_connect('localhost','root','','sigob');
         $empleados = $data['empleados'];
         $total_a_pagar = $data['total_a_pagar'];
         $correlativo = $data['correlativo'];
@@ -68,11 +69,21 @@ if (isset($data['Venezuela']) && isset($data['Tesoro']) && isset($data['Bicenten
     // Escribir el encabezado
     fwrite($file, $header);
         $content = "";
+        $cedulas = array();
+        $totalescobrar = array();
+        $banco = "Venezuela";
         foreach ($empleados as $empleado) {
+            $cedulas[] = $empleado['cedula'];
+            $totalescobrar[] = $empleado['total_a_pagar'];
             $cedula = $empleado['cedula'];
             $nrocuenta = $empleado['cuenta_bancaria'];
+            $caracter12 = $nrocuenta[11];
+    if ($caracter12 == '1') {
+        $tipocuenta = 1;
+    } elseif ($caracter12 == '0') {
+        $tipocuenta = 0;
+    } 
             $totalcobra = number_format($empleado['total_a_pagar'],2, "", "");
-            $tipocuenta = $empleado['tipo_cuenta'];
             $prueba = substr($empleado['nombres'], 0,30);
             $prueba = str_pad($prueba, 39, " ");
             $line = "";
@@ -246,9 +257,36 @@ header('Pragma: public');
 header('Content-Length: ' . filesize($file_path));
         // Terminar el script para que no se envíe más salida
        readfile($file_path);
+
+       $cedulas_json = json_encode($cedulas);
+$totalescobrar_json = json_encode($totalescobrar);
+
+      if (!empty($cedulas)) {
+      // Construir la consulta SQL para insertar datos
+    $sql = "INSERT INTO informacion_pdf (cedula, total_pagar, correlativo, identificador, banco)
+            VALUES (?, ?, ?, ?, ?)";
+
+    // Preparar la declaración SQL
+    $stmt = $conexion->prepare($sql);
+
+    // Vincular parámetros y ejecutar la consulta
+    $stmt->bind_param("sssss", $cedulas_json, $totalescobrar_json, $correlativo, $identificador, $banco);
+
+    // Ejecutar la consulta preparada
+    if ($stmt->execute()) {
+        echo "Datos insertados correctamente.";
+    } else {
+        echo "Error al insertar datos: " . $conexion->error;
+    }
+
+    // Cerrar la declaración y la conexión
+    $stmt->close();
+    $conexion->close();
+    }
     }
     // Función para procesar el array del banco Tesoro
     function txt_Tesoro($data) {
+      $conexion=mysqli_connect('localhost','root','','sigob');
         $empleados = $data['empleados'];
         $total_a_pagar = $data['total_a_pagar'];
         $correlativo = $data['correlativo'];
@@ -265,7 +303,12 @@ header('Content-Length: ' . filesize($file_path));
 
 
         $content = "";
+        $cedulas = array();
+    $totalescobrar = array();
+    $banco = "Tesoro";
         foreach ($empleados as $empleado) {
+          $cedulas[] = $empleado['cedula'];
+        $totalescobrar[] = $empleado['total_a_pagar'];
             $cedula = $empleado['cedula'];
             $nacionalidad = $empleado['nacionalidad'];
             $nrocuenta = $empleado['cuenta_bancaria'];
@@ -302,11 +345,39 @@ header('Pragma: public');
 header('Content-Length: ' . filesize($file_path));
    readfile($file_path);     
         // Terminar el script para que no se envíe más salida
+   // Insertar datos en la base de datos
+    $cedulas_json = json_encode($cedulas);
+    $totalescobrar_json = json_encode($totalescobrar);
+    if (!empty($cedulas)) {
+      // Construir la consulta SQL para insertar datos
+    $sql = "INSERT INTO informacion_pdf (cedula, total_pagar, correlativo, identificador, banco)
+            VALUES (?, ?, ?, ?, ?)";
+
+    // Preparar la declaración SQL
+    $stmt = $conexion->prepare($sql);
+
+    // Vincular parámetros y ejecutar la consulta
+    $stmt->bind_param("sssss", $cedulas_json, $totalescobrar_json, $correlativo, $identificador, $banco);
+
+    // Ejecutar la consulta preparada
+    if ($stmt->execute()) {
+        echo "Datos insertados correctamente.";
+    } else {
+        echo "Error al insertar datos: " . $conexion->error;
+    }
+
+    // Cerrar la declaración y la conexión
+    $stmt->close();
+    $conexion->close();
+    }
+
+    
    
     }
 
     // Función para procesar el array del banco Bicentenario
     function txt_Bicentenario($data) {
+      $conexion=mysqli_connect('localhost','root','','sigob');
          $empleados = $data['empleados'];
         $total_a_pagar = $data['total_a_pagar'];
         $correlativo = $data['correlativo'];
@@ -383,7 +454,12 @@ header('Content-Length: ' . filesize($file_path));
 
     fwrite($file, $header);
         $content = "";
+        $cedulas = array();
+        $totalescobrar = array();
+        $banco = "Bicentenario";
         foreach ($empleados as $empleado) {
+          $cedulas[] = $empleado['cedula'];
+            $totalescobrar[] = $empleado['total_a_pagar'];
             $cedula = $empleado['cedula'];
             $nrocuenta = $empleado['cuenta_bancaria'];
             $nacionalidad = $empleado['nacionalidad'];
@@ -541,10 +617,36 @@ header('Cache-Control: must-revalidate');
 header('Pragma: public');
 header('Content-Length: ' . filesize($file_path));
  readfile($file_path);
+ $cedulas_json = json_encode($cedulas);
+$totalescobrar_json = json_encode($totalescobrar);
+
+       if (!empty($cedulas)) {
+      // Construir la consulta SQL para insertar datos
+    $sql = "INSERT INTO informacion_pdf (cedula, total_pagar, correlativo, identificador, banco)
+            VALUES (?, ?, ?, ?, ?)";
+
+    // Preparar la declaración SQL
+    $stmt = $conexion->prepare($sql);
+
+    // Vincular parámetros y ejecutar la consulta
+    $stmt->bind_param("sssss", $cedulas_json, $totalescobrar_json, $correlativo, $identificador, $banco);
+
+    // Ejecutar la consulta preparada
+    if ($stmt->execute()) {
+        echo "Datos insertados correctamente.";
+    } else {
+        echo "Error al insertar datos: " . $conexion->error;
+    }
+
+    // Cerrar la declaración y la conexión
+    $stmt->close();
+    $conexion->close();
+    }
     }
 
     // Función para procesar el array del banco Caroni
     function txt_Caroni($data) {
+      $conexion=mysqli_connect('localhost','root','','sigob');
         $empleados = $data['empleados'];
         $total_a_pagar = $data['total_a_pagar'];
         $correlativo = $data['correlativo'];
@@ -562,7 +664,12 @@ header('Content-Length: ' . filesize($file_path));
 
 
         $content = "";
+         $cedulas = array();
+        $totalescobrar = array();
+        $banco = "Caroni";
         foreach ($empleados as $empleado) {
+          $cedulas[] = $empleado['cedula'];
+            $totalescobrar[] = $empleado['total_a_pagar'];
             $cedula = $empleado['cedula'];
             $nrocuenta = $empleado['cuenta_bancaria'];
             $nacionalidad = $empleado['nacionalidad'];
@@ -676,6 +783,33 @@ header('Pragma: public');
 header('Content-Length: ' . filesize($file_path));
 readfile($file_path);
         // Terminar el script para que no se envíe más salida
+$cedulas_json = json_encode($cedulas);
+$totalescobrar_json = json_encode($totalescobrar);
+
+  if (!empty($cedulas)) {
+      // Construir la consulta SQL para insertar datos
+    $sql = "INSERT INTO informacion_pdf (cedula, total_pagar, correlativo, identificador, banco)
+            VALUES (?, ?, ?, ?, ?)";
+
+    // Preparar la declaración SQL
+    $stmt = $conexion->prepare($sql);
+
+    // Vincular parámetros y ejecutar la consulta
+    $stmt->bind_param("sssss", $cedulas_json, $totalescobrar_json, $correlativo, $identificador, $banco);
+
+    // Ejecutar la consulta preparada
+    if ($stmt->execute()) {
+        echo "Datos insertados correctamente.";
+    } else {
+        echo "Error al insertar datos: " . $conexion->error;
+    }
+
+    // Cerrar la declaración y la conexión
+    $stmt->close();
+    $conexion->close();
+    }else{
+
+    }
     }
 
     // Llamar a las funciones con los datos correspondientes

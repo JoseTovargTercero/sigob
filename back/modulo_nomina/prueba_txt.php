@@ -7,7 +7,7 @@ $url = 'http://localhost/sigob/back/modulo_nomina/nom_creacion_txt.php/';
 // Datos a enviar (el objeto JSON)
 $data = array(
     "correlativo" => "00001",
-    "identificador" => "unico",
+    "identificador" => "s1",
 );
 
 // Convertir el array a formato JSON
