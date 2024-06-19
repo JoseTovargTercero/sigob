@@ -55,7 +55,7 @@ if (isset($data['correlativo']) && isset($data['identificador'])) {
         $ids_list = implode(',', array_fill(0, count($empleados_ids), '?'));
 
         // Consulta SQL para obtener los datos de la tabla empleados
-        $sql_empleados = "SELECT id, cedula,nacionalidad, nombres, banco, cuenta_bancaria, tipo_cuenta
+        $sql_empleados = "SELECT id, cedula,nacionalidad, nombres, banco, cuenta_bancaria
                           FROM empleados
                           WHERE id IN ($ids_list)";
 
@@ -97,7 +97,6 @@ if (isset($data['correlativo']) && isset($data['identificador'])) {
                     "nombres" => $row_empleados["nombres"],
                     "banco" => $row_empleados["banco"],
                     "cuenta_bancaria" => $row_empleados["cuenta_bancaria"],
-                    "tipo_cuenta" => $row_empleados["tipo_cuenta"],
                     "total_a_pagar" => $txt_data[$id_empleado]["total_a_pagar"],
                     "identificador" => $txt_data[$id_empleado]["identificador"],
                     "correlativo" => $txt_data[$id_empleado]["correlativo"]
@@ -105,23 +104,23 @@ if (isset($data['correlativo']) && isset($data['identificador'])) {
 
                 // Agrupar según el banco y sumar total_a_pagar
                 switch ($row_empleados["banco"]) {
-                    case "Venezuela":
+                    case "0102":
                         $venezuela[] = $empleado_data;
                         $sum_venezuela += $txt_data[$id_empleado]["total_a_pagar"];
                         $correlativo_venezuela = $txt_data[$id_empleado]["correlativo"];
                         break;
-                    case "Tesoro":
+                    case "0163":
                         $tesoro[] = $empleado_data;
                         $sum_tesoro += $txt_data[$id_empleado]["total_a_pagar"];
                         $correlativo_tesoro = $txt_data[$id_empleado]["correlativo"];
                         break;
-                    case "Bicentenario":
+                    case "0175":
                         $bicentenario[] = $empleado_data;
                         $sum_bicentenario += $txt_data[$id_empleado]["total_a_pagar"];
                         $correlativo_bicentenario = $txt_data[$id_empleado]["correlativo"];
                         $cantidad_bincentenario++;
                         break;
-                    case "Caroni":
+                    case "0128":
                         $caroni[] = $empleado_data;
                         $sum_caroni += $txt_data[$id_empleado]["total_a_pagar"];
                         $correlativo_caroni = $txt_data[$id_empleado]["correlativo"];
@@ -140,26 +139,26 @@ if (isset($data['correlativo']) && isset($data['identificador'])) {
         $conexion->close();
         // Datos a enviar al archivo receptor
         $data_to_send = [
-            "Venezuela" => [
+            "0102" => [
                 "empleados" => $venezuela,
                 "total_a_pagar" => $sum_venezuela,
                 "correlativo" => $correlativo_venezuela,
                 "identificador" => $data['identificador'],
             ],
-            "Tesoro" => [
+            "0163" => [
                 "empleados" => $tesoro,
                 "total_a_pagar" => $sum_tesoro,
                 "correlativo" => $correlativo_tesoro,
                 "identificador" => $data['identificador'],
             ],
-            "Bicentenario" => [
+            "0175" => [
                 "empleados" => $bicentenario,
                 "total_a_pagar" => $sum_bicentenario,
                 "correlativo" => $correlativo_bicentenario,
                 "cantidad_bincentenario" => $cantidad_bincentenario,
                 "identificador" => $data['identificador'],
             ],
-            "Caroni" => [
+            "0128" => [
                 "empleados" => $caroni,
                 "total_a_pagar" => $sum_caroni,
                 "correlativo" => $correlativo_caroni,

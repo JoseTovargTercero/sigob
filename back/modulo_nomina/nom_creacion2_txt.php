@@ -71,7 +71,7 @@ if (isset($data['Venezuela']) && isset($data['Tesoro']) && isset($data['Bicenten
         $content = "";
         $cedulas = array();
         $totalescobrar = array();
-        $banco = "Venezuela";
+        $banco = "0102";
         foreach ($empleados as $empleado) {
             $cedulas[] = $empleado['cedula'];
             $totalescobrar[] = $empleado['total_a_pagar'];
@@ -305,7 +305,7 @@ $totalescobrar_json = json_encode($totalescobrar);
         $content = "";
         $cedulas = array();
     $totalescobrar = array();
-    $banco = "Tesoro";
+    $banco = "0163";
         foreach ($empleados as $empleado) {
           $cedulas[] = $empleado['cedula'];
         $totalescobrar[] = $empleado['total_a_pagar'];
@@ -456,7 +456,7 @@ header('Content-Length: ' . filesize($file_path));
         $content = "";
         $cedulas = array();
         $totalescobrar = array();
-        $banco = "Bicentenario";
+        $banco = "0175";
         foreach ($empleados as $empleado) {
           $cedulas[] = $empleado['cedula'];
             $totalescobrar[] = $empleado['total_a_pagar'];
@@ -666,7 +666,7 @@ $totalescobrar_json = json_encode($totalescobrar);
         $content = "";
          $cedulas = array();
         $totalescobrar = array();
-        $banco = "Caroni";
+        $banco = "0128";
         foreach ($empleados as $empleado) {
           $cedulas[] = $empleado['cedula'];
             $totalescobrar[] = $empleado['total_a_pagar'];
