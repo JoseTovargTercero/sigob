@@ -190,11 +190,7 @@ require_once '../../back/sistema_global/session.php';
                     <td>:</td>
                     <td id="info_cuenta_bancaria"></td>
                   </tr>
-                  <tr>
-                    <td>Tipo de cuenta</td>
-                    <td>:</td>
-                    <td id="info_tipo_cuenta"></td>
-                  </tr>
+               
                 </tbody>
               </table>
             </div>
@@ -404,8 +400,7 @@ require_once '../../back/sistema_global/session.php';
             $('#info_dependencia').html(datosEmpleado['dependencia'])
             $('#info_banco').html(datosEmpleado['banco'])
             $('#info_cuenta_bancaria').html(agregarGuiones(datosEmpleado['cuenta_bancaria']))
-            $('#info_tipo_cuenta').html((datosEmpleado['tipo_cuenta'] == 1 ? 'Ahorro' : 'Corriente'))
-
+            
             $('#cargando').hide()
 
 

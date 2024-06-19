@@ -555,7 +555,7 @@ while ($r = $query->fetch_object()) {
           let tabla = '';
 
           empleados.forEach(e => {
-            empleadosFiltro[e.id] = [e.id, e.nacionalidad, e.cedula, e.cod_empleado, e.nombres, e.fecha_ingreso, e.anios_actuales, e.otros_anios, e.anios_totales, e.status, e.observacion, e.cod_cargo, e.hijos, e.instruccion_academica, e.discapacidades, e.id_dependencia];
+            empleadosFiltro[e.id] = [e.id, e.nacionalidad, e.cedula, e.nombres, e.fecha_ingreso, e.anios_actuales, e.otros_anios, e.anios_totales, e.status, e.observacion, e.cod_cargo, e.hijos, e.instruccion_academica, e.discapacidades, e.id_dependencia];
             tabla += '<tr>';
             tabla += '<td>' + e.cedula + '</td>';
             tabla += '<td>' + e.nombres + '</td>';
