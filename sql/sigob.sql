@@ -689,7 +689,7 @@ INSERT INTO `empleados` (`id`, `nacionalidad`, `cedula`, `cod_empleado`, `nombre
 (41, 'V123456', '123456789', '441151', 'Pedro Pablo', '2010-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '01020457790100627238', 3, 2, 0, 1, 2, 6, 0, '');
 
 -- --------------------------------------------------------
-
+ALTER TABLE `empleados` ADD `beca` INT(2) NOT NULL DEFAULT '0' AFTER `correcion`;
 --
 -- Estructura de tabla para la tabla `nominas`
 --
