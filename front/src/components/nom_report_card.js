@@ -1,7 +1,26 @@
 import { FRECUENCY_TYPES } from '../helpers/types.js'
 
 export const nomReportCard = ({ data }) => {
-  if (!data) return `<div class="card"><h2>DATOS NO ESPECIFICADOS</h2></div>`
+  if (!data)
+    return `<div class='modal-window' id='modal-report'>
+        <div class='modal-box'>
+          <header class='modal-box-header'>
+            <h5>Gestionar información</h5>
+            <button
+              id='btn-close-report'
+              type='button'
+              class='btn btn-danger'
+              aria-label='Close'
+            >
+              ×
+            </button>
+          </header>
+          <div class='card'>
+            <h2>DATOS NO ESPECIFICADOS</h2>
+          </div>
+        </div>
+      </div>`
+
   console.log(data)
   let nombre_nomina = data.nombre_nomina
   let totalEmpleados = data.empleados.length
@@ -10,8 +29,10 @@ export const nomReportCard = ({ data }) => {
   let totalPagar = data.total_a_pagar.reduce((value, acc) => value + acc, 0)
 
   let identificador = FRECUENCY_TYPES[data.frecuencia][0]
+  let frecuencia = data.frecuencia
+  console.log(frecuencia)
 
-  return `<div class='modal-window' id="modal-report">
+  return `<div class='modal-window' id='modal-report'>
       <div class='modal-box'>
         <header class='modal-box-header'>
           <h5>Gestionar información</h5>
@@ -48,7 +69,7 @@ export const nomReportCard = ({ data }) => {
             <div class='btn-report-actions'>
               <a
                 target='_parent'
-                href='../../../../../sigob/back/modulo_nomina/nom_txt_descargas.php?correlativo=${correlativo}&identificador=${identificador}'
+                href='../../../../../sigob/back/modulo_nomina/nom_txt_descargas.php?correlativo=${correlativo}&frecuencia=${frecuencia}'
                 class='mx-auto btn btn-secondary size-change-animation'
                 id='generar-txt'
               >

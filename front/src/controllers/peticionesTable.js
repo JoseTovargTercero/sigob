@@ -73,11 +73,7 @@ export async function loadRequestTable() {
         peticion.correlativo
       }" ${
         Number(peticion.status) === 0 ? 'disabled' : ''
-      } id="btn-show-request">${
-        Number(peticion.status) === 0
-          ? `<i class='bx bx-low-vision'></i>`
-          : `<i class='bx bxs-show' id="btn-show-request"></i>`
-      }</button>
+      } id="btn-show-request">Informacion</button>
      `,
     }
   })
@@ -87,3 +83,15 @@ export async function loadRequestTable() {
   // console.log(datosOrdenados)
   requestTable.rows.add(data).draw()
 }
+
+// `
+// <button class="btn btn-primary btn-sm" data-correlativo="${
+//   peticion.correlativo
+// }" ${
+//   Number(peticion.status) === 0 ? 'disabled' : ''
+// } id="btn-show-request">${
+//   Number(peticion.status) === 0
+//     ? `<i class='bx bx-low-vision' data-correlativo="${peticion.correlativo}"></i>`
+//     : `<i class='bx bxs-show' id="btn-show-request"></i>`
+// }</button>
+// `
