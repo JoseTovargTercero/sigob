@@ -2338,7 +2338,7 @@ CREATE TABLE `system_users` (
 
 INSERT INTO `system_users` (`u_id`, `u_nombre`, `u_oficina_id`, `u_oficina`, `u_email`, `u_contrasena`, `creado`, `u_nivel`, `u_status`) VALUES
 (31, 'user Nombre', 1, 'Nomina', 'corro@correo.com', '$2y$10$EyP1MOY39kuw4uREdk7ao.UUzQ10YNIZ95IZLM70MUPo5J6YzEBVG', '2024-03-07 11:18:19', 1, 1),
-(33, 'otro user', 2, 'RegControl', 'correo2@correo.com', '$2y$10$uHhoK5UNls/rvTrmVCia.eTxE3b2eCp5IFHCsS1j0FOacCTj3bQ8C', '2024-05-29 16:32:32', 2, 1);
+(33, 'otro user', 2, 'RegControl', 'correo2@correo.com', '$2y$10$EyP1MOY39kuw4uREdk7ao.UUzQ10YNIZ95IZLM70MUPo5J6YzEBVG', '2024-05-29 16:32:32', 2, 1);
 
 -- --------------------------------------------------------
 
