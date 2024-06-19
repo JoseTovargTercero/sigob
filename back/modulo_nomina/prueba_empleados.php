@@ -15,7 +15,6 @@ $data = array(
     "otros_años" => 0,
     "status" => 1,
     "observacion" => "N/A",
-    "cod_cargo" => "25212",
     "banco" => "Venezuela",
     "cuenta_bancaria" => "1002555541124",
     "hijos" => 3,
