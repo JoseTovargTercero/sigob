@@ -8,9 +8,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id'])) {
 
     // Consulta SQL para obtener los datos del empleado y su dependencia
     $sql = "SELECT e.id, e.cedula, e.nombres, e.tipo_nomina, d.id_dependencia, d.dependencia,
-                   e.nacionalidad, e.cod_empleado, e.fecha_ingreso, e.otros_años, e.status, 
+                   e.nacionalidad, e.fecha_ingreso, e.otros_años, e.status, 
                    e.observacion, e.cod_cargo, e.banco, e.cuenta_bancaria, e.hijos, 
-                   e.instruccion_academica, e.discapacidades, e.tipo_cuenta, e.tipo_nomina, e.correcion
+                   e.instruccion_academica, e.discapacidades, e.tipo_nomina, e.correcion
             FROM empleados AS e
             INNER JOIN dependencias AS d ON e.id_dependencia = d.id_dependencia
             WHERE e.id = ?";
@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id'])) {
                 "id_dependencia" => $row["id_dependencia"],
                 "dependencia" => $row["dependencia"],
                 "nacionalidad" => $row["nacionalidad"],
-                "cod_empleado" => $row["cod_empleado"],
+                "cod_empleado" => '0',
                 "fecha_ingreso" => $row["fecha_ingreso"],
                 "otros_años" => $row["otros_años"],
                 "status" => $row["status"],
@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id'])) {
                 "hijos" => $row["hijos"],
                 "instruccion_academica" => $row["instruccion_academica"],
                 "discapacidades" => $row["discapacidades"],
-                "tipo_cuenta" => $row["tipo_cuenta"],
+                "tipo_cuenta" => '1',
                 "correcion" => $row["correcion"]
             );
             $datos[] = $empleado;
