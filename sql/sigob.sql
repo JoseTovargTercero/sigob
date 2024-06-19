@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 16-06-2024 a las 19:46:05
+-- Tiempo de generación: 19-06-2024 a las 16:35:52
 -- Versión del servidor: 10.4.27-MariaDB
 -- Versión de PHP: 7.4.33
 
@@ -651,45 +651,85 @@ INSERT INTO `dependencias` (`id_dependencia`, `dependencia`) VALUES
 
 CREATE TABLE `empleados` (
   `id` int(11) NOT NULL,
-  `nacionalidad` varchar(255) COLLATE latin1_spanish_ci NOT NULL,
-  `cedula` varchar(20) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `cod_empleado` varchar(20) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `nombres` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `nacionalidad` varchar(255) NOT NULL,
+  `cedula` varchar(20) DEFAULT NULL,
+  `cod_empleado` varchar(20) DEFAULT NULL,
+  `nombres` varchar(255) DEFAULT NULL,
   `fecha_ingreso` date DEFAULT NULL,
   `otros_años` int(11) NOT NULL DEFAULT 0,
-  `status` varchar(5) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `observacion` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `cod_cargo` varchar(10) COLLATE latin1_spanish_ci NOT NULL,
-  `banco` varchar(255) COLLATE latin1_spanish_ci NOT NULL,
-  `cuenta_bancaria` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `status` varchar(5) DEFAULT NULL,
+  `observacion` varchar(255) DEFAULT NULL,
+  `cod_cargo` varchar(10) NOT NULL,
+  `banco` varchar(255) NOT NULL,
+  `cuenta_bancaria` varchar(255) DEFAULT NULL,
   `hijos` int(11) NOT NULL DEFAULT 0,
   `instruccion_academica` int(11) NOT NULL DEFAULT 0,
   `discapacidades` int(2) NOT NULL DEFAULT 0,
   `tipo_cuenta` int(10) NOT NULL,
   `tipo_nomina` int(10) NOT NULL,
   `id_dependencia` int(255) NOT NULL,
-  `verificado` int(1) NOT NULL DEFAULT 0,
-  `correcion` varchar(255) COLLATE latin1_spanish_ci NOT NULL
+  `verificado` int(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 --
 -- Volcado de datos para la tabla `empleados`
 --
 
-INSERT INTO `empleados` (`id`, `nacionalidad`, `cedula`, `cod_empleado`, `nombres`, `fecha_ingreso`, `otros_años`, `status`, `observacion`, `cod_cargo`, `banco`, `cuenta_bancaria`, `hijos`, `instruccion_academica`, `discapacidades`, `tipo_cuenta`, `tipo_nomina`, `id_dependencia`, `verificado`, `correcion`) VALUES
-(27, 'V', '23987719', '441151', 'ORQUIDEA JOSE BOSSIO ALDANA', '2010-05-02', 0, '1', 'N/A', '25212', 'Tesoro', '01630409334091000513', 3, 3, 0, 0, 0, 6, 1, ''),
-(28, 'V', '4781808', '441151', 'BOSSIO CORREA, HERNAN ARSENIO', '2021-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '01020457790100627238', 3, 2, 0, 0, 0, 6, 1, ''),
-(29, 'V', '1566323', '441151', 'LARA, ALIDA DEL VALLE', '2021-05-02', 0, '1', 'N/A', '25212', 'Caroni', '01280027402712476304', 3, 3, 0, 1, 0, 6, 1, ''),
-(30, 'V', '642362', '441151', 'NANCY GISELA AGUILAR DE MENOTTI', '2021-05-02', 0, '1', 'N/A', '25212', 'Bicentenario', '01750575120077277895', 3, 2, 0, 0, 0, 6, 1, ''),
-(35, '1', '123456789', '441151', 'Pedro Pablo', '2010-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '01020457790100627238', 3, 3, 0, 1, 2, 6, 0, ''),
-(37, '1', '123456789', '441151', 'Pedro Pablo', '2010-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '01020457790100627238', 3, 2, 0, 1, 2, 6, 0, ''),
-(38, 'V', '123456789', '441151', 'Pedro Pablo', '2010-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '01020457790100627238', 3, 3, 0, 1, 2, 6, 0, ''),
-(39, 'V', '123456789', '441151', 'Pedro Pablo', '2010-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '01020457790100627238', 3, 2, 0, 1, 2, 6, 0, ''),
-(40, 'V', '123456789', '441151', 'Pedro Pablo', '2010-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '01020457790100627238', 3, 3, 0, 1, 2, 6, 0, ''),
-(41, 'V123456', '123456789', '441151', 'Pedro Pablo', '2010-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '01020457790100627238', 3, 2, 0, 1, 2, 6, 0, '');
+INSERT INTO `empleados` (`id`, `nacionalidad`, `cedula`, `cod_empleado`, `nombres`, `fecha_ingreso`, `otros_años`, `status`, `observacion`, `cod_cargo`, `banco`, `cuenta_bancaria`, `hijos`, `instruccion_academica`, `discapacidades`, `tipo_cuenta`, `tipo_nomina`, `id_dependencia`, `verificado`) VALUES
+(27, 'V', '23987719', '441151', 'ORQUIDEA JOSE BOSSIO ALDANA', '2010-05-02', 0, '1', 'N/A', '25212', 'Tesoro', '01630409334091000513', 3, 3, 0, 0, 0, 6, 1),
+(28, 'V', '4781808', '441151', 'BOSSIO CORREA, HERNAN ARSENIO', '2021-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '01020457790100627238', 3, 2, 0, 1, 0, 6, 1),
+(29, 'V', '1566323', '441151', 'LARA, ALIDA DEL VALLE', '2021-05-02', 0, '1', 'N/A', '25212', 'Caroni', '01280027402712476304', 3, 3, 0, 1, 0, 6, 1),
+(30, 'V', '642362', '441151', 'NANCY GISELA AGUILAR DE MENOTTI', '2021-05-02', 0, '1', 'N/A', '25212', 'Bicentenario', '01750575120077277895', 3, 2, 0, 0, 0, 6, 1),
+(31, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 3, 0, 0, 0, 6, 0),
+(32, '1', '123456789', '441151', 'Pedro Pablo', '2021-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 2, 0, 0, 0, 6, 0),
+(33, '1', '123456789', '441151', 'Pedro Pablo', '2022-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 3, 0, 0, 0, 6, 0),
+(34, '1', '123456789', '441151', 'Pedro Pablo', '2010-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 2, 0, 1, 2, 6, 0),
+(35, '1', '123456789', '441151', 'Pedro Pablo', '2010-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 3, 0, 1, 2, 6, 0),
+(37, '1', '123456789', '441151', 'Pedro Pablo', '2010-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 2, 0, 1, 2, 6, 0),
+(38, 'V', '123456789', '441151', 'Pedro Pablo', '2010-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 3, 0, 1, 2, 6, 0),
+(39, 'V', '123456789', '441151', 'Pedro Pablo', '2010-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 2, 0, 1, 2, 6, 0),
+(40, 'V', '123456789', '441151', 'Pedro Pablo', '2010-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 3, 0, 1, 2, 6, 0),
+(41, 'V123456', '123456789', '441151', 'Pedro Pablo', '2010-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 2, 0, 1, 2, 6, 0);
 
 -- --------------------------------------------------------
-ALTER TABLE `empleados` ADD `beca` INT(2) NOT NULL DEFAULT '0' AFTER `correcion`;
+
+--
+-- Estructura de tabla para la tabla `informacion_pdf`
+--
+
+CREATE TABLE `informacion_pdf` (
+  `id` int(255) NOT NULL,
+  `cedula` varchar(2000) NOT NULL,
+  `total_pagar` varchar(2000) NOT NULL,
+  `correlativo` varchar(255) NOT NULL,
+  `identificador` varchar(255) NOT NULL,
+  `banco` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `informacion_pdf`
+--
+
+INSERT INTO `informacion_pdf` (`id`, `cedula`, `total_pagar`, `correlativo`, `identificador`, `banco`) VALUES
+(129, '[\"4781808\"]', '[\"82.03\"]', '00001', 's1', 'Venezuela'),
+(130, '[\"4781808\"]', '[\"82.03\"]', '00001', 's3', 'Venezuela'),
+(131, '[\"4781808\"]', '[\"82.03\"]', '00001', 's2', 'Venezuela'),
+(132, '[\"23987719\"]', '[\"112.8\"]', '00001', 's1', 'Tesoro'),
+(133, '[\"4781808\"]', '[\"82.03\"]', '00001', 's4', 'Venezuela'),
+(134, '[\"23987719\"]', '[\"112.8\"]', '00001', 's3', 'Tesoro'),
+(135, '[\"1566323\"]', '[\"82.03\"]', '00001', 's3', 'Caroni'),
+(136, '[\"23987719\"]', '[\"112.8\"]', '00001', 's2', 'Tesoro'),
+(137, '[\"23987719\"]', '[\"112.8\"]', '00001', 's4', 'Tesoro'),
+(138, '[\"1566323\"]', '[\"82.03\"]', '00001', 's1', 'Caroni'),
+(139, '[\"642362\"]', '[\"82.03\"]', '00001', 's3', 'Bicentenario'),
+(140, '[\"1566323\"]', '[\"82.03\"]', '00001', 's2', 'Caroni'),
+(141, '[\"1566323\"]', '[\"82.03\"]', '00001', 's4', 'Caroni'),
+(142, '[\"642362\"]', '[\"82.03\"]', '00001', 's1', 'Bicentenario'),
+(143, '[\"642362\"]', '[\"82.03\"]', '00001', 's2', 'Bicentenario'),
+(144, '[\"642362\"]', '[\"82.03\"]', '00001', 's4', 'Bicentenario');
+
+-- --------------------------------------------------------
+
 --
 -- Estructura de tabla para la tabla `nominas`
 --
@@ -708,7 +748,7 @@ CREATE TABLE `nominas` (
 --
 
 INSERT INTO `nominas` (`id`, `grupo_nomina`, `nombre`, `frecuencia`, `tipo`, `conceptos_aplicados`) VALUES
-(5, '3', 'Obreros', '3', '1', '[22,23,24,25,26,27,28,29,30,31,32,33,34,21]');
+(5, '3', 'Obreros', '1', '1', '[22,23,24,25,26,27,28,29,30,31,32,33,34,21]');
 
 -- --------------------------------------------------------
 
@@ -813,8 +853,7 @@ CREATE TABLE `peticiones` (
 --
 
 INSERT INTO `peticiones` (`id`, `empleados`, `asignaciones`, `deducciones`, `aportes`, `total_pagar`, `correlativo`, `status`, `nombre_nomina`, `creacion`) VALUES
-(13, '[27,28,29,30]', '{\"CONTRIBUCION POR DISCAPACIDAD\":40,\"PRIMA POR HIJO EMPLEADOS\":20,\"PRIMA POR TRANSPORTE\":200,\"PRIMA POR ANTIGUEDAD EMPLEADOS\":40,\"PRIMA POR ESCALAFON\":20,\"PRIMA POR FRONTERA\":20,\"PRIMA POR PROFESIONALES\":80,\"PAGO DE BECA\":40,\"PRIMA P\\/DED AL S\\/PUBLICO UNICO DE SALUD\":20}', '{\"S. S. O\":20,\"RPE\":20}', '{\"A\\/P S.S.O\":20,\"A\\/P RPE\":20}', '[451.18,328.12,328.12,328.12]', '00001', '0', 'Obreros', '2024-06-16'),
-(14, '[27,28,29,30]', '{\"CONTRIBUCION POR DISCAPACIDAD\":40,\"PRIMA POR HIJO EMPLEADOS\":20,\"PRIMA POR TRANSPORTE\":200,\"PRIMA POR ANTIGUEDAD EMPLEADOS\":40,\"PRIMA POR ESCALAFON\":20,\"PRIMA POR FRONTERA\":20,\"PRIMA POR PROFESIONALES\":80,\"PAGO DE BECA\":40,\"PRIMA P\\/DED AL S\\/PUBLICO UNICO DE SALUD\":20}', '{\"S. S. O\":20,\"RPE\":20}', '{\"A\\/P S.S.O\":20,\"A\\/P RPE\":20}', '[451.18,328.12,328.12,328.12]', '00002', '0', 'Obreros', '2024-06-16');
+(29, '[27,28,29,30]', '{\"CONTRIBUCION POR DISCAPACIDAD\":40,\"PRIMA POR HIJO EMPLEADOS\":20,\"PRIMA POR TRANSPORTE\":200,\"PRIMA POR ANTIGUEDAD EMPLEADOS\":40,\"PRIMA POR ESCALAFON\":20,\"PRIMA POR FRONTERA\":20,\"PRIMA POR PROFESIONALES\":80,\"PAGO DE BECA\":40,\"PRIMA P\\/DED AL S\\/PUBLICO UNICO DE SALUD\":20}', '{\"S. S. O\":20,\"RPE\":20}', '{\"A\\/P S.S.O\":20,\"A\\/P RPE\":20}', '[451.18,328.12,328.12,328.12]', '00001', '1', 'Obreros', '2024-06-19');
 
 -- --------------------------------------------------------
 
@@ -1361,14 +1400,22 @@ CREATE TABLE `txt` (
 --
 
 INSERT INTO `txt` (`id`, `id_empleado`, `total_a_pagar`, `nombre_nomina`, `identificador`, `fecha_pagar`, `correlativo`) VALUES
-(799, 27, '451.18', 'Obreros', 'unico', '06-2024', '00001'),
-(800, 28, '328.12', 'Obreros', 'unico', '06-2024', '00001'),
-(801, 29, '328.12', 'Obreros', 'unico', '06-2024', '00001'),
-(802, 30, '328.12', 'Obreros', 'unico', '06-2024', '00001'),
-(803, 27, '451.18', 'Obreros', 'unico', '06-2024', '00002'),
-(804, 28, '328.12', 'Obreros', 'unico', '06-2024', '00002'),
-(805, 29, '328.12', 'Obreros', 'unico', '06-2024', '00002'),
-(806, 30, '328.12', 'Obreros', 'unico', '06-2024', '00002');
+(987, 27, '112.8', 'Obreros', 's1', '06-2024', '00001'),
+(988, 27, '112.8', 'Obreros', 's2', '06-2024', '00001'),
+(989, 27, '112.8', 'Obreros', 's3', '06-2024', '00001'),
+(990, 27, '112.8', 'Obreros', 's4', '06-2024', '00001'),
+(991, 28, '82.03', 'Obreros', 's1', '06-2024', '00001'),
+(992, 28, '82.03', 'Obreros', 's2', '06-2024', '00001'),
+(993, 28, '82.03', 'Obreros', 's3', '06-2024', '00001'),
+(994, 28, '82.03', 'Obreros', 's4', '06-2024', '00001'),
+(995, 29, '82.03', 'Obreros', 's1', '06-2024', '00001'),
+(996, 29, '82.03', 'Obreros', 's2', '06-2024', '00001'),
+(997, 29, '82.03', 'Obreros', 's3', '06-2024', '00001'),
+(998, 29, '82.03', 'Obreros', 's4', '06-2024', '00001'),
+(999, 30, '82.03', 'Obreros', 's1', '06-2024', '00001'),
+(1000, 30, '82.03', 'Obreros', 's2', '06-2024', '00001'),
+(1001, 30, '82.03', 'Obreros', 's3', '06-2024', '00001'),
+(1002, 30, '82.03', 'Obreros', 's4', '06-2024', '00001');
 
 --
 -- Índices para tablas volcadas
@@ -1414,6 +1461,12 @@ ALTER TABLE `dependencias`
 -- Indices de la tabla `empleados`
 --
 ALTER TABLE `empleados`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `informacion_pdf`
+--
+ALTER TABLE `informacion_pdf`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -1530,6 +1583,12 @@ ALTER TABLE `empleados`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
 
 --
+-- AUTO_INCREMENT de la tabla `informacion_pdf`
+--
+ALTER TABLE `informacion_pdf`
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=145;
+
+--
 -- AUTO_INCREMENT de la tabla `nominas`
 --
 ALTER TABLE `nominas`
@@ -1557,7 +1616,7 @@ ALTER TABLE `password_resets`
 -- AUTO_INCREMENT de la tabla `peticiones`
 --
 ALTER TABLE `peticiones`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT de la tabla `primantiguedad`
@@ -1593,7 +1652,7 @@ ALTER TABLE `tabuladores_estr`
 -- AUTO_INCREMENT de la tabla `txt`
 --
 ALTER TABLE `txt`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=807;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1003;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
