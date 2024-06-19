@@ -54,7 +54,7 @@ export const nomReportCard = ({ data }) => {
               Generar reportes (PDF, TXT, ETC)
             </small>
             <p class=' mb-0'>CORRELATIVO: </p>
-            ${identificador ? `<h5 class=' mb-2'>${identificador}</h5>` : ''}
+            <h5 class=' mb-2'>${correlativo}</h5>
             <p class=' mb-0'>NOMBRE DE NOMINA: </p>
             <h5 class=' mb-2'>${nombre_nomina}</h5>
             <p class=' mb-0'>TOTAL A PAGAR: </p>

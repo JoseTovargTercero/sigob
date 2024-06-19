@@ -31,11 +31,10 @@ const tableLanguage = {
   },
 }
 
-let employeeTable = new DataTable('#employee-table', {
+let employeeTableVerificados = new DataTable('#employee-table-verificados', {
   responsive: true,
   scrollY: 300,
   language: tableLanguage,
-  order: [],
   layout: {
     topEnd: function () {
       let toolbar = document.createElement('div')
@@ -56,8 +55,56 @@ let employeeTable = new DataTable('#employee-table', {
   ],
 })
 
-const loadTable = async () => {
-  employeeTable.clear().draw()
+let employeeTableCorregir = new DataTable('#employee-table-corregir', {
+  responsive: true,
+  scrollY: 300,
+  language: tableLanguage,
+  layout: {
+    topEnd: function () {
+      let toolbar = document.createElement('div')
+      toolbar.innerHTML = `<a class="btn btn-primary"
+      href="nom_empleados_registrar">Registrar Personal</a>`
+      return toolbar
+    },
+    topStart: { search: { placeholder: 'Buscar...' } },
+    bottomStart: 'info',
+    bottomEnd: 'paging',
+  },
+  columns: [
+    { data: 'nombres', width: '10%' },
+    { data: 'cedula', width: '10%' },
+    { data: 'dependencia', width: '10%' },
+    { data: 'nomina', width: '10%' },
+    { data: 'acciones', width: '10%' },
+  ],
+})
+
+let employeeTableRevision = new DataTable('#employee-table-revision', {
+  responsive: true,
+  scrollY: 300,
+  language: tableLanguage,
+  layout: {
+    topEnd: function () {
+      let toolbar = document.createElement('div')
+      toolbar.innerHTML = `<a class="btn btn-primary"
+      href="nom_empleados_registrar">Registrar Personal</a>`
+      return toolbar
+    },
+    topStart: { search: { placeholder: 'Buscar...' } },
+    bottomStart: 'info',
+    bottomEnd: 'paging',
+  },
+  columns: [
+    { data: 'nombres', width: '10%' },
+    { data: 'cedula', width: '10%' },
+    { data: 'dependencia', width: '10%' },
+    { data: 'nomina', width: '10%' },
+    { data: 'acciones', width: '10%' },
+  ],
+})
+
+const validateEmployeeTable = async () => {
+  employeeTableVerificados.clear().draw()
 
   let empleados = await getEmployeesData()
 
@@ -65,57 +112,63 @@ const loadTable = async () => {
   let empleadosOrdenados = [...empleados].sort(
     (a, b) => b.id_empleado - a.id_empleado
   )
+  let data = {
+    revision: [],
+    corregir: [],
+    verificados: [],
+  }
 
-  let data = empleadosOrdenados.map((empleado) => {
-    return {
-      nombres: empleado.nombres,
-      cedula: empleado.cedula,
-      dependencia: empleado.dependencia,
-      nomina: empleado.tipo_nomina,
-      acciones: `
+  empleadosOrdenados.forEach((empleado) => {
+    if (empleado.verificado === 0) {
+      data.revision.push({
+        nombres: empleado.nombres,
+        cedula: empleado.cedula,
+        dependencia: empleado.dependencia,
+        nomina: empleado.tipo_nomina,
+        acciones: `
       <button class="btn btn-info btn-sm btn-view" data-id="${empleado.id_empleado}"><i class="bx bx-detail me-1"></i>Detalles</button>
       <button class="btn btn-warning btn-sm btn-edit" data-id="${empleado.id_empleado}"><i class="bx bx-edit me-1"></i>Editar</button>
-      <button class="btn btn-danger btn-sm btn-delete" data-id="${empleado.id_empleado}"><i class="bx bx-trash me-1"></i>Eliminar</button>`,
+      <button class="btn btn-danger btn-sm btn-delete" data-id="${empleado.id_empleado}" data-table=""><i class="bx bx-trash me-1"></i>Eliminar</button>`,
+      })
+    }
+
+    if (empleado.verificado === 1) {
+      data.verificados.push({
+        nombres: empleado.nombres,
+        cedula: empleado.cedula,
+        dependencia: empleado.dependencia,
+        nomina: empleado.tipo_nomina,
+        acciones: `
+      <button class="btn btn-info btn-sm btn-view" data-id="${empleado.id_empleado}"><i class="bx bx-detail me-1"></i>Detalles</button>
+      <button class="btn btn-warning btn-sm btn-edit" data-id="${empleado.id_empleado}"><i class="bx bx-edit me-1"></i>Editar</button>
+      <button class="btn btn-danger btn-sm btn-delete" data-id="${empleado.id_empleado}" data-table=""><i class="bx bx-trash me-1"></i>Eliminar</button>`,
+      })
+    }
+
+    if (empleado.verificado === 2) {
+      data.corregir.push({
+        nombres: empleado.nombres,
+        cedula: empleado.cedula,
+        dependencia: empleado.dependencia,
+        nomina: empleado.tipo_nomina,
+        acciones: `
+      <button class="btn btn-info btn-sm btn-view" data-id="${empleado.id_empleado}"><i class="bx bx-detail me-1"></i>Detalles</button>
+      <button class="btn btn-warning btn-sm btn-edit" data-id="${empleado.id_empleado}"><i class="bx bx-edit me-1"></i>Editar</button>
+      <button class="btn btn-danger btn-sm btn-delete" data-id="${empleado.id_empleado}" data-table=""><i class="bx bx-trash me-1"></i>Eliminar</button>`,
+      })
     }
   })
 
   console.log(data)
-  employeeTable.rows.add(data).draw()
 
-  // employeeTable.rows.delete({
-  //   buttons: [
-  //     {
-  //       label: 'Cancel',
-  //       fn: function () {
-  //         this.close()
-  //       },
-  //     },
-  //     'Delete',
-  //   ],
-  // })
-}
+  employeeTableVerificados.rows.add(data.verificados)
 
-// var filteredRows = table.rows(function (idx, data, node) {
-//   // Aquí define tu criterio de filtrado
-//   return data.nombre === 'Juan'; // Por ejemplo, eliminar filas con el nombre 'Juan'
-// });
+  employeeTableCorregir.rows.add(data.corregir)
+  employeeTableRevision.rows.add(data.revision)
 
-// filteredRows.remove().draw();
-
-export const confirmDelete = async ({ id, row }) => {
-  let userConfirm = await confirmNotification({
-    type: NOTIFICATIONS_TYPES.delete,
-    successFunction: deleteEmployee,
-    successFunctionParams: id,
-  })
-
-  // ELIMINAR FILA DE LA TABLA CON LA API DE DATATABLES
-  if (userConfirm) {
-    let filteredRows = employeeTable.rows(function (idx, data, node) {
-      return node === row
-    })
-    filteredRows.remove().draw()
-  }
+  employeeTableVerificados.draw()
+  employeeTableCorregir.draw()
+  employeeTableRevision.draw()
 }
 
 d.addEventListener('click', (e) => {
@@ -139,6 +192,65 @@ d.addEventListener('click', (e) => {
   if (e.target.id === 'btn-close-employee-card') {
     d.getElementById('modal-employee').remove()
   }
+
+  if (e.target.dataset.tableid) {
+    mostrarTabla(e.target.dataset.tableid)
+    d.querySelectorAll('.nav-link').forEach((el) => {
+      el.classList.remove('active')
+    })
+
+    e.target.classList.add('active')
+  }
 })
 
-loadTable()
+async function confirmDelete({ id, row }) {
+  let userConfirm = await confirmNotification({
+    type: NOTIFICATIONS_TYPES.delete,
+    successFunction: deleteEmployee,
+    successFunctionParams: id,
+  })
+
+  // ELIMINAR FILA DE LA TABLA CON LA API DE DATATABLES
+  if (userConfirm) {
+    let filteredRows = employeeTable.rows(function (idx, data, node) {
+      return node === row
+    })
+    filteredRows.remove().draw()
+  }
+}
+
+function mostrarTabla(tablaId) {
+  let verificadosId = 'employee-table-verificados',
+    corregirseId = 'employee-table-corregir',
+    revisionId = 'employee-table-revision'
+
+  if (tablaId === verificadosId) {
+    console.log('VERIFICADOS')
+    d.getElementById(`${verificadosId}-container`).classList.add('d-block')
+    d.getElementById(`${verificadosId}-container`).classList.remove('d-none')
+    d.getElementById(`${corregirseId}-container`).classList.add('d-none')
+    d.getElementById(`${corregirseId}-container`).classList.remove('block')
+    d.getElementById(`${revisionId}-container`).classList.add('d-none')
+    d.getElementById(`${revisionId}-container`).classList.remove('d-block')
+  } else if (tablaId === corregirseId) {
+    console.log('POR CORREGIR')
+
+    d.getElementById(`${verificadosId}-container`).classList.add('d-none')
+    d.getElementById(`${verificadosId}-container`).classList.remove('d-block')
+    d.getElementById(`${corregirseId}-container`).classList.add('d-block')
+    d.getElementById(`${corregirseId}-container`).classList.remove('d-none')
+    d.getElementById(`${revisionId}-container`).classList.add('d-none')
+    d.getElementById(`${revisionId}-container`).classList.remove('d-block')
+  } else if (tablaId === revisionId) {
+    console.log('REVISAAAR')
+
+    d.getElementById(`${verificadosId}-container`).classList.add('d-none')
+    d.getElementById(`${verificadosId}-container`).classList.remove('d-block')
+    d.getElementById(`${corregirseId}-container`).classList.add('d-none')
+    d.getElementById(`${corregirseId}-container`).classList.remove('d-block')
+    d.getElementById(`${revisionId}-container`).classList.add('d-block')
+    d.getElementById(`${revisionId}-container`).classList.remove('d-none')
+  }
+}
+
+validateEmployeeTable()

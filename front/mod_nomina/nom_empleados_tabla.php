@@ -39,13 +39,20 @@ require_once '../../back/sistema_global/session.php';
         <div class="col-lg-12 mb-3" id="employee-table-view">
           <div class="card">
             <div class="card-header">
-              <div>
+              <div class="mb-2">
                 <h5 class="mb-0">Empleados</h5>
                 <small class="mt-0 text-muted">Administre su personal</small>
+
+
               </div>
+              <nav class="nav nav-pills nav-justified">
+                <a class="nav-link" href="#" data-tableid="employee-table-verificados">Verificados</a>
+                <a class="nav-link" href="#" data-tableid="employee-table-corregir">Por correciones</a>
+                <a class="nav-link" href="#" data-tableid="employee-table-revision">En revisión</a>
+              </nav>
             </div>
-            <div class="card-body">
-              <table id="employee-table" class="table table-striped" style="width:100%">
+            <div class="card-body d-block" id="employee-table-verificados-container">
+              <table id="employee-table-verificados" class="table table-striped" style="width:100%">
                 <thead class="w-100">
                   <th>NOMBRES</th>
                   <th>CEDULA</th>
@@ -57,9 +64,34 @@ require_once '../../back/sistema_global/session.php';
 
                 </tbody>
               </table>
+            </div>
+            <div class="card-body d-none" id="employee-table-corregir-container">
+              <table id="employee-table-corregir" class="table table-striped" style="width:100%">
+                <thead class="w-100">
+                  <th>NOMBRES</th>
+                  <th>CEDULA</th>
+                  <th>DEPENDENCIA</th>
+                  <th>NOMINA</th>
+                  <th>ACCIONES</th>
+                </thead>
+                <tbody>
 
+                </tbody>
+              </table>
+            </div>
+            <div class="card-body d-none" id="employee-table-revision-container">
+              <table id="employee-table-revision" class="table table-striped" style="width:100%">
+                <thead class="w-100">
+                  <th>NOMBRES</th>
+                  <th>CEDULA</th>
+                  <th>DEPENDENCIA</th>
+                  <th>NOMINA</th>
+                  <th>ACCIONES</th>
+                </thead>
+                <tbody>
 
-
+                </tbody>
+              </table>
             </div>
           </div>
         </div>

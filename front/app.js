@@ -80,7 +80,7 @@ d.addEventListener('DOMContentLoaded', (e) => {
         discapacidades: '',
         banco: '',
         cuenta_bancaria: '',
-        tipo_cuenta: 0,
+        // tipo_cuenta: 0,
         id_dependencia: '',
         dependencia: '',
         tipo_nomina: 0,
@@ -149,11 +149,11 @@ d.addEventListener('DOMContentLoaded', (e) => {
           message: 'Introducir N° de cuenta válido',
           type: 'cuenta_bancaria',
         },
-        tipo_cuenta: {
-          value: true,
-          message: 'Elegir tipo de cuenta',
-          type: 'number2',
-        },
+        // tipo_cuenta: {
+        //   value: true,
+        //   message: 'Elegir tipo de cuenta',
+        //   type: 'number2',
+        // },
         id_dependencia: {
           value: true,
           message: 'Elejir una dependencia',

@@ -8,13 +8,14 @@ import {
   sendEmployeeData,
   updateEmployeeData,
 } from '../api/empleados.js'
+import { nomCorrectionAlert } from '../components/nom_correcion_alert.js'
 import {
   closeModal,
   confirmNotification,
   validateInput,
   validateModal,
 } from '../helpers/helpers.js'
-import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
+import { ALERT_TYPES, NOTIFICATIONS_TYPES } from '../helpers/types.js'
 
 const d = document
 const w = window
@@ -71,7 +72,15 @@ function validateEmployeeForm({
       fieldList = employeeData[0]
       console.log(fieldList, fieldListErrors)
 
-      // formElement.insertAdjacentHTML('after')
+      if (employeeData[0].verificado === 2) {
+        formElement.insertAdjacentHTML(
+          'beforebegin',
+          nomCorrectionAlert({
+            message: employeeData[0].correcion,
+            type: ALERT_TYPES.warning,
+          })
+        )
+      }
     }
   }
 
@@ -178,6 +187,7 @@ function validateEmployeeForm({
           message: 'Complete todo el formulario antes de avanzar',
         })
       }
+
       delete fieldList.dependencia
       if (id) return updateEmployeeData({ data: fieldList })
 

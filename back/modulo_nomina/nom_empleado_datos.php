@@ -43,6 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id'])) {
                 "dependencia" => $row["dependencia"],
                 "nacionalidad" => $row["nacionalidad"],
                 "fecha_ingreso" => $row["fecha_ingreso"],
+                "cod_cargo" => $row["cod_cargo"],
                 "otros_años" => $row["otros_años"],
                 "status" => $row["status"],
                 "observacion" => $row["observacion"],
