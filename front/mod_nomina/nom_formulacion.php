@@ -204,6 +204,7 @@ while ($r = $query->fetch_object()) {
                                 <option value="hijos">Hijos</option>
                                 <option value="antiguedad">Antigüedad (desde la fecha de ingreso)</option>
                                 <option value="antiguedad_total">Antigüedad (Sumando años anteriores)</option>
+                                <option value="tipo_nomina">Tipo de nomina</option>
 
                               </select>
                             </div>

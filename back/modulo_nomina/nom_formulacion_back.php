@@ -61,22 +61,6 @@ function refValues($arr) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // Verificar si la nomina existe
 $stmt = mysqli_prepare($conexion, "SELECT * FROM `nominas` WHERE nombre = ?");
 $stmt->bind_param('s', $nombre);
@@ -148,7 +132,6 @@ if ($result->num_rows > 0) {
             "id" => $row["id"],
             "nacionalidad" => $row["nacionalidad"],
             "cedula" => $row["cedula"],
-            "cod_empleado" => $row["cod_empleado"],
             "nombres" => $row["nombres"],
             "fecha_ingreso" => $row["fecha_ingreso"],
             "anios_actuales" => $anios_actuales,
@@ -239,7 +222,6 @@ if ($result->num_rows > 0) {
                     "id" => $row["id"],
                     "nacionalidad" => $row["nacionalidad"],
                     "cedula" => $row["cedula"],
-                    "cod_empleado" => $row["cod_empleado"],
                     "nombres" => $row["nombres"],
                     "fecha_ingreso" => $row["fecha_ingreso"],
                     "anios_actuales" => $anios_actuales,
