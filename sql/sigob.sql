@@ -3,7 +3,8 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 19-06-2024 a las 16:35:52
+
+-- Tiempo de generación: 19-06-2024 a las 16:43:41
 -- Versión del servidor: 10.4.27-MariaDB
 -- Versión de PHP: 7.4.33
 
@@ -668,13 +669,14 @@ CREATE TABLE `empleados` (
   `tipo_cuenta` int(10) NOT NULL,
   `tipo_nomina` int(10) NOT NULL,
   `id_dependencia` int(255) NOT NULL,
-  `verificado` int(1) NOT NULL DEFAULT 0
+  `verificado` int(1) NOT NULL DEFAULT 0,
+  `correcion` varchar(255) NOT NULL,
+  `beca` int(2) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 --
 -- Volcado de datos para la tabla `empleados`
 --
-
 INSERT INTO `empleados` (`id`, `nacionalidad`, `cedula`, `cod_empleado`, `nombres`, `fecha_ingreso`, `otros_años`, `status`, `observacion`, `cod_cargo`, `banco`, `cuenta_bancaria`, `hijos`, `instruccion_academica`, `discapacidades`, `tipo_cuenta`, `tipo_nomina`, `id_dependencia`, `verificado`) VALUES
 (27, 'V', '23987719', '441151', 'ORQUIDEA JOSE BOSSIO ALDANA', '2010-05-02', 0, '1', 'N/A', '25212', 'Tesoro', '01630409334091000513', 3, 3, 0, 0, 0, 6, 1),
 (28, 'V', '4781808', '441151', 'BOSSIO CORREA, HERNAN ARSENIO', '2021-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '01020457790100627238', 3, 2, 0, 1, 0, 6, 1),
@@ -690,6 +692,7 @@ INSERT INTO `empleados` (`id`, `nacionalidad`, `cedula`, `cod_empleado`, `nombre
 (39, 'V', '123456789', '441151', 'Pedro Pablo', '2010-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 2, 0, 1, 2, 6, 0),
 (40, 'V', '123456789', '441151', 'Pedro Pablo', '2010-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 3, 0, 1, 2, 6, 0),
 (41, 'V123456', '123456789', '441151', 'Pedro Pablo', '2010-05-02', 0, '1', 'N/A', '25212', 'Venezuela', '1002555541124', 3, 2, 0, 1, 2, 6, 0);
+
 
 -- --------------------------------------------------------
 
@@ -727,6 +730,7 @@ INSERT INTO `informacion_pdf` (`id`, `cedula`, `total_pagar`, `correlativo`, `id
 (142, '[\"642362\"]', '[\"82.03\"]', '00001', 's1', 'Bicentenario'),
 (143, '[\"642362\"]', '[\"82.03\"]', '00001', 's2', 'Bicentenario'),
 (144, '[\"642362\"]', '[\"82.03\"]', '00001', 's4', 'Bicentenario');
+
 
 -- --------------------------------------------------------
 
@@ -854,6 +858,7 @@ CREATE TABLE `peticiones` (
 
 INSERT INTO `peticiones` (`id`, `empleados`, `asignaciones`, `deducciones`, `aportes`, `total_pagar`, `correlativo`, `status`, `nombre_nomina`, `creacion`) VALUES
 (29, '[27,28,29,30]', '{\"CONTRIBUCION POR DISCAPACIDAD\":40,\"PRIMA POR HIJO EMPLEADOS\":20,\"PRIMA POR TRANSPORTE\":200,\"PRIMA POR ANTIGUEDAD EMPLEADOS\":40,\"PRIMA POR ESCALAFON\":20,\"PRIMA POR FRONTERA\":20,\"PRIMA POR PROFESIONALES\":80,\"PAGO DE BECA\":40,\"PRIMA P\\/DED AL S\\/PUBLICO UNICO DE SALUD\":20}', '{\"S. S. O\":20,\"RPE\":20}', '{\"A\\/P S.S.O\":20,\"A\\/P RPE\":20}', '[451.18,328.12,328.12,328.12]', '00001', '1', 'Obreros', '2024-06-19');
+
 
 -- --------------------------------------------------------
 
@@ -1417,6 +1422,7 @@ INSERT INTO `txt` (`id`, `id_empleado`, `total_a_pagar`, `nombre_nomina`, `ident
 (1001, 30, '82.03', 'Obreros', 's3', '06-2024', '00001'),
 (1002, 30, '82.03', 'Obreros', 's4', '06-2024', '00001');
 
+
 --
 -- Índices para tablas volcadas
 --
@@ -1588,6 +1594,7 @@ ALTER TABLE `empleados`
 ALTER TABLE `informacion_pdf`
   MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=145;
 
+
 --
 -- AUTO_INCREMENT de la tabla `nominas`
 --
@@ -1617,6 +1624,7 @@ ALTER TABLE `password_resets`
 --
 ALTER TABLE `peticiones`
   MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+
 
 --
 -- AUTO_INCREMENT de la tabla `primantiguedad`
