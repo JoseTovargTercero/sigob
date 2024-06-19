@@ -7,10 +7,10 @@ if (isset($_POST['id'])) {
     $id = $_POST['id'];
 
     // Consulta SQL para obtener los datos del empleado y su dependencia
-    $sql = "SELECT e.id, e.cedula, e.nombres, e.tipo_nomina, d.id_dependencia, d.dependencia,
+    $sql = "SELECT e.id, e.cedula, e.nombres, d.id_dependencia, d.dependencia,
                    e.nacionalidad, e.fecha_ingreso, e.otros_años, e.status, 
                    e.observacion, e.cod_cargo, e.banco, e.cuenta_bancaria, e.hijos, 
-                   e.instruccion_academica, e.discapacidades, e.tipo_nomina, c.cargo 
+                   e.instruccion_academica, e.discapacidades, c.cargo 
             FROM empleados AS e
             INNER JOIN dependencias AS d ON e.id_dependencia = d.id_dependencia
             LEFT JOIN cargos_grados AS c ON e.cod_cargo = c.cod_cargo
@@ -39,7 +39,6 @@ if (isset($_POST['id'])) {
                 "id_empleado" => $row["id"],
                 "cedula" => $row["cedula"], // LISTO
                 "nombres" => $row["nombres"], // LISTO
-                "tipo_nomina" => $row["tipo_nomina"],
                 "id_dependencia" => $row["id_dependencia"],
                 "dependencia" => $row["dependencia"], // LISTO
                 "nacionalidad" => $row["nacionalidad"], // LISTO
