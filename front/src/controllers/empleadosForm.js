@@ -56,7 +56,8 @@ function validateEmployeeForm({
     if (id) {
       let employeeData = await getEmployeeData(id)
 
-      // console.log(employeeData)
+      console.log(employeeData)
+
       employeeSelectElementCopy.forEach((select) => {
         select.value = employeeData[0][select.name]
       })
@@ -68,7 +69,9 @@ function validateEmployeeForm({
       employeeData[0].id = employeeData[0].id_empleado
 
       fieldList = employeeData[0]
-      // console.log(fieldList, fieldListErrors)
+      console.log(fieldList, fieldListErrors)
+
+      // formElement.insertAdjacentHTML('after')
     }
   }
 
@@ -186,7 +189,7 @@ function validateEmployeeForm({
 
 function insertOptions({ input, data }) {
   const selectElement = d.getElementById(`search-select-${input}`)
-  selectElement.innerHTML = `<option value="">ELEGIR...</option>`
+  selectElement.innerHTML = `<option value="">Elegir...</option>`
   const fragment = d.createDocumentFragment()
   data.forEach((el) => {
     const option = d.createElement('option')

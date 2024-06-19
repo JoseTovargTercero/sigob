@@ -157,9 +157,7 @@ require_once '../../back/sistema_global/session.php';
                                                 <select name="banco" class="form-select employee-select"
                                                     id="search-select-bancos">
                                                     <option value="" selected>ELEGIR...</option>
-                                                    <option value="0102">VENEZUELA</option>
-                                                    <option value="0175">BICENTENARIO</option>
-                                                    <option value="0163">TESORO</option>
+
                                                 </select>
                                             </div>
                                             <div class="col-sm">

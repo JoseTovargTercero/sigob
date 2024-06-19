@@ -65,9 +65,10 @@ require_once '../../back/sistema_global/session.php';
                                 <table id='request-nom-table' class='table table-striped mx-auto' style='width:100%'>
                                     <thead>
                                         <th class="w-5">CORRELATIVO</th>
-                                        <th class="w-30">NOMBRE</th>
-                                        <th class="w-30">STATUS</th>
+                                        <th class="w-10">NOMBRE</th>
+                                        <th class="w-10">STATUS</th>
                                         <th class="w-5">FECHA</th>
+                                        <th class="w-5">ACCIONES</th>
                                     </thead>
                                     <tbody></tbody>
                                 </table>

@@ -86,6 +86,7 @@ d.addEventListener('DOMContentLoaded', (e) => {
         tipo_nomina: 0,
         observacion: '',
         cod_empleado: '441151',
+        correcion: 0,
       },
       fieldListErrors: {
         nombres: {

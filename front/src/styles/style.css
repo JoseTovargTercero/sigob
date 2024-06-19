@@ -80,13 +80,13 @@ a {
 .modal-box {
   background-color: var(--lightgray);
   width: 100%;
-  max-width: 75%;
+  max-width: 1000px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   padding: 1rem;
   height: 90%;
-  background-color: white;
+  /* background-color: white; */
 }
 
 .modal-box.short {

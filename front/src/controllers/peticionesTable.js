@@ -36,6 +36,7 @@ let requestTable = new DataTable('#request-nom-table', {
     { data: 'nombre' },
     { data: 'status' },
     { data: 'fecha' },
+    { data: 'acciones' },
   ],
   responsive: true,
   scrollY: 150,
@@ -61,15 +62,19 @@ export async function loadRequestTable() {
   )
 
   let data = datosOrdenados.map((peticion) => {
+    console.log(peticion)
     return {
       correlativo: peticion.correlativo,
       nombre: peticion.nombre_nomina,
       status: peticion.status == 1 ? 'Revisado' : 'Pendiente',
       fecha: peticion.creacion,
-      //   acciones: `
-      //   <button class="btn btn-info btn-sm btn-view" data-id="${empleado.id_empleado}"><i class="bx bx-detail me-1"></i>Detalles</button>
-      //   <button class="btn btn-warning btn-sm btn-edit" data-id="${empleado.id_empleado}"><i class="bx bx-edit me-1"></i>Editar</button>
-      //   <button class="btn btn-danger btn-sm btn-delete" data-id="${empleado.id_empleado}"><i class="bx bx-trash me-1"></i>Eliminar</button>`,
+      acciones: `
+      <button class="btn btn-primary btn-sm" data-correlativo="${
+        peticion.correlativo
+      }" ${
+        Number(peticion.status) === 0 ? 'disabled' : ''
+      } id="btn-show-request">Informacion</button>
+     `,
     }
   })
 
@@ -78,3 +83,15 @@ export async function loadRequestTable() {
   // console.log(datosOrdenados)
   requestTable.rows.add(data).draw()
 }
+
+// `
+// <button class="btn btn-primary btn-sm" data-correlativo="${
+//   peticion.correlativo
+// }" ${
+//   Number(peticion.status) === 0 ? 'disabled' : ''
+// } id="btn-show-request">${
+//   Number(peticion.status) === 0
+//     ? `<i class='bx bx-low-vision' data-correlativo="${peticion.correlativo}"></i>`
+//     : `<i class='bx bxs-show' id="btn-show-request"></i>`
+// }</button>
+// `

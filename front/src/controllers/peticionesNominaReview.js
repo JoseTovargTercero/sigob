@@ -39,7 +39,7 @@ export async function validateRequestNomForm({
   let requestComparationForm = d.getElementById(formId)
   let comparationContainer = d.getElementById('request-comparation-container')
 
-  let selectValues = await requestInfo
+  let selectValues = requestInfo
     .map((el) => {
       if (el.status == 0) {
         nominas.correlativo = el.correlativo
@@ -83,64 +83,51 @@ export async function validateRequestNomForm({
     }
 
     if (e.target.id === 'confirm-request') {
-      // console.log(e.target.dataset.correlativo)
-      // confirmNotification({
-      //   type: NOTIFICATIONS_TYPES.send,
-      //   successFunction: confirmarPeticionNomina,
-      //   successFunctionParams: e.target.dataset.correlativo,
-      //   othersFunctions: [resetInput, validateRequestFrecuency],
-      //   message: '¿Seguro de aceptar esta petición?',
-      // })
-
-      validateRequestFrecuency()
+      console.log(e.target.dataset.correlativo)
+      confirmNotification({
+        type: NOTIFICATIONS_TYPES.send,
+        successFunction: confirmarPeticionNomina,
+        successFunctionParams: e.target.dataset.correlativo,
+        othersFunctions: [resetInput, validateRequestFrecuency],
+        message: '¿Seguro de aceptar esta petición?',
+      })
     }
   })
 
-  function resetInput() {
+  async function resetInput() {
     let comparationContainer = d.getElementById('request-comparation-container')
 
     if (comparationContainer) comparationContainer.remove()
 
     selectNom.value = ''
+    selectNom.innerHTML = ''
+    let requestInfo = await getPeticionesNomina()
+    let selectValues = requestInfo
+      .map((el) => {
+        if (el.status == 0) {
+          nominas.correlativo = el.correlativo
+          nominas.nombre_nomina = el.nombre_nomina
+          return `<option value="${el.correlativo}">${el.correlativo} - ${el.nombre_nomina}</option>`
+        }
+      })
+      .join('')
+
+    selectNom.insertAdjacentHTML(
+      'beforeend',
+      `<option value="">Seleccionar petición de nómina</option>`
+    )
+    selectNom.insertAdjacentHTML('beforeend', selectValues)
   }
 
   async function validateRequestFrecuency() {
     let generarNomina
-    if (Number(fieldList.frecuencia) === 1) {
-      generarNomina = FRECUENCY_TYPES[1].map((el) =>
-        generarNominaTxt({
-          correlativo: fieldList['select-nomina'],
-          identificador: el,
-        })
-      )
-    }
 
-    if (Number(fieldList.frecuencia) === 2) {
-      generarNomina = FRECUENCY_TYPES[2].map((el) =>
-        generarNominaTxt({
-          correlativo: fieldList['select-nomina'],
-          identificador: el,
-        })
-      )
-    }
-
-    if (Number(fieldList.frecuencia) === 3) {
-      generarNomina = FRECUENCY_TYPES[3].map((el) =>
-        generarNominaTxt({
-          correlativo: fieldList['select-nomina'],
-          identificador: el,
-        })
-      )
-    }
-
-    if (Number(fieldList.frecuencia) === 4) {
-      generarNomina = FRECUENCY_TYPES[4].map((el) =>
-        generarNominaTxt({
-          correlativo: fieldList['select-nomina'],
-          identificador: el,
-        })
-      )
-    }
+    generarNomina = FRECUENCY_TYPES[fieldList.frecuencia].map((el) =>
+      generarNominaTxt({
+        correlativo: fieldList['select-nomina'],
+        identificador: el,
+      })
+    )
 
     let resultados = await Promise.all(generarNomina)
 
