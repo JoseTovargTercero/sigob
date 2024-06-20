@@ -166,16 +166,7 @@ require_once '../../back/sistema_global/session.php';
                                                     name="cuenta_bancaria" placeholder="0000 0000 00 0000"
                                                     id="cuenta_bancaria" maxlength="20">
                                             </div>
-                                            <!-- <div class="col-sm">
-                                                <label class="form-label" for="tipo_cuenta">TIPO DE CUENTA</label>
-                                                <select name="tipo_cuenta" class="form-select employee-select"
-                                                    id="tipo_cuenta">
-                                                    <option value="activo" selected>ELEGIR...</option>
-                                                    <option value="0">CORRIENTE</option>
-                                                    <option value="1">AHORRO</option>
-
-                                                </select>
-                                            </div> -->
+   
                                         </div>
                                     </div>
 

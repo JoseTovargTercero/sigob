@@ -187,8 +187,8 @@ function validateEmployeeForm({
           message: 'Complete todo el formulario antes de avanzar',
         })
       }
-      delete fieldList.correcion
 
+      delete fieldList.dependencia
       if (id) return updateEmployeeData({ data: fieldList })
 
       // ENVÍO DE INFORMACIÓN

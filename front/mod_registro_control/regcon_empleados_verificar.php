@@ -190,7 +190,7 @@ require_once '../../back/sistema_global/session.php';
                     <td>:</td>
                     <td id="info_cuenta_bancaria"></td>
                   </tr>
-               
+                  
                 </tbody>
               </table>
             </div>
@@ -396,11 +396,10 @@ require_once '../../back/sistema_global/session.php';
             $('#info_observacion').html(datosEmpleado['observacion'])
             $('#info_cargo').html(datosEmpleado['cargo'])
             $('#info_cod_cargo').html(datosEmpleado['cod_cargo'])
-
             $('#info_dependencia').html(datosEmpleado['dependencia'])
             $('#info_banco').html(datosEmpleado['banco'])
             $('#info_cuenta_bancaria').html(agregarGuiones(datosEmpleado['cuenta_bancaria']))
-            
+
             $('#cargando').hide()
 
 

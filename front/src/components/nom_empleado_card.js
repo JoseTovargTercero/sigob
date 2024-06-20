@@ -18,7 +18,6 @@ export async function employeeCard({ id, elementToInsert }) {
   //     id_dependencia: 12,
   //     dependencia: 'qwedsa',
   //     nacionalidad: 'E',
-  //     cod_empleado: null,
   //     fecha_ingreso: '2024-05-19',
   //     otros_años: 2,
   //     status: '',
@@ -29,7 +28,6 @@ export async function employeeCard({ id, elementToInsert }) {
   //     hijos: 2,
   //     instruccion_academica: 3,
   //     discapacidades: 0,
-  //     tipo_cuenta: 0,
   //   }
 
   let id_empleado = employeedeData[0].id_empleado,
@@ -47,7 +45,6 @@ export async function employeeCard({ id, elementToInsert }) {
     dependencia = employeedeData[0].dependencia,
     id_dependencia = employeedeData[0].id_dependencia,
     discapacidades = employeedeData[0].discapacidades,
-    tipo_cuenta = employeedeData[0].banco,
     tipo_nomina = employeedeData[0].tipo_nomina,
     observacion = employeedeData[0].observacion
 
@@ -146,7 +143,7 @@ export async function employeeCard({ id, elementToInsert }) {
               </p>
               <p>Dependencia laboral: ${dependencia}</p>
               <p>
-                Banco: ${banco} - ${tipo_cuenta === 0 ? 'Correiente' : 'Ahorro'}
+                Banco: ${banco}
               </p>
             </div>
           </div>

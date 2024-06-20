@@ -60,7 +60,6 @@ const getNominas = async (grupo) => {
 }
 
 const getGruposNomina = async (data) => {
-  console.log(data)
   showLoader('employee-pay-loader')
   try {
     let res = await fetch(calculoNominaUrl, {
@@ -68,9 +67,9 @@ const getGruposNomina = async (data) => {
       body: JSON.stringify({ nombre: data }),
     })
 
-    let json = await res.text()
+    let json = await res.json()
     console.log(json)
-    // json.informacion_empleados = await mapData(json.informacion_empleados)
+    json.informacion_empleados = await mapData(json.informacion_empleados)
 
     return json
   } catch (e) {
@@ -325,7 +324,6 @@ async function mapData(data) {
       nacionalidad,
       status,
       discapacidades,
-      tipo_cuenta,
       id_dependencia,
       instruccion_academica,
       cod_cargo,
@@ -336,7 +334,6 @@ async function mapData(data) {
     empleado.nacionalidad = nacionalidad == 1 ? 'EXTRANJERO' : 'VENEZOLANO'
     empleado.status = status == 1 ? 'ACTIVO' : 'INACTIVO'
     discapacidades = discapacidades == 1 ? 'SI' : 'NO'
-    empleado.tipo_cuenta = tipo_cuenta = 1 ? 'AHORRO' : 'CORRIENTE'
 
     id_dependencia = dependencias.find((el) => el.id == id_dependencia)
     instruccion_academica = profesiones.find(

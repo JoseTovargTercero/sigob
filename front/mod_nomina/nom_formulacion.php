@@ -240,14 +240,18 @@ while ($r = $query->fetch_object()) {
                           <tbody id="empleados-list">
                           </tbody>
 
+                          <tfoot>
+                            <tr>
+                              <td></td>
+                              <td class="fw-bold" id="resumen_epleados_seleccionados"></td>
+                              <td class="w-auto text-center"><button class="btn btn-sm btn-primary" id="guardar_empleados_nomina">Guardar </button></td>
+                            </tr>
+                          </tfoot>
                         </table>
 
 
                       </section>
 
-                      <p class="text-end mt-2" id="resumen_epleados_seleccionados">
-                        
-                      </p>
                     </div>
                     <div class="d-flex w-100 mt-3">
                       <div class="d-flex m-a">
@@ -359,7 +363,7 @@ while ($r = $query->fetch_object()) {
 
 
                           </div>
-                          <div id="tabla_empleados-conceptos" class="hide mh-60">
+                          <div id="tabla_empleados-conceptos" class="hide">
 
 
 
@@ -555,7 +559,7 @@ while ($r = $query->fetch_object()) {
             tabla += '<tr>';
             tabla += '<td>' + e.cedula + '</td>';
             tabla += '<td>' + e.nombres + '</td>';
-            tabla += '<td class="text-center"><input class="form-check-input itemCheckbox" onchange="guardar_empleados_nomina()" type="checkbox" value="' + e.id + '"></td>';
+            tabla += '<td class="text-center"><input class="form-check-input itemCheckbox" type="checkbox" value="' + e.id + '"></td>';
             tabla += '</tr>';
           });
 
@@ -574,8 +578,6 @@ while ($r = $query->fetch_object()) {
       itemCheckboxes.forEach(checkbox => {
         checkbox.checked = status;
       });
-
-      guardar_empleados_nomina()
     }
 
     let empleadosSeleccionados = [] // Todos los emleados seleccionados para la nomina 
@@ -595,8 +597,8 @@ while ($r = $query->fetch_object()) {
       document.getElementById('resumen_epleados_seleccionados').innerText = 'Empleados seleccionados: ' + empleadosSeleccionados.length;
     }
 
-   // document.getElementsByClassName('guardar_empleados_nomina').addEventListener('click', guardar_empleados_nomina);
-  
+    document.getElementById('guardar_empleados_nomina').addEventListener('click', guardar_empleados_nomina);
+
 
     /**
      * Loads data from the server using AJAX.
@@ -762,14 +764,11 @@ while ($r = $query->fetch_object()) {
               tabla += '<tr>';
               tabla += '<td>' + e[2] + '</td>';
               tabla += '<td>' + e[4] + '</td>';
-              tabla += '<td class="text-center"><input class="form-check-input itemCheckbox"  type="checkbox" value="' + e.id + '"></td>';
+              tabla += '<td class="text-center"><input class="form-check-input itemCheckbox" type="checkbox" value="' + e.id + '"></td>';
               tabla += '</tr>';
             });
 
             document.getElementById(result_list).innerHTML = tabla;
-
-         
-
           }
         });
       }
