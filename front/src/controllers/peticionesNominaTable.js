@@ -1,8 +1,3 @@
-import { sendCalculoNomina } from '../api/peticionesNomina.js'
-import { confirmNotification, validateModal } from '../helpers/helpers.js'
-import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
-import { loadRequestTable } from './peticionesTable.js'
-
 const d = document
 const w = window
 

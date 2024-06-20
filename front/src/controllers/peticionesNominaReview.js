@@ -3,6 +3,7 @@ import {
   generarNominaTxt,
   getComparacionNomina,
   getPeticionesNomina,
+  getRegConPeticionesNomina,
 } from '../api/peticionesNomina.js'
 import { createComparationContainer } from '../components/regcon_comparation_container.js'
 import { confirmNotification, validateInput } from '../helpers/helpers.js'
@@ -30,7 +31,7 @@ export async function validateRequestNomForm({
   consultBtnId,
   formId,
 }) {
-  let requestInfo = await getPeticionesNomina()
+  let requestInfo = await getRegConPeticionesNomina()
 
   console.log(requestInfo)
 
@@ -101,7 +102,7 @@ export async function validateRequestNomForm({
 
     selectNom.value = ''
     selectNom.innerHTML = ''
-    let requestInfo = await getPeticionesNomina()
+    let requestInfo = await getRegConPeticionesNomina()
     let selectValues = requestInfo
       .map((el) => {
         if (el.status == 0) {
@@ -134,9 +135,3 @@ export async function validateRequestNomForm({
     console.log(resultados)
   }
 }
-
-// FRECUENCIAS
-// 1: 4 PETICIONES
-// 2: 2 PETICIONES
-// 3: 1 PETICION
-// 4 ???

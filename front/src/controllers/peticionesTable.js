@@ -62,11 +62,10 @@ export async function loadRequestTable() {
   )
 
   let data = datosOrdenados.map((peticion) => {
-    console.log(peticion)
     return {
       correlativo: peticion.correlativo,
       nombre: peticion.nombre_nomina,
-      status: peticion.status == 1 ? 'Revisado' : 'Pendiente',
+      status: Number(peticion.status) === 1 ? 'Revisado' : 'Pendiente',
       fecha: peticion.creacion,
       acciones: `
       <button class="btn btn-primary btn-sm" data-correlativo="${

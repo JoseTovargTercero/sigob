@@ -1,8 +1,8 @@
 import {
-  getGruposNomina,
+  calculoNomina,
   getNominas,
   getPeticionesNomina,
-  sendCalculoNomina,
+  enviarCalculoNomina,
 } from '../api/peticionesNomina.js'
 import { nomReportCard } from '../components/nom_report_card.js'
 import { tableListCard } from '../components/tabla_lista_card.js'
@@ -87,7 +87,7 @@ export function validateEmployeePayForm({
   })
   selectNomina.addEventListener('change', async (e) => {
     if (!e.target.value) return
-    let nomina = await getGruposNomina(e.target.value)
+    let nomina = await calculoNomina(e.target.value)
     console.log(nomina)
     requestInfo = nomina
 
@@ -134,7 +134,7 @@ export function validateEmployeePayForm({
       confirmNotification({
         type: NOTIFICATIONS_TYPES.send,
         message: 'Deseas realizar esta petición?',
-        successFunction: sendCalculoNomina,
+        successFunction: enviarCalculoNomina,
         successFunctionParams: requestInfo,
         othersFunctions: [loadRequestTable, resetSelect],
       })

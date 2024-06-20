@@ -3,7 +3,6 @@ import {
   descargarNominaTxt,
   generarNominaTxt,
   getComparacionNomina,
-  getNominaTxt,
   getPeticionesNomina,
 } from '../api/peticionesNomina.js'
 import { nomReportCard } from '../components/nom_report_card.js'
@@ -72,10 +71,10 @@ export async function validatePayNomForm({ selectId, consultBtnId, formId }) {
       let result = requestInfo.find(
         (el) => el.correlativo === fieldList['select-correlativo']
       )
-      crearNominaTxt({
-        correlativo: fieldList['select-correlativo'],
-        identificador: identificador[0].identificador,
-      })
+      // crearNominaTxt({
+      //   correlativo: fieldList['select-correlativo'],
+      //   identificador: identificador[0].identificador,
+      // })
 
       payNomForm.insertAdjacentHTML(
         'beforeend',
