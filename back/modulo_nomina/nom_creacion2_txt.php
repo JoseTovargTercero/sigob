@@ -5,7 +5,7 @@ $input = file_get_contents('php://input');
 // Decodificar el JSON recibido
 $data = json_decode($input, true);
 // Validar que se hayan recibido los arrays necesarios
-if (isset($data['Venezuela']) && isset($data['Tesoro']) && isset($data['Bicentenario']) && isset($data['Caroni'])) {
+if (isset($data['0102']) && isset($data['0163']) && isset($data['0175']) && isset($data['0128'])) {
     
     // Función para procesar el array del banco Venezuela y generar un archivo TXT
     function txt_Venezuela($data) {
@@ -22,6 +22,10 @@ if (isset($data['Venezuela']) && isset($data['Tesoro']) && isset($data['Bicenten
    $ano = date('y');
    $total = number_format($total_a_pagar,2, "", "");
    $correlativo3 = intval($correlativo);
+   $cedulas = array();
+        $totalescobrar = array();
+        $banco = "0102";
+   if (!empty($empleados)) {
    if ($correlativo3 < 10) {
       $correlativo2 = "0".$correlativo3;
    }elseif($correlativo3 > 100){
@@ -69,9 +73,7 @@ if (isset($data['Venezuela']) && isset($data['Tesoro']) && isset($data['Bicenten
     // Escribir el encabezado
     fwrite($file, $header);
         $content = "";
-        $cedulas = array();
-        $totalescobrar = array();
-        $banco = "0102";
+        
         foreach ($empleados as $empleado) {
             $cedulas[] = $empleado['cedula'];
             $totalescobrar[] = $empleado['total_a_pagar'];
@@ -257,7 +259,7 @@ header('Pragma: public');
 header('Content-Length: ' . filesize($file_path));
         // Terminar el script para que no se envíe más salida
        readfile($file_path);
-
+}
        $cedulas_json = json_encode($cedulas);
 $totalescobrar_json = json_encode($totalescobrar);
 
@@ -296,6 +298,10 @@ $totalescobrar_json = json_encode($totalescobrar);
         $direccion = "C:/xampp/htdocs/sigob/".$file_path;   
         // Cuerpo del archivo
          // Abrir el archivo para escritura
+        $cedulas = array();
+    $totalescobrar = array();
+    $banco = "0163";
+    if (!empty($empleados)) {
     $file = fopen($file_path, 'w');
     if ($file === false) {
         die('Error al abrir el archivo para escritura');
@@ -303,9 +309,9 @@ $totalescobrar_json = json_encode($totalescobrar);
 
 
         $content = "";
-        $cedulas = array();
-    $totalescobrar = array();
-    $banco = "0163";
+        
+    
+    
         foreach ($empleados as $empleado) {
           $cedulas[] = $empleado['cedula'];
         $totalescobrar[] = $empleado['total_a_pagar'];
@@ -313,7 +319,6 @@ $totalescobrar_json = json_encode($totalescobrar);
             $nacionalidad = $empleado['nacionalidad'];
             $nrocuenta = $empleado['cuenta_bancaria'];
             $totalcobra = $empleado['total_a_pagar'];
-            $tipocuenta = $empleado['tipo_cuenta'];
             $prueba = substr($empleado['nombres'], 0,30);
             $prueba = str_pad($prueba, 39, " ");
             $line = "";
@@ -343,7 +348,8 @@ header('Expires: 0');
 header('Cache-Control: must-revalidate');
 header('Pragma: public');
 header('Content-Length: ' . filesize($file_path));
-   readfile($file_path);     
+   readfile($file_path); 
+}    
         // Terminar el script para que no se envíe más salida
    // Insertar datos en la base de datos
     $cedulas_json = json_encode($cedulas);
@@ -391,6 +397,10 @@ header('Content-Length: ' . filesize($file_path));
    $ano = date('Y');
    $total = number_format($total_a_pagar,2, "", "");
    $correlativo3 = intval($correlativo);
+   $cedulas = array();
+        $totalescobrar = array();
+        $banco = "0175";
+   if (!empty($empleados)) {
    if ($correlativo3 < 10) {
       $correlativo2 = "0".$correlativo3;
    }elseif($correlativo3 > 100){
@@ -454,9 +464,7 @@ header('Content-Length: ' . filesize($file_path));
 
     fwrite($file, $header);
         $content = "";
-        $cedulas = array();
-        $totalescobrar = array();
-        $banco = "0175";
+        
         foreach ($empleados as $empleado) {
           $cedulas[] = $empleado['cedula'];
             $totalescobrar[] = $empleado['total_a_pagar'];
@@ -464,7 +472,6 @@ header('Content-Length: ' . filesize($file_path));
             $nrocuenta = $empleado['cuenta_bancaria'];
             $nacionalidad = $empleado['nacionalidad'];
             $totalcobra = number_format($empleado['total_a_pagar'],2, "", "");
-            $tipocuenta = $empleado['tipo_cuenta'];
             $prueba = substr($empleado['nombres'], 0,30);
             $prueba = str_pad($prueba, 39, " ");
             $line = "";
@@ -617,6 +624,7 @@ header('Cache-Control: must-revalidate');
 header('Pragma: public');
 header('Content-Length: ' . filesize($file_path));
  readfile($file_path);
+}
  $cedulas_json = json_encode($cedulas);
 $totalescobrar_json = json_encode($totalescobrar);
 
@@ -654,7 +662,10 @@ $totalescobrar_json = json_encode($totalescobrar);
         // Ruta del archivo a generar
         $file_path = '../../txt/caroni_'.$correlativo.'_'.$identificador.'.txt';
         $direccion = "C:/xampp/htdocs/sigob/".$file_path;
-     
+        $cedulas = array();
+        $totalescobrar = array();
+        $banco = "0128";
+         if (!empty($empleados)) {
         // Cuerpo del archivo
          // Abrir el archivo para escritura
     $file = fopen($file_path, 'w');
@@ -664,9 +675,7 @@ $totalescobrar_json = json_encode($totalescobrar);
 
 
         $content = "";
-         $cedulas = array();
-        $totalescobrar = array();
-        $banco = "0128";
+         
         foreach ($empleados as $empleado) {
           $cedulas[] = $empleado['cedula'];
             $totalescobrar[] = $empleado['total_a_pagar'];
@@ -674,7 +683,6 @@ $totalescobrar_json = json_encode($totalescobrar);
             $nrocuenta = $empleado['cuenta_bancaria'];
             $nacionalidad = $empleado['nacionalidad'];
             $totalcobra = number_format($empleado['total_a_pagar'],2, "", "");
-            $tipocuenta = $empleado['tipo_cuenta'];
             $prueba = substr($empleado['nombres'], 0,30);
             $prueba = str_pad($prueba, 39, " ");
             $line = "";
@@ -782,6 +790,7 @@ header('Cache-Control: must-revalidate');
 header('Pragma: public');
 header('Content-Length: ' . filesize($file_path));
 readfile($file_path);
+}
         // Terminar el script para que no se envíe más salida
 $cedulas_json = json_encode($cedulas);
 $totalescobrar_json = json_encode($totalescobrar);
@@ -813,10 +822,10 @@ $totalescobrar_json = json_encode($totalescobrar);
     }
 
     // Llamar a las funciones con los datos correspondientes
-    $result_venezuela = txt_Venezuela($data['Venezuela']);
-    $result_tesoro = txt_Tesoro($data['Tesoro']);
-    $result_caroni = txt_Caroni($data['Caroni']);
-    $result_bicentenario = txt_Bicentenario($data['Bicentenario']);
+    $result_venezuela = txt_Venezuela($data['0102']);
+    $result_tesoro = txt_Tesoro($data['0163']);
+    $result_caroni = txt_Caroni($data['0128']);
+    $result_bicentenario = txt_Bicentenario($data['0175']);
 
     // Devolver los resultados en formato JSON (excepto Venezuela)
     

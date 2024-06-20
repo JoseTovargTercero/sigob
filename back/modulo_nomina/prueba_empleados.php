@@ -9,7 +9,6 @@ $url = 'http://localhost/sigob/back/modulo_nomina/nom_empleados_registro.php/';
 $data = array(
     "nacionalidad" => "V123456",
     "cedula" => 123456789,
-    "cod_empleado" => 441151,
     "nombres" => "Pedro Pablo",
     "fecha_ingreso" => "2010/05/02",
     "otros_años" => 0,
@@ -20,7 +19,6 @@ $data = array(
     "hijos" => 3,
     "instruccion_academica" => 1,
     "discapacidades" => 0,
-    "tipo_cuenta" => 1,
     "tipo_nomina" => 2,
     "id_dependencia" => 6,
 );

@@ -40,22 +40,22 @@ $stmt = $conexion->prepare($sql);
 
 // Vincular parámetros y ejecutar la consulta
 $stmt->bind_param(
-    "ssssisssssiiiiii",
-    $data["nacionalidad"],
-    $data["cedula"],
-    $data["nombres"],
-    $data["fecha_ingreso"],
-    $data["otros_años"],
-    $data["status"],
-    $data["observacion"],
-    $data["cod_cargo"],
-    $data["banco"],
-    $data["cuenta_bancaria"],
-    $data["hijos"],
-    $data["instruccion_academica"],
-    $data["discapacidades"],
-    $data["tipo_nomina"],
-    $data["id_dependencia"],
+    "ssssissssssiiiis", 
+    $data["nacionalidad"], 
+    $data["cedula"], 
+    $data["nombres"], 
+    $data["fecha_ingreso"], 
+    $data["otros_años"], 
+    $data["status"], 
+    $data["observacion"], 
+    $data["cod_cargo"], 
+    $data["banco"], 
+    $data["cuenta_bancaria"], 
+    $data["hijos"], 
+    $data["instruccion_academica"], 
+    $data["discapacidades"], 
+    $data["tipo_nomina"], 
+    $data["id_dependencia"], 
     $data["id"]
 );
 

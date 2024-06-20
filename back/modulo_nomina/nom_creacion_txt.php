@@ -6,7 +6,6 @@ $input = file_get_contents('php://input');
 
 // Decodificar el JSON recibido
 $data = json_decode($input, true);
-
 // Validar que se hayan recibido los valores necesarios
 if (isset($data['correlativo']) && isset($data['identificador'])) {
     // Consulta SQL para obtener los datos de la tabla txt
@@ -40,6 +39,7 @@ if (isset($data['correlativo']) && isset($data['identificador'])) {
                 "identificador" => $row_txt["identificador"],
                 "correlativo" => $row_txt["correlativo"]
             );
+            
         }
     } else {
         echo json_encode(["mensaje" => "No se encontraron resultados en la tabla txt."]);
@@ -131,7 +131,7 @@ if (isset($data['correlativo']) && isset($data['identificador'])) {
             echo json_encode(["mensaje" => "No se encontraron resultados en la tabla empleados."]);
             exit();
         }
-
+       
         // Cerrar la declaración de empleados
         $stmt_empleados->close();
 
@@ -165,7 +165,7 @@ if (isset($data['correlativo']) && isset($data['identificador'])) {
                 "identificador" => $data['identificador'],
             ]
         ];
-
+       
         // URL del archivo receptor
         $url = 'http://localhost/sigob/back/modulo_nomina/nom_creacion2_txt.php';
 

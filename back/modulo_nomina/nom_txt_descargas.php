@@ -1,57 +1,53 @@
 <?php
 
-
-
 $correlativo = $_GET['correlativo'];
 $frecuencia = $_GET['frecuencia'];
-
 
 // Lista de archivos a incluir en el ZIP, utilizando la variable 'correlativo'
 if ($frecuencia == 1) {
     $files = [
-    "tesoro_{$correlativo}_s1.txt",
-    "tesoro_{$correlativo}_s2.txt",
-    "tesoro_{$correlativo}_s3.txt",
-    "tesoro_{$correlativo}_s4.txt",
-    "venezuela_{$correlativo}_s1.txt",
-    "venezuela_{$correlativo}_s2.txt",
-    "venezuela_{$correlativo}_s3.txt",
-    "venezuela_{$correlativo}_s4.txt",
-    "bicentenario_{$correlativo}_s1.txt",
-    "bicentenario_{$correlativo}_s2.txt",
-    "bicentenario_{$correlativo}_s3.txt",
-    "bicentenario_{$correlativo}_s4.txt",
-    "caroni_{$correlativo}_s1.txt",
-    "caroni_{$correlativo}_s2.txt",
-    "caroni_{$correlativo}_s3.txt",
-    "caroni_{$correlativo}_s4.txt",
-];
-}elseif ($frecuencia == 2) {
+        "tesoro_{$correlativo}_s1.txt",
+        "tesoro_{$correlativo}_s2.txt",
+        "tesoro_{$correlativo}_s3.txt",
+        "tesoro_{$correlativo}_s4.txt",
+        "venezuela_{$correlativo}_s1.txt",
+        "venezuela_{$correlativo}_s2.txt",
+        "venezuela_{$correlativo}_s3.txt",
+        "venezuela_{$correlativo}_s4.txt",
+        "bicentenario_{$correlativo}_s1.txt",
+        "bicentenario_{$correlativo}_s2.txt",
+        "bicentenario_{$correlativo}_s3.txt",
+        "bicentenario_{$correlativo}_s4.txt",
+        "caroni_{$correlativo}_s1.txt",
+        "caroni_{$correlativo}_s2.txt",
+        "caroni_{$correlativo}_s3.txt",
+        "caroni_{$correlativo}_s4.txt",
+    ];
+} elseif ($frecuencia == 2) {
     $files = [
-    "tesoro_{$correlativo}_q1.txt",
-    "tesoro_{$correlativo}_q2.txt",
-    "venezuela_{$correlativo}_q1.txt",
-    "venezuela_{$correlativo}_q2.txt",
-    "bicentenario_{$correlativo}_q1.txt",
-    "bicentenario_{$correlativo}_q2.txt",
-    "caroni_{$correlativo}_q1.txt",
-    "caroni_{$correlativo}_q2.txt",
-];
-}elseif ($frecuencia == 3 OR $frecuencia == 4) {
+        "tesoro_{$correlativo}_q1.txt",
+        "tesoro_{$correlativo}_q2.txt",
+        "venezuela_{$correlativo}_q1.txt",
+        "venezuela_{$correlativo}_q2.txt",
+        "bicentenario_{$correlativo}_q1.txt",
+        "bicentenario_{$correlativo}_q2.txt",
+        "caroni_{$correlativo}_q1.txt",
+        "caroni_{$correlativo}_q2.txt",
+    ];
+} elseif ($frecuencia == 3 || $frecuencia == 4) {
     $files = [
-    "tesoro_{$correlativo}_unico.txt",
-    "venezuela_{$correlativo}_unico.txt",
-    "bicentenario_{$correlativo}_unico.txt",
-    "caroni_{$correlativo}_unico.txt",
-];
+        "tesoro_{$correlativo}_unico.txt",
+        "venezuela_{$correlativo}_unico.txt",
+        "bicentenario_{$correlativo}_unico.txt",
+        "caroni_{$correlativo}_unico.txt",
+    ];
 }
-
 
 // Ruta donde se encuentran los archivos
 $base_dir = "../../txt/";
 
 // Nombre del archivo ZIP que se generará
-$zip_filename = "txt__{$correlativo}_{$identificador}.zip";
+$zip_filename = "txt__{$correlativo}.zip";
 
 // Crear una instancia de la clase ZipArchive
 $zip = new ZipArchive();
@@ -64,11 +60,6 @@ foreach ($files as $file) {
     $file_path = $base_dir . $file;
     if (file_exists($file_path)) {
         $zip->addFile($file_path, $file);
-    } else {
-        // Salir del script si falta algún archivo
-        $zip->close();
-        unlink($zip_filename);
-        exit("El archivo $file no existe");
     }
 }
 

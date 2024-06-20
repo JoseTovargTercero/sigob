@@ -6,11 +6,10 @@ $response = file_get_contents($url);
 $data = json_decode($response, true);
 $precio_dolar = $data['conversion_rate'];
 
-// Función para calcular el salario base de un empleado
 function calculoSalarioBase($conexion, $empleado, $nombre) {
     // Consulta SQL con LEFT JOIN
     $sql = "SELECT empleados.*, cargos_grados.grado,
-            TIMESTAMPDIFF(YEAR, empleados.fecha_ingreso, CURDATE()) + empleados.otros_años AS paso
+            TIMESTAMPDIFF(YEAR, empleados.fecha_ingreso, CURDATE()) + empleados.otros_años AS antiguedad
             FROM empleados
             LEFT JOIN cargos_grados ON empleados.cod_cargo = cargos_grados.cod_cargo
             WHERE empleados.id = ?";
@@ -27,6 +26,10 @@ function calculoSalarioBase($conexion, $empleado, $nombre) {
 
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
+
+        // Calcular el paso basándose en la antigüedad
+        $antiguedad = $row['antiguedad'];
+        $paso = $antiguedad > 15 ? 15 : $antiguedad;
 
         // Consulta SQL para obtener el tabulador correspondiente al nombre_nomina
         $sqlTabulador = "SELECT tabulador FROM conceptos_aplicados WHERE nombre_nomina = ?";
@@ -45,7 +48,7 @@ function calculoSalarioBase($conexion, $empleado, $nombre) {
             $tabulador = $rowTabulador["tabulador"];
 
             // Obtener el monto correspondiente a este empleado usando el tabulador
-            $monto = obtenerMonto($conexion, $row["grado"], $row["paso"], $tabulador);
+            $monto = obtenerMonto($conexion, $row["grado"], $paso, $tabulador);
 
             return $monto;
         } else {
