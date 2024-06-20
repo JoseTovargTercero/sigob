@@ -29,7 +29,18 @@ function calculoSalarioBase($conexion, $empleado, $nombre) {
 
         // Calcular el paso basándose en la antigüedad
         $antiguedad = $row['antiguedad'];
-        $paso = $antiguedad > 15 ? 15 : $antiguedad;
+
+        if ($antiguedad > 15) {
+            $paso = 15;
+        } elseif ($antiguedad < 1) {
+            $paso = 1;
+        } else {
+            $paso = $antiguedad;
+        }
+            
+          
+       
+        
 
         // Consulta SQL para obtener el tabulador correspondiente al nombre_nomina
         $sqlTabulador = "SELECT tabulador FROM conceptos_aplicados WHERE nombre_nomina = ?";
