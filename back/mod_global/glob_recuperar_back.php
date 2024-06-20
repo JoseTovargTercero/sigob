@@ -1,6 +1,8 @@
 <?php
 require_once '../sistema_global/conexion.php';
-require_once '../sistema_global/session.php';
+
+// LINEA DE SESIÓN EVITABA QUE AVANZARA EN EL FORMULARIO
+// require_once '../sistema_global/session.php';
 
 
 $accion = $_POST["accion"];

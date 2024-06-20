@@ -122,9 +122,9 @@ const updateEmployeeData = async ({ data }) => {
         type: NOTIFICATIONS_TYPES.done,
         message: 'Datos guardados',
       })
-      setTimeout(() => {
-        location.assign('nom_empleados_tabla.php')
-      }, 1500)
+      // setTimeout(() => {
+      //   location.assign('nom_empleados_tabla.php')
+      // }, 1500)
     }
     const json = await res.text()
     console.log(json)

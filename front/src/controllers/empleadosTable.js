@@ -31,6 +31,13 @@ const tableLanguage = {
   },
 }
 
+let tableColumns = [
+  { data: 'nombres' },
+  { data: 'cedula' },
+  { data: 'dependencia' },
+  { data: 'nomina' },
+  { data: 'acciones' },
+]
 let employeeTableVerificados = new DataTable('#employee-table-verificados', {
   responsive: true,
   scrollY: 300,
@@ -46,13 +53,7 @@ let employeeTableVerificados = new DataTable('#employee-table-verificados', {
     bottomStart: 'info',
     bottomEnd: 'paging',
   },
-  columns: [
-    { data: 'nombres', width: '10%' },
-    { data: 'cedula', width: '10%' },
-    { data: 'dependencia', width: '10%' },
-    { data: 'nomina', width: '10%' },
-    { data: 'acciones', width: '10%' },
-  ],
+  columns: tableColumns,
 })
 
 let employeeTableCorregir = new DataTable('#employee-table-corregir', {
@@ -70,13 +71,7 @@ let employeeTableCorregir = new DataTable('#employee-table-corregir', {
     bottomStart: 'info',
     bottomEnd: 'paging',
   },
-  columns: [
-    { data: 'nombres', width: '10%' },
-    { data: 'cedula', width: '10%' },
-    { data: 'dependencia', width: '10%' },
-    { data: 'nomina', width: '10%' },
-    { data: 'acciones', width: '10%' },
-  ],
+  columns: tableColumns,
 })
 
 let employeeTableRevision = new DataTable('#employee-table-revision', {
@@ -94,13 +89,7 @@ let employeeTableRevision = new DataTable('#employee-table-revision', {
     bottomStart: 'info',
     bottomEnd: 'paging',
   },
-  columns: [
-    { data: 'nombres', width: '10%' },
-    { data: 'cedula', width: '10%' },
-    { data: 'dependencia', width: '10%' },
-    { data: 'nomina', width: '10%' },
-    { data: 'acciones', width: '10%' },
-  ],
+  columns: tableColumns,
 })
 
 const validateEmployeeTable = async () => {
@@ -127,8 +116,7 @@ const validateEmployeeTable = async () => {
         nomina: empleado.tipo_nomina,
         acciones: `
       <button class="btn btn-info btn-sm btn-view" data-id="${empleado.id_empleado}"><i class="bx bx-detail me-1"></i>Detalles</button>
-      <button class="btn btn-warning btn-sm btn-edit" data-id="${empleado.id_empleado}"><i class="bx bx-edit me-1"></i>Editar</button>
-      <button class="btn btn-danger btn-sm btn-delete" data-id="${empleado.id_empleado}" data-table=""><i class="bx bx-trash me-1"></i>Eliminar</button>`,
+      <button class="btn btn-danger btn-sm btn-delete" data-id="${empleado.id_empleado}" data-table="corregir"><i class="bx bx-trash me-1"></i>Eliminar</button>`,
       })
     }
 
@@ -141,7 +129,7 @@ const validateEmployeeTable = async () => {
         acciones: `
       <button class="btn btn-info btn-sm btn-view" data-id="${empleado.id_empleado}"><i class="bx bx-detail me-1"></i>Detalles</button>
       <button class="btn btn-warning btn-sm btn-edit" data-id="${empleado.id_empleado}"><i class="bx bx-edit me-1"></i>Editar</button>
-      <button class="btn btn-danger btn-sm btn-delete" data-id="${empleado.id_empleado}" data-table=""><i class="bx bx-trash me-1"></i>Eliminar</button>`,
+      <button class="btn btn-danger btn-sm btn-delete" data-id="${empleado.id_empleado}" data-table="verificados"><i class="bx bx-trash me-1"></i>Eliminar</button>`,
       })
     }
 
@@ -154,28 +142,27 @@ const validateEmployeeTable = async () => {
         acciones: `
       <button class="btn btn-info btn-sm btn-view" data-id="${empleado.id_empleado}"><i class="bx bx-detail me-1"></i>Detalles</button>
       <button class="btn btn-warning btn-sm btn-edit" data-id="${empleado.id_empleado}"><i class="bx bx-edit me-1"></i>Editar</button>
-      <button class="btn btn-danger btn-sm btn-delete" data-id="${empleado.id_empleado}" data-table=""><i class="bx bx-trash me-1"></i>Eliminar</button>`,
+      <button class="btn btn-danger btn-sm btn-delete" data-id="${empleado.id_empleado}" data-table="revisar"><i class="bx bx-trash me-1"></i>Eliminar</button>`,
       })
     }
   })
 
   console.log(data)
-
-  employeeTableVerificados.rows.add(data.verificados)
-
-  employeeTableCorregir.rows.add(data.corregir)
-  employeeTableRevision.rows.add(data.revision)
-
-  employeeTableVerificados.draw()
-  employeeTableCorregir.draw()
-  employeeTableRevision.draw()
+  // AÑADIR FILAS A TABLAS
+  employeeTableVerificados.rows.add(data.verificados).draw()
+  employeeTableCorregir.rows.add(data.corregir).draw()
+  employeeTableRevision.rows.add(data.revision).draw()
 }
 
 d.addEventListener('click', (e) => {
   if (e.target.classList.contains('btn-delete')) {
     let fila = e.target.closest('tr')
-    confirmDelete({ id: e.target.dataset.id, row: fila })
-    employeeTable.draw()
+    e.target.dataset
+    confirmDelete({
+      id: e.target.dataset.id,
+      row: fila,
+      table: e.target.dataset.table,
+    })
   }
 
   if (e.target.classList.contains('btn-edit')) {
@@ -203,7 +190,7 @@ d.addEventListener('click', (e) => {
   }
 })
 
-async function confirmDelete({ id, row }) {
+async function confirmDelete({ id, row, table }) {
   let userConfirm = await confirmNotification({
     type: NOTIFICATIONS_TYPES.delete,
     successFunction: deleteEmployee,
@@ -212,10 +199,38 @@ async function confirmDelete({ id, row }) {
 
   // ELIMINAR FILA DE LA TABLA CON LA API DE DATATABLES
   if (userConfirm) {
-    let filteredRows = employeeTable.rows(function (idx, data, node) {
-      return node === row
-    })
-    filteredRows.remove().draw()
+    console.log('AAA', table)
+    if (table === 'verificados') {
+      let filteredRows = employeeTableVerificados.rows(function (
+        idx,
+        data,
+        node
+      ) {
+        return node === row
+      })
+      filteredRows.remove().draw()
+    }
+    if (table === 'corregir') {
+      let filteredRows = employeeTableCorregir.rows(function (idx, data, node) {
+        return node === row
+      })
+      filteredRows.remove().draw()
+    }
+    if (table === 'revisar') {
+      let filteredRows = employeeTableRevision.rows(function (idx, data, node) {
+        return node === row
+      })
+      filteredRows.remove().draw()
+    }
+
+    // let filteredRows = employeeTableVerificados.rows(function (
+    //   idx,
+    //   data,
+    //   node
+    // ) {
+    //   return node === row
+    // })
+    // filteredRows.remove().draw()
   }
 }
 

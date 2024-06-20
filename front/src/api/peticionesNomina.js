@@ -60,6 +60,7 @@ const getNominas = async (grupo) => {
 }
 
 const getGruposNomina = async (data) => {
+  console.log(data)
   showLoader('employee-pay-loader')
   try {
     let res = await fetch(calculoNominaUrl, {
@@ -67,9 +68,9 @@ const getGruposNomina = async (data) => {
       body: JSON.stringify({ nombre: data }),
     })
 
-    let json = await res.json()
+    let json = await res.text()
     console.log(json)
-    json.informacion_empleados = await mapData(json.informacion_empleados)
+    // json.informacion_empleados = await mapData(json.informacion_empleados)
 
     return json
   } catch (e) {

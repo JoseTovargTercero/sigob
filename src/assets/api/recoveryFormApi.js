@@ -5,7 +5,6 @@ const recoveryUrl = '../../../../sigob/back/mod_global/glob_recuperar_back.php'
 
 const validateEmail = async (email) => {
   let data = new FormData()
-
   data.append('accion', 'consulta')
   data.append('email', email)
   try {
@@ -24,7 +23,8 @@ const validateEmail = async (email) => {
       return false
     }
   } catch (e) {
-    return toast_s('error', 'Error: verifique sus credenciales')
+    console.log(e)
+    return toast_s('error', 'Error: verifique susss credenciales')
   }
 }
 
