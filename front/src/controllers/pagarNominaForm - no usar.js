@@ -64,17 +64,9 @@ export async function validatePayNomForm({ selectId, consultBtnId, formId }) {
       let nomReportCardElement = d.getElementById('nom-report-card')
       if (nomReportCardElement) nomReportCardElement.remove()
 
-      let identificador = await getNominaTxt({
-        correlativo: fieldList['select-correlativo'],
-      })
-
       let result = requestInfo.find(
         (el) => el.correlativo === fieldList['select-correlativo']
       )
-      // crearNominaTxt({
-      //   correlativo: fieldList['select-correlativo'],
-      //   identificador: identificador[0].identificador,
-      // })
 
       payNomForm.insertAdjacentHTML(
         'beforeend',
@@ -85,11 +77,10 @@ export async function validatePayNomForm({ selectId, consultBtnId, formId }) {
     }
 
     if (e.target.id === 'generar-txt') {
-      let descargatxt = await descargarNominaTxt(
-        fieldList['select-correlativo']
-      )
-
-      console.log(descargatxt)
+      // let descargatxt = await descargarNominaTxt(
+      //   fieldList['select-correlativo']
+      // )
+      // console.log(descargatxt)
       // console.log(e.target.dataset.correlativo)
       // confirmNotification({
       //   type: NOTIFICATIONS_TYPES.send,

@@ -47,7 +47,6 @@ export async function employeeCard({ id, elementToInsert }) {
     dependencia = employeedeData[0].dependencia,
     id_dependencia = employeedeData[0].id_dependencia,
     discapacidades = employeedeData[0].discapacidades,
-    tipo_cuenta = employeedeData[0].banco,
     tipo_nomina = employeedeData[0].tipo_nomina,
     observacion = employeedeData[0].observacion
 
@@ -146,7 +145,7 @@ export async function employeeCard({ id, elementToInsert }) {
               </p>
               <p>Dependencia laboral: ${dependencia}</p>
               <p>
-                Banco: ${banco} - ${tipo_cuenta === 0 ? 'Correiente' : 'Ahorro'}
+                Banco: ${banco} - ${cuenta_bancaria}}
               </p>
             </div>
           </div>

@@ -338,7 +338,7 @@ function closeModal({ modalId }) {
 
 function showLoader(loaderId) {
   let loader = d.getElementById(loaderId)
-  loader.style.display = 'block'
+  loader.style.display = 'grid'
   loader.focus()
 }
 function hideLoader(loaderId) {

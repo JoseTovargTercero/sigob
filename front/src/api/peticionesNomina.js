@@ -297,28 +297,53 @@ const generarNominaTxt = async ({ correlativo, identificador }) => {
     }
   }
 }
-const descargarNominaTxt = async (correlativo) => {
-  let loader = document.getElementById('pay-nom-loader')
+const descargarNominaTxt = async ({ correlativo, frecuencia }) => {
+  let loader = document.getElementById('cargando')
+  let data = new FormData()
+  data.append('correlativo', correlativo)
+  data.append('frecuencia', frecuencia)
   if (loader) {
-    showLoader('pay-nom-loader')
+    showLoader('cargando')
   }
 
-  console.log(correlativo)
   try {
-    let res = await fetch(descargarNominaTxtUrl(correlativo))
+    let res = await fetch(
+      `../../../../sigob/back/modulo_nomina/nom_txt_descargas.php`,
+      {
+        method: 'POST',
+        body: data,
+      }
+    )
 
-    let json = await res.text()
+    if (!res.ok) {
+      throw new Error('Error al descargar archivo')
+    }
 
-    return json
+    let blob = await res.blob()
+
+    let url = URL.createObjectURL(blob)
+
+    // Crear un enlace para descargar el Blob
+    let enlaceDescarga = document.createElement('a')
+    enlaceDescarga.href = url
+    enlaceDescarga.download = `Documentos_${correlativo}` // Nombre del archivo al descargar
+
+    // Simular un clic en el enlace para iniciar la descarga automáticamente
+    enlaceDescarga.click()
+
+    // Liberar la URL del objeto una vez que se haya iniciado la descarga
+    URL.revokeObjectURL(url)
+
+    return true
   } catch (e) {
     console.log(e)
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
-      message: 'Error en descargat TXT',
+      message: 'Error en descargar TXT',
     })
   } finally {
     if (loader) {
-      hideLoader('pay-nom-loader')
+      hideLoader('cargando')
     }
   }
 }

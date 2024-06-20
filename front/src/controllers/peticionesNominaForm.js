@@ -3,6 +3,7 @@ import {
   getNominas,
   getPeticionesNomina,
   enviarCalculoNomina,
+  descargarNominaTxt,
 } from '../api/peticionesNomina.js'
 import { nomReportCard } from '../components/nom_report_card.js'
 import { tableListCard } from '../components/tabla_lista_card.js'
@@ -118,6 +119,8 @@ export function validateEmployeePayForm({
       let peticion = peticiones.find(
         (el) => el.correlativo === e.target.dataset.correlativo
       )
+
+      fieldList.frecuencia = peticion.frecuencia
       employeePayForm.insertAdjacentHTML(
         'beforeend',
         nomReportCard({ data: peticion })
@@ -127,6 +130,13 @@ export function validateEmployeePayForm({
     if (e.target.id === 'btn-close-report') {
       let reportCard = d.getElementById('modal-report')
       reportCard.remove()
+    }
+
+    if (e.target.id === 'generar-txt') {
+      let descargatxt = await descargarNominaTxt({
+        frecuencia: e.target.dataset.frecuencia,
+        correlativo: e.target.dataset.correlativo,
+      })
     }
 
     if (e.target.id === 'send-nom-request') {

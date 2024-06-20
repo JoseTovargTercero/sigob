@@ -1,5 +1,5 @@
 import { validateEmployeeForm } from './src/controllers/empleadosForm.js'
-import { validatePayNomForm } from './src/controllers/pagarNominaForm.js'
+// import { validatePayNomForm } from './src/controllers/pagarNominaForm.js'
 import { validateEmployeePayForm } from './src/controllers/peticionesNominaForm.js'
 import { validateRequestNomForm } from './src/controllers/peticionesNominaReview.js'
 import { validateTabulatorForm } from './src/controllers/tabuladorForm.js'
@@ -196,13 +196,13 @@ d.addEventListener('DOMContentLoaded', (e) => {
     })
   }
 
-  if (payNomForm) {
-    validatePayNomForm({
-      selectId: 'select-correlativo',
-      consultBtnId: 'consultar-correlativo',
-      formId: 'pay-nom-form',
-    })
-  }
+  // if (payNomForm) {
+  //   validatePayNomForm({
+  //     selectId: 'select-correlativo',
+  //     consultBtnId: 'consultar-correlativo',
+  //     formId: 'pay-nom-form',
+  //   })
+  // }
 
   // if (employeeTableElement) {
   //   loadTable()

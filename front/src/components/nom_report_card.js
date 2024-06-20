@@ -1,3 +1,4 @@
+import { descargarNominaTxt } from '../api/peticionesNomina.js'
 import { FRECUENCY_TYPES } from '../helpers/types.js'
 
 export const nomReportCard = ({ data }) => {
@@ -21,16 +22,13 @@ export const nomReportCard = ({ data }) => {
         </div>
       </div>`
 
-  console.log(data)
   let nombre_nomina = data.nombre_nomina
   let totalEmpleados = data.empleados.length
   let fechaCreacion = data.creacion
   let correlativo = data.correlativo
   let totalPagar = data.total_a_pagar.reduce((value, acc) => value + acc, 0)
 
-  let identificador = FRECUENCY_TYPES[data.frecuencia][0]
   let frecuencia = data.frecuencia
-  console.log(frecuencia)
 
   return `<div class='modal-window' id='modal-report'>
       <div class='modal-box'>
@@ -67,35 +65,18 @@ export const nomReportCard = ({ data }) => {
           <div class='card-body'>
             <h5 class='text-center mb-2'>Generar reportes:</h5>
             <div class='btn-report-actions'>
-              <a
-                target='_parent'
-                href='../../../../../sigob/back/modulo_nomina/nom_txt_descargas.php?correlativo=${correlativo}&frecuencia=${frecuencia}'
+              <button
+              data-frecuencia="${frecuencia}"        
+              data-correlativo="${correlativo}"        
                 class='mx-auto btn btn-secondary size-change-animation'
                 id='generar-txt'
               >
                 <i class='bx bxs-file-txt bx-sm'></i>
-              </a>
+              </button>
+              
             </div>
           </div>
         </div>
       </div>
     </div>`
-}
-
-// el correlativo, nombre_nomina, total a pagar, la fecha y quizás el identificador
-
-{
-  /* <button class='btn btn-danger' id='generar-pdf-venezuela'>
-PDF VENEZUELA
-</button>
-<button class='btn btn-danger' id='generar-pdf-tesoro'>
-PDF tesoro
-</button>
-
-<button class='btn btn-danger' id='generar-pdf-bicentenario'>
-PDF bicentenario
-</button>
-<button class='btn btn-danger' id='generar-pdf-caroni'>
-PDF caroni
-</button> */
 }
