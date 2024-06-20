@@ -2779,3 +2779,6 @@ transition: visibility 0s linear 0s, opacity 0.25s 0s, transform 0.25s;
 .fs-3{
   font-size: 3rem !important;
 }
+.no-number::before {
+  content: none !important;
+}

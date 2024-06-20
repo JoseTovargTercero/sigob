@@ -61,6 +61,7 @@ require_once '../../back/sistema_global/session.php';
                       <option value="3">Porcentaje al sueldo base</option>
                       <option value="4">Porcentaje al integral</option>
                       <option value="5">Porcentaje a N conceptos</option>
+                      <option value="7">Valor multiplicado</option>
                       <option value="6">Formulado</option>
                     </select>
                   </div>
@@ -84,16 +85,14 @@ require_once '../../back/sistema_global/session.php';
 
                     <div class="mb-3" id="forms"><label class="form-label">Formulación</label>
                       <div class="input-group mb-3" id="form-1">
-                        <textarea class="form-control condicion" aria-label="With textarea" rows="1" id="t_area-1"></textarea>
-                        <span class="input-group-text p-0"><input id="val-1" type="text" placeholder="Valor"></span>
+                        <textarea class="form-control condicion" aria-label="With textarea" rows="1" id="t_area-1" onchange="validarContenido()"></textarea>
+                        <span class="input-group-text p-0"><input id="val-1" onchange="validarContenido()" type="text" placeholder="Valor"></span>
                         <span class="input-group-text d-flex">
-                          <a onclick="removeForm('form-1')" class="m-a">
-                            <box-icon style="width: 20px;" class="fill-light" name='log-out-circle'></box-icon>
-                          </a>
+
                         </span>
                       </div>
                     </div>
-                    <div class="text-end">
+                    <div class="text-end hide" id="btn-addFormulacion">
 
                       <button type="button" onclick="addForm()" class="btn btn-secondary d-inline-flex btn-sm rounded"><box-icon class="icon" name='add-to-queue'></box-icon> &nbsp; Agregar opción </button>
                     </div>
@@ -105,14 +104,8 @@ require_once '../../back/sistema_global/session.php';
 
                     <div class="mb-3">
                       <label class="form-label" for="campo_condiciona">Condicionantes</label>
-                      <select name="campo_condiciona" onchange="setCondicionante(this.value)" id="campo_condiciona" class="form-control">
+                      <select name="campo_condiciona" onchange="setCondicionanteConceptos(this.value)" id="campo_condiciona" class="form-control">
                         <option value="">Seleccione</option>
-                        <option value="cod_cargo">Código de cargo</option>
-                        <option value="discapacidades">Discapacidades</option>
-                        <option value="instruccion_academica">Instrucción académica</option>
-                        <option value="hijos">Hijos</option>
-                        <option value="antiguedad">Antigüedad (desde la fecha de ingreso)</option>
-                        <option value="antiguedad_total">Antigüedad (Sumando años anteriores)</option>
                       </select>
                     </div>
                     <ol class="list-group list-group-numbered" id="result">
@@ -124,7 +117,6 @@ require_once '../../back/sistema_global/session.php';
 
               <div class="d-flex justify-content-end">
                 <button type="button" id="btn-registrar" class="btn btn-primary d-inline-flex btn-sm rounded"> <i class="bx bx-dave"></i> &nbsp; Guardar concepto</button>
-
               </div>
             </div>
           </div>
@@ -185,10 +177,6 @@ require_once '../../back/sistema_global/session.php';
   <script src="https://cdn.datatables.net/2.0.1/js/dataTables.bootstrap5.js"></script>
   <script src="../../src/assets/js/main.js"></script>
   <script>
-
-
-
-
     let tipo_concepto = {
       'A': 'Asignacion',
       'D': 'Deducción',
@@ -324,6 +312,7 @@ require_once '../../back/sistema_global/session.php';
 
     function finalizarRegistroConcepto() {
 
+      let maxValue = 0
       let nombre = document.getElementsByName('nombre')[0].value;
       let tipo = document.getElementsByName('tipo')[0].value;
       let partida = document.getElementsByName('partida')[0].value;
@@ -343,6 +332,10 @@ require_once '../../back/sistema_global/session.php';
         // recorre los elementos textarea e input de la clase section-formulado[0] alguno de ellos se encuentra vacio le agregas la clase 'invalidate' sino lo agregas al array
         tipo_calculo_aplicado = document.getElementsByName('tipo_calculo_aplicado')[0].value;
 
+        if (tipo_calculo_aplicado == '') {
+          toast_s('error', 'Por favor, complete todos los campos')
+          return
+        }
 
 
         // while mientras form-N exista en el dom, donde N=1,2,3,4,5...
@@ -370,9 +363,25 @@ require_once '../../back/sistema_global/session.php';
           i++;
         }
 
+      }else if(tipo_calculo == '7'){
+        tipo_calculo_aplicado = document.getElementsByName('tipo_calculo_aplicado')[0].value;
+
+        if (tipo_calculo_aplicado == '') {
+          toast_s('error', 'Por favor, complete todos los campos')
+          return
+        }
+        if (formulacionesMultiplicadas.length < 1) {
+          toast_s('error', 'No se ha agregado ninguna condicion')
+          return
+        }
+        maxValue = formulacionesMultiplicadas.length
+        formulacionesMultiplicadas.forEach(element => {
+          condiciones.push(element[0]);
+          valores.push(element[1]);
+        });
 
 
-      }else{
+      } else {
 
         if (valor == '') {
           $('#valor').addClass('invalidate')
@@ -400,6 +409,7 @@ require_once '../../back/sistema_global/session.php';
           condiciones: condiciones,
           valor: valor,
           valores: valores,
+          maxValue: maxValue,
           registro: true
         },
         success: function(text) {
@@ -421,7 +431,7 @@ require_once '../../back/sistema_global/session.php';
               confirmButtonColor: "#04a9f5",
               confirmButtonText: "Ok",
             }).then((result) => {
-                location.reload();
+              location.reload();
             });
 
           } else {
@@ -534,7 +544,7 @@ require_once '../../back/sistema_global/session.php';
           validarConceptoFormulado: true,
           condicion: condicion
         },
-        success: function(response) { 
+        success: function(response) {
           const trimmedResponse = response.trim();
           const textAreaElement = $('#' + textArea);
 
@@ -601,8 +611,203 @@ require_once '../../back/sistema_global/session.php';
       }
     }
 
-   
-   
+
+
+    const valoresColumnas = {
+      cod_cargo: ['Código de cargo', '1'],
+      discapacidades: ['Discapacidades', '1'],
+      instruccion_academica: ['Instrucción académica', '1'],
+      hijos: ['Hijos', '2'],
+      antiguedad: ['Antigüedad (desde la fecha de ingreso)', '1'],
+      antiguedad_total: ['Antigüedad (Sumando años anteriores)', '1'],
+      beca: ['becas', '2'],
+      status: ['Estatus del empleado', '1'],
+    }
+    
+
+    function agregarCondicionantes(){
+      let tipoCondicion = $('#tipo_calculo').val()
+      const select = document.getElementById('campo_condiciona');
+      select.innerHTML = '<option value="">Seleccione</option>';
+      for (const key in valoresColumnas) {
+        if (valoresColumnas.hasOwnProperty(key)) {
+          if (tipoCondicion == '6') {
+              let option = document.createElement('option');
+              option.value = key;
+              option.textContent = valoresColumnas[key][0];
+              select.appendChild(option);
+            }else if(tipoCondicion == '7' && valoresColumnas[key][1] == '2'){
+              let option = document.createElement('option');
+              option.value = key;
+              option.textContent = valoresColumnas[key][0];
+              select.appendChild(option);
+            }
+           
+          }
+        }
+
+    }
+    let tipoCalculoSimbolo = {
+      '1': 'BS',
+      '2': '$',
+      '3': '%',
+      '4': '%'
+    }
+    function validarContenido() { 
+      if ($('#tipo_calculo').val() == '7') {
+        const campo = $('#t_area-1').val()
+        const valor = $('#val-1').val()
+        
+        if (!valoresColumnas[campo] && campo != '') {
+          toast_s('error', 'Campo  no encontrado')
+          $('#t_area-1').addClass('border-dangers')
+          return false
+        } else {
+          if (campo != '' && valor != '') {
+            //verificar opciones
+            contenidoMultiplicacion(campo, valor)
+          }
+        }
+      }
+    }
+    var tipoCalculoAplicado = document.getElementById('tipo_calculo_aplicado');
+    tipoCalculoAplicado.addEventListener('change', validarContenido);
+
+    let formulacionesMultiplicadas = []
+  
+  
+    function contenidoMultiplicacion(campo, valor) {
+      formulacionesMultiplicadas = []
+      $.ajax({
+        url: url_back,
+        type: 'POST',
+        data: {
+          valorMultiplicado: true,
+          campo: campo
+        },
+        success: function(response) {
+          let tabla = document.getElementById('result')
+          tabla.innerHTML = `<p>Ejemplo de posibles aplicaciones: </p>`
+       
+          for (let index = 1; index <= response; index++) {
+               let texto = index +' '+ campo;
+              let resultado = index  * valor;
+              formulacionesMultiplicadas.push([campo+"='"+index+"'", resultado])
+              let tipoCalculo = $('#tipo_calculo_aplicado').val();
+              if (tipoCalculo != '') {
+                resultado += ' ' + tipoCalculoSimbolo[tipoCalculo]
+              }
+
+
+
+            if (index < 4) {
+           
+
+              tabla.innerHTML += `
+              <li class="list-group-item d-flex justify-content-between align-items-start">
+                    <div class="ms-2 me-auto">
+                      <div class="fw-bold">`+texto+`</div>
+                    </div>
+                  
+                   <span class="badge bg-light-secondary">${resultado}</span>
+                  </li>
+              `
+              
+            }else if (index == 4) {
+              tabla.innerHTML += `
+              <li class="list-group-item  align-items-start  no-number">
+                    . . .
+                  </li>
+              `
+            }
+          }
+        //  formulacionesMultiplicadas.length
+        //  console.log(formulacionesMultiplicadas)
+        }
+      });
+    }
+
+/**
+ * Sets the condition for the given value.
+*
+* @param {string} value - The value to set the condition for.
+*/
+    function setCondicionanteConceptos(condicionante, div = null) {
+      if ($('#tipo_calculo').val() == '7') {
+        $('#t_area-1').val(condicionante)
+        // mover el tabulador a valor-1
+        $('#val-1').focus()
+        return
+      }
+      if (condicionante == '') {
+        return
+      }
+      const resultDiv = div == null ? document.getElementById('result') : document.getElementById(div);
+
+
+      if (condicionante == 'antiguedad' || condicionante == 'antiguedad_total') {
+        resultDiv.innerHTML = `<p>` + (condicionante == 'antiguedad' ? 'Antiguedad (desde la fecha de ingreso)' : 'Antiguedad (Sumando años anteriores)') + `:</p>`
+
+        resultDiv.innerHTML += `<li class="list-group-item d-flex justify-content-between align-items-start">
+      <div class="ms-2 me-auto">
+        <div class="fw-bold">` + condicionante + `</div>
+      </div>
+      <button onclick="addCondicion('` + condicionante + `', '<', 'N', ` + div + `)" type="button" class="btn btn-sm btn-info  me-2" title="Menor"><</button>
+      <button onclick="addCondicion('` + condicionante + `', '>', 'N', ` + div + `)" type="button" class="btn btn-sm btn-success  me-2" title="Mayor">></button>
+      <button onclick="addCondicion('` + condicionante + `', '=', 'N', ` + div + `)" type="button" class="btn btn-sm btn-primary  me-2" title="Igual">==</button>
+      <button onclick="addCondicion('` + condicionante + `', '!=', 'N', ` + div + `)" type="button" id="miBoton" class="btn btn-sm btn-danger " title="Diferente">!=</button>
+    </li>`;
+
+        return
+      }
+
+
+      fetch('../../back/modulo_nomina/nom_columnas_return.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            columna: condicionante
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.error) {
+            resultDiv.innerHTML = `<p style="color: red;">Error: ${data.error}</p>`;
+          } else {
+
+            // toma el html del option seleccionado en el campo tipo_calculo
+            let html = document.getElementById('campo_condiciona').options[document.getElementById('campo_condiciona').selectedIndex].innerHTML;
+
+
+            resultDiv.innerHTML = `<p>` + html + `:</p>`
+
+            // recorre 'data' y verifica si es igual a 1 o 0 remplazas con si y no, sino imprimes el resultado normal
+            data = data.map(value => {
+              let val = value;
+              // agrega al resutdiv
+              resultDiv.innerHTML += `<li class="list-group-item d-flex justify-content-between align-items-start">
+                    <div class="ms-2 me-auto">
+                      <div class="fw-bold">${val}</div>
+                    </div>
+                    <button onclick="addCondicion('` + condicionante + `', '<', '${val}', '${div}')" type="button" class="btn btn-sm btn-primary  me-2" title="Menor"><</button>
+                    <button onclick="addCondicion('` + condicionante + `', '>', '${val}', '${div}')" type="button" class="btn btn-sm btn-primary  me-2" title="Mayor">></button>
+                    <button onclick="addCondicion('` + condicionante + `', '=', '${val}', '${div}')" type="button" class="btn btn-sm btn-primary  me-2" title="Igual">==</button>
+                    <button onclick="addCondicion('` + condicionante + `', '!=', '${val}', '${div}')" type="button" id="miBoton" class="btn btn-sm btn-danger " title="Diferente">!=</button>
+                  </li>`;
+
+            });
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+    }
+
+
+
+
 
     const titulos_placeholders = {
       '1': 'Monto neto en BS',
@@ -612,20 +817,39 @@ require_once '../../back/sistema_global/session.php';
       '5': 'Porcentaje a N conceptos'
     }
 
-
     /**
      * Updates the visibility of sections based on the selected type.
      *
      * @param {string} type - The selected type.
      */
     function tipoCalculo(type) {
-      if (type == '6') {
+      $('#result').html('')
+      $("#campo_condiciona" + " option[value='']").attr("selected", true);
+      $('#t_area-1').val('')
+
+
+      let i = 2;
+      form = 1
+
+      while ($('#form-'+i).length > 0 ) {
+        $('#form-'+i).remove()
+        i++
+      }
+
+
+
+      if (type == '6' || type == '7') {
+        agregarCondicionantes()
         $('.section-formulado').removeClass('hide');
         $('#section-valor').addClass('hide');
+        if (type == '6') {
+          $('#btn-addFormulacion').removeClass('hide');
+        } else {
+          $('#btn-addFormulacion').addClass('hide');
+        }
       } else {
         $('.section-formulado').addClass('hide');
         $('#section-valor').removeClass('hide');
-
         $('#section-valor label').html(titulos_placeholders[type]);
         $('#section-valor input').attr('placeholder', titulos_placeholders[type]);
       }

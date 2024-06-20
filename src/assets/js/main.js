@@ -155,12 +155,7 @@ function setCondicionante(condicionante, div = null) {
 
         // recorre 'data' y verifica si es igual a 1 o 0 remplazas con si y no, sino imprimes el resultado normal
         data = data.map(value => {
-          let val
-          if (value == '1' || value == '0') {
-            val = booleans[value];
-          } else {
-            val = value;
-          }
+          let val = value;
           // agrega al resutdiv
           resultDiv.innerHTML += `<li class="list-group-item d-flex justify-content-between align-items-start">
                     <div class="ms-2 me-auto">

@@ -22,7 +22,14 @@ if (isset($_POST["tabla"])) {
     $partida = clear($_POST["partida"]);
     $tipo_calculo = clear($_POST["tipo_calculo"]);
     $valor = clear($_POST["valor"]);
+    $maxValue = clear($_POST["maxValue"]);
 
+
+    if ($tipo_calculo == '7') {
+        $tipo_calculo = '6';
+    }
+
+    
     // Comprobar que no exista el concepto
     $stmt = mysqli_prepare($conexion, "SELECT * FROM `conceptos` WHERE nom_concepto = ? LIMIT 1");
     if (!$stmt) {
@@ -47,11 +54,11 @@ if (isset($_POST["tabla"])) {
         }
 
         // Insertar en `conceptos`
-        $stmt = mysqli_prepare($conexion, "INSERT INTO `conceptos` (nom_concepto, tipo_concepto, cod_partida, tipo_calculo, valor) VALUES (?, ?, ?, ?, ?)");
+        $stmt = mysqli_prepare($conexion, "INSERT INTO `conceptos` (nom_concepto, tipo_concepto, cod_partida, tipo_calculo, valor, maxval) VALUES (?, ?, ?, ?, ?, ?)");
         if (!$stmt) {
             die('Error en la preparación del statement: ' . mysqli_error($conexion));
         }
-        $stmt->bind_param("sssss", $nombre, $tipo, $partida, $tipo_calculo, $valor);
+        $stmt->bind_param("ssssss", $nombre, $tipo, $partida, $tipo_calculo, $valor, $maxValue);
 
         if ($stmt->execute()) {
             echo 'ok';
@@ -158,6 +165,41 @@ if (isset($_POST["tabla"])) {
     }else {
         echo 'ok';
     }
+
+} elseif (isset($_POST['valorMultiplicado'])) {
+   
+    
+
+    $campo = $_POST["campo"];
+
+    // Validar y sanitizar el valor del campo para prevenir inyecciones SQL
+    if (preg_match('/^[a-zA-Z0-9_]+$/', $campo)) {
+        // Preparar la consulta SQL utilizando sentencias preparadas
+        $sql = "SELECT DISTINCT `$campo` FROM empleados ORDER BY `$campo` DESC LIMIT 1";
+        
+        // Ejecutar la consulta
+        if ($stmt = $conexion->prepare($sql)) {
+            $stmt->execute();
+            $result = $stmt->get_result();
+
+            // Verificar si hay resultados
+            if ($result->num_rows > 0) {
+                $row = $result->fetch_assoc();
+                echo json_encode(intval($row[$campo]));
+            } else {
+                echo json_encode('error');
+            }
+
+            // Cerrar el statement
+            $stmt->close();
+        } else {
+            echo json_encode('error');
+        }
+    } else {
+        echo json_encode('error');
+    }
+
+
 
 }
 $conexion->close();

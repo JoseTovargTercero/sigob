@@ -632,6 +632,8 @@ INSERT INTO `conceptos` (`id`, `nom_concepto`, `cod_partida`, `tipo_concepto`, `
 (35, 'PRIMA P/DED AL S/PUBLICO UNICO DE SALUD', '4.01.07.08.00', 'A', 1, '5'),
 (36, 'PRIMA POR ANTIGUEDAD (ESPECIAL)', '4.01.03.09.00', 'A', 1, '10');
 
+
+ALTER TABLE `conceptos` ADD `maxval` INT(1) NOT NULL DEFAULT '0' AFTER `valor`;
 -- --------------------------------------------------------
 
 --
