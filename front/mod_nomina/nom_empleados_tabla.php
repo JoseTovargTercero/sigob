@@ -46,9 +46,11 @@ require_once '../../back/sistema_global/session.php';
 
               </div>
               <nav class="nav nav-pills nav-justified">
-                <a class="nav-link" href="#" data-tableid="employee-table-verificados">Verificados</a>
-                <a class="nav-link" href="#" data-tableid="employee-table-corregir">Por correciones</a>
-                <a class="nav-link" href="#" data-tableid="employee-table-revision">En revisión</a>
+
+                <button class="nav-link active" data-tableid="employee-table-verificados">Verificados</button>
+                <button class="nav-link" data-tableid="employee-table-corregir">Por
+                  correciones</button>
+                <button class="nav-link" data-tableid="employee-table-revision">En revisión</button>
               </nav>
             </div>
             <div class="card-body d-block" id="employee-table-verificados-container">

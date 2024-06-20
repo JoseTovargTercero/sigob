@@ -57,8 +57,6 @@ export function validateEmployeePayForm({
   let showRequestGroupBtn = d.getElementById(showRequestGroupBtnId)
   let employeePayForm = d.getElementById(formId)
 
-  console.log(requestSelectContainer)
-
   selectGrupo.addEventListener('change', async (e) => {
     fieldList = validateInput({
       target: e.target,
@@ -90,7 +88,7 @@ export function validateEmployeePayForm({
   selectNomina.addEventListener('change', async (e) => {
     if (!e.target.value) return
     let nomina = await getGruposNomina(e.target.value)
-
+    console.log(nomina)
     requestInfo = nomina
 
     selectGrupo.value = ''
