@@ -42,15 +42,12 @@ foreach ($data as $item) {
 
         // Ejecutar la consulta
         if (!$stmt_insert->execute()) {
-            // En caso de error, puedes manejarlo aquí (registrar el error, devolver una respuesta, etc.)
             echo "Error al insertar: " . $stmt_insert->error;
         }
     } else {
         array_push($errores, $campo);
     }
 }
-
-
 
 if ($conexion->affected_rows > 0) { // en caso de que alguna modificacion se haya insertado
     notificar(['registro_control'], 2);
