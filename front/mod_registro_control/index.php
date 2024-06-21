@@ -99,7 +99,7 @@ require_once '../../back/sistema_global/session.php';
   <script src="../../src/assets/js/fonts/custom-font.js"></script>
   <script src="../../src/assets/js/pcoded.js"></script>
   <script src="../../src/assets/js/plugins/feather.min.js"></script>
-
+  <script src="../../src/assets/js/notificaciones.js"></script>
 
 </body>
 

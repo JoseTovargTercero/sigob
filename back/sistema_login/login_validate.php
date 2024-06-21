@@ -21,6 +21,7 @@ if ($result->num_rows > 0) {
 		if (password_verify($contrasena, $row['u_contrasena'])) {
 
 			session_start();
+			$_SESSION['u_id'] = $row['u_id'];
 			$_SESSION['u_nombre'] = $row['u_nombre'];
 			$_SESSION['u_oficina_id'] = $row['u_oficina_id'];
 			$_SESSION['u_oficina'] = $row['u_oficina'];

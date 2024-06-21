@@ -1,6 +1,7 @@
 <?php
 require_once '../sistema_global/conexion.php';
 require_once '../sistema_global/session.php';
+require_once '../sistema_global/notificaciones.php';
 
 if (isset($_POST["tabla"])) {
 
@@ -62,6 +63,8 @@ if (isset($_POST["tabla"])) {
 
         if ($stmt->execute()) {
             echo 'ok';
+
+            
             $concepto_id = $stmt->insert_id;
 
             if ($tipo_calculo == '6') {

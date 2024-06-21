@@ -176,6 +176,7 @@ require_once '../../back/sistema_global/session.php';
   <script src="https://cdn.datatables.net/2.0.1/js/dataTables.js"></script>
   <script src="https://cdn.datatables.net/2.0.1/js/dataTables.bootstrap5.js"></script>
   <script src="../../src/assets/js/main.js"></script>
+  <script src="../../src/assets/js/notificaciones.js"></script>
   <script>
     let tipo_concepto = {
       'A': 'Asignacion',
