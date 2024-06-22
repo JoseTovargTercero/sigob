@@ -74,19 +74,23 @@ require_once '../../back/sistema_global/session.php';
                       <td></td>
                       <td class="ps-0">
                         <div>
-                          <input type="text" class="form-control  check-length" name="prefijo" id="prefijo" placeholder="Prefijo" data-max="4">
+                          <input type="text" class="form-control  check-length" name="prefijo" id="prefijo"
+                            placeholder="Prefijo" data-max="4">
                         </div>
                       </td>
-                      <th class="ps-0"><input type="text" class="form-control" name="nombre" id="nombre" placeholder="Nombre del banco"></th>
+                      <th class="ps-0"><input type="text" class="form-control" name="nombre" id="nombre"
+                          placeholder="Nombre del banco"></th>
                       <th class="ps-0">
 
                         <div>
-                          <input type="text" class="form-control check-length" name="cuenta_matriz" id="cuenta_matriz" placeholder="Cuenta matriz" data-max="20">
+                          <input type="text" class="form-control check-length" name="cuenta_matriz" id="cuenta_matriz"
+                            placeholder="Cuenta matriz" data-max="20">
 
                         </div>
 
                       </th>
-                      <th class="ps-0"><input type="text" class="form-control" name="afiliado" id="afiliado" placeholder="Numero de afiliado"></th>
+                      <th class="ps-0"><input type="text" class="form-control" name="afiliado" id="afiliado"
+                          placeholder="Numero de afiliado"></th>
                       <th><button type="submit" class="btn btn-primary rounded" id="btn-guardar">Guardar</button></th>
                   </thead>
                   <tbody>
@@ -107,6 +111,7 @@ require_once '../../back/sistema_global/session.php';
 
 
   <!-- [ Main Content ] end -->
+  <script src="../../src/assets/js/notificaciones.js"></script>
   <script src="../../src/assets/js/plugins/simplebar.min.js"></script>
   <script src="../../src/assets/js/plugins/bootstrap.min.js"></script>
   <script src="../../src/assets/js/pcoded.js"></script>
@@ -124,7 +129,7 @@ require_once '../../back/sistema_global/session.php';
           tabla: true
         },
         cache: false,
-        success: function(response) {
+        success: function (response) {
 
           $('#table tbody').html('');
           if (response) {
@@ -191,16 +196,16 @@ require_once '../../back/sistema_global/session.php';
               eliminar: true,
               id: id,
             },
-            success: function(response) {
+            success: function (response) {
               console.log(response)
-            text = JSON.parse(response)
+              text = JSON.parse(response)
 
               if (text == "ok") {
                 cargarTabla();
                 toast_s("success", "Eliminado con éxito");
-              }else if(text == 'negado'){
+              } else if (text == 'negado') {
                 toast_s("error", "No se puede eliminar el banco, existen empleados asociados.");
-              }  else {
+              } else {
                 toast_s("error", response);
               }
             },
@@ -214,7 +219,7 @@ require_once '../../back/sistema_global/session.php';
       // Obtener los elementos de los campos
       var cuentaMatriz = document.getElementById('cuenta_matriz');
       var prefijo = document.getElementById('prefijo').value;
-     
+
       if (cuentaMatriz.value != '' && prefijo != '') {
 
         var cuentaMatrizValor = cuentaMatriz.value;
@@ -267,7 +272,7 @@ require_once '../../back/sistema_global/session.php';
             afiliado: afiliado,
             registro: true
           },
-          success: function(text) {
+          success: function (text) {
             text = JSON.parse(text)
 
             if (text == 'ok') {
@@ -290,7 +295,7 @@ require_once '../../back/sistema_global/session.php';
     }
 
     // cuando el boton btn-guardar sea pulsado, se ejecuta la funcion anterior
-    $(document).ready(function() {
+    $(document).ready(function () {
       document.getElementById('btn-guardar').addEventListener('click', guardar);
       document.getElementById('cuenta_matriz').addEventListener('change', verificarPrefijo);
       document.getElementById('prefijo').addEventListener('change', verificarPrefijo);

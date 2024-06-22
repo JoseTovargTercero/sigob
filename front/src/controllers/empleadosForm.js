@@ -7,11 +7,13 @@ import {
   sendDependencyData,
   sendEmployeeData,
   updateEmployeeData,
+  updateRequestEmployeeData,
 } from '../api/empleados.js'
 import { nomCorrectionAlert } from '../components/nom_correcion_alert.js'
 import {
   closeModal,
   confirmNotification,
+  openModal,
   validateInput,
   validateModal,
 } from '../helpers/helpers.js'
@@ -19,8 +21,10 @@ import { ALERT_TYPES, NOTIFICATIONS_TYPES } from '../helpers/types.js'
 
 const d = document
 const w = window
-const urlParameters = new URLSearchParams(w.location.search)
-const id = urlParameters.get('id')
+
+let employeeId
+
+console.log(location)
 function validateEmployeeForm({
   formElement,
   employeeInputClass,
@@ -43,7 +47,7 @@ function validateEmployeeForm({
   let employeeInputElementCopy = [...employeeInputElement]
   let employeeSelectElementCopy = [...employeeSelectElement]
 
-  const loadEmployeeData = async () => {
+  const loadEmployeeData = async (id) => {
     let cargos = await getJobData()
     let profesiones = await getProfessionData()
     let dependencias = await getDependencyData()
@@ -68,6 +72,7 @@ function validateEmployeeForm({
       })
 
       employeeData[0].id = employeeData[0].id_empleado
+      employeeId = employeeData[0].id_empleado
 
       fieldList = employeeData[0]
       console.log(fieldList, fieldListErrors)
@@ -81,10 +86,16 @@ function validateEmployeeForm({
           })
         )
       }
+    } else {
+      employeeSelectElementCopy.forEach((select) => {
+        select.value = ''
+      })
+
+      employeeInputElementCopy.forEach((input) => {
+        input.value = ''
+      })
     }
   }
-
-  loadEmployeeData()
 
   formElement.addEventListener('submit', (e) => e.preventDefault())
 
@@ -143,6 +154,19 @@ function validateEmployeeForm({
   // })
 
   d.addEventListener('click', (e) => {
+    if (e.target.classList.contains('btn-edit')) {
+      loadEmployeeData(e.target.dataset.id)
+      openModal({ modalId: 'modal-employee-form' })
+    }
+
+    if (e.target.id === 'btn-employee-form-open') {
+      openModal({ modalId: 'modal-employee-form' })
+    }
+    if (e.target.id === 'btn-employee-form-close') {
+      closeModal({ modalId: 'modal-employee-form' })
+      loadEmployeeData(false)
+    }
+
     if (e.target === btnAddElement) {
       validateModal({
         e: e,
@@ -181,6 +205,8 @@ function validateEmployeeForm({
           })
       })
 
+      console.log(fieldList, fieldListErrors)
+
       if (Object.values(fieldListErrors).some((el) => el.value)) {
         return confirmNotification({
           type: NOTIFICATIONS_TYPES.fail,
@@ -189,12 +215,48 @@ function validateEmployeeForm({
       }
       delete fieldList.correcion
 
-      if (id) return updateEmployeeData({ data: fieldList })
+      if (employeeId)
+        return confirmNotification({
+          type: NOTIFICATIONS_TYPES.send,
+          successFunction: sendEmployeeInformationRequest,
+          successFunctionParams: { data: fieldList },
+          message: 'Complete todo el formulario antes de avanzar',
+        })
+      sendEmployeeInformationRequest({ data: fieldList })
 
       // ENVÍO DE INFORMACIÓN
       sendEmployeeData({ data: fieldList })
     }
   })
+}
+
+async function sendEmployeeInformationRequest({ data }) {
+  let employeeDataRequest = await getEmployeeData(employeeId),
+    employeeData = employeeDataRequest[0]
+
+  console.log(employeeData)
+  let updateData = []
+
+  Object.entries(data).forEach((el) => {
+    let propiedad = el[0]
+    let valorNuevo = el[1]
+    let valorAnterior = employeeData[propiedad]
+
+    if (propiedad === 'id' || propiedad === 'id_empleado') return
+
+    if (valorNuevo !== valorAnterior) {
+      console.log(
+        propiedad,
+        valorNuevo,
+        valorAnterior,
+        'Se actualiza: ',
+        valorNuevo !== valorAnterior
+      )
+      updateData.push([Number(employeeId), propiedad, valorNuevo])
+    }
+  })
+
+  let result = await updateRequestEmployeeData({ data: updateData })
 }
 
 function insertOptions({ input, data }) {

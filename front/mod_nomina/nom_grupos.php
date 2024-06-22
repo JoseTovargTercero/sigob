@@ -73,8 +73,10 @@ require_once '../../back/sistema_global/session.php';
 
                     <tr id="section_registro" class="hide">
                       <td></td>
-                      <td class="ps-0"><input type="text" class="form-control" name="codigo" id="codigo" placeholder="Código"></td>
-                      <th class="ps-0"><input type="text" class="form-control" name="nombre" id="nombre" placeholder="Nombre del grupo"></th>
+                      <td class="ps-0"><input type="text" class="form-control" name="codigo" id="codigo"
+                          placeholder="Código"></td>
+                      <th class="ps-0"><input type="text" class="form-control" name="nombre" id="nombre"
+                          placeholder="Nombre del grupo"></th>
                       <th><button type="submit" class="btn btn-primary rounded" id="btn-guardar">Guardar</button></th>
                       <td></td>
                     </tr>
@@ -109,19 +111,19 @@ require_once '../../back/sistema_global/session.php';
         <ol class="list-group list-group-numbered">
           <li class="list-group-item d-flex justify-content-between align-items-start">
             <div class="ms-2 me-auto">
-              <div class="fw-bold">003 Nacional </div> <small>Normal</small> 
+              <div class="fw-bold">003 Nacional </div> <small>Normal</small>
             </div>
             <button type="button" class="btn btn-icon btn-light-danger avtar-sm"><i class="bx bx-trash"></i></button>
           </li>
           <li class="list-group-item d-flex justify-content-between align-items-start">
             <div class="ms-2 me-auto">
-              <div class="fw-bold">033 Regional </div> <small>Normal</small> 
+              <div class="fw-bold">033 Regional </div> <small>Normal</small>
             </div>
             <button type="button" class="btn btn-icon btn-light-danger avtar-sm"><i class="bx bx-trash"></i></button>
           </li>
           <li class="list-group-item d-flex justify-content-between align-items-start">
             <div class="ms-2 me-auto">
-              <div class="fw-bold">003 Cesta ticket </div> <small>Especial</small> 
+              <div class="fw-bold">003 Cesta ticket </div> <small>Especial</small>
             </div>
             <button type="button" class="btn btn-icon btn-light-danger avtar-sm"><i class="bx bx-trash"></i></button>
           </li>
@@ -135,6 +137,7 @@ require_once '../../back/sistema_global/session.php';
 
 
   <!-- [ Main Content ] end -->
+  <script src="../../src/assets/js/notificaciones.js"></script>
   <script src="../../src/assets/js/plugins/simplebar.min.js"></script>
   <script src="../../src/assets/js/plugins/bootstrap.min.js"></script>
   <script src="../../src/assets/js/pcoded.js"></script>
@@ -153,7 +156,7 @@ require_once '../../back/sistema_global/session.php';
           tabla: true
         },
         cache: false,
-        success: function(response) {
+        success: function (response) {
 
           $('#table tbody').html('');
           if (response) {
@@ -223,7 +226,7 @@ require_once '../../back/sistema_global/session.php';
               eliminar: true,
               id: id,
             },
-            success: function(response) {
+            success: function (response) {
               if (response.trim() == "ok") {
                 cargarTabla();
 
@@ -255,7 +258,7 @@ require_once '../../back/sistema_global/session.php';
             nombre: nombre,
             registro: true
           },
-          success: function(text) {
+          success: function (text) {
             console.log(text)
 
             if (text == 'ok') {
@@ -276,7 +279,7 @@ require_once '../../back/sistema_global/session.php';
     }
 
     // cuando el boton btn-guardar sea pulsado, se ejecuta la funcion anterior
-    $(document).ready(function() {
+    $(document).ready(function () {
       document.getElementById('btn-guardar').addEventListener('click', guardar);
     });
   </script>

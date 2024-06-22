@@ -315,6 +315,7 @@ const errorMessage = (target, message) => {
 
 function validateModal({ e, btnId, modalId }) {
   const modalElement = d.getElementById(modalId)
+
   if (e.target.matches(`#${btnId}`)) {
     if (modalElement.classList.contains('hide')) {
       modalElement.classList.remove('hide')
@@ -326,23 +327,23 @@ function validateModal({ e, btnId, modalId }) {
 
 function closeModal({ modalId }) {
   const modalElement = d.getElementById(modalId)
+  modalElement.classList.add('hide')
+}
 
-  if (modalElement.classList.contains('hide')) {
-    modalElement.classList.remove('hide')
-  } else {
-    modalElement.classList.add('hide')
-  }
+function openModal({ modalId }) {
+  const modalElement = d.getElementById(modalId)
+  modalElement.classList.remove('hide')
 }
 
 // FUNCIÓNES PARA LOADERS
 
 function showLoader(loaderId) {
-  let loader = d.getElementById(loaderId)
+  let loader = d.getElementById('cargando')
   loader.style.display = 'grid'
   loader.focus()
 }
 function hideLoader(loaderId) {
-  let loader = d.getElementById(loaderId)
+  let loader = d.getElementById('cargando')
   loader.style.display = 'none'
 }
 
@@ -460,6 +461,7 @@ export {
   validateInput,
   validateModal,
   closeModal,
+  openModal,
   showLoader,
   hideLoader,
   confirmNotification,

@@ -1,6 +1,11 @@
 import { deleteEmployee, getEmployeesData } from '../api/empleados.js'
 import { employeeCard } from '../components/nom_empleado_card.js'
-import { confirmNotification, validateModal } from '../helpers/helpers.js'
+import {
+  closeModal,
+  confirmNotification,
+  openModal,
+  validateModal,
+} from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 
 const d = document
@@ -38,17 +43,19 @@ let tableColumns = [
   { data: 'nomina' },
   { data: 'acciones' },
 ]
+
+function employeeFormButton() {
+  let toolbar = document.createElement('div')
+  toolbar.innerHTML = `<button class="btn btn-primary" id="btn-employee-form-open">DESHABILITADO</button>`
+  return toolbar
+}
+
 let employeeTableVerificados = new DataTable('#employee-table-verificados', {
   responsive: true,
   scrollY: 300,
   language: tableLanguage,
   layout: {
-    topEnd: function () {
-      let toolbar = document.createElement('div')
-      toolbar.innerHTML = `<a class="btn btn-primary"
-      href="nom_empleados_registrar">Registrar Personal</a>`
-      return toolbar
-    },
+    topEnd: employeeFormButton,
     topStart: { search: { placeholder: 'Buscar...' } },
     bottomStart: 'info',
     bottomEnd: 'paging',
@@ -61,12 +68,7 @@ let employeeTableCorregir = new DataTable('#employee-table-corregir', {
   scrollY: 300,
   language: tableLanguage,
   layout: {
-    topEnd: function () {
-      let toolbar = document.createElement('div')
-      toolbar.innerHTML = `<a class="btn btn-primary"
-      href="nom_empleados_registrar">Registrar Personal</a>`
-      return toolbar
-    },
+    topEnd: employeeFormButton,
     topStart: { search: { placeholder: 'Buscar...' } },
     bottomStart: 'info',
     bottomEnd: 'paging',
@@ -79,12 +81,7 @@ let employeeTableRevision = new DataTable('#employee-table-revision', {
   scrollY: 300,
   language: tableLanguage,
   layout: {
-    topEnd: function () {
-      let toolbar = document.createElement('div')
-      toolbar.innerHTML = `<a class="btn btn-primary"
-      href="nom_empleados_registrar">Registrar Personal</a>`
-      return toolbar
-    },
+    topEnd: employeeFormButton,
     topStart: { search: { placeholder: 'Buscar...' } },
     bottomStart: 'info',
     bottomEnd: 'paging',
@@ -94,6 +91,8 @@ let employeeTableRevision = new DataTable('#employee-table-revision', {
 
 const validateEmployeeTable = async () => {
   employeeTableVerificados.clear().draw()
+  employeeTableRevision.clear().draw()
+  employeeTableCorregir.clear().draw()
 
   let empleados = await getEmployeesData()
 
@@ -163,10 +162,6 @@ d.addEventListener('click', (e) => {
       row: fila,
       table: e.target.dataset.table,
     })
-  }
-
-  if (e.target.classList.contains('btn-edit')) {
-    w.location.assign(`nom_empleados_registrar.php?id=${e.target.dataset.id}`)
   }
 
   if (e.target.classList.contains('btn-view')) {
@@ -240,7 +235,6 @@ function mostrarTabla(tablaId) {
     revisionId = 'employee-table-revision'
 
   if (tablaId === verificadosId) {
-    console.log('VERIFICADOS')
     d.getElementById(`${verificadosId}-container`).classList.add('d-block')
     d.getElementById(`${verificadosId}-container`).classList.remove('d-none')
     d.getElementById(`${corregirseId}-container`).classList.add('d-none')
@@ -248,8 +242,6 @@ function mostrarTabla(tablaId) {
     d.getElementById(`${revisionId}-container`).classList.add('d-none')
     d.getElementById(`${revisionId}-container`).classList.remove('d-block')
   } else if (tablaId === corregirseId) {
-    console.log('POR CORREGIR')
-
     d.getElementById(`${verificadosId}-container`).classList.add('d-none')
     d.getElementById(`${verificadosId}-container`).classList.remove('d-block')
     d.getElementById(`${corregirseId}-container`).classList.add('d-block')
@@ -257,8 +249,6 @@ function mostrarTabla(tablaId) {
     d.getElementById(`${revisionId}-container`).classList.add('d-none')
     d.getElementById(`${revisionId}-container`).classList.remove('d-block')
   } else if (tablaId === revisionId) {
-    console.log('REVISAAAR')
-
     d.getElementById(`${verificadosId}-container`).classList.add('d-none')
     d.getElementById(`${verificadosId}-container`).classList.remove('d-block')
     d.getElementById(`${corregirseId}-container`).classList.add('d-none')

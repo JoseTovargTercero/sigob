@@ -94,7 +94,7 @@ require_once '../../back/sistema_global/session.php';
 </body>
 
 <script type="module" src="../app.js"></script>
-
+<script src="../../src/assets/js/notificaciones.js"></script>
 </script>
 <!-- DATATABLES -->
 <script src="https://cdn.datatables.net/2.0.1/js/dataTables.js"></script>

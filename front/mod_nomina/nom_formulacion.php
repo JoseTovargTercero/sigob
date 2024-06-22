@@ -77,7 +77,8 @@ while ($r = $query->fetch_object()) {
           <div class="row align-items-center">
             <div class="col-md-12">
               <div class="page-header-title">
-                <h5 class="mb-0">Formulación de nómina <br><small class="text-muted"><?php echo $codigo . ' ' . $nombre ?></small> </h5>
+                <h5 class="mb-0">Formulación de nómina <br><small
+                    class="text-muted"><?php echo $codigo . ' ' . $nombre ?></small> </h5>
               </div>
             </div>
           </div>
@@ -90,10 +91,14 @@ while ($r = $query->fetch_object()) {
           <div class="card">
             <div class="card-body p-3">
               <ul class="nav nav-pills nav-justified">
-                <span id="link_basico" class="nav-item nav-link item-wizard active"><i class="ph-duotone ph-user-circle"></i> <span class="d-none d-sm-inline">Basico</span></span>
-                <span id="link_empleados" class="nav-item nav-link item-wizard"><i class="ph-duotone ph-graduation-cap"></i> <span class="d-none d-sm-inline">Empleados</span></span>
-                <span id="link_conceptos" class="nav-item nav-link item-wizard"><i class="ph-duotone ph-map-pin"></i> <span class="d-none d-sm-inline">Conceptos</span></span>
-                <span id="link_resumen" class="nav-item nav-link item-wizard"><i class="ph-duotone ph-check-circle"></i> <span class="d-none d-sm-inline">Resumen general</span></span>
+                <span id="link_basico" class="nav-item nav-link item-wizard active"><i
+                    class="ph-duotone ph-user-circle"></i> <span class="d-none d-sm-inline">Basico</span></span>
+                <span id="link_empleados" class="nav-item nav-link item-wizard"><i
+                    class="ph-duotone ph-graduation-cap"></i> <span class="d-none d-sm-inline">Empleados</span></span>
+                <span id="link_conceptos" class="nav-item nav-link item-wizard"><i class="ph-duotone ph-map-pin"></i>
+                  <span class="d-none d-sm-inline">Conceptos</span></span>
+                <span id="link_resumen" class="nav-item nav-link item-wizard"><i class="ph-duotone ph-check-circle"></i>
+                  <span class="d-none d-sm-inline">Resumen general</span></span>
               </ul>
             </div>
           </div>
@@ -101,7 +106,8 @@ while ($r = $query->fetch_object()) {
             <div class="card-body">
 
               <div class="progress mb-3">
-                <div class="progress-bar bg-success " id="progressbar" style="width: 25%;" aria-valuemin="0" aria-valuemax="100"></div>
+                <div class="progress-bar bg-success " id="progressbar" style="width: 25%;" aria-valuemin="0"
+                  aria-valuemax="100"></div>
               </div>
 
 
@@ -121,7 +127,8 @@ while ($r = $query->fetch_object()) {
                         <div class="row">
                           <div class="col-sm-6">
                             <div class="mb-3"><label class="form-label">Nombre de la nomina</label>
-                              <input type="text" class="form-control" id="nombre_nomina" placeholder="Nombre de la nomina">
+                              <input type="text" class="form-control" id="nombre_nomina"
+                                placeholder="Nombre de la nomina">
                             </div>
                           </div>
                           <div class="col-sm-6">
@@ -153,7 +160,8 @@ while ($r = $query->fetch_object()) {
                   <div class="d-flex w-100 mt-3">
                     <div class="d-flex m-a">
                       <div class="me-2"><button class="btn btn-secondary disabled">Regresar</button></div>
-                      <div class="next"><button class="btn btn-secondary mt-3 mt-md-0" onclick="nextStep('1')">Siguiente</button></div>
+                      <div class="next"><button class="btn btn-secondary mt-3 mt-md-0"
+                          onclick="nextStep('1')">Siguiente</button></div>
                     </div>
                   </div>
 
@@ -170,8 +178,10 @@ while ($r = $query->fetch_object()) {
                       <div class="col-md-12">
 
                         <div class="mb-3">
-                          <label class="form-label" for="filtro_empleados">¿Como quieres seleccionar a tus empleados?</label>
-                          <select class="form-select" id="filtro_empleados" onchange="seleccion_empleados(this.value, 'empleados-list')">
+                          <label class="form-label" for="filtro_empleados">¿Como quieres seleccionar a tus
+                            empleados?</label>
+                          <select class="form-select" id="filtro_empleados"
+                            onchange="seleccion_empleados(this.value, 'empleados-list')">
                             <option>Seleccione</option>
                             <option value="1">Enlistar todos</option>
                             <option value="2">Por sus características (Formulación)</option>
@@ -188,7 +198,8 @@ while ($r = $query->fetch_object()) {
                             <div class="mb-3"><label class="form-label">Formulación</label>
                               <div class="input-group mb-3">
                                 <textarea class="form-control condicion" rows="1" id="t_area-1"></textarea>
-                                <button class="btn btn-primary" onclick="validarFormula('t_area-1', 'empleados-list')" type="button">Obtener</button>
+                                <button class="btn btn-primary" onclick="validarFormula('t_area-1', 'empleados-list')"
+                                  type="button">Obtener</button>
                               </div>
                             </div>
                           </div>
@@ -196,7 +207,8 @@ while ($r = $query->fetch_object()) {
 
                             <div class="mb-3">
                               <label class="form-label" for="campo_condiciona">Condicionantes</label>
-                              <select name="campo_condiciona" onchange="setCondicionante(this.value, 'result')" id="campo_condiciona" class="form-control">
+                              <select name="campo_condiciona" onchange="setCondicionante(this.value, 'result')"
+                                id="campo_condiciona" class="form-control">
                                 <option value="">Seleccione</option>
                                 <option value="cod_cargo">Código de cargo</option>
                                 <option value="discapacidades">Discapacidades</option>
@@ -220,7 +232,7 @@ while ($r = $query->fetch_object()) {
                           <label class="form-label" for="otra_nominas">Nominas registradas</label>
                           <select class="form-select" id="otra_nominas">
                             <option>Seleccione</option>
-                            <?php foreach ($nominas as $n) : ?>
+                            <?php foreach ($nominas as $n): ?>
                               <option value="<?php echo $n->nombre; ?>">&nbsp;<?php echo $n->nombre; ?></option>
                             <?php endforeach; ?>
                           </select>
@@ -234,7 +246,8 @@ while ($r = $query->fetch_object()) {
                             <tr>
                               <th class="w-40">Cedula</th>
                               <th class="w-40">Nombre</th>
-                              <th class="w-auto text-center"><input type="checkbox" id="selectAll" onchange="checkAll(this.checked, '')" class="form-check-input" /></th>
+                              <th class="w-auto text-center"><input type="checkbox" id="selectAll"
+                                  onchange="checkAll(this.checked, '')" class="form-check-input" /></th>
                             </tr>
                           </thead>
                           <tbody id="empleados-list">
@@ -246,14 +259,16 @@ while ($r = $query->fetch_object()) {
                       </section>
 
                       <p class="text-end mt-2" id="resumen_epleados_seleccionados">
-                        
+
                       </p>
                     </div>
                     <div class="d-flex w-100 mt-3">
                       <div class="d-flex m-a">
-                        <div class="me-2"><button class="previous btn btn-secondary" onclick="beforeStep('1')">Regresar</button>
+                        <div class="me-2"><button class="previous btn btn-secondary"
+                            onclick="beforeStep('1')">Regresar</button>
                         </div>
-                        <div class="next"><button class="btn btn-secondary mt-3 mt-md-0" onclick="nextStep('2')">Siguiente</button></div>
+                        <div class="next"><button class="btn btn-secondary mt-3 mt-md-0"
+                            onclick="nextStep('2')">Siguiente</button></div>
                       </div>
                     </div>
                   </div>
@@ -271,14 +286,16 @@ while ($r = $query->fetch_object()) {
 
                       <section class="hide" id="nuevo_concepto-sec">
                         <div class="mb-3">
-                          <label class="form-label" for="concepto_aplicar">Seleccione el concepto de desea agregar</label>
+                          <label class="form-label" for="concepto_aplicar">Seleccione el concepto de desea
+                            agregar</label>
                           <div class="input-group">
                             <select class="form-control" id="concepto_aplicar">
                               <option value="">Seleccione</option>
                               <option value="sueldo_base">Sueldo</option>
                             </select>
 
-                            <span class="input-group-text" onclick="getData('conceptos')"><i class='bx bx-refresh reload-icon pointer'></i></span>
+                            <span class="input-group-text" onclick="getData('conceptos')"><i
+                                class='bx bx-refresh reload-icon pointer'></i></span>
                           </div>
                         </div>
 
@@ -315,7 +332,8 @@ while ($r = $query->fetch_object()) {
 
                         <section id="aplicacion_conceptos-options" class="hide">
                           <div class="mb-3">
-                            <label class="form-label" for="tipo_aplicacion_concept">¿Como desea aplicar el concepto?</label>
+                            <label class="form-label" for="tipo_aplicacion_concept">¿Como desea aplicar el
+                              concepto?</label>
                             <select class="form-control" id="tipo_aplicacion_concept">
                               <option value="">Seleccione</option>
                               <option value="2">Enlistar todos los empleados de la nomina</option>
@@ -332,7 +350,9 @@ while ($r = $query->fetch_object()) {
                                 <div class="mb-3"><label class="form-label">Formulación</label>
                                   <div class="input-group mb-3">
                                     <textarea class="form-control condicion" rows="1" id="t_area-2"></textarea>
-                                    <button class="btn btn-primary" onclick="validarFormula('t_area-2', 'emp_pre_seleccionados-list')" type="button">Obtener</button>
+                                    <button class="btn btn-primary"
+                                      onclick="validarFormula('t_area-2', 'emp_pre_seleccionados-list')"
+                                      type="button">Obtener</button>
                                   </div>
                                 </div>
                               </div>
@@ -340,7 +360,9 @@ while ($r = $query->fetch_object()) {
 
                                 <div class="mb-3">
                                   <label class="form-label" for="campo_condiciona">Condicionantes</label>
-                                  <select name="campo_condiciona" onchange="setCondicionante(this.value, 'result-em_nomina')" id="campo_condiciona_epNomina" class="form-control">
+                                  <select name="campo_condiciona"
+                                    onchange="setCondicionante(this.value, 'result-em_nomina')"
+                                    id="campo_condiciona_epNomina" class="form-control">
                                     <option value="">Seleccione</option>
                                     <option value="cod_cargo">Código de cargo</option>
                                     <option value="discapacidades">Discapacidades</option>
@@ -368,7 +390,8 @@ while ($r = $query->fetch_object()) {
                                 <tr>
                                   <th class="w-40">Cedula</th>
                                   <th class="w-40">Nombre</th>
-                                  <th class="w-auto text-center"><input type="checkbox" id="selectAllC" onchange="checkAll(this.checked, '_C')" class="form-check-input" /></th>
+                                  <th class="w-auto text-center"><input type="checkbox" id="selectAllC"
+                                      onchange="checkAll(this.checked, '_C')" class="form-check-input" /></th>
                                 </tr>
                               </thead>
                               <tbody id="emp_pre_seleccionados-list">
@@ -398,7 +421,9 @@ while ($r = $query->fetch_object()) {
                             <tr>
                               <th class="w-40">Nombre del concepto</th>
                               <th class="w-40">Empleados</th>
-                              <th class="w-auto text-center"><button class="btn btn-sm btn-primary" onclick="setViewRegistro()"><i class='bx bx-folder-plus'> Agregar concepto</i> </button></th>
+                              <th class="w-auto text-center"><button class="btn btn-sm btn-primary"
+                                  onclick="setViewRegistro()"><i class='bx bx-folder-plus'> Agregar concepto</i>
+                                </button></th>
                             </tr>
                           </thead>
                           <tbody id="table-conceptos">
@@ -409,8 +434,10 @@ while ($r = $query->fetch_object()) {
                     </div>
                     <div class="d-flex w-100 mt-3">
                       <div class="d-flex m-a">
-                        <div class=" me-2"><button class="previous btn btn-secondary" onclick="beforeStep('2')">Regresar</button></div>
-                        <div class="next"><button class="previous btn btn-secondary mt-3 mt-md-0" onclick="nextStep('3')">Siguiente</button></div>
+                        <div class=" me-2"><button class="previous btn btn-secondary"
+                            onclick="beforeStep('2')">Regresar</button></div>
+                        <div class="next"><button class="previous btn btn-secondary mt-3 mt-md-0"
+                            onclick="nextStep('3')">Siguiente</button></div>
                       </div>
                     </div>
                   </div>
@@ -431,9 +458,11 @@ while ($r = $query->fetch_object()) {
                   </div>
                   <div class="d-flex w-100 mt-3">
                     <div class="d-flex m-a">
-                      <div class="me-2"><button class="previous btn btn-secondary" onclick="beforeStep('3')">Regresar</button=>
+                      <div class="me-2"><button class="previous btn btn-secondary" onclick="beforeStep('3')">Regresar
+                          </button=>
                       </div>
-                      <div class="next"><button onclick="guardarNomina()" class="btn btn-primary mt-3 mt-md-0"> <i class="bx bx-save"></i> Guardar</button></div>
+                      <div class="next"><button onclick="guardarNomina()" class="btn btn-primary mt-3 mt-md-0"> <i
+                            class="bx bx-save"></i> Guardar</button></div>
                     </div>
                   </div>
                 </section>
@@ -449,6 +478,7 @@ while ($r = $query->fetch_object()) {
     </div>
   </div>
   <!-- [ Main Content ] end -->
+  <script src="../../src/assets/js/notificaciones.js"></script>
   <script src="../../src/assets/js/plugins/simplebar.min.js"></script>
   <script src="../../src/assets/js/plugins/bootstrap.min.js"></script>
   <script src="../../src/assets/js/pcoded.js"></script>
@@ -497,7 +527,7 @@ while ($r = $query->fetch_object()) {
      * 
      * @param {Event} event - The event object.
      */
-    document.getElementById('otra_nominas').addEventListener('change', function(event) {
+    document.getElementById('otra_nominas').addEventListener('change', function (event) {
       let nombre = this.value;
       if (nombre != '') {
         aplicar_filtro(3, nombre, 'empleados-list');
@@ -546,7 +576,7 @@ while ($r = $query->fetch_object()) {
           filtro: filtro.trim(),
           tabla_empleados: true
         },
-        success: function(response) {
+        success: function (response) {
           let empleados = JSON.parse(response);
           let tabla = '';
 
@@ -595,8 +625,8 @@ while ($r = $query->fetch_object()) {
       document.getElementById('resumen_epleados_seleccionados').innerText = 'Empleados seleccionados: ' + empleadosSeleccionados.length;
     }
 
-   // document.getElementsByClassName('guardar_empleados_nomina').addEventListener('click', guardar_empleados_nomina);
-  
+    // document.getElementsByClassName('guardar_empleados_nomina').addEventListener('click', guardar_empleados_nomina);
+
 
     /**
      * Loads data from the server using AJAX.
@@ -612,10 +642,10 @@ while ($r = $query->fetch_object()) {
           data: {
             loadData: value
           },
-          success: function(response) {
+          success: function (response) {
             resolve(JSON.parse(response));
           },
-          error: function(xhr, status, error) {
+          error: function (xhr, status, error) {
             reject(error);
           }
         });
@@ -724,7 +754,7 @@ while ($r = $query->fetch_object()) {
     document.getElementById('tipo_aplicacion_concept').addEventListener('change', tipoAplicacion);
 
     function tbl_emp_seleccionados(condicion, accion) {
-          if (accion == 'todos') {
+      if (accion == 'todos') {
         $('#tabla_empleados-conceptos').removeClass('hide');
         let tabla = '';
         empleadosSeleccionados.forEach(e => {
@@ -753,7 +783,7 @@ while ($r = $query->fetch_object()) {
             tabla_empleados: tabla_empleados,
             tabla_seleccionados: true
           },
-          success: function(response) {
+          success: function (response) {
             let empleados = JSON.parse(response);
             let tabla = '';
 
@@ -768,7 +798,7 @@ while ($r = $query->fetch_object()) {
 
             document.getElementById(result_list).innerHTML = tabla;
 
-         
+
 
           }
         });
@@ -786,117 +816,117 @@ while ($r = $query->fetch_object()) {
      * performs validation checks, and saves the concept in the 'conceptosAplicados' object.
      * It also updates the UI by adding the concept to the select options and the table.
      */
-async function guardar_concepto() {
-    const concepto_aplicar = $('#concepto_aplicar').val();
-    const fechas_aplicar = $('#fechas_aplicar').val();
-    const concepto_aplicados = $('#concepto_aplicados').val();
+    async function guardar_concepto() {
+      const concepto_aplicar = $('#concepto_aplicar').val();
+      const fechas_aplicar = $('#fechas_aplicar').val();
+      const concepto_aplicados = $('#concepto_aplicados').val();
 
-    if (conceptosAplicados[concepto_aplicar]) {
+      if (conceptosAplicados[concepto_aplicar]) {
         return toast_s('error', 'No puede agregar el mismo concepto más de una vez');
-    }
-
-    if (!concepto_aplicar) {
-        return toast_s('error', 'Debe seleccionar algún concepto');
-    }
-
-    if ($('#frecuencia_pago').val() == '1' || $('#frecuencia_pago').val() == '2') {
-      if (fechas_aplicar == '') {
-        return toast_s('error', 'Debe indicar una fecha a aplicar');
       }
-    }
 
-    let tipoCalculo, nombreConcepto, tabulador = null;
+      if (!concepto_aplicar) {
+        return toast_s('error', 'Debe seleccionar algún concepto');
+      }
 
-    if (concepto_aplicar === 'sueldo_base') {
+      if ($('#frecuencia_pago').val() == '1' || $('#frecuencia_pago').val() == '2') {
+        if (fechas_aplicar == '') {
+          return toast_s('error', 'Debe indicar una fecha a aplicar');
+        }
+      }
+
+      let tipoCalculo, nombreConcepto, tabulador = null;
+
+      if (concepto_aplicar === 'sueldo_base') {
         tipoCalculo = null;
         nombreConcepto = 'Sueldo Base';
-    } else {
+      } else {
         tipoCalculo = conceptos[concepto_aplicar].tipo_calculo;
         nombreConcepto = conceptos[concepto_aplicar].nom_concepto;
-    }
+      }
 
-    if (tipoCalculo != 6 && !$('#tipo_aplicacion_concept').val()) {
+      if (tipoCalculo != 6 && !$('#tipo_aplicacion_concept').val()) {
         return toast_s('error', 'Debe seleccionar un tipo de aplicación');
-    }
+      }
 
-    if (tipoCalculo === 5 && !concepto_aplicados) {
+      if (tipoCalculo === 5 && !concepto_aplicados) {
         return toast_s('error', 'Debe seleccionar al menos un concepto al cual aplicar el porcentaje');
-    }
+      }
 
-    if (concepto_aplicar === 'sueldo_base' && !$('#tabulador').val()) {
+      if (concepto_aplicar === 'sueldo_base' && !$('#tabulador').val()) {
         return toast_s('error', 'Debe seleccionar el tabulador');
-    } else if (concepto_aplicar === 'sueldo_base') {
+      } else if (concepto_aplicar === 'sueldo_base') {
         tabulador = $('#tabulador').val();
-    }
+      }
 
-    let empleadosDelConcepto = [];
+      let empleadosDelConcepto = [];
 
-    if (tipoCalculo !== 6) {
+      if (tipoCalculo !== 6) {
         document.querySelectorAll('.itemCheckbox_C').forEach(checkbox => {
-            if (checkbox.checked) {
-                empleadosDelConcepto.push(checkbox.value);
-            }
+          if (checkbox.checked) {
+            empleadosDelConcepto.push(checkbox.value);
+          }
         });
 
         if (empleadosDelConcepto.length < 1) {
-            return toast_s('error', 'Debe seleccionar al menos un empleado');
+          return toast_s('error', 'Debe seleccionar al menos un empleado');
         }
-    }
+      }
 
-    let cantidad_t;
-    let valor = 0;
-    let subCalculo = '0';
-    let nombre_nomina = document.getElementById('nombre_nomina').value;
+      let cantidad_t;
+      let valor = 0;
+      let subCalculo = '0';
+      let nombre_nomina = document.getElementById('nombre_nomina').value;
 
-    if (tipoCalculo !== 6) {
+      if (tipoCalculo !== 6) {
         cantidad_t = empleadosDelConcepto.length;
-      }else{
+      } else {
         infoResolve = await cantidadFormulada(concepto_aplicar, Object.keys(empleadosFiltro))
-        empleadosDelConcepto =  infoResolve
+        empleadosDelConcepto = infoResolve
         cantidad_t = infoResolve.length
         console.log(cantidad_t)
       }
 
-    let concepto = {
+      let concepto = {
         'concepto_id': concepto_aplicar,
         'nom_concepto': nombreConcepto,
         'fecha_aplicar': fechas_aplicar,
         'formulacionConcepto': {
-            'TipoCalculo': tipoCalculo,
-            'n_conceptos': concepto_aplicados, // Solo en caso de que tipoCalculo == 5
-            'emp_cantidad': cantidad_t
+          'TipoCalculo': tipoCalculo,
+          'n_conceptos': concepto_aplicados, // Solo en caso de que tipoCalculo == 5
+          'emp_cantidad': cantidad_t
         },
         'tabulador': tabulador, // solo en caso de que sea sueldo_base
         'empleados': empleadosDelConcepto,
         'nombre_nomina': nombre_nomina
-    };
+      };
 
-    conceptosAplicados[concepto_aplicar] = concepto;
+      conceptosAplicados[concepto_aplicar] = concepto;
 
-    // Enviar los datos al archivo PHP mediante AJAX
-    $.ajax({
+      // Enviar los datos al archivo PHP mediante AJAX
+      $.ajax({
         url: '../../back/modulo_nomina/guardar_concepto.php',
         type: 'POST',
         data: JSON.stringify(concepto),
         contentType: 'application/json',
-        success: function(response) {
-        // Analizar la respuesta JSON
-        var jsonResponse = JSON.parse(response);
-        
-        // Acceder a las propiedades de jsonResponse
-        console.log(jsonResponse.status);
-        console.log(jsonResponse.message);
-    },
-    error: function(xhr, textStatus, errorThrown) {
-        console.error("Error al procesar la solicitud AJAX:", errorThrown);
-    }
-        
-    });
+        success: function (response) {
+          // Analizar la respuesta JSON
+          var jsonResponse = JSON.parse(response);
 
-    $('#concepto_aplicados').append(`<option value="${concepto_aplicar}">${nombreConcepto}</option>`);
-    toast_s('success', 'Agregado con éxito');
+          // Acceder a las propiedades de jsonResponse
+          console.log(jsonResponse.status);
+          console.log(jsonResponse.message);
+        },
+        error: function (xhr, textStatus, errorThrown) {
+          console.error("Error al procesar la solicitud AJAX:", errorThrown);
+        }
 
-    $('#table-conceptos').append(`
+      });
+
+      $('#concepto_aplicados').append(`<option value="${concepto_aplicar}">${nombreConcepto}</option>`);
+      toast_s('success', 'Agregado con éxito');
+
+      $('#table-conceptos').append(`
         <tr id="row_${concepto_aplicar}">
           <td>${nombreConcepto}</td>
           <td>${cantidad_t}</td>
@@ -904,10 +934,10 @@ async function guardar_concepto() {
         </tr>
     `);
 
-    setViewRegistro();
-}
+      setViewRegistro();
+    }
 
-document.getElementById('guardar_concepto').addEventListener('click', guardar_concepto);
+    document.getElementById('guardar_concepto').addEventListener('click', guardar_concepto);
 
     let valorPrevio_frecuencia_pago;
 
@@ -926,9 +956,9 @@ document.getElementById('guardar_concepto').addEventListener('click', guardar_co
         '2': `
       <option value="q1">Primera quincena</option>
       <option value="q2">Segunda quincena</option>`,
-      '3': `
+        '3': `
       <option value="m">Pago Mensual</option>`,
-      '4': `
+        '4': `
       <option value="um">Pago Unico Mensual</option>`,
       };
 
@@ -1009,7 +1039,7 @@ document.getElementById('guardar_concepto').addEventListener('click', guardar_co
             concepto: c,
             empleados: e
           },
-          success: function(response) {
+          success: function (response) {
             console.log(response)
             try {
               resolve(JSON.parse(response));
@@ -1017,7 +1047,7 @@ document.getElementById('guardar_concepto').addEventListener('click', guardar_co
               reject('Error parsing JSON response: ' + parseError);
             }
           },
-          error: function(xhr, status, error) {
+          error: function (xhr, status, error) {
             reject(`AJAX error - Status: ${status}, Error: ${error}`);
           }
         });
@@ -1095,7 +1125,7 @@ document.getElementById('guardar_concepto').addEventListener('click', guardar_co
           let cantidadEmpleados = concepto.formulacionConcepto.emp_cantidad;
           $('#nomina_resumen').append(`
             <li class="list-group-item d-flex justify-content-between align-items-center">
-            <a class="pointer" onclick="verTrabajadoresConcepto('`+concepto+`')">${nombreConcepto}</a>
+            <a class="pointer" onclick="verTrabajadoresConcepto('`+ concepto + `')">${nombreConcepto}</a>
              <span class="badge bg-primary rounded-pill">${cantidadEmpleados} Empleados</span>
           </li>`)
         }
@@ -1139,64 +1169,64 @@ document.getElementById('guardar_concepto').addEventListener('click', guardar_co
      * @param {string} step - The current step value.
      */
 
-function checkNombreNominaExists(nombre_nomina) {
-    return new Promise((resolve, reject) => {
+    function checkNombreNominaExists(nombre_nomina) {
+      return new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
         xhr.open('POST', '../../back/modulo_nomina/check_nombre_nomina.php', true);
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === XMLHttpRequest.DONE) {
-                if (xhr.status === 200) {
-                    const response = JSON.parse(xhr.responseText);
-                    if (response.exists) {
-                        resolve(true);
-                    } else {
-                        resolve(false);
-                    }
-                } else {
-                    reject('Error al verificar el nombre de la nómina');
-                }
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (xhr.status === 200) {
+              const response = JSON.parse(xhr.responseText);
+              if (response.exists) {
+                resolve(true);
+              } else {
+                resolve(false);
+              }
+            } else {
+              reject('Error al verificar el nombre de la nómina');
             }
+          }
         };
         xhr.send(`nombre_nomina=${encodeURIComponent(nombre_nomina)}`);
-    });
-}
+      });
+    }
 
-async function nextStep(step) {
-    if (step == '1') {
+    async function nextStep(step) {
+      if (step == '1') {
         const inputs = ['nombre_nomina', 'frecuencia_pago', 'tipo_nomina'];
         if (inputs.some(id => !document.getElementById(id).value)) {
-            return toast_s('error', 'Debe completar todos los campos');
+          return toast_s('error', 'Debe completar todos los campos');
         }
 
         const nombreNomina = document.getElementById('nombre_nomina').value;
         try {
-            const exists = await checkNombreNominaExists(nombreNomina);
-            if (exists) {
-                return toast_s('error', 'El nombre de la nómina ya existe');
-            } else {
-                toggleStep('basico', 'empleados');
-                document.getElementById('progressbar').style.width = '50%';
-            }
+          const exists = await checkNombreNominaExists(nombreNomina);
+          if (exists) {
+            return toast_s('error', 'El nombre de la nómina ya existe');
+          } else {
+            toggleStep('basico', 'empleados');
+            document.getElementById('progressbar').style.width = '50%';
+          }
         } catch (error) {
-            return toast_s('error', error);
+          return toast_s('error', error);
         }
-    } else if (step == '2') {
+      } else if (step == '2') {
         if (empleadosSeleccionados.length === 0) {
-            return toast_s('error', 'Debe seleccionar al menos un empleado');
+          return toast_s('error', 'Debe seleccionar al menos un empleado');
         }
         toggleStep('empleados', 'conceptos');
         document.getElementById('progressbar').style.width = '75%';
-    } else if (step == '3') {
+      } else if (step == '3') {
         if (Object.keys(conceptosAplicados).length === 0) {
-            return toast_s('error', 'Debe seleccionar al menos un concepto');
+          return toast_s('error', 'Debe seleccionar al menos un concepto');
         } else {
-            toggleStep('conceptos', 'resumen');
-            document.getElementById('progressbar').style.width = '100%';
-            resumenDeNomina()
+          toggleStep('conceptos', 'resumen');
+          document.getElementById('progressbar').style.width = '100%';
+          resumenDeNomina()
         }
+      }
     }
-}
 
     /**
      * Function to toggle between steps by hiding and showing the corresponding elements.
@@ -1295,7 +1325,7 @@ async function nextStep(step) {
     }
 
 
-    function guardarNomina(){
+    function guardarNomina() {
       const nombre = $('#nombre_nomina').val()
       const frecuencia = $('#frecuencia_pago').val()
       const tipo = $('#tipo_nomina').val()
@@ -1312,11 +1342,11 @@ async function nextStep(step) {
           tipo: tipo,
           conceptosAplicados: conceptosAplicados
         },
-        success: function(response) {
+        success: function (response) {
           if (response == 'ok') {
             toast_s('success', 'Creado con exito')
           }
-         
+
         }
       });
 

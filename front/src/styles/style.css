@@ -48,28 +48,23 @@ a {
 /* MODAL STYLES */
 
 .modal-window {
-  padding: 1rem;
+  position: fixed;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   overflow: auto;
-  top: 74px;
-  left: 0;
-  width: 100%;
-
-  height: var(--modal-height);
-  position: fixed;
-  z-index: 1030;
   background-color: rgba(0, 0, 0, 0.5);
 
-  visibility: visible;
-  opacity: 1;
-
-  transition: opacity 0.5s ease;
-
-  top: 0;
   height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  z-index: 1030;
+
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.5s ease;
 }
 .modal-window.hide {
   visibility: hidden;
@@ -78,14 +73,16 @@ a {
 }
 
 .modal-box {
-  background-color: var(--lightgray);
-  width: 100%;
-  max-width: 1000px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 1rem;
   height: 90%;
+  max-height: 1000px;
+  width: 90%;
+  max-width: 1000px;
+  display: grid;
+  grid-template-rows: 80px 1fr 80px;
+
+  padding: 1rem;
+
+  background-color: var(--lightgray);
   /* background-color: white; */
 }
 
@@ -95,10 +92,22 @@ a {
 
 .modal-box-header {
   display: flex;
+
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;
   width: 100%;
+  height: 80px;
+}
+
+.modal-box-content {
+  height: 100%;
+  overflow: hidden;
+  overflow-y: auto;
+}
+
+.modal-box-footer {
+  height: 100%;
 }
 
 /* FORM STYLES */
@@ -138,11 +147,6 @@ a {
   width: 100%;
 }
 
-.form-input,
-.form-select {
-  border-left: 2px solid var(--light-bluegray);
-  border-right: 2px solid var(--light-bluegray);
-}
 option {
   padding: 0.5rem 0.5rem;
   border-radius: 0.5rem;
@@ -152,7 +156,7 @@ option {
 .form-input::placeholder {
   color: #3f4d67a6;
 }
-*/ .form-control.input-error {
+.form-control.input-error {
   border: 1px solid var(--error-red);
   border-left: 2px solid var(--error-red);
   border-right: 2px solid var(--error-red);

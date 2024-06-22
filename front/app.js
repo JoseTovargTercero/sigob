@@ -63,7 +63,7 @@ d.addEventListener('DOMContentLoaded', (e) => {
       formElement: employeeForm,
       employeeInputClass: 'employee-input',
       employeeSelectClass: 'employee-select',
-      btnId: 'tabulator-btn',
+      btnId: 'btn-employee-save',
       selectSearchInput: 'select-search-input',
       selectSearch: ['cargo'],
       btnAddId: 'add-dependency',

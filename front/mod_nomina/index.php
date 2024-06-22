@@ -1,4 +1,4 @@
-<?php 
+<?php
 require_once '../../back/sistema_global/session.php';
 ?>
 <!DOCTYPE html>
@@ -78,7 +78,8 @@ require_once '../../back/sistema_global/session.php';
                       <td>
                         TEXT
                       </td>
-                      <td><a href="#!" class="badge me-2 bg-brand-color-2 text-white f-12">Rechazar</a><a href="#!" class="badge me-2 bg-brand-color-1 text-white f-12">Aprobar</a></td>
+                      <td><a href="#!" class="badge me-2 bg-brand-color-2 text-white f-12">Rechazar</a><a href="#!"
+                          class="badge me-2 bg-brand-color-1 text-white f-12">Aprobar</a></td>
                     </tr>
                   </tbody>
                 </table>
@@ -93,7 +94,7 @@ require_once '../../back/sistema_global/session.php';
   </div>
   <!-- [ Main Content ] end -->
 
-
+  <script src="../../src/assets/js/notificaciones.js"></script>
   <script src="../../src/assets/js/plugins/simplebar.min.js"></script>
   <script src="../../src/assets/js/plugins/bootstrap.min.js"></script>
   <script src="../../src/assets/js/fonts/custom-font.js"></script>
