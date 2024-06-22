@@ -63,10 +63,22 @@ function validateEmployeeForm({
 
       employeeSelectElementCopy.forEach((select) => {
         select.value = employeeData[0][select.name]
+        validateInput({
+          target: select,
+          fieldList,
+          fieldListErrors,
+          type: fieldListErrors[select.name].type,
+        })
       })
 
       employeeInputElementCopy.forEach((input) => {
         input.value = employeeData[0][input.name]
+        validateInput({
+          target: input,
+          fieldList,
+          fieldListErrors,
+          type: fieldListErrors[input.name].type,
+        })
       })
 
       employeeData[0].id = employeeData[0].id_empleado
@@ -85,6 +97,9 @@ function validateEmployeeForm({
         )
       }
     } else {
+      validateInput({
+        type: 'reset',
+      })
       employeeSelectElementCopy.forEach((select) => {
         select.value = ''
       })

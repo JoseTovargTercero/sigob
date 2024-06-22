@@ -4,9 +4,25 @@ import { regularExpressions } from './regExp.js'
 const d = document
 
 function validateInput({ target, fieldList = {}, fieldListErrors = {}, type }) {
-  let value = target.value
+  let value
+
+  if (target) {
+    value = target.value
+  }
 
   try {
+    if (type === 'reset') {
+      let inputErrors = d.querySelectorAll('.input-error')
+      let inputErrorsMessages = d.querySelectorAll('.input-error-message')
+      inputErrors.forEach((input) => {
+        input.classList.remove('input-error')
+      })
+      inputErrorsMessages.forEach((inputMessage) => {
+        inputMessage.remove()
+      })
+      return
+    }
+
     if (type === 'matrixCell') {
       let isFloat = regularExpressions.FLOAT.test(value)
 

@@ -155,9 +155,11 @@ require_once '../../back/sistema_global/session.php';
                   <div class="col-sm">
                     <label class="form-label" for="status">ESTADO DEL TRABAJADOR</label>
                     <select name="status" id="status" class="form-select employee-select">
-                      <option value="">ELEGIR...</option>
-                      <option value="1" selected>ACTIVO</option>
-                      <option value="0">INACTIVO</option>
+                      <option value="" selected>ELEGIR...</option>
+                      <option value="A">ACTIVO</option>
+                      <option value="R">RETIRADO</option>
+                      <option value="S">SUSPENDIDO</option>
+                      <option value="C">COMOSION DE SERVICIO</option>
                     </select>
                   </div>
                 </div>

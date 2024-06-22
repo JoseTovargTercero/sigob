@@ -108,7 +108,7 @@ d.addEventListener('DOMContentLoaded', (e) => {
         status: {
           value: false,
           message: 'Elija una opción',
-          type: 'number2',
+          type: 'text',
         },
         instruccion_academica: {
           value: true,
