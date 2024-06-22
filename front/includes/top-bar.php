@@ -32,10 +32,10 @@
             <span id="badge_notifications_number" class="position-absolute top-0 start-100 translate-middle badge rounded-pill text-bg-danger"><span id="notifications_number"></span><span class="visually-hidden">Notificaciones pendientes</span></span>
             <div class="custom-dropdown-menu">
 
-              <div class="dropdown-header d-flex align-items-center justify-content-between p-3">
+              <div class="dropdown-header  align-items-center justify-content-between p-3">
                 <h5 class="m-0">Notificaciones</h5>
               </div>
-              <ul class="p-0 list-unstyled" id="notifications"></ul>
+              <ul class="p-0 list-unstyled d-block" id="notifications"></ul>
             </div>
           </div>
         </li>

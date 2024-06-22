@@ -1,6 +1,7 @@
 <?php
 require_once '../sistema_global/conexion.php';
-
+require_once '../sistema_global/session.php';
+require_once '../sistema_global/notificaciones.php';
 // Verificar si el parámetro 'id' está presente en la URL
 if (isset($_POST['id'])) {
     $id = $_POST['id'];
@@ -22,6 +23,8 @@ if (isset($_POST['id'])) {
     // Ejecutar la consulta preparada
     if ($stmt->execute()) {
         echo "ok";
+        notificar(['nomina'], 4);
+
     } else {
         echo "Error al eliminar el registro: " . $stmt->error;
     }

@@ -41,7 +41,7 @@ foreach ($data as $item) {
         $stmt_insert->bind_param("iss", $empleado_id, $campo, $valor);
 
         // Ejecutar la consulta
-        if (!$stmt_insert->execute()) {
+        if (!$stmt_insert->execute()) {p
             echo "Error al insertar: " . $stmt_insert->error;
         }
     } else {

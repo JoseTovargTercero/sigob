@@ -65,6 +65,10 @@ function cargarNotificaciones() {
 
         for (var i = 0; i < data.length; i++) {
           var guia = data[i].guia;
+
+          if (guia.trim() == 'http://localhost/sigob/') {
+            guia = '';
+          }
           //var date = data[i].date;
           var comentario = data[i].comentario;
           var id_notificacion = data[i].id_notificacion;

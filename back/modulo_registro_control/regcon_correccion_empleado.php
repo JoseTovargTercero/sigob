@@ -1,5 +1,7 @@
 <?php
 require_once '../sistema_global/conexion.php';
+require_once '../sistema_global/session.php';
+require_once '../sistema_global/notificaciones.php';
 
 // Verificar si el parámetro 'id' está presente en la URL
 if (isset($_POST['id'])) {
@@ -16,6 +18,7 @@ if (isset($_POST['id'])) {
         $stmt2->bind_param("ss", $comentario, $id);
         if ($stmt2->execute()) {
             echo json_encode("ok");
+            notificar(['nomina'], 3);
         } else {
             echo json_encode("error");
         }

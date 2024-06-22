@@ -140,6 +140,7 @@ require_once '../../back/sistema_global/session.php';
   <script src="../../src/assets/js/pcoded.js"></script>
   <script src="../../src/assets/js/plugins/feather.min.js"></script>
   <script src="../../src/assets/js/main.js"></script>
+  <script src="../../src/assets/js/notificaciones.js"></script>
   <script>
     const url_back = '../../back/modulo_nomina/nom_grupos_back.php';
 

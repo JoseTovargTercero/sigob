@@ -185,11 +185,6 @@ require_once '../../back/sistema_global/session.php';
                     <td>:</td>
                     <td id="info_banco"></td>
                   </tr>
-                  <tr>
-                    <td>Cuenta</td>
-                    <td>:</td>
-                    <td id="info_cuenta_bancaria"></td>
-                  </tr>
                
                 </tbody>
               </table>
@@ -210,7 +205,7 @@ require_once '../../back/sistema_global/session.php';
       </div>
 
 
-      <div class="w-100 text-center pt-3">
+      <div class="w-100 text-center pt-4">
         <button class="btn btn-danger" id="eliminar-btn">Eliminar solicitud</button>
         <button class="btn btn-secondary" id="enviar_correcion-btn" onclick="mostrarSectionComentario()">Enviar a corrección</button>
         <button class="btn btn-primary" id="aceptar-btn">Aceptar empleado</button>
@@ -275,10 +270,52 @@ require_once '../../back/sistema_global/session.php';
     }
 
     function aceptarSolicitud() {
-      
+     //id_revision
+     toggleDialogs();
+      Swal.fire({
+        title: "¿Estás seguro?",
+        html: "Al aceptar el registro del empleado, esta indicando que los datos del mismo son correctos",
+        icon: "info",
+        showCancelButton: true,
+        confirmButtonColor: "#04a9f5",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Sí, aceptar!",
+        cancelButtonText: "Cancelar",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          $.ajax({
+            url: url_back + 'regcon_empleados_aceptar.php',
+            type: "POST",
+            data: {
+              id: id_revision
+            },
+            success: function(text) {
+              if (text.trim() == "ok") {
+                cargarTabla();
+                toast_s("success", "Agregado con éxito");
+              }else {
+                toast_s("error", text.trim());
+              }
+            },
+          });
+        }else{
+          toggleDialogs()
+
+        }
+      });
+
     }
 
+
+    const aceptar = document.querySelector("#aceptar-btn");
+    aceptar.addEventListener("click", aceptarSolicitud);
+
+
+
+
     function cargarTabla() {
+      $('#table tbody').html('');
+
       $.ajax({
         url: url_back + 'regcon_empleados_datos.php',
         type: 'POST',
@@ -287,7 +324,7 @@ require_once '../../back/sistema_global/session.php';
         },
         cache: false,
         success: function(data) {
-          $('#table tbody').html('');
+          console.log(data)
           if (data) {
             for (var i = 0; i < data.length; i++) {
               const cedula = data[i].cedula;
@@ -303,6 +340,8 @@ require_once '../../back/sistema_global/session.php';
               <td><a class="pointer btn-wicon badge me-2 bg-brand-color-1 text-white f-12" onclick="revisar(` + id + `)"><i class="bx bx-detail me-1"></i> Revisar</a></td>
               </tr>`);
             }
+          }else{
+            checkTablesForData();
           }
 
         }
@@ -338,23 +377,21 @@ require_once '../../back/sistema_global/session.php';
             },
             success: function(text) {
 
-              if (text == "ok") {
+              if (text.trim() == "ok") {
                 cargarTabla();
                 toast_s("success", "Eliminado con éxito");
-              } else if (text == 'negado') {
-                toast_s("error", "No se puede eliminar el banco, existen empleados asociados.");
               } else {
                 toast_s("error", text);
               }
             },
           });
+        }else{
+          toggleDialogs()
+
         }
       });
     }
-
     document.getElementById('eliminar-btn').addEventListener("click", eliminar);
-
-    
 
 
     function agregarGuiones(cadena) {
@@ -366,8 +403,6 @@ require_once '../../back/sistema_global/session.php';
       // Utiliza una expresión regular para insertar los guiones cada 4 caracteres
       return cadena.replace(/(.{4})/g, "$1-").slice(0, -1);
     }
-
-
 
 
     function revisar(id) {
@@ -384,10 +419,9 @@ require_once '../../back/sistema_global/session.php';
           const datosEmpleado = data[0]
           if (data) {
             id_revision = datosEmpleado['id_empleado']
-
             $('#info_nombre').html(datosEmpleado['nombres'])
             $('#info_full_name').html(datosEmpleado['nombres'])
-            $('#info_cedula').html((datosEmpleado['nacionalidad'] == 1 ? 'V' : 'E') + '-' + datosEmpleado['cedula'])
+            $('#info_cedula').html(datosEmpleado['nacionalidad'] + '-' + datosEmpleado['cedula'])
             $('#info_fIngreso').html(datosEmpleado['fecha_ingreso'])
             $('#info_otrosAnos').html(datosEmpleado['otros_años'])
             $('#info_discapacidad').html((datosEmpleado['discapacidades'] == '1' ? 'Si' : 'No'))
@@ -399,18 +433,13 @@ require_once '../../back/sistema_global/session.php';
 
             $('#info_dependencia').html(datosEmpleado['dependencia'])
             $('#info_banco').html(datosEmpleado['banco'])
-            $('#info_cuenta_bancaria').html(agregarGuiones(datosEmpleado['cuenta_bancaria']))
-            
             $('#cargando').hide()
-
-
-
-
             toggleDialogs()
           }
         }
       });
     }
+
 
   </script>
 

@@ -35,7 +35,6 @@ if ($result->num_rows > 0) {
         $datos[] = $empleado;
     }
 } else {
-    echo json_encode(["mensaje" => "No se encontraron resultados."]);
     exit();
 }
 

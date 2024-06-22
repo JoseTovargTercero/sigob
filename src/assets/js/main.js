@@ -246,7 +246,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-
 var dialogs = document.querySelector(".dialogs");
 var closeButton = document.querySelector(".close-button");
 
@@ -260,7 +259,34 @@ function windowOnClick(event) {
   }
 }
 
-if ($('#dialogs').length) {
+if ($('.dialogs').length) {
   closeButton.addEventListener("click", toggleDialogs);
   window.addEventListener("click", windowOnClick);
 } 
+
+
+
+
+function checkTablesForData() {
+  // Obtener todas las tablas en el DOM
+  var tables = document.querySelectorAll('table');
+
+  tables.forEach(function(table) {
+      // Verificar si la tabla tiene un tbody
+      var tbody = table.querySelector('tbody');
+
+      if (tbody) {
+          // Verificar si el tbody está vacío
+          if (tbody.rows.length === 0) {
+              // Crear una fila y una celda para el mensaje
+              var row = tbody.insertRow();
+              var cell = row.insertCell();
+
+              // Configurar la celda para que ocupe todo el ancho de la tabla y centrar el texto
+              cell.colSpan = table.rows[0].cells.length;
+              cell.style.textAlign = 'center';
+              cell.textContent = 'No hay datos para mostrar';
+          }
+      }
+  });
+}

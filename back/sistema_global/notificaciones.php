@@ -10,7 +10,11 @@
 function textNotification($type){
   $msgTextNotification = array(
     '1' => ['Inicio el pago de una nomina', 'front/mod_registro_control/regcon_nomina_comparar'],
-    '2' => ['Solicito modificar los datos de un empleado', 'front/mod_registro_control/regcon_modificacion_empleados']
+    '2' => ['Solicito modificar los datos de un empleado', 'front/mod_registro_control/regcon_modificacion_empleados'],
+    '3' => ['Envió a corrección los datos de un empleado', 'front/mod_nomina/nom_empleados_tabla'],
+    '4' => ['Rechazo la creación de un empleado', ''],
+    '5' => ['Aprobó la creación de un empleado', 'front/mod_nomina/nom_empleados_tabla'],
+    
     // mas opciones
   );
   return $msgTextNotification[$type];
