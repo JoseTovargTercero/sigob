@@ -75,16 +75,20 @@ require_once '../../back/sistema_global/session.php';
                       <td></td>
                       <td class="ps-0">
                         <div>
-                          <input type="text" class="form-control  check-length" name="prefijo" id="prefijo" placeholder="Prefijo" data-max="4">
+                          <input type="text" class="form-control  check-length" name="prefijo" id="prefijo"
+                            placeholder="Prefijo" data-max="4">
                         </div>
                       </td>
-                      <th class="ps-0"><input type="text" class="form-control" name="nombre" id="nombre" placeholder="Nombre del banco"></th>
+                      <th class="ps-0"><input type="text" class="form-control" name="nombre" id="nombre"
+                          placeholder="Nombre del banco"></th>
                       <th class="ps-0">
                         <div>
-                          <input type="text" class="form-control check-length" name="cuenta_matriz" id="cuenta_matriz" placeholder="Cuenta matriz" data-max="20">
+                          <input type="text" class="form-control check-length" name="cuenta_matriz" id="cuenta_matriz"
+                            placeholder="Cuenta matriz" data-max="20">
                         </div>
                       </th>
-                      <th class="ps-0"><input type="text" class="form-control" name="afiliado" id="afiliado" placeholder="Numero de afiliado"></th>
+                      <th class="ps-0"><input type="text" class="form-control" name="afiliado" id="afiliado"
+                          placeholder="Numero de afiliado"></th>
                       <th><button type="submit" class="btn btn-primary rounded" id="btn-guardar">Guardar</button></th>
                   </thead>
                   <tbody>
@@ -113,7 +117,8 @@ require_once '../../back/sistema_global/session.php';
               <div class="position-relative d-inline-block">
                 <i class='bx bx-user text-primary fs-3'></i>
 
-                <div class="certificated-badge"><i class="fas fa-certificate text-primary bg-icon"></i> <i class="fas fa-check front-icon text-white"></i></div>
+                <div class="certificated-badge"><i class="fas fa-certificate text-primary bg-icon"></i> <i
+                    class="fas fa-check front-icon text-white"></i></div>
               </div>
             </div>
             <div class="flex-grow-1 ms-3">
@@ -190,7 +195,7 @@ require_once '../../back/sistema_global/session.php';
                     <td>:</td>
                     <td id="info_cuenta_bancaria"></td>
                   </tr>
-               
+
                 </tbody>
               </table>
             </div>
@@ -202,23 +207,26 @@ require_once '../../back/sistema_global/session.php';
         <hr>
         <div class="d-flex justify-content-between mb-3">
           <label for="comentario" class="form-label">Comentario</label>
-          <button class="btn btn-light-dark btn-sm" id="btn-cancelarEnvio" onclick="cancelarRegistro()">Cancelar</button>
+          <button class="btn btn-light-dark btn-sm" id="btn-cancelarEnvio"
+            onclick="cancelarRegistro()">Cancelar</button>
         </div>
         <div>
-        <textarea type="text" id="comentario" class="form-control check-length"  data-max="250"></textarea>
+          <textarea type="text" id="comentario" class="form-control check-length" data-max="250"></textarea>
         </div>
       </div>
 
 
       <div class="w-100 text-center pt-3">
         <button class="btn btn-danger" id="eliminar-btn">Eliminar solicitud</button>
-        <button class="btn btn-secondary" id="enviar_correcion-btn" onclick="mostrarSectionComentario()">Enviar a corrección</button>
+        <button class="btn btn-secondary" id="enviar_correcion-btn" onclick="mostrarSectionComentario()">Enviar a
+          corrección</button>
         <button class="btn btn-primary" id="aceptar-btn">Aceptar empleado</button>
       </div>
     </div>
   </div>
 
   <!-- [ Main Content ] end -->
+  <script src="../../src/assets/js/notificaciones.js"></script>
   <script src="../../src/assets/js/plugins/simplebar.min.js"></script>
   <script src="../../src/assets/js/plugins/bootstrap.min.js"></script>
   <script src="../../src/assets/js/pcoded.js"></script>
@@ -259,23 +267,23 @@ require_once '../../back/sistema_global/session.php';
           comentario: comentario
         },
         cache: false,
-        success: function(data) {
+        success: function (data) {
           const result = JSON.parse(data)
           if (result == 'ok') {
             toast_s('success', 'Se envió a corrección')
             cargarTabla()
             toggleDialogs()
             cancelarRegistro()
-          }else{
-              toast_s('error', result);
-              return
+          } else {
+            toast_s('error', result);
+            return
           }
         }
       });
     }
 
     function aceptarSolicitud() {
-      
+
     }
 
     function cargarTabla() {
@@ -286,7 +294,7 @@ require_once '../../back/sistema_global/session.php';
           tabla: true
         },
         cache: false,
-        success: function(data) {
+        success: function (data) {
           $('#table tbody').html('');
           if (data) {
             for (var i = 0; i < data.length; i++) {
@@ -336,7 +344,7 @@ require_once '../../back/sistema_global/session.php';
             data: {
               id: id_revision
             },
-            success: function(text) {
+            success: function (text) {
 
               if (text == "ok") {
                 cargarTabla();
@@ -354,11 +362,11 @@ require_once '../../back/sistema_global/session.php';
 
     document.getElementById('eliminar-btn').addEventListener("click", eliminar);
 
-    
+
 
 
     function agregarGuiones(cadena) {
-    // Verifica que la cadena tenga exactamente 20 caracteres
+      // Verifica que la cadena tenga exactamente 20 caracteres
       if (cadena.length !== 20) {
         throw new Error("La cuenta bancaria no es correcta.");
       }
@@ -380,7 +388,7 @@ require_once '../../back/sistema_global/session.php';
           id: id
         },
         cache: false,
-        success: function(data) {
+        success: function (data) {
           const datosEmpleado = data[0]
           if (data) {
             id_revision = datosEmpleado['id_empleado']
@@ -400,7 +408,7 @@ require_once '../../back/sistema_global/session.php';
             $('#info_dependencia').html(datosEmpleado['dependencia'])
             $('#info_banco').html(datosEmpleado['banco'])
             $('#info_cuenta_bancaria').html(agregarGuiones(datosEmpleado['cuenta_bancaria']))
-            
+
             $('#cargando').hide()
 
 

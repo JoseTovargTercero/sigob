@@ -124,6 +124,8 @@ require_once '../../back/sistema_global/session.php';
 
     <!-- [ Main Content ] end -->
     <script type="module" src="../app.js"></script>
+    <script src="../../src/assets/js/notificaciones.js"></script>
+
     <!-- <script type="module" src="../src/controllers/peticionesNominaForm.js"></script> -->
     <script type="module" src="../src/controllers/peticionesTable.js"></script>
     <script src="https://cdn.datatables.net/2.0.1/js/dataTables.js"></script>

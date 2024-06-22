@@ -315,6 +315,7 @@ const errorMessage = (target, message) => {
 
 function validateModal({ e, btnId, modalId }) {
   const modalElement = d.getElementById(modalId)
+
   if (e.target.matches(`#${btnId}`)) {
     if (modalElement.classList.contains('hide')) {
       modalElement.classList.remove('hide')
@@ -332,6 +333,11 @@ function closeModal({ modalId }) {
   } else {
     modalElement.classList.add('hide')
   }
+}
+
+function openModal({ modalId }) {
+  const modalElement = d.getElementById(modalId)
+  modalElement.classList.add('hide')
 }
 
 // FUNCIÓNES PARA LOADERS
@@ -460,6 +466,7 @@ export {
   validateInput,
   validateModal,
   closeModal,
+  openModal,
   showLoader,
   hideLoader,
   confirmNotification,

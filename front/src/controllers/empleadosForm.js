@@ -7,6 +7,7 @@ import {
   sendDependencyData,
   sendEmployeeData,
   updateEmployeeData,
+  updateRequestEmployeeData,
 } from '../api/empleados.js'
 import { nomCorrectionAlert } from '../components/nom_correcion_alert.js'
 import {
@@ -189,12 +190,48 @@ function validateEmployeeForm({
       }
       delete fieldList.correcion
 
-      if (id) return updateEmployeeData({ data: fieldList })
+      if (id)
+        return confirmNotification({
+          type: NOTIFICATIONS_TYPES.send,
+          successFunction: sendEmployeeInformationRequest,
+          successFunctionParams: { data: fieldList },
+          message: 'Complete todo el formulario antes de avanzar',
+        })
+      sendEmployeeInformationRequest({ data: fieldList })
 
       // ENVÍO DE INFORMACIÓN
       sendEmployeeData({ data: fieldList })
     }
   })
+}
+
+async function sendEmployeeInformationRequest({ data }) {
+  let employeeDataRequest = await getEmployeeData(id),
+    employeeData = employeeDataRequest[0]
+
+  console.log(employeeData)
+  let updateData = []
+
+  Object.entries(data).forEach((el) => {
+    let propiedad = el[0]
+    let valorNuevo = el[1]
+    let valorAnterior = employeeData[propiedad]
+
+    if (propiedad === 'id' || propiedad === 'id_empleado') return
+
+    if (valorNuevo !== valorAnterior) {
+      console.log(
+        propiedad,
+        valorNuevo,
+        valorAnterior,
+        'Se actualiza: ',
+        valorNuevo !== valorAnterior
+      )
+      updateData.push([Number(id), propiedad, valorNuevo])
+    }
+  })
+
+  let result = await updateRequestEmployeeData({ data: updateData })
 }
 
 function insertOptions({ input, data }) {

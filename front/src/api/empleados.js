@@ -18,6 +18,9 @@ const sendEmployeeUrl =
 const updateEmployeeUrl =
   '../../../../../sigob/back/modulo_nomina/nom_empleados_modif.php'
 
+const updateRequestEmployeeUrl =
+  '../../../../../sigob/back/modulo_nomina/nom_editar_solicitud.php'
+
 const getEmployeesUrl =
   '../../../../../sigob/back/modulo_nomina/nom_empleados_datos.php'
 
@@ -129,6 +132,55 @@ const updateEmployeeData = async ({ data }) => {
     const json = await res.text()
     console.log(json)
   } catch (e) {
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al enviar datos del empleado',
+    })
+  }
+}
+
+const updateRequestEmployeeData = async ({ data = [] }) => {
+  console.log(data)
+  try {
+    const res = await fetch(updateRequestEmployeeUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+    else {
+      console.log(res)
+      confirmNotification({
+        type: NOTIFICATIONS_TYPES.done,
+        message: 'Datos guardados',
+      })
+      // setTimeout(() => {
+      //   location.assign('nom_empleados_tabla.php')
+      // }, 1500)
+    }
+
+    const json = await res.json()
+
+    if (json.errores.length > 0) {
+      confirmNotification({
+        type: NOTIFICATIONS_TYPES.fail,
+        message: `Los siguientes datos ya están en revisión: ${json.errores.join(
+          ', '
+        )} Los demás se enviaron.`,
+      })
+    } else {
+      confirmNotification({
+        type: NOTIFICATIONS_TYPES.done,
+        message: `Solicitud de modificación enviada para su revisión`,
+      })
+    }
+
+    return json
+  } catch (e) {
+    console.error(e)
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
       message: 'Error al enviar datos del empleado',
@@ -273,6 +325,7 @@ export {
   getEmployeeData,
   sendEmployeeData,
   updateEmployeeData,
+  updateRequestEmployeeData,
   deleteEmployee,
   getJobData,
   getProfessionData,

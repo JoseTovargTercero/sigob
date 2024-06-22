@@ -183,7 +183,7 @@ require_once '../../back/sistema_global/session.php';
                                         <div class="row">
                                             <label class="form-label" for="id_dependencia">DEPENDENCIAS
                                                 LABORALES</label>
-                                            <div class="col-sm">
+                                            <div class="col-sm-9">
                                                 <select class="form-select employee-select" name="id_dependencia"
                                                     id="search-select-dependencias">
 
@@ -260,6 +260,8 @@ require_once '../../back/sistema_global/session.php';
 </body>
 
 <script type="module" src="../app.js"></script>
+<script src="../../src/assets/js/notificaciones.js"></script>
+
 <script src="https://cdn.datatables.net/2.0.1/js/dataTables.js"></script>
 <script src="https://cdn.datatables.net/2.0.1/js/dataTables.bootstrap5.js"></script>
 <script src="../../src/assets/js/plugins/simplebar.min.js"></script>

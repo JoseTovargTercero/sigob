@@ -94,6 +94,8 @@ let employeeTableRevision = new DataTable('#employee-table-revision', {
 
 const validateEmployeeTable = async () => {
   employeeTableVerificados.clear().draw()
+  employeeTableRevision.clear().draw()
+  employeeTableCorregir.clear().draw()
 
   let empleados = await getEmployeesData()
 
@@ -155,6 +157,15 @@ const validateEmployeeTable = async () => {
 }
 
 d.addEventListener('click', (e) => {
+  if (e.target.id === 'btn-employee-form') {
+    console.log('a')
+    validateModal({
+      e: e,
+      btnId: 'btn-employee-form',
+      modalId: 'modal-employee-form',
+    })
+  }
+
   if (e.target.classList.contains('btn-delete')) {
     let fila = e.target.closest('tr')
     e.target.dataset
@@ -240,7 +251,6 @@ function mostrarTabla(tablaId) {
     revisionId = 'employee-table-revision'
 
   if (tablaId === verificadosId) {
-    console.log('VERIFICADOS')
     d.getElementById(`${verificadosId}-container`).classList.add('d-block')
     d.getElementById(`${verificadosId}-container`).classList.remove('d-none')
     d.getElementById(`${corregirseId}-container`).classList.add('d-none')
@@ -248,8 +258,6 @@ function mostrarTabla(tablaId) {
     d.getElementById(`${revisionId}-container`).classList.add('d-none')
     d.getElementById(`${revisionId}-container`).classList.remove('d-block')
   } else if (tablaId === corregirseId) {
-    console.log('POR CORREGIR')
-
     d.getElementById(`${verificadosId}-container`).classList.add('d-none')
     d.getElementById(`${verificadosId}-container`).classList.remove('d-block')
     d.getElementById(`${corregirseId}-container`).classList.add('d-block')
@@ -257,8 +265,6 @@ function mostrarTabla(tablaId) {
     d.getElementById(`${revisionId}-container`).classList.add('d-none')
     d.getElementById(`${revisionId}-container`).classList.remove('d-block')
   } else if (tablaId === revisionId) {
-    console.log('REVISAAAR')
-
     d.getElementById(`${verificadosId}-container`).classList.add('d-none')
     d.getElementById(`${verificadosId}-container`).classList.remove('d-block')
     d.getElementById(`${corregirseId}-container`).classList.add('d-none')
