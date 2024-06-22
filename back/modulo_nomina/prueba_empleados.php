@@ -7,20 +7,24 @@ $url = 'http://localhost/sigob/back/modulo_nomina/nom_empleados_registro.php/';
 
 // Datos a enviar (el objeto JSON)
 $data = array(
-    "nacionalidad" => "V123456",
-    "cedula" => 123456789,
+    "nacionalidad" => "V",
+    "cedula" => '123456789',
     "nombres" => "Pedro Pablo",
+    "otros_años" => '0',
+    "status" => 'A',
+    "observacion" => NULL,
+    "cod_cargo" => "0041",
+    "banco" => "0102",
+    "cuenta_bancaria" => "01020457770100648138",
+    "hijos" => '3',
+    "instruccion_academica" => '1',
+    "discapacidades" => '0',
+    "tipo_nomina" => '003',
+    "id_dependencia" => '6',
+    "verificado" => '0',
+    "coreccion" => 'NULL',
+    "beca" => '0',
     "fecha_ingreso" => "2010/05/02",
-    "otros_años" => 0,
-    "status" => 1,
-    "observacion" => "N/A",
-    "banco" => "Venezuela",
-    "cuenta_bancaria" => "1002555541124",
-    "hijos" => 3,
-    "instruccion_academica" => 1,
-    "discapacidades" => 0,
-    "tipo_nomina" => 2,
-    "id_dependencia" => 6,
 );
 
 // Convertir el array a formato JSON
