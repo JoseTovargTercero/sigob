@@ -24,7 +24,6 @@ const w = window
 
 let employeeId
 
-console.log(location)
 function validateEmployeeForm({
   formElement,
   employeeInputClass,
@@ -47,7 +46,7 @@ function validateEmployeeForm({
   let employeeInputElementCopy = [...employeeInputElement]
   let employeeSelectElementCopy = [...employeeSelectElement]
 
-  const loadEmployeeData = async (id) => {
+  const loadEmployeeData = async (id = false) => {
     let cargos = await getJobData()
     let profesiones = await getProfessionData()
     let dependencias = await getDependencyData()
@@ -160,6 +159,7 @@ function validateEmployeeForm({
     }
 
     if (e.target.id === 'btn-employee-form-open') {
+      loadEmployeeData()
       openModal({ modalId: 'modal-employee-form' })
     }
     if (e.target.id === 'btn-employee-form-close') {
@@ -184,7 +184,8 @@ function validateEmployeeForm({
     }
 
     if (e.target === btnElement) {
-      if (fieldList.dependencia.length <= 0) delete fieldListErrors.dependencia
+      delete fieldList.dependencia
+      delete fieldListErrors.dependencia
 
       employeeSelectElementCopy.forEach((input) => {
         validateInput({
@@ -215,19 +216,31 @@ function validateEmployeeForm({
       }
       delete fieldList.correcion
 
+      // EDITAR EMPLEADO
+
       if (employeeId)
         return confirmNotification({
           type: NOTIFICATIONS_TYPES.send,
           successFunction: sendEmployeeInformationRequest,
           successFunctionParams: { data: fieldList },
+          othersFunctions: [closeEmployeeModal],
           message: 'Complete todo el formulario antes de avanzar',
         })
-      sendEmployeeInformationRequest({ data: fieldList })
 
-      // ENVÍO DE INFORMACIÓN
-      sendEmployeeData({ data: fieldList })
+      // REGISTRAR EMPLEADO
+      return confirmNotification({
+        type: NOTIFICATIONS_TYPES.send,
+        successFunction: sendEmployeeData,
+        successFunctionParams: { data: fieldList },
+        othersFunctions: [loadEmployeeData, closeEmployeeModal],
+        message: 'Complete todo el formulario antes de avanzar',
+      })
     }
   })
+}
+
+function closeEmployeeModal() {
+  closeModal({ modalId: 'modal-employee-form' })
 }
 
 async function sendEmployeeInformationRequest({ data }) {

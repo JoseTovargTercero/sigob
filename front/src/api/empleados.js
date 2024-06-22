@@ -91,9 +91,6 @@ const sendEmployeeData = async ({ data }) => {
         type: NOTIFICATIONS_TYPES.done,
         message: 'Datos guardados',
       })
-      setTimeout(() => {
-        location.assign('nom_empleados_tabla')
-      }, 1500)
     }
     const json = await res.text()
     console.log(json)
@@ -163,6 +160,7 @@ const updateRequestEmployeeData = async ({ data = [] }) => {
     }
 
     const json = await res.json()
+    console.log(json)
 
     if (json.errores.length > 0) {
       confirmNotification({

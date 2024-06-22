@@ -26,7 +26,7 @@ foreach ($data as $item) {
     // Verificar si existe una modificación pendiente
     $sql_check = "SELECT COUNT(*) FROM modificaciones_empleados WHERE empleado = ? AND campo = ?";
     $stmt_check = $conexion->prepare($sql_check);
-    
+
     if ($stmt_check === false) {
         die("Error en la preparación de la consulta de verificación: " . $conexion->error);
     }
@@ -41,7 +41,7 @@ foreach ($data as $item) {
         $stmt_insert->bind_param("iss", $empleado_id, $campo, $valor);
 
         // Ejecutar la consulta
-        if (!$stmt_insert->execute()) {p
+        if (!$stmt_insert->execute()) {
             echo "Error al insertar: " . $stmt_insert->error;
         }
     } else {

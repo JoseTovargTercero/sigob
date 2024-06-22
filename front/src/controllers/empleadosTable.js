@@ -46,7 +46,7 @@ let tableColumns = [
 
 function employeeFormButton() {
   let toolbar = document.createElement('div')
-  toolbar.innerHTML = `<button class="btn btn-primary" id="btn-employee-form-open">DESHABILITADO</button>`
+  toolbar.innerHTML = `<button class="btn btn-primary" id="btn-employee-form-open">REGISTRAR EMPLEADO</button>`
   return toolbar
 }
 
@@ -115,6 +115,7 @@ const validateEmployeeTable = async () => {
         nomina: empleado.tipo_nomina,
         acciones: `
       <button class="btn btn-info btn-sm btn-view" data-id="${empleado.id_empleado}"><i class="bx bx-detail me-1"></i>Detalles</button>
+      <button class="btn btn-warning btn-sm btn-edit" data-id="${empleado.id_empleado}"><i class="bx bx-edit me-1"></i>Editar</button>
       <button class="btn btn-danger btn-sm btn-delete" data-id="${empleado.id_empleado}" data-table="corregir"><i class="bx bx-trash me-1"></i>Eliminar</button>`,
       })
     }
