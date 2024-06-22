@@ -18,6 +18,7 @@ import {
   validateModal,
 } from '../helpers/helpers.js'
 import { ALERT_TYPES, NOTIFICATIONS_TYPES } from '../helpers/types.js'
+import { validateEmployeeTable } from './empleadosTable.js'
 
 const d = document
 const w = window
@@ -60,8 +61,6 @@ function validateEmployeeForm({
     if (id) {
       let employeeData = await getEmployeeData(id)
 
-      console.log(employeeData)
-
       employeeSelectElementCopy.forEach((select) => {
         select.value = employeeData[0][select.name]
       })
@@ -74,7 +73,7 @@ function validateEmployeeForm({
       employeeId = employeeData[0].id_empleado
 
       fieldList = employeeData[0]
-      console.log(fieldList, fieldListErrors)
+      // console.log(fieldList, fieldListErrors)
 
       if (employeeData[0].verificado === 2) {
         formElement.insertAdjacentHTML(
@@ -164,7 +163,7 @@ function validateEmployeeForm({
     }
     if (e.target.id === 'btn-employee-form-close') {
       closeModal({ modalId: 'modal-employee-form' })
-      loadEmployeeData(false)
+      formElement.reset()
     }
 
     if (e.target === btnAddElement) {
@@ -223,7 +222,12 @@ function validateEmployeeForm({
           type: NOTIFICATIONS_TYPES.send,
           successFunction: sendEmployeeInformationRequest,
           successFunctionParams: { data: fieldList },
-          othersFunctions: [closeEmployeeModal],
+          othersFunctions: [
+            closeEmployeeModal,
+            function () {
+              validateEmployeeTable()
+            },
+          ],
           message: 'Complete todo el formulario antes de avanzar',
         })
 
@@ -232,7 +236,13 @@ function validateEmployeeForm({
         type: NOTIFICATIONS_TYPES.send,
         successFunction: sendEmployeeData,
         successFunctionParams: { data: fieldList },
-        othersFunctions: [loadEmployeeData, closeEmployeeModal],
+        othersFunctions: [
+          loadEmployeeData,
+          closeEmployeeModal,
+          function () {
+            validateEmployeeTable()
+          },
+        ],
         message: 'Complete todo el formulario antes de avanzar',
       })
     }

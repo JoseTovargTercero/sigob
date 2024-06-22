@@ -1,4 +1,8 @@
-import { confirmNotification } from '../helpers/helpers.js'
+import {
+  confirmNotification,
+  hideLoader,
+  showLoader,
+} from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 
 const cargosUrl = '../../../../../sigob/back/modulo_nomina/nom_cargos_info.php'
@@ -42,6 +46,7 @@ const mapData = ({ obj, name, id }) => {
 // const mapEmployee = ({ obj, name, id }) => {}
 
 const getEmployeesData = async () => {
+  showLoader()
   try {
     const res = await fetch(getEmployeesUrl)
 
@@ -54,6 +59,8 @@ const getEmployeesData = async () => {
       type: NOTIFICATIONS_TYPES.fail,
       message: 'Error al obtener empleados',
     })
+  } finally {
+    hideLoader()
   }
 }
 
@@ -215,6 +222,7 @@ const deleteEmployee = async (id) => {
 }
 
 const getJobData = async () => {
+  showLoader()
   try {
     const res = await fetch(cargosUrl)
 
@@ -227,10 +235,13 @@ const getJobData = async () => {
       type: NOTIFICATIONS_TYPES.fail,
       message: 'Error al obtener cargos',
     })
+  } finally {
+    hideLoader()
   }
 }
 
 const getProfessionData = async () => {
+  showLoader()
   try {
     const res = await fetch(profesionesUrl)
 
@@ -243,10 +254,13 @@ const getProfessionData = async () => {
       type: NOTIFICATIONS_TYPES.fail,
       message: 'Error al obtener profesiones',
     })
+  } finally {
+    hideLoader()
   }
 }
 
 const getDependencyData = async () => {
+  showLoader()
   try {
     const res = await fetch(dependenciasUrl)
 
@@ -260,10 +274,13 @@ const getDependencyData = async () => {
       type: NOTIFICATIONS_TYPES.fail,
       message: 'Error al obtener dependencias',
     })
+  } finally {
+    hideLoader()
   }
 }
 
 const getBankData = async () => {
+  showLoader()
   try {
     const res = await fetch(bancosUrl)
 
@@ -277,6 +294,8 @@ const getBankData = async () => {
       type: NOTIFICATIONS_TYPES.fail,
       message: 'Error al obtener bancos',
     })
+  } finally {
+    hideLoader()
   }
 }
 

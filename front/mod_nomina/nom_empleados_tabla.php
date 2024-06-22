@@ -177,9 +177,6 @@ require_once '../../back/sistema_global/session.php';
 
                   <div class="col-sm" tabindex="0">
                     <label class="form-label" for="cargo">CARGO AL QUE OPTA</label>
-                    <!-- <input class="employee-input form-control select-search-input" type="text" name="cargo"
-                            placeholder="Buscar cargo..." id="cargo" /> -->
-
                     <select class="form-select employee-select" name="cod_cargo" id="search-select-cargo">
                       <option value="" selected>ELEGIR...</option>
                     </select>
@@ -205,6 +202,16 @@ require_once '../../back/sistema_global/session.php';
                       placeholder="CANTIDAD DE HIJOS...">
                   </div>
                   <div class="col-sm">
+                    <label class="form-label" for="">Becas cursadas</label>
+                    <input class="employee-input form-control " type="number" name="beca"
+                      placeholder="CANTIDAD DE BECAS...">
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <div class="row">
+                  <div class="col-sm-2">
                     <label class="form-label" for="discapacidades">DISCAPACIDAD</label>
                     <select name="discapacidades" class="form-select employee-select" id="discapacidades">
                       <option value="" selected>ELEGIR...</option>
@@ -213,12 +220,7 @@ require_once '../../back/sistema_global/session.php';
                     </select>
                   </div>
 
-                </div>
-              </div>
-
-              <div class="form-group">
-                <div class="row">
-                  <div class="col-sm">
+                  <div class="col-sm-3">
                     <label class="form-label" for="banco">BANCO</label>
                     <select name="banco" class="form-select employee-select" id="search-select-bancos">
                       <option value="" selected>ELEGIR...</option>

@@ -77,6 +77,7 @@ d.addEventListener('DOMContentLoaded', (e) => {
         fecha_ingreso: '',
         otros_años: 0,
         hijos: 0,
+        beca: 0,
         discapacidades: '',
         banco: '',
         cuenta_bancaria: '',
@@ -84,9 +85,9 @@ d.addEventListener('DOMContentLoaded', (e) => {
         id_dependencia: '',
         dependencia: '',
         tipo_nomina: 0,
-        observacion: '',
         cod_empleado: '441151',
         correcion: 0,
+        observacion: '',
       },
       fieldListErrors: {
         nombres: {
@@ -134,9 +135,9 @@ d.addEventListener('DOMContentLoaded', (e) => {
           message: 'Introducir cantidad o "0"',
           type: 'number2',
         },
-        discapacidades: {
+        beca: {
           value: true,
-          message: 'Elija una opción',
+          message: 'Introducir cantidad o "0"',
           type: 'number2',
         },
         banco: {
@@ -148,6 +149,11 @@ d.addEventListener('DOMContentLoaded', (e) => {
           value: true,
           message: 'Introducir N° de cuenta válido',
           type: 'cuenta_bancaria',
+        },
+        discapacidades: {
+          value: true,
+          message: 'Elija una opción',
+          type: 'number2',
         },
         // tipo_cuenta: {
         //   value: true,

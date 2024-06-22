@@ -62,10 +62,7 @@ const getNominas = async (grupo) => {
 }
 
 const getPeticionesNomina = async () => {
-  let loader = document.getElementById('select-request-loader')
-  if (loader) {
-    showLoader('select-request-loader')
-  }
+  showLoader()
 
   try {
     let res = await fetch(obtenerPeticionesNominaUrl)
@@ -90,17 +87,12 @@ const getPeticionesNomina = async () => {
       message: 'Error al obtener nominas',
     })
   } finally {
-    if (loader) {
-      hideLoader('select-request-loader')
-    }
+    hideLoader()
   }
 }
 
 const getRegConPeticionesNomina = async () => {
-  let loader = document.getElementById('select-request-loader')
-  if (loader) {
-    showLoader('select-request-loader')
-  }
+  showLoader()
 
   try {
     let res = await fetch(regConObtenerPeticionesNominaUrl)
@@ -125,9 +117,7 @@ const getRegConPeticionesNomina = async () => {
       message: 'Error al obtener nominas',
     })
   } finally {
-    if (loader) {
-      hideLoader('select-request-loader')
-    }
+    hideLoader()
   }
 }
 
@@ -135,7 +125,7 @@ const getComparacionNomina = async (obj) => {
   if (!obj) return
   let { correlativo, nombre_nomina } = obj
 
-  showLoader('request-comparation-loader')
+  showLoader()
   try {
     let res = await fetch(comparacionNominaUrl, {
       method: 'POST',
@@ -162,13 +152,13 @@ const getComparacionNomina = async (obj) => {
       message: 'Error al obtener peticiones',
     })
   } finally {
-    hideLoader('request-comparation-loader')
+    hideLoader()
   }
 }
 
 const calculoNomina = async (data) => {
   console.log(data)
-  showLoader('employee-pay-loader')
+  showLoader()
   try {
     let res = await fetch(calculoNominaUrl, {
       method: 'POST',
@@ -187,7 +177,7 @@ const calculoNomina = async (data) => {
       message: 'Error al obtener nominas',
     })
   } finally {
-    hideLoader('employee-pay-loader')
+    hideLoader()
   }
 }
 
@@ -271,10 +261,7 @@ const confirmarPeticionNomina = async (correlativo) => {
 // }
 
 const generarNominaTxt = async ({ correlativo, identificador }) => {
-  let loader = document.getElementById('pay-nom-loader')
-  if (loader) {
-    showLoader('pay-nom-loader')
-  }
+  showLoader()
 
   try {
     let res = await fetch(creacionNominasTxtUrl, {
@@ -292,9 +279,7 @@ const generarNominaTxt = async ({ correlativo, identificador }) => {
       message: 'Error al generar documentos',
     })
   } finally {
-    if (loader) {
-      hideLoader('pay-nom-loader')
-    }
+    hideLoader()
   }
 }
 const descargarNominaTxt = async ({ correlativo, frecuencia }) => {

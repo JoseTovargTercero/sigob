@@ -89,14 +89,13 @@ let employeeTableRevision = new DataTable('#employee-table-revision', {
   columns: tableColumns,
 })
 
-const validateEmployeeTable = async () => {
+export const validateEmployeeTable = async () => {
   employeeTableVerificados.clear().draw()
   employeeTableRevision.clear().draw()
   employeeTableCorregir.clear().draw()
 
   let empleados = await getEmployeesData()
 
-  console.log(empleados)
   let empleadosOrdenados = [...empleados].sort(
     (a, b) => b.id_empleado - a.id_empleado
   )
