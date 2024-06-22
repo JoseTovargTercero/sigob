@@ -1,6 +1,11 @@
 import { deleteEmployee, getEmployeesData } from '../api/empleados.js'
 import { employeeCard } from '../components/nom_empleado_card.js'
-import { confirmNotification, validateModal } from '../helpers/helpers.js'
+import {
+  closeModal,
+  confirmNotification,
+  openModal,
+  validateModal,
+} from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 
 const d = document
@@ -38,17 +43,19 @@ let tableColumns = [
   { data: 'nomina' },
   { data: 'acciones' },
 ]
+
+function employeeFormButton() {
+  let toolbar = document.createElement('div')
+  toolbar.innerHTML = `<button class="btn btn-primary" id="btn-employee-form-open">DESHABILITADO</button>`
+  return toolbar
+}
+
 let employeeTableVerificados = new DataTable('#employee-table-verificados', {
   responsive: true,
   scrollY: 300,
   language: tableLanguage,
   layout: {
-    topEnd: function () {
-      let toolbar = document.createElement('div')
-      toolbar.innerHTML = `<a class="btn btn-primary"
-      href="nom_empleados_registrar">Registrar Personal</a>`
-      return toolbar
-    },
+    topEnd: employeeFormButton,
     topStart: { search: { placeholder: 'Buscar...' } },
     bottomStart: 'info',
     bottomEnd: 'paging',
@@ -61,12 +68,7 @@ let employeeTableCorregir = new DataTable('#employee-table-corregir', {
   scrollY: 300,
   language: tableLanguage,
   layout: {
-    topEnd: function () {
-      let toolbar = document.createElement('div')
-      toolbar.innerHTML = `<a class="btn btn-primary"
-      href="nom_empleados_registrar">Registrar Personal</a>`
-      return toolbar
-    },
+    topEnd: employeeFormButton,
     topStart: { search: { placeholder: 'Buscar...' } },
     bottomStart: 'info',
     bottomEnd: 'paging',
@@ -79,12 +81,7 @@ let employeeTableRevision = new DataTable('#employee-table-revision', {
   scrollY: 300,
   language: tableLanguage,
   layout: {
-    topEnd: function () {
-      let toolbar = document.createElement('div')
-      toolbar.innerHTML = `<a class="btn btn-primary"
-      href="nom_empleados_registrar">Registrar Personal</a>`
-      return toolbar
-    },
+    topEnd: employeeFormButton,
     topStart: { search: { placeholder: 'Buscar...' } },
     bottomStart: 'info',
     bottomEnd: 'paging',
@@ -157,15 +154,6 @@ const validateEmployeeTable = async () => {
 }
 
 d.addEventListener('click', (e) => {
-  if (e.target.id === 'btn-employee-form') {
-    console.log('a')
-    validateModal({
-      e: e,
-      btnId: 'btn-employee-form',
-      modalId: 'modal-employee-form',
-    })
-  }
-
   if (e.target.classList.contains('btn-delete')) {
     let fila = e.target.closest('tr')
     e.target.dataset
@@ -174,10 +162,6 @@ d.addEventListener('click', (e) => {
       row: fila,
       table: e.target.dataset.table,
     })
-  }
-
-  if (e.target.classList.contains('btn-edit')) {
-    w.location.assign(`nom_empleados_registrar.php?id=${e.target.dataset.id}`)
   }
 
   if (e.target.classList.contains('btn-view')) {

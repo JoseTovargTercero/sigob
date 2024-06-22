@@ -285,8 +285,8 @@ require_once '../../back/sistema_global/session.php';
 
           </div>
           <div class="modal-box-footer card-footer d-flex align-items-center justify-content-center gap-2 py-0">
-            <button class="btn btn-primary " id="tabulator-btn">GUARDAR</button>
-            <button class="btn btn-danger " id="btn-employee-form">CERRAR</button>
+            <button class="btn btn-primary " id="btn-employee-save">GUARDAR</button>
+            <button class="btn btn-danger " id="btn-employee-form-close">CERRAR</button>
           </div>
         </div>
 

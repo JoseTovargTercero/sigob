@@ -13,6 +13,7 @@ import { nomCorrectionAlert } from '../components/nom_correcion_alert.js'
 import {
   closeModal,
   confirmNotification,
+  openModal,
   validateInput,
   validateModal,
 } from '../helpers/helpers.js'
@@ -20,8 +21,10 @@ import { ALERT_TYPES, NOTIFICATIONS_TYPES } from '../helpers/types.js'
 
 const d = document
 const w = window
-const urlParameters = new URLSearchParams(w.location.search)
-const id = urlParameters.get('id')
+
+let employeeId
+
+console.log(location)
 function validateEmployeeForm({
   formElement,
   employeeInputClass,
@@ -44,7 +47,7 @@ function validateEmployeeForm({
   let employeeInputElementCopy = [...employeeInputElement]
   let employeeSelectElementCopy = [...employeeSelectElement]
 
-  const loadEmployeeData = async () => {
+  const loadEmployeeData = async (id) => {
     let cargos = await getJobData()
     let profesiones = await getProfessionData()
     let dependencias = await getDependencyData()
@@ -69,6 +72,7 @@ function validateEmployeeForm({
       })
 
       employeeData[0].id = employeeData[0].id_empleado
+      employeeId = employeeData[0].id_empleado
 
       fieldList = employeeData[0]
       console.log(fieldList, fieldListErrors)
@@ -82,10 +86,16 @@ function validateEmployeeForm({
           })
         )
       }
+    } else {
+      employeeSelectElementCopy.forEach((select) => {
+        select.value = ''
+      })
+
+      employeeInputElementCopy.forEach((input) => {
+        input.value = ''
+      })
     }
   }
-
-  loadEmployeeData()
 
   formElement.addEventListener('submit', (e) => e.preventDefault())
 
@@ -144,6 +154,19 @@ function validateEmployeeForm({
   // })
 
   d.addEventListener('click', (e) => {
+    if (e.target.classList.contains('btn-edit')) {
+      loadEmployeeData(e.target.dataset.id)
+      openModal({ modalId: 'modal-employee-form' })
+    }
+
+    if (e.target.id === 'btn-employee-form-open') {
+      openModal({ modalId: 'modal-employee-form' })
+    }
+    if (e.target.id === 'btn-employee-form-close') {
+      closeModal({ modalId: 'modal-employee-form' })
+      loadEmployeeData(false)
+    }
+
     if (e.target === btnAddElement) {
       validateModal({
         e: e,
@@ -182,6 +205,8 @@ function validateEmployeeForm({
           })
       })
 
+      console.log(fieldList, fieldListErrors)
+
       if (Object.values(fieldListErrors).some((el) => el.value)) {
         return confirmNotification({
           type: NOTIFICATIONS_TYPES.fail,
@@ -190,7 +215,7 @@ function validateEmployeeForm({
       }
       delete fieldList.correcion
 
-      if (id)
+      if (employeeId)
         return confirmNotification({
           type: NOTIFICATIONS_TYPES.send,
           successFunction: sendEmployeeInformationRequest,
@@ -206,7 +231,7 @@ function validateEmployeeForm({
 }
 
 async function sendEmployeeInformationRequest({ data }) {
-  let employeeDataRequest = await getEmployeeData(id),
+  let employeeDataRequest = await getEmployeeData(employeeId),
     employeeData = employeeDataRequest[0]
 
   console.log(employeeData)
@@ -227,7 +252,7 @@ async function sendEmployeeInformationRequest({ data }) {
         'Se actualiza: ',
         valorNuevo !== valorAnterior
       )
-      updateData.push([Number(id), propiedad, valorNuevo])
+      updateData.push([Number(employeeId), propiedad, valorNuevo])
     }
   })
 

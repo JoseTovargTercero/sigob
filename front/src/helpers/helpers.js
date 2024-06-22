@@ -327,28 +327,23 @@ function validateModal({ e, btnId, modalId }) {
 
 function closeModal({ modalId }) {
   const modalElement = d.getElementById(modalId)
-
-  if (modalElement.classList.contains('hide')) {
-    modalElement.classList.remove('hide')
-  } else {
-    modalElement.classList.add('hide')
-  }
+  modalElement.classList.add('hide')
 }
 
 function openModal({ modalId }) {
   const modalElement = d.getElementById(modalId)
-  modalElement.classList.add('hide')
+  modalElement.classList.remove('hide')
 }
 
 // FUNCIÓNES PARA LOADERS
 
 function showLoader(loaderId) {
-  let loader = d.getElementById(loaderId)
+  let loader = d.getElementById('cargando')
   loader.style.display = 'grid'
   loader.focus()
 }
 function hideLoader(loaderId) {
-  let loader = d.getElementById(loaderId)
+  let loader = d.getElementById('cargando')
   loader.style.display = 'none'
 }
 
