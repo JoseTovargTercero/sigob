@@ -11,13 +11,14 @@ if (!$data) {
 }
 
 // Verificar si el array contiene los datos necesarios
-if (!isset($data['nombre_nomina']) || !isset($data['empleados']) || !isset($data['total_pagar']) || !isset($data['suma_asignaciones']) || !isset($data['suma_deducciones']) || !isset($data['suma_aportes'])) {
+if (!isset($data['nombre_nomina']) || !isset($data['empleados']) || !isset($data['total_pagar']) || !isset($data['suma_asignaciones']) || !isset($data['suma_deducciones']) || !isset($data['suma_aportes']) || !isset($data['identificador'])) {
     echo json_encode(array('error' => 'Faltan datos en el JSON recibido.'));
     exit();
 }
 
 // Obtener la frecuencia de la nómina desde la tabla nominas
 $nombre_nomina = $data['nombre_nomina'];
+$identificador = $data['identificador'];
 $query_frecuencia = "SELECT frecuencia FROM nominas WHERE nombre = ?";
 $stmt_frecuencia = $conexion->prepare($query_frecuencia);
 
@@ -66,18 +67,12 @@ for ($i = 0; $i < count($data['empleados']); $i++) {
     // Verificar la frecuencia y dividir el total a pagar si es necesario
     switch ($frecuencia) {
         case 1:
-            $pago_individual = $total_a_pagar / 4; // Dividir en 4 pagos
-            for ($j = 1; $j <= 4; $j++) {
-                $identificador = "s$j";
+                $pago_individual = $total_a_pagar; // Dividir en 4 pagos
                 registrarPago($conexion, $id_empleado, round($pago_individual, 2), $data['nombre_nomina'], $identificador, $mes_anio_actual, $correlativo_formateado);
-            }
             break;
         case 2:
-            $pago_individual = $total_a_pagar / 2; // Dividir en 2 pagos
-            for ($j = 1; $j <= 2; $j++) {
-                $identificador = "q$j";
+                $pago_individual = $total_a_pagar; // Dividir en 2 pagos
                 registrarPago($conexion, $id_empleado, round($pago_individual, 2), $data['nombre_nomina'], $identificador, $mes_anio_actual, $correlativo_formateado);
-            }
             break;
         case 3:
         case 4:

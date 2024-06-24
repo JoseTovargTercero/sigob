@@ -6,13 +6,51 @@ $response = file_get_contents($url);
 $data = json_decode($response, true);
 $precio_dolar = $data['conversion_rate'];
 
-function calculoSalarioBase($conexion, $empleado, $nombre) {
+function calculoSalarioBase($conexion, $empleado, $nombre, $identificador) {
     // Consulta SQL con LEFT JOIN
+    if ($identificador == "s1") {
     $sql = "SELECT empleados.*, cargos_grados.grado,
-            TIMESTAMPDIFF(YEAR, empleados.fecha_ingreso, CURDATE()) + empleados.otros_años AS antiguedad
-            FROM empleados
-            LEFT JOIN cargos_grados ON empleados.cod_cargo = cargos_grados.cod_cargo
-            WHERE empleados.id = ?";
+        TIMESTAMPDIFF(YEAR, empleados.fecha_ingreso, CURDATE()) + empleados.otros_años AS antiguedad
+    FROM empleados
+    LEFT JOIN cargos_grados ON empleados.cod_cargo = cargos_grados.cod_cargo
+    WHERE empleados.id = ?";
+} elseif ($identificador == "s2") {
+    $sql = "SELECT empleados.*, cargos_grados.grado,
+        TIMESTAMPDIFF(YEAR, empleados.fecha_ingreso, DATE_ADD(CURDATE(), INTERVAL 14 DAY)) + empleados.otros_años AS antiguedad
+    FROM empleados
+    LEFT JOIN cargos_grados ON empleados.cod_cargo = cargos_grados.cod_cargo
+    WHERE empleados.id = ?";
+} elseif ($identificador == "s3") {
+   $sql = "SELECT empleados.*, cargos_grados.grado,
+        TIMESTAMPDIFF(YEAR, empleados.fecha_ingreso, DATE_ADD(CURDATE(), INTERVAL 21 DAY)) + empleados.otros_años AS antiguedad
+    FROM empleados
+    LEFT JOIN cargos_grados ON empleados.cod_cargo = cargos_grados.cod_cargo
+    WHERE empleados.id = ?";
+} elseif ($identificador == "s4") {
+    $sql = "SELECT empleados.*, cargos_grados.grado,
+        TIMESTAMPDIFF(YEAR, empleados.fecha_ingreso, DATE_ADD(CURDATE(), INTERVAL 28 DAY)) + empleados.otros_años AS antiguedad
+    FROM empleados
+    LEFT JOIN cargos_grados ON empleados.cod_cargo = cargos_grados.cod_cargo
+    WHERE empleados.id = ?";
+}elseif ($identificador == "q1") {
+    $sql = "SELECT empleados.*, cargos_grados.grado,
+        TIMESTAMPDIFF(YEAR, empleados.fecha_ingreso, DATE_ADD(CURDATE(), INTERVAL 15 DAY)) + empleados.otros_años AS antiguedad
+    FROM empleados
+    LEFT JOIN cargos_grados ON empleados.cod_cargo = cargos_grados.cod_cargo
+    WHERE empleados.id = ?";
+}elseif ($identificador == "q2") {
+    $sql = "SELECT empleados.*, cargos_grados.grado,
+        TIMESTAMPDIFF(YEAR, empleados.fecha_ingreso, DATE_ADD(CURDATE(), INTERVAL 30 DAY)) + empleados.otros_años AS antiguedad
+    FROM empleados
+    LEFT JOIN cargos_grados ON empleados.cod_cargo = cargos_grados.cod_cargo
+    WHERE empleados.id = ?";
+}else{
+    $sql = "SELECT empleados.*, cargos_grados.grado,
+        TIMESTAMPDIFF(YEAR, empleados.fecha_ingreso, CURDATE()) + empleados.otros_años AS antiguedad
+    FROM empleados
+    LEFT JOIN cargos_grados ON empleados.cod_cargo = cargos_grados.cod_cargo
+    WHERE empleados.id = ?";
+}
 
     $stmt = $conexion->prepare($sql);
     $stmt->bind_param("i", $empleado['id']);
@@ -59,7 +97,7 @@ function calculoSalarioBase($conexion, $empleado, $nombre) {
             $tabulador = $rowTabulador["tabulador"];
 
             // Obtener el monto correspondiente a este empleado usando el tabulador
-            $monto = obtenerMonto($conexion, $row["grado"], $paso, $tabulador);
+            $monto = obtenerMonto($conexion, $row["grado"], $paso, $tabulador, $identificador);
 
             return $monto;
         } else {
@@ -71,7 +109,7 @@ function calculoSalarioBase($conexion, $empleado, $nombre) {
 }
 
 // Función para obtener el monto del salario base
-function obtenerMonto($conexion, $grado, $paso, $tabulador) {
+function obtenerMonto($conexion, $grado, $paso, $tabulador, $identificador) {
     // Consulta SQL para obtener el monto
     $grado = "G" . $grado; // Agregar el prefijo 'G' al grado
     $paso = "P" . $paso;   // Agregar el prefijo 'P' al paso
@@ -94,14 +132,24 @@ function obtenerMonto($conexion, $grado, $paso, $tabulador) {
 
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
-        return $row["monto"];
+        if ($identificador == "s1" OR $identificador == "s2" OR $identificador == "s3" OR $identificador == "s4") {
+            $monto2 = $row["monto"];
+            $monto = round($monto2*0.25,2);
+        }elseif ($identificador == "q1" OR $identificador == "q2") {
+            $monto2 = $row["monto"];
+            $monto = round($monto2*0.50,2);
+        }else{
+            $monto = $row["monto"];
+        }
+        
+        return $monto;
     } else {
         return "No disponible";
     }
 }
 
 // Función para obtener el valor de un concepto según su tipo de cálculo
-function obtenerValorConcepto($conexion, $nom_concepto, $salarioBase, $precio_dolar, $salarioIntegral, $ids_empleados) {
+function obtenerValorConcepto($conexion, $nom_concepto, $salarioBase, $precio_dolar, $salarioIntegral, $ids_empleados, $identificador) {
 
 
 
@@ -114,7 +162,15 @@ function obtenerValorConcepto($conexion, $nom_concepto, $salarioBase, $precio_do
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
         $tipo_calculo = $row["tipo_calculo"];
-        $valor = $row["valor"];
+        if ($identificador == "s1" OR $identificador == "s2" OR $identificador == "s3" OR $identificador == "s4") {
+            $valor2 = $row["valor"];
+            $valor = round($valor2*0.25,2);
+        }elseif ($identificador == "q1" OR $identificador == "q2") {
+            $valor2 = $row["valor"];
+            $valor = round($valor2*0.50,2);
+        }else{
+            $valor = $row["valor"];
+        }
 
         // Calcular valor según el tipo de cálculo
         switch ($tipo_calculo) {
@@ -250,7 +306,7 @@ function obtenerValorConcepto($conexion, $nom_concepto, $salarioBase, $precio_do
 
                         if ($result_concepto->num_rows > 0) {
                             $row_concepto = $result_concepto->fetch_assoc();
-                            $valor_concepto = obtenerValorConcepto($conexion, $row_concepto['nom_concepto'], $salarioBase, $precio_dolar, $salarioIntegral, 0);
+                            $valor_concepto = obtenerValorConcepto($conexion, $row_concepto['nom_concepto'], $salarioBase, $precio_dolar, $salarioIntegral, 0, $identificador);
                             $total_valor += $valor_concepto;
                         }
                     }
@@ -308,6 +364,8 @@ if (!isset($data['nombre'])) {
 }
 
 $nombre = $data['nombre'];
+$identificador = $data['identificador'];
+
 
 // Consultar la tabla 'conceptos_aplicados' para obtener los registros con el mismo nombre_nomina
 $queryConceptos = "
@@ -365,7 +423,7 @@ $suma_aportes = array();
 $total_a_pagar = 0;
 
 // Función para obtener los datos de un empleado por su ID
-function obtenerEmpleadoPorID($conexion, $id_empleado) {
+function obtenerEmpleadoPorID($conexion, $id_empleado, $identificador) {
     $queryEmpleado = "SELECT * FROM empleados WHERE id = ?";
     $stmtEmpleado = $conexion->prepare($queryEmpleado);
 
@@ -404,11 +462,11 @@ foreach ($conceptos_aplicados as &$concepto) {
         // Verificar si este empleado ya ha sido agregado
         if (!isset($empleados_unicos[$id_empleado])) {
             // Obtener los datos del empleado por su ID
-            $empleado = obtenerEmpleadoPorID($conexion, $id_empleado);
+            $empleado = obtenerEmpleadoPorID($conexion, $id_empleado,$identificador);
 
             if ($empleado) {
                 // Calcular el salario base del empleado
-                $empleado['salario_base'] = calculoSalarioBase($conexion, $empleado,$nombre);
+                $empleado['salario_base'] = calculoSalarioBase($conexion, $empleado,$nombre, $identificador);
 
                 // Inicializar el salario integral con el salario base
                 $empleado['salario_integral'] = $empleado['salario_base'];
@@ -422,7 +480,7 @@ foreach ($conceptos_aplicados as &$concepto) {
         $tipo_concepto = $concepto['tipo_concepto'];
 
         // Calcular el valor del concepto para este empleado
-        $valor_concepto = obtenerValorConcepto($conexion, $concepto['nom_concepto'], $empleados_unicos[$id_empleado]['salario_base'], $precio_dolar, $empleados_unicos[$id_empleado]['salario_integral'], array($id_empleado));
+        $valor_concepto = obtenerValorConcepto($conexion, $concepto['nom_concepto'], $empleados_unicos[$id_empleado]['salario_base'], $precio_dolar, $empleados_unicos[$id_empleado]['salario_integral'], array($id_empleado), $identificador);
 
         // Agregar el valor del concepto al array del empleado
         $empleados_unicos[$id_empleado][$concepto['nom_concepto']] = $valor_concepto;
@@ -471,7 +529,7 @@ foreach ($empleados_unicos as &$empleado) {
             $total_a_pagar_empleado += $empleado[$nom_concepto];
         } else {
             // Calcular el valor de la asignación si no está previamente calculado
-            $valorAsignacion = obtenerValorConcepto($conexion, $nom_concepto, $empleado['salario_base'], $precio_dolar, $empleado['salario_integral'], array($empleado['id']));
+            $valorAsignacion = obtenerValorConcepto($conexion, $nom_concepto, $empleado['salario_base'], $precio_dolar, $empleado['salario_integral'], array($empleado['id']), $identificador);
             $total_a_pagar_empleado += $valorAsignacion;
         }
     }
@@ -483,7 +541,7 @@ foreach ($empleados_unicos as &$empleado) {
             $total_a_pagar_empleado -= $empleado[$nom_concepto];
         } else {
             // Calcular el valor de la deducción si no está previamente calculado
-            $valorDeduccion = obtenerValorConcepto($conexion, $nom_concepto, $empleado['salario_base'], $precio_dolar, $empleado['salario_integral'], array($empleado['id']));
+            $valorDeduccion = obtenerValorConcepto($conexion, $nom_concepto, $empleado['salario_base'], $precio_dolar, $empleado['salario_integral'], array($empleado['id']), $identificador);
             $total_a_pagar_empleado -= $valorDeduccion;
         }
     }
@@ -495,7 +553,7 @@ foreach ($empleados_unicos as &$empleado) {
             $total_a_pagar_empleado -= $empleado[$nom_concepto];
         } else {
             // Calcular el valor de la deducción si no está previamente calculado
-            $valorAporte = obtenerValorConcepto($conexion, $nom_concepto, $empleado['salario_base'], $precio_dolar, $empleado['salario_integral'], array($empleado['id']));
+            $valorAporte = obtenerValorConcepto($conexion, $nom_concepto, $empleado['salario_base'], $precio_dolar, $empleado['salario_integral'], array($empleado['id']),$identificador);
             $total_a_pagar_empleado -= $valorAporte;
         }
     }
@@ -526,6 +584,8 @@ $response = array(
     'suma_asignaciones' => $suma_asignaciones,
     'suma_deducciones' => $suma_deducciones,
     'suma_aportes' => $suma_aportes,
+    'identificador' => $identificador,
+
 );
 
  
