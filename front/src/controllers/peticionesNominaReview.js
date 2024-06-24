@@ -72,6 +72,7 @@ export async function validateRequestNomForm({
         (el) => el.correlativo === fieldList['select-nomina']
       )
       fieldList.frecuencia = result.frecuencia
+      fieldList.identificador = result.identificador
       console.log(fieldList)
       if (comparationContainer) comparationContainer.remove()
 
@@ -126,7 +127,7 @@ export async function validateRequestNomForm({
     generarNomina = FRECUENCY_TYPES[fieldList.frecuencia].map((el) =>
       generarNominaTxt({
         correlativo: fieldList['select-nomina'],
-        identificador: el,
+        identificador: fieldList.identificador,
       })
     )
 

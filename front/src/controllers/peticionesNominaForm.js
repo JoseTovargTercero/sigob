@@ -8,7 +8,7 @@ import {
 import { nomReportCard } from '../components/nom_report_card.js'
 import { tableListCard } from '../components/tabla_lista_card.js'
 import { confirmNotification, validateInput } from '../helpers/helpers.js'
-import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
+import { FRECUENCY_TYPES, NOTIFICATIONS_TYPES } from '../helpers/types.js'
 import { createTable, employeePayTableHTML } from './peticionesNominaTable.js'
 import { loadRequestTable } from './peticionesTable.js'
 
@@ -42,6 +42,8 @@ let fieldListErrors = {
 
 let requestInfo
 
+let nominaList
+
 export function validateEmployeePayForm({
   selectIdNomina,
   selectIdGrupo,
@@ -69,6 +71,7 @@ export function validateEmployeePayForm({
     })
 
     let nominas = await getNominas(e.target.value)
+    nominaList = nominas
 
     selectNomina.innerHTML = ''
     let employeePayTableCard = d.getElementById('request-employee-table-card')
@@ -77,8 +80,8 @@ export function validateEmployeePayForm({
 
     if (nominas.length > 0)
       nominas.forEach((nomina) => {
-        let option = `<option value="${nomina}">${
-          nomina || 'Grupo de nómina vacío'
+        let option = `<option value="${nomina.nombre}">${
+          nomina.nombre || 'Grupo de nómina vacío'
         }</option>`
         selectNomina.insertAdjacentHTML('beforeend', option)
       })
@@ -93,16 +96,51 @@ export function validateEmployeePayForm({
     if (!e.target.value) return
     fieldList.nomina = e.target.value
 
-    selectFrecuencia.insertAdjacentHTML(
-      'beforeend',
-      `<option value="s1">Semana 1</option>
-    <option value="s2">Semana 2</option>
-    <option value="s3">Semana 3</option>
-    <option value="s4">Semana 4</option>
-    <option value="q1">Quincena 1</option>
-    <option value="q2">Quincena 2</option>
-    <option value="unico">Mensual</option>`
-    )
+    fieldList.frecuencia = nominaList.find(
+      (nomina) => nomina.nombre === e.target.value
+    ).frecuencia
+
+    console.log(fieldList.frecuencia)
+
+    selectFrecuencia.innerHTML = ''
+
+    let identificadorOpciones = ''
+
+    switch (fieldList.frecuencia) {
+      case '1':
+        FRECUENCY_TYPES[fieldList.frecuencia].forEach(
+          (identificadorNomina, index) => {
+            identificadorOpciones += `<option value='${identificadorNomina}'>Semana ${
+              index + 1
+            }</option>`
+          }
+        )
+        break
+      case '2':
+        FRECUENCY_TYPES[fieldList.frecuencia].forEach(
+          (identificadorNomina, index) => {
+            identificadorOpciones += `<option value='${identificadorNomina}'>Quincena ${
+              index + 1
+            }</option>`
+          }
+        )
+        break
+      case '3':
+        FRECUENCY_TYPES[fieldList.frecuencia].forEach((identificadorNomina) => {
+          identificadorOpciones += `<option value='${identificadorNomina}'>Mensual</option>`
+        })
+        break
+      case '4':
+        FRECUENCY_TYPES[fieldList.frecuencia].forEach((identificadorNomina) => {
+          identificadorOpciones += `<option value='${identificadorNomina}'>Mensual</option>`
+        })
+        break
+
+      default:
+        break
+    }
+
+    selectFrecuencia.insertAdjacentHTML('beforeend', identificadorOpciones)
   })
 
   selectFrecuencia.addEventListener('change', async (e) => {
