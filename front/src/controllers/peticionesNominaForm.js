@@ -45,6 +45,7 @@ let requestInfo
 export function validateEmployeePayForm({
   selectIdNomina,
   selectIdGrupo,
+  selectIdFrecuencia,
   requestSelectContainerId,
   showRequestGroupBtnId,
   formId,
@@ -54,6 +55,7 @@ export function validateEmployeePayForm({
 
   let selectGrupo = d.getElementById(selectIdGrupo)
   let selectNomina = d.getElementById(selectIdNomina)
+  let selectFrecuencia = d.getElementById(selectIdFrecuencia)
   let requestSelectContainer = d.getElementById(requestSelectContainerId)
   let showRequestGroupBtn = d.getElementById(showRequestGroupBtnId)
   let employeePayForm = d.getElementById(formId)
@@ -86,10 +88,41 @@ export function validateEmployeePayForm({
         `<option value="">Grupo de nómina vacío</option>`
       )
   })
+
   selectNomina.addEventListener('change', async (e) => {
     if (!e.target.value) return
-    let nomina = await calculoNomina(e.target.value)
-    console.log(nomina)
+    fieldList.nomina = e.target.value
+
+    selectFrecuencia.insertAdjacentHTML(
+      'beforeend',
+      `<option value="s1">Semana 1</option>
+    <option value="s2">Semana 2</option>
+    <option value="s3">Semana 3</option>
+    <option value="s4">Semana 4</option>
+    <option value="q1">Quincena 1</option>
+    <option value="q2">Quincena 2</option>
+    <option value="unico">Mensual</option>`
+    )
+  })
+
+  selectFrecuencia.addEventListener('change', async (e) => {
+    if (!fieldList.nomina)
+      return confirmNotification({
+        type: NOTIFICATIONS_TYPES.fail,
+        message: 'Elija una nomina.',
+      })
+
+    if (!fieldList.grupo)
+      return confirmNotification({
+        type: NOTIFICATIONS_TYPES.fail,
+        message: 'Elija un grupo de nomina.',
+      })
+
+    let nomina = await calculoNomina({
+      nombre: fieldList.nomina,
+      identificador: e.target.value,
+    })
+
     requestInfo = nomina
 
     selectGrupo.value = ''
@@ -156,5 +189,6 @@ export function validateEmployeePayForm({
     if (employeePayTableCard) employeePayTableCard.remove()
     selectNomina.value = ''
     selectGrupo.value = ''
+    selectFrecuencia.innerHTML = `<option value="">Seleccionar una nómina</option>`
   }
 }

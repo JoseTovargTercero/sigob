@@ -1,4 +1,5 @@
 import { validateEmployeeForm } from './src/controllers/empleadosForm.js'
+import { validateEmployeeTable } from './src/controllers/empleadosTable.js'
 // import { validatePayNomForm } from './src/controllers/pagarNominaForm.js'
 import { validateEmployeePayForm } from './src/controllers/peticionesNominaForm.js'
 import { validateRequestNomForm } from './src/controllers/peticionesNominaReview.js'
@@ -59,6 +60,7 @@ d.addEventListener('DOMContentLoaded', (e) => {
   }
 
   if (employeeForm) {
+    validateEmployeeTable()
     validateEmployeeForm({
       formElement: employeeForm,
       employeeInputClass: 'employee-input',
@@ -188,6 +190,7 @@ d.addEventListener('DOMContentLoaded', (e) => {
     validateEmployeePayForm({
       selectIdNomina: 'nomina',
       selectIdGrupo: 'grupo',
+      selectIdFrecuencia: 'frecuencia',
       requestSelectContainerId: 'request-employee-container',
       showRequestGroupBtnId: 'show-request-group',
       formId: 'request-form',

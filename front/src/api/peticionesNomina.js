@@ -156,13 +156,12 @@ const getComparacionNomina = async (obj) => {
   }
 }
 
-const calculoNomina = async (data) => {
-  console.log(data)
+const calculoNomina = async ({ nombre, identificador }) => {
   showLoader()
   try {
     let res = await fetch(calculoNominaUrl, {
       method: 'POST',
-      body: JSON.stringify({ nombre: data }),
+      body: JSON.stringify({ nombre: nombre, identificador }),
     })
 
     let json = await res.json()
@@ -182,6 +181,7 @@ const calculoNomina = async (data) => {
 }
 
 const enviarCalculoNomina = async (requestInfo) => {
+  showLoader()
   try {
     let res = await fetch(enviarCalculoNominaUrl, {
       method: 'POST',
@@ -189,6 +189,8 @@ const enviarCalculoNomina = async (requestInfo) => {
     })
 
     let json = await res.json()
+
+    hideLoader()
 
     await confirmNotification({
       type: NOTIFICATIONS_TYPES.done,
@@ -203,6 +205,7 @@ const enviarCalculoNomina = async (requestInfo) => {
     })
 
     return false
+  } finally {
   }
 }
 

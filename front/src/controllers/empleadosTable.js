@@ -257,5 +257,3 @@ function mostrarTabla(tablaId) {
     d.getElementById(`${revisionId}-container`).classList.remove('d-none')
   }
 }
-
-validateEmployeeTable()

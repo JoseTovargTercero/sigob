@@ -61,6 +61,18 @@ function validateEmployeeForm({
     if (id) {
       let employeeData = await getEmployeeData(id)
 
+      if (employeeData[0].verificado === 2) {
+        let correcionElement = d.getElementById('employee-correcion')
+        if (correcionElement) correcionElement.remove()
+        formElement.insertAdjacentHTML(
+          'beforebegin',
+          nomCorrectionAlert({
+            message: employeeData[0].correcion,
+            type: ALERT_TYPES.warning,
+          })
+        )
+      }
+
       employeeSelectElementCopy.forEach((select) => {
         select.value = employeeData[0][select.name]
         validateInput({
@@ -85,17 +97,7 @@ function validateEmployeeForm({
       employeeId = employeeData[0].id_empleado
 
       fieldList = employeeData[0]
-      // console.log(fieldList, fieldListErrors)
-
-      if (employeeData[0].verificado === 2) {
-        formElement.insertAdjacentHTML(
-          'beforebegin',
-          nomCorrectionAlert({
-            message: employeeData[0].correcion,
-            type: ALERT_TYPES.warning,
-          })
-        )
-      }
+      console.log(fieldList, fieldListErrors)
     } else {
       validateInput({
         type: 'reset',

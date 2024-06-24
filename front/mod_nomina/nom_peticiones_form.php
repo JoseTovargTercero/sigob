@@ -102,6 +102,16 @@ require_once '../../back/sistema_global/session.php';
                                         <option value="">Seleccionar grupo de nómina</option>
                                     </select>
                                 </div>
+
+                                <div class="mb-2 w-100">
+                                    <label for="frecuencia" class="form-label">Frecuencia</label>
+                                    <small class="text-muted mt-0 d-block mb-2">Seleccione la frecuencia</small>
+                                    <select id="frecuencia" name="frecuencia" class="form-control" size="3">
+                                        <option value="">Seleccionar una nómina</option>
+
+
+                                    </select>
+                                </div>
                             </div>
 
 
