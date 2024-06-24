@@ -33,31 +33,11 @@ $stmt_emp->close();
 
 
 // Construir la consulta SQL para actualizar datos
-$sql = "UPDATE empleados SET nacionalidad = ?, cedula = ?, nombres = ?, fecha_ingreso = ?, otros_años = ?, status = ?, observacion = ?, cod_cargo = ?, banco = ?, cuenta_bancaria = ?, hijos = ?, instruccion_academica = ?, discapacidades = ?, tipo_nomina = ?, id_dependencia = ?, verificado='$verificado' WHERE id = ?";
+$sql = "UPDATE empleados SET  verificado='0' WHERE id = ?";
 
 // Preparar la declaración SQL
 $stmt = $conexion->prepare($sql);
 
-// Vincular parámetros y ejecutar la consulta
-$stmt->bind_param(
-    "ssssissssssiiiis", 
-    $data["nacionalidad"], 
-    $data["cedula"], 
-    $data["nombres"], 
-    $data["fecha_ingreso"], 
-    $data["otros_años"], 
-    $data["status"], 
-    $data["observacion"], 
-    $data["cod_cargo"], 
-    $data["banco"], 
-    $data["cuenta_bancaria"], 
-    $data["hijos"], 
-    $data["instruccion_academica"], 
-    $data["discapacidades"], 
-    $data["tipo_nomina"], 
-    $data["id_dependencia"], 
-    $data["id"]
-);
 
 // Ejecutar la consulta preparada
 if ($stmt->execute()) {
