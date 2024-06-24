@@ -1,6 +1,5 @@
 <?php
 require_once '../sistema_global/conexion.php';
-require_once '../sistema_global/session.php';
 
 if (isset($_POST["select"])) {
     $data = array();
@@ -12,10 +11,14 @@ if (isset($_POST["select"])) {
     $result = $stmt->get_result();
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
-            $data[] = $row['nombre'];
+            $data[] = array(
+                'nombre' => $row['nombre'],
+                'frecuencia' => $row['frecuencia']
+            );
         }
     }
     $stmt->close();
 
     echo json_encode($data);
 }
+?>
