@@ -150,25 +150,27 @@ function obtenerMonto($conexion, $grado, $paso, $tabulador, $identificador) {
 
 // Función para obtener el valor de un concepto según su tipo de cálculo
 function obtenerValorConcepto($conexion, $nom_concepto, $salarioBase, $precio_dolar, $salarioIntegral, $ids_empleados, $identificador) {
+    $sql = "SELECT c.tipo_calculo, c.valor
+            FROM conceptos c
+            JOIN conceptos_aplicados ca ON c.nom_concepto = ca.nom_concepto
+            WHERE c.nom_concepto = ?
+            AND JSON_CONTAINS(ca.fecha_aplicar, JSON_QUOTE(?))";
 
-
-
-    $sql = "SELECT tipo_calculo, valor FROM conceptos WHERE nom_concepto = ?";
     $stmt = $conexion->prepare($sql);
-    $stmt->bind_param("s", $nom_concepto);
+    $stmt->bind_param("ss", $nom_concepto, $identificador); // Agregamos el identificador como segundo parámetro
     $stmt->execute();
     $result = $stmt->get_result();
 
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
         $tipo_calculo = $row["tipo_calculo"];
-        if ($identificador == "s1" OR $identificador == "s2" OR $identificador == "s3" OR $identificador == "s4") {
-            $valor2 = $row["valor"];
-            $valor = round($valor2*0.25,2);
-        }elseif ($identificador == "q1" OR $identificador == "q2") {
-            $valor2 = $row["valor"];
-            $valor = round($valor2*0.50,2);
-        }else{
+        $valor2 = $row["valor"];
+        
+        if ($identificador == "s1" || $identificador == "s2" || $identificador == "s3" || $identificador == "s4") {
+            $valor = round($valor2 * 0.25, 2);
+        } elseif ($identificador == "q1" || $identificador == "q2") {
+            $valor = round($valor2 * 0.50, 2);
+        } else {
             $valor = $row["valor"];
         }
 
@@ -214,7 +216,7 @@ function obtenerValorConcepto($conexion, $nom_concepto, $salarioBase, $precio_do
 
                         if ($result_concepto->num_rows > 0) {
                             $row_concepto = $result_concepto->fetch_assoc();
-                            $valor_concepto = obtenerValorConcepto($conexion, $row_concepto['nom_concepto'], $salarioBase, $precio_dolar, $salarioIntegral, 0);
+                            $valor_concepto = obtenerValorConcepto($conexion, $row_concepto['nom_concepto'], $salarioBase, $precio_dolar, $salarioIntegral, $ids_empleados, $identificador);
                             $total_valor += $valor_concepto;
                         }
                     }
@@ -230,63 +232,9 @@ function obtenerValorConcepto($conexion, $nom_concepto, $salarioBase, $precio_do
                     echo "No se encontraron conceptos adicionales.";
                     return 0;
                 }
-          case 6:
-    // Obtener el ID del concepto
-    $sql_conceptos = "SELECT id FROM conceptos WHERE nom_concepto = ?";
-    $stmt_conceptos = $conexion->prepare($sql_conceptos);
-    $stmt_conceptos->bind_param("s", $nom_concepto);
-    $stmt_conceptos->execute();
-    $result_conceptos = $stmt_conceptos->get_result();
-
-    if ($result_conceptos->num_rows > 0) {
-        $row_conceptos = $result_conceptos->fetch_assoc();
-        $concepto_id = $row_conceptos['id'];
-
-        // Consultar en conceptos_formulacion usando el concepto_id
-        $sql_concepto_formulacion = "SELECT condicion, tipo_calculo, valor FROM conceptos_formulacion WHERE concepto_id = ?";
-        $stmt_concepto_formulacion = $conexion->prepare($sql_concepto_formulacion);
-        $stmt_concepto_formulacion->bind_param("i", $concepto_id);
-        $stmt_concepto_formulacion->execute();
-        $result_concepto_formulacion = $stmt_concepto_formulacion->get_result();
-
-        if ($result_concepto_formulacion->num_rows > 0) {
-            $row_concepto_formulacion = $result_concepto_formulacion->fetch_assoc();
-            $condicion = $row_concepto_formulacion['condicion']; // Se define aquí la variable $condicion
-            $tipo_calculo = $row_concepto_formulacion['tipo_calculo'];
-            $valor = $row_concepto_formulacion['valor'];
-
-            // Consultar en la tabla empleados con la condición proporcionada
-            foreach ($ids_empleados as $id_empleado) { // Iterar sobre cada ID de empleado
-                $sql_empleado = "SELECT id FROM empleados WHERE id = ? AND $condicion"; // Modificar la consulta para incluir la condición
-                $stmt_empleado = $conexion->prepare($sql_empleado);
-                $stmt_empleado->bind_param("i", $id_empleado);
-                $stmt_empleado->execute();
-                $result_empleado = $stmt_empleado->get_result();
-
-                if ($result_empleado->num_rows > 0) {
-                    // Si el empleado cumple con la condición, proceder con el cálculo
-                    switch ($tipo_calculo) {
-                        case 1:
-                            return $valor;
-                        case 2:
-                            return round($precio_dolar * $valor, 2);
-                        case 3:
-                            if ($valor < 100) {
-                                return round($salarioBase * ($valor / 100), 2);
-                            } else {
-                                echo "El valor del porcentaje no es válido.";
-                                return 0;
-                            }
-                        case 4:
-                            if ($valor < 100) {
-                                return round($salarioIntegral * ($valor / 100), 2);
-                            } else {
-                                echo "El valor del porcentaje no es válido.";
-                                return 0;
-                            }
-                        case 5:
-                // Verificar conceptos adicionales en n_conceptos
-                $sql_conceptos = "SELECT n_conceptos FROM conceptos_aplicados WHERE nom_concepto = ?";
+            case 6:
+                // Obtener el ID del concepto
+                $sql_conceptos = "SELECT id FROM conceptos WHERE nom_concepto = ?";
                 $stmt_conceptos = $conexion->prepare($sql_conceptos);
                 $stmt_conceptos->bind_param("s", $nom_concepto);
                 $stmt_conceptos->execute();
@@ -294,64 +242,114 @@ function obtenerValorConcepto($conexion, $nom_concepto, $salarioBase, $precio_do
 
                 if ($result_conceptos->num_rows > 0) {
                     $row_conceptos = $result_conceptos->fetch_assoc();
-                    $n_conceptos = json_decode($row_conceptos['n_conceptos'], true);
-                    $total_valor = 0;
+                    $concepto_id = $row_conceptos['id'];
 
-                    foreach ($n_conceptos as $concepto_id) {
-                        $sql_concepto = "SELECT nom_concepto, tipo_calculo, valor FROM conceptos WHERE id = ?";
-                        $stmt_concepto = $conexion->prepare($sql_concepto);
-                        $stmt_concepto->bind_param("i", $concepto_id);
-                        $stmt_concepto->execute();
-                        $result_concepto = $stmt_concepto->get_result();
+                    // Consultar en conceptos_formulacion usando el concepto_id
+                    $sql_concepto_formulacion = "SELECT condicion, tipo_calculo, valor FROM conceptos_formulacion WHERE concepto_id = ?";
+                    $stmt_concepto_formulacion = $conexion->prepare($sql_concepto_formulacion);
+                    $stmt_concepto_formulacion->bind_param("i", $concepto_id);
+                    $stmt_concepto_formulacion->execute();
+                    $result_concepto_formulacion = $stmt_concepto_formulacion->get_result();
 
-                        if ($result_concepto->num_rows > 0) {
-                            $row_concepto = $result_concepto->fetch_assoc();
-                            $valor_concepto = obtenerValorConcepto($conexion, $row_concepto['nom_concepto'], $salarioBase, $precio_dolar, $salarioIntegral, 0, $identificador);
-                            $total_valor += $valor_concepto;
+                    if ($result_concepto_formulacion->num_rows > 0) {
+                        $row_concepto_formulacion = $result_concepto_formulacion->fetch_assoc();
+                        $condicion = $row_concepto_formulacion['condicion']; // Se define aquí la variable $condicion
+                        $tipo_calculo = $row_concepto_formulacion['tipo_calculo'];
+                        $valor = $row_concepto_formulacion['valor'];
+
+                        // Consultar en la tabla empleados con la condición proporcionada
+                        foreach ($ids_empleados as $id_empleado) { // Iterar sobre cada ID de empleado
+                            $sql_empleado = "SELECT id FROM empleados WHERE id = ? AND $condicion"; // Modificar la consulta para incluir la condición
+                            $stmt_empleado = $conexion->prepare($sql_empleado);
+                            $stmt_empleado->bind_param("i", $id_empleado);
+                            $stmt_empleado->execute();
+                            $result_empleado = $stmt_empleado->get_result();
+
+                            if ($result_empleado->num_rows > 0) {
+                                // Si el empleado cumple con la condición, proceder con el cálculo
+                                switch ($tipo_calculo) {
+                                    case 1:
+                                        return $valor;
+                                    case 2:
+                                        return round($precio_dolar * $valor, 2);
+                                    case 3:
+                                        if ($valor < 100) {
+                                            return round($salarioBase * ($valor / 100), 2);
+                                        } else {
+                                            echo "El valor del porcentaje no es válido.";
+                                            return 0;
+                                        }
+                                    case 4:
+                                        if ($valor < 100) {
+                                            return round($salarioIntegral * ($valor / 100), 2);
+                                        } else {
+                                            echo "El valor del porcentaje no es válido.";
+                                            return 0;
+                                        }
+                                    case 5:
+                                        // Verificar conceptos adicionales en n_conceptos
+                                        $sql_conceptos = "SELECT n_conceptos FROM conceptos_aplicados WHERE nom_concepto = ?";
+                                        $stmt_conceptos = $conexion->prepare($sql_conceptos);
+                                        $stmt_conceptos->bind_param("s", $nom_concepto);
+                                        $stmt_conceptos->execute();
+                                        $result_conceptos = $stmt_conceptos->get_result();
+
+                                        if ($result_conceptos->num_rows > 0) {
+                                            $row_conceptos = $result_conceptos->fetch_assoc();
+                                            $n_conceptos = json_decode($row_conceptos['n_conceptos'], true);
+                                            $total_valor = 0;
+
+                                            foreach ($n_conceptos as $concepto_id) {
+                                                $sql_concepto = "SELECT nom_concepto, tipo_calculo, valor FROM conceptos WHERE id = ?";
+                                                $stmt_concepto = $conexion->prepare($sql_concepto);
+                                                $stmt_concepto->bind_param("i", $concepto_id);
+                                                $stmt_concepto->execute();
+                                                $result_concepto = $stmt_concepto->get_result();
+
+                                                if ($result_concepto->num_rows > 0) {
+                                                    $row_concepto = $result_concepto->fetch_assoc();
+                                                    $valor_concepto = obtenerValorConcepto($conexion, $row_concepto['nom_concepto'], $salarioBase, $precio_dolar, $salarioIntegral, $ids_empleados, $identificador);
+                                                    $total_valor += $valor_concepto;
+                                                }
+                                            }
+
+                                            // Calcular el porcentaje del valor total
+                                            if ($valor < 100) {
+                                                return round($total_valor * ($valor / 100), 2);
+                                            } else {
+                                                echo "El valor del porcentaje no es válido.";
+                                                return 0;
+                                            }
+                                        } else {
+                                            echo "No se encontraron conceptos adicionales.";
+                                            return 0;
+                                        }
+                                    default:
+                                        echo "Tipo de cálculo no reconocido.";
+                                        return 0;
+                                }
+                            }
                         }
-                    }
-
-                    // Calcular el porcentaje del valor total
-                    if ($valor < 100) {
-                        return round($total_valor * ($valor / 100), 2);
+                        return 0;
                     } else {
-                        echo "El valor del porcentaje no es válido.";
+                        echo "No se encontraron datos en conceptos_formulacion.";
                         return 0;
                     }
                 } else {
-                    echo "No se encontraron conceptos adicionales.";
+                    echo "No se encontró el concepto.";
                     return 0;
                 }
-                        default:
-                            echo "Tipo de cálculo no reconocido.";
-                            return 0;
-                    }
-                }
-            }
-            return 0;
-        } else {
-            echo "No se encontraron datos en conceptos_formulacion.";
-            return 0;
-        }
-    } else {
-        echo "No se encontró el concepto.";
-        return 0;
-    }
-
-
-
-
-
-
             default:
                 echo "Tipo de cálculo no reconocido.";
                 return 0;
         }
     } else {
-        echo "No se encontró el concepto.";
+        // No hacer nada si no se encontró el identificador en fecha_aplicar
         return 0;
     }
 }
+
+// El resto del código permanece igual...
 
 // Obtener el contenido JSON enviado en la solicitud POST
 $json = file_get_contents('php://input');
@@ -365,7 +363,6 @@ if (!isset($data['nombre'])) {
 
 $nombre = $data['nombre'];
 $identificador = $data['identificador'];
-
 
 // Consultar la tabla 'conceptos_aplicados' para obtener los registros con el mismo nombre_nomina
 $queryConceptos = "
@@ -421,6 +418,7 @@ $suma_aportes = array();
 
 // Variable para almacenar el total a pagar
 $total_a_pagar = 0;
+
 
 // Función para obtener los datos de un empleado por su ID
 function obtenerEmpleadoPorID($conexion, $id_empleado, $identificador) {
