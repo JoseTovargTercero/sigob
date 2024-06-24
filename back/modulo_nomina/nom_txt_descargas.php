@@ -5,86 +5,23 @@ require_once '../../vendor/autoload.php'; // Ajusta la ruta según la ubicación
 use Mpdf\Mpdf;
 
 $correlativo = $_POST['correlativo'];
-$frecuencia = $_POST['frecuencia'];
+$identificador = $_POST['identificador'];
 
-// Lista de archivos de texto a incluir en el ZIP
-if ($frecuencia == 1) {
-    $txt_files = [
-        "tesoro_{$correlativo}_s1.txt",
-        "tesoro_{$correlativo}_s2.txt",
-        "tesoro_{$correlativo}_s3.txt",
-        "tesoro_{$correlativo}_s4.txt",
-        "venezuela_{$correlativo}_s1.txt",
-        "venezuela_{$correlativo}_s2.txt",
-        "venezuela_{$correlativo}_s3.txt",
-        "venezuela_{$correlativo}_s4.txt",
-        "bicentenario_{$correlativo}_s1.txt",
-        "bicentenario_{$correlativo}_s2.txt",
-        "bicentenario_{$correlativo}_s3.txt",
-        "bicentenario_{$correlativo}_s4.txt",
-        "caroni_{$correlativo}_s1.txt",
-        "caroni_{$correlativo}_s2.txt",
-        "caroni_{$correlativo}_s3.txt",
-        "caroni_{$correlativo}_s4.txt",
-    ];
-} elseif ($frecuencia == 2) {
-    $txt_files = [
-        "tesoro_{$correlativo}_q1.txt",
-        "tesoro_{$correlativo}_q2.txt",
-        "venezuela_{$correlativo}_q1.txt",
-        "venezuela_{$correlativo}_q2.txt",
-        "bicentenario_{$correlativo}_q1.txt",
-        "bicentenario_{$correlativo}_q2.txt",
-        "caroni_{$correlativo}_q1.txt",
-        "caroni_{$correlativo}_q2.txt",
-    ];
-} elseif ($frecuencia == 3 || $frecuencia == 4) {
-    $txt_files = [
-        "tesoro_{$correlativo}_unico.txt",
-        "venezuela_{$correlativo}_unico.txt",
-        "bicentenario_{$correlativo}_unico.txt",
-        "caroni_{$correlativo}_unico.txt",
-    ];
-}
 
-if ($frecuencia == 1) {
-    $pdf_files = [
-        "http://localhost/sigob/back/modulo_nomina/venezuela_pdf.php?correlativo=$correlativo&identificador=s1" => "relacion_de_banco_venezuela_s1.pdf",
-        "http://localhost/sigob/back/modulo_nomina/venezuela_pdf.php?correlativo=$correlativo&identificador=s2" => "relacion_de_banco_venezuela_s2.pdf",
-        "http://localhost/sigob/back/modulo_nomina/venezuela_pdf.php?correlativo=$correlativo&identificador=s3" => "relacion_de_banco_venezuela_s3.pdf",
-        "http://localhost/sigob/back/modulo_nomina/venezuela_pdf.php?correlativo=$correlativo&identificador=s4" => "relacion_de_banco_venezuela_s4.pdf",
-        "http://localhost/sigob/back/modulo_nomina/tesoro_pdf.php?correlativo=$correlativo&identificador=s1" => "relacion_de_banco_tesoro_s1.pdf",
-        "http://localhost/sigob/back/modulo_nomina/tesoro_pdf.php?correlativo=$correlativo&identificador=s2" => "relacion_de_banco_tesoro_s2.pdf",
-        "http://localhost/sigob/back/modulo_nomina/tesoro_pdf.php?correlativo=$correlativo&identificador=s3" => "relacion_de_banco_tesoro_s3.pdf",
-        "http://localhost/sigob/back/modulo_nomina/tesoro_pdf.php?correlativo=$correlativo&identificador=s4" => "relacion_de_banco_tesoro_s4.pdf",
-        "http://localhost/sigob/back/modulo_nomina/bicentenario_pdf.php?correlativo=$correlativo&identificador=s1" => "relacion_de_banco_bicentenario_s1.pdf",
-        "http://localhost/sigob/back/modulo_nomina/bicentenario_pdf.php?correlativo=$correlativo&identificador=s2" => "relacion_de_banco_bicentenario_s2.pdf",
-        "http://localhost/sigob/back/modulo_nomina/bicentenario_pdf.php?correlativo=$correlativo&identificador=s3" => "relacion_de_banco_bicentenario_s3.pdf",
-        "http://localhost/sigob/back/modulo_nomina/bicentenario_pdf.php?correlativo=$correlativo&identificador=s4" => "relacion_de_banco_bicentenario_s4.pdf",
-        "http://localhost/sigob/back/modulo_nomina/caroni_pdf.php?correlativo=$correlativo&identificador=s1" => "relacion_de_banco_caroni_s1.pdf",
-        "http://localhost/sigob/back/modulo_nomina/caroni_pdf.php?correlativo=$correlativo&identificador=s2" => "relacion_de_banco_caroni_s2.pdf",
-        "http://localhost/sigob/back/modulo_nomina/caroni_pdf.php?correlativo=$correlativo&identificador=s3" => "relacion_de_banco_caroni_s3.pdf",
-        "http://localhost/sigob/back/modulo_nomina/caroni_pdf.php?correlativo=$correlativo&identificador=s4" => "relacion_de_banco_caroni_s4.pdf",
+    $txt_files = [
+        "tesoro_{$correlativo}_{$identificador}.txt",
+        "venezuela_{$correlativo}_{$identificador}.txt",
+        "bicentenario_{$correlativo}_{$identificador}.txt",
+        "caroni_{$correlativo}_{$identificador}.txt",
     ];
-} elseif ($frecuencia == 2) {
+
     $pdf_files = [
-        "http://localhost/sigob/back/modulo_nomina/venezuela_pdf.php?correlativo=$correlativo&identificador=q1" => "relacion_de_banco_venezuela_q1.pdf",
-        "http://localhost/sigob/back/modulo_nomina/venezuela_pdf.php?correlativo=$correlativo&identificador=q2" => "relacion_de_banco_venezuela_q2.pdf",
-        "http://localhost/sigob/back/modulo_nomina/tesoro_pdf.php?correlativo=$correlativo&identificador=q1" => "relacion_de_banco_tesoro_q1.pdf",
-        "http://localhost/sigob/back/modulo_nomina/tesoro_pdf.php?correlativo=$correlativo&identificador=q2" => "relacion_de_banco_tesoro_q2.pdf",
-        "http://localhost/sigob/back/modulo_nomina/bicentenario_pdf.php?correlativo=$correlativo&identificador=q1" => "relacion_de_banco_bicentenario_q1.pdf",
-        "http://localhost/sigob/back/modulo_nomina/bicentenario_pdf.php?correlativo=$correlativo&identificador=q2" => "relacion_de_banco_bicentenario_q2.pdf",
-        "http://localhost/sigob/back/modulo_nomina/caroni_pdf.php?correlativo=$correlativo&identificador=q1" => "relacion_de_banco_caroni_q1.pdf",
-        "http://localhost/sigob/back/modulo_nomina/caroni_pdf.php?correlativo=$correlativo&identificador=q2" => "relacion_de_banco_caroni_q2.pdf",
+        "http://localhost/sigob/back/modulo_nomina/venezuela_pdf.php?correlativo=$correlativo&identificador=$identificador" => "relacion_de_banco_venezuela_{$identificador}.pdf",
+        "http://localhost/sigob/back/modulo_nomina/tesoro_pdf.php?correlativo=$correlativo&identificador=$identificador" => "relacion_de_banco_tesoro_{$identificador}.pdf",
+        "http://localhost/sigob/back/modulo_nomina/bicentenario_pdf.php?correlativo=$correlativo&identificador=$identificador" => "relacion_de_banco_bicentenario_{$identificador}.pdf",
+        "http://localhost/sigob/back/modulo_nomina/caroni_pdf.php?correlativo=$correlativo&identificador=$identificador" => "relacion_de_banco_caroni_{$identificador}.pdf",
     ];
-} elseif ($frecuencia == 3 || $frecuencia == 4) {
-    $pdf_files = [
-        "http://localhost/sigob/back/modulo_nomina/venezuela_pdf.php?correlativo=$correlativo&identificador=unico" => "relacion_de_banco_venezuela_unico.pdf",
-        "http://localhost/sigob/back/modulo_nomina/tesoro_pdf.php?correlativo=$correlativo&identificador=unico" => "relacion_de_banco_tesoro_unico.pdf",
-        "http://localhost/sigob/back/modulo_nomina/bicentenario_pdf.php?correlativo=$correlativo&identificador=unico" => "relacion_de_banco_bicentenario_unico.pdf",
-        "http://localhost/sigob/back/modulo_nomina/caroni_pdf.php?correlativo=$correlativo&identificador=unico" => "relacion_de_banco_caroni_unico.pdf",
-    ];
-}
+
 // Array con los URLs de los archivos PDF que quieres generar
 
 
