@@ -94,7 +94,7 @@ $total_pagar_json = json_encode($data['total_pagar']);
 $status = "0";
 $creacion = Date('Y-m-d');
 
-$sql_peticiones = "INSERT INTO peticiones (empleados, asignaciones, deducciones, aportes, total_pagar, correlativo, status, nombre_nomina, creacion) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+$sql_peticiones = "INSERT INTO peticiones (empleados, asignaciones, deducciones, aportes, total_pagar, correlativo, status, nombre_nomina, creacion, identificador) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 $stmt_peticiones = $conexion->prepare($sql_peticiones);
 
 if (!$stmt_peticiones) {
@@ -102,7 +102,7 @@ if (!$stmt_peticiones) {
     exit();
 }
 
-$stmt_peticiones->bind_param("sssssssss", $empleados_json, $suma_asignaciones_json, $suma_deducciones_json, $suma_aportes_json, $total_pagar_json, $correlativo_formateado, $status, $nombre_nomina, $creacion);
+$stmt_peticiones->bind_param("ssssssssss", $empleados_json, $suma_asignaciones_json, $suma_deducciones_json, $suma_aportes_json, $total_pagar_json, $correlativo_formateado, $status, $nombre_nomina, $creacion, $identificador);
 $stmt_peticiones->execute();
 
 if ($stmt_peticiones->affected_rows === 0) {
