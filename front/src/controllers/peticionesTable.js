@@ -35,6 +35,7 @@ let requestTable = new DataTable('#request-nom-table', {
     { data: 'correlativo' },
     { data: 'nombre' },
     { data: 'status' },
+    { data: 'identificador' },
     { data: 'fecha' },
     { data: 'acciones' },
   ],
@@ -66,6 +67,7 @@ export async function loadRequestTable() {
       correlativo: peticion.correlativo,
       nombre: peticion.nombre_nomina,
       status: Number(peticion.status) === 1 ? 'Revisado' : 'Pendiente',
+      identificador: validarIdentificador(peticion.identificador),
       fecha: peticion.creacion,
       acciones: `
       <button class="btn btn-primary btn-sm" data-correlativo="${
@@ -83,6 +85,15 @@ export async function loadRequestTable() {
   requestTable.rows.add(data).draw()
 }
 
+function validarIdentificador(identificador) {
+  if (identificador.startsWith('s')) return `Semana ${identificador.charAt(1)}`
+  if (identificador.startsWith('q'))
+    return `Quincena ${identificador.charAt(1)}`
+  if (identificador === 'unico') return `Mensual`
+  if (identificador === 'um') return `Mensual`
+
+  return identificador
+}
 // `
 // <button class="btn btn-primary btn-sm" data-correlativo="${
 //   peticion.correlativo

@@ -67,6 +67,7 @@ require_once '../../back/sistema_global/session.php';
                                         <th class="w-5">CORRELATIVO</th>
                                         <th class="w-10">NOMBRE</th>
                                         <th class="w-10">STATUS</th>
+                                        <th class="w-10">IDENTIFICADOR</th>
                                         <th class="w-5">FECHA</th>
                                         <th class="w-5">ACCIONES</th>
                                     </thead>
