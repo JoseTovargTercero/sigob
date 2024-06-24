@@ -285,11 +285,11 @@ const generarNominaTxt = async ({ correlativo, identificador }) => {
     hideLoader()
   }
 }
-const descargarNominaTxt = async ({ correlativo, frecuencia }) => {
+const descargarNominaTxt = async ({ correlativo, identificador }) => {
   let loader = document.getElementById('cargando')
   let data = new FormData()
   data.append('correlativo', correlativo)
-  data.append('frecuencia', frecuencia)
+  data.append('identificador', identificador)
   if (loader) {
     showLoader('cargando')
   }

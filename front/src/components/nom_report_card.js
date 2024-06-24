@@ -26,7 +26,10 @@ export const nomReportCard = ({ data }) => {
   let totalEmpleados = data.empleados.length
   let fechaCreacion = data.creacion
   let correlativo = data.correlativo
+  let identificador = data.identificador
   let totalPagar = data.total_a_pagar.reduce((value, acc) => value + acc, 0)
+
+  console.log(data)
 
   let frecuencia = data.frecuencia
 
@@ -66,12 +69,12 @@ export const nomReportCard = ({ data }) => {
             <h5 class='text-center mb-2'>Generar reportes:</h5>
             <div class='btn-report-actions'>
               <button
-              data-frecuencia="${frecuencia}"        
               data-correlativo="${correlativo}"        
+              data-identificador="${identificador}"        
                 class='mx-auto btn btn-secondary size-change-animation'
                 id='generar-txt'
               >
-                <i class='bx bxs-file-txt bx-sm'></i>
+               GENERAR 📁
               </button>
               
             </div>
@@ -79,4 +82,8 @@ export const nomReportCard = ({ data }) => {
         </div>
       </div>
     </div>`
+}
+
+{
+  /* <i class='bx bxs-file-txt bx-sm'></i> */
 }

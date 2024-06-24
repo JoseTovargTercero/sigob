@@ -205,7 +205,7 @@ export function validateEmployeePayForm({
 
     if (e.target.id === 'generar-txt') {
       let descargatxt = await descargarNominaTxt({
-        frecuencia: e.target.dataset.frecuencia,
+        identificador: e.target.dataset.identificador,
         correlativo: e.target.dataset.correlativo,
       })
     }
