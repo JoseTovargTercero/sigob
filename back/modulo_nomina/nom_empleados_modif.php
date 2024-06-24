@@ -26,7 +26,6 @@ $stmt_emp->bind_param('s', $data["id"]);
 $stmt_emp->execute();
 $result = $stmt_emp->get_result();
 if ($row = $result->fetch_assoc()) {
-    $verificado = ($row["verificado"] == '2') ? '0' : $row["verificado"];
 }
 $stmt_emp->close();
 
@@ -38,6 +37,8 @@ $sql = "UPDATE empleados SET  verificado='0' WHERE id = ?";
 // Preparar la declaración SQL
 $stmt = $conexion->prepare($sql);
 
+// Vincular parámetros y ejecutar la consulta
+$stmt->bind_param("s", $data["id"]);
 
 // Ejecutar la consulta preparada
 if ($stmt->execute()) {
