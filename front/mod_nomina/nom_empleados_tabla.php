@@ -316,7 +316,7 @@ require_once '../../back/sistema_global/session.php';
 
 <script type="module" src="../app.js"></script>
 <script src="../../src/assets/js/notificaciones.js"></script>
-<script type="module" src="../src/controllers/empleadosTable.js">
+<!-- <script type="module" src="../src/controllers/empleadosTable.js"> -->
 </script>
 
 <!-- DATATABLES -->

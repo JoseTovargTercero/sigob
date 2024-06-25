@@ -109,18 +109,16 @@ const sendEmployeeData = async ({ data }) => {
   }
 }
 
-const updateEmployeeData = async ({ data }) => {
-  console.log(data)
+const updateEmployeeData = async ({ id }) => {
+  console.log(id)
   try {
     const res = await fetch(updateEmployeeUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify({ id }),
     })
-
-    console.log(data)
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
     else {

@@ -10,6 +10,7 @@ import {
   updateRequestEmployeeData,
 } from '../api/empleados.js'
 import { nomCorrectionAlert } from '../components/nom_correcion_alert.js'
+import { employeeCard } from '../components/nom_empleado_card.js'
 import {
   closeModal,
   confirmNotification,
@@ -61,6 +62,8 @@ function validateEmployeeForm({
     if (id) {
       let employeeData = await getEmployeeData(id)
 
+      // SI EL EMPLEADO TIENE EL VERIFICADO EN 2, COLOCAR CORRECIÓN EN FORMULARCIÓN DE EDICIÓN
+
       if (employeeData[0].verificado === 2) {
         let correcionElement = d.getElementById('employee-correcion')
         if (correcionElement) correcionElement.remove()
@@ -74,7 +77,10 @@ function validateEmployeeForm({
       }
 
       employeeSelectElementCopy.forEach((select) => {
-        select.value = employeeData[0][select.name]
+        // SI EL VALOR NO ES UNDEFINED COLOCAR VALOR EN SELECT
+        if (employeeData[0][select.name] !== undefined)
+          select.value = employeeData[0][select.name]
+
         validateInput({
           target: select,
           fieldList,
@@ -84,7 +90,10 @@ function validateEmployeeForm({
       })
 
       employeeInputElementCopy.forEach((input) => {
-        input.value = employeeData[0][input.name]
+        // SI EL VALOR NO ES UNDEFINED COLOCAR VALOR EN INPUT
+        if (employeeData[0][input.name] !== undefined)
+          input.value = employeeData[0][input.name]
+
         validateInput({
           target: input,
           fieldList,
@@ -109,7 +118,10 @@ function validateEmployeeForm({
       employeeInputElementCopy.forEach((input) => {
         input.value = ''
       })
+
+      employeeId = undefined
     }
+    console.log(employeeId)
   }
 
   formElement.addEventListener('submit', (e) => e.preventDefault())
@@ -240,12 +252,15 @@ function validateEmployeeForm({
           successFunction: sendEmployeeInformationRequest,
           successFunctionParams: { data: fieldList },
           othersFunctions: [
-            closeEmployeeModal,
+            function () {
+              closeModal({ modalId: 'modal-employee-form' })
+            },
             function () {
               validateEmployeeTable()
             },
           ],
-          message: 'Complete todo el formulario antes de avanzar',
+          message:
+            'Los datos a editar serán solicitados para su próxima revisión',
         })
 
       // REGISTRAR EMPLEADO
@@ -255,19 +270,17 @@ function validateEmployeeForm({
         successFunctionParams: { data: fieldList },
         othersFunctions: [
           loadEmployeeData,
-          closeEmployeeModal,
+          function () {
+            closeModal({ modalId: 'modal-employee-form' })
+          },
           function () {
             validateEmployeeTable()
           },
         ],
-        message: 'Complete todo el formulario antes de avanzar',
+        message: 'Se enviará este empleado para su revisión',
       })
     }
   })
-}
-
-function closeEmployeeModal() {
-  closeModal({ modalId: 'modal-employee-form' })
 }
 
 async function sendEmployeeInformationRequest({ data }) {
