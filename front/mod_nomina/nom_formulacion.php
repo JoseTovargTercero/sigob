@@ -24,6 +24,8 @@ if ($result->num_rows > 0) {
     $nombre = $row['nombre'];
     $codigo = $row['codigo'];
   }
+} else {
+  header("Location: nom_grupos");
 }
 $stmt->close();
 
@@ -77,8 +79,7 @@ while ($r = $query->fetch_object()) {
           <div class="row align-items-center">
             <div class="col-md-12">
               <div class="page-header-title">
-                <h5 class="mb-0">Formulación de nómina <br><small
-                    class="text-muted"><?php echo $codigo . ' ' . $nombre ?></small> </h5>
+                <h5 class="mb-0">Formulación de nómina <br><small class="text-muted"><?php echo $codigo . ' ' . $nombre ?></small> </h5>
               </div>
             </div>
           </div>
@@ -91,10 +92,8 @@ while ($r = $query->fetch_object()) {
           <div class="card">
             <div class="card-body p-3">
               <ul class="nav nav-pills nav-justified">
-                <span id="link_basico" class="nav-item nav-link item-wizard active"><i
-                    class="ph-duotone ph-user-circle"></i> <span class="d-none d-sm-inline">Basico</span></span>
-                <span id="link_empleados" class="nav-item nav-link item-wizard"><i
-                    class="ph-duotone ph-graduation-cap"></i> <span class="d-none d-sm-inline">Empleados</span></span>
+                <span id="link_basico" class="nav-item nav-link item-wizard active"><i class="ph-duotone ph-user-circle"></i> <span class="d-none d-sm-inline">Basico</span></span>
+                <span id="link_empleados" class="nav-item nav-link item-wizard"><i class="ph-duotone ph-graduation-cap"></i> <span class="d-none d-sm-inline">Empleados</span></span>
                 <span id="link_conceptos" class="nav-item nav-link item-wizard"><i class="ph-duotone ph-map-pin"></i>
                   <span class="d-none d-sm-inline">Conceptos</span></span>
                 <span id="link_resumen" class="nav-item nav-link item-wizard"><i class="ph-duotone ph-check-circle"></i>
@@ -106,14 +105,13 @@ while ($r = $query->fetch_object()) {
             <div class="card-body">
 
               <div class="progress mb-3">
-                <div class="progress-bar bg-success " id="progressbar" style="width: 25%;" aria-valuemin="0"
-                  aria-valuemax="100"></div>
+                <div class="progress-bar bg-success " id="progressbar" style="width: 25%;" aria-valuemin="0" aria-valuemax="100"></div>
               </div>
 
 
               <div class="tab-content">
 
-                <section class="tab-pane show active" id="tab_basico">
+                <section class="tab-pane" id="tab_basico">
                   <div id="contactForm" method="post" action="#">
                     <div class="text-center">
                       <h3 class="mb-2">Comencemos con la información básica.</h3>
@@ -127,8 +125,7 @@ while ($r = $query->fetch_object()) {
                         <div class="row">
                           <div class="col-sm-6">
                             <div class="mb-3"><label class="form-label">Nombre de la nomina</label>
-                              <input type="text" class="form-control" id="nombre_nomina"
-                                placeholder="Nombre de la nomina">
+                              <input type="text" class="form-control" id="nombre_nomina" placeholder="Nombre de la nomina">
                             </div>
                           </div>
                           <div class="col-sm-6">
@@ -160,8 +157,7 @@ while ($r = $query->fetch_object()) {
                   <div class="d-flex w-100 mt-3">
                     <div class="d-flex m-a">
                       <div class="me-2"><button class="btn btn-secondary disabled">Regresar</button></div>
-                      <div class="next"><button class="btn btn-secondary mt-3 mt-md-0"
-                          onclick="nextStep('1')">Siguiente</button></div>
+                      <div class="next"><button class="btn btn-secondary mt-3 mt-md-0" onclick="nextStep('1')">Siguiente</button></div>
                     </div>
                   </div>
 
@@ -180,8 +176,7 @@ while ($r = $query->fetch_object()) {
                         <div class="mb-3">
                           <label class="form-label" for="filtro_empleados">¿Como quieres seleccionar a tus
                             empleados?</label>
-                          <select class="form-select" id="filtro_empleados"
-                            onchange="seleccion_empleados(this.value, 'empleados-list')">
+                          <select class="form-select" id="filtro_empleados" onchange="seleccion_empleados(this.value, 'empleados-list')">
                             <option>Seleccione</option>
                             <option value="1">Enlistar todos</option>
                             <option value="2">Por sus características (Formulación)</option>
@@ -198,8 +193,7 @@ while ($r = $query->fetch_object()) {
                             <div class="mb-3"><label class="form-label">Formulación</label>
                               <div class="input-group mb-3">
                                 <textarea class="form-control condicion" rows="1" id="t_area-1"></textarea>
-                                <button class="btn btn-primary" onclick="validarFormula('t_area-1', 'empleados-list')"
-                                  type="button">Obtener</button>
+                                <button class="btn btn-primary" onclick="validarFormula('t_area-1', 'empleados-list')" type="button">Obtener</button>
                               </div>
                             </div>
                           </div>
@@ -207,8 +201,7 @@ while ($r = $query->fetch_object()) {
 
                             <div class="mb-3">
                               <label class="form-label" for="campo_condiciona">Condicionantes</label>
-                              <select name="campo_condiciona" onchange="setCondicionante(this.value, 'result')"
-                                id="campo_condiciona" class="form-control">
+                              <select name="campo_condiciona" onchange="setCondicionante(this.value, 'result')" id="campo_condiciona" class="form-control">
                                 <option value="">Seleccione</option>
                                 <option value="cod_cargo">Código de cargo</option>
                                 <option value="discapacidades">Discapacidades</option>
@@ -232,7 +225,7 @@ while ($r = $query->fetch_object()) {
                           <label class="form-label" for="otra_nominas">Nominas registradas</label>
                           <select class="form-select" id="otra_nominas">
                             <option>Seleccione</option>
-                            <?php foreach ($nominas as $n): ?>
+                            <?php foreach ($nominas as $n) : ?>
                               <option value="<?php echo $n->nombre; ?>">&nbsp;<?php echo $n->nombre; ?></option>
                             <?php endforeach; ?>
                           </select>
@@ -246,8 +239,7 @@ while ($r = $query->fetch_object()) {
                             <tr>
                               <th class="w-40">Cedula</th>
                               <th class="w-40">Nombre</th>
-                              <th class="w-auto text-center"><input type="checkbox" id="selectAll"
-                                  onchange="checkAll(this.checked, '')" class="form-check-input" /></th>
+                              <th class="w-auto text-center"><input type="checkbox" id="selectAll" onchange="checkAll(this.checked, '')" class="form-check-input" /></th>
                             </tr>
                           </thead>
                           <tbody id="empleados-list">
@@ -264,16 +256,14 @@ while ($r = $query->fetch_object()) {
                     </div>
                     <div class="d-flex w-100 mt-3">
                       <div class="d-flex m-a">
-                        <div class="me-2"><button class="previous btn btn-secondary"
-                            onclick="beforeStep('1')">Regresar</button>
+                        <div class="me-2"><button class="previous btn btn-secondary" onclick="beforeStep('1')">Regresar</button>
                         </div>
-                        <div class="next"><button class="btn btn-secondary mt-3 mt-md-0"
-                            onclick="nextStep('2')">Siguiente</button></div>
+                        <div class="next"><button class="btn btn-secondary mt-3 mt-md-0" onclick="nextStep('2')">Siguiente</button></div>
                       </div>
                     </div>
                   </div>
                 </section>
-                <section class="tab-pane" id="tab_conceptos">
+                <section class="tab-pane  show active" id="tab_conceptos">
                   <div id="jobForm" method="post" action="#">
                     <div class="text-center">
                       <h3 class="mb-2">Es hora de agregar los conceptos</h3>
@@ -291,11 +281,11 @@ while ($r = $query->fetch_object()) {
                           <div class="input-group">
                             <select class="form-control" id="concepto_aplicar">
                               <option value="">Seleccione</option>
-                              <option value="sueldo_base">Sueldo</option>
+                              <option value="sueldo_base">-- SUELDO BASE --</option>
+                              <option value="sueldo_diferencia">-- DIFERENCIA DE SUELDO --</option>
                             </select>
 
-                            <span class="input-group-text" onclick="getData('conceptos')"><i
-                                class='bx bx-refresh reload-icon pointer'></i></span>
+                            <span class="input-group-text" onclick="getData('conceptos')"><i class='bx bx-refresh reload-icon pointer'></i></span>
                           </div>
                         </div>
 
@@ -307,6 +297,36 @@ while ($r = $query->fetch_object()) {
                           <small>Mantén presionada la tecla shift o presiona ctrl para selección múltiple.</small>
                         </div>
 
+
+                        <section id="diferenciaNomina-options" class="hide">
+
+
+
+                          <div class="mb-3" id="section_fechas">
+                            <label class="form-label" for="nominas_restar">Nominas a restar</label>
+                            <select multiple="" class="form-select" id="nominas_restar">
+
+                            <?php 
+                            $stmt = mysqli_prepare($conexion, "SELECT * FROM `nominas` WHERE grupo_nomina = ? AND tipo='1'");
+                            $stmt->bind_param('i', $i);
+                            $stmt->execute();
+                            $result = $stmt->get_result();
+                            if ($result->num_rows > 0) {
+                              while ($row = $result->fetch_assoc()) {
+                                $id = $row['id'];
+                                $nomina = $row['nombre'];
+                                echo "<option value='$id'>$nomina</option>";
+                              }
+                            } 
+                            $stmt->close();
+                            
+                            ?>
+   
+                            </select>
+                            <small>Mantén presionada la tecla shift o presiona ctrl para seleccionar las nominas que desea restar.</small>
+                          </div>
+
+                        </section>
 
 
                         <section id="sueldo-options" class="hide">
@@ -350,9 +370,7 @@ while ($r = $query->fetch_object()) {
                                 <div class="mb-3"><label class="form-label">Formulación</label>
                                   <div class="input-group mb-3">
                                     <textarea class="form-control condicion" rows="1" id="t_area-2"></textarea>
-                                    <button class="btn btn-primary"
-                                      onclick="validarFormula('t_area-2', 'emp_pre_seleccionados-list')"
-                                      type="button">Obtener</button>
+                                    <button class="btn btn-primary" onclick="validarFormula('t_area-2', 'emp_pre_seleccionados-list')" type="button">Obtener</button>
                                   </div>
                                 </div>
                               </div>
@@ -360,9 +378,7 @@ while ($r = $query->fetch_object()) {
 
                                 <div class="mb-3">
                                   <label class="form-label" for="campo_condiciona">Condicionantes</label>
-                                  <select name="campo_condiciona"
-                                    onchange="setCondicionante(this.value, 'result-em_nomina')"
-                                    id="campo_condiciona_epNomina" class="form-control">
+                                  <select name="campo_condiciona" onchange="setCondicionante(this.value, 'result-em_nomina')" id="campo_condiciona_epNomina" class="form-control">
                                     <option value="">Seleccione</option>
                                     <option value="cod_cargo">Código de cargo</option>
                                     <option value="discapacidades">Discapacidades</option>
@@ -390,8 +406,7 @@ while ($r = $query->fetch_object()) {
                                 <tr>
                                   <th class="w-40">Cedula</th>
                                   <th class="w-40">Nombre</th>
-                                  <th class="w-auto text-center"><input type="checkbox" id="selectAllC"
-                                      onchange="checkAll(this.checked, '_C')" class="form-check-input" /></th>
+                                  <th class="w-auto text-center"><input type="checkbox" id="selectAllC" onchange="checkAll(this.checked, '_C')" class="form-check-input" /></th>
                                 </tr>
                               </thead>
                               <tbody id="emp_pre_seleccionados-list">
@@ -421,8 +436,7 @@ while ($r = $query->fetch_object()) {
                             <tr>
                               <th class="w-40">Nombre del concepto</th>
                               <th class="w-40">Empleados</th>
-                              <th class="w-auto text-center"><button class="btn btn-sm btn-primary"
-                                  onclick="setViewRegistro()"><i class='bx bx-folder-plus'> Agregar concepto</i>
+                              <th class="w-auto text-center"><button class="btn btn-sm btn-primary" onclick="setViewRegistro()"><i class='bx bx-folder-plus'> Agregar concepto</i>
                                 </button></th>
                             </tr>
                           </thead>
@@ -434,10 +448,8 @@ while ($r = $query->fetch_object()) {
                     </div>
                     <div class="d-flex w-100 mt-3">
                       <div class="d-flex m-a">
-                        <div class=" me-2"><button class="previous btn btn-secondary"
-                            onclick="beforeStep('2')">Regresar</button></div>
-                        <div class="next"><button class="previous btn btn-secondary mt-3 mt-md-0"
-                            onclick="nextStep('3')">Siguiente</button></div>
+                        <div class=" me-2"><button class="previous btn btn-secondary" onclick="beforeStep('2')">Regresar</button></div>
+                        <div class="next"><button class="previous btn btn-secondary mt-3 mt-md-0" onclick="nextStep('3')">Siguiente</button></div>
                       </div>
                     </div>
                   </div>
@@ -461,8 +473,7 @@ while ($r = $query->fetch_object()) {
                       <div class="me-2"><button class="previous btn btn-secondary" onclick="beforeStep('3')">Regresar
                           </button=>
                       </div>
-                      <div class="next"><button onclick="guardarNomina()" class="btn btn-primary mt-3 mt-md-0"> <i
-                            class="bx bx-save"></i> Guardar</button></div>
+                      <div class="next"><button onclick="guardarNomina()" class="btn btn-primary mt-3 mt-md-0"> <i class="bx bx-save"></i> Guardar</button></div>
                     </div>
                   </div>
                 </section>
@@ -527,7 +538,7 @@ while ($r = $query->fetch_object()) {
      * 
      * @param {Event} event - The event object.
      */
-    document.getElementById('otra_nominas').addEventListener('change', function (event) {
+    document.getElementById('otra_nominas').addEventListener('change', function(event) {
       let nombre = this.value;
       if (nombre != '') {
         aplicar_filtro(3, nombre, 'empleados-list');
@@ -576,7 +587,7 @@ while ($r = $query->fetch_object()) {
           filtro: filtro.trim(),
           tabla_empleados: true
         },
-        success: function (response) {
+        success: function(response) {
           let empleados = JSON.parse(response);
           let tabla = '';
 
@@ -642,10 +653,10 @@ while ($r = $query->fetch_object()) {
           data: {
             loadData: value
           },
-          success: function (response) {
+          success: function(response) {
             resolve(JSON.parse(response));
           },
-          error: function (xhr, status, error) {
+          error: function(xhr, status, error) {
             reject(error);
           }
         });
@@ -685,7 +696,7 @@ while ($r = $query->fetch_object()) {
             conceptos_formulacion[d.id] = d;
           });
 
-          $('#concepto_aplicar').html('<option value="">Seleccione</option> <option value="sueldo_base">Sueldo</option>');
+          $('#concepto_aplicar').html('   <option value="sueldo_base">-- SUELDO BASE --</option><option value="sueldo_diferencia">-- DIFERENCIA DE SUELDO --</option>');
           data1.forEach(d => {
             $('#concepto_aplicar').append(`<option value="${d.id}">${d.nom_concepto}</option>`);
           });
@@ -709,16 +720,29 @@ while ($r = $query->fetch_object()) {
      * @returns void
      */
     function tipoConcepto() {
+      const difereciaOptions = $('#diferenciaNomina-options');
       const sueldoOptions = $('#sueldo-options');
       const aplicacionConceptosOptions = $('#aplicacion_conceptos-options');
       const n_conceptos_porcentajes = $('#n_conceptos_porcentajes');
-      const tipoCalculo = (this.value == 'sueldo_base' ? null : conceptos[this.value]['tipo_calculo']);
+      let tipoCalculo;
+
+      if (this.value == 'sueldo_base') {
+        tipoCalculo = null
+      } else if (this.value == 'sueldo_diferencia') {
+        tipoCalculo = 7;
+      } else {
+        tipoCalculo = conceptos[this.value]['tipo_calculo'];
+      }
+
       resetValsConceptos()
       sueldoOptions.addClass('hide');
 
       if (this.value == 'sueldo_base') {
         aplicacionConceptosOptions.removeClass('hide');
         sueldoOptions.removeClass('hide');
+      } else if (this.value == 'sueldo_diferencia') {
+        aplicacionConceptosOptions.removeClass('hide');
+        difereciaOptions.removeClass('hide');
       } else if (tipoCalculo == '5') {
         n_conceptos_porcentajes.toggleClass('hide', false);
         aplicacionConceptosOptions.removeClass('hide');
@@ -783,7 +807,7 @@ while ($r = $query->fetch_object()) {
             tabla_empleados: tabla_empleados,
             tabla_seleccionados: true
           },
-          success: function (response) {
+          success: function(response) {
             let empleados = JSON.parse(response);
             let tabla = '';
 
@@ -808,6 +832,15 @@ while ($r = $query->fetch_object()) {
 
     let conceptosAplicados = {}
 
+    function verificarElementosResta() {
+      let nominas_restar = $('#nominas_restar').val()
+      if (nominas_restar.length > 2) {
+        $('#nominas_restar').val([])
+        toast_s('error', 'Solo se pueden seleccionar 2 nominas')
+        return false
+      }
+    }
+    document.getElementById('nominas_restar').addEventListener('change', verificarElementosResta)
 
     /**
      * Function to save a concept.
@@ -820,6 +853,7 @@ while ($r = $query->fetch_object()) {
       const concepto_aplicar = $('#concepto_aplicar').val();
       const fechas_aplicar = $('#fechas_aplicar').val();
       const concepto_aplicados = $('#concepto_aplicados').val();
+      const nominas_restar = $('#nominas_restar').val()
 
       if (conceptosAplicados[concepto_aplicar]) {
         return toast_s('error', 'No puede agregar el mismo concepto más de una vez');
@@ -840,6 +874,10 @@ while ($r = $query->fetch_object()) {
       if (concepto_aplicar === 'sueldo_base') {
         tipoCalculo = null;
         nombreConcepto = 'Sueldo Base';
+      } else if(concepto_aplicar === 'sueldo_diferencia'){
+        tipoCalculo = 7;
+        nombreConcepto = 'Diferencia de sueldo';
+
       } else {
         tipoCalculo = conceptos[concepto_aplicar].tipo_calculo;
         nombreConcepto = conceptos[concepto_aplicar].nom_concepto;
@@ -857,6 +895,10 @@ while ($r = $query->fetch_object()) {
         return toast_s('error', 'Debe seleccionar el tabulador');
       } else if (concepto_aplicar === 'sueldo_base') {
         tabulador = $('#tabulador').val();
+      }
+
+      if (concepto_aplicar === 'sueldo_diferencia' && nominas_restar.length != 2) {
+        return toast_s('error', 'Debe seleccionar las nominas a restar');
       }
 
       let empleadosDelConcepto = [];
@@ -898,8 +940,11 @@ while ($r = $query->fetch_object()) {
         },
         'tabulador': tabulador, // solo en caso de que sea sueldo_base
         'empleados': empleadosDelConcepto,
-        'nombre_nomina': nombre_nomina
+        'nombre_nomina': nombre_nomina,
+        'nominas_restar': nominas_restar
       };
+
+      console.log(concepto)
 
       conceptosAplicados[concepto_aplicar] = concepto;
 
@@ -909,15 +954,12 @@ while ($r = $query->fetch_object()) {
         type: 'POST',
         data: JSON.stringify(concepto),
         contentType: 'application/json',
-        success: function (response) {
+        success: function(response) {
           // Analizar la respuesta JSON
-          var jsonResponse = JSON.parse(response);
-
-          // Acceder a las propiedades de jsonResponse
-          console.log(jsonResponse.status);
-          console.log(jsonResponse.message);
+       //   console.log(response.status);
+       //   console.log(response.message);
         },
-        error: function (xhr, textStatus, errorThrown) {
+        error: function(xhr, textStatus, errorThrown) {
           console.error("Error al procesar la solicitud AJAX:", errorThrown);
         }
 
@@ -1039,7 +1081,7 @@ while ($r = $query->fetch_object()) {
             concepto: c,
             empleados: e
           },
-          success: function (response) {
+          success: function(response) {
             console.log(response)
             try {
               resolve(JSON.parse(response));
@@ -1047,7 +1089,7 @@ while ($r = $query->fetch_object()) {
               reject('Error parsing JSON response: ' + parseError);
             }
           },
-          error: function (xhr, status, error) {
+          error: function(xhr, status, error) {
             reject(`AJAX error - Status: ${status}, Error: ${error}`);
           }
         });
@@ -1125,7 +1167,7 @@ while ($r = $query->fetch_object()) {
           let cantidadEmpleados = concepto.formulacionConcepto.emp_cantidad;
           $('#nomina_resumen').append(`
             <li class="list-group-item d-flex justify-content-between align-items-center">
-            <a class="pointer" onclick="verTrabajadoresConcepto('`+ concepto + `')">${nombreConcepto}</a>
+            <a class="pointer" onclick="verTrabajadoresConcepto('` + concepto + `')">${nombreConcepto}</a>
              <span class="badge bg-primary rounded-pill">${cantidadEmpleados} Empleados</span>
           </li>`)
         }
@@ -1174,7 +1216,7 @@ while ($r = $query->fetch_object()) {
         const xhr = new XMLHttpRequest();
         xhr.open('POST', '../../back/modulo_nomina/check_nombre_nomina.php', true);
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-        xhr.onreadystatechange = function () {
+        xhr.onreadystatechange = function() {
           if (xhr.readyState === XMLHttpRequest.DONE) {
             if (xhr.status === 200) {
               const response = JSON.parse(xhr.responseText);
@@ -1312,6 +1354,7 @@ while ($r = $query->fetch_object()) {
       document.querySelector("#tipo_aplicacion_concept option[value='']").selected = true;
       document.getElementById('selectAllC').checked = false;
 
+      $('#diferenciaNomina-options').addClass('hide')
       $('#sueldo-options').addClass('hide')
       $('#n_conceptos_porcentajes').addClass('hide')
       $('#aplicacion_conceptos-options').addClass('hide')
@@ -1330,8 +1373,6 @@ while ($r = $query->fetch_object()) {
       const frecuencia = $('#frecuencia_pago').val()
       const tipo = $('#tipo_nomina').val()
 
-      console.log(conceptosAplicados)
-
       $.ajax({
         url: '../../back/modulo_nomina/guardar_nominas.php',
         type: 'POST',
@@ -1342,9 +1383,12 @@ while ($r = $query->fetch_object()) {
           tipo: tipo,
           conceptosAplicados: conceptosAplicados
         },
-        success: function (response) {
-          if (response == 'ok') {
+        success: function(response) {
+          if (response.status == 'ok') {
             toast_s('success', 'Creado con exito')
+            window.location.href = 'nom_grupos.php'
+          }else{
+            console.log(response.message)
           }
 
         }
