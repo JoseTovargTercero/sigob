@@ -111,7 +111,7 @@ while ($r = $query->fetch_object()) {
 
               <div class="tab-content">
 
-                <section class="tab-pane" id="tab_basico">
+                <section class="tab-pane show active" id="tab_basico">
                   <div id="contactForm" method="post" action="#">
                     <div class="text-center">
                       <h3 class="mb-2">Comencemos con la información básica.</h3>
@@ -263,7 +263,7 @@ while ($r = $query->fetch_object()) {
                     </div>
                   </div>
                 </section>
-                <section class="tab-pane  show active" id="tab_conceptos">
+                <section class="tab-pane" id="tab_conceptos">
                   <div id="jobForm" method="post" action="#">
                     <div class="text-center">
                       <h3 class="mb-2">Es hora de agregar los conceptos</h3>
