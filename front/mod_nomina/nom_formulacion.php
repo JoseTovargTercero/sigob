@@ -113,7 +113,7 @@ while ($r = $query->fetch_object()) {
 
                 <section class="tab-pane show active" id="tab_basico">
                   <div id="contactForm" method="post" action="#">
-                    <div class="text-center">
+                    <div class="text-center"> 
                       <h3 class="mb-2">Comencemos con la información básica.</h3>
                       <small class="text-muted">
                         Por favor, ingrese la información básica de la nómina.
