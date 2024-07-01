@@ -13,7 +13,7 @@ const d = document
 const w = window
 
 let fieldList = {
-  fieldList: '',
+  'select-nomina': '',
 }
 
 let fieldListErrors = {
@@ -122,17 +122,11 @@ export async function validateRequestNomForm({
   }
 
   async function validateRequestFrecuency() {
-    let generarNomina
+    let res = await generarNominaTxt({
+      correlativo: fieldList['select-nomina'],
+      identificador: fieldList.identificador,
+    })
 
-    generarNomina = FRECUENCY_TYPES[fieldList.frecuencia].map((el) =>
-      generarNominaTxt({
-        correlativo: fieldList['select-nomina'],
-        identificador: fieldList.identificador,
-      })
-    )
-
-    let resultados = await Promise.all(generarNomina)
-
-    console.log(resultados)
+    console.log(res)
   }
 }
