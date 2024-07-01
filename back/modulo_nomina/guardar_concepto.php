@@ -14,6 +14,7 @@ $n_conceptos = isset($data['formulacionConcepto']['n_conceptos']) ? json_encode(
 $emp_cantidad = $data['formulacionConcepto']['emp_cantidad'];
 $tabulador = isset($data['tabulador']) ? $data['tabulador'] : null;
 $empleados = json_encode($data['empleados']);
+$nominas_restar = json_encode($data['nominas_restar']);
 $nombre_nomina = $data['nombre_nomina'];
 
 
@@ -29,8 +30,8 @@ if (!$table_exists) {
 }
 
 // Insertar los datos en la base de datos
-$sql = "INSERT INTO conceptos_aplicados (concepto_id, nom_concepto, fecha_aplicar, tipo_calculo, n_conceptos, emp_cantidad, tabulador, empleados,nombre_nomina)
-        VALUES ('$concepto_id', '$nom_concepto', '$fecha_aplicar', '$tipoCalculo', '$n_conceptos', '$emp_cantidad', '$tabulador', '$empleados', '$nombre_nomina')";
+$sql = "INSERT INTO conceptos_aplicados (concepto_id, nom_concepto, fecha_aplicar, tipo_calculo, n_conceptos, emp_cantidad, tabulador, empleados,nombre_nomina,nomina_restar)
+        VALUES ('$concepto_id', '$nom_concepto', '$fecha_aplicar', '$tipoCalculo', '$n_conceptos', '$emp_cantidad', '$tabulador', '$empleados', '$nombre_nomina', '$nominas_restar')";
 
 if ($conexion->query($sql) === TRUE) {
     echo json_encode(["status" => "success", "message" => "Registro guardado con éxito"]);

@@ -5,8 +5,540 @@ $url = "https://v6.exchangerate-api.com/v6/{$api_key}/pair/USD/VES";
 $response = file_get_contents($url);
 $data = json_decode($response, true);
 $precio_dolar = $data['conversion_rate'];
+// Obtener el contenido JSON enviado en la solicitud POST
+$json = file_get_contents('php://input');
+$data = json_decode($json, true);
 
+// Verificar si el array contiene el nombre
+if (!isset($data['nombre'])) {
+    echo json_encode(array('error' => 'No se recibió el nombre en el array.'));
+    exit();
+}
+
+$identificador = $data['identificador'];
+$nombre = $data['nombre'];
+$palabrasClave = ['diferencia', 'Diferencia', 'DIFERENCIA', 'diferencias', 'DIFERENCIAS', 'Diferencias'];
+
+$contienePalabraClave = false;
+
+foreach ($palabrasClave as $palabra) {
+    if (strpos($nombre, $palabra) !== false) {
+        $contienePalabraClave = true;
+        break;
+    }
+}
+
+if ($contienePalabraClave) {
 function calculoSalarioBase($conexion, $empleado, $nombre, $identificador) {
+    $busqueda = "%Diferencia de sueldo%";
+
+    // Preparar y ejecutar la consulta
+    $sql = $conexion->prepare("SELECT * FROM conceptos_aplicados WHERE nombre_nomina = ? AND nom_concepto LIKE ? LIMIT 1");
+    $sql->bind_param("ss", $nombre, $busqueda);
+    $sql->execute();
+
+    $result = $sql->get_result();
+
+    // Verificar si se encontraron registros
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $nomina_restar = str_replace(['[', ']', '"'], '', $row["nomina_restar"]); // Eliminar [ ] y "
+        $nomina_restar = explode(',', $nomina_restar); // Convertir a array
+    } else {
+        echo "No se encontraron registros.";
+        return null;
+    }
+
+    // Datos de entrada
+
+    $fecha_pagar = date('m-Y');
+
+    // Obtener los últimos registros de cada nómina
+    $totals = [];
+    foreach ($nomina_restar as $nomina) {
+        $nomina = trim($nomina); // Eliminar espacios en blanco
+        $sql2 = "SELECT total_a_pagar FROM txt 
+                WHERE nombre_nomina = ? AND identificador = ? AND fecha_pagar = ?
+                ORDER BY id DESC LIMIT 1";
+        $stmt2 = $conexion->prepare($sql2);
+        $stmt2->bind_param("sss", $nomina, $identificador, $fecha_pagar);
+        $stmt2->execute();
+        $stmt2->bind_result($total_a_pagar);
+        if ($stmt2->fetch()) {
+            $totals[] = $total_a_pagar;
+        }
+        $stmt2->close();
+    }
+
+    // Calcular la diferencia
+    if (count($totals) == 2) {
+        $difference = abs($totals[0] - $totals[1]);
+        return round($difference,2);
+    } else {
+        echo "No se encontraron suficientes registros para calcular la diferencia.";
+        return null;
+    }
+}
+
+
+
+// Función para obtener el valor de un concepto según su tipo de cálculo
+function obtenerValorConcepto($conexion, $nom_concepto, $salarioBase, $precio_dolar, $salarioIntegral, $ids_empleados, $identificador) {
+    $sql = "SELECT c.tipo_calculo, c.valor
+            FROM conceptos c
+            JOIN conceptos_aplicados ca ON c.nom_concepto = ca.nom_concepto
+            WHERE c.nom_concepto = ?
+            AND JSON_CONTAINS(ca.fecha_aplicar, JSON_QUOTE(?))";
+
+    $stmt = $conexion->prepare($sql);
+    $stmt->bind_param("ss", $nom_concepto, $identificador); // Agregamos el identificador como segundo parámetro
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $tipo_calculo = $row["tipo_calculo"];
+        $valor2 = $row["valor"];
+        
+        if ($identificador == "s1" || $identificador == "s2" || $identificador == "s3" || $identificador == "s4") {
+            $valor = round($valor2 * 0.25, 2);
+        } elseif ($identificador == "q1" || $identificador == "q2") {
+            $valor = round($valor2 * 0.50, 2);
+        } else {
+            $valor = $row["valor"];
+        }
+
+        // Calcular valor según el tipo de cálculo
+        switch ($tipo_calculo) {
+            case 1:
+                return $valor;
+            case 2:
+                return round($precio_dolar * $valor, 2);
+            case 3:
+                if ($valor < 100) {
+                    return round($salarioBase * ($valor / 100), 2);
+                } else {
+                    echo "El valor del porcentaje no es válido.";
+                    return 0;
+                }
+            case 4:
+                if ($valor < 100) {
+                    return round($salarioIntegral * ($valor / 100), 2);
+                } else {
+                    echo "El valor del porcentaje no es válido.";
+                    return 0;
+                }
+            case 5:
+                // Verificar conceptos adicionales en n_conceptos
+                $sql_conceptos = "SELECT n_conceptos FROM conceptos_aplicados WHERE nom_concepto = ?";
+                $stmt_conceptos = $conexion->prepare($sql_conceptos);
+                $stmt_conceptos->bind_param("s", $nom_concepto);
+                $stmt_conceptos->execute();
+                $result_conceptos = $stmt_conceptos->get_result();
+
+                if ($result_conceptos->num_rows > 0) {
+                    $row_conceptos = $result_conceptos->fetch_assoc();
+                    $n_conceptos = json_decode($row_conceptos['n_conceptos'], true);
+                    $total_valor = 0;
+
+                    foreach ($n_conceptos as $concepto_id) {
+                        $sql_concepto = "SELECT nom_concepto, tipo_calculo, valor FROM conceptos WHERE id = ?";
+                        $stmt_concepto = $conexion->prepare($sql_concepto);
+                        $stmt_concepto->bind_param("i", $concepto_id);
+                        $stmt_concepto->execute();
+                        $result_concepto = $stmt_concepto->get_result();
+
+                        if ($result_concepto->num_rows > 0) {
+                            $row_concepto = $result_concepto->fetch_assoc();
+                            $valor_concepto = obtenerValorConcepto($conexion, $row_concepto['nom_concepto'], $salarioBase, $precio_dolar, $salarioIntegral, $ids_empleados, $identificador);
+                            $total_valor += $valor_concepto;
+                        }
+                    }
+
+                    // Calcular el porcentaje del valor total
+                    if ($valor < 100) {
+                        return round($total_valor * ($valor / 100), 2);
+                    } else {
+                        echo "El valor del porcentaje no es válido.";
+                        return 0;
+                    }
+                } else {
+                    echo "No se encontraron conceptos adicionales.";
+                    return 0;
+                }
+            case 6:
+                // Obtener el ID del concepto
+                $sql_conceptos = "SELECT id FROM conceptos WHERE nom_concepto = ?";
+                $stmt_conceptos = $conexion->prepare($sql_conceptos);
+                $stmt_conceptos->bind_param("s", $nom_concepto);
+                $stmt_conceptos->execute();
+                $result_conceptos = $stmt_conceptos->get_result();
+
+                if ($result_conceptos->num_rows > 0) {
+                    $row_conceptos = $result_conceptos->fetch_assoc();
+                    $concepto_id = $row_conceptos['id'];
+
+                    // Consultar en conceptos_formulacion usando el concepto_id
+                    $sql_concepto_formulacion = "SELECT condicion, tipo_calculo, valor FROM conceptos_formulacion WHERE concepto_id = ?";
+                    $stmt_concepto_formulacion = $conexion->prepare($sql_concepto_formulacion);
+                    $stmt_concepto_formulacion->bind_param("i", $concepto_id);
+                    $stmt_concepto_formulacion->execute();
+                    $result_concepto_formulacion = $stmt_concepto_formulacion->get_result();
+
+                    if ($result_concepto_formulacion->num_rows > 0) {
+                        $row_concepto_formulacion = $result_concepto_formulacion->fetch_assoc();
+                        $condicion = $row_concepto_formulacion['condicion']; // Se define aquí la variable $condicion
+                        $tipo_calculo = $row_concepto_formulacion['tipo_calculo'];
+                        $valor = $row_concepto_formulacion['valor'];
+
+                        // Consultar en la tabla empleados con la condición proporcionada
+                        foreach ($ids_empleados as $id_empleado) { // Iterar sobre cada ID de empleado
+                            $sql_empleado = "SELECT id FROM empleados WHERE id = ? AND $condicion"; // Modificar la consulta para incluir la condición
+                            $stmt_empleado = $conexion->prepare($sql_empleado);
+                            $stmt_empleado->bind_param("i", $id_empleado);
+                            $stmt_empleado->execute();
+                            $result_empleado = $stmt_empleado->get_result();
+
+                            if ($result_empleado->num_rows > 0) {
+                                // Si el empleado cumple con la condición, proceder con el cálculo
+                                switch ($tipo_calculo) {
+                                    case 1:
+                                        return $valor;
+                                    case 2:
+                                        return round($precio_dolar * $valor, 2);
+                                    case 3:
+                                        if ($valor < 100) {
+                                            return round($salarioBase * ($valor / 100), 2);
+                                        } else {
+                                            echo "El valor del porcentaje no es válido.";
+                                            return 0;
+                                        }
+                                    case 4:
+                                        if ($valor < 100) {
+                                            return round($salarioIntegral * ($valor / 100), 2);
+                                        } else {
+                                            echo "El valor del porcentaje no es válido.";
+                                            return 0;
+                                        }
+                                    case 5:
+                                        // Verificar conceptos adicionales en n_conceptos
+                                        $sql_conceptos = "SELECT n_conceptos FROM conceptos_aplicados WHERE nom_concepto = ?";
+                                        $stmt_conceptos = $conexion->prepare($sql_conceptos);
+                                        $stmt_conceptos->bind_param("s", $nom_concepto);
+                                        $stmt_conceptos->execute();
+                                        $result_conceptos = $stmt_conceptos->get_result();
+
+                                        if ($result_conceptos->num_rows > 0) {
+                                            $row_conceptos = $result_conceptos->fetch_assoc();
+                                            $n_conceptos = json_decode($row_conceptos['n_conceptos'], true);
+                                            $total_valor = 0;
+
+                                            foreach ($n_conceptos as $concepto_id) {
+                                                $sql_concepto = "SELECT nom_concepto, tipo_calculo, valor FROM conceptos WHERE id = ?";
+                                                $stmt_concepto = $conexion->prepare($sql_concepto);
+                                                $stmt_concepto->bind_param("i", $concepto_id);
+                                                $stmt_concepto->execute();
+                                                $result_concepto = $stmt_concepto->get_result();
+
+                                                if ($result_concepto->num_rows > 0) {
+                                                    $row_concepto = $result_concepto->fetch_assoc();
+                                                    $valor_concepto = obtenerValorConcepto($conexion, $row_concepto['nom_concepto'], $salarioBase, $precio_dolar, $salarioIntegral, $ids_empleados, $identificador);
+                                                    $total_valor += $valor_concepto;
+                                                }
+                                            }
+
+                                            // Calcular el porcentaje del valor total
+                                            if ($valor < 100) {
+                                                return round($total_valor * ($valor / 100), 2);
+                                            } else {
+                                                echo "El valor del porcentaje no es válido.";
+                                                return 0;
+                                            }
+                                        } else {
+                                            echo "No se encontraron conceptos adicionales.";
+                                            return 0;
+                                        }
+                                    default:
+                                        echo "Tipo de cálculo no reconocido.";
+                                        return 0;
+                                }
+                            }
+                        }
+                        return 0;
+                    } else {
+                        echo "No se encontraron datos en conceptos_formulacion.";
+                        return 0;
+                    }
+                } else {
+                    echo "No se encontró el concepto.";
+                    return 0;
+                }
+            default:
+                echo "Tipo de cálculo no reconocido.";
+                return 0;
+        }
+    } else {
+        // No hacer nada si no se encontró el identificador en fecha_aplicar
+        return 0;
+    }
+}
+
+// El resto del código permanece igual...
+
+
+
+// Consultar la tabla 'conceptos_aplicados' para obtener los registros con el mismo nombre_nomina
+$queryConceptos = "
+    SELECT 
+        ca.*,
+        c.tipo_concepto
+    FROM 
+        conceptos_aplicados ca
+    JOIN
+        conceptos c ON ca.concepto_id = c.id
+    WHERE 
+        ca.nombre_nomina = ?
+";
+$stmtConceptos = $conexion->prepare($queryConceptos);
+
+// Verificar si la preparación de la consulta fue exitosa
+if (!$stmtConceptos) {
+    echo json_encode(array('error' => 'Error al preparar la consulta de conceptos_aplicados: ' . $conexion->error));
+    exit();
+}
+
+$stmtConceptos->bind_param("s", $nombre);
+
+// Verificar si ocurrió un error al vincular los parámetros
+if ($stmtConceptos->errno) {
+    echo json_encode(array('error' => 'Error al vincular parámetros de la consulta de conceptos_aplicados: ' . $stmtConceptos->error));
+    exit();
+}
+
+$stmtConceptos->execute();
+
+// Verificar si ocurrió un error al ejecutar la consulta
+if ($stmtConceptos->errno) {
+    echo json_encode(array('error' => 'Error al ejecutar la consulta de conceptos_aplicados: ' . $stmtConceptos->error));
+    exit();
+}
+
+$resultConceptos = $stmtConceptos->get_result();
+$conceptos_aplicados = $resultConceptos->fetch_all(MYSQLI_ASSOC);
+
+// Array asociativo para mantener un registro de empleados únicos
+$empleados_unicos = array();
+
+// Array para almacenar asignaciones y deducciones
+$asignaciones = array();
+$deducciones = array();
+$aportes = array();
+
+// Arrays para almacenar las sumas de cada asignación y deducción
+$suma_asignaciones = array();
+$suma_deducciones = array();
+$suma_aportes = array();
+$suma_diferencia = array();
+
+// Variable para almacenar el total a pagar
+$total_a_pagar = 0;
+
+
+// Función para obtener los datos de un empleado por su ID
+function obtenerEmpleadoPorID($conexion, $id_empleado, $identificador) {
+    $queryEmpleado = "SELECT * FROM empleados WHERE id = ?";
+    $stmtEmpleado = $conexion->prepare($queryEmpleado);
+
+    if (!$stmtEmpleado) {
+        return false;
+    }
+
+    $stmtEmpleado->bind_param("i", $id_empleado);
+    $stmtEmpleado->execute();
+
+    $resultEmpleado = $stmtEmpleado->get_result();
+
+    if ($resultEmpleado->num_rows > 0) {
+        return $resultEmpleado->fetch_assoc();
+    } else {
+        return false;
+    }
+}
+
+// Iterar sobre cada registro de conceptos_aplicados
+foreach ($conceptos_aplicados as &$concepto) {
+    // Obtener los IDs de empleados de este concepto
+    $ids_empleados = json_decode($concepto['empleados'], true);
+
+    // Clasificar los conceptos en asignaciones o deducciones
+    if ($concepto['tipo_concepto'] === "A") {
+        $asignaciones[] = $concepto;
+    } elseif ($concepto['tipo_concepto'] === "D") {
+        $deducciones[] = $concepto;
+    }elseif($concepto['tipo_concepto'] === "P") {
+        $aportes[] = $concepto;
+    }
+
+    // Consultar la tabla 'empleados' para cada ID de empleado
+    foreach ($ids_empleados as $id_empleado) {
+        // Verificar si este empleado ya ha sido agregado
+        if (!isset($empleados_unicos[$id_empleado])) {
+            // Obtener los datos del empleado por su ID
+            $empleado = obtenerEmpleadoPorID($conexion, $id_empleado,$identificador);
+
+            if ($empleado) {
+                // Calcular el salario base del empleado
+                $empleado['salario_base'] = calculoSalarioBase($conexion, $empleado,$nombre, $identificador);
+
+                // Inicializar el salario integral con el salario base
+                $empleado['salario_integral'] = $empleado['salario_base'];
+
+                // Agregar el empleado al array de empleados únicos
+                $empleados_unicos[$id_empleado] = $empleado;
+            }
+        }
+
+        // Obtener el tipo de concepto
+        $tipo_concepto = $concepto['tipo_concepto'];
+
+        // Calcular el valor del concepto para este empleado
+        $valor_concepto = obtenerValorConcepto($conexion, $concepto['nom_concepto'], $empleados_unicos[$id_empleado]['salario_base'], $precio_dolar, $empleados_unicos[$id_empleado]['salario_integral'], array($id_empleado), $identificador);
+
+        // Agregar el valor del concepto al array del empleado
+        $empleados_unicos[$id_empleado][$concepto['nom_concepto']] = $valor_concepto;
+
+        // Sumar el valor del concepto al array de sumatorias correspondientes
+        if ($tipo_concepto === "A") {
+            if (isset($suma_asignaciones[$concepto['nom_concepto']])) {
+                $suma_asignaciones[$concepto['nom_concepto']] += $valor_concepto;
+            } else {
+                $suma_asignaciones[$concepto['nom_concepto']] = $valor_concepto;
+            }
+        } elseif ($tipo_concepto === "D") {
+            if (isset($suma_deducciones[$concepto['nom_concepto']])) {
+                $suma_deducciones[$concepto['nom_concepto']] += $valor_concepto;
+            } else {
+                $suma_deducciones[$concepto['nom_concepto']] = $valor_concepto;
+            }
+        }elseif ($tipo_concepto === "P"){
+            if (isset($suma_aportes[$concepto['nom_concepto']])) {
+                $suma_aportes[$concepto['nom_concepto']] += $valor_concepto;
+            } else {
+                $suma_aportes[$concepto['nom_concepto']] = $valor_concepto;
+            }
+        }
+
+        // Si el tipo de concepto es "A" y no es el salario base, sumarlo al salario integral
+        if ($tipo_concepto === "A" && $concepto['nom_concepto'] !== "salario_base") {
+            $empleados_unicos[$id_empleado]['salario_integral'] += $valor_concepto;
+        }
+    }
+}
+
+// Calcular el total a pagar para cada empleado
+$id_empleados_detalles = array();
+$total_a_pagar_empleados = array();
+$informacion_empleados = array();
+
+foreach ($empleados_unicos as &$empleado) {
+    // Inicializar el total a pagar para este empleado con el salario base
+    $total_a_pagar_empleado = $empleado['salario_base'];
+
+    // Sumar las asignaciones
+    foreach ($asignaciones as $asignacion) {
+        $nom_concepto = $asignacion['nom_concepto'];
+        if (isset($empleado[$nom_concepto])) {
+            $total_a_pagar_empleado += $empleado[$nom_concepto];
+        } else {
+            // Calcular el valor de la asignación si no está previamente calculado
+            $valorAsignacion = obtenerValorConcepto($conexion, $nom_concepto, $empleado['salario_base'], $precio_dolar, $empleado['salario_integral'], array($empleado['id']), $identificador);
+            $total_a_pagar_empleado += $valorAsignacion;
+        }
+    }
+
+    // Restar las deducciones
+    foreach ($deducciones as $deduccion) {
+        $nom_concepto = $deduccion['nom_concepto'];
+        if (isset($empleado[$nom_concepto])) {
+            $total_a_pagar_empleado -= $empleado[$nom_concepto];
+        } else {
+            // Calcular el valor de la deducción si no está previamente calculado
+            $valorDeduccion = obtenerValorConcepto($conexion, $nom_concepto, $empleado['salario_base'], $precio_dolar, $empleado['salario_integral'], array($empleado['id']), $identificador);
+            $total_a_pagar_empleado -= $valorDeduccion;
+        }
+    }
+
+    // Restar los aportes
+    foreach ($aportes as $aporte) {
+        $nom_concepto = $aporte['nom_concepto'];
+        if (isset($empleado[$nom_concepto])) {
+            $total_a_pagar_empleado -= $empleado[$nom_concepto];
+        } else {
+            // Calcular el valor de la deducción si no está previamente calculado
+            $valorAporte = obtenerValorConcepto($conexion, $nom_concepto, $empleado['salario_base'], $precio_dolar, $empleado['salario_integral'], array($empleado['id']),$identificador);
+            $total_a_pagar_empleado -= $valorAporte;
+        }
+    }
+
+    // Almacenar el total a pagar para este empleado en el array del empleado
+    $empleado['total_a_pagar'] = $total_a_pagar_empleado;
+    $informacion_empleados[] = $empleado;
+    $informacion_empleados[] = $empleado;
+    // Almacenar el ID del empleado y el total a pagar en los arrays correspondientes
+    $id_empleados_detalles[] = $empleado['id'];
+    $total_a_pagar_empleados[] = $total_a_pagar_empleado;
+}
+
+// Cerrar la conexión
+$stmtConceptos->close();
+$conexion->close();
+
+$nombre_nomina = $data['nombre'];
+
+
+
+
+// Preparar la respuesta con los resultados
+$response = array(
+    'informacion_empleados' => $informacion_empleados,
+    'empleados' => $id_empleados_detalles,
+    'total_pagar' => $total_a_pagar_empleados,
+    'nombre_nomina' => $nombre_nomina,
+    'suma_asignaciones' => $suma_asignaciones,
+    'suma_deducciones' => $suma_deducciones,
+    'suma_aportes' => $suma_aportes,
+    'identificador' => $identificador,
+
+);
+
+ 
+
+
+
+
+echo json_encode($response);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+} else {
+   function calculoSalarioBase($conexion, $empleado, $nombre, $identificador) {
     // Consulta SQL con LEFT JOIN
     if ($identificador == "s1") {
     $sql = "SELECT empleados.*, cargos_grados.grado,
@@ -351,18 +883,7 @@ function obtenerValorConcepto($conexion, $nom_concepto, $salarioBase, $precio_do
 
 // El resto del código permanece igual...
 
-// Obtener el contenido JSON enviado en la solicitud POST
-$json = file_get_contents('php://input');
-$data = json_decode($json, true);
 
-// Verificar si el array contiene el nombre
-if (!isset($data['nombre'])) {
-    echo json_encode(array('error' => 'No se recibió el nombre en el array.'));
-    exit();
-}
-
-$nombre = $data['nombre'];
-$identificador = $data['identificador'];
 
 // Consultar la tabla 'conceptos_aplicados' para obtener los registros con el mismo nombre_nomina
 $queryConceptos = "
@@ -571,7 +1092,7 @@ $conexion->close();
 $nombre_nomina = $data['nombre'];
 
 
-header('Content-Type: application/json');
+
 
 // Preparar la respuesta con los resultados
 $response = array(
@@ -592,5 +1113,9 @@ $response = array(
 
 
 echo json_encode($response);
+}
+
+
+
 
 ?>
