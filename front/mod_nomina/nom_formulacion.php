@@ -307,15 +307,14 @@ while ($r = $query->fetch_object()) {
                             <select multiple="" class="form-select" id="nominas_restar">
 
                             <?php 
-                            $stmt = mysqli_prepare($conexion, "SELECT * FROM `nominas` WHERE grupo_nomina = ? AND tipo='1'");
-                            $stmt->bind_param('i', $i);
+                            $stmt = mysqli_prepare($conexion, "SELECT * FROM `nominas` WHERE tipo='1'");
                             $stmt->execute();
                             $result = $stmt->get_result();
                             if ($result->num_rows > 0) {
                               while ($row = $result->fetch_assoc()) {
                                 $id = $row['id'];
                                 $nomina = $row['nombre'];
-                                echo "<option value='$id'>$nomina</option>";
+                                echo "<option value='$nomina'>$nomina</option>";
                               }
                             } 
                             $stmt->close();
