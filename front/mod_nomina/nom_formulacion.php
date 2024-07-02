@@ -1371,18 +1371,25 @@ while ($r = $query->fetch_object()) {
       const nombre = $('#nombre_nomina').val()
       const frecuencia = $('#frecuencia_pago').val()
       const tipo = $('#tipo_nomina').val()
+      console.log('hola')
 
-      $.ajax({
+
+    /*  $.ajax({
         url: '../../back/modulo_nomina/guardar_nominas.php',
         type: 'POST',
-        data: {
-          grupo_nomina: "<?php echo $i ?>",
-          nombre: nombre,
-          frecuencia: frecuencia,
-          tipo: tipo,
-          conceptosAplicados: conceptosAplicados
-        },
+        contentType: 'application/json',
+        data: JSON.stringify({
+            grupo_nomina: '<?php echo $i ?>',
+            nombre: nombre,
+            frecuencia: frecuencia,
+            tipo: tipo,
+            conceptosAplicados: conceptosAplicados
+        }),
         success: function(response) {
+
+
+          console.log(response)
+          return 
           if (response.status == 'ok') {
             toast_s('success', 'Creado con exito')
             window.location.href = 'nom_grupos.php'
@@ -1391,7 +1398,47 @@ while ($r = $query->fetch_object()) {
           }
 
         }
-      });
+      });*/
+
+
+      $.ajax({
+        url: '../../back/modulo_nomina/guardar_nominas.php',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({
+            grupo_nomina: '<?php echo $i ?>',
+            nombre: nombre,
+            frecuencia: frecuencia,
+            tipo: tipo,
+            conceptosAplicados: conceptosAplicados
+        }),
+        success: function(response) {
+            console.log(response);
+            // Asegúrate de que response es un objeto JSON
+            try {
+                response = JSON.parse(response);
+            } catch (e) {
+                console.error('Error al parsear la respuesta JSON:', e);
+                toast_s('error', 'Respuesta del servidor no válida');
+                return;
+            }
+
+            if (response.status === 'ok') {
+                toast_s('success', 'Creado con éxito');
+                window.location.href = 'nom_grupos.php';
+            } else {
+                console.log(response.message);
+                toast_s('error', 'Error: ' + response.message);
+            }
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.error('Error en la solicitud AJAX:', textStatus, errorThrown);
+            toast_s('error', 'Error en la solicitud: ' + textStatus);
+        },
+        complete: function() {
+            console.log('Solicitud AJAX completada');
+        }
+    });
 
 
 
