@@ -173,9 +173,9 @@ d.addEventListener('DOMContentLoaded', (e) => {
           type: 'text',
         },
         tipo_nomina: {
-          value: true,
+          value: false,
           message: 'Introducir un campo válido',
-          type: 'number',
+          type: 'number2',
         },
         observacion: {
           value: true,

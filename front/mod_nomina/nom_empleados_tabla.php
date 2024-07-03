@@ -124,13 +124,15 @@ require_once '../../back/sistema_global/session.php';
                     <input class="form-control employee-input" type="text" name="nombres" id="nombres"
                       placeholder="NOMBRE COMPLETO" />
                   </div>
-                  <div class="col-sm-4">
+                  <div class="col-sm-4 d-none">
                     <label class="form-label" for="tipo_nomina">TIPO NÓMINA</label>
-                    <select name="tipo_nomina" class="form-select employee-select" id="tipo_nomina">
+                    <input class="form-control employee-input" type="number" name="tipo_nomina" id="tipo_nomina"
+                      placeholder="NOMBRE COMPLETO" value=0 />
+                    <!-- <select name="tipo_nomina" class="form-select employee-select" id="tipo_nomina">
                       <option selected value="">ELEGIR...</option>
                       <option value="1">OPCIÓN 1</option>
                       <option value="2">OPCIÓN 2</option>
-                    </select>
+                    </select> -->
                   </div>
 
                 </div>
