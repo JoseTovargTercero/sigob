@@ -4,7 +4,14 @@ require_once '../sistema_global/session.php';
 
 if (isset($_POST["tabla"])) {
 
-    $stmt = mysqli_prepare($conexion, "SELECT * FROM `nominas_grupos` ORDER BY codigo");
+    $stmt = mysqli_prepare($conexion, "SELECT 
+    nominas_grupos.codigo, 
+    nominas_grupos.nombre, 
+    nominas_grupos.id,
+    EXISTS (SELECT 1 FROM empleados_por_grupo WHERE empleados_por_grupo.id_grupo = nominas_grupos.id) AS grupo_existe
+FROM 
+    nominas_grupos 
+ORDER BY  codigo");
     $stmt->execute();
     $result = $stmt->get_result();
     if ($result->num_rows > 0) {

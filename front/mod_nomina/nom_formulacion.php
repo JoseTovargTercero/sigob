@@ -93,7 +93,6 @@ while ($r = $query->fetch_object()) {
             <div class="card-body p-3">
               <ul class="nav nav-pills nav-justified">
                 <span id="link_basico" class="nav-item nav-link item-wizard active"><i class="ph-duotone ph-user-circle"></i> <span class="d-none d-sm-inline">Basico</span></span>
-                <span id="link_empleados" class="nav-item nav-link item-wizard"><i class="ph-duotone ph-graduation-cap"></i> <span class="d-none d-sm-inline">Empleados</span></span>
                 <span id="link_conceptos" class="nav-item nav-link item-wizard"><i class="ph-duotone ph-map-pin"></i>
                   <span class="d-none d-sm-inline">Conceptos</span></span>
                 <span id="link_resumen" class="nav-item nav-link item-wizard"><i class="ph-duotone ph-check-circle"></i>
@@ -183,107 +182,6 @@ while ($r = $query->fetch_object()) {
                     </div>
                   </div>
 
-                </section>
-                <section class="tab-pane" id="tab_empleados">
-                  <div id="educationForm" method="post" action="#">
-                    <div class="text-center">
-                      <h3 class="mb-2">Continua agregando los empleados</h3>
-                      <small class="text-muted">
-                        Por favor, ingrese los empleados de la nómina.
-                      </small>
-                    </div>
-                    <div class="row">
-                      <div class="col-md-12">
-
-                        <div class="mb-3">
-                          <label class="form-label" for="filtro_empleados">¿Como quieres seleccionar a tus
-                            empleados?</label>
-                          <select class="form-select" id="filtro_empleados" onchange="seleccion_empleados(this.value, 'empleados-list')">
-                            <option>Seleccione</option>
-                            <option value="1">Enlistar todos</option>
-                            <option value="2">Por sus características (Formulación)</option>
-                            <option value="3">Heredar de otra nomina</option>
-                          </select>
-                        </div>
-                      </div>
-
-                      <section id="herramienta-formulacion" class="hide p-3">
-                        <!-- HERRAMIENTA PARA FILTRAR SEGUN FORMULA-->
-                        <div class="row">
-
-                          <div class="col-lg-6">
-                            <div class="mb-3"><label class="form-label">Formulación</label>
-                              <div class="input-group mb-3">
-                                <textarea class="form-control condicion" rows="1" id="t_area-1"></textarea>
-                                <button class="btn btn-primary" onclick="validarFormula('t_area-1', 'empleados-list')" type="button">Obtener</button>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="col-lg-6">
-
-                            <div class="mb-3">
-                              <label class="form-label" for="campo_condiciona">Condicionantes</label>
-                              <select name="campo_condiciona" onchange="setCondicionante(this.value, 'result')" id="campo_condiciona" class="form-control">
-                                <option value="">Seleccione</option>
-                                <option value="cod_cargo">Código de cargo</option>
-                                <option value="discapacidades">Discapacidades</option>
-                                <option value="instruccion_academica">Instrucción académica</option>
-                                <option value="hijos">Hijos</option>
-                                <option value="antiguedad">Antigüedad (desde la fecha de ingreso)</option>
-                                <option value="antiguedad_total">Antigüedad (Sumando años anteriores)</option>
-                                <option value="tipo_nomina">Tipo de nomina</option>
-
-                              </select>
-                            </div>
-                            <ol class="list-group list-group-numbered" id="result">
-                            </ol>
-                          </div>
-                        </div>
-                      </section>
-
-
-                      <div class="col-md-12 hide" id="otras_nominas-list">
-                        <div class="mb-3">
-                          <label class="form-label" for="otra_nominas">Nominas registradas</label>
-                          <select class="form-select" id="otra_nominas">
-                            <option>Seleccione</option>
-                            <?php foreach ($nominas as $n) : ?>
-                              <option value="<?php echo $n->nombre; ?>">&nbsp;<?php echo $n->nombre; ?></option>
-                            <?php endforeach; ?>
-                          </select>
-                        </div>
-                      </div>
-
-                      <!-- SIEMPRE VISIBLE, CON LA LISTA DE TRABAJADORES-->
-                      <section class="mt-3 mh-60">
-                        <table class="table table-striped table-hover">
-                          <thead>
-                            <tr>
-                              <th class="w-40">Cedula</th>
-                              <th class="w-40">Nombre</th>
-                              <th class="w-auto text-center"><input type="checkbox" id="selectAll" onchange="checkAll(this.checked, '')" class="form-check-input" /></th>
-                            </tr>
-                          </thead>
-                          <tbody id="empleados-list">
-                          </tbody>
-
-                        </table>
-
-
-                      </section>
-
-                      <p class="text-end mt-2" id="resumen_epleados_seleccionados">
-
-                      </p>
-                    </div>
-                    <div class="d-flex w-100 mt-3">
-                      <div class="d-flex m-a">
-                        <div class="me-2"><button class="previous btn btn-secondary" onclick="beforeStep('1')">Regresar</button>
-                        </div>
-                        <div class="next"><button class="btn btn-secondary mt-3 mt-md-0" onclick="nextStep('2')">Siguiente</button></div>
-                      </div>
-                    </div>
-                  </div>
                 </section>
                 <section class="tab-pane" id="tab_conceptos">
                   <div id="jobForm" method="post" action="#">
@@ -469,8 +367,8 @@ while ($r = $query->fetch_object()) {
                     </div>
                     <div class="d-flex w-100 mt-3">
                       <div class="d-flex m-a">
-                        <div class=" me-2"><button class="previous btn btn-secondary" onclick="beforeStep('2')">Regresar</button></div>
-                        <div class="next"><button class="previous btn btn-secondary mt-3 mt-md-0" onclick="nextStep('3')">Siguiente</button></div>
+                        <div class=" me-2"><button class="previous btn btn-secondary" onclick="beforeStep('1')">Regresar</button></div>
+                        <div class="next"><button class="previous btn btn-secondary mt-3 mt-md-0" onclick="nextStep('2')">Siguiente</button></div>
                       </div>
                     </div>
                   </div>
@@ -491,7 +389,7 @@ while ($r = $query->fetch_object()) {
                   </div>
                   <div class="d-flex w-100 mt-3">
                     <div class="d-flex m-a">
-                      <div class="me-2"><button class="previous btn btn-secondary" onclick="beforeStep('3')">Regresar
+                      <div class="me-2"><button class="previous btn btn-secondary" onclick="beforeStep('2')">Regresar
                           </button=>
                       </div>
                       <div class="next"><button onclick="guardarNomina()" class="btn btn-primary mt-3 mt-md-0"> <i class="bx bx-save"></i> Guardar</button></div>
@@ -554,78 +452,7 @@ while ($r = $query->fetch_object()) {
 
 
 
-    /**
-     * Adds an event listener to the 'otra_nominas' element and applies a filter when the value changes.
-     * 
-     * @param {Event} event - The event object.
-     */
-    document.getElementById('otra_nominas').addEventListener('change', function(event) {
-      let nombre = this.value;
-      if (nombre != '') {
-        aplicar_filtro(3, nombre, 'empleados-list');
-      }
-    });
-
-
-    /**
-     * Adds an event listener to the 'btn-obtener' button and performs a specific action when clicked.
-     * 
-     * @param {Event} event - The event object.
-     * @returns {void}
-     */
-    function validarFormula(area, result_list) {
-      let condicion = $('#' + area).val();
-      if (condicion == '') {
-        return toast_s('error', 'Debe indicar una condición');
-      } else {
-        if (result_list == 'empleados-list') {
-          aplicar_filtro(2, condicion, result_list);
-        } else {
-          let accion = 'todos'; // Definir 'accion' aquí si es necesario
-          tbl_emp_seleccionados(condicion, accion); // Pasar 'accion' como parámetro
-        }
-      }
-    }
-
-
-
-    /**
-     * Applies a filter to retrieve employees based on the specified type and filter.
-     *
-     * @param {string} tipo - The type of filter to apply.
-     * @param {string} filtro - The filter to apply.
-     */
-
-    let empleadosFiltro = []
-
-    function aplicar_filtro(tipo, filtro, result_list) {
-      empleadosFiltro = []
-      $.ajax({
-        url: url_back,
-        type: 'POST',
-        data: {
-          tipo_filtro: tipo,
-          filtro: filtro.trim(),
-          tabla_empleados: true
-        },
-        success: function(response) {
-          let empleados = JSON.parse(response);
-          let tabla = '';
-
-          empleados.forEach(e => {
-            empleadosFiltro[e.id] = [e.id, e.nacionalidad, e.cedula, e.nombres, e.fecha_ingreso, e.anios_actuales, e.otros_anios, e.anios_totales, e.status, e.observacion, e.cod_cargo, e.hijos, e.instruccion_academica, e.discapacidades, e.id_dependencia];
-            tabla += '<tr>';
-            tabla += '<td>' + e.cedula + '</td>';
-            tabla += '<td>' + e.nombres + '</td>';
-            tabla += '<td class="text-center"><input class="form-check-input itemCheckbox" onchange="guardar_empleados_nomina()" type="checkbox" value="' + e.id + '"></td>';
-            tabla += '</tr>';
-          });
-
-          document.getElementById(result_list).innerHTML = tabla;
-        }
-      });
-    }
-
+    
     /**
      * Checks or unchecks all checkboxes with the class 'itemCheckbox'.
      *
@@ -639,6 +466,7 @@ while ($r = $query->fetch_object()) {
 
       guardar_empleados_nomina()
     }
+
 
     let empleadosSeleccionados = [] // Todos los emleados seleccionados para la nomina 
 
@@ -654,10 +482,41 @@ while ($r = $query->fetch_object()) {
           empleadosSeleccionados.push(empleadosFiltro[checkbox.value]);
         }
       });
-      document.getElementById('resumen_epleados_seleccionados').innerText = 'Empleados seleccionados: ' + empleadosSeleccionados.length;
     }
 
-    // document.getElementsByClassName('guardar_empleados_nomina').addEventListener('click', guardar_empleados_nomina);
+
+    /* ACA SE CARGA LA LISTA DE EMPLEADOS DEL 'NOM_MODIFICAR' */
+
+    
+
+    <?php
+    /**
+     * Retrieves employee data from the database based on the provided group ID.
+     *
+     * @param mysqli $conexion The database connection object.
+     * @param string $i The group ID.
+     * @return array An array of employee data.
+     */
+    $stmt = mysqli_prepare($conexion, "SELECT e.id, e.nacionalidad, e.cedula, e.nombres, e.fecha_ingreso, e.otros_años, e.status, e.observacion, e.cod_cargo, e.hijos, e.instruccion_academica, e.discapacidades, e.id_dependencia, e.verificado, TIMESTAMPDIFF(YEAR, e.fecha_ingreso, CURDATE()) AS antiguedad, TIMESTAMPDIFF(YEAR, e.fecha_ingreso, CURDATE()) + e.otros_años AS anios_totales_calculados FROM empleados_por_grupo LEFT JOIN empleados AS e ON e.id = empleados_por_grupo.id_empleado WHERE id_grupo = ?");
+    $stmt->bind_param('s', $i);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+      while ($row = $result->fetch_assoc()) {
+        if ($row["otros_años"] !== null) {
+          $anios_actuales = $row["anios_totales_calculados"] - $row["otros_años"];
+        } else {
+            $anios_actuales = $row["antiguedad"];
+        }
+
+        echo 'empleadosSeleccionados.push(['.$row["id"].',"'.$row["nacionalidad"].'","'.$row["cedula"].'","'.$row["nombres"].'","'.$row["fecha_ingreso"].'",'.$anios_actuales.','.$row["otros_años"].','.$row["anios_totales_calculados"].',"'.$row["status"].'","'.$row['observacion'].'","'.$row["cod_cargo"].'",'.$row["hijos"].','.$row["instruccion_academica"].','.$row["discapacidades"].','.$row["id_dependencia"].','.$row["verificado"].'
+            ])'.PHP_EOL;
+      }
+    }
+
+    $stmt->close();
+    ?>
 
 
     /**
@@ -853,6 +712,11 @@ while ($r = $query->fetch_object()) {
 
     let conceptosAplicados = {}
 
+    /**
+     * Verifies the selected elements for subtraction.
+     *
+     * @return boolean Returns false if more than 2 elements are selected, otherwise returns true.
+     */
     function verificarElementosResta() {
       let nominas_restar = $('#nominas_restar').val()
       if (nominas_restar.length > 2) {
@@ -861,6 +725,7 @@ while ($r = $query->fetch_object()) {
         return false
       }
     }
+
     document.getElementById('nominas_restar').addEventListener('change', verificarElementosResta)
 
     /**
@@ -1158,12 +1023,15 @@ while ($r = $query->fetch_object()) {
     }
 
 
+    /**
+     * Generates a summary of the payroll.
+     */
     function resumenDeNomina() {
       const nombre = $('#nombre_nomina').val()
       const frecuencia = $('#frecuencia_pago').val()
       const tipo = $('#tipo_nomina').val()
 
-
+      // Display the payroll data
       $('#nomina_resumen').html(`<h5>Datos de la nómina:</h5>
        <p>Nombre: <b>` + nombre + `</b><br>
        Frecuencia de pago: <b>` + frecuencia + `</b><br>
@@ -1171,13 +1039,11 @@ while ($r = $query->fetch_object()) {
        </p>
      `)
 
-
       let totalPrimas = 0;
       let totalDeducciones = 0;
       let totalAportes = 0;
 
-
-
+      // Display the applied concepts
       $('#nomina_resumen').append(`<h5> Conceptos aplicados:</h5>
       <ul class="list-group">`)
 
@@ -1194,7 +1060,7 @@ while ($r = $query->fetch_object()) {
         }
       }
       $('#nomina_resumen').append('</ul>')
-      /*
+        /*
       return
 
       let tabla = '';
@@ -1232,6 +1098,17 @@ while ($r = $query->fetch_object()) {
      * @param {string} step - The current step value.
      */
 
+    function verTrabajadoresConcepto(param) {
+      alert('Pendiente')
+    }
+
+    /**
+     * Checks if a given nombre_nomina exists by making an asynchronous request to the server.
+     *
+     * @param {string} nombre_nomina - The nombre_nomina to check.
+     * @returns {Promise<boolean>} - A promise that resolves to true if the nombre_nomina exists, false otherwise.
+     * @throws {string} - Throws an error message if there was an error verifying the nombre_nomina.
+     */
     function checkNombreNominaExists(nombre_nomina) {
       return new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
@@ -1255,6 +1132,13 @@ while ($r = $query->fetch_object()) {
       });
     }
 
+    /**
+     * This function is used to navigate to the next step in a form.
+     * 
+     * @param {string} step - The current step of the form.
+     * 
+     * @returns {void} - This function does not return anything.
+     */
     async function nextStep(step) {
       if (step == '1') {
         const inputs = ['nombre_nomina', 'frecuencia_pago', 'tipo_nomina', 'tipo_pago'];
@@ -1270,27 +1154,22 @@ while ($r = $query->fetch_object()) {
           if (exists) {
             return toast_s('error', 'El nombre de la nómina ya existe');
           } else {
-            toggleStep('basico', 'empleados');
-            document.getElementById('progressbar').style.width = '50%';
+            toggleStep('basico', 'conceptos');
+            document.getElementById('progressbar').style.width = '60%';
           }
         } catch (error) {
           return toast_s('error', error);
         }
       } else if (step == '2') {
-        if (empleadosSeleccionados.length === 0) {
-          return toast_s('error', 'Debe seleccionar al menos un empleado');
-        }
-        toggleStep('empleados', 'conceptos');
-        document.getElementById('progressbar').style.width = '75%';
-      } else if (step == '3') {
         if (Object.keys(conceptosAplicados).length === 0) {
           return toast_s('error', 'Debe seleccionar al menos un concepto');
         } else {
           toggleStep('conceptos', 'resumen');
           document.getElementById('progressbar').style.width = '100%';
           resumenDeNomina()
+          
         }
-      }
+      } 
     }
 
     /**
@@ -1317,19 +1196,14 @@ while ($r = $query->fetch_object()) {
         '1': {
           link: 'link_basico',
           tab: 'tab_basico',
-          progressbar: 25
+          progressbar: 30
         },
         '2': {
-          link: 'link_empleados',
-          tab: 'tab_empleados',
-          progressbar: 50
-        },
-        '3': {
           link: 'link_conceptos',
           tab: 'tab_conceptos',
-          progressbar: 75
+          progressbar: 60
         },
-        '4': {
+        '3': {
           link: 'link_resumen',
           tab: 'tab_resumen',
           progressbar: 100
@@ -1434,14 +1308,18 @@ while ($r = $query->fetch_object()) {
 
 
 
-
+    /**
+     * This function is responsible for saving the payroll information.
+     * It sends an AJAX request to the server to save the data.
+     * 
+     * @return void
+     */
     function guardarNomina() {
       const prefijo = $('#prefijo_nomina').html() + ' ' + $('#prefijo_nomina2').html() + ' ';
       const nombre = prefijo+$('#nombre_nomina').val()
       const frecuencia = $('#frecuencia_pago').val()
       const tipo = $('#tipo_nomina').val()
       console.log('hola')
-
 
       $.ajax({
         url: '../../back/modulo_nomina/guardar_nominas.php',
@@ -1456,19 +1334,19 @@ while ($r = $query->fetch_object()) {
         }),
         success: function(response) {
           console.log(response);
-          // Asegúrate de que response es un objeto JSON
+          // Make sure response is a JSON object
           try {
             if (typeof response !== 'object') {
               response = JSON.parse(response);
             }
           } catch (e) {
-            console.error('Error al parsear la respuesta JSON:', e);
-            toast_s('error', 'Respuesta del servidor no válida');
+            console.error('Error parsing JSON response:', e);
+            toast_s('error', 'Invalid server response');
             return;
           }
 
           if (response.status === 'ok') {
-            toast_s('success', 'Creado con éxito');
+            toast_s('success', 'Created successfully');
             window.location.href = 'nom_grupos.php';
           } else {
             console.log(response.message);
@@ -1476,16 +1354,13 @@ while ($r = $query->fetch_object()) {
           }
         },
         error: function(jqXHR, textStatus, errorThrown) {
-          console.error('Error en la solicitud AJAX:', textStatus, errorThrown);
-          toast_s('error', 'Error en la solicitud: ' + textStatus);
+          console.error('AJAX request error:', textStatus, errorThrown);
+          toast_s('error', 'Request error: ' + textStatus);
         },
         complete: function() {
-          console.log('Solicitud AJAX completada');
+          console.log('AJAX request completed');
         }
       });
-
-
-
     }
   </script>
 </body>

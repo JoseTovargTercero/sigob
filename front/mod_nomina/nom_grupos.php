@@ -98,46 +98,8 @@ require_once '../../back/sistema_global/session.php';
   </div>
 
 
-  <div class="dialogs">
-    <div class="dialogs-content">
-      <span class="close-button">×</span>
-
-      <h5 class="card-header">
-        Nominas
-      </h5>
-      <div class="mt-3">
-
-
-        <ol class="list-group list-group-numbered">
-          <li class="list-group-item d-flex justify-content-between align-items-start">
-            <div class="ms-2 me-auto">
-              <div class="fw-bold">003 Nacional </div> <small>Normal</small>
-            </div>
-            <button type="button" class="btn btn-icon btn-light-danger avtar-sm"><i class="bx bx-trash"></i></button>
-          </li>
-          <li class="list-group-item d-flex justify-content-between align-items-start">
-            <div class="ms-2 me-auto">
-              <div class="fw-bold">033 Regional </div> <small>Normal</small>
-            </div>
-            <button type="button" class="btn btn-icon btn-light-danger avtar-sm"><i class="bx bx-trash"></i></button>
-          </li>
-          <li class="list-group-item d-flex justify-content-between align-items-start">
-            <div class="ms-2 me-auto">
-              <div class="fw-bold">003 Cesta ticket </div> <small>Especial</small>
-            </div>
-            <button type="button" class="btn btn-icon btn-light-danger avtar-sm"><i class="bx bx-trash"></i></button>
-          </li>
-        </ol>
-
-
-
-      </div>
-    </div>
-  </div>
-
 
   <!-- [ Main Content ] end -->
-  <script src="../../src/assets/js/notificaciones.js"></script>
   <script src="../../src/assets/js/plugins/simplebar.min.js"></script>
   <script src="../../src/assets/js/plugins/bootstrap.min.js"></script>
   <script src="../../src/assets/js/pcoded.js"></script>
@@ -157,7 +119,6 @@ require_once '../../back/sistema_global/session.php';
         },
         cache: false,
         success: function (response) {
-
           $('#table tbody').html('');
           if (response) {
 
@@ -167,21 +128,19 @@ require_once '../../back/sistema_global/session.php';
               var codigo = data[i].codigo;
               var nombre = data[i].nombre;
               var id = data[i].id;
+              var grupo_existe = data[i].grupo_existe;
 
               $('#table tbody').append(`<tr>
               <td><img class="rounded-circle" src="../../src/assets/images/icons-png/folder.png" alt="activity-user"></td>
               <td>` + codigo + `</td>
               <td>` + nombre + `</td>
 
-    
+              <td><a class="pointer btn-wicon badge me-2 bg-brand-color-3 text-white f-12" href="nom_modificar?i=` + id + `"> <i class="bx bx-cog me-1"></i> Modificar</a></td>
+              <td>
+              `+ (grupo_existe == '0' ? `<span title="No hay empleados agregados al grupo" onclick="swal('error', 'No hay empleados asociados al grupo de nomina, cree un nuevo listado para continuar')" class="btn-wicon badge me-2 bg-light-dark  f-12 text-muted"> <i class="bx bx-add-to-queue me-1"></i> Agregar</span>` : `<a href="nom_formulacion?i=` + id + `" class="pointer btn-wicon badge me-2 bg-brand-color-1 text-white f-12"> <i class="bx bx-add-to-queue me-1"></i> Agregar</a>`) +`
+              </td>
 
-              <td><a class="pointer btn-wicon badge me-2 bg-light-dark  f-12" onclick="verGrupo(` + id + `)"> <i class="bx bx-detail"></i> Detalles</a></td>
-
-
-
-              <td><a href="nom_formulacion?i=` + id + `" class="pointer btn-wicon badge me-2 bg-brand-color-1 text-white f-12" onclick="addNomina(` + id + `)"> <i class="bx bx-add-to-queue"></i> Agregar</a></td>
-
-              <td><a class="pointer btn-wicon badge me-2 bg-brand-color-2 text-white f-12" onclick="eliminar(` + id + `)"><i class="bx bx-trash"></i> Eliminar</a></td>
+              <td><a class="pointer btn-wicon badge me-2 bg-brand-color-2 text-white f-12" onclick="eliminar(` + id + `)"><i class="bx bx-trash me-1"></i> Eliminar</a></td>
               </tr>`);
             }
           }
@@ -192,14 +151,6 @@ require_once '../../back/sistema_global/session.php';
     }
     // ready function
     cargarTabla()
-
-
-    function verGrupo(gurpo) {
-      toggleDialogs()
-
-    }
-
-
 
 
     /**
@@ -240,6 +191,7 @@ require_once '../../back/sistema_global/session.php';
       });
     }
 
+ 
     // enviar data al back
     function guardar() {
       let codigo = document.getElementsByName('codigo')[0].value;

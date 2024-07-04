@@ -290,3 +290,17 @@ function checkTablesForData() {
       }
   });
 }
+
+
+
+
+   
+function swal(type, text) {
+  Swal.fire({
+    title: "Atención",
+    text: text,
+    icon: type,
+    confirmButtonColor: "#04a9f5",
+    confirmButtonText: "Ok"
+  });
+}
