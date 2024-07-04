@@ -2182,6 +2182,19 @@ CREATE TABLE `modificaciones_empleados` (
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `empleados_por_grupo`
+--
+
+CREATE TABLE `empleados_por_grupo` (
+  `id` int(11) NOT NULL,
+  `id_empleado` int(11) NOT NULL,
+  `id_grupo` int(11) NOT NULL,
+  `status` int(11) NOT NULL DEFAULT '1'
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+
+
+
+--
 -- Estructura de tabla para la tabla `nominas`
 --
 
@@ -6973,7 +6986,8 @@ INSERT INTO `txt` (`id`, `id_empleado`, `total_a_pagar`, `nombre_nomina`, `ident
 --
 -- Índices para tablas volcadas
 --
-
+ALTER TABLE `empleados_por_grupo`
+  ADD PRIMARY KEY (`id`);
 --
 -- Indices de la tabla `bancos`
 --
@@ -7129,6 +7143,9 @@ ALTER TABLE `conceptos`
 ALTER TABLE `conceptos_aplicados`
   MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=68;
 
+ALTER TABLE `empleados_por_grupo`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  
 --
 -- AUTO_INCREMENT de la tabla `conceptos_formulacion`
 --
