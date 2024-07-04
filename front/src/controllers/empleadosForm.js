@@ -60,6 +60,7 @@ function validateEmployeeForm({
 
     // CÓDIGO PARA OBTENER EMPLEADO EN CASO DE EDITAR
     if (id) {
+      // Obtener datos de empleado dada su ID
       let employeeData = await getEmployeeData(id)
 
       // SI EL EMPLEADO TIENE EL VERIFICADO EN 2, COLOCAR CORRECIÓN EN FORMULARCIÓN DE EDICIÓN
@@ -76,6 +77,16 @@ function validateEmployeeForm({
         )
       }
 
+      // Vacíar campo de dependencia no necesario
+      employeeData[0].dependencia = ''
+
+      employeeData[0].id = employeeData[0].id_empleado
+      employeeId = employeeData[0].id_empleado
+
+      console.log(employeeId)
+
+      fieldList = employeeData[0]
+
       employeeSelectElementCopy.forEach((select) => {
         // SI EL VALOR NO ES UNDEFINED COLOCAR VALOR EN SELECT
         if (employeeData[0][select.name] !== undefined)
@@ -91,7 +102,10 @@ function validateEmployeeForm({
 
       employeeInputElementCopy.forEach((input) => {
         // SI EL VALOR NO ES UNDEFINED COLOCAR VALOR EN INPUT
-        if (employeeData[0][input.name] !== undefined)
+        if (
+          employeeData[0][input.name] !== undefined &&
+          input.name !== 'dependencia'
+        )
           input.value = employeeData[0][input.name]
 
         validateInput({
@@ -102,10 +116,6 @@ function validateEmployeeForm({
         })
       })
 
-      employeeData[0].id = employeeData[0].id_empleado
-      employeeId = employeeData[0].id_empleado
-
-      fieldList = employeeData[0]
       console.log(fieldList, fieldListErrors)
     } else {
       validateInput({
@@ -121,12 +131,12 @@ function validateEmployeeForm({
 
       employeeId = undefined
     }
-    console.log(employeeId)
   }
 
   formElement.addEventListener('submit', (e) => e.preventDefault())
 
   formElement.addEventListener('input', (e) => {
+    console.log(fieldList)
     if (e.target.classList.contains(employeeInputClass)) {
       fieldList = validateInput({
         target: e.target,
@@ -205,15 +215,22 @@ function validateEmployeeForm({
 
     if (e.target === btnDependencySave) {
       let newDependency = { dependencia: fieldList.dependencia }
-      console.log(fieldList)
+      if (!fieldList.dependencia)
+        return confirmNotification({
+          type: NOTIFICATIONS_TYPES.fail,
+          message: 'No se puede enviar una dependencia vacía',
+        })
       if (!fieldListErrors.dependencia.value) {
         validateNewDependency({ newDependency })
+        d.getElementById('dependencia').value = ''
+        fieldList.dependencia = ''
       }
     }
 
+    // ENVIAR DATOS
+
     if (e.target === btnElement) {
-      delete fieldList.dependencia
-      delete fieldListErrors.dependencia
+      console.log(fieldList.dependencia)
 
       employeeSelectElementCopy.forEach((input) => {
         validateInput({
@@ -225,7 +242,7 @@ function validateEmployeeForm({
       })
 
       employeeInputElementCopy.forEach((input) => {
-        if (fieldListErrors[input.name] && fieldListErrors[input.value])
+        if (fieldListErrors[input.name] && input.name !== 'dependencia')
           validateInput({
             target: input,
             fieldList,
