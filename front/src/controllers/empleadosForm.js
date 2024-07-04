@@ -225,7 +225,7 @@ function validateEmployeeForm({
       })
 
       employeeInputElementCopy.forEach((input) => {
-        if (fieldListErrors[input.name])
+        if (fieldListErrors[input.name] && fieldListErrors[input.value])
           validateInput({
             target: input,
             fieldList,

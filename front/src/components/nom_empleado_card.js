@@ -145,7 +145,7 @@ export async function employeeCard({ id, elementToInsert }) {
               </p>
               <p>Dependencia laboral: ${dependencia}</p>
               <p>
-                Banco: ${banco} - ${cuenta_bancaria}}
+                Banco: ${banco} - ${cuenta_bancaria}
               </p>
             </div>
           </div>
