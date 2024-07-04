@@ -2173,7 +2173,10 @@ CREATE TABLE `modificaciones_empleados` (
   `id` int(11) NOT NULL,
   `empleado` int(11) NOT NULL,
   `campo` varchar(255) DEFAULT NULL,
-  `valor` varchar(255) DEFAULT NULL
+  `valor` varchar(255) DEFAULT NULL,
+  `timestamp` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `user_acepta` int(10) NOT NULL DEFAULT '0',
+  `fecha` varchar(50) COLLATE latin1_spanish_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 -- --------------------------------------------------------

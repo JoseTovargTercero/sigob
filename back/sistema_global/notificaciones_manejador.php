@@ -12,7 +12,7 @@ if (isset($_POST["tabla"])) {
   system_users.u_oficina, system_users.u_nombre 
   FROM `notificaciones` 
   LEFT JOIN system_users ON system_users.u_id = notificaciones.user_1
-  WHERE user_2 = ? AND visto = '0'");
+  WHERE user_2 = ? AND visto = '0' ORDER BY id DESC");
   $stmt->bind_param('s', $user);
   $stmt->execute();
   $result = $stmt->get_result();

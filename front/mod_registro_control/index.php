@@ -96,7 +96,6 @@ require_once '../../back/sistema_global/session.php';
 
   <script src="../../src/assets/js/plugins/simplebar.min.js"></script>
   <script src="../../src/assets/js/plugins/bootstrap.min.js"></script>
-  <script src="../../src/assets/js/fonts/custom-font.js"></script>
   <script src="../../src/assets/js/pcoded.js"></script>
   <script src="../../src/assets/js/plugins/feather.min.js"></script>
   <script src="../../src/assets/js/notificaciones.js"></script>
@@ -104,3 +103,5 @@ require_once '../../back/sistema_global/session.php';
 </body>
 
 </html>
+
+e5 2650 v4

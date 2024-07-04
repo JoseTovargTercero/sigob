@@ -70,17 +70,32 @@
           <li class="pc-item pc-hasmenu">
             <a href="#!" class="pc-link">
               <span class="pc-micon">
-                <i class='bx bx-file'></i>
+                <i class='bx bx-group'></i>
               </span>
-              <span class="pc-mtext">Verificación</span><span class="pc-arrow"><i class="ti ti-chevron-right"></i></span>
+              <span class="pc-mtext">Gestión de Empleados</span><span class="pc-arrow"><i class="ti ti-chevron-right"></i></span>
             </a>
             <ul class="pc-submenu">
               <li class="pc-item"><a class="pc-link"
-                  href="<?php echo constant('URL') ?>front/mod_registro_control/regcon_empleados_verificar">Gestión de
+                  href="<?php echo constant('URL') ?>front/mod_registro_control/regcon_empleados_verificar">Nuevos
                   empleados</a></li>
               <li class="pc-item"><a class="pc-link"
-                  href="<?php echo constant('URL') ?>front/mod_registro_control/regcon_nomina_comparar">Revision de
-                  nominas</a></li>
+                  href="<?php echo constant('URL') ?>front/mod_registro_control/regcon_modificacion_empleados">Actualización de datos</a></li>
+            </ul>
+          </li>
+
+          <li class="pc-item pc-hasmenu">
+            <a href="#!" class="pc-link">
+              <span class="pc-micon">
+                <i class='bx bx-file'></i>
+              </span>
+              <span class="pc-mtext">Nómina</span><span class="pc-arrow"><i class="ti ti-chevron-right"></i></span>
+            </a>
+            <ul class="pc-submenu">
+              <li class="pc-item"><a class="pc-link"
+                  href="<?php echo constant('URL') ?>front/mod_registro_control/regcon_nomina_comparar">Pago de Nómina</a></li>
+
+
+
             </ul>
           </li>
 

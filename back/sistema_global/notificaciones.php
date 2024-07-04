@@ -14,6 +14,8 @@ function textNotification($type){
     '3' => ['Envió a corrección los datos de un empleado', 'front/mod_nomina/nom_empleados_tabla'],
     '4' => ['Rechazo la creación de un empleado', ''],
     '5' => ['Aprobó la creación de un empleado', 'front/mod_nomina/nom_empleados_tabla'],
+    '6' => ['Rechazo la modificación de un empleado', ''],
+    '7' => ['Aprobó la modificación de un empleado', 'front/mod_nomina/nom_empleados_tabla'],
     
     // mas opciones
   );

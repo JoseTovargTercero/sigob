@@ -52,7 +52,6 @@ function cargarNotificaciones() {
       tabla: true,
     },
     success: function (response) {
-      console.log(response)
       var data = JSON.parse(response)
       if (data.length > 0) {
         $('#notifications_number').html(data.length)

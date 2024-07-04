@@ -94,7 +94,6 @@ require_once '../../back/sistema_global/session.php';
   </div>
   <!-- [ Main Content ] end -->
 
-  <script src="../../src/assets/js/notificaciones.js"></script>
   <script src="../../src/assets/js/plugins/simplebar.min.js"></script>
   <script src="../../src/assets/js/plugins/bootstrap.min.js"></script>
   <script src="../../src/assets/js/fonts/custom-font.js"></script>
