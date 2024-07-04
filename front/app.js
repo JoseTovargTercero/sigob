@@ -168,17 +168,17 @@ d.addEventListener('DOMContentLoaded', (e) => {
           type: 'number',
         },
         dependencia: {
-          value: false,
+          value: null,
           message: 'No puede estar vacío',
           type: 'text',
         },
         tipo_nomina: {
-          value: false,
+          value: null,
           message: 'Introducir un campo válido',
           type: 'number2',
         },
         observacion: {
-          value: true,
+          value: null,
           message: 'Introducir un campo válido',
           type: 'text',
         },

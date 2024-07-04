@@ -8,6 +8,13 @@ function validateInput({ target, fieldList = {}, fieldListErrors = {}, type }) {
 
   if (target) {
     value = target.value
+    if (fieldListErrors[target.name].value === null) {
+      fieldList = {
+        ...fieldList,
+        [target.name]: target.value,
+      }
+      return fieldList
+    }
   }
 
   try {
@@ -65,7 +72,7 @@ function validateInput({ target, fieldList = {}, fieldListErrors = {}, type }) {
       let numeroCuenta = fieldList['cuenta_bancaria']
       let isBankSelected = numeroCuenta.startsWith(secuenciaBanco)
 
-      if (!isBank) {
+      if (!isBank && fieldList['banco']) {
         target.classList.add('input-error')
         fieldListErrors[target.name].value = true
         errorMessage(target, `Elija un banco`)

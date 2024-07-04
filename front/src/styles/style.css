@@ -87,7 +87,7 @@ a {
 }
 
 .modal-box.short {
-  height: fit-content;
+  max-height: 250px;
 }
 
 .modal-box-header {
