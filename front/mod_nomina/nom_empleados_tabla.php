@@ -179,7 +179,7 @@ require_once '../../back/sistema_global/session.php';
 
                   </div>
 
-                  <div class="col-sm" tabindex="0">
+                  <div class="col-sm">
                     <label class="form-label" for="cargo">CARGO AL QUE OPTA</label>
                     <select class="form-select employee-select" name="cod_cargo" id="search-select-cargo">
                       <option value="" selected>ELEGIR...</option>
