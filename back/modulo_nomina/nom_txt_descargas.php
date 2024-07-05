@@ -20,6 +20,7 @@ $identificador = $_POST['identificador'];
         "http://localhost/sigob/back/modulo_nomina/tesoro_pdf.php?correlativo=$correlativo&identificador=$identificador" => "relacion_de_banco_tesoro_{$identificador}.pdf",
         "http://localhost/sigob/back/modulo_nomina/bicentenario_pdf.php?correlativo=$correlativo&identificador=$identificador" => "relacion_de_banco_bicentenario_{$identificador}.pdf",
         "http://localhost/sigob/back/modulo_nomina/caroni_pdf.php?correlativo=$correlativo&identificador=$identificador" => "relacion_de_banco_caroni_{$identificador}.pdf",
+        
     ];
 
 // Array con los URLs de los archivos PDF que quieres generar
