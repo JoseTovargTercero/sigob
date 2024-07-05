@@ -7,27 +7,42 @@ use Mpdf\Mpdf;
 $correlativo = $_POST['correlativo'];
 $identificador = $_POST['identificador'];
 
+// Definir el número de registros por página
+$registrosPorPagina = 350;
 
-    $txt_files = [
-        "tesoro_{$correlativo}_{$identificador}.txt",
-        "venezuela_{$correlativo}_{$identificador}.txt",
-        "bicentenario_{$correlativo}_{$identificador}.txt",
-        "caroni_{$correlativo}_{$identificador}.txt",
-    ];
+// Obtener el número total de registros para la paginación
+$conn = new PDO('mysql:host=localhost;dbname=sigob', 'root', '');
+$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    $pdf_files = [
-        "http://localhost/sigob/back/modulo_nomina/venezuela_pdf.php?correlativo=$correlativo&identificador=$identificador" => "relacion_de_banco_venezuela_{$identificador}.pdf",
-        "http://localhost/sigob/back/modulo_nomina/tesoro_pdf.php?correlativo=$correlativo&identificador=$identificador" => "relacion_de_banco_tesoro_{$identificador}.pdf",
-        "http://localhost/sigob/back/modulo_nomina/bicentenario_pdf.php?correlativo=$correlativo&identificador=$identificador" => "relacion_de_banco_bicentenario_{$identificador}.pdf",
-        "http://localhost/sigob/back/modulo_nomina/caroni_pdf.php?correlativo=$correlativo&identificador=$identificador" => "relacion_de_banco_caroni_{$identificador}.pdf",
-        
-    ];
+$stmt = $conn->prepare("
+    SELECT COUNT(*) AS total
+    FROM recibo_pago
+    WHERE correlativo = :correlativo
+");
+$stmt->bindValue(':correlativo', $correlativo, PDO::PARAM_STR);
+$stmt->execute();
+$totalRegistros = $stmt->fetchColumn();
 
-// Array con los URLs de los archivos PDF que quieres generar
+$totalPaginas = ceil($totalRegistros / $registrosPorPagina);
 
+// Archivos TXT y PDFs a incluir en el ZIP
+$txt_files = [
+    "tesoro_{$correlativo}_{$identificador}.txt",
+    "venezuela_{$correlativo}_{$identificador}.txt",
+    "bicentenario_{$correlativo}_{$identificador}.txt",
+    "caroni_{$correlativo}_{$identificador}.txt",
+];
+
+$pdf_files = [
+    "http://localhost/sigob/back/modulo_nomina/venezuela_pdf.php?correlativo=$correlativo&identificador=$identificador" => "relacion_de_banco_venezuela_{$identificador}.pdf",
+    "http://localhost/sigob/back/modulo_nomina/tesoro_pdf.php?correlativo=$correlativo&identificador=$identificador" => "relacion_de_banco_tesoro_{$identificador}.pdf",
+    "http://localhost/sigob/back/modulo_nomina/bicentenario_pdf.php?correlativo=$correlativo&identificador=$identificador" => "relacion_de_banco_bicentenario_{$identificador}.pdf",
+    "http://localhost/sigob/back/modulo_nomina/caroni_pdf.php?correlativo=$correlativo&identificador=$identificador" => "relacion_de_banco_caroni_{$identificador}.pdf",
+    "http://localhost/sigob/back/modulo_nomina/nom_resumen_nomina.php?correlativo=$correlativo" => "Resumen_de_nomina_{$correlativo}.pdf",
+];
 
 // Nombre del archivo ZIP que se generará
-$zip_filename = "archivos__{$correlativo}.zip";
+$zip_filename = "archivos__{$correlativo}_Paginado.zip";
 
 // Crear una instancia de la clase ZipArchive
 $zip = new ZipArchive();
@@ -35,7 +50,7 @@ if ($zip->open($zip_filename, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== TR
     exit("No se puede abrir el archivo ZIP");
 }
 
-// Agregar archivos de texto al ZIP
+// Agregar archivos TXT al ZIP
 foreach ($txt_files as $txt_file) {
     $file_path = "../../txt/" . $txt_file;
     if (file_exists($file_path)) {
@@ -43,12 +58,31 @@ foreach ($txt_files as $txt_file) {
     }
 }
 
-// Generar y agregar los PDFs al ZIP
+// Generar PDFs por cada página y agregarlos al ZIP
+for ($pagina = 1; $pagina <= $totalPaginas; $pagina++) {
+    $pdf_filename = "Recibos_de_pago_{$correlativo}_Pagina_{$pagina}.pdf";
+    $url = "http://localhost/sigob/back/modulo_nomina/nom_recibos_pagos.php?correlativo=$correlativo&pagina=$pagina";
+
+    // Obtener el contenido HTML
+    $html = file_get_contents($url);
+
+    // Generar el PDF con mPDF
+    $mpdf = new Mpdf();
+    $mpdf->WriteHTML($html);
+
+    // Obtener el contenido del PDF generado
+    $pdf_content = $mpdf->Output('', 'S');
+
+    // Agregar el PDF al archivo ZIP
+    $zip->addFromString($pdf_filename, $pdf_content);
+}
+
+// Agregar PDFs relacionados con bancos al ZIP
 foreach ($pdf_files as $url => $pdf_filename) {
     // Obtener el contenido HTML
     $html = file_get_contents($url);
 
-    // Generar el PDF con mpdf
+    // Generar el PDF con mPDF
     $mpdf = new Mpdf();
     $mpdf->WriteHTML($html);
 

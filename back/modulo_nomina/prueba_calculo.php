@@ -8,7 +8,7 @@ $url = 'http://localhost/sigob/back/modulo_nomina/nom_calculonomina.php';
 
 // Datos a enviar (el objeto JSON)
 $data = array(
-    "nombre" => "Obreros Diferencia",
+    "nombre" => "Obreros Nacional",
     "identificador" => "s1",
 );
 

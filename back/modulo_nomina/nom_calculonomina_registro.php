@@ -11,12 +11,13 @@ if (!$data) {
 }
 
 // Verificar si el array contiene los datos necesarios
-if (!isset($data['nombre_nomina']) || !isset($data['empleados']) || !isset($data['total_pagar']) || !isset($data['suma_asignaciones']) || !isset($data['suma_deducciones']) || !isset($data['suma_aportes']) || !isset($data['identificador'])) {
+if (!isset($data['nombre_nomina']) || !isset($data['empleados']) || !isset($data['total_pagar']) || !isset($data['suma_asignaciones']) || !isset($data['suma_deducciones']) || !isset($data['suma_aportes']) || !isset($data['identificador']) || !isset($data['recibos_pagos'])) {
     echo json_encode(array('error' => 'Faltan datos en el JSON recibido.'));
     exit();
 }
 
 // Obtener la frecuencia de la nómina desde la tabla nominas
+$recibos_de_pago = $data['recibos_pagos'];
 $nombre_nomina = $data['nombre_nomina'];
 $identificador = $data['identificador'];
 $query_frecuencia = "SELECT frecuencia FROM nominas WHERE nombre = ?";
@@ -110,8 +111,81 @@ if ($stmt_peticiones->affected_rows === 0) {
     exit();
 }
 
+
+
+// Registrar cada recibo de pago en la tabla 'recibo_pago'
+foreach ($recibos_de_pago as $recibo) {
+    $id_empleado = $recibo['id_empleado'];
+    // Ejemplo con las variables $asignaciones, $deducciones y $aportes
+$asignaciones =  substr(json_encode($recibo['asignaciones'], JSON_UNESCAPED_UNICODE), 1, -1);
+$deducciones = substr(json_encode($recibo['deducciones'], JSON_UNESCAPED_UNICODE), 1, -1);
+$aportes = substr(json_encode($recibo['aportes'], JSON_UNESCAPED_UNICODE), 1, -1);
+// Función para combinar las claves y sumar los valores
+
+
+// Aplicar la función a cada variable
+$resultado_asignaciones = combinarDatos($asignaciones);
+$resultado_deducciones = combinarDatos($deducciones);
+$resultado_aportes = combinarDatos($aportes);
+
+// Codificar los resultados combinados en formato JSON
+$asignaciones_final = json_encode($resultado_asignaciones, JSON_UNESCAPED_UNICODE);
+$deducciones_final = json_encode($resultado_deducciones, JSON_UNESCAPED_UNICODE);
+$aportes_final = json_encode($resultado_aportes, JSON_UNESCAPED_UNICODE);
+
+
+
+    $total_pagar = $recibo['total_a_pagar'];
+    
+    // Preparar la consulta SQL
+    $sql_recibo_pago = "INSERT INTO recibo_pago (id_empleado, asignaciones, deducciones, aportes, total_pagar, identificador, correlativo) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    $stmt_recibo_pago = $conexion->prepare($sql_recibo_pago);
+
+    if (!$stmt_recibo_pago) {
+        echo json_encode(array('error' => 'Error al preparar la consulta SQL para recibo_pago: ' . $conexion->error));
+        exit();
+    }
+
+    // Vincular parámetros y ejecutar la consulta
+    $stmt_recibo_pago->bind_param("issssss", $id_empleado, $asignaciones_final, $deducciones_final, $aportes_final, $total_pagar, $identificador, $correlativo_formateado);
+    $stmt_recibo_pago->execute();
+
+    if ($stmt_recibo_pago->affected_rows === 0) {
+        echo json_encode(array('error' => 'Error al insertar datos en la tabla recibo_pago.'));
+        exit();
+    }
+
+    // Cerrar la consulta
+    $stmt_recibo_pago->close();
+
+}
+function combinarDatos($datos) {
+    $resultado = [];
+    // Dividir la cadena en objetos individuales
+    $objetos = explode('},{', $datos);
+
+    foreach ($objetos as $objeto) {
+        // Limpiar los corchetes al inicio y final de cada objeto
+        $objeto = trim($objeto, '{}');
+        // Decodificar el objeto JSON en un array asociativo
+        $datos_array = json_decode('{' . $objeto . '}', true);
+
+        // Combinar las claves y sumar los valores
+        foreach ($datos_array as $concepto => $valor) {
+            if (array_key_exists($concepto, $resultado)) {
+                $resultado[$concepto] += $valor;
+            } else {
+                $resultado[$concepto] = $valor;
+            }
+        }
+    }
+
+    return $resultado;
+}
+
 // Cerrar la conexión
 $conexion->close();
+
 
 // Enviar una respuesta exitosa
 echo json_encode(array('success' => 'Datos registrados correctamente en las tablas txt y peticiones.'));
@@ -140,3 +214,37 @@ function registrarPago($conexion, $id_empleado, $total_a_pagar, $nombre_nomina, 
     $stmt->close();
 }
 ?>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
