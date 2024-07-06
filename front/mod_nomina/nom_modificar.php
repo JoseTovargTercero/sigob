@@ -30,18 +30,95 @@ if ($result->num_rows > 0) {
 $stmt->close();
 
 
+/**
+ * This script handles the POST requests and returns JSON data based on the request parameters.
+ */
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  $data = json_decode(file_get_contents('php://input'), true);
+
+  if (isset($data['nomina'])) {
+    /**
+     * If the 'nomina' parameter is set in the request data, it calls the 'getConceptosXnomina' function
+     * to retrieve the conceptos (concepts) associated with the given nomina (payroll).
+     * The retrieved data is then encoded as JSON and echoed as the response.
+     */
+    echo json_encode(getConceptosXnomina($data['nomina']));
+    exit;
+  } elseif (isset($data['grupo_nomina'])) {
+    /**
+     * If the 'grupo_nomina' parameter is set in the request data, it retrieves the nominas (payrolls)
+     * associated with the given grupo_nomina (payroll group) from the database.
+     * The retrieved data is then encoded as JSON and echoed as the response.
+     */
+    $grupo_nomina = $data['grupo_nomina'];
+    $stmt = mysqli_prepare($conexion, "SELECT * FROM `nominas` WHERE grupo_nomina = ?");
+    $stmt->bind_param('i', $grupo_nomina);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $nominas = [];
+    if ($result->num_rows > 0) {
+      while ($row = $result->fetch_assoc()) {
+        $nominas[] = $row;
+      }
+    }
+    $stmt->close();
+    echo json_encode($nominas);
+    exit;
+  }
+}
+
+/**
+ * Retrieves the conceptos (concepts) associated with the given nomina (payroll) from the database.
+ *
+ * @param string $nomina The name of the nomina (payroll).
+ * @return array An array of conceptos (concepts) associated with the given nomina (payroll).
+ */
+function getConceptosXnomina($nomina)
+{
+  global $conexion;
+  $conceptos = [];
+  $stmt = mysqli_prepare($conexion, "SELECT c.id, c.tipo_calculo, ca.nom_concepto, ca.empleados FROM `conceptos_aplicados` AS ca LEFT JOIN conceptos AS c ON ca.concepto_id = c.id WHERE nombre_nomina = ?");
+  $stmt->bind_param('s', $nomina);
+  $stmt->execute();
+  $result = $stmt->get_result();
+  if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+      if ($row['nom_concepto'] == 'Sueldo Base') {
+        // lo unico que cambia es que el id_concepto es 'sueldo_base'
+        $conceptos[] = [
+          'id' => 'sueldo_base',
+          'tipo_calculo' => $row['tipo_calculo'],
+          'nom_concepto' => $row['nom_concepto'],
+          'empleados' => $row['empleados']
+        ];
+      } else {
+        $conceptos[] = $row;
+      }
+    }
+  }
+  $stmt->close();
+  return $conceptos;
+}
+
+
+/**
+ * Selects records from the 'nominas' table based on the provided 'grupo_nomina' value.
+ *
+ * @param mysqli $conexion The mysqli connection object.
+ * @param int $i The value of 'grupo_nomina' to filter the records.
+ * @return string The status of the 'grupo_nomina' based on the number of records found.
+ */
 $stmt = mysqli_prepare($conexion, "SELECT * FROM `nominas` WHERE grupo_nomina = ?");
 $stmt->bind_param('i', $i);
 $stmt->execute();
 $result = $stmt->get_result();
-if ($result->num_rows == 0) {
-  $statusGrupo = 'nuevo';
-} else {
+if ($result->num_rows > 0) {
   $statusGrupo = 'conRegistros';
+} else {
+  $statusGrupo = 'nuevo';
 }
 $stmt->close();
-
 
 /**
  * Retrieves all records from the 'nominas' table.
@@ -65,6 +142,73 @@ while ($r = $query->fetch_object()) {
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <?php if ($statusGrupo == 'conRegistros') { ?>
+
+    <script>
+      let nominasDelGrupo
+
+      async function getConceptosXnomina(nomina) {
+        const response = await fetch('', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            nomina: nomina
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Error al obtener los conceptos');
+        }
+
+        const conceptos = await response.json();
+        return conceptos;
+      }
+
+      async function getNominas(grupoNomina) {
+        const response = await fetch('', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            grupo_nomina: grupoNomina
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Error al obtener las nóminas');
+        }
+
+        const nominas = await response.json();
+
+        const nominasConConceptos = [];
+        for (const nomina of nominas) {
+          const conceptos = await getConceptosXnomina(nomina.nombre);
+          if (conceptos.length > 0) {
+            nominasConConceptos.push([nomina.id, nomina.nombre, conceptos]);
+          }
+        }
+
+        return nominasConConceptos.length > 0 ? {
+          status: 'conRegistros',
+          data: nominasConConceptos
+        } : {
+          status: 'nuevo'
+        };
+      }
+
+      // Ejemplo de uso
+      getNominas(<?php echo $i ?>).then((result) => {
+        nominasDelGrupo = result;
+        //  console.log(nominasDelGrupo)
+      }).catch((error) => {
+        console.error(error);
+      });
+    </script>
+
+  <?php } ?>
 
 </head>
 <?php require_once '../includes/header.php' ?>
@@ -139,112 +283,160 @@ while ($r = $query->fetch_object()) {
 
 
                   </section>
-                      <?php if ($statusGrupo == 'nuevo') { ?>
-                  <section class="hide" id="seleccion_empleados">
-                    <h5>Agrega los empleados de la nomina</h5>
-                    <div class="row mt-3">
-                      <div class="col-md-12">
+                  <?php if ($statusGrupo == 'nuevo') { ?>
+                    <section class="hide" id="seleccion_empleados">
+                      <h5>Agrega los empleados de la nomina</h5>
+                      <div class="row mt-3">
+                        <div class="col-md-12">
 
-                        <hr>
-                        <div class="mb-3">
-                          <label class="form-label" for="filtro_empleados">¿Como quieres seleccionar a tus
-                            empleados?</label>
-                          <select class="form-select" id="filtro_empleados" onchange="seleccion_empleados(this.value, 'empleados-list')">
-                            <option>Seleccione</option>
-                            <option value="1">Enlistar todos</option>
-                            <option value="2">Por sus características (Formulación)</option>
-                            <option value="3">Heredar de otra nomina</option>
-                          </select>
+                          <hr>
+                          <div class="mb-3">
+                            <label class="form-label" for="filtro_empleados">¿Como quieres seleccionar a tus
+                              empleados?</label>
+                            <select class="form-select" id="filtro_empleados" onchange="seleccion_empleados(this.value, 'empleados-list')">
+                              <option>Seleccione</option>
+                              <option value="1">Enlistar todos</option>
+                              <option value="2">Por sus características (Formulación)</option>
+                              <option value="3">Heredar de otra nomina</option>
+                            </select>
+                          </div>
                         </div>
-                      </div>
 
-                      <section id="herramienta-formulacion" class="hide p-3">
-                        <!-- HERRAMIENTA PARA FILTRAR SEGUN FORMULA-->
-                        <div class="row">
+                        <section id="herramienta-formulacion" class="hide p-3">
+                          <!-- HERRAMIENTA PARA FILTRAR SEGUN FORMULA-->
+                          <div class="row">
 
-                          <div class="col-lg-6">
-                            <div class="mb-3"><label class="form-label">Formulación</label>
-                              <div class="input-group mb-3">
-                                <textarea class="form-control condicion" rows="1" id="t_area-1"></textarea>
-                                <button class="btn btn-primary" onclick="validarFormula('t_area-1', 'empleados-list')" type="button">Obtener</button>
+                            <div class="col-lg-6">
+                              <div class="mb-3"><label class="form-label">Formulación</label>
+                                <div class="input-group mb-3">
+                                  <textarea class="form-control condicion" rows="1" id="t_area-1"></textarea>
+                                  <button class="btn btn-primary" onclick="validarFormula('t_area-1', 'empleados-list')" type="button">Obtener</button>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                          <div class="col-lg-6">
+                            <div class="col-lg-6">
 
-                            <div class="mb-3">
-                              <label class="form-label" for="campo_condiciona">Condicionantes</label>
-                              <select name="campo_condiciona" onchange="setCondicionante(this.value, 'result')" id="campo_condiciona" class="form-control">
-                                <option value="">Seleccione</option>
-                                <option value="cod_cargo">Código de cargo</option>
-                                <option value="discapacidades">Discapacidades</option>
-                                <option value="instruccion_academica">Instrucción académica</option>
-                                <option value="hijos">Hijos</option>
-                                <option value="antiguedad">Antigüedad (desde la fecha de ingreso)</option>
-                                <option value="antiguedad_total">Antigüedad (Sumando años anteriores)</option>
-                                <option value="tipo_nomina">Tipo de nomina</option>
+                              <div class="mb-3">
+                                <label class="form-label" for="campo_condiciona">Condicionantes</label>
+                                <select name="campo_condiciona" onchange="setCondicionante(this.value, 'result')" id="campo_condiciona" class="form-control">
+                                  <option value="">Seleccione</option>
+                                  <option value="cod_cargo">Código de cargo</option>
+                                  <option value="discapacidades">Discapacidades</option>
+                                  <option value="instruccion_academica">Instrucción académica</option>
+                                  <option value="hijos">Hijos</option>
+                                  <option value="antiguedad">Antigüedad (desde la fecha de ingreso)</option>
+                                  <option value="antiguedad_total">Antigüedad (Sumando años anteriores)</option>
+                                  <option value="tipo_nomina">Tipo de nomina</option>
 
-                              </select>
+                                </select>
+                              </div>
+                              <ol class="list-group list-group-numbered" id="result">
+                              </ol>
                             </div>
-                            <ol class="list-group list-group-numbered" id="result">
-                            </ol>
+                          </div>
+                        </section>
+
+
+                        <div class="col-md-12 hide" id="otras_nominas-list">
+                          <div class="mb-3">
+                            <label class="form-label" for="otra_nominas">Nominas registradas</label>
+                            <select class="form-select" id="otra_nominas">
+                              <option>Seleccione</option>
+                              <?php foreach ($nominas as $n) : ?>
+                                <option value="<?php echo $n->nombre; ?>">&nbsp;<?php echo $n->nombre; ?></option>
+                              <?php endforeach; ?>
+                            </select>
                           </div>
                         </div>
-                      </section>
+
+                        <!-- SIEMPRE VISIBLE, CON LA LISTA DE TRABAJADORES-->
+                        <section class="mt-3 mh-60">
+                          <table class="table table-striped table-hover">
+                            <thead>
+                              <tr>
+                                <th class="w-40">Cedula</th>
+                                <th class="w-40">Nombre</th>
+                                <th class="w-auto text-center"><input type="checkbox" id="selectAll" onchange="checkAll(this.checked, '')" class="form-check-input" /></th>
+                              </tr>
+                            </thead>
+                            <tbody id="empleados-list">
+                            </tbody>
+
+                          </table>
 
 
-                      <div class="col-md-12 hide" id="otras_nominas-list">
-                        <div class="mb-3">
-                          <label class="form-label" for="otra_nominas">Nominas registradas</label>
-                          <select class="form-select" id="otra_nominas">
-                            <option>Seleccione</option>
-                            <?php foreach ($nominas as $n) : ?>
-                              <option value="<?php echo $n->nombre; ?>">&nbsp;<?php echo $n->nombre; ?></option>
-                            <?php endforeach; ?>
-                          </select>
-                        </div>
+                        </section>
+
+                        <p class="text-end mt-2" id="resumen_epleados_seleccionados">
+
+                        </p>
                       </div>
-
-                      <!-- SIEMPRE VISIBLE, CON LA LISTA DE TRABAJADORES-->
-                      <section class="mt-3 mh-60">
-                        <table class="table table-striped table-hover">
-                          <thead>
-                            <tr>
-                              <th class="w-40">Cedula</th>
-                              <th class="w-40">Nombre</th>
-                              <th class="w-auto text-center"><input type="checkbox" id="selectAll" onchange="checkAll(this.checked, '')" class="form-check-input" /></th>
-                            </tr>
-                          </thead>
-                          <tbody id="empleados-list">
-                          </tbody>
-
-                        </table>
-
-
-                      </section>
-
-                      <p class="text-end mt-2" id="resumen_epleados_seleccionados">
-
-                      </p>
-                    </div>
-                    <div class="d-flex w-100 mt-3">
-                      <div class="d-flex m-a">
-                        <div class="me-2"><button class="previous btn btn-info" onclick="guardarListaEmpleados()">Guardar</button>
+                      <div class="d-flex w-100 mt-3">
+                        <div class="d-flex m-a">
+                          <div class="me-2"><button class="previous btn btn-info" onclick="guardarListaEmpleados()">Guardar</button>
                           </div>
                         </div>
                       </div>
-                  </section>                     
-                   <?php } ?>
+                    </section>
+                  <?php } ?>
                 </div>
-
 
 
 
 
                 <div class="tab-pane fade" id="v-pills-addEmpleado" role="tabpanel" aria-labelledby="v-pills-addEmpleado-tab">
-                  <p class="mb-0">It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy.</p>
+                  <div class="mb-3">
+                    <h5 class="mb-0">Agregar empleado al grupo</h5>
+                    <small class="text-muted">Indique la cédula del empleado que desea agregar al grupo de nominas</small>
+                  </div>
+                  <form class="mb-3" id="formularioBusqueda">
+                    <label class="form-label" for="cedula">Cedula</label>
+                    <div class="input-group"><input type="text" class="form-control" placeholder="Numero de cedula" id="cedula" name="cedula"> <button type="submit" class="btn btn-primary"><i class="feather icon-download-cloud"></i> BUSCAR</button></div>
+                    <small class="text-danger">* Se excluirán empleados que ya pertenezcan al mismo grupo de nominas.</small>
+                  </form>
+
+                  <section id="resultado_busqueda">
+
+                  </section>
+                  <section id="resultado_nominas_disponibles">
+
+                  </section>
+                  <section id="resultado_reintegro" class="hide">
+                    <h5 class="mb-0">Reintegro</h5><span class="text-primary">Indique si es necesario pagar un reintegro al empleado.</span>
+                    <div class="mt-3">
+                      <div class="mb-3">
+                        <label class="form-label" for="reintegro_aplica">¿Aplica reintegro?</label>
+                        <select class="form-select" id="reintegro_aplica">
+                          <option>Seleccione</option>
+                          <option value="1">Si</option>
+                          <option value="0">No</option>
+                        </select>
+                      </div>
+                      <section id="section-reintegro_aplica" class="hide">
+                        <div class="mb-3">
+                          <label class="form-label" for="desde_cuando_pagar">¿Desde cuando se debe pagar?</label>
+                          <select class="form-control" id="desde_cuando_pagar">
+                            <option>Seleccione</option>
+                            <option value="1">Desde la fecha de ingreso</option>
+                            <option value="2">Desde fecha especifica</option>
+                          </select>
+                        </div>
+                      </section>
+                      <section id="section-fecha_especifica" class="hide">
+                        <div class="mb-3">
+                          <label class="form-label" for="fecha_especifica">Fecha especifica</label>
+                          <input type="date" class="form-control" id="fecha_especifica">
+                        </div>
+                      </section>
+
+                      <div class="text-end">
+                                <button class="btn btn-primary" onclick="finalizarRegistroNuevoEmpleado()">Finalizar</button>
+                      </div>
+                    </div>
+
+                  </section>
                 </div>
-            
+
                 <div class="tab-pane fade" id="v-pills-settings" role="tabpanel" aria-labelledby="v-pills-settings-tab">
                   <p class="mb-0">There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text.</p>
                 </div>
@@ -262,8 +454,10 @@ while ($r = $query->fetch_object()) {
                 <h5>Opciones disponibles</h5>
               </div>
               <ul class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                  <li><a class="nav-link active" id="v-listaEmpleados-tab" data-bs-toggle="pill" href="#v-listaEmpleados" role="tab" aria-controls="v-listaEmpleados" aria-selected="false" tabindex="-1">Lista de empleados</a></li>
-                <li><a class="nav-link" id="v-pills-addEmpleado-tab" data-bs-toggle="pill" href="#v-pills-addEmpleado" role="tab" aria-controls="v-pills-addEmpleado" aria-selected="false" tabindex="-1">Agregar empleado</a></li>
+                <li><a class="nav-link active" id="v-listaEmpleados-tab" data-bs-toggle="pill" href="#v-listaEmpleados" role="tab" aria-controls="v-listaEmpleados" aria-selected="false" tabindex="-1">Lista de empleados</a></li>
+                <?php if ($statusGrupo == 'conRegistros') { ?>
+                  <li><a class="nav-link" id="v-pills-addEmpleado-tab" data-bs-toggle="pill" href="#v-pills-addEmpleado" role="tab" aria-controls="v-pills-addEmpleado" aria-selected="false" tabindex="-1">Agregar empleado al grupo</a></li>
+                <?php } ?>
                 <li><a class="nav-link" id="v-pills-settings-tab" data-bs-toggle="pill" href="#v-pills-settings" role="tab" aria-controls="v-pills-settings" aria-selected="true">Cambiar estatus</a></li>
               </ul>
             </div>
@@ -271,13 +465,10 @@ while ($r = $query->fetch_object()) {
         </div>
 
         <script>
-          // detecta cuando 'v-listaEmpleados' se muestre y muestra un mensaje en la consola
-          $('#v-listaEmpleados-tab').on('shown.bs.tab', function(e) {
+          /*$('#v-listaEmpleados-tab').on('shown.bs.tab', function(e) {
             console.log('v-listaEmpleados-tab activado');
-          })
+          })*/
         </script>
-
-
         <!-- [ worldLow section ] end -->
         <!-- [ Recent Users ] end -->
       </div>
@@ -292,7 +483,9 @@ while ($r = $query->fetch_object()) {
   <script src="../../src/assets/js/plugins/feather.min.js"></script>
   <script src="../../src/assets/js/main.js"></script>
   <script src="../../src/assets/js/ajax_class.js"></script>
-  <?php if ($statusGrupo == 'nuevo') { echo '<script src="../../src/assets/js/lista-empleados.js"></script> '; } ?>
+  <?php if ($statusGrupo == 'nuevo') {
+    echo '<script src="../../src/assets/js/lista-empleados.js"></script> ';
+  } ?>
 
   <script>
     const url_back = '../../back/modulo_nomina/nom_modificar.php';
@@ -355,7 +548,6 @@ while ($r = $query->fetch_object()) {
         };
         const ajaxRequest = new AjaxRequest('application/json', data, url_back);
         const onSuccess = (response) => {
-          //console.log('Success:', response);
           toast_s('success', 'Registrados con éxito');
           cargarListaEmpleados();
           document.getElementById('tabla_empleados').classList.remove('hide');
@@ -369,71 +561,339 @@ while ($r = $query->fetch_object()) {
       }
 
 
-    
-      <?php } ?>
+
+    <?php } ?>
 
 
-
-
-
-      const badges = {
-        'A': ['Activo', 'badge bg-success'],
-        'I': ['Inactivo', 'badge bg-danger'],
-        'R': ['Retirado', 'badge bg-warning'],
-        'S': ['Suspendido', 'badge bg-info'],
-        'V': ['Vacaciones', 'badge bg-primary'],
-        'L': ['Licencia', 'badge bg-secondary'],
-        'E': ['Excedencia', 'badge bg-dark'],
-        'B': ['Baja', 'badge bg-light']
-      }
-
+    const badges = {
+      'A': ['Activo', 'badge bg-success'],
+      'I': ['Inactivo', 'badge bg-danger'],
+      'R': ['Retirado', 'badge bg-warning'],
+      'S': ['Suspendido', 'badge bg-info'],
+      'V': ['Vacaciones', 'badge bg-primary'],
+      'L': ['Licencia', 'badge bg-secondary'],
+      'E': ['Excedencia', 'badge bg-dark'],
+      'B': ['Baja', 'badge bg-light']
+    }
+    /**
+     * Function to load the list of employees.
+     */
+    function cargarListaEmpleados() {
+      const data = {
+        grupo_nomina: '<?php echo $i ?>',
+        accion: 'cargar_lista'
+      };
+      const ajaxRequest = new AjaxRequest('application/json', data, url_back);
 
       /**
-       * Function to load the list of employees.
+       * Callback function to handle the successful response.
+       * @param {Object} response - The response object.
        */
-      function cargarListaEmpleados() {
-        const data = {
-          grupo_nomina: '<?php echo $i ?>',
-          accion: 'cargar_lista'
-        };
-        const ajaxRequest = new AjaxRequest('application/json', data, url_back);
+      const onSuccess = (response) => {
+        if (response.datos) {
+          document.getElementById('tabla_empleados-list').innerHTML = '';
 
-        /**
-         * Callback function to handle the successful response.
-         * @param {Object} response - The response object.
-         */
-        const onSuccess = (response) => {
-          if (response.datos) {
-            document.getElementById('tabla_empleados-list').innerHTML = '';
-
-            response.datos.forEach((empleado) => {
-              let tr = document.createElement('tr');
-              tr.innerHTML = `
+          response.datos.forEach((empleado) => {
+            let tr = document.createElement('tr');
+            tr.innerHTML = `
           <td>${empleado.cedula}</td>
           <td>${empleado.nombres}</td>
           <td class="text-center">
             <span class="${badges[empleado.status][1]}">${badges[empleado.status][0]}</span>
           </td>
         `;
-              document.getElementById('tabla_empleados-list').appendChild(tr);
-            });
+            document.getElementById('tabla_empleados-list').appendChild(tr);
+          });
+        }
+      };
+
+      /**
+       * Callback function to handle the error response.
+       * @param {Object} response - The response object.
+       */
+      const onError = (response) => {
+        console.log('Error:', response);
+        toast_s('error', 'Error: ' + response);
+      };
+
+      ajaxRequest.send(onSuccess, onError);
+    }
+
+    cargarListaEmpleados();
+
+
+
+
+    let empleado_seleccion
+
+    function agregarEmpleado(id_empleado) {
+
+      document.getElementById('formularioBusqueda').classList.add('hide')
+      document.getElementById('btn-agregar-empleado').classList.add('hide')
+      empleado_seleccion = id_empleado
+
+      $('#resultado_nominas_disponibles').html('<h5 class="mb-3">Nominas Disponibles</h5><div class="list-group">')
+      nominasDelGrupo.data.forEach(nomina => {
+        $('#resultado_nominas_disponibles').append(`<label class="list-group-item">
+      <input class="form-check-input me-1" type="checkbox" value="${nomina[0]}" id="nomina-${nomina[0]}"> ${nomina[1]}</label>`)
+      })
+      $('#resultado_nominas_disponibles').append('</div><div class="mt-3 text-end"><button onclick="confirmarNominas()" class="btn  btn-primary">siguiente</button></div>')
+
+
+    }
+
+
+    let nominasConfirmadas
+
+    function confirmarNominas() {
+      nominasConfirmadas = []
+      $('input[type="checkbox"]').each(function() {
+        if (this.checked) {
+          nominasConfirmadas.push(this.value)
+        }
+      })
+      if (nominasConfirmadas.length === 0) {
+        return swal('error', 'Debe seleccionar al menos una nomina')
+      } else {
+
+        seleccionarConceptos()
+      }
+    }
+
+    function seleccionarConceptos() {
+      $('#resultado_nominas_disponibles').html('<h5 class="mb-0">Conceptos Disponibles</h5><span class="text-primary">Los conceptos tipo "Formulados" no se muestran en la lista y se aplican automáticamente si se cumplen las condiciones.</span><div class="list-group mt-3">')
+      nominasDelGrupo.data.forEach(nomina => {
+        if (nominasConfirmadas.includes(String(nomina[0]))) {
+          $('#resultado_nominas_disponibles').append(`
+          <label class="list-group-item list-group-item-dark">
+          <input class="form-check-input  me-1" onchange="checkAll(this.checked, '-c${nomina[0]}')" type="checkbox" value="${nomina[0]}" id="nomina-${nomina[0]}">
+          ${nomina[1]}
+          <span class="identificadorLineaDerecha">Nomina</span></label>`)
+
+
+
+          nomina[2].forEach(concepto => {
+            if (concepto.tipo_calculo != 6) {
+
+              $('#resultado_nominas_disponibles').append(`<label class="list-group-item">
+              <input class="form-check-input me-1 itemCheckbox-c${nomina[0]}" type="checkbox" value="${concepto.id}" id="concepto-${concepto.id}"> ${concepto.nom_concepto}</label>`)
+            }
+          })
+        }
+      })
+      $('#resultado_nominas_disponibles').append('</div><div class="mt-3 text-end"><button onclick="guardarEmpleado()" class="btn  btn-primary">Finalizar</button></div>')
+    }
+
+
+    /**
+     * Function to clear the search results and available payrolls.
+     * Clears the inner HTML of 'resultado_busqueda' and 'resultado_nominas_disponibles' elements.
+     */
+    function agregarEmpleadoCancelar() {
+      document.getElementById('formularioBusqueda').classList.remove('hide')
+      document.getElementById('resultado_reintegro').classList.add('hide')
+      document.getElementById('resultado_busqueda').innerHTML = ''
+      document.getElementById('resultado_nominas_disponibles').innerHTML = ''
+      document.getElementById('btn-agregar-empleado').classList.remove('hide')
+    }
+
+    let nominasXconceptos = []
+
+    function guardarEmpleado() {
+      nominasXconceptos = []
+      // recorre las nominas seleccionadas
+      nominasConfirmadas.forEach(nomina => {
+        let conceptos = []
+        // recorre los conceptos seleccionados
+        $(`.itemCheckbox-c${nomina}`).each(function() {
+          if (this.checked) {
+            conceptos.push(this.value)
           }
-        };
+        })
+        nominasXconceptos.push({
+          nomina: nomina,
+          conceptos: conceptos
+        })
+      })
+      let status = true
 
-        /**
-         * Callback function to handle the error response.
-         * @param {Object} response - The response object.
-         */
-        const onError = (response) => {
-          console.log('Error:', response);
-          toast_s('error', 'Error: ' + response);
-        };
 
-        ajaxRequest.send(onSuccess, onError);
+      nominasXconceptos.forEach(element => {
+        if (element['conceptos'].length === 0) {
+          status = false
+          return swal('error', 'Debe seleccionar al menos un concepto por nomina')
+        }
+      });
+      if (status) {
+        document.getElementById('resultado_nominas_disponibles').classList.add('hide')
+        document.getElementById('resultado_reintegro').classList.remove('hide')
+
+      }
+    }
+
+
+
+
+    /**
+     * Checks or unchecks all checkboxes with the class 'itemCheckbox'.
+     *
+     * @param {boolean} status - The status to set for all checkboxes.
+     */
+    function checkAll(status, subfijo) {
+      let itemCheckboxes = document.querySelectorAll('.itemCheckbox' + subfijo);
+      itemCheckboxes.forEach(checkbox => {
+        checkbox.checked = status;
+      });
+    }
+
+
+
+    /**
+     * 
+     * This script handles the form submission event when the DOM content is loaded.
+     * It sends a form using Ajax to a specified URL and displays the response in the HTML.
+     * 
+     * @event DOMContentLoaded
+     * @param {object} e - The event object
+     */
+    var fecha_ingreso
+    var id_empleado
+    document.addEventListener("DOMContentLoaded", () => {
+      const form1 = document.getElementById("formularioBusqueda");
+      const sender = new AjaxFormSender();
+
+      form1.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const additionalData1 = {
+          grupoActual: '<?php echo $i ?>'
+        };
+        sender.sendForm(form1, "../../back/modulo_nomina/nom_modificar_agregar_empleado_buscar.php", additionalData1, (err, response) => {
+          if (err) {
+            console.error(err);
+          } else {
+            if (response.status == 'error') {
+              swal('error', response.mensaje)
+            } else {
+              fecha_ingreso = response.datos[2]
+              id_empleado = response.datos[1]
+              document.getElementById('resultado_busqueda').innerHTML = `
+              <div class="alert alert-info" role="alert">
+                <h4 class="alert-heading">${response.datos[0]}</h4>
+                <p>Fecha de ingreso: ${response.datos[2]}</p>
+                <hr>
+                <p class="mb-3">¿Desea agregar a ${response.datos[0]} al grupo de nominas?</p>
+                <div class="d-flex">
+                <button class="btn btn-primary me-1" id="btn-agregar-empleado" onclick="agregarEmpleado(${response.datos[1]})">Agregar</button>
+                <button class="btn btn-secondary" onclick="agregarEmpleadoCancelar()">Cancelar</button>
+                </div>
+              </div>
+              `;
+
+            }
+          }
+        });
+      });
+    });
+
+
+    /**
+     * Event listener for the 'reintegro_aplica' element.
+     * Shows or hides the 'section-reintegro_aplica' based on the selected value.
+     */
+    document.getElementById('reintegro_aplica').addEventListener('change', function() {
+      if (this.value == '1') {
+        document.getElementById('section-reintegro_aplica').classList.remove('hide');
+      } else {
+        document.getElementById('section-reintegro_aplica').classList.add('hide');
+      }
+    });
+
+    /**
+     * Event listener for the 'desde_cuando_pagar' element.
+     * Shows or hides the 'section-fecha_especifica' based on the selected value.
+     */
+    document.getElementById('desde_cuando_pagar').addEventListener('change', function() {
+      if (this.value == '2') {
+        document.getElementById('section-fecha_especifica').classList.remove('hide');
+      } else {
+        document.getElementById('section-fecha_especifica').classList.add('hide');
+      }
+    });
+
+    /**
+     * This function is used to finalize the registration of a new employee.
+     * It retrieves values from various input fields and performs validation checks.
+     * If all checks pass, it sends an AJAX request to add the employee to the database.
+     *
+     * @return void
+     */
+    function finalizarRegistroNuevoEmpleado(){
+      // Retrieve values from input fields
+      let fecha_especifica = document.getElementById('fecha_especifica').value
+      let desde_cuando_pagar = document.getElementById('desde_cuando_pagar').value
+      let reintegro_aplica = document.getElementById('reintegro_aplica').value
+      let info_reintegro = {}
+
+      // Perform validation checks
+      if (reintegro_aplica == '') {
+        return swal('error', 'Debe seleccionar si aplica reintegro')
+      }
+      if (reintegro_aplica == '1' && desde_cuando_pagar == '2' && fecha_especifica == '') {
+        return swal('error', 'Debe seleccionar una fecha específica')
+      }
+      if (reintegro_aplica == '1' && desde_cuando_pagar =='2' && new Date(fecha_especifica) < new Date(fecha_ingreso)) {
+        return swal('error', 'La fecha específica debe ser mayor o igual a la fecha de ingreso')
       }
 
-      cargarListaEmpleados();
-    </script>
+      // Prepare info_reintegro object based on reintegro_aplica value
+      if (reintegro_aplica == '1') {
+        info_reintegro['reintegro'] = {
+          'reintegro' : '1',
+          'datos' : {
+            'pagarDesde': desde_cuando_pagar,
+            'fechaIngreso': fecha_ingreso,
+            'fechaEspecifica': fecha_especifica
+          }} 
+      }else{
+        info_reintegro['reintegro'] = {
+          'reintegro' : '0',
+          'datos' : {
+            'pagarDesde': '',
+            'fechaEspecifica': ''
+          }}
+      }
+
+      // Prepare data object for AJAX request
+      let data = {
+        accion: 'agregar_empleado',
+        empleado: id_empleado,
+        grupo_nomina: '<?php echo $i ?>',
+        nominas: nominasXconceptos,
+        info_reintegro: info_reintegro
+      }
+
+      // Send AJAX request to add the employee
+      const ajaxRequest = new AjaxRequest('application/json', data, '../../back/modulo_nomina/nom_modificar_agregar_empleado.php');
+      const onSuccess = (response) => {
+        console.log(response)
+        if (response.status == 'ok') {
+          swal('success', 'Empleado agregado con éxito')
+          agregarEmpleadoCancelar()
+        } else {
+          swal('error', response.mensaje)
+        }
+      };
+      const onError = (response) => {
+        console.log('Error:', response);
+        toast_s('error', 'Error: ' + response);
+      };
+      ajaxRequest.send(onSuccess, onError);
+    }
+
+
+
+
+  </script>
 </body>
 
 </html>

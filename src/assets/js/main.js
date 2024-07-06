@@ -304,3 +304,6 @@ function swal(type, text) {
     confirmButtonText: "Ok"
   });
 }
+
+
+

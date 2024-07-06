@@ -73,3 +73,66 @@ class AjaxRequest {
     });
   }
 }
+
+
+
+
+
+
+/**
+ * Represents an AJAX form sender.
+ * @class
+ */
+class AjaxFormSender {
+  constructor() {
+    this.xhr = new XMLHttpRequest();
+  }
+
+  /**
+   * Sends a form using AJAX.
+   * @param {HTMLFormElement} formElement - The form element to send.
+   * @param {string} url - The URL to send the form data to.
+   * @param {Object} [additionalData={}] - Additional data to include in the form data.
+   * @param {function} callback - The callback function to handle the response.
+   */
+  sendForm(formElement, url, additionalData = {}, callback) {
+    const formData = new FormData(formElement);
+    const jsonObject = {};
+
+    formData.forEach((value, key) => {
+      jsonObject[key] = value;
+    });
+
+    // Agregar los datos adicionales al objeto jsonObject
+    for (const key in additionalData) {
+      if (additionalData.hasOwnProperty(key)) {
+        jsonObject[key] = additionalData[key];
+      }
+    }
+
+    const jsonString = JSON.stringify(jsonObject);
+
+    this.xhr.open("POST", url, true);
+    this.xhr.setRequestHeader("Content-Type", "application/json");
+
+    this.xhr.onreadystatechange = () => {
+      if (this.xhr.readyState === XMLHttpRequest.DONE) {
+        if (this.xhr.status === 200) {
+          try {
+            JSON.parse(this.xhr.responseText)
+            callback(null, JSON.parse(this.xhr.responseText));
+          } catch (error) {
+            callback(null, this.xhr.responseText);
+          }
+        } else {
+          callback(`Error: ${this.xhr.status}`, null);
+        }
+      }
+    };
+
+    this.xhr.send(jsonString);
+  }
+}
+
+
+

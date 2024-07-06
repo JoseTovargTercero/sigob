@@ -23016,3 +23016,30 @@ input[type="number"]::-webkit-outer-spin-button {
 input[type="number"] {
     -moz-appearance: textfield;
 }
+
+
+.list-group-item-dark {
+    --bs-list-group-color: var(--bs-dark-text-emphasis);
+    --bs-list-group-bg: var(--bs-dark-bg-subtle);
+    --bs-list-group-border-color: var(--bs-dark-border-subtle);
+    --bs-list-group-action-hover-color: var(--bs-emphasis-color);
+    --bs-list-group-action-hover-bg: var(--bs-dark-border-subtle);
+    --bs-list-group-action-active-color: var(--bs-emphasis-color);
+    --bs-list-group-action-active-bg: var(--bs-dark-border-subtle);
+    --bs-list-group-active-color: var(--bs-dark-bg-subtle);
+    --bs-list-group-active-bg: var(--bs-dark-text-emphasis);
+    --bs-list-group-active-border-color: var(--bs-dark-text-emphasis);
+}
+
+.list-group-item-primary {
+  --bs-list-group-color: var(--bs-primary-text-emphasis);
+  --bs-list-group-bg: var(--bs-primary-bg-subtle);
+  --bs-list-group-border-color: var(--bs-primary-border-subtle);
+  --bs-list-group-action-hover-color: var(--bs-emphasis-color);
+  --bs-list-group-action-hover-bg: var(--bs-primary-border-subtle);
+  --bs-list-group-action-active-color: var(--bs-emphasis-color);
+  --bs-list-group-action-active-bg: var(--bs-primary-border-subtle);
+  --bs-list-group-active-color: var(--bs-primary-bg-subtle);
+  --bs-list-group-active-bg: var(--bs-primary-text-emphasis);
+  --bs-list-group-active-border-color: var(--bs-primary-text-emphasis);
+}
