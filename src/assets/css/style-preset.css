@@ -2634,7 +2634,7 @@ div.dt-container .dt-paging .dt-paging-button{
 }
 
 .hide{
-  display: none;
+  display: none !important;
 }
 .w-5{
   width: 5%;
@@ -2912,3 +2912,56 @@ transition: visibility 0s linear 0s, opacity 0.25s 0s, transform 0.25s;
     float: right !important;
     font-weight: bold !important;
   }
+
+  
+  .file-upload {
+    text-align: center;
+}
+
+
+.upload-area {
+    border: 2px dashed #9ca3af;
+    border-radius: 12px;
+    padding: 40px;
+    height: 300px;
+    background-color: #f0f4ff;
+    position: relative;
+  }
+  .width-338p{
+    min-width: 338px;
+}
+
+.upload-area .icon {
+    margin-bottom: 16px;
+}
+
+.upload-area i {
+    color: #7f9cf5;
+    font-size: 5.2rem;
+    margin: auto;
+}
+
+.upload-area p {
+    margin: 8px 0;
+    color: #6b7280;
+    font-size: 16px;
+}
+
+.browse-btn {
+    background-color: #4a56e2;
+    color: #fff;
+    padding: 8px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+}
+.text-title{
+  color: #4a56e2;
+  font-weight: 900;
+  font-size: 17px;
+}
+
+.browse-btn:hover {
+    background-color: #364fc7;
+}

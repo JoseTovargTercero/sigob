@@ -26,12 +26,14 @@ if ($result->num_rows > 0) {
 			$_SESSION['u_oficina_id'] = $row['u_oficina_id'];
 			$_SESSION['u_oficina'] = $row['u_oficina'];
 			$_SESSION['u_nivel'] = $row['u_nivel'];
+			$_SESSION['verificar_upload'] = false;
 
 			// regresa una respuesta al fetch
 			$folder = '';
 			switch ($row['u_oficina_id']) {
 				case '1':
 					$folder = 'mod_nomina';
+					$_SESSION['verificar_upload'] = true;
 					break;
 				case '2':
 					$folder = 'mod_registro_control';

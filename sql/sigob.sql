@@ -26,6 +26,13 @@ SET time_zone = "+00:00";
 --
 -- Estructura de tabla para la tabla `bancos`
 --
+CREATE TABLE `backups` (
+  `id` int(11) NOT NULL,
+  `user` int(11) NOT NULL,
+  `fecha` varchar(20) COLLATE latin1_spanish_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+
+
 
 CREATE TABLE `bancos` (
   `id` int(11) NOT NULL,
@@ -11254,6 +11261,8 @@ ALTER TABLE `txt`
 --
 -- AUTO_INCREMENT de las tablas volcadas
 --
+ALTER TABLE `backups`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- AUTO_INCREMENT de la tabla `bancos`
@@ -11261,6 +11270,9 @@ ALTER TABLE `txt`
 ALTER TABLE `bancos`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
+
+ALTER TABLE `backups`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT de la tabla `cargos_grados`
 --
