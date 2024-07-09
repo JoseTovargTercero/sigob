@@ -271,8 +271,7 @@ while ($r = $query->fetch_object()) {
 
                         <section id="aplicacion_conceptos-options" class="hide">
                           <div class="mb-3">
-                            <label class="form-label" for="tipo_aplicacion_concept">¿Como desea aplicar el
-                              concepto?</label>
+                            <label class="form-label" for="tipo_aplicacion_concept">¿Como desea aplicar el concepto?</label>
                             <select class="form-control" id="tipo_aplicacion_concept">
                               <option value="">Seleccione</option>
                               <option value="2">Enlistar todos los empleados de la nomina</option>
@@ -515,7 +514,7 @@ while ($r = $query->fetch_object()) {
             tabla += '<tr>';
             tabla += '<td>' + e.cedula + '</td>';
             tabla += '<td>' + e.nombres + '</td>';
-            tabla += '<td class="text-center"><input class="form-check-input itemCheckbox" onchange="guardar_empleados_nomina()" type="checkbox" value="' + e.id + '"></td>';
+            tabla += '<td class="text-center"><input class="form-check-input itemCheckbox"  type="checkbox" value="' + e.id + '"></td>';
             tabla += '</tr>';
           });
 
@@ -538,7 +537,7 @@ while ($r = $query->fetch_object()) {
         checkbox.checked = status;
       });
 
-      guardar_empleados_nomina()
+      //guardar_empleados_nomina()
     }
 
 
