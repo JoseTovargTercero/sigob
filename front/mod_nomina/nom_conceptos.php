@@ -146,6 +146,7 @@ require_once '../../back/sistema_global/session.php';
                       <th>Tipo</th>
                       <th>Partida</th>
                       <th class="w-15"></th>
+                      <th class="w-15"></th>
                     </tr>
                     <tr id="section_registro" class="hide">
                       <th><input type="text" class="form-control" name="nombre" id="nombre"></th>
@@ -157,7 +158,7 @@ require_once '../../back/sistema_global/session.php';
                         </select></th>
                       <th><input type="text" list="partidas" class="form-control" name="partida" id="partida"
                           placeholder="Partida"></th>
-                      <th><button type="submit" class="btn btn-sm btn-primary" id="btn-continuar">Continuar</button>
+                      <th colspan= 2><button type="submit" class="btn btn-sm btn-primary" id="btn-continuar">Continuar</button>
                       </th>
                     </tr>
                   </thead>
@@ -217,7 +218,7 @@ require_once '../../back/sistema_global/session.php';
               var cod_partida = data[i].cod_partida;
               var id = data[i].id;
 
-              $('#table tbody').append('<tr><td>' + nombre + '</td><td>' + tipo_concepto[tipo] + '</td><td>' + cod_partida + '</td><td><a href="#!" class="badge me-2 bg-brand-color-2 text-white f-12" onclick="eliminar(' + id + ')">Eliminar</a></td></tr>');
+              $('#table tbody').append('<tr><td>' + nombre + '</td><td>' + tipo_concepto[tipo] + '</td><td>' + cod_partida + '</td><td><a href="#!" class="badge me-2 bg-brand-color-1 text-white f-12" onclick="eliminar(' + id + ')">Editar</a></td><td><a href="#!" class="badge me-2 bg-brand-color-2 text-white f-12" onclick="eliminar(' + id + ')">Eliminar</a></td></tr>');
             }
           }
         }

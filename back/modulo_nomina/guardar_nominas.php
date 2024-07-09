@@ -21,6 +21,7 @@ try {
         $conceptosAplicados = isset($data['conceptosAplicados']) ? $data['conceptosAplicados'] : [];
 
 
+        
         // Verificar si el nombre ya existe en la tabla nominas
         $stmt = $conexion->prepare("SELECT COUNT(*) FROM nominas WHERE nombre = ?");
         $stmt->bind_param("s", $nombre);

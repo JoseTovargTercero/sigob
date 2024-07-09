@@ -873,7 +873,10 @@ while ($r = $query->fetch_object()) {
       let cantidad_t;
       let valor = 0;
       let subCalculo = '0';
-      let nombre_nomina = document.getElementById('nombre_nomina').value;
+
+      let prefijo = $('#prefijo_nomina').html() + ' ' + $('#prefijo_nomina2').html() + ' ';
+
+      let nombre_nomina = prefijo+document.getElementById('nombre_nomina').value;
 
       if (tipoCalculo !== 6) {
         cantidad_t = empleadosDelConcepto.length;
@@ -1402,6 +1405,9 @@ while ($r = $query->fetch_object()) {
         }),
         success: function(response) {
           console.log(response);
+
+
+          return
           // Make sure response is a JSON object
           try {
             if (typeof response !== 'object') {
