@@ -1404,10 +1404,6 @@ while ($r = $query->fetch_object()) {
           conceptosAplicados: conceptosAplicados
         }),
         success: function(response) {
-          console.log(response);
-
-
-          return
           // Make sure response is a JSON object
           try {
             if (typeof response !== 'object') {
@@ -1420,8 +1416,17 @@ while ($r = $query->fetch_object()) {
           }
 
           if (response.status === 'ok') {
-            toast_s('success', 'Created successfully');
-            window.location.href = 'nom_grupos.php';
+
+            Swal.fire({
+              title: "Éxito",
+              text: "La nomina se creo con éxito, sera redirigido al inicio",
+              icon: "success",
+              confirmButtonColor: "#04a9f5",
+              confirmButtonText: "Ok",
+            }).then((result) => {
+              window.location.href = 'nom_grupos.php';
+            });
+
           } else {
             console.log(response.message);
             toast_s('error', 'Error: ' + response.message);
