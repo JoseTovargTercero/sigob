@@ -297,7 +297,7 @@ while ($r = $query->fetch_object()) {
 
                                 <div class="mb-3">
                                   <label class="form-label" for="campo_condiciona">Condicionantes</label>
-                                  <select name="campo_condiciona" onchange="setCondicionante(this.value, 'result-em_nomina')" id="campo_condiciona_epNomina" class="form-control">
+                                  <select name="campo_condiciona" onchange="setCondicionante(this.value, 'result-em_nomina')" id="campo_condiciona" class="form-control">
                                     <option value="">Seleccione</option>
                                     <option value="cod_cargo">Código de cargo</option>
                                     <option value="discapacidades">Discapacidades</option>
@@ -325,7 +325,7 @@ while ($r = $query->fetch_object()) {
                                 <tr>
                                   <th class="w-40">Cedula</th>
                                   <th class="w-40">Nombre</th>
-                                  <th class="w-auto text-center"><input type="checkbox" id="selectAllC" onchange="checkAll(this.checked, '_C')" class="form-check-input" /></th>
+                                  <th class="w-auto text-center"><input type="checkbox" id="selectAllC" onchange="checkAll(this.checked)" class="form-check-input" /></th>
                                 </tr>
                               </thead>
                               <tbody id="emp_pre_seleccionados-list">
@@ -414,6 +414,7 @@ while ($r = $query->fetch_object()) {
   <script src="../../src/assets/js/pcoded.js"></script>
   <script src="../../src/assets/js/plugins/feather.min.js"></script>
   <script src="../../src/assets/js/main.js"></script>
+
   <script>
     const url_back = '../../back/modulo_nomina/nom_formulacion_back';
     let textarea = 't_area-1';
@@ -451,43 +452,7 @@ while ($r = $query->fetch_object()) {
     }
 
 
-
-    
-    /**
-     * Checks or unchecks all checkboxes with the class 'itemCheckbox'.
-     *
-     * @param {boolean} status - The status to set for all checkboxes.
-     */
-    function checkAll(status, subfijo) {
-      let itemCheckboxes = document.querySelectorAll('.itemCheckbox' + subfijo);
-      itemCheckboxes.forEach(checkbox => {
-        checkbox.checked = status;
-      });
-
-      guardar_empleados_nomina()
-    }
-
-
-    let empleadosSeleccionados = [] // Todos los emleados seleccionados para la nomina 
-
-    /**
-     * This function is responsible for saving the selected employees for the payroll.
-     * It retrieves all the selected checkboxes and adds the corresponding employees to the 'empleadosSeleccionados' array.
-     */
-    function guardar_empleados_nomina() {
-      empleadosSeleccionados = []
-      let itemCheckboxes = document.querySelectorAll('.itemCheckbox');
-      itemCheckboxes.forEach(checkbox => {
-        if (checkbox.checked) {
-          empleadosSeleccionados.push(empleadosFiltro[checkbox.value]);
-        }
-      });
-    }
-
-
-    /* ACA SE CARGA LA LISTA DE EMPLEADOS DEL 'NOM_MODIFICAR' */
-
-    
+    let empleadosSeleccionados = [] // Todos los emleados seleccionados para la nomina // Segun el grupo
 
     <?php
     /**
@@ -510,13 +475,119 @@ while ($r = $query->fetch_object()) {
             $anios_actuales = $row["antiguedad"];
         }
 
-        echo 'empleadosSeleccionados.push(['.$row["id"].',"'.$row["nacionalidad"].'","'.$row["cedula"].'","'.$row["nombres"].'","'.$row["fecha_ingreso"].'",'.$anios_actuales.','.$row["otros_años"].','.$row["anios_totales_calculados"].',"'.$row["status"].'","'.$row['observacion'].'","'.$row["cod_cargo"].'",'.$row["hijos"].','.$row["instruccion_academica"].','.$row["discapacidades"].','.$row["id_dependencia"].','.$row["verificado"].'
-            ])'.PHP_EOL;
+        echo 'empleadosSeleccionados.push(['.$row["id"].',"'.$row["nacionalidad"].'","'.$row["cedula"].'","'.$row["nombres"].'","'.$row["fecha_ingreso"].'",'.$anios_actuales.','.$row["otros_años"].','.$row["anios_totales_calculados"].',"'.$row["status"].'","'.$row['observacion'].'","'.$row["cod_cargo"].'",'.$row["hijos"].','.$row["instruccion_academica"].','.$row["discapacidades"].','.$row["id_dependencia"].','.$row["verificado"].'])'.PHP_EOL;
       }
     }
 
     $stmt->close();
-    ?>
+    ?> // aqui se cargan los empleados del grupo
+ 
+
+
+
+
+    /**
+     * Applies a filter to retrieve employees based on the specified type and filter criteria.
+     *
+     * @param {string} tipo - The type of filter to apply.
+     * @param {string} filtro - The filter criteria.
+     * @param {string} result_list - The ID of the HTML element where the filtered employee list will be displayed.
+     */
+    let empleadosFiltro = []
+
+    function aplicar_filtro(tipo, filtro, result_list) {
+      empleadosFiltro = []
+      $.ajax({
+        url: '../../back/modulo_nomina/nom_formulacion_back',
+        type: 'POST',
+        data: {
+          tipo_filtro: tipo,
+          filtro: filtro.trim(),
+          tabla_empleados: true
+        },
+        success: function(response) {
+          console.log(response)
+          let empleados = JSON.parse(response);
+          let tabla = '';
+
+          empleados.forEach(e => {
+            empleadosFiltro[e.id] = [e.id];
+            tabla += '<tr>';
+            tabla += '<td>' + e.cedula + '</td>';
+            tabla += '<td>' + e.nombres + '</td>';
+            tabla += '<td class="text-center"><input class="form-check-input itemCheckbox" onchange="guardar_empleados_nomina()" type="checkbox" value="' + e.id + '"></td>';
+            tabla += '</tr>';
+          });
+
+          document.getElementById(result_list).innerHTML = tabla;
+        }
+      });
+    }
+
+
+
+    
+    /**
+     * Checks or unchecks all checkboxes with the class 'itemCheckbox'.
+     *
+     * @param {boolean} status - The status to set for all checkboxes.
+     */
+    function checkAll(status) {
+      let itemCheckboxes = document.querySelectorAll('.itemCheckbox');
+      itemCheckboxes.forEach(checkbox => {
+        checkbox.checked = status;
+      });
+
+      guardar_empleados_nomina()
+    }
+
+
+
+    /**
+     * This function is responsible for saving the selected employees for the payroll.
+     * It retrieves all the selected checkboxes and adds the corresponding employees to the 'empleadosSeleccionados' array.
+     */
+    function guardar_empleados_nomina() {
+      empleadosSeleccionados = []
+      let itemCheckboxes = document.querySelectorAll('.itemCheckbox');
+      itemCheckboxes.forEach(checkbox => {
+        if (checkbox.checked) {
+          empleadosSeleccionados.push(empleadosFiltro[checkbox.value]);
+        }
+      });
+    }
+
+
+    /* ACA SE CARGA LA LISTA DE EMPLEADOS DEL 'NOM_MODIFICAR' */
+
+    
+    /**
+     * Adds an event listener to the 'btn-obtener' button and performs a specific action when clicked.
+     * 
+     * @param {Event} event - The event object.
+     * @returns {void}
+     */
+    function validarFormula(area, result_list) {
+      let condicion = $('#' + area).val();
+
+      //console.log(result_list)
+
+      if (condicion == '') {
+        return toast_s('error', 'Debe indicar una condición');
+      } else { //emp_pre_seleccionados-list
+      /*  if (result_list == 'emp_pre_seleccionados-list') {
+  
+        } else {
+          let accion = 'todos'; // Definir 'accion' aquí si es necesario
+          tbl_emp_seleccionados(condicion, accion); // Pasar 'accion' como parámetro
+        }*/
+
+        $('#tabla_empleados-conceptos').removeClass('hide')
+        aplicar_filtro(2, condicion, result_list);
+
+      }
+    }
+
 
 
     /**
@@ -648,15 +719,14 @@ while ($r = $query->fetch_object()) {
       $('#tabla_empleados-conceptos').addClass('hide');
 
       if (this.value == '1') {
-        $('#formulacion-conceptos').removeClass('hide');
+        $('#formulacion-conceptos').removeClass('hide'); // SE MUESTRA EL DIV CON LA HERRAMIENTAS DE FORMULAS
       } else if (this.value == '2') {
-        // Aquí pasamos el valor de 'condicion' como un parámetro adicional
         tbl_emp_seleccionados(null, 'todos');
       }
     }
 
     document.getElementById('tipo_aplicacion_concept').addEventListener('change', tipoAplicacion);
-
+    //#HERE
     function tbl_emp_seleccionados(condicion, accion) {
       if (accion == 'todos') {
         $('#tabla_empleados-conceptos').removeClass('hide');
@@ -665,7 +735,7 @@ while ($r = $query->fetch_object()) {
           tabla += '<tr>';
           tabla += '<td>' + e[1] + '</td>';
           tabla += '<td>' + e[3] + '</td>';
-          tabla += '<td class="text-center"><input class="form-check-input itemCheckbox_C" type="checkbox" value="' + e[0] + '"></td>';
+          tabla += '<td class="text-center"><input class="form-check-input itemCheckbox" type="checkbox" value="' + e[0] + '"></td>';
           tabla += '</tr>';
         });
         document.getElementById('emp_pre_seleccionados-list').innerHTML = tabla;
@@ -790,7 +860,7 @@ while ($r = $query->fetch_object()) {
       let empleadosDelConcepto = [];
 
       if (tipoCalculo !== 6) {
-        document.querySelectorAll('.itemCheckbox_C').forEach(checkbox => {
+        document.querySelectorAll('.itemCheckbox').forEach(checkbox => {
           if (checkbox.checked) {
             empleadosDelConcepto.push(checkbox.value);
           }
@@ -853,6 +923,7 @@ while ($r = $query->fetch_object()) {
 
       $('#concepto_aplicados').append(`<option value="${concepto_aplicar}">${nombreConcepto}</option>`);
       toast_s('success', 'Agregado con éxito');
+      $('#t_area-2').val('')
 
       $('#table-conceptos').append(`
         <tr id="row_${concepto_aplicar}">
