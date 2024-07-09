@@ -2634,7 +2634,7 @@ div.dt-container .dt-paging .dt-paging-button{
 }
 
 .hide{
-  display: none !important;
+  display: none;
 }
 .w-5{
   width: 5%;
@@ -2964,4 +2964,11 @@ transition: visibility 0s linear 0s, opacity 0.25s 0s, transform 0.25s;
 
 .browse-btn:hover {
     background-color: #364fc7;
+}
+
+.text-v-actual{
+  color: #c1c1c1 !important;
+}
+.w-20{
+  width: 20% !important;
 }

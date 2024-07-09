@@ -24,10 +24,11 @@ if (isset($_POST["tabla"])) {
     $tipo_calculo = clear($_POST["tipo_calculo"]);
     $valor = clear($_POST["valor"]);
     $maxValue = clear($_POST["maxValue"]);
-
-
+    $tipo_calculo_origen = '0';
+    
     if ($tipo_calculo == '7') {
         $tipo_calculo = '6';
+        $tipo_calculo_origen = '7';
     }
 
     
@@ -55,11 +56,11 @@ if (isset($_POST["tabla"])) {
         }
 
         // Insertar en `conceptos`
-        $stmt = mysqli_prepare($conexion, "INSERT INTO `conceptos` (nom_concepto, tipo_concepto, cod_partida, tipo_calculo, valor, maxval) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt = mysqli_prepare($conexion, "INSERT INTO `conceptos` (nom_concepto, tipo_concepto, cod_partida, tipo_calculo, valor, maxval, tipo_calculo_origen) VALUES (?, ?, ?, ?, ?, ?, ?)");
         if (!$stmt) {
             die('Error en la preparación del statement: ' . mysqli_error($conexion));
         }
-        $stmt->bind_param("ssssss", $nombre, $tipo, $partida, $tipo_calculo, $valor, $maxValue);
+        $stmt->bind_param("sssssss", $nombre, $tipo, $partida, $tipo_calculo, $valor, $maxValue, $tipo_calculo_origen);
 
         if ($stmt->execute()) {
             echo 'ok';
@@ -203,6 +204,104 @@ if (isset($_POST["tabla"])) {
     }
 
 
+
+} elseif (isset($_POST['editar_getData'])) {
+    $id = $_POST["id"];
+    function getFormulas($id){
+        global $conexion;
+        $data = [];
+        $stmt = mysqli_prepare($conexion, "SELECT * FROM `conceptos_formulacion` WHERE concepto_id = ? ORDER BY id ASC");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $data[] = $row;
+            }
+        }
+        return $data;
+
+    }
+    $stmt = mysqli_prepare($conexion, "SELECT *  FROM `conceptos` AS c WHERE id = ? LIMIT 1");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        echo json_encode([
+            'id' => $row['id'],
+            'nombre' => $row['nom_concepto'],
+            'tipo' => $row['tipo_concepto'],
+            'partida' => $row['cod_partida'],
+            'tipo_calculo' => $row['tipo_calculo'],
+            'valor' => $row['valor'],
+            'maxValue' => $row['maxval'],
+            'tipo_calculo_origen' => $row['tipo_calculo_origen'],
+            'formulacion' => getFormulas($row['id'])
+        ]);
+    }
+
+} elseif (isset($_POST["editar_setData"])) {
+    $id = $_POST["id"];
+    $valor = $_POST["valor"];
+
+    // obtener el tipo de calculo del concepto y tipo_calculo_origen
+    $stmt = mysqli_prepare($conexion, "SELECT tipo_calculo, tipo_calculo_origen, valor FROM `conceptos` WHERE id = ? LIMIT 1");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    $tipo_calculo = $row['tipo_calculo'];
+    $tipo_calculo_origen = $row['tipo_calculo_origen'];
+    $valor_previo = $row['valor'];
+    $stmt->close();
+
+
+    if ($tipo_calculo != 6 && $tipo_calculo_origen != 7) {
+        // actualiza el valor del concepto y 
+        $stmt = mysqli_prepare($conexion, "UPDATE `conceptos` SET valor = ? WHERE id = ?");
+        $stmt->bind_param("si", $valor, $id);
+        if ($stmt->execute()) {
+            //guarda en 'historico_conceptos' (id_concepto, valor) el valor previo
+            $stmt = mysqli_prepare($conexion, "INSERT INTO `historico_conceptos` (identificador, valor) VALUES (?, ?)");
+            $stmt->bind_param("is", $id, $valor_previo);
+            $stmt->execute();
+            echo json_encode(['status' => 'ok', 'mensaje' => 'Actualizado correctamente']);
+        }
+        $stmt->close();
+        
+    }elseif ($tipo_calculo == 6) {
+
+        $stmt_q = mysqli_prepare($conexion, "SELECT * FROM `conceptos_formulacion` WHERE id = ? ORDER BY id ASC");
+        $error = false;
+
+        foreach ($valor as $value) {
+            $id_item = $value['id'];
+            $valor_item = $value['valor'];
+
+            $stmt_q->bind_param('s', $id_item);
+            $stmt_q->execute();
+            $result = $stmt_q->get_result();
+            if ($result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    $valor_previo_item = $row['valor'];
+                    $stmt_update = mysqli_prepare($conexion, "UPDATE `conceptos_formulacion` SET valor = ? WHERE id = ?");
+                    $stmt_update->bind_param("si", $valor_item, $id_item);
+                    if ($stmt_update->execute()) {
+                        $stmt = mysqli_prepare($conexion, "INSERT INTO `historico_conceptos` (identificador, valor) VALUES (?, ?)");
+                        $stmt->bind_param("is", $id_item, $valor_previo_item);
+                        $stmt->execute();
+                    }else {
+                        $error = true;
+                    }
+                }
+            }
+        }
+        if (!$error) {
+            echo json_encode(['status' => 'ok', 'mensaje' => 'Actualizado correctamente']);
+        }
+        $stmt_q->close();
+    }
 
 }
 $conexion->close();
