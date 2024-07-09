@@ -39,12 +39,36 @@
             </div>
           </div>
         </li>
-        <li class="dropdown pc-h-item header-user-profile">
-          <a class="pc-head-link dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" data-bs-auto-close="outside" aria-expanded="false">
 
+        <li class="pc-h-item ms-3">
+          <div class="custom-dropdown custom-dropdown-toggle">
             <i data-feather="user"></i>
-          </a>
+            <div class="custom-dropdown-menu">
+              <div class="dropdown-header  align-items-center justify-content-between p-3">
+                <h5 class="m-0">Notificaciones</h5>
+              </div>
+              <ul class="p-0 list-unstyled d-block" >
+                <li class="border-bottom">
+                  <a href="<?php echo constant('URL') ?>perfil" class="p-3 d-flex align-items-center">
+                    <i data-feather="user"></i>
+                    <span class="ms-2">Perfil</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="<?php echo constant('URL') ?>back/sistema_login/login_salir.php" class="text-danger p-3 d-flex align-items-center">
+                    <i data-feather="log-out"></i>
+                    <span class="ms-2">Cerrar sesión</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
         </li>
+
+
+
+
+
       </ul>
     </div>
   </div>
