@@ -186,11 +186,13 @@ while ($r = $query->fetch_object()) {
         const nominasConConceptos = [];
         for (const nomina of nominas) {
           const conceptos = await getConceptosXnomina(nomina.nombre);
+          console.log(nomina.nombre)
           if (conceptos.length > 0) {
             nominasConConceptos.push([nomina.id, nomina.nombre, conceptos]);
           }
         }
 
+        console.log(nominasConConceptos.length)
         return nominasConConceptos.length > 0 ? {
           status: 'conRegistros',
           data: nominasConConceptos
@@ -201,6 +203,7 @@ while ($r = $query->fetch_object()) {
 
       // Ejemplo de uso
       getNominas(<?php echo $i ?>).then((result) => {
+        console.log(result)
         nominasDelGrupo = result;
         //  console.log(nominasDelGrupo)
       }).catch((error) => {
@@ -632,6 +635,7 @@ while ($r = $query->fetch_object()) {
       document.getElementById('btn-agregar-empleado').classList.add('hide')
       empleado_seleccion = id_empleado
 
+      console.log(nominasDelGrupo)
       $('#resultado_nominas_disponibles').html('<h5 class="mb-3">Nominas Disponibles</h5><div class="list-group">')
       nominasDelGrupo.data.forEach(nomina => {
         $('#resultado_nominas_disponibles').append(`<label class="list-group-item">

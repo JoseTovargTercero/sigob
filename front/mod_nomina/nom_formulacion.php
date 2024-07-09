@@ -546,7 +546,7 @@ while ($r = $query->fetch_object()) {
      * This function is responsible for saving the selected employees for the payroll.
      * It retrieves all the selected checkboxes and adds the corresponding employees to the 'empleadosSeleccionados' array.
      */
-    function guardar_empleados_nomina() {
+ /*   function guardar_empleados_nomina() {
       empleadosSeleccionados = []
       let itemCheckboxes = document.querySelectorAll('.itemCheckbox');
       itemCheckboxes.forEach(checkbox => {
@@ -554,7 +554,7 @@ while ($r = $query->fetch_object()) {
           empleadosSeleccionados.push(empleadosFiltro[checkbox.value]);
         }
       });
-    }
+    }*/
 
 
     /* ACA SE CARGA LA LISTA DE EMPLEADOS DEL 'NOM_MODIFICAR' */
@@ -1218,7 +1218,6 @@ while ($r = $query->fetch_object()) {
 
         let prefijo = $('#prefijo_nomina').html() + ' ' + $('#prefijo_nomina2').html() + ' ';
         const nombreNomina = prefijo + document.getElementById('nombre_nomina').value.trim();
-        console.log(nombreNomina)
         try {
           const exists = await checkNombreNominaExists(nombreNomina);
           if (exists) {
@@ -1389,8 +1388,8 @@ while ($r = $query->fetch_object()) {
       const nombre = prefijo+$('#nombre_nomina').val()
       const frecuencia = $('#frecuencia_pago').val()
       const tipo = $('#tipo_nomina').val()
-      console.log('hola')
-
+      console.log(conceptosAplicados)
+      return
       $.ajax({
         url: '../../back/modulo_nomina/guardar_nominas.php',
         type: 'POST',
