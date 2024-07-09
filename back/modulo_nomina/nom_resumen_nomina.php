@@ -70,12 +70,12 @@
                 }
 
                 // Función para obtener datos de conceptos y conceptos_aplicados
-                function obtener_datos_conceptos($conexion, $concepto) {
+                function obtener_datos_conceptos($conexion, $concepto, $nombre_nomina) {
                     $sql_conceptos = "SELECT nom_concepto, cod_partida FROM conceptos WHERE nom_concepto='$concepto'";
                     $result_conceptos = mysqli_query($conexion, $sql_conceptos);
                     $datos_conceptos = mysqli_fetch_assoc($result_conceptos);
 
-                    $sql_conceptos_aplicados = "SELECT emp_cantidad FROM conceptos_aplicados WHERE nom_concepto='$concepto'";
+                    $sql_conceptos_aplicados = "SELECT emp_cantidad FROM conceptos_aplicados WHERE nom_concepto='$concepto' AND nombre_nomina='$nombre_nomina'";
                     $result_conceptos_aplicados = mysqli_query($conexion, $sql_conceptos_aplicados);
                     $datos_conceptos_aplicados = mysqli_fetch_assoc($result_conceptos_aplicados);
 
@@ -86,7 +86,7 @@
                 if (!empty($asignaciones)) {
                     foreach ($asignaciones as $key => $value) {
                         $total_asignaciones += $value;
-                        $datos_conceptos = obtener_datos_conceptos($conexion, $key);
+                        $datos_conceptos = obtener_datos_conceptos($conexion, $key, $nombre_nomina);
                         echo "<tr><td>" . $datos_conceptos['nom_concepto'] . "</td><td>$value Bs</td><td></td><td></td><td>" . $datos_conceptos['cod_partida'] . "</td><td>" . $datos_conceptos['emp_cantidad'] . "</td></tr>";
                     }
                 }
@@ -95,7 +95,7 @@
                 if (!empty($deducciones)) {
                     foreach ($deducciones as $key => $value) {
                         $total_deducciones += $value;
-                        $datos_conceptos = obtener_datos_conceptos($conexion, $key);
+                        $datos_conceptos = obtener_datos_conceptos($conexion, $key, $nombre_nomina);
                         echo "<tr><td>" . $datos_conceptos['nom_concepto'] . "</td><td></td><td>$value Bs</td><td></td><td>" . $datos_conceptos['cod_partida'] . "</td><td>" . $datos_conceptos['emp_cantidad'] . "</td></tr>";
                     }
                 }
@@ -104,7 +104,7 @@
                 if (!empty($aportes)) {
                     foreach ($aportes as $key => $value) {
                         $total_aportes += $value;
-                        $datos_conceptos = obtener_datos_conceptos($conexion, $key);
+                        $datos_conceptos = obtener_datos_conceptos($conexion, $key, $nombre_nomina);
                         echo "<tr><td>" . $datos_conceptos['nom_concepto'] . "</td><td></td><td></td><td>$value Bs</td><td>" . $datos_conceptos['cod_partida'] . "</td><td>" . $datos_conceptos['emp_cantidad'] . "</td></tr>";
                     }
                 }
