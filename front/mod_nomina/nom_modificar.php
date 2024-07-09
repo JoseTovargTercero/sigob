@@ -394,7 +394,7 @@ while ($r = $query->fetch_object()) {
                   </div>
                   <form class="mb-3" id="formularioBusqueda">
                     <label class="form-label" for="cedula">Cedula</label>
-                    <div class="input-group"><input type="text" class="form-control" placeholder="Numero de cedula" id="cedula" name="cedula"> <button type="submit" class="btn btn-primary"><i class="feather icon-download-cloud"></i> BUSCAR</button></div>
+                    <div class="input-group"><input value="27640176" type="text" class="form-control" placeholder="Numero de cedula" id="cedula" name="cedula"> <button type="submit" class="btn btn-primary"><i class="feather icon-download-cloud"></i> BUSCAR</button></div>
                     <small class="text-danger">* Se excluirán empleados que ya pertenezcan al mismo grupo de nominas.</small>
                   </form>
 

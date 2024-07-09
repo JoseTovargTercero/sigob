@@ -1388,8 +1388,7 @@ while ($r = $query->fetch_object()) {
       const nombre = prefijo+$('#nombre_nomina').val()
       const frecuencia = $('#frecuencia_pago').val()
       const tipo = $('#tipo_nomina').val()
-      console.log(conceptosAplicados)
-      return
+  
       $.ajax({
         url: '../../back/modulo_nomina/guardar_nominas.php',
         type: 'POST',
