@@ -158,6 +158,7 @@ const getComparacionNomina = async (obj) => {
 
 const calculoNomina = async ({ nombre, identificador }) => {
   showLoader()
+  console.log(nombre, identificador)
   try {
     let res = await fetch(calculoNominaUrl, {
       method: 'POST',
@@ -381,9 +382,12 @@ async function mapData(data) {
     // Datos dinámicos
 
     empleado.nacionalidad = nacionalidad == 1 ? 'EXTRANJERO' : 'VENEZOLANO'
-    empleado.status = status == 1 ? 'ACTIVO' : 'INACTIVO'
+    empleado.status = empleadoEstatus[empleado.status]
     discapacidades = discapacidades == 1 ? 'SI' : 'NO'
     empleado.tipo_cuenta = tipo_cuenta = 1 ? 'AHORRO' : 'CORRIENTE'
+    empleado.observacion = empleado.observacion
+      ? empleado.observacion
+      : 'No disponible'
 
     id_dependencia = dependencias.find((el) => el.id == id_dependencia)
     instruccion_academica = profesiones.find(
@@ -403,4 +407,11 @@ async function mapData(data) {
 
     return empleado
   })
+}
+
+const empleadoEstatus = {
+  A: 'ACTIVO',
+  S: 'SUSPENDIDO',
+  R: 'RETIRADO',
+  C: 'COMISIÓN POR SERVICIO',
 }

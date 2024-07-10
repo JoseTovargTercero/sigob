@@ -161,7 +161,7 @@ require_once '../../back/sistema_global/session.php';
                       <option value="A">ACTIVO</option>
                       <option value="R">RETIRADO</option>
                       <option value="S">SUSPENDIDO</option>
-                      <option value="C">COMOSION DE SERVICIO</option>
+                      <option value="C">COMISION DE SERVICIO</option>
                     </select>
                   </div>
                 </div>

@@ -169,14 +169,27 @@ export function validateEmployeePayForm({
     let employeePayTableCard = d.getElementById('request-employee-table-card')
     if (employeePayTableCard) employeePayTableCard.remove()
 
-    let columns = Object.keys(nomina.informacion_empleados[0])
+    let nominaMapped = { ...nomina }
+
+    nominaMapped.informacion_empleados = nominaMapped.informacion_empleados.map(
+      (el) => {
+        delete el.aportes
+        delete el.deducciones
+        delete el.asignaciones
+
+        return el
+      }
+    )
+
+    console.log(nominaMapped)
+    let columns = Object.keys(nominaMapped.informacion_empleados[0])
 
     // Insertar tabla en formulario
     employeePayForm.insertAdjacentHTML(
       'beforeend',
-      employeePayTableHTML({ nominaData: nomina, columns })
+      employeePayTableHTML({ nominaData: nominaMapped, columns })
     )
-    createTable({ nominaData: nomina, columns })
+    createTable({ nominaData: nominaMapped, columns })
   })
 
   d.addEventListener('click', async (e) => {

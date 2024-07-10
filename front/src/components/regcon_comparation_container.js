@@ -18,7 +18,9 @@ const createCard = ({ actual, anterior, confirmBtn }) => {
   let nombreNominaActual = actual.nombre_nomina
   let estadoActual = actual.status
   let totalEmpleadosActual = actual.empleados.length
-  let totalPagarActual = actual.total_pagar.reduce((acc, el) => el + acc, 0)
+  let totalPagarActual = actual.total_pagar
+    .reduce((acc, el) => el + acc, 0)
+    .toFixed(2)
 
   let correlativoAnterior,
     nombreNominaAnterior,
@@ -31,7 +33,9 @@ const createCard = ({ actual, anterior, confirmBtn }) => {
     nombreNominaAnterior = anterior.nombre_nomina
     estadoAnterior = anterior.status
     totalEmpleadosAnterior = anterior.empleados.length
-    totalPagarAnterior = anterior.total_pagar.reduce((acc, el) => el + acc, 0)
+    totalPagarAnterior = anterior.total_pagar
+      .reduce((acc, el) => el + acc, 0)
+      .toFixed(2)
   }
 
   let listaAsignaciones = createObjectList(
