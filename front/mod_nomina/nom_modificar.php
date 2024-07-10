@@ -383,10 +383,6 @@ while ($r = $query->fetch_object()) {
                     </section>
                   <?php } ?>
                 </div>
-
-
-
-
                 <div class="tab-pane fade" id="v-pills-addEmpleado" role="tabpanel" aria-labelledby="v-pills-addEmpleado-tab">
                   <div class="mb-3">
                     <h5 class="mb-0">Agregar empleado al grupo</h5>
@@ -541,6 +537,7 @@ while ($r = $query->fetch_object()) {
        * @return void
        */
       function guardarListaEmpleados() {
+        
         if (empleadosSeleccionados.length === 0) {
           return toast_s('error', 'Debe seleccionar al menos un empleado');
         }
@@ -639,7 +636,7 @@ while ($r = $query->fetch_object()) {
       $('#resultado_nominas_disponibles').html('<h5 class="mb-3">Nominas Disponibles</h5><div class="list-group">')
       nominasDelGrupo.data.forEach(nomina => {
         $('#resultado_nominas_disponibles').append(`<label class="list-group-item">
-      <input class="form-check-input me-1" type="checkbox" value="${nomina[0]}" id="nomina-${nomina[0]}"> ${nomina[1]}</label>`)
+        <input class="form-check-input me-1" type="checkbox" value="${nomina[0]}" id="nomina-${nomina[0]}"> ${nomina[1]}</label>`)
       })
       $('#resultado_nominas_disponibles').append('</div><div class="mt-3 text-end"><button onclick="confirmarNominas()" class="btn  btn-primary">siguiente</button></div>')
 
@@ -742,13 +739,13 @@ while ($r = $query->fetch_object()) {
      * Checks or unchecks all checkboxes with the class 'itemCheckbox'.
      *
      * @param {boolean} status - The status to set for all checkboxes.
-     */
+     *//*
     function checkAll(status, subfijo) {
       let itemCheckboxes = document.querySelectorAll('.itemCheckbox' + subfijo);
       itemCheckboxes.forEach(checkbox => {
         checkbox.checked = status;
       });
-    }
+    }*/
 
 
 
