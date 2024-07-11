@@ -6,17 +6,32 @@
     </div>
     <div class="navbar-content">
       <ul class="pc-navbar">
-
-
-
-
-
         <?php if ($_SESSION["u_oficina_id"] == 1) { //nomina ?>
 
           <li class="pc-item pc-caption">
             <label>Nómina</label>
             <i data-feather="sidebar"></i>
           </li>
+
+          <li class="pc-item pc-hasmenu">
+            <a href="#!" class="pc-link">
+              <span class="pc-micon">
+                <i class='bx bx-cog'></i>
+              </span>
+              <span class="pc-mtext">Mantenimiento</span><span class="pc-arrow"><i class="ti ti-chevron-right"></i></span>
+            </a>
+            <ul class="pc-submenu">
+              <li class="pc-item"><a class="pc-link"
+                  href="<?php echo constant('URL') ?>front/mod_nomina/index">Inicio</a></li>
+              <li class="pc-item"><a class="pc-link"
+                  href="<?php echo constant('URL') ?>front/mod_nomina/nom_errores">Estatus</a></li>
+
+            </ul>
+          </li>
+
+
+
+
           <li class="pc-item pc-hasmenu">
             <a href="#!" class="pc-link">
               <span class="pc-micon">
