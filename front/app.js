@@ -2,6 +2,7 @@ import { validateEmployeeForm } from './src/controllers/empleadosForm.js'
 import { validateEmployeeTable } from './src/controllers/empleadosTable.js'
 // import { validatePayNomForm } from './src/controllers/pagarNominaForm.js'
 import { validateEmployeePayForm } from './src/controllers/peticionesNominaForm.js'
+import { validateRequestForm } from './src/controllers/peticionesNominaForm2.js'
 import { validateRequestNomForm } from './src/controllers/peticionesNominaReview.js'
 import { validateTabulatorForm } from './src/controllers/tabuladorForm.js'
 import { validateModal } from './src/helpers/helpers.js'
@@ -11,6 +12,7 @@ const tabulatorForm = d.getElementById('tabulator-primary-form')
 const employeeForm = d.getElementById('employee-form')
 const requestNomForm = d.getElementById('request-nom-form')
 const requestForm = d.getElementById('request-form')
+const requestForm2 = d.getElementById('request-form2')
 const payNomForm = d.getElementById('pay-nom-form')
 
 const employeeTableElement = d.getElementById('employee-table')
@@ -194,6 +196,18 @@ d.addEventListener('DOMContentLoaded', (e) => {
       requestSelectContainerId: 'request-employee-container',
       showRequestGroupBtnId: 'show-request-group',
       formId: 'request-form',
+    })
+  }
+
+  if (requestForm2) {
+    validateRequestForm({
+      btnNewRequestId: 'btn-new-request',
+      requestTableId: 'request-table',
+      newRequestFormId: 'form-request-id',
+      selectGrupoId: 'grupo',
+      selectNominaId: 'nomina',
+      selectFrecuenciaId: 'frecuencia',
+      requestEmployeeListId: 'request-employee-list',
     })
   }
 

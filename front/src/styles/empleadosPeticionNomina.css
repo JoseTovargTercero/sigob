@@ -17,18 +17,26 @@
   /* scrollbar-width: none; */
 }
 
+.request-step-container {
+}
+
+.request-step {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+
+  gap: 1rem;
+}
+
 .request-table-container {
   width: 100%;
   padding: 1rem;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+
   gap: 1rem;
   min-height: 300px;
 }
 
 .request-table-container div:nth-child(1) {
   width: 100%;
-  max-width: 700px;
 }
 
 /* COMPARACIÓN DE PETICIONES */
