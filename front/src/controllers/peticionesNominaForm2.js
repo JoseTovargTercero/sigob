@@ -3,7 +3,7 @@ import {
   loadEmployeeList,
   nom_empleados_list_card,
 } from '../components/nom_empleados_list_card.js'
-import { validateInput } from '../helpers/helpers.js'
+import { closeModal, validateInput } from '../helpers/helpers.js'
 import { FRECUENCY_TYPES } from '../helpers/types.js'
 import { loadRequestTable } from './peticionesTable.js'
 
@@ -26,6 +26,8 @@ let fieldListErrors = {
     type: 'text',
   },
 }
+
+let employeeNewStatus = []
 
 let nominas
 
@@ -54,89 +56,122 @@ export async function validateRequestForm({
   loadEmployeeList({
     listaEmpleados: listaEmpleados.informacion_empleados,
   })
+
   d.addEventListener('click', (e) => {
     if (e.target.id === btnNewRequestId) {
       requestTable.classList.toggle('hide')
       newRequestForm.classList.toggle('hide')
     }
+
+    if (e.target.id === 'btn-close-employee-list-card') {
+      closeModal({ modalId: 'modal-employee-list' })
+    }
   })
 
-  selectGrupo.addEventListener('change', async (e) => {
-    fieldList = validateInput({
-      target: e.target,
-      fieldList,
-      fieldListErrors,
-      type: fieldListErrors[e.target.name].type,
-    })
+  d.addEventListener('change', async (e) => {
+    if (e.target.dataset.employeeid) {
+      let id = e.target.dataset.employeeid
+      let defaultValue = e.target.dataset.defaultvalue
 
-    nominas = await getNominas(e.target.value)
-    console.log(nominas)
+      let oldValueIndex = employeeNewStatus.findIndex((el) => el.id === id)
+      if (e.target.value === defaultValue) {
+        employeeNewStatus = employeeNewStatus.filter((el) => el.id !== id)
+        console.log(employeeNewStatus)
+        return
+      }
 
-    selectNomina.innerHTML = ''
-
-    if (nominas.length > 0)
-      nominas.forEach((nomina) => {
-        let option = `<option value="${nomina.nombre}">${
-          nomina.nombre || 'Grupo de nómina vacío'
-        }</option>`
-
-        selectNomina.insertAdjacentHTML('beforeend', option)
-      })
-    else
-      selectNomina.insertAdjacentHTML(
-        'beforeend',
-        `<option value="">Grupo de nómina vacío</option>`
-      )
-  })
-
-  selectNomina.addEventListener('change', (e) => {
-    if (!e.target.value) return
-    fieldList.nomina = e.target.value
-
-    fieldList.frecuencia = nominas.find(
-      (nomina) => nomina.nombre === e.target.value
-    ).frecuencia
-
-    console.log(fieldList.frecuencia)
-
-    selectFrecuencia.innerHTML = ''
-
-    let identificadorOpciones = ''
-
-    switch (fieldList.frecuencia) {
-      case '1':
-        FRECUENCY_TYPES[fieldList.frecuencia].forEach(
-          (identificadorNomina, index) => {
-            identificadorOpciones += `<option value='${identificadorNomina}'>Semana ${
-              index + 1
-            }</option>`
-          }
-        )
-        break
-      case '2':
-        FRECUENCY_TYPES[fieldList.frecuencia].forEach(
-          (identificadorNomina, index) => {
-            identificadorOpciones += `<option value='${identificadorNomina}'>Quincena ${
-              index + 1
-            }</option>`
-          }
-        )
-        break
-      case '3':
-        FRECUENCY_TYPES[fieldList.frecuencia].forEach((identificadorNomina) => {
-          identificadorOpciones += `<option value='${identificadorNomina}'>Mensual</option>`
+      if (employeeNewStatus.some((el) => el.id === id)) {
+        employeeNewStatus.splice(oldValueIndex, 1, {
+          id,
+          value: e.target.value,
         })
-        break
-      case '4':
-        FRECUENCY_TYPES[fieldList.frecuencia].forEach((identificadorNomina) => {
-          identificadorOpciones += `<option value='${identificadorNomina}'>Mensual</option>`
-        })
-        break
-
-      default:
-        break
+      } else {
+        employeeNewStatus.push({ id, value: e.target.value })
+      }
+      console.log(employeeNewStatus)
     }
 
-    selectFrecuencia.insertAdjacentHTML('beforeend', identificadorOpciones)
+    if (e.target === selectGrupo) {
+      fieldList = validateInput({
+        target: e.target,
+        fieldList,
+        fieldListErrors,
+        type: fieldListErrors[e.target.name].type,
+      })
+
+      nominas = await getNominas(e.target.value)
+      console.log(nominas)
+
+      selectNomina.innerHTML = ''
+
+      if (nominas.length > 0)
+        nominas.forEach((nomina) => {
+          let option = `<option value="${nomina.nombre}">${
+            nomina.nombre || 'Grupo de nómina vacío'
+          }</option>`
+
+          selectNomina.insertAdjacentHTML('beforeend', option)
+        })
+      else
+        selectNomina.insertAdjacentHTML(
+          'beforeend',
+          `<option value="">Grupo de nómina vacío</option>`
+        )
+    }
+
+    if (e.target === selectNomina) {
+      if (!e.target.value) return
+      fieldList.nomina = e.target.value
+
+      fieldList.frecuencia = nominas.find(
+        (nomina) => nomina.nombre === e.target.value
+      ).frecuencia
+
+      console.log(fieldList.frecuencia)
+
+      selectFrecuencia.innerHTML = ''
+
+      let identificadorOpciones = ''
+
+      switch (fieldList.frecuencia) {
+        case '1':
+          FRECUENCY_TYPES[fieldList.frecuencia].forEach(
+            (identificadorNomina, index) => {
+              identificadorOpciones += `<option value='${identificadorNomina}'>Semana ${
+                index + 1
+              }</option>`
+            }
+          )
+          break
+        case '2':
+          FRECUENCY_TYPES[fieldList.frecuencia].forEach(
+            (identificadorNomina, index) => {
+              identificadorOpciones += `<option value='${identificadorNomina}'>Quincena ${
+                index + 1
+              }</option>`
+            }
+          )
+          break
+        case '3':
+          FRECUENCY_TYPES[fieldList.frecuencia].forEach(
+            (identificadorNomina) => {
+              identificadorOpciones += `<option value='${identificadorNomina}'>Mensual</option>`
+            }
+          )
+          break
+        case '4':
+          FRECUENCY_TYPES[fieldList.frecuencia].forEach(
+            (identificadorNomina) => {
+              identificadorOpciones += `<option value='${identificadorNomina}'>Mensual</option>`
+            }
+          )
+          break
+
+        default:
+          break
+      }
+
+      selectFrecuencia.insertAdjacentHTML('beforeend', identificadorOpciones)
+    }
   })
 }

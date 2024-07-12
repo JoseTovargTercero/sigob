@@ -18,13 +18,11 @@
 }
 
 .request-step-container {
+  display: flex;
+  flex-direction: column;
 }
 
 .request-step {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-
-  gap: 1rem;
 }
 
 .request-table-container {

@@ -77,52 +77,70 @@ require_once '../../back/sistema_global/session.php';
 
                             <div class="request-step-container hide slide-up-animation" id="form-request-id">
                                 <div class="request-step" id="request-step-1">
-                                    <div class="mb-2 w-100">
-                                        <label for="grupo" class="form-label">Grupo de nomina</label>
-                                        <small class="text-muted mt-0 d-block mb-2">Seleccione un grupo de
-                                            nomina</small>
 
-                                        <select id="grupo" name="grupo" class="form-control" size="3">
-                                            <?php
-                                            $stmt = mysqli_prepare($conexion, "SELECT id, codigo, nombre FROM `nominas_grupos` ORDER BY codigo");
-                                            $stmt->execute();
-                                            $result = $stmt->get_result();
-                                            if ($result->num_rows > 0) {
-                                                while ($row = $result->fetch_assoc()) {
-                                                    echo '<option value="' . $row['id'] . '">' . $row['codigo'] . ' - ' . $row['nombre'] . '</option>';
+                                    <div class="row">
+                                        <div class="mb-2 col-sm w-100">
+                                            <label for="grupo" class="form-label">Grupo de nomina</label>
+                                            <small class="text-muted mt-0 d-block mb-2">Seleccione un grupo de
+                                                nomina</small>
+
+                                            <select id="grupo" name="grupo" class="form-control" size="3">
+                                                <?php
+                                                $stmt = mysqli_prepare($conexion, "SELECT id, codigo, nombre FROM `nominas_grupos` ORDER BY codigo");
+                                                $stmt->execute();
+                                                $result = $stmt->get_result();
+                                                if ($result->num_rows > 0) {
+                                                    while ($row = $result->fetch_assoc()) {
+                                                        echo '<option value="' . $row['id'] . '">' . $row['codigo'] . ' - ' . $row['nombre'] . '</option>';
+                                                    }
                                                 }
-                                            }
-                                            $stmt->close();
-                                            ?>
-                                        </select>
+                                                $stmt->close();
+                                                ?>
+                                            </select>
+                                        </div>
+
+
+                                        <div class="mb-2 col-sm w-100">
+                                            <label for="nomina" class="form-label">Nómina</label>
+                                            <small class="text-muted mt-0 d-block mb-2">Seleccione la nómina a
+                                                registrar</small>
+                                            <select id="nomina" name="nomina" class="form-control" size="3">
+                                                <option value="">Seleccionar grupo de nómina</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-2 col-sm w-100">
+                                            <label for="frecuencia" class="form-label">Frecuencia</label>
+                                            <small class="text-muted mt-0 d-block mb-2">Seleccione la frecuencia</small>
+                                            <select id="frecuencia" name="frecuencia" class="form-control" size="3">
+                                                <option value="">Seleccionar una nómina</option>
+
+
+                                            </select>
+                                        </div>
                                     </div>
 
+                                </div>
 
-                                    <div class="mb-2 w-100">
-                                        <label for="nomina" class="form-label">Nómina</label>
-                                        <small class="text-muted mt-0 d-block mb-2">Seleccione la nómina a
-                                            registrar</small>
-                                        <select id="nomina" name="nomina" class="form-control" size="3">
-                                            <option value="">Seleccionar grupo de nómina</option>
-                                        </select>
-                                    </div>
+                                <div class="request-step" id="request-step-2">
+                                    <h3 class="mb-2">Nomina calculada y lista para solicitar revisión</h3>
+                                    <h5 class="mb-2">nombre_nomina</h5>
+                                    <small class="text-muted">
+                                        Por favor, ingrese la información básica de la nómina.
+                                    </small>
 
-                                    <div class="mb-2 w-100">
-                                        <label for="frecuencia" class="form-label">Frecuencia</label>
-                                        <small class="text-muted mt-0 d-block mb-2">Seleccione la frecuencia</small>
-                                        <select id="frecuencia" name="frecuencia" class="form-control" size="3">
-                                            <option value="">Seleccionar una nómina</option>
+                                    <button class="btn btn-secondary">Cambiar estatus a empleados</button>
+                                </div>
+                                <div class="request-step" id="request-step-3">
+                                    <h1>hola</h1>
+                                </div>
 
-
-                                        </select>
-                                    </div>
+                                <div class="d-flex justify-content-center gap-2">
+                                    <button class="btn btn-secondary" id="btn-previus">Anterior</button>
+                                    <button class="btn btn-primary" id="btn-next">Siguiente</button>
                                 </div>
 
                             </div>
-                            <div class="d-flex justify-content-center gap-2">
-                                <button class="btn btn-secondary" id="btn-previus">Anterior</button>
-                                <button class="btn btn-primary" id="btn-next">Siguiente</button>
-                            </div>
+
 
                         </div>
 

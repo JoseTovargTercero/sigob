@@ -60,7 +60,9 @@ export async function loadEmployeeList({ listaEmpleados }) {
     return {
       cedula: empleado.cedula,
       nombres: empleado.nombres,
-      status: ` <select class="form-select">
+      status: ` ${empleado.status}<select class="form-select" data-employeeid=${
+        empleado.id
+      } data-defaultvalue="${empleado.status}">
       <option value="A" ${empleado.status === 'A' && 'selected'}>ACTIVO</option>
       <option value="R" ${
         empleado.status === 'R' && 'selected'
@@ -82,7 +84,7 @@ export async function loadEmployeeList({ listaEmpleados }) {
 }
 
 export const nom_empleados_list_card = () => {
-  return `  <div class='modal-window'>
+  return `  <div class='modal-window' id="modal-employee-list">
       <div class='modal-box slide-up-animation'>
         <div class='modal-box-header card-header'>
         <div>
@@ -90,7 +92,7 @@ export const nom_empleados_list_card = () => {
           <small class="text-secondary">Verifica el estado de los empleados en nomina</small>
           </div>
           <button
-              id='btn-close-employee-card'
+              id='btn-close-employee-list-card'
               type='button'
               class='btn btn-danger'
               aria-label='Close'
