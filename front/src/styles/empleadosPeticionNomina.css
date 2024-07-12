@@ -35,10 +35,6 @@
   min-height: 300px;
 }
 
-.request-table-container div:nth-child(1) {
-  width: 100%;
-}
-
 /* COMPARACIÓN DE PETICIONES */
 
 .request-comparation-container {

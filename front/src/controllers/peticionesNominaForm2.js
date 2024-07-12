@@ -1,4 +1,8 @@
-import { getNominas } from '../api/peticionesNomina.js'
+import { calculoNomina, getNominas } from '../api/peticionesNomina.js'
+import {
+  loadEmployeeList,
+  nom_empleados_list_card,
+} from '../components/nom_empleados_list_card.js'
 import { validateInput } from '../helpers/helpers.js'
 import { FRECUENCY_TYPES } from '../helpers/types.js'
 import { loadRequestTable } from './peticionesTable.js'
@@ -25,7 +29,7 @@ let fieldListErrors = {
 
 let nominas
 
-export function validateRequestForm({
+export async function validateRequestForm({
   btnNewRequestId,
   requestTableId,
   newRequestFormId,
@@ -40,7 +44,16 @@ export function validateRequestForm({
   let selectGrupo = d.getElementById(selectGrupoId)
   let selectFrecuencia = d.getElementById(selectFrecuenciaId)
 
-  console.log(newRequestFormId)
+  let listaEmpleadosFetch = await fetch(
+      '/sigob/front/src/api/calculoNomina.json'
+    ),
+    listaEmpleados = await listaEmpleadosFetch.json()
+
+  requestTable.insertAdjacentHTML('beforeend', nom_empleados_list_card())
+
+  loadEmployeeList({
+    listaEmpleados: listaEmpleados.informacion_empleados,
+  })
   d.addEventListener('click', (e) => {
     if (e.target.id === btnNewRequestId) {
       requestTable.classList.toggle('hide')

@@ -382,7 +382,7 @@ async function mapData(data) {
     // Datos dinámicos
 
     empleado.nacionalidad = nacionalidad == 1 ? 'EXTRANJERO' : 'VENEZOLANO'
-    empleado.status = empleadoEstatus[empleado.status]
+    // empleado.status = empleadoEstatus[empleado.status]
     discapacidades = discapacidades == 1 ? 'SI' : 'NO'
     empleado.tipo_cuenta = tipo_cuenta = 1 ? 'AHORRO' : 'CORRIENTE'
     empleado.observacion = empleado.observacion
