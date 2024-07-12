@@ -2972,3 +2972,7 @@ transition: visibility 0s linear 0s, opacity 0.25s 0s, transform 0.25s;
 .w-20{
   width: 20% !important;
 }
+
+.fz-40p{
+  font-size: 40px !important;
+}
