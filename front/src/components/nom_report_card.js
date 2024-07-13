@@ -27,7 +27,9 @@ export const nomReportCard = ({ data }) => {
   let fechaCreacion = data.creacion
   let correlativo = data.correlativo
   let identificador = data.identificador
-  let totalPagar = data.total_a_pagar.reduce((value, acc) => value + acc, 0)
+  let totalPagar = data.total_a_pagar
+    .reduce((value, acc) => value + acc, 0)
+    .toFixed(2)
 
   console.log(data)
 
@@ -47,10 +49,10 @@ export const nomReportCard = ({ data }) => {
           </button>
         </header>
         <div
-          class='card h-100 p-2 slide-up-animation d-flex flex-row align-items-center gap-2 nom-report-card'
+          class='card h-100 p-2 slide-up-animation d-flex flex-column align-items-center gap-2 nom-report-card'
           id='nom-report-card'
         >
-          <div class='card-header py-5'>
+          <div class='card-header py-5 text-center'>
             <small class='d-block text-center w-100 py-0'>
               Generar reportes (PDF, TXT, ETC)
             </small>

@@ -186,6 +186,7 @@ d.addEventListener('DOMContentLoaded', (e) => {
         },
       },
     })
+    return
   }
 
   if (requestForm) {
@@ -203,11 +204,15 @@ d.addEventListener('DOMContentLoaded', (e) => {
     validateRequestForm({
       btnNewRequestId: 'btn-new-request',
       requestTableId: 'request-table',
+      requestFormId: 'request-form2',
+      requeFormInformationId: 'request-form-information',
       newRequestFormId: 'form-request-id',
       selectGrupoId: 'grupo',
       selectNominaId: 'nomina',
       selectFrecuenciaId: 'frecuencia',
       requestEmployeeListId: 'request-employee-list',
+      btnNextId: 'btn-next',
+      btnPreviusId: 'btn-previus',
     })
   }
 

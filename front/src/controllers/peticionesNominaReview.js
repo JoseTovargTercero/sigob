@@ -77,7 +77,7 @@ export async function validateRequestNomForm({
       if (comparationContainer) comparationContainer.remove()
 
       let peticiones = await getComparacionNomina(result)
-
+      peticiones.confirmBtn = true
       requestComparationForm.insertAdjacentHTML(
         'beforeend',
         createComparationContainer({ data: peticiones })

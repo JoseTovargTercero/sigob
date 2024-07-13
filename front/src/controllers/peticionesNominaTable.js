@@ -107,7 +107,7 @@ export async function createTable({ nominaData, columns }) {
     layout: {
       topEnd: function () {
         let toolbar = document.createElement('div')
-        toolbar.innerHTML = `<button id="send-nom-request" class="btn btn-info">REALIZAR PETICIÓN</button>
+        toolbar.innerHTML = `
         `
 
         return toolbar

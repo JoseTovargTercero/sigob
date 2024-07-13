@@ -37,18 +37,10 @@ export async function loadEmployeeList({ listaEmpleados }) {
   let requestTable = new DataTable('#employee-list-table', {
     columns: [{ data: 'cedula' }, { data: 'nombres' }, { data: 'status' }],
     responsive: true,
-    pageLength: 50,
+    pageLength: 10,
 
     language: tableLanguage,
     layout: {
-      topEnd: function () {
-        let toolbar = document.createElement('div')
-        toolbar.innerHTML = `
-          `
-
-        return toolbar
-      },
-      topStart: { search: { placeholder: 'Buscar...' } },
       bottomStart: 'info',
       bottomEnd: 'paging',
     },
@@ -62,7 +54,9 @@ export async function loadEmployeeList({ listaEmpleados }) {
       nombres: empleado.nombres,
       status: ` ${empleado.status}<select class="form-select" data-employeeid=${
         empleado.id
-      } data-defaultvalue="${empleado.status}">
+      } data-defaultvalue="${empleado.status}" data-nombres="${
+        empleado.nombres
+      }" data-cedula="${empleado.cedula}"/>
       <option value="A" ${empleado.status === 'A' && 'selected'}>ACTIVO</option>
       <option value="R" ${
         empleado.status === 'R' && 'selected'
@@ -114,7 +108,9 @@ export const nom_empleados_list_card = () => {
             <tbody></tbody>
           </table>
         </div>
-        <div class='modal-box-footer card-footer'></div>
+        <div class='modal-box-footer card-footer'>
+        <button class="btn btn-primary w-100 my-auto" id="btn-confirm-list">Confirmar</button>
+        </div>
       </div>
     </div>`
 }

@@ -125,6 +125,8 @@ const getComparacionNomina = async (obj) => {
   if (!obj) return
   let { correlativo, nombre_nomina } = obj
 
+  console.log(obj)
+
   showLoader()
   try {
     let res = await fetch(comparacionNominaUrl, {

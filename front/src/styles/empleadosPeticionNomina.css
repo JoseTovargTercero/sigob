@@ -18,11 +18,16 @@
 }
 
 .request-step-container {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: 50px 1fr 80px;
 }
 
 .request-step {
+  padding: 2rem 1rem;
+  display: flex;
+  justify-content: center;
+
+  flex-direction: column;
 }
 
 .request-table-container {

@@ -59,9 +59,9 @@ require_once '../../back/sistema_global/session.php';
 
                             </div>
                         </div>
-                        <div class="card-body request-table-container">
+                        <div class="card-body request-table-container ">
 
-                            <div class="mb-2 mx-auto" id="request-table">
+                            <div class="mb-2 mx-auto slide-up-animation" id="request-table">
                                 <table id='request-nom-table' class='table table-striped mx-auto' style='width:100%'>
                                     <thead>
                                         <th class="w-5">CORRELATIVO</th>
@@ -76,9 +76,16 @@ require_once '../../back/sistema_global/session.php';
                             </div>
 
                             <div class="request-step-container hide slide-up-animation" id="form-request-id">
-                                <div class="request-step" id="request-step-1">
+                                <nav class="my-auto nav nav-pills nav-justified">
+                                    <span class="nav-link active" data-part="part1">Empezar cálculo</span>
+                                    <span class="nav-link" data-part="part2">Verificar empleados</span>
+                                    <span class="nav-link" data-part="part3">En revisión</span>
+                                </nav>
 
+                                <div class="request-step slide-up-animation" id="request-step-1">
+                                    <h5 class="mb-2">Peticion de nomina</h5>
                                     <div class="row">
+
                                         <div class="mb-2 col-sm w-100">
                                             <label for="grupo" class="form-label">Grupo de nomina</label>
                                             <small class="text-muted mt-0 d-block mb-2">Seleccione un grupo de
@@ -121,21 +128,28 @@ require_once '../../back/sistema_global/session.php';
 
                                 </div>
 
-                                <div class="request-step" id="request-step-2">
-                                    <h3 class="mb-2">Nomina calculada y lista para solicitar revisión</h3>
-                                    <h5 class="mb-2">nombre_nomina</h5>
-                                    <small class="text-muted">
-                                        Por favor, ingrese la información básica de la nómina.
+                                <div class="request-step hide slide-up-animation" id="request-step-2">
+                                    <h5 class="mb-2 text-center">Nomina calculada y lista para solicitar revisión</h5>
+                                    <!-- <h3 class="mb-2 text-center" id="">nombre_nomina</h3> -->
+                                    <small class="text-muted mb-4 text-center d-block">
+                                        ¿Desea realizar cambios a los empleados en nómina?
                                     </small>
 
-                                    <button class="btn btn-secondary">Cambiar estatus a empleados</button>
+                                    <button class="btn btn-secondary btn-sm d-block mx-auto"
+                                        id="show-employee-list">Estatus de empleados</button>
                                 </div>
-                                <div class="request-step" id="request-step-3">
-                                    <h1>hola</h1>
+                                <div class="request-step hide slide-up-animation" id="request-step-3">
+                                    <h5 class="mb-2 text-center">¡Casi listo!</h5>
+                                    <h3 class="mb-2 text-center">¡Resumen generado!</h3>
+                                    <small class="text-muted mb-4 text-center d-block">
+                                        Asignaciones, aportes, deducciones:
+                                    </small>
+                                    <button class="btn btn-primary btn-lg d-block mx-auto" id="btn-send-request">Generar
+                                        Petición</button>
                                 </div>
 
-                                <div class="d-flex justify-content-center gap-2">
-                                    <button class="btn btn-secondary" id="btn-previus">Anterior</button>
+                                <div class="d-flex justify-content-center gap-2 align-items-center">
+                                    <button class="btn btn-secondary " id="btn-previus" disabled>Anterior</button>
                                     <button class="btn btn-primary" id="btn-next">Siguiente</button>
                                 </div>
 
@@ -149,6 +163,18 @@ require_once '../../back/sistema_global/session.php';
                         <div class="loader-container card-footer py-4" id="employee-pay-loader">
                             <div class="loader"></div>
                         </div>
+                    </div>
+
+                    <div class="card hide" id="request-form-information">
+                        <div class="card-header">
+                            <div class="d-flex align-items-center justify-content-between">
+
+                                <h5 class="mb-0">Información de la petición</h5>
+                                <small class="text-muted mt-0">Verifique los datos de la petición</small>
+
+                            </div>
+                        </div>
+                        <div class="card-body" id="request-form-information-body"></div>
                     </div>
                 </div>
                 <!-- [ worldLow section ] end -->

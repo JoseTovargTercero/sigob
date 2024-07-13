@@ -1,7 +1,8 @@
 export function createComparationContainer({ data }) {
   if (!data) return
-  let { registro_actual, registro_anterior } = data
+  let { registro_actual, registro_anterior, confirmBtn } = data
 
+  console.log(data)
   return `<div
       class='request-comparation-container'
       id='request-comparation-container'
@@ -9,7 +10,7 @@ export function createComparationContainer({ data }) {
     ${createCard({
       actual: registro_actual,
       anterior: registro_anterior,
-      confirmBtn: true,
+      confirmBtn,
     })}`
 }
 
@@ -112,12 +113,12 @@ const createCard = ({ actual, anterior, confirmBtn }) => {
 
       <div class='card-body request-list-container'>
       
-        ${listaAsignaciones}
+        ${listaAsignaciones ? listaAsignaciones : ''}
 
         <div class="d-flex flex-column">
-        ${listaDeducciones}
-        ${listaAportes}
-        ${listaEmpleados}
+        ${listaDeducciones ? listaDeducciones : ''}
+        ${listaAportes ? listaAportes : ''}
+        ${listaAportes ? listaAportes : ''}
         </div>
         
 
