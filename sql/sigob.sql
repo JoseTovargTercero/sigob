@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 15-07-2024 a las 16:11:02
+-- Tiempo de generación: 16-07-2024 a las 01:56:28
 -- Versión del servidor: 10.4.16-MariaDB
 -- Versión de PHP: 7.4.12
 
@@ -20,6 +20,25 @@ SET time_zone = "+00:00";
 --
 -- Base de datos: `sigob`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `backups`
+--
+
+CREATE TABLE `backups` (
+  `id` int(11) NOT NULL,
+  `user` int(11) NOT NULL,
+  `fecha` varchar(20) COLLATE latin1_spanish_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+
+--
+-- Volcado de datos para la tabla `backups`
+--
+
+INSERT INTO `backups` (`id`, `user`, `fecha`) VALUES
+(2, 31, '15-07-2024');
 
 -- --------------------------------------------------------
 
@@ -598,11 +617,6 @@ INSERT INTO `cargos_grados` (`id`, `cargo`, `cod_cargo`, `grado`) VALUES
 (537, 'PENDIENTE', '7351', '1');
 
 -- --------------------------------------------------------
-CREATE TABLE `backups` (
-  `id` int(11) NOT NULL,
-  `user` int(11) NOT NULL,
-  `fecha` varchar(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 --
 -- Estructura de tabla para la tabla `conceptos`
@@ -1833,10 +1847,10 @@ INSERT INTO `empleados` (`id`, `nacionalidad`, `cedula`, `nombres`, `otros_años
 (1058, 'V', '25275280', 'BERNE DARIO ALVAREZ LINARE', 0, 'A', NULL, '0455', '0163', '01630409314095003570', 0, 0, 0, '003', 6, 1, '', 0, '2023-10-17'),
 (1059, 'V', '18050572', ' SILVA CARIBAN AMELIA', 0, 'A', NULL, '0455', '0102', '01020457780000905969', 0, 0, 0, '003', 6, 1, '', 0, '2023-10-17'),
 (1060, 'V', '26013725', 'CARDOZO GAVINI RONALDO MARTIN', 0, 'A', NULL, '0455', '0102', '01020501850007213625', 0, 0, 0, '003', 6, 1, '', 0, '2023-10-17'),
-(1061, 'V', '19580685', ' GAVINI MEDINA CARMEN', 0, 'A', NULL, '0455', '0102', '01020501810007214608', 0, 0, 0, '003', 6, 1, '', 0, '2023-10-17'),
+(1061, 'V', '19580685', ' GAVINI MEDINA CARMEN', 0, 'A', 'ew jols', '0455', '0128', '01285501810007214608', 2, 0, 0, '003', 6, 1, '', 0, '2023-10-17'),
 (1062, 'V', '19580110', 'RODRIGUEZ RODRIGUEZ BEATRIZ', 0, 'A', NULL, '0455', '0102', '01020457750000917274', 0, 0, 0, '003', 6, 1, '', 0, '2023-10-17'),
 (1063, 'V', '27727430', 'INFANTE RAMIREZ RAUMETO KAREN', 0, 'A', NULL, '0455', '0163', '01630409314095006722', 0, 0, 0, '003', 6, 1, '', 0, '2023-10-17'),
-(1064, 'V', '21548687', ' SILVA CARIBAN LILIA', 0, 'A', NULL, '0455', '0102', '01020457750000499556', 0, 0, 0, '003', 6, 1, '', 0, '2023-10-17'),
+(1064, 'V', '21548687', ' SILVA CARIBAN LILIA', 0, 'A', NULL, '0455', '0175', '01750457750000499556', 0, 0, 0, '003', 6, 1, '', 0, '2023-10-17'),
 (1065, 'V', '19805980', 'META FUENTES AMANDA ANGELICA', 0, 'A', NULL, '0455', '0102', '01020457710000614823', 0, 0, 0, '003', 6, 1, '', 0, '2023-10-17'),
 (1066, 'V', '24127973', 'SILVA CARIBAN CARMEN MARIA ', 0, 'A', NULL, '0455', '0102', '01020457700000904397', 0, 0, 0, '003', 6, 1, '', 0, '2023-10-17'),
 (1067, 'V', '20720569', 'SILVA ESTRADA ROBERTO CARLOS', 0, 'A', NULL, '0455', '0102', '01020457750000903987', 0, 0, 0, '003', 6, 1, '', 0, '2023-10-17'),
@@ -2110,7 +2124,7 @@ INSERT INTO `empleados` (`id`, `nacionalidad`, `cedula`, `nombres`, `otros_años
 (1335, 'V', '18835706', 'LINARES FIGUEREDO LUIS MARCIAL', 0, 'A', NULL, '0041', '0102', '01020457720000891057', 0, 0, 0, '003', 6, 1, '', 0, '2024-04-15'),
 (1336, 'V', '20436619', 'GAMEZ CHIPIAJE FELIXANDER', 0, 'A', NULL, '0041', '0102', '01020615430000206024', 0, 0, 0, '003', 6, 1, '', 0, '2024-04-15'),
 (1337, 'V', '12469090', 'ALVAREZ PONARE FRANCIZ YUVISAY', 0, 'A', NULL, '0041', '0102', '01020457730000848958', 0, 0, 0, '003', 6, 1, '', 0, '2024-04-15'),
-(1338, 'V', '28700034', ' NAAZER TOVAR SOFIA', 0, 'A', NULL, '0041', '0102', '01020457700000962672', 0, 0, 0, '003', 6, 1, '', 0, '2024-04-15'),
+(1338, 'V', '28700034', ' NAAZER TOVAR SOFIA', 0, 'A', 'op[p[\'', '0041', '0175', '01750457700000962672', 1, 0, 0, '003', 6, 1, '', 0, '2024-04-15'),
 (1339, 'V', '20437759', 'FERNANDEZ FERNANDEZ CARINA ', 0, 'A', NULL, '0041', '0102', '01020457780000479068', 0, 0, 0, '003', 6, 1, '', 0, '2024-04-15'),
 (1340, 'V', '10606609', 'ALI SILVA', 0, 'A', NULL, '0041', '0175', '01750575150072274539', 0, 0, 0, '003', 6, 1, '', 0, '2024-04-15'),
 (1341, 'V', '19805452', 'TOVAR GONZALEZ JORGE LUCINDO', 0, 'A', NULL, '0041', '0102', '01020712620000039877', 0, 0, 0, '003', 6, 1, '', 0, '2024-04-15'),
@@ -2238,11 +2252,19 @@ CREATE TABLE `movimientos` (
   `id` int(11) NOT NULL,
   `id_empleado` int(10) NOT NULL,
   `id_nomina` varchar(255) COLLATE latin1_spanish_ci NOT NULL,
-  `fecha_movimiento` datetime NOT NULL,
+  `fecha_movimiento` datetime NOT NULL DEFAULT current_timestamp(),
   `accion` varchar(50) COLLATE latin1_spanish_ci NOT NULL,
   `descripcion` longtext COLLATE latin1_spanish_ci NOT NULL,
   `status` int(11) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+
+--
+-- Volcado de datos para la tabla `movimientos`
+--
+
+INSERT INTO `movimientos` (`id`, `id_empleado`, `id_nomina`, `fecha_movimiento`, `accion`, `descripcion`, `status`) VALUES
+(9, 1061, '0', '2024-07-15 19:54:28', 'UPDATE', 'Se han modificado los campos: hijos: 1. ', 1),
+(10, 1061, '0', '2024-07-15 19:54:52', 'UPDATE', 'Se han modificado los campos: hijos: 2. ', 1);
 
 -- --------------------------------------------------------
 
@@ -11165,6 +11187,12 @@ INSERT INTO `txt` (`id`, `id_empleado`, `total_a_pagar`, `nombre_nomina`, `ident
 --
 
 --
+-- Indices de la tabla `backups`
+--
+ALTER TABLE `backups`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indices de la tabla `bancos`
 --
 ALTER TABLE `bancos`
@@ -11320,6 +11348,12 @@ ALTER TABLE `txt`
 --
 
 --
+-- AUTO_INCREMENT de la tabla `backups`
+--
+ALTER TABLE `backups`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT de la tabla `bancos`
 --
 ALTER TABLE `bancos`
@@ -11361,12 +11395,6 @@ ALTER TABLE `dependencias`
 ALTER TABLE `empleados`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1362;
 
-ALTER TABLE `backups`
-  ADD PRIMARY KEY (`id`);
-
-ALTER TABLE `backups`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
 --
 -- AUTO_INCREMENT de la tabla `empleados_pasados`
 --
@@ -11395,7 +11423,7 @@ ALTER TABLE `modificaciones_empleados`
 -- AUTO_INCREMENT de la tabla `movimientos`
 --
 ALTER TABLE `movimientos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT de la tabla `nominas`
