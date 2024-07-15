@@ -227,7 +227,7 @@ while ($r = $query->fetch_object()) {
                             <select multiple="" class="form-select" id="nominas_restar">
 
                               <?php
-                              $stmt = mysqli_prepare($conexion, "SELECT * FROM `nominas` WHERE tipo='1'");
+                              $stmt = mysqli_prepare($conexion, "SELECT * FROM `nominas` WHERE tipo='1' AND grupo_nomina = $codigo");
                               $stmt->execute();
                               $result = $stmt->get_result();
                               if ($result->num_rows > 0) {
