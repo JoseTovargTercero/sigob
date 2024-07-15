@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 15-07-2024 a las 15:04:02
+-- Tiempo de generación: 15-07-2024 a las 16:11:02
 -- Versión del servidor: 10.4.16-MariaDB
 -- Versión de PHP: 7.4.12
 
@@ -2235,7 +2235,8 @@ CREATE TABLE `movimientos` (
   `id_nomina` varchar(255) COLLATE latin1_spanish_ci NOT NULL,
   `fecha_movimiento` datetime NOT NULL,
   `accion` varchar(50) COLLATE latin1_spanish_ci NOT NULL,
-  `descripcion` longtext COLLATE latin1_spanish_ci NOT NULL
+  `descripcion` longtext COLLATE latin1_spanish_ci NOT NULL,
+  `status` int(11) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 -- --------------------------------------------------------

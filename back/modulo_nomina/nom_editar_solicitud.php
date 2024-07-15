@@ -5,57 +5,42 @@ require_once '../sistema_global/notificaciones.php';
 
 // Recibir el array de valores desde JavaScript
 $data = json_decode(file_get_contents('php://input'), true);
+$empleado_id = 0;
 
-// Preparar la consulta SQL para la inserción
-$sql_insert = "INSERT INTO modificaciones_empleados (empleado, campo, valor) VALUES (?, ?, ?)";
-$stmt_insert = $conexion->prepare($sql_insert);
-
-// Verificar si la preparación de la consulta fue exitosa
-if ($stmt_insert === false) {
-    die("Error en la preparación de la consulta de inserción: " . $conexion->error);
-}
-
+$stmt2 = mysqli_prepare($conexion, "UPDATE empleados SET $campo = ? WHERE id = ?");
 $errores = array();
-
 // Iterar sobre el array recibido e insertar cada conjunto de valores
 foreach ($data as $item) {
     $empleado_id = $item[0];
     $campo = $item[1];
     $valor = $item[2];
 
-    // Verificar si existe una modificación pendiente
-    $sql_check = "SELECT COUNT(*) FROM modificaciones_empleados WHERE empleado = ? AND campo = ?";
-    $stmt_check = $conexion->prepare($sql_check);
-
-    if ($stmt_check === false) {
-        die("Error en la preparación de la consulta de verificación: " . $conexion->error);
-    }
-
-    $stmt_check->bind_param("is", $empleado_id, $campo);
-    $stmt_check->execute();
-    $stmt_check->bind_result($count);
-    $stmt_check->fetch();
-    $stmt_check->close();
-
-    if ($count == 0) {
-        $stmt_insert->bind_param("iss", $empleado_id, $campo, $valor);
-
-        // Ejecutar la consulta
-        if (!$stmt_insert->execute()) {
-            echo "Error al insertar: " . $stmt_insert->error;
-        }
-    } else {
+    $stmt2->bind_param('si', $valor, $empleado_id);
+    if (!$stmt2->execute()) {
         array_push($errores, $campo);
     }
 }
 
-if ($conexion->affected_rows > 0) { // en caso de que alguna modificacion se haya insertado
-    notificar(['registro_control'], 2);
-}
-
 // Cerrar la declaración de inserción
-$stmt_insert->close();
 $conexion->close();
+
+// inserta en la tabla movimientos
+$movimiento = "Se han modificado los campos: ";
+foreach ($data as $item) {
+    $campo = $item[1];
+    $valor = $item[2];
+    $movimiento .= "$campo: $valor, ";
+}
+$movimiento = substr($movimiento, 0, -2);
+
+
+$id_nomina = '';
+$accion = `UPDATE`;
+
+$stmt_o = $conexion->prepare("INSERT INTO movimientos (id_empleado, id_nomina, accion, descripcion) VALUES (?,?,?,?)");
+$stmt_o->bind_param("ssss", $empleado_id, $id_nomina, $accion, $movimiento);
+$stmt_o->execute();
+
 
 // Devolver una respuesta en JSON
 echo json_encode(["errores" => $errores]);

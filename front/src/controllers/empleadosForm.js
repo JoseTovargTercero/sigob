@@ -276,8 +276,7 @@ function validateEmployeeForm({
               validateEmployeeTable()
             },
           ],
-          message:
-            'Los datos a editar serán solicitados para su próxima revisión',
+          message: 'Los datos del empleado serán modificados.',
         })
 
       // REGISTRAR EMPLEADO
