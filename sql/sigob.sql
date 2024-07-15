@@ -598,6 +598,11 @@ INSERT INTO `cargos_grados` (`id`, `cargo`, `cod_cargo`, `grado`) VALUES
 (537, 'PENDIENTE', '7351', '1');
 
 -- --------------------------------------------------------
+CREATE TABLE `backups` (
+  `id` int(11) NOT NULL,
+  `user` int(11) NOT NULL,
+  `fecha` varchar(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 --
 -- Estructura de tabla para la tabla `conceptos`
@@ -11355,6 +11360,12 @@ ALTER TABLE `dependencias`
 --
 ALTER TABLE `empleados`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1362;
+
+ALTER TABLE `backups`
+  ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `backups`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `empleados_pasados`
