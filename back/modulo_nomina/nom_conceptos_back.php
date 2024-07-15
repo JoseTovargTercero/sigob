@@ -24,6 +24,7 @@ if (isset($_POST["tabla"])) {
     $tipo_calculo = clear($_POST["tipo_calculo"]);
     $valor = clear($_POST["valor"]);
     $maxValue = clear($_POST["maxValue"]);
+    $codigo_concepto = clear($_POST["codigo_concepto"]);
     $tipo_calculo_origen = '0';
     
     if ($tipo_calculo == '7') {
@@ -56,11 +57,11 @@ if (isset($_POST["tabla"])) {
         }
 
         // Insertar en `conceptos`
-        $stmt = mysqli_prepare($conexion, "INSERT INTO `conceptos` (nom_concepto, tipo_concepto, cod_partida, tipo_calculo, valor, maxval, tipo_calculo_origen) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $stmt = mysqli_prepare($conexion, "INSERT INTO `conceptos` (nom_concepto, tipo_concepto, cod_partida, tipo_calculo, valor, maxval, tipo_calculo_origen, codigo_concepto) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
         if (!$stmt) {
             die('Error en la preparación del statement: ' . mysqli_error($conexion));
         }
-        $stmt->bind_param("sssssss", $nombre, $tipo, $partida, $tipo_calculo, $valor, $maxValue, $tipo_calculo_origen);
+        $stmt->bind_param("ssssssss", $nombre, $tipo, $partida, $tipo_calculo, $valor, $maxValue, $tipo_calculo_origen, $codigo_concepto);
 
         if ($stmt->execute()) {
             echo 'ok';
