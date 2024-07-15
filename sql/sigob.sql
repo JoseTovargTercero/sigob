@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 15-07-2024 a las 14:41:25
+-- Tiempo de generación: 15-07-2024 a las 15:04:02
 -- Versión del servidor: 10.4.16-MariaDB
 -- Versión de PHP: 7.4.12
 
@@ -2221,6 +2221,21 @@ CREATE TABLE `modificaciones_empleados` (
   `timestamp` datetime NOT NULL DEFAULT current_timestamp(),
   `user_acepta` int(10) NOT NULL DEFAULT 0,
   `fecha` varchar(50) COLLATE latin1_spanish_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `movimientos`
+--
+
+CREATE TABLE `movimientos` (
+  `id` int(11) NOT NULL,
+  `id_empleado` int(10) NOT NULL,
+  `id_nomina` varchar(255) COLLATE latin1_spanish_ci NOT NULL,
+  `fecha_movimiento` datetime NOT NULL,
+  `accion` varchar(50) COLLATE latin1_spanish_ci NOT NULL,
+  `descripcion` longtext COLLATE latin1_spanish_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 -- --------------------------------------------------------
@@ -11210,6 +11225,12 @@ ALTER TABLE `modificaciones_empleados`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indices de la tabla `movimientos`
+--
+ALTER TABLE `movimientos`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indices de la tabla `nominas`
 --
 ALTER TABLE `nominas`
@@ -11357,6 +11378,12 @@ ALTER TABLE `informacion_pdf`
 --
 ALTER TABLE `modificaciones_empleados`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+
+--
+-- AUTO_INCREMENT de la tabla `movimientos`
+--
+ALTER TABLE `movimientos`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `nominas`
