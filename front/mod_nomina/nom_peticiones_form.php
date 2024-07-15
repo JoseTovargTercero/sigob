@@ -11,7 +11,7 @@ require_once '../../back/sistema_global/session.php';
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.1/css/dataTables.dataTables.css" />
+    <!-- <link rel="stylesheet" href="https://cdn.datatables.net/2.0.1/css/dataTables.dataTables.css" /> -->
     <link rel="stylesheet" href="../src/styles/style.css">
 
 </head>
@@ -139,8 +139,8 @@ require_once '../../back/sistema_global/session.php';
 
     <!-- <script type="module" src="../src/controllers/peticionesNominaForm.js"></script> -->
     <script type="module" src="../src/controllers/peticionesTable.js"></script>
-    <script src="https://cdn.datatables.net/2.0.1/js/dataTables.js"></script>
-    <script src="https://cdn.datatables.net/2.0.1/js/dataTables.bootstrap5.js"></script>
+    <!-- <script src="https://cdn.datatables.net/2.0.1/js/dataTables.js"></script>
+    <script src="https://cdn.datatables.net/2.0.1/js/dataTables.bootstrap5.js"></script> -->
     <script src="../../src/assets/js/plugins/simplebar.min.js"></script>
     <script src="../../src/assets/js/plugins/bootstrap.min.js"></script>
     <script src="../../src/assets/js/pcoded.js"></script>

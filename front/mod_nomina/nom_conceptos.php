@@ -10,7 +10,7 @@ require_once '../../back/sistema_global/session.php';
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <link rel="stylesheet" href="https://cdn.datatables.net/2.0.1/css/dataTables.dataTables.css" />
+
 </head>
 <?php require_once '../includes/header.php' ?>
 
@@ -74,7 +74,9 @@ require_once '../../back/sistema_global/session.php';
 
                 </div>
                 <div class="d-flex mt-3">
-                  <button type="button" id="btn-editar" class="m-a text-center btn btn-primary d-inline-flex btn-sm rounded"> <i class="bx bx-dave"></i> &nbsp; Guardar cambios</button>
+                  <button type="button" id="btn-editar"
+                    class="m-a text-center btn btn-primary d-inline-flex btn-sm rounded"> <i class="bx bx-dave"></i>
+                    &nbsp; Guardar cambios</button>
                 </div>
               </div>
             </div>
@@ -96,7 +98,8 @@ require_once '../../back/sistema_global/session.php';
                 <div class="col-lg-6">
                   <div class="mb-3">
                     <label class="form-label" for="tipo_calculo">Tipo de Calculo</label>
-                    <select class="form-control" onchange="tipoCalculo(this.value)" name="tipo_calculo" id="tipo_calculo">
+                    <select class="form-control" onchange="tipoCalculo(this.value)" name="tipo_calculo"
+                      id="tipo_calculo">
                       <option value="">Seleccione</option>
                       <option value="1">Monto neto en BS</option>
                       <option value="2">Monto neto indexado</option>
@@ -127,8 +130,10 @@ require_once '../../back/sistema_global/session.php';
 
                     <div class="mb-3" id="forms"><label class="form-label">Formulación</label>
                       <div class="input-group mb-3" id="form-1">
-                        <textarea class="form-control condicion" aria-label="With textarea" rows="1" id="t_area-1" onchange="validarContenido()"></textarea>
-                        <span class="input-group-text p-0"><input id="val-1" onchange="validarContenido()" type="text" placeholder="Valor"></span>
+                        <textarea class="form-control condicion" aria-label="With textarea" rows="1" id="t_area-1"
+                          onchange="validarContenido()"></textarea>
+                        <span class="input-group-text p-0"><input id="val-1" onchange="validarContenido()" type="text"
+                            placeholder="Valor"></span>
                         <span class="input-group-text d-flex">
 
                         </span>
@@ -136,7 +141,9 @@ require_once '../../back/sistema_global/session.php';
                     </div>
                     <div class="text-end hide" id="btn-addFormulacion">
 
-                      <button type="button" onclick="addForm()" class="btn btn-secondary d-inline-flex btn-sm rounded"><box-icon class="icon" name='add-to-queue'></box-icon> &nbsp; Agregar opción </button>
+                      <button type="button" onclick="addForm()"
+                        class="btn btn-secondary d-inline-flex btn-sm rounded"><box-icon class="icon"
+                          name='add-to-queue'></box-icon> &nbsp; Agregar opción </button>
                     </div>
 
                   </section>
@@ -146,7 +153,8 @@ require_once '../../back/sistema_global/session.php';
 
                     <div class="mb-3">
                       <label class="form-label" for="campo_condiciona">Condicionantes</label>
-                      <select name="campo_condiciona" onchange="setCondicionanteConceptos(this.value)" id="campo_condiciona" class="form-control">
+                      <select name="campo_condiciona" onchange="setCondicionanteConceptos(this.value)"
+                        id="campo_condiciona" class="form-control">
                         <option value="">Seleccione</option>
                       </select>
                     </div>
@@ -158,7 +166,8 @@ require_once '../../back/sistema_global/session.php';
               </div>
 
               <div class="d-flex justify-content-end">
-                <button type="button" id="btn-registrar" class="btn btn-primary d-inline-flex btn-sm rounded"> <i class="bx bx-dave"></i> &nbsp; Guardar concepto</button>
+                <button type="button" id="btn-registrar" class="btn btn-primary d-inline-flex btn-sm rounded"> <i
+                    class="bx bx-dave"></i> &nbsp; Guardar concepto</button>
               </div>
             </div>
           </div>
@@ -186,12 +195,14 @@ require_once '../../back/sistema_global/session.php';
                     </tr>
                     <tr id="section_registro" class="hide">
                       <th>
-                      <input type="text" class="form-control" name="codigo_concepto" id="codigo_concepto" placeholder="Código">
+                        <input type="text" class="form-control" name="codigo_concepto" id="codigo_concepto"
+                          placeholder="Código">
 
                       </th>
                       <th>
 
-                        <input type="text" class="form-control" placeholder="Nombre del concepto" name="nombre" id="nombre">
+                        <input type="text" class="form-control" placeholder="Nombre del concepto" name="nombre"
+                          id="nombre">
 
 
 
@@ -206,8 +217,10 @@ require_once '../../back/sistema_global/session.php';
                           <option value="D">Deducción</option>
                           <option value="P">Aporte</option>
                         </select></th>
-                      <th><input type="text" list="partidas" class="form-control" name="partida" id="partida" placeholder="Partida"></th>
-                      <th colspan=2><button type="submit" class="btn btn-sm btn-primary" id="btn-continuar">Continuar</button>
+                      <th><input type="text" list="partidas" class="form-control" name="partida" id="partida"
+                          placeholder="Partida"></th>
+                      <th colspan=2><button type="submit" class="btn btn-sm btn-primary"
+                          id="btn-continuar">Continuar</button>
                       </th>
                     </tr>
                   </thead>
@@ -231,8 +244,7 @@ require_once '../../back/sistema_global/session.php';
   <script src="../../src/assets/js/plugins/feather.min.js"></script>
   <script src="../../src/assets/js/pcoded.js"></script>
   <script src="../../src/assets/js/clasificador-presupuestario.js"></script>
-  <script src="https://cdn.datatables.net/2.0.1/js/dataTables.js"></script>
-  <script src="https://cdn.datatables.net/2.0.1/js/dataTables.bootstrap5.js"></script>
+
   <script src="../../src/assets/js/main.js"></script>
   <script src="../../src/assets/js/notificaciones.js"></script>
   <script src="../../src/assets/js/ajax_class.js"></script>
@@ -254,7 +266,7 @@ require_once '../../back/sistema_global/session.php';
         data: {
           tabla: true
         },
-        success: function(response) {
+        success: function (response) {
           $('#table tbody').html('');
 
           if (response) {
@@ -267,7 +279,7 @@ require_once '../../back/sistema_global/session.php';
               var cod_partida = data[i].cod_partida;
               var id = data[i].id;
 
-              $('#table tbody').append('<tr><td>' +codigo_concepto + ' </td><td>' + nombre + '</td><td>' + tipo_concepto[tipo] + '</td><td>' + cod_partida + '</td><td><a href="#!" class="badge me-2 bg-brand-color-1 text-white f-12" onclick="editar(' + id + ')">Editar</a></td><td><a href="#!" class="badge me-2 bg-brand-color-2 text-white f-12" onclick="eliminar(' + id + ')">Eliminar</a></td></tr>');
+              $('#table tbody').append('<tr><td>' + codigo_concepto + ' </td><td>' + nombre + '</td><td>' + tipo_concepto[tipo] + '</td><td>' + cod_partida + '</td><td><a href="#!" class="badge me-2 bg-brand-color-1 text-white f-12" onclick="editar(' + id + ')">Editar</a></td><td><a href="#!" class="badge me-2 bg-brand-color-2 text-white f-12" onclick="eliminar(' + id + ')">Eliminar</a></td></tr>');
             }
           }
         }
@@ -296,7 +308,7 @@ require_once '../../back/sistema_global/session.php';
           editar_getData: true,
           id: id
         },
-        success: function(response) {
+        success: function (response) {
           if (response) {
             var data = JSON.parse(response);
             conceptoEditar = data;
@@ -392,7 +404,7 @@ require_once '../../back/sistema_global/session.php';
             id: conceptoEditar.id,
             valor: valores
           },
-          success: function(response) {
+          success: function (response) {
 
             let result = JSON.parse(response)
             if (result.status == 'ok') {
@@ -445,7 +457,7 @@ require_once '../../back/sistema_global/session.php';
               eliminar: true,
               id: id,
             },
-            success: function(response) {
+            success: function (response) {
               if (response.trim() == "ok") {
                 cargarTabla();
 
@@ -502,7 +514,7 @@ require_once '../../back/sistema_global/session.php';
             nombre: nombre,
             consulta_nombre: true
           },
-          success: function(response) {
+          success: function (response) {
             $('#cargando').hide();
             if (response.trim() == 'ok') {
               $("#section-registro").removeClass('hide');
@@ -619,7 +631,7 @@ require_once '../../back/sistema_global/session.php';
           maxValue: maxValue,
           registro: true
         },
-        success: function(text) {
+        success: function (text) {
 
           console.log(nombre + ' - ' + tipo + ' - ' + partida + ' - ' + tipo_calculo + ' - ' + valor + ' - ' + tipo_calculo_aplicado)
           $('#cargando').hide();
@@ -649,7 +661,7 @@ require_once '../../back/sistema_global/session.php';
       });
     }
 
-    $(document).ready(function() {
+    $(document).ready(function () {
       document.getElementById('btn-continuar').addEventListener('click', nuevoConcepto);
       document.getElementById('btn-registrar').addEventListener('click', finalizarRegistroConcepto);
     });
@@ -657,7 +669,7 @@ require_once '../../back/sistema_global/session.php';
     /**
      * Initializes the DataTable.
      */
-    $(document).ready(function() {
+    $(document).ready(function () {
       var DataTable = $("#table").DataTable({
         language: {
           decimal: "",
@@ -685,7 +697,7 @@ require_once '../../back/sistema_global/session.php';
         columnDefs: [{
           targets: [0, 1],
           className: "text-start",
-        }, ],
+        },],
       });
     });
 
@@ -699,19 +711,19 @@ require_once '../../back/sistema_global/session.php';
      */
 
     let textarea = 't_area-1';
-    $(document).on('click', 'textarea', function() {
+    $(document).on('click', 'textarea', function () {
       textarea = $(this).attr('id');
     });
 
 
-    $(document).on('click', '.invalidate', function() {
+    $(document).on('click', '.invalidate', function () {
       $(this).removeClass('invalidate')
     });
 
 
     const palabrasProhibidas = ['UPDATE', 'DELETE', 'DROP', 'TRUNCATE', 'INSERT', 'ALTER', 'GRANT', 'REVOKE'];
 
-    $(document).on('change', 'textarea', function() {
+    $(document).on('change', 'textarea', function () {
       if ($(this).val() != '') {
 
         var condicion = $(this).val();
@@ -751,7 +763,7 @@ require_once '../../back/sistema_global/session.php';
           validarConceptoFormulado: true,
           condicion: condicion
         },
-        success: function(response) {
+        success: function (response) {
           const trimmedResponse = response.trim();
           const textAreaElement = $('#' + textArea);
 
@@ -893,7 +905,7 @@ require_once '../../back/sistema_global/session.php';
           valorMultiplicado: true,
           campo: campo
         },
-        success: function(response) {
+        success: function (response) {
           let tabla = document.getElementById('result')
           tabla.innerHTML = `<p>Ejemplo de posibles aplicaciones: </p>`
 
@@ -971,14 +983,14 @@ require_once '../../back/sistema_global/session.php';
 
 
       fetch('../../back/modulo_nomina/nom_columnas_return.php', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            columna: condicionante
-          })
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          columna: condicionante
         })
+      })
         .then(response => response.json())
         .then(data => {
           if (data.error) {

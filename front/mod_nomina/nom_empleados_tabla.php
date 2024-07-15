@@ -6,7 +6,7 @@ require_once '../../back/sistema_global/session.php';
 
 <head>
   <link rel="stylesheet" href="../src/styles/style.css">
-  <link rel="stylesheet" href="https://cdn.datatables.net/2.0.1/css/dataTables.dataTables.css" />
+
   <title>PERSONAL</title>
 </head>
 
@@ -322,8 +322,7 @@ require_once '../../back/sistema_global/session.php';
 </script>
 
 <!-- DATATABLES -->
-<script src="https://cdn.datatables.net/2.0.1/js/dataTables.js"></script>
-<script src="https://cdn.datatables.net/2.0.1/js/dataTables.bootstrap5.js"></script>
+<!-- <script src="https://cdn.datatables.net/2.0.1/js/dataTables.bootstrap5.js"></script> -->
 <script src="../../src/assets/js/plugins/simplebar.min.js"></script>
 <script src="../../src/assets/js/plugins/bootstrap.min.js"></script>
 <script src="../../src/assets/js/fonts/custom-font.js"></script>
