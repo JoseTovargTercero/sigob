@@ -364,6 +364,7 @@ function obtenerValorConcepto($conexion, $nom_concepto, $salarioBase, $precio_do
 
 // Array asociativo para mantener un registro de empleados únicos
 $empleados_unicos = array();
+$status = 0;
 
 // Array para almacenar asignaciones y deducciones
 $asignaciones = array();
@@ -579,12 +580,13 @@ $conexion->close();
 // Si todo salió bien, puedes devolver una respuesta de éxito o realizar más acciones si es necesario
 
 
-// Devolver la respuesta como JSON
-echo json_encode($response);
+
 
     echo json_encode(["status" => "success", "mensaje" => "Datos procesados correctamente."]);
 } else {
     echo json_encode(["status" => "error", "mensaje" => "Método de solicitud no permitido."]);
 }
+
+
 
 ?>
