@@ -7,7 +7,7 @@ $url = 'http://localhost/sigob/back/modulo_nomina/nom_modificar_agregar_empleado
 // Datos a enviar (el objeto JSON)
 $data = array(
     "accion" => "agregar_empleado",
-    "empleado" => 7,
+    "empleado" => 11,
     "grupo_nomina" => "4",
     "nominas" => array(
         array(
