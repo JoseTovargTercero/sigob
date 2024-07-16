@@ -1,17 +1,15 @@
 <?php
 
 require_once '../../vendor/autoload.php'; // Ajusta la ruta según la ubicación de mpdf
+require_once 'pdf_files_config.php'; // Incluir el archivo de configuración
 
 use Mpdf\Mpdf;
 
 $id_empleado = $_GET['id_empleado'];
 
-
-
-
 $pdf_files = [
-    "http://localhost/sigob/back/modulo_nomina/nom_reintegro_pdf2.php?id_empleado=$id_empleado" => "reintegro_{$id_empleado}_1.pdf",
-    "http://localhost/sigob/back/modulo_nomina/nom_reintegro_pdf3.php?id_empleado=$id_empleado" => "reintegro_{$id_empleado}_2.pdf",
+    "{$base_url}nom_reintegro_pdf2.php?id_empleado=$id_empleado" => "reintegro_{$id_empleado}_1.pdf",
+    "{$base_url}nom_reintegro_pdf3.php?id_empleado=$id_empleado" => "reintegro_{$id_empleado}_2.pdf",
 ];
 
 // Nombre del archivo ZIP que se generará
@@ -22,8 +20,6 @@ $zip = new ZipArchive();
 if ($zip->open($zip_filename, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== TRUE) {
     exit("No se puede abrir el archivo ZIP");
 }
-
-
 
 // Agregar PDFs relacionados con bancos al ZIP
 foreach ($pdf_files as $url => $pdf_filename) {

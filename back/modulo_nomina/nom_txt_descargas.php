@@ -1,6 +1,7 @@
 <?php
 
 require_once '../../vendor/autoload.php'; // Ajusta la ruta según la ubicación de mpdf
+require_once 'pdf_files_config.php'; // Incluir el archivo de configuración
 
 use Mpdf\Mpdf;
 
@@ -34,11 +35,11 @@ $txt_files = [
 ];
 
 $pdf_files = [
-    "http://localhost/sigob/back/modulo_nomina/venezuela_pdf.php?correlativo=$correlativo&identificador=$identificador" => "relacion_de_banco_venezuela_{$identificador}.pdf",
-    "http://localhost/sigob/back/modulo_nomina/tesoro_pdf.php?correlativo=$correlativo&identificador=$identificador" => "relacion_de_banco_tesoro_{$identificador}.pdf",
-    "http://localhost/sigob/back/modulo_nomina/bicentenario_pdf.php?correlativo=$correlativo&identificador=$identificador" => "relacion_de_banco_bicentenario_{$identificador}.pdf",
-    "http://localhost/sigob/back/modulo_nomina/caroni_pdf.php?correlativo=$correlativo&identificador=$identificador" => "relacion_de_banco_caroni_{$identificador}.pdf",
-    "http://localhost/sigob/back/modulo_nomina/nom_resumen_nomina.php?correlativo=$correlativo" => "Resumen_de_nomina_{$correlativo}.pdf",
+    "{$base_url}venezuela_pdf.php?correlativo=$correlativo&identificador=$identificador" => "relacion_de_banco_venezuela_{$identificador}.pdf",
+    "{$base_url}tesoro_pdf.php?correlativo=$correlativo&identificador=$identificador" => "relacion_de_banco_tesoro_{$identificador}.pdf",
+    "{$base_url}bicentenario_pdf.php?correlativo=$correlativo&identificador=$identificador" => "relacion_de_banco_bicentenario_{$identificador}.pdf",
+    "{$base_url}caroni_pdf.php?correlativo=$correlativo&identificador=$identificador" => "relacion_de_banco_caroni_{$identificador}.pdf",
+    "{$base_url}nom_resumen_nomina.php?correlativo=$correlativo" => "Resumen_de_nomina_{$correlativo}.pdf",
 ];
 
 // Nombre del archivo ZIP que se generará
@@ -61,7 +62,7 @@ foreach ($txt_files as $txt_file) {
 // Generar PDFs por cada página y agregarlos al ZIP
 for ($pagina = 1; $pagina <= $totalPaginas; $pagina++) {
     $pdf_filename = "Recibos_de_pago_{$correlativo}_Pagina_{$pagina}.pdf";
-    $url = "http://localhost/sigob/back/modulo_nomina/nom_recibos_pagos.php?correlativo=$correlativo&pagina=$pagina";
+    $url = "{$base_url}nom_recibos_pagos.php?correlativo=$correlativo&pagina=$pagina";
 
     // Obtener el contenido HTML
     $html = file_get_contents($url);
