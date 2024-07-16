@@ -99,9 +99,10 @@ const sendEmployeeData = async ({ data }) => {
         message: 'Datos guardados',
       })
     }
-    const json = await res.text()
+    const json = await res.json()
     console.log(json)
   } catch (e) {
+    console.error(e)
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
       message: 'Error al guardar datos del empleado',
@@ -131,7 +132,7 @@ const updateEmployeeData = async ({ id }) => {
       //   location.assign('nom_empleados_tabla.php')
       // }, 1500)
     }
-    const json = await res.text()
+    const json = await res.json()
     console.log(json)
   } catch (e) {
     return confirmNotification({
@@ -143,6 +144,7 @@ const updateEmployeeData = async ({ id }) => {
 
 const updateRequestEmployeeData = async ({ data = [] }) => {
   console.log(data)
+
   try {
     const res = await fetch(updateRequestEmployeeUrl, {
       method: 'POST',
@@ -152,19 +154,16 @@ const updateRequestEmployeeData = async ({ data = [] }) => {
       body: JSON.stringify(data),
     })
 
-    if (!res.ok) throw { status: res.status, statusText: res.statusText }
-    else {
+    if (!res.ok) {
       console.log(res)
       confirmNotification({
         type: NOTIFICATIONS_TYPES.done,
-        message: 'Datos guardados',
+        message: 'Error al enviar los datos',
       })
-      // setTimeout(() => {
-      //   location.assign('nom_empleados_tabla.php')
-      // }, 1500)
+      return
     }
 
-    const json = await res.text()
+    const json = await res.json()
     console.log(json)
 
     if (json.errores.length > 0) {
@@ -212,6 +211,7 @@ const deleteEmployee = async (id) => {
     const json = await res.text()
     return json
   } catch (e) {
+    console.error(e)
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
       message: 'Error al enviar datos del empleado',
@@ -224,11 +224,18 @@ const getJobData = async () => {
   try {
     const res = await fetch(cargosUrl)
 
-    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+    if (!res.ok) {
+      confirmNotification({
+        type: NOTIFICATIONS_TYPES.fail,
+        message: 'Error al obtener cargos',
+      })
+      return
+    }
 
     const json = await res.json()
     return mapData({ obj: json, name: 'cargo', id: 'cod_cargo' })
   } catch (e) {
+    console.error(e)
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
       message: 'Error al obtener cargos',
@@ -248,6 +255,7 @@ const getProfessionData = async () => {
     const json = await res.json()
     return mapData({ obj: json, name: 'profesion', id: 'id_profesion' })
   } catch (e) {
+    console.error(e)
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
       message: 'Error al obtener profesiones',
@@ -268,6 +276,7 @@ const getDependencyData = async () => {
 
     return mapData({ obj: json, name: 'dependencia', id: 'id_dependencia' })
   } catch (e) {
+    console.log(e)
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
       message: 'Error al obtener dependencias',
@@ -288,6 +297,7 @@ const getBankData = async () => {
 
     return mapData({ obj: json, name: 'nombre', id: 'prefijo' })
   } catch (e) {
+    console.log(e)
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
       message: 'Error al obtener bancos',
