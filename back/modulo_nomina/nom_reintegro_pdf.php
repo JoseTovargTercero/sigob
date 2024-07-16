@@ -10,7 +10,8 @@ $id_empleado = $_GET['id_empleado'];
 
 
 $pdf_files = [
-    "http://localhost/sigob/back/modulo_nomina/nom_reintegro_pdf2.php?id_empleado=$id_empleado" => "reintegro_{$id_empleado}.pdf",
+    "http://localhost/sigob/back/modulo_nomina/nom_reintegro_pdf2.php?id_empleado=$id_empleado" => "reintegro_{$id_empleado}_1.pdf",
+    "http://localhost/sigob/back/modulo_nomina/nom_reintegro_pdf3.php?id_empleado=$id_empleado" => "reintegro_{$id_empleado}_2.pdf",
 ];
 
 // Nombre del archivo ZIP que se generará
