@@ -24,7 +24,7 @@ $stmt->bind_param("ssssssssssssssssss", $data["nacionalidad"], $data["cedula"], 
 
 // Ejecutar la consulta preparada
 if ($stmt->execute()) {
-    echo "Datos insertados correctamente.";
+    echo json_encode(["status" => "success", "mensaje" => "Datos insertados correctamente."]);
     // Obtener el ID del empleado insertado
     $id_empleado = $conexion->insert_id;
     // Ajustar valores del empleado
