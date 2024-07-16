@@ -6,7 +6,7 @@ require_once '../../back/sistema_global/session.php';
 
 <head>
   <link rel="stylesheet" href="../src/styles/style.css">
-  <link rel="stylesheet" href="https://cdn.datatables.net/2.0.1/css/dataTables.dataTables.css" />
+
   <title>TABULADORES</title>
 </head>
 

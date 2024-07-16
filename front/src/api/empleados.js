@@ -164,7 +164,7 @@ const updateRequestEmployeeData = async ({ data = [] }) => {
       // }, 1500)
     }
 
-    const json = await res.json()
+    const json = await res.text()
     console.log(json)
 
     if (json.errores.length > 0) {

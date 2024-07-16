@@ -276,8 +276,7 @@ function validateEmployeeForm({
               validateEmployeeTable()
             },
           ],
-          message:
-            'Los datos a editar serán solicitados para su próxima revisión',
+          message: 'Los datos del empleado serán modificados.',
         })
 
       // REGISTRAR EMPLEADO
@@ -309,8 +308,10 @@ async function sendEmployeeInformationRequest({ data }) {
 
   Object.entries(data).forEach((el) => {
     let propiedad = el[0]
-    let valorNuevo = el[1]
     let valorAnterior = employeeData[propiedad]
+    let valorNuevo = el[1]
+
+    if (!valorNuevo) return
 
     if (propiedad === 'id' || propiedad === 'id_empleado') return
 

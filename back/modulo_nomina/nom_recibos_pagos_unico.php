@@ -70,13 +70,13 @@ $stmt->execute();
 $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Preparamos la consulta para obtener el código de partida
-$codPartidaStmt = $conn->prepare("SELECT cod_partida FROM conceptos WHERE nom_concepto = :nom_concepto");
+$codPartidaStmt = $conn->prepare("SELECT codigo_concepto FROM conceptos WHERE nom_concepto = :nom_concepto");
 
 // Función para obtener el código de partida
 function obtenerCodPartida($concepto, $stmt) {
     $stmt->execute(['nom_concepto' => $concepto]);
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
-    return $result ? $result['cod_partida'] : '';
+    return $result ? $result['codigo_concepto'] : '';
 }
 
 foreach ($results as $row) {
@@ -126,9 +126,9 @@ foreach ($results as $row) {
     // Mostrar asignaciones
     $totalAsignaciones = 0;
     foreach ($asignaciones as $concepto => $valor) {
-        $codPartida = obtenerCodPartida($concepto, $codPartidaStmt);
+        $codigo_concepto = obtenerCodPartida($concepto, $codPartidaStmt);
         echo "<tr>";
-        echo "<td colspan='2'>{$codPartida}</td>";
+        echo "<td colspan='2'>{$codigo_concepto}</td>";
         echo "<td colspan='2'>{$concepto}</td>";
         echo "<td colspan='2'>{$valor} Bs</td>";
         echo "<td></td>";
@@ -141,9 +141,9 @@ foreach ($results as $row) {
     // Mostrar deducciones
     $totalDeducciones = 0;
     foreach ($deducciones as $concepto => $valor) {
-        $codPartida = obtenerCodPartida($concepto, $codPartidaStmt);
+        $codigo_concepto = obtenerCodPartida($concepto, $codPartidaStmt);
         echo "<tr>";
-        echo "<td colspan='2'>{$codPartida}</td>";
+        echo "<td colspan='2'>{$codigo_concepto}</td>";
         echo "<td colspan='2'>{$concepto}</td>";
         echo "<td colspan='2'></td>";
         echo "<td>{$valor} Bs</td>";
@@ -155,9 +155,9 @@ foreach ($results as $row) {
     // Mostrar aportes
     $totalAportes = 0;
     foreach ($aportes as $concepto => $valor) {
-        $codPartida = obtenerCodPartida($concepto, $codPartidaStmt);
+        $codigo_concepto = obtenerCodPartida($concepto, $codPartidaStmt);
         echo "<tr>";
-        echo "<td colspan='2'>{$codPartida}</td>";
+        echo "<td colspan='2'>{$codigo_concepto}</td>";
         echo "<td colspan='2'>{$concepto}</td>";
         echo "<td colspan='2'></td>";
         echo "<td></td>";
