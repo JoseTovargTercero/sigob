@@ -113,6 +113,7 @@ if ($data['accion'] == "agregar_empleado") {
         $exists_stmt->bind_param("ii", $empleado_id, $grupo_nomina);
         $exists_stmt->execute();
         $exists_stmt->store_result();
+        $status_response = 0;
 
         if ($exists_stmt->num_rows > 0) {
             echo json_encode([$info_reintegro2]);
@@ -176,9 +177,14 @@ if ($data['accion'] == "agregar_empleado") {
                             if ($response === false) {
                                 echo json_encode(["status" => "error", "mensaje" => "Error al enviar datos a procesar_datos.php"]);
                             } else {
-                                echo $response;
+                                $status_response = 1;
+                                
                             }
                         }
+                    }
+
+                    if ($status_response == "1") {
+                        echo $response;
                     }
                 }
             } else {
