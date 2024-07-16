@@ -695,7 +695,11 @@ while ($r = $query->fetch_object()) {
       document.getElementById('resultado_reintegro').classList.add('hide')
       document.getElementById('resultado_busqueda').innerHTML = ''
       document.getElementById('resultado_nominas_disponibles').innerHTML = ''
-      document.getElementById('btn-agregar-empleado').classList.remove('hide')
+
+      if(document.getElementById('btn-agregar-empleado')){
+
+        document.getElementById('btn-agregar-empleado').classList.remove('hide')
+      }
     }
 
     let nominasXconceptos = []
@@ -873,23 +877,110 @@ while ($r = $query->fetch_object()) {
         info_reintegro: info_reintegro
       }
 
-      // Send AJAX request to add the employee
-      const ajaxRequest = new AjaxRequest('application/json', data, '../../back/modulo_nomina/nom_modificar_agregar_empleado.php');
-      const onSuccess = (response) => {
-        console.log(response)
-        if (response.status == 'ok') {
-          swal('success', 'Empleado agregado con éxito')
-          agregarEmpleadoCancelar()
-        } else {
-          swal('error', response.mensaje)
-        }
-      };
-      const onError = (response) => {
-        console.log('Error:', response);
-        toast_s('error', 'Error: ' + response);
-      };
-      ajaxRequest.send(onSuccess, onError);
+      console.log(data);
+
+// Send AJAX request to add the employee
+// const ajaxRequest = new AjaxRequest('application/json', data, '../../back/modulo_nomina/nom_modificar_agregar_empleado.php');
+// console.log(ajaxRequest);
+// const onSuccess = (response) => {
+//   console.log(response)
+//   if (response.status == 'success') {
+//     toast_s('success', 'Empleado agregado con éxito')
+//     agregarEmpleadoCancelar()
+//   } else {
+//     toast_s('error', response.mensaje)
+//   }
+// };
+// const onError = (response) => {
+//   console.log('Error:', response.mensaje);
+//   toast_s('error', 'Error: ' + response.mensaje);
+// };
+// ajaxRequest.send(onSuccess, onError);
+
+// const fetchRequest = fetch('../../back/modulo_nomina/nom_modificar_agregar_empleado.php', {
+//   method: 'POST',
+//   body: JSON.stringify(data)
+// })
+
+// fetchRequest.then(res=>res.json())
+// .then(json=>{
+//   console.log(json);
+//   if (json.status == 'success') {
+//     toast_s('success', 'Empleado agregado con éxito')
+//     console.log(data.info_reintegro.reintegro.reintegro);
+//     if(data.info_reintegro.reintegro.reintegro === 1 || data.info_reintegro.reintegro.reintegro === '1'){
+//       let reintegroRequest = fetch(`../../back/modulo_nomina/nom_reintegro_pdf.php?id_empleado=${data.empleado}`).then(res=> res.blob()).then(blob=> {
+//         const url = window.URL.createObjectURL(blob);
+//           const a = document.createElement('a');
+//           a.href = url;
+//           a.download = 'archivo.bin';
+//           a.click();
+//           window.URL.revokeObjectURL(url);
+//       toast_s('success', 'Reintegro generado')
+
+//       }).catch(error => {
+//             console.error('Error al descargar el archivo:', error);
+//         });
+//     }
+//     agregarEmpleadoCancelar()
+    
+//   } else {
+//     toast_s('error', json.mensaje)
+//   }
+// }).catch(error=>{
+//   console.log('Error:', error);
+//   toast_s('error', 'Error: ' + error);
+// })
+
+
+const descargarArchivo = async (url) => {
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error('No se pudo descargar el archivo');
+  }
+  
+  const blob = await response.blob();
+  const urlBlob = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = urlBlob;
+  a.download = `Reintegro_${data.empleado}.rar`;
+  a.click();
+  window.URL.revokeObjectURL(urlBlob);
+};
+
+const procesarEmpleado = async (data) => {
+  try {
+    const res = await fetch('../../back/modulo_nomina/nom_modificar_agregar_empleado.php', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+
+    
+  
+    let json = await res.json();
+
+    if (json.status === 'success') {
+      toast_s('success', 'Empleado agregado con éxito');
+      
+      if (data.info_reintegro.reintegro.reintegro === 1 || data.info_reintegro.reintegro.reintegro === '1') {
+        await descargarArchivo(`../../back/modulo_nomina/nom_reintegro_pdf.php?id_empleado=${data.empleado}`);
+        toast_s('success', 'Reintegro generado');
+      }
+
+      agregarEmpleadoCancelar();
+    } else {
+      toast_s('error', json.mensaje);
     }
+  } catch (error) {
+    console.error('Error en el proceso:', error);
+    toast_s('error', 'Error: ' + error.message);
+  }
+};
+
+// Llamar a la función procesarEmpleado con los datos necesarios
+procesarEmpleado(data);
+
+}
 
 
 
