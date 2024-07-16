@@ -116,7 +116,7 @@ function validateEmployeeForm({
         })
       })
 
-      console.log(fieldList, fieldListErrors)
+      // console.log(fieldList, fieldListErrors)
     } else {
       validateInput({
         type: 'reset',
@@ -136,7 +136,7 @@ function validateEmployeeForm({
   formElement.addEventListener('submit', (e) => e.preventDefault())
 
   formElement.addEventListener('input', (e) => {
-    console.log(fieldList)
+    // console.log(fieldList)
     if (e.target.classList.contains(employeeInputClass)) {
       fieldList = validateInput({
         target: e.target,
@@ -308,8 +308,12 @@ async function sendEmployeeInformationRequest({ data }) {
 
   Object.entries(data).forEach((el) => {
     let propiedad = el[0]
-    let valorAnterior = employeeData[propiedad]
-    let valorNuevo = el[1]
+    let valorAnterior =
+      typeof employeeData[propiedad] !== 'string'
+        ? String(employeeData[propiedad])
+        : employeeData[propiedad]
+
+    let valorNuevo = el[1] !== 'string' ? String(el[1]) : el[1]
 
     if (!valorNuevo) return
 
@@ -323,9 +327,18 @@ async function sendEmployeeInformationRequest({ data }) {
         'Se actualiza: ',
         valorNuevo !== valorAnterior
       )
-      updateData.push([Number(employeeId), propiedad, valorNuevo])
+      updateData.push([
+        Number(employeeId),
+        propiedad,
+        valorNuevo,
+        valorAnterior,
+      ])
     }
   })
+  if (updateData.length === 0) {
+    toast_s('error', 'No hay cambios para este empleado')
+    return
+  }
 
   let result = await updateRequestEmployeeData({ data: updateData })
 }
