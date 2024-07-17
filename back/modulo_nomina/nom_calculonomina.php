@@ -927,6 +927,33 @@ if ($stmtConceptos->errno) {
 $resultConceptos = $stmtConceptos->get_result();
 $conceptos_aplicados = $resultConceptos->fetch_all(MYSQLI_ASSOC);
 
+// Recorrer los resultados y filtrar empleados por status 'A'
+foreach ($conceptos_aplicados as &$concepto) {
+    $empleados = json_decode($concepto['empleados'], true); // Convertir a array
+
+    // Filtrar empleados por status 'A'
+    $empleados_filtrados = [];
+    foreach ($empleados as $id_empleado) {
+        // Consultar el status del empleado
+        $queryStatus = "SELECT status FROM empleados WHERE id = ?";
+        $stmtStatus = $conexion->prepare($queryStatus);
+        $stmtStatus->bind_param("i", $id_empleado);
+        $stmtStatus->execute();
+        $stmtStatus->bind_result($status);
+        $stmtStatus->fetch();
+        $stmtStatus->close();
+
+        // Si el status es 'A', mantener el empleado en el array
+        if ($status == 'A') {
+            $empleados_filtrados[] = $id_empleado;
+        }
+    }
+
+    // Actualizar el campo empleados en el concepto_aplicado
+    $concepto['empleados'] = json_encode($empleados_filtrados);
+}
+
+
 // Array asociativo para mantener un registro de empleados únicos
 $empleados_unicos = array();
 
