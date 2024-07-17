@@ -77,5 +77,5 @@ if ($valor === 'R') {
 
 $conexion->close();
 
-echo "Datos actualizados correctamente.";
+echo json_encode(["status" => "success", "mensaje" => "El status del empleado fue modificado correctamente"]);
 ?>
