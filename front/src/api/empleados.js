@@ -25,6 +25,9 @@ const updateEmployeeUrl =
 const updateRequestEmployeeUrl =
   '../../../../../sigob/back/modulo_nomina/nom_editar_solicitud.php'
 
+const updateEmployeeStatusUrl =
+  '../../../../sigob/back/modulo_nomina/nom_cambiar_status.php'
+
 const getEmployeesUrl =
   '../../../../../sigob/back/modulo_nomina/nom_empleados_datos.php'
 
@@ -190,6 +193,42 @@ const updateRequestEmployeeData = async ({ data = [] }) => {
   }
 }
 
+const updateEmployeeStatus = async ({ data = [] }) => {
+  console.log(data)
+  showLoader()
+  try {
+    const res = await fetch(updateEmployeeStatusUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+
+    if (!res.ok) {
+      console.log(res)
+      confirmNotification({
+        type: NOTIFICATIONS_TYPES.done,
+        message: 'Error al enviar los datos',
+      })
+      return
+    }
+
+    const json = await res.json()
+    console.log(json)
+
+    return json
+  } catch (e) {
+    console.error(e)
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al actualizar status de los empleado',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
 const deleteEmployee = async (id) => {
   console.log(id)
   try {
@@ -308,6 +347,7 @@ const getBankData = async () => {
 }
 
 const sendDependencyData = async ({ newDependency }) => {
+  showLoader()
   try {
     const dependencyData = await getDependencyData()
     if (
@@ -343,6 +383,8 @@ const sendDependencyData = async ({ newDependency }) => {
       type: NOTIFICATIONS_TYPES.fail,
       message: 'Error al enviar datos del empleado',
     })
+  } finally {
+    hideLoader()
   }
 }
 export {
@@ -351,6 +393,7 @@ export {
   sendEmployeeData,
   updateEmployeeData,
   updateRequestEmployeeData,
+  updateEmployeeStatus,
   deleteEmployee,
   getJobData,
   getProfessionData,

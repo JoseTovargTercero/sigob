@@ -118,7 +118,7 @@ const createCard = ({ actual, anterior, confirmBtn }) => {
         <div class="d-flex flex-column">
         ${listaDeducciones ? listaDeducciones : ''}
         ${listaAportes ? listaAportes : ''}
-        ${listaAportes ? listaAportes : ''}
+        ${listaEmpleados ? listaEmpleados : ''}
         </div>
         
 

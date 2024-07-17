@@ -48,7 +48,7 @@ require_once '../../back/sistema_global/session.php';
             <div class="row mb3">
                 <!-- [ worldLow section ] start -->
                 <div class="col-xl-12">
-                    <div class="card" id="request-form2">
+                    <div class="card" id="request-form">
                         <div class="card-header">
                             <div class="d-flex align-items-center justify-content-between">
                                 <div>
