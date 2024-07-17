@@ -26,7 +26,7 @@ if ($result_ultimo->num_rows > 0) {
 
 // Respuesta JSON con el registro último
 $response = [
-    "registro_ultimo" => $registro_ultimo
+    "registro_anterior" => $registro_ultimo
 ];
 
 echo json_encode($response);

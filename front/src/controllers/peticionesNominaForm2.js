@@ -2,6 +2,7 @@ import {
   calculoNomina,
   enviarCalculoNomina,
   getComparacionNomina,
+  getComparacionNomina2,
   getNominas,
 } from '../api/peticionesNomina.js'
 import {
@@ -356,13 +357,22 @@ export async function validateRequestForm({
         // INSERTAR DATOS DE ASIGNACIONES, APORTES, DEDUCCIONES
 
         // ¡¡¡¡¡¡¡MODIFICAR PARA QUE SE REALICE LA PETICIÓN CON EL NOMBRE E IDENTIFICADOR
-        let data = await getComparacionNomina({
-          correlativo: '00004',
-          frecuencia: '1',
+        let data = {}
+        data.registro_anterior = await getComparacionNomina2({
           nombre_nomina: 'Obreros Nacional',
-          identificador: 's1',
+
           confirmBtn: false,
         })
+
+        data.registro_actual = {
+          asignaciones: calculoInformacion.suma_asignaciones,
+          deducciones: calculoInformacion.suma_deducciones,
+          aportes: calculoInformacion.suma_aportes,
+          empleados: calculoInformacion.empleados,
+          status: 'En proceso',
+          total_pagar: calculoInformacion.total_pagar,
+          nombre_nomina: calculoInformacion.nombre_nomina,
+        }
 
         let requestComparationContainer = d.getElementById(
           'request-comparation-container'
@@ -412,7 +422,6 @@ export async function validateRequestForm({
     }
 
     if (e.target.id === 'show-employee-list') {
-      console.log('hola')
       let modalEmployeeList = d.getElementById('modal-employee-list')
       if (modalEmployeeList) modalEmployeeList.remove()
       newRequestForm.insertAdjacentHTML('afterbegin', nom_empleados_list_card())

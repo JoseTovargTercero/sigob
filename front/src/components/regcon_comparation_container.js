@@ -15,7 +15,7 @@ export function createComparationContainer({ data }) {
 }
 
 const createCard = ({ actual, anterior, confirmBtn }) => {
-  let correlativoActual = actual.correlativo
+  let correlativoActual = actual.correlativo || 'Sin correlativo'
   let nombreNominaActual = actual.nombre_nomina
   let estadoActual = actual.status
   let totalEmpleadosActual = actual.empleados.length
@@ -144,6 +144,7 @@ const createCard = ({ actual, anterior, confirmBtn }) => {
 
 // return `<ul class="list-group list-group-flush mb-4">${li}</ul>`
 const createObjectList = (anterior, actual, title) => {
+  if (actual.length === 0) return
   let tr = ''
   let totalListActual = 0
   let totalListAnterior = 0

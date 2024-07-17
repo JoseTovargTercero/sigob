@@ -21,6 +21,8 @@ const enviarCalculoNominaUrl =
 
 const comparacionNominaUrl =
   '../../../../../sigob/back/modulo_nomina/nom_comparacion_nominas.php'
+const comparacionNominaUrl2 =
+  '../../../../../sigob/back/modulo_nomina/nom_comparacion_nominas2.php'
 
 const confirmarPeticionNominaUrl =
   '../../../../sigob/back/modulo_registro_control/regcon_status_peticiones.php'
@@ -158,6 +160,36 @@ const getComparacionNomina = async (obj) => {
   }
 }
 
+const getComparacionNomina2 = async ({ nombre_nomina }) => {
+  showLoader()
+  try {
+    let res = await fetch(comparacionNominaUrl2, {
+      method: 'POST',
+      body: JSON.stringify({ nombre_nomina }),
+    })
+
+    let data = await res.json()
+
+    let { registro_anterior } = data
+    console.log(registro_anterior)
+    if (registro_anterior.id !== 0) {
+      registro_anterior = mapComparationRequest(registro_anterior)
+    } else {
+      data.registro_anterior = false
+    }
+
+    return registro_anterior
+  } catch (e) {
+    console.log(e.message)
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener peticiones',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
 const calculoNomina = async ({ nombre, identificador }) => {
   showLoader()
   console.log(nombre, identificador)
@@ -168,7 +200,7 @@ const calculoNomina = async ({ nombre, identificador }) => {
     })
 
     let json = await res.json()
-    console.log(json)
+
     json.informacion_empleados = await mapData(json.informacion_empleados)
 
     return json
@@ -349,10 +381,11 @@ export {
   generarNominaTxt,
   descargarNominaTxt,
   getComparacionNomina,
+  getComparacionNomina2,
   confirmarPeticionNomina,
 }
 
-async function mapComparationRequest(obj) {
+function mapComparationRequest(obj) {
   for (let key in obj) {
     if (
       typeof obj[key] === 'string' &&
