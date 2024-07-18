@@ -34,6 +34,9 @@ const getEmployeesUrl =
 const getEmployeeUrl =
   '../../../../../sigob/back/modulo_nomina/nom_empleado_datos.php'
 
+const getRegConEmployeeUrl =
+  '../../../../sigob/back/modulo_registro_control/regcon_empleado_datos.php'
+
 const deleteEmployeeUrl =
   '../../../../../sigob/back/modulo_nomina/nom_empleados_delete.php'
 
@@ -68,17 +71,41 @@ const getEmployeesData = async () => {
 }
 
 const getEmployeeData = async (id) => {
+  console.log(id)
   try {
     const res = await fetch(`${getEmployeeUrl}?id=${id}`)
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
     const json = await res.json()
-
+    console.log(json)
     return json
   } catch (e) {
+    console.log(e)
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
-      message: 'Error al obtener empleados',
+      message: 'Error al obtener empleado',
+    })
+  }
+}
+
+const getRegConEmployeeData = async (id) => {
+  let data = new FormData()
+  data.append('id', id)
+  try {
+    const res = await fetch(getRegConEmployeeUrl, {
+      method: 'POST',
+      body: data,
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+    const json = await res.json()
+    console.log(json)
+    return json[0]
+  } catch (e) {
+    console.log(e)
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener empleado',
     })
   }
 }
@@ -390,6 +417,7 @@ const sendDependencyData = async ({ newDependency }) => {
 export {
   getEmployeesData,
   getEmployeeData,
+  getRegConEmployeeData,
   sendEmployeeData,
   updateEmployeeData,
   updateRequestEmployeeData,

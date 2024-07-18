@@ -370,6 +370,23 @@ function hideLoader(loaderId) {
   loader.style.display = 'none'
 }
 
+function empleadosDiferencia(registroAnterior, registroActual) {
+  if (!registroAnterior || registroAnterior.length === 0) {
+    return false
+  }
+  // Empleados eliminados (en el registro anterior pero no en el registro actual)
+  const empleadosEliminados = registroAnterior.filter(
+    (empleado) => !registroActual.includes(empleado)
+  )
+
+  // Empleados nuevos (en el registro actual pero no en el registro anterior)
+  const empleadosNuevos = registroActual.filter(
+    (empleado) => !registroAnterior.includes(empleado)
+  )
+
+  return { empleadosEliminados, empleadosNuevos }
+}
+
 function confirmNotification({
   type,
   successFunction,
@@ -490,4 +507,5 @@ export {
   confirmNotification,
   errorMessage,
   validateStatusText,
+  empleadosDiferencia,
 }

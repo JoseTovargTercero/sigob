@@ -1,3 +1,7 @@
+import { getRegConEmployeeData } from '../api/empleados.js'
+import { empleadosDiferencia } from '../helpers/helpers.js'
+import { nom_comparation_employee } from './regcon_comparation_employee.js'
+
 export function createComparationContainer({ data }) {
   if (!data) return
   let { registro_actual, registro_anterior, confirmBtn } = data
@@ -27,7 +31,8 @@ const createCard = ({ actual, anterior, confirmBtn }) => {
     nombreNominaAnterior,
     estadoAnterior,
     totalEmpleadosAnterior,
-    totalPagarAnterior
+    totalPagarAnterior,
+    diferenciaEmpleados
 
   if (anterior) {
     correlativoAnterior = anterior.correlativo
@@ -37,6 +42,11 @@ const createCard = ({ actual, anterior, confirmBtn }) => {
     totalPagarAnterior = anterior.total_pagar
       .reduce((acc, el) => el + acc, 0)
       .toFixed(2)
+
+    diferenciaEmpleados = empleadosDiferencia(
+      anterior.empleados,
+      actual.empleados
+    )
   }
 
   let listaAsignaciones = createObjectList(
@@ -56,6 +66,10 @@ const createCard = ({ actual, anterior, confirmBtn }) => {
     actual.aportes,
     'Aportes'
   )
+  nom_comparation_employee({
+    empleadosEliminados: diferenciaEmpleados.empleadosEliminados,
+    empleadosNuevos: diferenciaEmpleados.empleadosNuevos,
+  })
 
   let listaEmpleados = createObjectList(
     anterior
