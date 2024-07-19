@@ -2,7 +2,7 @@ import { getRegConEmployeeData } from '../api/empleados.js'
 import { empleadosDiferencia } from '../helpers/helpers.js'
 import { nom_comparation_employee } from './regcon_comparation_employee.js'
 
-export function createComparationContainer({ data }) {
+export function createComparationContainer({ data, tablaDiferencia }) {
   if (!data) return
   let { registro_actual, registro_anterior, confirmBtn } = data
 
@@ -11,11 +11,13 @@ export function createComparationContainer({ data }) {
       class='request-comparation-container'
       id='request-comparation-container'
     >
+    ${tablaDiferencia}
     ${createCard({
       actual: registro_actual,
       anterior: registro_anterior,
       confirmBtn,
-    })}`
+    })}
+    </div>`
 }
 
 const createCard = ({ actual, anterior, confirmBtn }) => {
@@ -42,11 +44,6 @@ const createCard = ({ actual, anterior, confirmBtn }) => {
     totalPagarAnterior = anterior.total_pagar
       .reduce((acc, el) => el + acc, 0)
       .toFixed(2)
-
-    diferenciaEmpleados = empleadosDiferencia(
-      anterior.empleados,
-      actual.empleados
-    )
   }
 
   let listaAsignaciones = createObjectList(
@@ -66,10 +63,6 @@ const createCard = ({ actual, anterior, confirmBtn }) => {
     actual.aportes,
     'Aportes'
   )
-  nom_comparation_employee({
-    empleadosEliminados: diferenciaEmpleados.empleadosEliminados,
-    empleadosNuevos: diferenciaEmpleados.empleadosNuevos,
-  })
 
   let listaEmpleados = createObjectList(
     anterior
@@ -147,7 +140,7 @@ const createCard = ({ actual, anterior, confirmBtn }) => {
           : ''
       }
       </div>
-    </div>`
+    `
 }
 
 // for (const keys in obj) {
@@ -201,7 +194,7 @@ const createObjectList = (anterior, actual, title) => {
   }
 
   return `
-    <table class="table" style='width: 100%'>
+    <table class="table table-xs" style='width: 100%'>
           <thead>
         <th class="table-warning"><i>${title}</i></th>
         ${anterior ? `<th class="">Anterior</th>` : ''}
