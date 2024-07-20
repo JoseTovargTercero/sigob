@@ -108,7 +108,21 @@ if (isset($_POST["tabla"])) {
 
 
 } elseif (isset($_POST["eliminar"])) {
-    $id = $_POST["id"];
+   $id = $_POST["id"];
+
+// Verificar si el registro existe en la tabla concepto_aplicados
+$stmt = mysqli_prepare($conexion, "SELECT COUNT(*) FROM `conceptos_aplicados` WHERE id = ?");
+$stmt->bind_param("i", $id);
+$stmt->execute();
+$stmt->bind_result($count);
+$stmt->fetch();
+$stmt->close();
+
+if ($count > 0) {
+    // Si el registro existe en concepto_aplicados, no realizar ninguna eliminación
+    echo json_encode(["status" => "error", "mensaje" => "No se puede borrar el registro porque existe en la tabla concepto_aplicados."]);
+} else {
+    // Si el registro no existe en concepto_aplicados, proceder con la eliminación
     $stmt = mysqli_prepare($conexion, "DELETE FROM `conceptos` WHERE id = ?");
     $stmt->bind_param("i", $id);
     $stmt->execute();
@@ -118,11 +132,8 @@ if (isset($_POST["tabla"])) {
     $stmt->bind_param("i", $id);
     $stmt->execute();
     $stmt->close();
-
-    // verifica si ejecuto e imprimir ok
-    if ($stmt) {
-        echo "ok";
-    }
+    echo json_encode(["status" => "sucess", "mensaje" => "Registro borrado con exito."]);
+}
 
 
 
