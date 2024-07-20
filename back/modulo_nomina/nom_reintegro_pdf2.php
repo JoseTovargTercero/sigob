@@ -29,326 +29,287 @@ require_once '../sistema_global/conexion.php';
     <div style="font-size: 10px;">
         <img src="../../img/logo.jpg" style="height: 110px; width: 250px;">
 <?php
- function convertirNumeroLetra($numero){
-    $numf = milmillon($numero);
-    return $numf."";
-    }
-    function milmillon($nummierod){
-        if ($nummierod >= 1000000000 && $nummierod <2000000000){
-            $num_letrammd = "mil ".(cienmillon($nummierod%1000000000));
-        }
-        if ($nummierod >= 2000000000 && $nummierod <10000000000){
-            $num_letrammd = unidad(Floor($nummierod/1000000000))." mil ".(cienmillon($nummierod%1000000000));
-        }
-        if ($nummierod < 1000000000)
-            $num_letrammd = cienmillon($nummierod);
-        
-        return $num_letrammd;
-    }
-    function cienmillon($numcmeros){
-        if ($numcmeros == 100000000)
-            $num_letracms = "cien millones";
-        if ($numcmeros >= 100000000 && $numcmeros <1000000000){
-            $num_letracms = centena(Floor($numcmeros/1000000))." millones ".(millon($numcmeros%1000000));       
-        }
-        if ($numcmeros < 100000000)
-            $num_letracms = decmillon($numcmeros);
-        return $num_letracms;
-    }
-    function decmillon($numerodm){
-        if ($numerodm == 10000000)
-            $num_letradmm = "diez millones";
-        if ($numerodm > 10000000 && $numerodm <20000000){
-            $num_letradmm = decena(Floor($numerodm/1000000))."millones ".(cienmiles($numerodm%1000000));        
-        }
-        if ($numerodm >= 20000000 && $numerodm <100000000){
-            $num_letradmm = decena(Floor($numerodm/1000000))." millones ".(millon($numerodm%1000000));      
-        }
-        if ($numerodm < 10000000)
-            $num_letradmm = millon($numerodm);
-        
-        return $num_letradmm;
-    }
-    function millon($nummiero){
-        if ($nummiero >= 1000000 && $nummiero <2000000){
-            $num_letramm = "un millon ".(cienmiles($nummiero%1000000));
-        }
-        if ($nummiero >= 2000000 && $nummiero <10000000){
-            $num_letramm = unidad(Floor($nummiero/1000000))." millones ".(cienmiles($nummiero%1000000));
-        }
-        if ($nummiero < 1000000)
-            $num_letramm = cienmiles($nummiero);
-        
-        return $num_letramm;
-    }
-    function cienmiles($numcmero){
-        if ($numcmero == 100000)
-            $num_letracm = "cien mil";
-        if ($numcmero >= 100000 && $numcmero <1000000){
-            $num_letracm = centena(Floor($numcmero/1000))." mil ".(centena($numcmero%1000));        
-        }
-        if ($numcmero < 100000)
-            $num_letracm = decmiles($numcmero);
-        return $num_letracm;
-    }
-    function decmiles($numdmero){
-        if ($numdmero == 10000)
-            $numde = "diez mil";
-        if ($numdmero > 10000 && $numdmero <20000){
-            $numde = decena(Floor($numdmero/1000))."mil ".(centena($numdmero%1000));        
-        }
-        if ($numdmero >= 20000 && $numdmero <100000){
-            $numde = decena(Floor($numdmero/1000))." mil ".(miles($numdmero%1000));     
-        }       
-        if ($numdmero < 10000)
-            $numde = miles($numdmero);
-        
-        return $numde;
-    }
-    function miles($nummero){
-        if ($nummero >= 1000 && $nummero < 2000){
-            $numm = "mil ".(centena($nummero%1000));
-        }
-        if ($nummero >= 2000 && $nummero <10000){
-            $numm = unidad(Floor($nummero/1000))." mil ".(centena($nummero%1000));
-        }
-        if ($nummero < 1000)
-            $numm = centena($nummero);
-        
-        return $numm;
-    }
-    function centena($numc){
-        if ($numc >= 100)
-        {
-            if ($numc >= 900 && $numc <= 999)
-            {
-                $numce = "novecientes ";
-                if ($numc > 900)
-                    $numce = $numce.(decena($numc - 900));
-            }
-            else if ($numc >= 800 && $numc <= 899)
-            {
-                $numce = "ochocientos ";
-                if ($numc > 800)
-                    $numce = $numce.(decena($numc - 800));
-            }
-            else if ($numc >= 700 && $numc <= 799)
-            {
-                $numce = "setecientos ";
-                if ($numc > 700)
-                    $numce = $numce.(decena($numc - 700));
-            }
-            else if ($numc >= 600 && $numc <= 699)
-            {
-                $numce = "seiscientos ";
-                if ($numc > 600)
-                    $numce = $numce.(decena($numc - 600));
-            }
-            else if ($numc >= 500 && $numc <= 599)
-            {
-                $numce = "quinientos ";
-                if ($numc > 500)
-                    $numce = $numce.(decena($numc - 500));
-            }
-            else if ($numc >= 400 && $numc <= 499)
-            {
-                $numce = "cuatrocientos ";
-                if ($numc > 400)
-                    $numce = $numce.(decena($numc - 400));
-            }
-            else if ($numc >= 300 && $numc <= 399)
-            {
-                $numce = "trescientos ";
-                if ($numc > 300)
-                    $numce = $numce.(decena($numc - 300));
-            }
-            else if ($numc >= 200 && $numc <= 299)
-            {
-                $numce = "doscientos ";
-                if ($numc > 200)
-                    $numce = $numce.(decena($numc - 200));
-            }
-            else if ($numc >= 100 && $numc <= 199)
-            {
-                if ($numc == 100)
-                    $numce = "cien ";
-                else
-                    $numce = "ciento ".(decena($numc - 100));
-            }
-        }
-        else
-            $numce = decena($numc);
-        
-        return $numce;  
-}
-function decena($numdero){
+function convertirNumeroLetra($numero) {
+    $numero = number_format($numero, 2, '.', '');
+    list($entero, $decimal) = explode('.', $numero);
+    $numf = milmillon2($entero);
     
-        if ($numdero >= 90 && $numdero <= 99)
-        {
-            $numd = "noventa ";
-            if ($numdero > 90)
-                $numd = $numd."Y ".(unidad($numdero - 90));
+    if ($decimal == "00") {
+        return strtoupper($numf) . " BOLÍVARES EXACTOS";
+    } else {
+        $decimal_letras = decena2($decimal);
+        return strtoupper($numf) . " BOLÍVARES CON " . strtoupper($decimal_letras) . " CÉNTIMOS";
+    }
+}
+
+function milmillon2($nummierod) {
+    if ($nummierod >= 1000000000 && $nummierod < 2000000000) {
+        $num_letrammd = "MIL " . cienmillon2($nummierod % 1000000000);
+    }
+    if ($nummierod >= 2000000000 && $nummierod < 10000000000) {
+        $num_letrammd = unidad2(floor($nummierod / 1000000000)) . " MIL " . cienmillon2($nummierod % 1000000000);
+    }
+    if ($nummierod < 1000000000) {
+        $num_letrammd = cienmillon2($nummierod);
+    }
+    return $num_letrammd;
+}
+
+function cienmillon2($numcmeros) {
+    if ($numcmeros == 100000000) {
+        $num_letracms = "CIEN MILLONES";
+    }
+    if ($numcmeros >= 100000000 && $numcmeros < 1000000000) {
+        $num_letracms = centena2(floor($numcmeros / 1000000)) . " MILLONES " . millon2($numcmeros % 1000000);
+    }
+    if ($numcmeros < 100000000) {
+        $num_letracms = decmillon2($numcmeros);
+    }
+    return $num_letracms;
+}
+
+function decmillon2($numerodm) {
+    if ($numerodm == 10000000) {
+        $num_letradmm = "DIEZ MILLONES";
+    }
+    if ($numerodm > 10000000 && $numerodm < 20000000) {
+        $num_letradmm = decena2(floor($numerodm / 1000000)) . " MILLONES " . cienmiles2($numerodm % 1000000);
+    }
+    if ($numerodm >= 20000000 && $numerodm < 100000000) {
+        $num_letradmm = decena2(floor($numerodm / 1000000)) . " MILLONES " . millon2($numerodm % 1000000);
+    }
+    if ($numerodm < 10000000) {
+        $num_letradmm = millon2($numerodm);
+    }
+    return $num_letradmm;
+}
+
+function millon2($nummiero) {
+    if ($nummiero >= 1000000 && $nummiero < 2000000) {
+        $num_letramm = "UN MILLÓN " . cienmiles2($nummiero % 1000000);
+    }
+    if ($nummiero >= 2000000 && $nummiero < 10000000) {
+        $num_letramm = unidad2(floor($nummiero / 1000000)) . " MILLONES " . cienmiles2($nummiero % 1000000);
+    }
+    if ($nummiero < 1000000) {
+        $num_letramm = cienmiles2($nummiero);
+    }
+    return $num_letramm;
+}
+
+function cienmiles2($numcmero) {
+    if ($numcmero == 100000) {
+        $num_letracm = "CIEN MIL";
+    }
+    if ($numcmero >= 100000 && $numcmero < 1000000) {
+        $num_letracm = centena2(floor($numcmero / 1000)) . " MIL " . centena2($numcmero % 1000);
+    }
+    if ($numcmero < 100000) {
+        $num_letracm = decmiles2($numcmero);
+    }
+    return $num_letracm;
+}
+
+function decmiles2($numdmero) {
+    if ($numdmero == 10000) {
+        $numde = "DIEZ MIL";
+    }
+    if ($numdmero > 10000 && $numdmero < 20000) {
+        $numde = decena2(floor($numdmero / 1000)) . " MIL " . centena2($numdmero % 1000);
+    }
+    if ($numdmero >= 20000 && $numdmero < 100000) {
+        $numde = decena2(floor($numdmero / 1000)) . " MIL " . miles2($numdmero % 1000);
+    }
+    if ($numdmero < 10000) {
+        $numde = miles2($numdmero);
+    }
+    return $numde;
+}
+
+function miles2($nummero) {
+    if ($nummero >= 1000 && $nummero < 2000) {
+        $numm = "MIL " . centena2($nummero % 1000);
+    }
+    if ($nummero >= 2000 && $nummero < 10000) {
+        $numm = unidad2(floor($nummero / 1000)) . " MIL " . centena2($nummero % 1000);
+    }
+    if ($nummero < 1000) {
+        $numm = centena2($nummero);
+    }
+    return $numm;
+}
+
+function centena2($numc) {
+    if ($numc >= 100) {
+        if ($numc >= 900 && $numc <= 999) {
+            $numce = "NOVECIENTOS ";
+            if ($numc > 900) {
+                $numce = $numce . decena2($numc - 900);
+            }
+        } else if ($numc >= 800 && $numc <= 899) {
+            $numce = "OCHOCIENTOS ";
+            if ($numc > 800) {
+                $numce = $numce . decena2($numc - 800);
+            }
+        } else if ($numc >= 700 && $numc <= 799) {
+            $numce = "SETECIENTOS ";
+            if ($numc > 700) {
+                $numce = $numce . decena2($numc - 700);
+            }
+        } else if ($numc >= 600 && $numc <= 699) {
+            $numce = "SEISCIENTOS ";
+            if ($numc > 600) {
+                $numce = $numce . decena2($numc - 600);
+            }
+        } else if ($numc >= 500 && $numc <= 599) {
+            $numce = "QUINIENTOS ";
+            if ($numc > 500) {
+                $numce = $numce . decena2($numc - 500);
+            }
+        } else if ($numc >= 400 && $numc <= 499) {
+            $numce = "CUATROCIENTOS ";
+            if ($numc > 400) {
+                $numce = $numce . decena2($numc - 400);
+            }
+        } else if ($numc >= 300 && $numc <= 399) {
+            $numce = "TRESCIENTOS ";
+            if ($numc > 300) {
+                $numce = $numce . decena2($numc - 300);
+            }
+        } else if ($numc >= 200 && $numc <= 299) {
+            $numce = "DOSCIENTOS ";
+            if ($numc > 200) {
+                $numce = $numce . decena2($numc - 200);
+            }
+        } else if ($numc >= 100 && $numc <= 199) {
+            if ($numc == 100) {
+                $numce = "CIEN ";
+            } else {
+                $numce = "CIENTO " . decena2($numc - 100);
+            }
         }
-        else if ($numdero >= 80 && $numdero <= 89)
-        {
-            $numd = "ochenta ";
-            if ($numdero > 80)
-                $numd = $numd."Y ".(unidad($numdero - 80));
+    } else {
+        $numce = decena2($numc);
+    }
+    return $numce;
+}
+
+function decena2($numdero) {
+    if ($numdero >= 90 && $numdero <= 99) {
+        $numd = "NOVENTA ";
+        if ($numdero > 90) {
+            $numd = $numd . "Y " . unidad2($numdero - 90);
         }
-        else if ($numdero >= 70 && $numdero <= 79)
-        {
-            $numd = "setenta ";
-            if ($numdero > 70)
-                $numd = $numd."Y ".(unidad($numdero - 70));
+    } else if ($numdero >= 80 && $numdero <= 89) {
+        $numd = "OCHENTA ";
+        if ($numdero > 80) {
+            $numd = $numd . "Y " . unidad2($numdero - 80);
         }
-        else if ($numdero >= 60 && $numdero <= 69)
-        {
-            $numd = "sesenta ";
-            if ($numdero > 60)
-                $numd = $numd."Y ".(unidad($numdero - 60));
+    } else if ($numdero >= 70 && $numdero <= 79) {
+        $numd = "SETENTA ";
+        if ($numdero > 70) {
+            $numd = $numd . "Y " . unidad2($numdero - 70);
         }
-        else if ($numdero >= 50 && $numdero <= 59)
-        {
-            $numd = "cincuenta ";
-            if ($numdero > 50)
-                $numd = $numd."Y ".(unidad($numdero - 50));
+    } else if ($numdero >= 60 && $numdero <= 69) {
+        $numd = "SESENTA ";
+        if ($numdero > 60) {
+            $numd = $numd . "Y " . unidad2($numdero - 60);
         }
-        else if ($numdero >= 40 && $numdero <= 49)
-        {
-            $numd = "cuarenta ";
-            if ($numdero > 40)
-                $numd = $numd."Y ".(unidad($numdero - 40));
+    } else if ($numdero >= 50 && $numdero <= 59) {
+        $numd = "CINCUENTA ";
+        if ($numdero > 50) {
+            $numd = $numd . "Y " . unidad2($numdero - 50);
         }
-        else if ($numdero >= 30 && $numdero <= 39)
-        {
-            $numd = "treinta ";
-            if ($numdero > 30)
-                $numd = $numd."Y ".(unidad($numdero - 30));
+    } else if ($numdero >= 40 && $numdero <= 49) {
+        $numd = "CUARENTA ";
+        if ($numdero > 40) {
+            $numd = $numd . "Y " . unidad2($numdero - 40);
         }
-        else if ($numdero >= 20 && $numdero <= 29)
-        {
-            if ($numdero == 20)
-                $numd = "veinte ";
-            else
-                $numd = "veinti".(unidad($numdero - 20));
+    } else if ($numdero >= 30 && $numdero <= 39) {
+        $numd = "TREINTA ";
+        if ($numdero > 30) {
+            $numd = $numd . "Y " . unidad2($numdero - 30);
         }
-        else if ($numdero >= 10 && $numdero <= 19)
-        {
-            switch ($numdero){
+    } else if ($numdero >= 20 && $numdero <= 29) {
+        if ($numdero == 20) {
+            $numd = "VEINTE ";
+        } else {
+            $numd = "VEINTI" . unidad2($numdero - 20);
+        }
+    } else if ($numdero >= 10 && $numdero <= 19) {
+        switch ($numdero) {
             case 10:
-            {
-                $numd = "diez ";
+                $numd = "DIEZ ";
                 break;
-            }
             case 11:
-            {               
-                $numd = "once ";
+                $numd = "ONCE ";
                 break;
-            }
             case 12:
-            {
-                $numd = "doce ";
+                $numd = "DOCE ";
                 break;
-            }
             case 13:
-            {
-                $numd = "trece ";
+                $numd = "TRECE ";
                 break;
-            }
             case 14:
-            {
-                $numd = "catorce ";
+                $numd = "CATORCE ";
                 break;
-            }
             case 15:
-            {
-                $numd = "quince ";
+                $numd = "QUINCE ";
                 break;
-            }
             case 16:
-            {
-                $numd = "dieciseis ";
+                $numd = "DIECISEIS ";
                 break;
-            }
             case 17:
-            {
-                $numd = "diecisiete ";
+                $numd = "DIECISIETE ";
                 break;
-            }
             case 18:
-            {
-                $numd = "dieciocho ";
+                $numd = "DIECIOCHO ";
                 break;
-            }
             case 19:
-            {
-                $numd = "diecinueve ";
+                $numd = "DIECINUEVE ";
                 break;
-            }
-            }   
         }
-        else
-            $numd = unidad($numdero);
+    } else {
+        $numd = unidad2($numdero);
+    }
     return $numd;
 }
-function unidad($numuero){
-    switch ($numuero)
-    {
+
+function unidad2($numuero) {
+    switch ($numuero) {
         case 9:
-        {
-            $numu = "nueve";
+            $numu = "NUEVE";
             break;
-        }
         case 8:
-        {
-            $numu = "ocho";
+            $numu = "OCHO";
             break;
-        }
         case 7:
-        {
-            $numu = "siete";
+            $numu = "SIETE";
             break;
-        }       
         case 6:
-        {
-            $numu = "seis";
+            $numu = "SEIS";
             break;
-        }       
         case 5:
-        {
-            $numu = "cinco";
+            $numu = "CINCO";
             break;
-        }       
         case 4:
-        {
-            $numu = "cuatro";
+            $numu = "CUATRO";
             break;
-        }       
         case 3:
-        {
-            $numu = "tres";
+            $numu = "TRES";
             break;
-        }       
         case 2:
-        {
-            $numu = "dos";
+            $numu = "DOS";
             break;
-        }       
         case 1:
-        {
-            $numu = "un";
+            $numu = "UNO";
             break;
-        }       
         case 0:
-        {
             $numu = "";
             break;
-        }       
     }
-    return $numu;   
+    return $numu;
 }
-
-
 
 
 
@@ -416,207 +377,238 @@ Para su proceso de pago correspondiente.
 
 
 
-        <?php
+<?php
 
-        function obtener_mes_en_letras($fecha) {
-            $meses = [
-                1 => 'Enero', 2 => 'Febrero', 3 => 'Marzo', 4 => 'Abril', 
-                5 => 'Mayo', 6 => 'Junio', 7 => 'Julio', 8 => 'Agosto', 
-                9 => 'Septiembre', 10 => 'Octubre', 11 => 'Noviembre', 12 => 'Diciembre'
+function obtener_mes_en_letras($fecha) {
+    $meses = [
+        1 => 'Enero', 2 => 'Febrero', 3 => 'Marzo', 4 => 'Abril', 
+        5 => 'Mayo', 6 => 'Junio', 7 => 'Julio', 8 => 'Agosto', 
+        9 => 'Septiembre', 10 => 'Octubre', 11 => 'Noviembre', 12 => 'Diciembre'
+    ];
+    $fecha_parts = explode('-', $fecha);
+    if (count($fecha_parts) == 2) {
+        $mes_numero = (int)$fecha_parts[0];
+        $año = $fecha_parts[1];
+        return $meses[$mes_numero] . ' ' . $año;
+    }
+    return "Fecha inválida";
+}
+?>
+<h1 align="center">Resumen de Reintegro <?php echo $nombres ?></h1>
+<?php
+
+// Consulta a la base de datos
+$sql4 = "SELECT * FROM historico_reintegros WHERE id_empleado='$id_empleado'";
+$result4 = mysqli_query($conexion, $sql4);
+
+// Arrays para almacenar los datos por fecha
+$datos_por_fecha = [];
+
+// Verificación y llenado de los datos obtenidos
+if ($result4 && mysqli_num_rows($result4) > 0) {
+    while ($mostrar4 = mysqli_fetch_assoc($result4)) {
+        // Decodificación de los arrays JSON
+        $asignaciones = json_decode($mostrar4['asignaciones'], true);
+        $deducciones = json_decode($mostrar4['deducciones'], true);
+        $aportes = json_decode($mostrar4['aportes'], true);
+        $total_pagar = $mostrar4['total_pagar'];
+        $nombre_nomina = strtolower($mostrar4['nombre_nomina']);
+        $fecha = $mostrar4['fecha'];
+
+        // Almacenar los datos en el array según la fecha y el tipo de nómina
+        if (!isset($datos_por_fecha[$fecha])) {
+            $datos_por_fecha[$fecha] = [
+                'nacional' => null,
+                'regional' => null
             ];
-            $fecha_parts = explode('-', $fecha);
-            if (count($fecha_parts) == 2) {
-                $mes_numero = (int)$fecha_parts[0];
-                $año = $fecha_parts[1];
-                return $meses[$mes_numero] . ' ' . $año;
-            }
-            return "Fecha inválida";
-        }
-        ?>
-        <h1 align="center">Resumen de Reintegro <?php echo $nombres ?></h1>
-        <?php
-
-
-        // Consulta a la base de datos
-        $sql4 = "SELECT * FROM historico_reintegros WHERE id_empleado='$id_empleado'";
-        $result4 = mysqli_query($conexion, $sql4);
-
-        // Arrays para almacenar los datos por fecha
-        $datos_por_fecha = [];
-
-        // Verificación y llenado de los datos obtenidos
-        if ($result4 && mysqli_num_rows($result4) > 0) {
-            while ($mostrar4 = mysqli_fetch_assoc($result4)) {
-                // Decodificación de los arrays JSON
-                $asignaciones = json_decode($mostrar4['asignaciones'], true);
-                $deducciones = json_decode($mostrar4['deducciones'], true);
-                $aportes = json_decode($mostrar4['aportes'], true);
-                $total_pagar = $mostrar4['total_pagar'];
-                $nombre_nomina = strtolower($mostrar4['nombre_nomina']);
-                $fecha = $mostrar4['fecha'];
-
-                // Almacenar los datos en el array según la fecha y el tipo de nómina
-                if (!isset($datos_por_fecha[$fecha])) {
-                    $datos_por_fecha[$fecha] = [
-                        'nacional' => null,
-                        'regional' => null
-                    ];
-                }
-
-                if (strpos($nombre_nomina, 'nacional') !== false) {
-                    $datos_por_fecha[$fecha]['nacional'] = [
-                        'asignaciones' => $asignaciones,
-                        'deducciones' => $deducciones,
-                        'aportes' => $aportes,
-                        'total_pagar' => $total_pagar
-                    ];
-                } elseif (strpos($nombre_nomina, 'regional') !== false) {
-                    $datos_por_fecha[$fecha]['regional'] = [
-                        'asignaciones' => $asignaciones,
-                        'deducciones' => $deducciones,
-                        'aportes' => $aportes,
-                        'total_pagar' => $total_pagar
-                    ];
-                }
-            }
-        } else {
-            echo "<p>No se encontraron Reintegros</p>";
         }
 
-        // Mostrar los datos en tablas
-        foreach ($datos_por_fecha as $fecha => $datos) {
-            if ($datos['nacional'] && $datos['regional']) {
-                $nacional = $datos['nacional'];
-                $regional = $datos['regional'];
+        if (strpos($nombre_nomina, 'nacional') !== false) {
+            $datos_por_fecha[$fecha]['nacional'] = [
+                'asignaciones' => $asignaciones,
+                'deducciones' => $deducciones,
+                'aportes' => $aportes,
+                'total_pagar' => $total_pagar
+            ];
+        } elseif (strpos($nombre_nomina, 'regional') !== false) {
+            $datos_por_fecha[$fecha]['regional'] = [
+                'asignaciones' => $asignaciones,
+                'deducciones' => $deducciones,
+                'aportes' => $aportes,
+                'total_pagar' => $total_pagar
+            ];
+        }
+    }
+} else {
+    echo "<p>No se encontraron Reintegros</p>";
+}
 
-                // Calcular diferencias
-                $diferencias = [
-                    'asignaciones' => [],
-                    'deducciones' => [],
-                    'aportes' => []
-                ];
+// Mostrar los datos en tablas
+foreach ($datos_por_fecha as $fecha => $datos) {
+    if ($datos['nacional'] && $datos['regional']) {
+        $nacional = $datos['nacional'];
+        $regional = $datos['regional'];
 
+        // Reiniciar las diferencias para cada fecha
+        $diferencias = [
+            'asignaciones' => [],
+            'deducciones' => [],
+            'aportes' => []
+        ];
+
+        // Calcular diferencias de asignaciones
+        foreach ($nacional['asignaciones'] as $key => $value) {
+            $regional_value = $regional['asignaciones'][$key] ?? null;
+            if ($regional_value === null) {
+                $diferencias['asignaciones'][$key] = $value;
+            } else {
+                $diferencias['asignaciones'][$key] = abs($value - $regional_value);
+            }
+        }
+        foreach ($regional['asignaciones'] as $key => $value) {
+            if (!isset($nacional['asignaciones'][$key])) {
+                $diferencias['asignaciones'][$key] = $value;
+            }
+        }
+
+        // Calcular diferencias de deducciones
+        foreach ($nacional['deducciones'] as $key => $value) {
+            $regional_value = $regional['deducciones'][$key] ?? null;
+            if ($regional_value === null) {
+                $diferencias['deducciones'][$key] = $value;
+            } else {
+                $diferencias['deducciones'][$key] = abs($value - $regional_value);
+            }
+        }
+        foreach ($regional['deducciones'] as $key => $value) {
+            if (!isset($nacional['deducciones'][$key])) {
+                $diferencias['deducciones'][$key] = $value;
+            }
+        }
+
+        // Calcular diferencias de aportes
+        foreach ($nacional['aportes'] as $key => $value) {
+            $regional_value = $regional['aportes'][$key] ?? null;
+            if ($regional_value === null) {
+                $diferencias['aportes'][$key] = $value;
+            } else {
+                $diferencias['aportes'][$key] = abs($value - $regional_value);
+            }
+        }
+        foreach ($regional['aportes'] as $key => $value) {
+            if (!isset($nacional['aportes'][$key])) {
+                $diferencias['aportes'][$key] = $value;
+            }
+        }
+?>
+<h1 align="center"><?php echo obtener_mes_en_letras($fecha); ?></h1>
+<table>
+    <thead>
+        <tr>
+            <th colspan="1">Nacional</th>
+            <th colspan="1">Regional</th>
+            <th rowspan="2">Diferencia</th>
+            <th colspan="2" style="text-align: center;">Total a Pagar</th>
+            <th rowspan="2">Fecha</th>
+        </tr>
+        <tr>
+            <th>Conceptos</th>
+            <th>Conceptos</th>
+            <th colspan="2" style="text-align: center;">Quincena / Mensual</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <!-- Columna Nacional -->
+            <td>
+                <strong>Asignaciones:</strong><br>
+                <?php
                 foreach ($nacional['asignaciones'] as $key => $value) {
-                    $regional_value = $regional['asignaciones'][$key] ?? 0;
-                    $diferencias['asignaciones'][$key] = abs($value - $regional_value);
+                    echo "$key: $value<br>";
                 }
-
+                ?>
+                <br><strong>Deducciones:</strong><br>
+                <?php
                 foreach ($nacional['deducciones'] as $key => $value) {
-                    $regional_value = $regional['deducciones'][$key] ?? 0;
-                    $diferencias['deducciones'][$key] = abs($value - $regional_value);
+                    echo "$key: $value<br>";
                 }
-
+                ?>
+                <br><strong>Aportes:</strong><br>
+                <?php
                 foreach ($nacional['aportes'] as $key => $value) {
-                    $regional_value = $regional['aportes'][$key] ?? 0;
-                    $diferencias['aportes'][$key] = abs($value - $regional_value);
+                    echo "$key: $value<br>";
                 }
-        ?>
-        <h1 align="center"><?php echo obtener_mes_en_letras($fecha); ?></h1>
-        <table>
-            <thead>
-                <tr>
-                    <th colspan="1">Nacional</th>
-                    <th colspan="1">Regional</th>
-                    <th rowspan="2">Diferencia</th>
-                    <th colspan="2" style="text-align: center;">Total a Pagar</th>
-                    <th rowspan="2">Fecha</th>
-                </tr>
-                <tr>
-                    <th>Conceptos</th>
-                    <th>Conceptos</th>
-                    <th colspan="2" style="text-align: center;">Quincena / Mensual</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <!-- Columna Nacional -->
-                    <td>
-                        <strong>Asignaciones:</strong><br>
-                        <?php
-                        foreach ($nacional['asignaciones'] as $key => $value) {
-                            echo "$key: $value<br>";
-                        }
-                        ?>
-                        <br><strong>Deducciones:</strong><br>
-                        <?php
-                        foreach ($nacional['deducciones'] as $key => $value) {
-                            echo "$key: $value<br>";
-                        }
-                        ?>
-                        <br><strong>Aportes:</strong><br>
-                        <?php
-                        foreach ($nacional['aportes'] as $key => $value) {
-                            echo "$key: $value<br>";
-                        }
-                        ?>
-                    </td>
+                ?>
+            </td>
 
-                    <!-- Columna Regional -->
-                    <td>
-                        <strong>Asignaciones:</strong><br>
-                        <?php
-                        foreach ($regional['asignaciones'] as $key => $value) {
-                            echo "$key: $value<br>";
-                        }
-                        ?>
-                        <br><strong>Deducciones:</strong><br>
-                        <?php
-                        foreach ($regional['deducciones'] as $key => $value) {
-                            echo "$key: $value<br>";
-                        }
-                        ?>
-                        <br><strong>Aportes:</strong><br>
-                        <?php
-                        foreach ($regional['aportes'] as $key => $value) {
-                            echo "$key: $value<br>";
-                        }
-                        ?>
-                    </td>
+            <!-- Columna Regional -->
+            <td>
+                <strong>Asignaciones:</strong><br>
+                <?php
+                foreach ($regional['asignaciones'] as $key => $value) {
+                    echo "$key: $value<br>";
+                }
+                ?>
+                <br><strong>Deducciones:</strong><br>
+                <?php
+                foreach ($regional['deducciones'] as $key => $value) {
+                    echo "$key: $value<br>";
+                }
+                ?>
+                <br><strong>Aportes:</strong><br>
+                <?php
+                foreach ($regional['aportes'] as $key => $value) {
+                    echo "$key: $value<br>";
+                }
+                ?>
+            </td>
 
-                    <!-- Columna Diferencia -->
-                    <td>
-                        <strong>Asignaciones:</strong><br>
-                        <?php
-                        foreach ($diferencias['asignaciones'] as $key => $value) {
-                            echo "$key: $value<br>";
-                        }
-                        ?>
-                        <br><strong>Deducciones:</strong><br>
-                        <?php
-                        foreach ($diferencias['deducciones'] as $key => $value) {
-                            echo "$key: $value<br>";
-                        }
-                        ?>
-                        <br><strong>Aportes:</strong><br>
-                        <?php
-                        foreach ($diferencias['aportes'] as $key => $value) {
-                            echo "$key: $value<br>";
-                        }
-                        ?>
-                    </td>
+            <!-- Columna Diferencia -->
+            <td>
+                <strong>Asignaciones:</strong><br>
+                <?php
+                foreach ($diferencias['asignaciones'] as $key => $value) {
+                    echo "$key: $value<br>";
+                }
+                ?>
+                <br><strong>Deducciones:</strong><br>
+                <?php
+                foreach ($diferencias['deducciones'] as $key => $value) {
+                    echo "$key: $value<br>";
+                }
+                ?>
+                <br><strong>Aportes:</strong><br>
+                <?php
+                foreach ($diferencias['aportes'] as $key => $value) {
+                    echo "$key: $value<br>";
+                }
+                ?>
+            </td>
 
-                    <!-- Columna Total a Pagar -->
-                    <td>
-                        <strong>Total a Pagar Nacional:</strong> <?php echo $nacional['total_pagar']/2; ?><br>
-                        <strong>Total a Pagar Regional:</strong> <?php echo $regional['total_pagar']/2; ?>
-                    </td>
-                    <td>
-                        <strong>Total a Pagar Nacional:</strong> <?php echo $nacional['total_pagar']; ?><br>
-                        <strong>Total a Pagar Regional:</strong> <?php echo $regional['total_pagar']; ?>
-                    </td>
+            <!-- Columna Total a Pagar -->
+            <td>
+                <strong>Total a Pagar Nacional:</strong> <?php echo $nacional['total_pagar'] / 2; ?><br>
+                <strong>Total a Pagar Regional:</strong> <?php echo $regional['total_pagar'] / 2; ?>
+            </td>
+            <td>
+                <strong>Total a Pagar Nacional:</strong> <?php echo $nacional['total_pagar']; ?><br>
+                <strong>Total a Pagar Regional:</strong> <?php echo $regional['total_pagar']; ?>
+            </td>
 
-                    <!-- Columna Fecha -->
-                    <td><?php echo $fecha; ?></td>
-                </tr>
-            </tbody>
-        </table>
-        <?php
-            }
-        }
+            <!-- Columna Fecha -->
+            <td><?php echo $fecha; ?></td>
+        </tr>
+    </tbody>
+</table>
+<?php
+    }
+}
 
-        // Cierre de la conexión
-        mysqli_close($conexion);
-        ?>
+// Cierre de la conexión
+mysqli_close($conexion);
+?>
+
+
     </div>
 </body>
 </html>
