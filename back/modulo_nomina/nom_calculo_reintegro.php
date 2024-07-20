@@ -166,22 +166,34 @@ function obtenerMonto($conexion, $grado, $paso, $tabulador, $identificador) {
 }
 
 // Función para obtener el valor de un concepto según su tipo de cálculo
-function obtenerValorConcepto($conexion, $nom_concepto, $salarioBase, $precio_dolar, $salarioIntegral, $ids_empleados, $identificador) {
-    $sql = "SELECT c.tipo_calculo, c.valor
-            FROM conceptos c
-            JOIN conceptos_aplicados ca ON c.nom_concepto = ca.nom_concepto
-            WHERE c.nom_concepto = ?";
+function obtenerValorConcepto($conexion, $nom_concepto, $salarioBase, $precio_dolar, $salarioIntegral, $ids_empleados, $identificador, $meses) {
+ $sql = "SELECT c.id, c.tipo_calculo, c.valor
+        FROM conceptos c
+        JOIN conceptos_aplicados ca ON c.nom_concepto = ca.nom_concepto
+        WHERE c.nom_concepto = ?";
 
-    $stmt = $conexion->prepare($sql);
-    $stmt->bind_param("s", $nom_concepto); // Agregamos el identificador como segundo parámetro
-    $stmt->execute();
-    $result = $stmt->get_result();
+$stmt = $conexion->prepare($sql);
+$stmt->bind_param("s", $nom_concepto);
+$stmt->execute();
+$result = $stmt->get_result();
 
-    if ($result->num_rows > 0) {
-        $row = $result->fetch_assoc();
-        $tipo_calculo = $row["tipo_calculo"];
-        $valor = $row["valor"];
-    
+if ($result->num_rows > 0) {
+    $row = $result->fetch_assoc();
+    $id_concepto1 = $row["id"];
+    $tipo_calculo = $row["tipo_calculo"];
+    $valor = $row["valor"];
+
+    // Nueva consulta para buscar en historico_conceptos
+    $sql_historico = "SELECT valor FROM historico_conceptos WHERE identificador = ? AND fecha = $meses";
+    $stmt_historico = $conexion->prepare($sql_historico);
+    $stmt_historico->bind_param("i", $id_concepto1);
+    $stmt_historico->execute();
+    $result_historico = $stmt_historico->get_result();
+
+    if ($result_historico->num_rows > 0) {
+        $row_historico = $result_historico->fetch_assoc();
+        $valor = $row_historico["valor"];
+    }
 
         // Calcular valor según el tipo de cálculo
         switch ($tipo_calculo) {
@@ -225,7 +237,7 @@ function obtenerValorConcepto($conexion, $nom_concepto, $salarioBase, $precio_do
 
                         if ($result_concepto->num_rows > 0) {
                             $row_concepto = $result_concepto->fetch_assoc();
-                            $valor_concepto = obtenerValorConcepto($conexion, $row_concepto['nom_concepto'], $salarioBase, $precio_dolar, $salarioIntegral, $ids_empleados, $identificador, $conceptos_aplicados);
+                            $valor_concepto = obtenerValorConcepto($conexion, $row_concepto['nom_concepto'], $salarioBase, $precio_dolar, $salarioIntegral, $ids_empleados, $identificador, $conceptos_aplicados,, $meses);
                             $total_valor += $valor_concepto;
                         }
                     }
@@ -317,7 +329,7 @@ function obtenerValorConcepto($conexion, $nom_concepto, $salarioBase, $precio_do
 
                                                 if ($result_concepto->num_rows > 0) {
                                                     $row_concepto = $result_concepto->fetch_assoc();
-                                                    $valor_concepto = obtenerValorConcepto($conexion, $row_concepto['nom_concepto'], $salarioBase, $precio_dolar, $salarioIntegral, $ids_empleados, $identificador);
+                                                    $valor_concepto = obtenerValorConcepto($conexion, $row_concepto['nom_concepto'], $salarioBase, $precio_dolar, $salarioIntegral, $ids_empleados, $identificador, $meses);
                                                     $total_valor += $valor_concepto;
                                                 }
                                             }
@@ -440,7 +452,7 @@ foreach ($conceptos_aplicados as &$concepto) {
         $tipo_concepto = $concepto['tipo_concepto'];
 
         // Calcular el valor del concepto para este empleado
-        $valor_concepto = obtenerValorConcepto($conexion, $concepto['nom_concepto'], $empleados_unicos[$id_empleado]['salario_base'], $precio_dolar, $empleados_unicos[$id_empleado]['salario_integral'], array($id_empleado), $identificador);
+        $valor_concepto = obtenerValorConcepto($conexion, $concepto['nom_concepto'], $empleados_unicos[$id_empleado]['salario_base'], $precio_dolar, $empleados_unicos[$id_empleado]['salario_integral'], array($id_empleado), $identificador, $meses);
 
         // Agregar el valor del concepto al array correspondiente del empleado
         if ($tipo_concepto === "A") {
