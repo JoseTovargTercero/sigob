@@ -371,9 +371,6 @@ function hideLoader(loaderId) {
 }
 
 function empleadosDiferencia(registroAnterior, registroActual) {
-  if (!registroAnterior || registroAnterior.length === 0) {
-    return false
-  }
   // Empleados eliminados (en el registro anterior pero no en el registro actual)
   const empleadosEliminados = registroAnterior.filter(
     (empleado) => !registroActual.includes(empleado)

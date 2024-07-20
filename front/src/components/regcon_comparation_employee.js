@@ -1,19 +1,26 @@
 import { getRegConEmployeeData } from '../api/empleados.js'
+import { empleadosDiferencia } from '../helpers/helpers.js'
 
-export async function nom_comparation_employee({
-  empleadosEliminados,
-  empleadosNuevos,
-}) {
-  let empleadosNuevosInformacion =
-    empleadosNuevos &&
-    (await Promise.all(empleadosNuevos.map((id) => getRegConEmployeeData(id))))
+export async function nom_comparation_employee({ actual, anterior }) {
+  let { empleadosEliminados, empleadosNuevos } = empleadosDiferencia(
+    anterior,
+    actual
+  )
+
+  if (!empleadosEliminados.length && !empleadosNuevos.length) return false
 
   let empleadosEliminadosInformacion =
-    empleadosEliminados &&
+    empleadosEliminados.length !== 0 &&
     (await Promise.all(
       empleadosEliminados.map((id) => getRegConEmployeeData(id))
     ))
 
+  let empleadosNuevosInformacion =
+    empleadosNuevos.length !== 0 &&
+    (await Promise.all(empleadosNuevos.map((id) => getRegConEmployeeData(id))))
+
+  let tablaEliminados
+  let tablaNuevos
   // let empleadosEliminadosInformacionPeticion = await Promise.all(
   //   empleadosEliminadosInformacion
   // )
@@ -22,22 +29,38 @@ export async function nom_comparation_employee({
   //   empleadosNuevosInformacion
   // )
 
-  let th
+  if (empleadosEliminadosInformacion) {
+    let columnas = Object.keys(empleadosEliminadosInformacion[0]).map(
+      (column) => {
+        return `<th>${column}</th>`
+      }
+    )
 
-  let mappedRows = empleadosEliminadosInformacion.map((row) => {
-    if (!row) return false
-    let td = ''
+    let filas = empleadosEliminadosInformacion.map((row) => {
+      if (!row) return false
+      let td = ''
 
-    Object.values(row).forEach((el) => {
-      td += `<td>${el}</td>`
+      Object.values(row).forEach((el) => {
+        td += `<td>${el}</td>`
+      })
+
+      return `<tr>${td}</tr>`
     })
 
-    return `<tr>${td}</tr>`
-  })
+    tablaEliminados = `<table  class='table table-xs table-responsive mx-auto'
+    style='width: 100%'>
+        <thead>${columnas.join('')}</thead>
+        <tbody>${filas.join('')}</tbody>
+      </table>`
+  }
 
-  console.log(mappedRows)
+  // let thNuevos = Object.keys(empleadosNuevosInformacion[0]).map((column) => {
+  //   return `<th>${column}</th>`
+  // })
 
-  return `div class='card size-change-animation w-75 mx-auto' id="table-list-card">
+  console.log(tablaEliminados)
+
+  return `<div class='card size-change-animation w-75 mx-auto' id="table-list-card">
   <div class='card-header py-2'>
     <div class='d-flex align-items-center justify-content-between'>
       <div>
@@ -49,13 +72,7 @@ export async function nom_comparation_employee({
     </div>
   </div>
   <div class="card-body">
-  <table
-    class='table table-sm table-responsive mx-auto'
-    style='width: fit-content'
-  >
-    <thead>${th}</thead>
-    <tbody>${empleadosEliminadosInformacion}</tbody>
-  </table>
+ ${tablaEliminados}
   </div>
 </div>`
 }

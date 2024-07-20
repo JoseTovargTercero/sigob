@@ -6,6 +6,7 @@ import {
   getRegConPeticionesNomina,
 } from '../api/peticionesNomina.js'
 import { createComparationContainer } from '../components/regcon_comparation_container.js'
+import { nom_comparation_employee } from '../components/regcon_comparation_employee.js'
 import { confirmNotification, validateInput } from '../helpers/helpers.js'
 import { FRECUENCY_TYPES, NOTIFICATIONS_TYPES } from '../helpers/types.js'
 
@@ -73,15 +74,23 @@ export async function validateRequestNomForm({
       )
       fieldList.frecuencia = result.frecuencia
       fieldList.identificador = result.identificador
-      console.log(fieldList)
+
       if (comparationContainer) comparationContainer.remove()
 
       let peticiones = await getComparacionNomina(result)
       peticiones.confirmBtn = true
+
+      console.log(peticiones)
+      let tablaDiferencia = await nom_comparation_employee({
+        anterior: peticiones.registro_anterior.empleados,
+        actual: peticiones.registro_actual.empleados,
+      })
       requestComparationForm.insertAdjacentHTML(
         'beforeend',
-        createComparationContainer({ data: peticiones })
+        createComparationContainer({ data: peticiones, tablaDiferencia })
       )
+
+      comparationContainer
     }
 
     if (e.target.id === 'confirm-request') {
