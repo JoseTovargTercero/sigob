@@ -184,9 +184,12 @@ if ($result->num_rows > 0) {
     $valor = $row["valor"];
 
     // Nueva consulta para buscar en historico_conceptos
-    $sql_historico = "SELECT valor FROM historico_conceptos WHERE identificador = ? AND fecha = $meses";
+    $sql_historico = "SELECT valor 
+                  FROM historico_conceptos 
+                  WHERE identificador = ? 
+                  AND STR_TO_DATE(CONCAT('01-', fecha), '%d-%m-%Y') > STR_TO_DATE(CONCAT('01-', ?), '%d-%m-%Y')";
     $stmt_historico = $conexion->prepare($sql_historico);
-    $stmt_historico->bind_param("i", $id_concepto1);
+    $stmt_historico->bind_param("ss", $id_concepto1, $meses);
     $stmt_historico->execute();
     $result_historico = $stmt_historico->get_result();
 
@@ -237,7 +240,7 @@ if ($result->num_rows > 0) {
 
                         if ($result_concepto->num_rows > 0) {
                             $row_concepto = $result_concepto->fetch_assoc();
-                            $valor_concepto = obtenerValorConcepto($conexion, $row_concepto['nom_concepto'], $salarioBase, $precio_dolar, $salarioIntegral, $ids_empleados, $identificador, $conceptos_aplicados,, $meses);
+                            $valor_concepto = obtenerValorConcepto($conexion, $row_concepto['nom_concepto'], $salarioBase, $precio_dolar, $salarioIntegral, $ids_empleados, $identificador, $conceptos_aplicados,$meses);
                             $total_valor += $valor_concepto;
                         }
                     }
