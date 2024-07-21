@@ -1,3 +1,4 @@
+import { getRegConEmployeeData } from '../api/empleados.js'
 import {
   confirmarPeticionNomina,
   generarNominaTxt,
@@ -81,16 +82,17 @@ export async function validateRequestNomForm({
       peticiones.confirmBtn = true
 
       console.log(peticiones)
+
+      requestComparationForm.insertAdjacentHTML(
+        'beforeend',
+        createComparationContainer({ data: peticiones })
+      )
+
       let tablaDiferencia = await nom_comparation_employee({
         anterior: peticiones.registro_anterior.empleados,
         actual: peticiones.registro_actual.empleados,
+        obtenerEmpleado: getRegConEmployeeData,
       })
-      requestComparationForm.insertAdjacentHTML(
-        'beforeend',
-        createComparationContainer({ data: peticiones, tablaDiferencia })
-      )
-
-      comparationContainer
     }
 
     if (e.target.id === 'confirm-request') {

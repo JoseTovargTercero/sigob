@@ -1,4 +1,4 @@
-import { updateEmployeeStatus } from '../api/empleados.js'
+import { getEmployeeData, updateEmployeeStatus } from '../api/empleados.js'
 import {
   calculoNomina,
   descargarNominaTxt,
@@ -14,6 +14,7 @@ import {
 } from '../components/nom_empleados_list_card.js'
 import { nomReportCard } from '../components/nom_report_card.js'
 import { createComparationContainer } from '../components/regcon_comparation_container.js'
+import { nom_comparation_employee } from '../components/regcon_comparation_employee.js'
 import {
   closeModal,
   confirmNotification,
@@ -483,6 +484,11 @@ export async function validateRequestForm({
           'afterbegin',
           createComparationContainer({ data })
         )
+        let tablaDiferencia = await nom_comparation_employee({
+          anterior: data.registro_anterior.empleados,
+          actual: data.registro_actual.empleados,
+          obtenerEmpleado: getEmployeeData,
+        })
 
         requestStepPart2.classList.add('hide')
         requestStepPart3.classList.remove('hide')

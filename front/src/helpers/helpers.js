@@ -371,15 +371,23 @@ function hideLoader(loaderId) {
 }
 
 function empleadosDiferencia(registroAnterior, registroActual) {
+  let empleadosEliminados = [],
+    empleadosNuevos = []
+
+  if (!registroAnterior) return { empleadosEliminados, empleadosNuevos }
   // Empleados eliminados (en el registro anterior pero no en el registro actual)
-  const empleadosEliminados = registroAnterior.filter(
-    (empleado) => !registroActual.includes(empleado)
-  )
+  if (registroAnterior) {
+    empleadosEliminados = registroAnterior.filter(
+      (empleado) => !registroActual.includes(empleado)
+    )
+  }
 
   // Empleados nuevos (en el registro actual pero no en el registro anterior)
-  const empleadosNuevos = registroActual.filter(
-    (empleado) => !registroAnterior.includes(empleado)
-  )
+  if (registroActual) {
+    empleadosNuevos = registroActual.filter(
+      (empleado) => !registroAnterior.includes(empleado)
+    )
+  }
 
   return { empleadosEliminados, empleadosNuevos }
 }

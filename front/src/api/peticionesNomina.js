@@ -127,8 +127,6 @@ const getComparacionNomina = async (obj) => {
   if (!obj) return
   let { correlativo, nombre_nomina } = obj
 
-  console.log(obj)
-
   showLoader()
   try {
     let res = await fetch(comparacionNominaUrl, {
@@ -171,7 +169,7 @@ const getComparacionNomina2 = async ({ nombre_nomina }) => {
     let data = await res.json()
 
     let { registro_anterior } = data
-    console.log(registro_anterior)
+
     if (registro_anterior.id !== 0) {
       registro_anterior = mapComparationRequest(registro_anterior)
     } else {

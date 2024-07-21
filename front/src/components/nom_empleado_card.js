@@ -32,23 +32,23 @@ export async function employeeCard({ id, elementToInsert }) {
   //     tipo_cuenta: 0,
   //   }
 
-  let id_empleado = employeedeData[0].id_empleado,
-    nombres = employeedeData[0].nombres,
-    cedula = employeedeData[0].cedula,
-    nacionalidad = employeedeData[0].nacionalidad,
-    fecha_ingreso = employeedeData[0].fecha_ingreso,
-    otros_años = employeedeData[0].otros_años,
-    status = employeedeData[0].status,
-    banco = employeedeData[0].banco,
-    cuenta_bancaria = employeedeData[0].cuenta_bancaria,
-    hijos = employeedeData[0].hijos,
-    instruccion_academica = employeedeData[0].instruccion_academica,
-    cargo = employeedeData[0].cod_cargo,
-    dependencia = employeedeData[0].dependencia,
-    id_dependencia = employeedeData[0].id_dependencia,
-    discapacidades = employeedeData[0].discapacidades,
-    tipo_nomina = employeedeData[0].tipo_nomina,
-    observacion = employeedeData[0].observacion
+  let id_empleado = employeedeData.id_empleado,
+    nombres = employeedeData.nombres,
+    cedula = employeedeData.cedula,
+    nacionalidad = employeedeData.nacionalidad,
+    fecha_ingreso = employeedeData.fecha_ingreso,
+    otros_años = employeedeData.otros_años,
+    status = employeedeData.status,
+    banco = employeedeData.banco,
+    cuenta_bancaria = employeedeData.cuenta_bancaria,
+    hijos = employeedeData.hijos,
+    instruccion_academica = employeedeData.instruccion_academica,
+    cargo = employeedeData.cod_cargo,
+    dependencia = employeedeData.dependencia,
+    id_dependencia = employeedeData.id_dependencia,
+    discapacidades = employeedeData.discapacidades,
+    tipo_nomina = employeedeData.tipo_nomina,
+    observacion = employeedeData.observacion
 
   const getCargo = async () => {
     let cargos = await getJobData()

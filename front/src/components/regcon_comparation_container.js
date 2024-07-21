@@ -2,22 +2,66 @@ import { getRegConEmployeeData } from '../api/empleados.js'
 import { empleadosDiferencia } from '../helpers/helpers.js'
 import { nom_comparation_employee } from './regcon_comparation_employee.js'
 
+const d = document
+const w = window
+
 export function createComparationContainer({ data, tablaDiferencia }) {
   if (!data) return
   let { registro_actual, registro_anterior, confirmBtn } = data
 
-  console.log(data)
   return `<div
       class='request-comparation-container'
       id='request-comparation-container'
     >
-    ${tablaDiferencia}
-    ${createCard({
-      actual: registro_actual,
-      anterior: registro_anterior,
-      confirmBtn,
-    })}
-    </div>`
+      ${createCard({
+        actual: registro_actual,
+        anterior: registro_anterior,
+        confirmBtn,
+      })}
+      <div class='row justify-content-center'>
+        <div class='col mb-4' style='max-width:600px'>
+        <h5 class="mb-0">Empleados eliminados de nomina</h5>
+        <small class="mt-0 text-muted">Visualice los empleados eliminados com respecto a la nomina anterior</small>
+          <table
+            id='peticion-empleados-eliminados'
+            class='table table-xs table-striped'
+            style='width:100%;'
+          >
+            <thead class='w-100'>
+              <th>NOMBRES</th>
+              <th>CEDULA</th>
+              <th>DEPENDENCIA</th>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+       <div class='col mb-4' style='max-width:600px'>
+         <h5 class="mb-0">Empleados nuevos en nomina</h5>
+        <small class="mt-0 text-muted">Visualice los empleados añadidos com respecto a la nomina anterior</small>
+          <table
+            id='peticion-empleados-nuevos'
+            class='table table-xs table-striped'
+            style='width:100%'
+          >
+            <thead class='w-100'>
+              <th>NOMBRES</th>
+              <th>CEDULA</th>
+              <th>DEPENDENCIA</th>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    
+     ${
+       confirmBtn
+         ? `<div class='form-group'>
+            <button class='btn btn-primary w-100' id="confirm-request" data-correlativo="${registro_actual.correlativo}">CONFIRMAR PETICIÓN</button>
+          </div>`
+         : ''
+     }
+    `
 }
 
 const createCard = ({ actual, anterior, confirmBtn }) => {
@@ -131,15 +175,7 @@ const createCard = ({ actual, anterior, confirmBtn }) => {
 
       
       </div>
-      <div class="card-footer">
-      ${
-        confirmBtn
-          ? `<div class='form-group'>
-            <button class='btn btn-primary w-100' id="confirm-request" data-correlativo="${correlativoActual}">CONFIRMAR</button>
-          </div>`
-          : ''
-      }
-      </div>
+      
     `
 }
 

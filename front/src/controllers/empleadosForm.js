@@ -65,32 +65,32 @@ function validateEmployeeForm({
 
       // SI EL EMPLEADO TIENE EL VERIFICADO EN 2, COLOCAR CORRECIÓN EN FORMULARCIÓN DE EDICIÓN
 
-      if (employeeData[0].verificado === 2) {
+      if (employeeData.verificado === 2) {
         let correcionElement = d.getElementById('employee-correcion')
         if (correcionElement) correcionElement.remove()
         formElement.insertAdjacentHTML(
           'beforebegin',
           nomCorrectionAlert({
-            message: employeeData[0].correcion,
+            message: employeeData.correcion,
             type: ALERT_TYPES.warning,
           })
         )
       }
 
       // Vacíar campo de dependencia no necesario
-      employeeData[0].dependencia = ''
+      employeeData.dependencia = ''
 
-      employeeData[0].id = employeeData[0].id_empleado
-      employeeId = employeeData[0].id_empleado
+      employeeData.id = employeeData.id_empleado
+      employeeId = employeeData.id_empleado
 
       console.log(employeeId)
 
-      fieldList = employeeData[0]
+      fieldList = employeeData
 
       employeeSelectElementCopy.forEach((select) => {
         // SI EL VALOR NO ES UNDEFINED COLOCAR VALOR EN SELECT
-        if (employeeData[0][select.name] !== undefined)
-          select.value = employeeData[0][select.name]
+        if (employeeData[select.name] !== undefined)
+          select.value = employeeData[select.name]
 
         validateInput({
           target: select,
@@ -103,10 +103,10 @@ function validateEmployeeForm({
       employeeInputElementCopy.forEach((input) => {
         // SI EL VALOR NO ES UNDEFINED COLOCAR VALOR EN INPUT
         if (
-          employeeData[0][input.name] !== undefined &&
+          employeeData[input.name] !== undefined &&
           input.name !== 'dependencia'
         )
-          input.value = employeeData[0][input.name]
+          input.value = employeeData[input.name]
 
         validateInput({
           target: input,
@@ -301,7 +301,7 @@ function validateEmployeeForm({
 
 async function sendEmployeeInformationRequest({ data }) {
   let employeeDataRequest = await getEmployeeData(employeeId),
-    employeeData = employeeDataRequest[0]
+    employeeData = employeeDataRequest
 
   console.log(employeeData)
   let updateData = []

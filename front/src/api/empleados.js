@@ -78,7 +78,7 @@ const getEmployeeData = async (id) => {
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
     const json = await res.json()
     console.log(json)
-    return json
+    return json[0]
   } catch (e) {
     console.log(e)
     return confirmNotification({
