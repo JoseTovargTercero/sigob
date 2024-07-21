@@ -93,9 +93,29 @@ foreach ($pdf_files as $url => $pdf_filename) {
     // Agregar el PDF al archivo ZIP
     $zip->addFromString($pdf_filename, $pdf_content);
 }
+// Construir la consulta SQL para actualizar datos
+$sql2 = "UPDATE peticiones SET status_archivos = :status_archivos WHERE correlativo = :correlativo";
 
+// Preparar la declaración SQL
+$stm3 = $conn->prepare($sql2);
+
+if ($stm3 === false) {
+    die("Error al preparar la consulta.");
+}
+
+// Vincular los parámetros
+$status_archivos = 1;
+$stm3->bindParam(':status_archivos', $status_archivos, PDO::PARAM_INT);
+$stm3->bindParam(':correlativo', $correlativo, PDO::PARAM_INT);
+
+// Ejecutar la consulta
+if ($stm3->execute() === false) {
+    $errorInfo = $stm3->errorInfo();
+    die("Error al ejecutar la consulta: " . $errorInfo[2]);
+}
 // Cerrar el archivo ZIP
 $zip->close();
+
 
 // Configurar las cabeceras para la descarga del archivo ZIP
 header('Content-Description: File Transfer');
@@ -116,6 +136,9 @@ readfile($zip_filename);
 
 // Eliminar el archivo ZIP del servidor después de la descarga
 unlink($zip_filename);
+
+
+
 
 // Salir del script
 exit;
