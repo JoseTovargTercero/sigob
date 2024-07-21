@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 21-07-2024 a las 03:44:04
+-- Tiempo de generación: 21-07-2024 a las 04:24:04
 -- Versión del servidor: 10.4.27-MariaDB
 -- Versión de PHP: 7.4.33
 
@@ -2180,7 +2180,7 @@ CREATE TABLE `empleados_pasados` (
   `hijos` int(11) NOT NULL DEFAULT 0,
   `instruccion_academica` int(11) NOT NULL DEFAULT 0,
   `discapacidades` int(2) NOT NULL DEFAULT 0,
-  `tipo_nomina` varchar(10) NOT NULL,
+  `tipo_nomina` varchar(255) NOT NULL,
   `id_dependencia` int(255) NOT NULL,
   `verificado` int(1) NOT NULL DEFAULT 0,
   `correcion` varchar(255) DEFAULT NULL,

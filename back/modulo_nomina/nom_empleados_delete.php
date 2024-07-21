@@ -59,7 +59,13 @@ if (isset($_GET['id'])) {
         }
     }
     $stmt->close();
-    $tipo_nomina2 = json_encode($tipo_nomina);
+
+    // Verificación adicional para asegurarse de que no haya espacios en blanco o caracteres extraños
+    $tipo_nomina = array_map('intval', $tipo_nomina);
+
+    // Asegúrate de que el array tipo_nomina está correctamente formado antes de convertirlo a JSON
+    $tipo_nomina2 = json_encode(array_values($tipo_nomina));
+
     // Consultar la tabla empleados
     $stmt = $conexion->prepare("SELECT *, TIMESTAMPDIFF(YEAR, fecha_ingreso, CURDATE()) + otros_años AS antiguedad_total FROM empleados WHERE id = ?");
     if (!$stmt) {
@@ -73,6 +79,7 @@ if (isset($_GET['id'])) {
         $empleado = $result->fetch_assoc();
     }
     $stmt->close();
+    $status_empleado = "R";
 
     // Insertar en empleados_pasados
     $stmt = $conexion->prepare("INSERT INTO empleados_pasados (nacionalidad, cedula, nombres, otros_años, status, observacion, cod_cargo, banco, cuenta_bancaria, hijos, instruccion_academica, discapacidades, tipo_nomina, id_dependencia, verificado, correcion, beca, fecha_ingreso) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
@@ -84,7 +91,7 @@ if (isset($_GET['id'])) {
         $empleado['cedula'], 
         $empleado['nombres'], 
         $empleado['antiguedad_total'], 
-        $empleado['status'], 
+        $status_empleado, 
         $empleado['observacion'], 
         $empleado['cod_cargo'], 
         $empleado['banco'], 
@@ -102,7 +109,7 @@ if (isset($_GET['id'])) {
     $stmt->execute();
 
     // Preparar la declaración SQL para eliminar el registro
-    $sql = "DELETE FROM empleados WHERE id = ?";
+    $sql = "UPDATE empleados SET  status='R' WHERE id = ?";
 
     // Preparar la declaración SQL
     $stmt = $conexion->prepare($sql);
@@ -115,12 +122,12 @@ if (isset($_GET['id'])) {
 
     // Ejecutar la consulta preparada
     if ($stmt->execute()) {
-        echo "Registro eliminado correctamente.";
+        echo "Empleado desactivado correctamente.";
 
         // Insertar en la tabla movimientos una sola vez
         $fecha_movimiento = date('Y-m-d H:i:s');
         $accion = 'Eliminar';
-        $descripcion = "Eliminacion de empleado: $id";
+        $descripcion = "Desactivacion de empleado: $id";
         $status = 1;
         $tipo_nomina_json = json_encode($tipo_nomina);
 
