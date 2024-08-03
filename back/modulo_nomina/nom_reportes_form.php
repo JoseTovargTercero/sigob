@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'conexion.php'; // Asegúrate de tener tu archivo de conexión a la base de datos
+require_once '../sistema_global/conexion.php';
 
 $condiciones = $_POST['condiciones'];
 $columnas = $_POST['columnas'];
