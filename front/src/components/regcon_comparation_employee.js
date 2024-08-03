@@ -137,6 +137,8 @@ export async function nom_comparation_employee({
       }
     })
 
+    console.log(dataNuevos)
+
     empleadosNuevosTabla.clear().draw()
 
     // console.log(datosOrdenados)

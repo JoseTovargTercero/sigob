@@ -56,7 +56,7 @@ export function employeePayTableHTML({ nominaData, columns }) {
     })
     .join('')
 
-  let table = `<div class='card' id='request-employee-table-card'>
+  let table = `<div class='' id='request-employee-table-card'>
       <div class='card-header'>
         <div class=''>
           <div>
