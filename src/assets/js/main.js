@@ -136,6 +136,7 @@ function setCondicionante(condicionante, div = null) {
   }
 
 
+
   fetch('../../back/modulo_nomina/nom_columnas_return.php', {
       method: 'POST',
       headers: {
@@ -178,7 +179,6 @@ function setCondicionante(condicionante, div = null) {
       console.error('Error:', error);
     });
 }
-
 
 
 /**
