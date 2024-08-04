@@ -174,7 +174,7 @@ require_once '../../back/sistema_global/session.php';
 
                             </div>
                         </div>
-                        <div class="card-body" id="request-form-information-body"></div>
+                        <div class="" id="request-form-information-body"></div>
                     </div>
                 </div>
                 <!-- [ worldLow section ] end -->

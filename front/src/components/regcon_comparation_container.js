@@ -10,7 +10,7 @@ export function createComparationContainer({ data, tablaDiferencia }) {
   let { registro_actual, registro_anterior, confirmBtn } = data
 
   return `<div
-      class='request-comparation-container'
+      class='border-bottom border-2 border-secondary border-opacity-25 request-comparation-container mb-4'
       id='request-comparation-container'
     >
       ${createCard({
@@ -18,8 +18,9 @@ export function createComparationContainer({ data, tablaDiferencia }) {
         anterior: registro_anterior,
         confirmBtn,
       })}
+      
       <div class='row justify-content-center'>
-        <div class='col mb-4' style='max-width:600px'>
+        <div class='col-sm-6 mb-4'>
         <h5 class="mb-0">Empleados eliminados de nomina</h5>
         <small class="mt-0 text-muted">Visualice los empleados eliminados com respecto a la nomina anterior</small>
           <table
@@ -35,7 +36,7 @@ export function createComparationContainer({ data, tablaDiferencia }) {
             <tbody></tbody>
           </table>
         </div>
-       <div class='col mb-4' style='max-width:600px'>
+       <div class='col-sm-6 mb-4'>
          <h5 class="mb-0">Empleados nuevos en nomina</h5>
         <small class="mt-0 text-muted">Visualice los empleados añadidos com respecto a la nomina anterior</small>
           <table
@@ -119,7 +120,7 @@ const createCard = ({ actual, anterior, confirmBtn }) => {
   )
 
   return `
-    <div class='card p-2 slide-up-animation'>
+    <div class='p-2 slide-up-animation'>
       <div class='card-header row py-2'>
      ${
        anterior
@@ -162,11 +163,19 @@ const createCard = ({ actual, anterior, confirmBtn }) => {
     </div>
       </div>
 
-      <div class='card-body request-list-container'>
+      <div class='row gap-2 m-auto request-list-container border-bottom border-2 border-secondary border-opacity-25 mb-4'>
       
-        ${listaAsignaciones ? listaAsignaciones : ''}
+      
+        ${
+          listaAsignaciones
+            ? `
+          <div class="col-sm">
+          ${listaAsignaciones}
+      </div>`
+            : ''
+        }
 
-        <div class="d-flex flex-column">
+        <div class="col-sm d-flex flex-column">
         ${listaDeducciones ? listaDeducciones : ''}
         ${listaAportes ? listaAportes : ''}
         ${listaEmpleados ? listaEmpleados : ''}

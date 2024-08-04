@@ -42,8 +42,6 @@
 
 .request-comparation-container {
   width: 100%;
-  padding: 1rem;
-
   gap: 1rem;
   min-height: 300px;
 }
@@ -55,9 +53,7 @@
   justify-items: center;
 }
 .request-list-container table {
-  max-width: 420px;
 }
 
 .request-list-container table td {
-  padding: 0.4rem;
 }
