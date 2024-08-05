@@ -24,6 +24,7 @@ if ($result->num_rows > 0) {
         $tabulador = array(
             "id_dependencia" => $row["id_dependencia"],
             "dependencia" => $row["dependencia"],
+            "cod_dependencia" => $row["cod_dependencia"],
 
         );
         $datos[] = $tabulador;

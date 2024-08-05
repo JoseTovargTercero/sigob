@@ -1,3 +1,5 @@
+import { validateDependenciaForm } from './src/controllers/dependenciasForm.js'
+import { loadDependenciaTable } from './src/controllers/dependenciasTable.js'
 import { validateEmployeeForm } from './src/controllers/empleadosForm.js'
 import { validateEmployeeTable } from './src/controllers/empleadosTable.js'
 import { validateRequestForm } from './src/controllers/peticionesNominaForm.js'
@@ -9,16 +11,18 @@ import { validateTabulatorForm } from './src/controllers/tabuladorForm.js'
 import { validateModal } from './src/helpers/helpers.js'
 const d = document
 
-const tabulatorForm = d.getElementById('tabulator-primary-form')
-const employeeForm = d.getElementById('employee-form')
-const requestNomForm = d.getElementById('request-nom-form')
-const requestForm = d.getElementById('request-form')
 // const requestForm2 = d.getElementById('request-form2')
 const payNomForm = d.getElementById('pay-nom-form')
 
 const employeeTableElement = d.getElementById('employee-table')
 const tabulatorTableElement = d.getElementById('tabulator-table')
 d.addEventListener('DOMContentLoaded', (e) => {
+  const tabulatorForm = d.getElementById('tabulator-primary-form')
+  const employeeForm = d.getElementById('employee-form')
+  const requestNomForm = d.getElementById('request-nom-form')
+  const requestForm = d.getElementById('request-form')
+  const dependenciaTable = d.getElementById('dependencia-table')
+
   if (tabulatorForm) {
     validateTabulatorForm({
       formId: 'tabulator-primary-form',
@@ -188,6 +192,32 @@ d.addEventListener('DOMContentLoaded', (e) => {
       },
     })
     return
+  }
+
+  if (dependenciaTable) {
+    loadDependenciaTable()
+    validateDependenciaForm({
+      formId: 'dependencia-form',
+      formContainerId: 'dependencia-form-container',
+      btnNewId: 'dependencia-nueva',
+      btnSaveId: 'dependencia-guardar',
+      fieldList: {
+        dependencia: '',
+        cod_dependencia: '',
+      },
+      fieldListErrors: {
+        dependencia: {
+          value: true,
+          message: 'Campo inválido',
+          type: 'text',
+        },
+        cod_dependencia: {
+          value: true,
+          message: 'Campo inválido',
+          type: 'number',
+        },
+      },
+    })
   }
 
   // if (requestForm) {

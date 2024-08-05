@@ -331,7 +331,7 @@ const getProfessionData = async () => {
   }
 }
 
-const getDependencyData = async () => {
+const getDependencyData = async ({ fullInfo }) => {
   showLoader()
   try {
     const res = await fetch(dependenciasUrl)
@@ -339,6 +339,8 @@ const getDependencyData = async () => {
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
 
     const json = await res.json()
+
+    if (fullInfo) return json
 
     return mapData({ obj: json, name: 'dependencia', id: 'id_dependencia' })
   } catch (e) {
@@ -376,7 +378,9 @@ const getBankData = async () => {
 const sendDependencyData = async ({ newDependency }) => {
   showLoader()
   try {
-    const dependencyData = await getDependencyData()
+    console.log(newDependency)
+
+    const dependencyData = await getDependencyData({ fullInfo: false })
     if (
       dependencyData.some(
         (el) =>
@@ -406,9 +410,10 @@ const sendDependencyData = async ({ newDependency }) => {
       return newDependency
     }
   } catch (e) {
+    console.log(e)
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
-      message: 'Error al enviar datos del empleado',
+      message: 'Error al guardar dependencia',
     })
   } finally {
     hideLoader()

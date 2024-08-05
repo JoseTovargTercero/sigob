@@ -38,7 +38,7 @@ require_once '../../back/sistema_global/session.php';
                     <div class="row align-items-center">
                         <div class="col-md-6">
                             <div class="page-header-title">
-                                <h5 class="mb-0">Petición de nomina2</h5>
+                                <h5 class="mb-0">Petición de nomina</h5>
                             </div>
                         </div>
                     </div>
@@ -55,7 +55,7 @@ require_once '../../back/sistema_global/session.php';
                                     <h5 class="mb-0">Peticion de nomina</h5>
                                     <small class="text-muted mt-0">Administre las peticiones de nomina</small>
                                 </div>
-                                <button class="btn btn-primary" id="btn-new-request">Nueva petición</button>
+                                <button class="btn btn-primary" id="btn-new-dependencia">Nueva petición</button>
 
                             </div>
                         </div>

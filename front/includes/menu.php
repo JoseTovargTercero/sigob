@@ -21,8 +21,8 @@
               <span class="pc-mtext">Mantenimiento</span><span class="pc-arrow"><i class="ti ti-chevron-right"></i></span>
             </a>
             <ul class="pc-submenu">
-              <li class="pc-item"><a class="pc-link"
-                  href="<?php echo constant('URL') ?>front/mod_nomina/index">Inicio</a></li>
+              <li class="pc-item"><a class="pc-link" href="<?php echo constant('URL') ?>front/mod_nomina/index">Inicio</a>
+              </li>
               <li class="pc-item"><a class="pc-link"
                   href="<?php echo constant('URL') ?>front/mod_nomina/nom_errores">Estatus</a></li>
 
@@ -70,6 +70,8 @@
                   href="<?php echo constant('URL') ?>front/mod_nomina/nom_grupos">Registro de nominas</a></li>
               <li class="pc-item"><a class="pc-link"
                   href="<?php echo constant('URL') ?>front/mod_nomina/nom_peticiones_form">Peticiones</a></li>
+              <li class="pc-item"><a class="pc-link"
+                  href="<?php echo constant('URL') ?>front/mod_nomina/nom_dependencias_tabla">Dependencias</a></li>
 
 
             </ul>
@@ -87,14 +89,16 @@
               <span class="pc-micon">
                 <i class='bx bx-group'></i>
               </span>
-              <span class="pc-mtext">Gestión de Empleados</span><span class="pc-arrow"><i class="ti ti-chevron-right"></i></span>
+              <span class="pc-mtext">Gestión de Empleados</span><span class="pc-arrow"><i
+                  class="ti ti-chevron-right"></i></span>
             </a>
             <ul class="pc-submenu">
               <li class="pc-item"><a class="pc-link"
                   href="<?php echo constant('URL') ?>front/mod_registro_control/regcon_empleados_verificar">Nuevos
                   empleados</a></li>
               <li class="pc-item"><a class="pc-link"
-                  href="<?php echo constant('URL') ?>front/mod_registro_control/regcon_modificacion_empleados">Actualización de datos</a></li>
+                  href="<?php echo constant('URL') ?>front/mod_registro_control/regcon_modificacion_empleados">Actualización
+                  de datos</a></li>
             </ul>
           </li>
 
@@ -107,7 +111,8 @@
             </a>
             <ul class="pc-submenu">
               <li class="pc-item"><a class="pc-link"
-                  href="<?php echo constant('URL') ?>front/mod_registro_control/regcon_nomina_comparar">Pago de Nómina</a></li>
+                  href="<?php echo constant('URL') ?>front/mod_registro_control/regcon_nomina_comparar">Pago de Nómina</a>
+              </li>
 
 
 
