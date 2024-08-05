@@ -331,7 +331,7 @@ const getProfessionData = async () => {
   }
 }
 
-const getDependencyData = async ({ fullInfo }) => {
+const getDependencyData = async (fullInfo = false) => {
   showLoader()
   try {
     const res = await fetch(dependenciasUrl)
@@ -380,7 +380,7 @@ const sendDependencyData = async ({ newDependency }) => {
   try {
     console.log(newDependency)
 
-    const dependencyData = await getDependencyData({ fullInfo: false })
+    const dependencyData = await getDependencyData(false)
     if (
       dependencyData.some(
         (el) =>

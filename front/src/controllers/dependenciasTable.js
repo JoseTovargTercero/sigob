@@ -52,7 +52,7 @@ let dependenciaTable = new DataTable('#dependencias-table', {
 export async function loadDependenciaTable() {
   console.log('hola')
 
-  let dependencias = await getDependencyData({ fullInfo: true })
+  let dependencias = await getDependencyData(true)
 
   console.log(dependencias)
   let datosOrdenados = [...dependencias].sort((a, b) => a.id - b.id)
