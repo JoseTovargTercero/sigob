@@ -64,6 +64,16 @@ INSERT INTO `bancos` (`id`, `prefijo`, `nombre`, `matriz`, `afiliado`) VALUES
 
 -- --------------------------------------------------------
 
+CREATE TABLE `reportes` (
+  `id` int(11) NOT NULL,
+  `furmulacion` longtext COLLATE latin1_spanish_ci NOT NULL,
+  `columnas` longtext COLLATE latin1_spanish_ci NOT NULL,
+  `formato` varchar(10) COLLATE latin1_spanish_ci NOT NULL,
+  `nombre` varchar(255) COLLATE latin1_spanish_ci NOT NULL,
+  `user` int(10) NOT NULL,
+  `creacion` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+
 --
 -- Estructura de tabla para la tabla `cargos_grados`
 --
@@ -12016,7 +12026,8 @@ INSERT INTO `txt` (`id`, `id_empleado`, `total_a_pagar`, `nombre_nomina`, `ident
 --
 -- Índices para tablas volcadas
 --
-
+ALTER TABLE `reportes`
+  ADD PRIMARY KEY (`id`);
 --
 -- Indices de la tabla `backups`
 --
@@ -12285,7 +12296,8 @@ ALTER TABLE `movimientos`
 --
 ALTER TABLE `nominas`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
-
+ALTER TABLE `reportes`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT de la tabla `nominas_conceptos`
 --

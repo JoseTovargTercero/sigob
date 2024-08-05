@@ -57,6 +57,279 @@ $stmt->close();
       </div>
       <!-- [ Main Content ] start -->
       <div class="row">
+        <!-- [ Recent Users ] start -->
+        <div class="col-xl-12 col-md-6">
+          <div class="card Recent-Users">
+            <div class="card-header">
+              <h5>Reportes</h5>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-lg-12">
+                  <div class="card-body p-3">
+                    <ul class="nav nav-pills nav-justified">
+                      <span id="link_informacion" class="nav-item nav-link item-wizard active"><i class="ph-duotone ph-user-circle"></i> <span class="d-none d-sm-inline">Informacion</span></span>
+                      <span id="link_columnas" class="nav-item nav-link item-wizard"><i class="ph-duotone ph-map-pin"></i>
+                        <span class="d-none d-sm-inline">Columnas</span></span>
+                      <span id="link_configuracion" class="nav-item nav-link item-wizard"><i class="ph-duotone ph-check-circle"></i>
+                        <span class="d-none d-sm-inline">Configuración final</span></span>
+                    </ul>
+                  </div>
+                  <div class="card-body">
+
+                    <div class="progress mb-3">
+                      <div class="progress-bar bg-success " id="progressbar" style="width: 25%;" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+
+
+                    <div class="tab-content">
+
+                      <section class="tab-pane show active" id="tab_informacion">
+                        <div id="contactForm" method="post" action="#">
+                          <div class="text-center">
+                            <h3 class="mb-2">Comencemos con la información requerida.</h3>
+                            <small class="text-muted">
+                              Formulación del reporte.
+                            </small>
+                          </div>
+                          <div class="mt-4">
+
+                            <div id="formulacion-conceptos" class="
+                            ">
+
+                              <!-- HERRAMIENTA PARA FILTRAR SEGUN FORMULA-->
+                              <div class="row">
+
+                                <div class="col-lg-6">
+                                  <div class="mb-3"><label class="form-label">Formulación</label>
+                                    <div class="input-group mb-3">
+                                      <textarea class="form-control condicion" rows="1" id="t_area-2"></textarea>
+                                      <button class="btn btn-primary" onclick="validarFormula('t_area-2', 'emp_pre_seleccionados-list')" type="button">Obtener</button>
+                                    </div>
+                                  </div>
+
+
+                                  <hr class="my-4">
+                                  <h5 class="mb-0">Filtrar por nomina</h5>
+                                  <small class="text-muted">Si no selecciona ninguna nomina no se aplicara ningún filtro</small>
+
+                                  <div class="mb-3">
+                                    <label class="form-label">Formulación</label>
+                                    <select id="filtrarXnomina" class="form-control">
+                                      <option value="Ninguno">Ninguno</option>
+                                      <option value="nominas">Nominas</option>
+                                      <option value="nominas_g">Nominas Grupos</option>
+                                    </select>
+                                  </div>
+
+
+                                  <ul class="list-group" id="nominasFiltroSection">
+
+                                  </ul>
+
+                                </div>
+                                <div class="col-lg-6">
+
+                                  <div class="mb-3">
+                                    <label class="form-label" for="campo_condiciona">Condicionantes</label>
+                                    <select name="campo_condiciona" onchange="setCondicionante(this.value, 'result-em_nomina')" id="campo_condiciona" class="form-control">
+                                      <option value="">Seleccione</option>
+                                      <option value="cod_cargo">Código de cargo</option>
+                                      <option value="discapacidades">Discapacidades</option>
+                                      <option value="instruccion_academica">Instrucción académica</option>
+                                      <option value="hijos">Hijos</option>
+                                      <option value="antiguedad">Antigüedad (desde la fecha de ingreso)</option>
+                                      <option value="antiguedad_total">Antigüedad (Sumando años anteriores)</option>
+                                    </select>
+                                  </div>
+                                  <ul class="list-group" id="result-em_nomina">
+                                  </ul>
+                                </div>
+                              </div>
+
+
+
+                            </div>
+
+
+                          </div>
+                        </div>
+
+                        <div class="d-flex w-100 mt-3">
+                          <div class="d-flex m-a">
+                            <div class="me-2"><button class="btn btn-secondary disabled">Regresar</button></div>
+                            <div class="next"><button class="btn btn-secondary mt-3 mt-md-0" onclick="nextStep('1')">Siguiente</button></div>
+                          </div>
+                        </div>
+
+                      </section>
+                      <section class="tab-pane" id="tab_columnas">
+                        <div id="jobForm" method="post" action="#">
+                          <div class="text-center">
+                            <h3 class="mb-2">Es hora de indicar que columnas se mostraran</h3>
+                            <small class="text-muted">
+                              Por favor, ingrese los columnas de la nómina.
+                            </small>
+                          </div>
+                          <div class="row mt-4">
+                            <div class="list-group">
+                              <label class="list-group-item">
+                                <input class="form-check-input me-1 campos" type="checkbox" disabled checked value="nombres">
+                                Nombre
+                              </label>
+                              <label class="list-group-item">
+                                <input class="form-check-input me-1 campos" type="checkbox" disabled checked value="cedula">
+                                Cedula
+                              </label>
+                              <label class="list-group-item">
+                                <input class="form-check-input me-1 campos" type="checkbox" value="nacionalidad">
+                                Nacionalidad
+                              </label>
+                              <label class="list-group-item">
+                                <input class="form-check-input me-1 campos" type="checkbox" value="otros_años">
+                                Otros años
+                              </label>
+                              <label class="list-group-item">
+                                <input class="form-check-input me-1 campos" type="checkbox" value="status">
+                                Estatus
+                              </label>
+                              <label class="list-group-item">
+                                <input class="form-check-input me-1 campos" type="checkbox" value="observacion">
+                                Observación
+                              </label>
+                              <label class="list-group-item">
+                                <input class="form-check-input me-1 campos" type="checkbox" value="cod_cargo">
+                                Código del cargo
+                              </label>
+                              <label class="list-group-item">
+                                <input class="form-check-input me-1 campos" type="checkbox" value="banco">
+                                Banco
+                              </label>
+                              <label class="list-group-item">
+                                <input class="form-check-input me-1 campos" type="checkbox" value="cuenta_bancaria">
+                                Cuenta Bancaria
+                              </label>
+                              <label class="list-group-item">
+                                <input class="form-check-input me-1 campos" type="checkbox" value="hijos">
+                                Hijos
+                              </label>
+                              <label class="list-group-item">
+                                <input class="form-check-input me-1 campos" type="checkbox" value="instruccion_academica">
+                                Instrucción Académica
+                              </label>
+                              <label class="list-group-item">
+                                <input class="form-check-input me-1 campos" type="checkbox" value="discapacidades">
+                                Discapacidades
+                              </label>
+                              <label class="list-group-item">
+                                <input class="form-check-input me-1 campos" type="checkbox" value="tipo_nomina">
+                                Nomina
+                              </label>
+                              <label class="list-group-item">
+                                <input class="form-check-input me-1 campos" type="checkbox" value="id_dependencia">
+                                Dependencia
+                              </label>
+                              <label class="list-group-item">
+                                <input class="form-check-input me-1 campos" type="checkbox" value="verificado">
+                                Código Dependencia
+                              </label>
+                              <label class="list-group-item">
+                                <input class="form-check-input me-1 campos" type="checkbox" value="correcion">
+                                Corrección
+                              </label>
+                              <label class="list-group-item">
+                                <input class="form-check-input me-1 campos" type="checkbox" value="beca">
+                                Beca
+                              </label>
+                              <label class="list-group-item">
+                                <input class="form-check-input me-1 campos" type="checkbox" value="fecha_ingreso">
+                                Fecha de ingreso
+                              </label>
+                              <label class="list-group-item">
+                                <input class="form-check-input me-1 campos" type="checkbox" value="sueldo">
+                                Sueldo
+                              </label>
+                            </div>
+
+
+                          </div>
+                          <div class="d-flex w-100 mt-3">
+                            <div class="d-flex m-a">
+                              <div class=" me-2"><button class="previous btn btn-secondary" onclick="beforeStep('1')">Regresar</button></div>
+                              <div class="next"><button class="previous btn btn-secondary mt-3 mt-md-0" onclick="nextStep('2')">Siguiente</button></div>
+                            </div>
+                          </div>
+                        </div>
+                      </section>
+                      <section class="tab-pane" id="tab_configuracion">
+                        <div class="row d-flex justify-content-center">
+                          <div class="col-lg-6">
+                            <div class="text-center"><i class="ph-duotone ph-gift f-50 text-danger"></i>
+                              <h3 class="mt-4 mb-3">Configuración final</h3>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="p-3">
+                          <div class="row">
+
+
+                            <div class="col-sm-6">
+                              <div class="mb-3">
+                                <label class="form-label">Formato del archivo</label>
+                                <select class="form-control" id="formato">
+                                  <option value="">Seleccione</option>
+                                  <option value="pdf">PDF</option>
+                                  <option value="xlsx">XLSX</option>
+                                </select>
+                              </div>
+                            </div>
+
+
+                            <div class="col-sm-6">
+                              <div class="mb-3">
+                                <label class="form-label">Almacenar reporte</label>
+                                <select class="form-control" id="almacenar">
+                                  <option value="">Seleccione</option>
+                                  <option value="Si">Si</option>
+                                  <option value="No">No</option>
+                                </select>
+                              </div>
+                            </div>
+
+
+                            <div class="col-sm-12">
+                              <div class="mb-3">
+                                <label class="form-label">Nombre del reporte</label>
+                                <input type="text" class="form-control" id="nombre" placeholder="Indique el nombre con el que se va a guardar el archivo">
+                              </div>
+                            </div>
+
+
+                          </div>
+                        </div>
+                        <div class="d-flex w-100 mt-3">
+                          <div class="d-flex m-a">
+                            <div class="me-2"><button class="previous btn btn-secondary" onclick="beforeStep('2')">Regresar
+                                </button=>
+                            </div>
+                            <div class="next"><button onclick="guardarReporte()" class="btn btn-primary mt-3 mt-md-0"> <i class="bx bx-save"></i> Guardar</button></div>
+                          </div>
+                        </div>
+                      </section>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+        <!-- [ Recent Users ] end -->
+
+
+
+
 
         <!-- [ worldLow section ] start -->
         <div class="col-xl-6 col-md-6">
@@ -92,6 +365,7 @@ $stmt->close();
       <!-- [ worldLow section ] end -->
 
 
+<<<<<<< HEAD
 
 
 
@@ -121,12 +395,17 @@ $stmt->close();
         </div>
       </div>
       <!-- [ Recent Users ] end -->
+=======
+>>>>>>> e3a8f367d909920e59a5e953f86b52f0fe1f6269
     </div>
     <!-- [ Main Content ] end -->
   </div>
   </div>
   <!-- [ Main Content ] end -->
 
+  <script>
+    let textarea = 't_area-2';
+  </script>
   <script src="../../src/assets/js/plugins/simplebar.min.js"></script>
   <script src="../../src/assets/js/plugins/bootstrap.min.js"></script>
   <script src="../../src/assets/js/pcoded.js"></script>
@@ -137,6 +416,7 @@ $stmt->close();
 
 
   <script>
+<<<<<<< HEAD
 
 
     // cuando cargue la pagina, agrega 'pc-sidebar-hide' a .pc-sidebar
@@ -157,12 +437,97 @@ $stmt->close();
     //   }
 
     // });
+=======
+    function getNominas() {
+
+
+      let tipo = this.value
+
+      if (tipo == 'Ninguno') {
+        document.getElementById('nominasFiltroSection').innerHTML = ''
+      } else {
+        document.getElementById('nominasFiltroSection').innerHTML = ''
+
+        fetch('../../back/modulo_nomina/nom_lista_nominas.php', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              tipo: tipo
+            })
+          })
+          .then(response => response.json())
+          .then(data => {
+
+            if (data.error) {
+              console.error(data.error)
+            } else {
+
+              let html = document.getElementById('nominasFiltroSection');
+              html.innerHTML = ''
+              // recorre 'data' y verifica si es igual a 1 o 0 remplazas con si y no, sino imprimes el resultado normal
+              data = data.map(value => {
+                let val = value;
+                // agrega al resutdiv
+                html.innerHTML += `<li class="list-group-item">
+        <label class="pointer d-flex justify-content-between align-items-start">
+                  <div class="ms-2 me-auto">
+                    <div class="fw-bold">${val.nombre}</div>
+                  </div>
+                  <input type="checkbox" class="form-check-input inputs-nominas" value="${val.id}"/>
+
+                  </label>
+                </li>`;
+              });
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+          });
+      }
+
+    }
+
+
+
+    document.getElementById('filtrarXnomina').addEventListener('change', getNominas)
+
+
+
+
+
+    // cuando cargue la pagina, agrega 'pc-sidebar-hide' a .pc-sidebar
+    document.addEventListener('DOMContentLoaded', function() {
+      if ("<?php echo $ultima_Act ?>" == 'Nunca') {
+        actualizar()
+      } else {
+        // verificar si han pasado mas de 7 dias desde la ultima actualizacion
+        var fecha = "<?php echo $ultima_Act ?>";
+        var fecha = fecha.split('-');
+        var fecha = new Date(fecha[2], fecha[1] - 1, fecha[0]);
+        var hoy = new Date();
+        var dias = Math.floor((hoy - fecha) / (1000 * 60 * 60 * 24));
+        if (dias >= 7) {
+          actualizar()
+        }
+        $('#timeAgo').html('Hace ' + dias + ' dias')
+      }
+
+    });
+>>>>>>> e3a8f367d909920e59a5e953f86b52f0fe1f6269
 
     function actualizar() {
       document.querySelector('.pc-sidebar').classList.add('pc-sidebar-hide');
       document.querySelector('.pc-sidebar-collapse').classList.add('hide');
       // Prepare data object for AJAX request
+<<<<<<< HEAD
       let data = { accion: 'get_data' }
+=======
+      let data = {
+        accion: 'get_data'
+      }
+>>>>>>> e3a8f367d909920e59a5e953f86b52f0fe1f6269
       $('#cargando').show()
 
 
@@ -195,7 +560,270 @@ $stmt->close();
     }
 
     document.getElementById('respaldar-btn').addEventListener('click', actualizar)
+
+
+
+
+
+
+
+    /**
+     * Adds an event listener to the 'btn-obtener' button and performs a specific action when clicked.
+     * 
+     * @param {Event} event - The event object.
+     * @returns {void}
+     */
+    function validarFormula(area, result_list) {
+      let condicion = $('#' + area).val();
+
+      //console.log(result_list)
+
+      if (condicion == '') {
+        return toast_s('error', 'Debe indicar una condición');
+      } else { //emp_pre_seleccionados-list
+        /*  if (result_list == 'emp_pre_seleccionados-list') {
+  
+        } else {
+          let accion = 'todos'; // Definir 'accion' aquí si es necesario
+          tbl_emp_seleccionados(condicion, accion); // Pasar 'accion' como parámetro
+        }*/
+
+        $('#tabla_empleados-conceptos').removeClass('hide')
+        aplicar_filtro(2, condicion, result_list);
+
+      }
+    }
+
+
+
+
+
+    /**
+     * Applies a filter to retrieve employees based on the specified type and filter criteria.
+     *
+     * @param {string} tipo - The type of filter to apply.
+     * @param {string} filtro - The filter criteria.
+     * @param {string} result_list - The ID of the HTML element where the filtered employee list will be displayed.
+     */
+    let empleadosFiltro = []
+
+    function aplicar_filtro(tipo, filtro, result_list) {
+      empleadosFiltro = []
+      $.ajax({
+        url: '../../back/modulo_nomina/nom_formulacion_back',
+        type: 'POST',
+        data: {
+          tipo_filtro: tipo,
+          filtro: filtro.trim(),
+          tabla_empleados: true
+        },
+        success: function(response) {
+          console.log(response)
+          let empleados = JSON.parse(response);
+          let tabla = '';
+
+          empleados.forEach(e => {
+            empleadosFiltro[e.id] = [e.id];
+            tabla += '<tr>';
+            tabla += '<td>' + e.cedula + '</td>';
+            tabla += '<td>' + e.nombres + '</td>';
+            tabla += '<td class="text-center"><input class="form-check-input itemCheckbox"  type="checkbox" value="' + e.id + '"></td>';
+            tabla += '</tr>';
+          });
+
+          document.getElementById(result_list).innerHTML = tabla;
+        }
+      });
+    }
+
+
+
+
+    function guardarReporte(){
+      let formato = document.getElementById('formato').value
+      let almacenar = document.getElementById('almacenar').value
+      let nombre = document.getElementById('nombre').value
+      let condicion = document.getElementById('t_area-2').value
+      let tipoFiltro = document.getElementById('filtrarXnomina').value
+      let campos = document.querySelectorAll('.inputs-nominas');
+    
+      let camposArray = [];
+      let columnas = document.querySelectorAll('.campos');
+      let columnasArray = [];
+
+
+      columnas.forEach(input => {
+          if (input.checked) {
+            columnasArray.push(input.value);
+          }
+        });
+
+
+      // Verificar si el tipo de filtro no es 'Ninguno'
+      if (tipoFiltro != 'Ninguno') {
+        campos.forEach(campo => {
+          if (campo.checked) {
+            camposArray.push(campo.value);
+          }
+        });
+
+        // Si no hay checkboxes seleccionados, mostrar mensaje de error
+        if (camposArray.length == 0) {
+          return toast_s('error', 'Debe seleccionar al menos una nómina o grupo');
+        }
+      }
+
+      // Verificar si la condición y los checkboxes están vacíos
+      if (condicion == '' && camposArray.length == 0) {
+        return toast_s('error', 'Debe indicar una condición');
+      }
+
+     
+      let data = {
+        formato: formato,
+        almacenar: almacenar,
+        nombre: nombre,
+        columnas: columnasArray,
+        condicion: condicion,
+        tipoFiltro: tipoFiltro,
+        nominas: camposArray
+      }
+    
+      fetch('../../back/modulo_nomina/nom_reportes_form.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            data: data
+         })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.error) {
+            console.error(data.error)
+          } else {
+            console.log(data)
+            toast_s('success', 'Reporte guardado correctamente')
+            // vaciar los campos
+            document.getElementById('formato').value = ''
+            document.getElementById('almacenar').value = ''
+            document.getElementById('nombre').value = ''
+            document.getElementById('t_area-2').value = ''
+            document.getElementById('filtrarXnomina').value = 'Ninguno'
+            document.getElementById('nominasFiltroSection').innerHTML = ''
+            document.getElementById('result-em_nomina').innerHTML = ''
+            
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+    }
+
+
+
+
+    /**
+     * This function is used to navigate to the next step in a form.
+     * 
+     * @param {string} step - The current step of the form.
+     * 
+     * @returns {void} - This function does not return anything.
+     */
+    async function nextStep(step) {
+      if (step == '1') {
+        let condicion = document.getElementById('t_area-2').value;
+        let tipoFiltro = document.getElementById('filtrarXnomina').value;
+        let campos = document.querySelectorAll('.inputs-nominas');
+        let camposArray = [];
+
+        // Verificar si el tipo de filtro no es 'Ninguno'
+        if (tipoFiltro != 'Ninguno') {
+          campos.forEach(campo => {
+            if (campo.checked) {
+              camposArray.push(campo.value);
+            }
+          });
+
+          // Si no hay checkboxes seleccionados, mostrar mensaje de error
+          if (camposArray.length == 0) {
+            return toast_s('error', 'Debe seleccionar al menos una nómina o grupo');
+          }
+        }
+
+        // Verificar si la condición y los checkboxes están vacíos
+        if (condicion == '' && camposArray.length == 0) {
+          return toast_s('error', 'Debe indicar una condición');
+        }
+
+        // Continuar con la siguiente parte del proceso
+        toggleStep('informacion', 'columnas');
+        document.getElementById('progressbar').style.width = '60%';
+      } else if (step == '2') {
+
+        toggleStep('columnas', 'configuracion');
+        document.getElementById('progressbar').style.width = '100%';
+      }
+    }
+
+    /**
+     * Function to toggle between steps by hiding and showing the corresponding elements.
+     *
+     * @param {string} hideId - The ID of the element to hide.
+     * @param {string} showId - The ID of the element to show.
+     */
+    function toggleStep(hideId, showId) {
+      document.getElementById('tab_' + hideId).classList.remove('show', 'active');
+      document.getElementById('tab_' + showId).classList.add('show', 'active');
+      document.getElementById('link_' + hideId).classList.remove('active');
+      document.getElementById('link_' + showId).classList.add('active');
+    }
+
+    /**
+     * This function is called before transitioning to a new step in a wizard.
+     * It updates the active and show classes of the wizard items and tabs based on the given step.
+     *
+     * @param {string} step - The step to transition to.
+     */
+    function beforeStep(step) {
+      const stepMap = {
+        '1': {
+          link: 'link_informacion',
+          tab: 'tab_informacion',
+          progressbar: 30
+        },
+        '2': {
+          link: 'link_columnas',
+          tab: 'tab_columnas',
+          progressbar: 60
+        },
+        '3': {
+          link: 'link_configuracion',
+          tab: 'tab_configuracion',
+          progressbar: 100
+        }
+      };
+
+      // Eliminar las clases 'active' y 'show' de todos los elementos
+      document.querySelectorAll('.item-wizard, .tab-pane').forEach(item => {
+        item.classList.remove('active', 'show');
+      });
+
+      // Establecer las clases 'active' y 'show' según el paso
+      if (stepMap[step]) {
+        const {
+          link,
+          tab,
+          progressbar
+        } = stepMap[step];
+        document.getElementById(link).classList.add('active');
+        document.getElementById(tab).classList.add('active', 'show');
+        document.getElementById('progressbar').style.width = progressbar + '%';
+      }
+    }
   </script>
+
 
 </body>
 
