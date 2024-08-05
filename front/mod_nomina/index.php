@@ -68,17 +68,22 @@ $stmt->close();
                 <div class="col-lg-12">
                   <div class="card-body p-3">
                     <ul class="nav nav-pills nav-justified">
-                      <span id="link_informacion" class="nav-item nav-link item-wizard active"><i class="ph-duotone ph-user-circle"></i> <span class="d-none d-sm-inline">Informacion</span></span>
-                      <span id="link_columnas" class="nav-item nav-link item-wizard"><i class="ph-duotone ph-map-pin"></i>
+                      <span id="link_informacion" class="nav-item nav-link item-wizard active"><i
+                          class="ph-duotone ph-user-circle"></i> <span
+                          class="d-none d-sm-inline">Informacion</span></span>
+                      <span id="link_columnas" class="nav-item nav-link item-wizard"><i
+                          class="ph-duotone ph-map-pin"></i>
                         <span class="d-none d-sm-inline">Columnas</span></span>
-                      <span id="link_configuracion" class="nav-item nav-link item-wizard"><i class="ph-duotone ph-check-circle"></i>
+                      <span id="link_configuracion" class="nav-item nav-link item-wizard"><i
+                          class="ph-duotone ph-check-circle"></i>
                         <span class="d-none d-sm-inline">Configuración final</span></span>
                     </ul>
                   </div>
                   <div class="card-body">
 
                     <div class="progress mb-3">
-                      <div class="progress-bar bg-success " id="progressbar" style="width: 25%;" aria-valuemin="0" aria-valuemax="100"></div>
+                      <div class="progress-bar bg-success " id="progressbar" style="width: 25%;" aria-valuemin="0"
+                        aria-valuemax="100"></div>
                     </div>
 
 
@@ -104,14 +109,17 @@ $stmt->close();
                                   <div class="mb-3"><label class="form-label">Formulación</label>
                                     <div class="input-group mb-3">
                                       <textarea class="form-control condicion" rows="1" id="t_area-2"></textarea>
-                                      <button class="btn btn-primary" onclick="validarFormula('t_area-2', 'emp_pre_seleccionados-list')" type="button">Obtener</button>
+                                      <button class="btn btn-primary"
+                                        onclick="validarFormula('t_area-2', 'emp_pre_seleccionados-list')"
+                                        type="button">Obtener</button>
                                     </div>
                                   </div>
 
 
                                   <hr class="my-4">
                                   <h5 class="mb-0">Filtrar por nomina</h5>
-                                  <small class="text-muted">Si no selecciona ninguna nomina no se aplicara ningún filtro</small>
+                                  <small class="text-muted">Si no selecciona ninguna nomina no se aplicara ningún
+                                    filtro</small>
 
                                   <div class="mb-3">
                                     <label class="form-label">Formulación</label>
@@ -132,7 +140,9 @@ $stmt->close();
 
                                   <div class="mb-3">
                                     <label class="form-label" for="campo_condiciona">Condicionantes</label>
-                                    <select name="campo_condiciona" onchange="setCondicionante(this.value, 'result-em_nomina')" id="campo_condiciona" class="form-control">
+                                    <select name="campo_condiciona"
+                                      onchange="setCondicionante(this.value, 'result-em_nomina')" id="campo_condiciona"
+                                      class="form-control">
                                       <option value="">Seleccione</option>
                                       <option value="cod_cargo">Código de cargo</option>
                                       <option value="discapacidades">Discapacidades</option>
@@ -158,7 +168,8 @@ $stmt->close();
                         <div class="d-flex w-100 mt-3">
                           <div class="d-flex m-a">
                             <div class="me-2"><button class="btn btn-secondary disabled">Regresar</button></div>
-                            <div class="next"><button class="btn btn-secondary mt-3 mt-md-0" onclick="nextStep('1')">Siguiente</button></div>
+                            <div class="next"><button class="btn btn-secondary mt-3 mt-md-0"
+                                onclick="nextStep('1')">Siguiente</button></div>
                           </div>
                         </div>
 
@@ -174,11 +185,13 @@ $stmt->close();
                           <div class="row mt-4">
                             <div class="list-group">
                               <label class="list-group-item">
-                                <input class="form-check-input me-1 campos" type="checkbox" disabled checked value="nombres">
+                                <input class="form-check-input me-1 campos" type="checkbox" disabled checked
+                                  value="nombres">
                                 Nombre
                               </label>
                               <label class="list-group-item">
-                                <input class="form-check-input me-1 campos" type="checkbox" disabled checked value="cedula">
+                                <input class="form-check-input me-1 campos" type="checkbox" disabled checked
+                                  value="cedula">
                                 Cedula
                               </label>
                               <label class="list-group-item">
@@ -214,7 +227,8 @@ $stmt->close();
                                 Hijos
                               </label>
                               <label class="list-group-item">
-                                <input class="form-check-input me-1 campos" type="checkbox" value="instruccion_academica">
+                                <input class="form-check-input me-1 campos" type="checkbox"
+                                  value="instruccion_academica">
                                 Instrucción Académica
                               </label>
                               <label class="list-group-item">
@@ -255,8 +269,10 @@ $stmt->close();
                           </div>
                           <div class="d-flex w-100 mt-3">
                             <div class="d-flex m-a">
-                              <div class=" me-2"><button class="previous btn btn-secondary" onclick="beforeStep('1')">Regresar</button></div>
-                              <div class="next"><button class="previous btn btn-secondary mt-3 mt-md-0" onclick="nextStep('2')">Siguiente</button></div>
+                              <div class=" me-2"><button class="previous btn btn-secondary"
+                                  onclick="beforeStep('1')">Regresar</button></div>
+                              <div class="next"><button class="previous btn btn-secondary mt-3 mt-md-0"
+                                  onclick="nextStep('2')">Siguiente</button></div>
                             </div>
                           </div>
                         </div>
@@ -300,7 +316,8 @@ $stmt->close();
                             <div class="col-sm-12">
                               <div class="mb-3">
                                 <label class="form-label">Nombre del reporte</label>
-                                <input type="text" class="form-control" id="nombre" placeholder="Indique el nombre con el que se va a guardar el archivo">
+                                <input type="text" class="form-control" id="nombre"
+                                  placeholder="Indique el nombre con el que se va a guardar el archivo">
                               </div>
                             </div>
 
@@ -309,10 +326,12 @@ $stmt->close();
                         </div>
                         <div class="d-flex w-100 mt-3">
                           <div class="d-flex m-a">
-                            <div class="me-2"><button class="previous btn btn-secondary" onclick="beforeStep('2')">Regresar
+                            <div class="me-2"><button class="previous btn btn-secondary"
+                                onclick="beforeStep('2')">Regresar
                                 </button=>
                             </div>
-                            <div class="next"><button onclick="guardarReporte()" class="btn btn-primary mt-3 mt-md-0"> <i class="bx bx-save"></i> Guardar</button></div>
+                            <div class="next"><button onclick="guardarReporte()" class="btn btn-primary mt-3 mt-md-0">
+                                <i class="bx bx-save"></i> Guardar</button></div>
                           </div>
                         </div>
                       </section>
@@ -365,38 +384,6 @@ $stmt->close();
       <!-- [ worldLow section ] end -->
 
 
-<<<<<<< HEAD
-
-
-
-      <!-- [ Recent Users ] start -->
-      <div class="col-xl-12 col-md-6">
-        <div class="card Recent-Users">
-          <div class="card-header">
-            <h5>Titulo</h5>
-          </div>
-          <div class="card-body px-0 py-3">
-            <div class="table-responsive">
-              <table class="table ">
-                <tbody>
-                  <tr class="unread">
-
-                    <td>TEXT</td>
-                    <td>
-                      TEXT
-                    </td>
-                    <td><a href="#!" class="badge me-2 bg-brand-color-2 text-white f-12">Rechazar</a><a href="#!"
-                        class="badge me-2 bg-brand-color-1 text-white f-12">Aprobar</a></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- [ Recent Users ] end -->
-=======
->>>>>>> e3a8f367d909920e59a5e953f86b52f0fe1f6269
     </div>
     <!-- [ Main Content ] end -->
   </div>
@@ -416,28 +403,6 @@ $stmt->close();
 
 
   <script>
-<<<<<<< HEAD
-
-
-    // cuando cargue la pagina, agrega 'pc-sidebar-hide' a .pc-sidebar
-    // document.addEventListener('DOMContentLoaded', function () {
-    //   if ("<?php echo $ultima_Act ?>" == 'Nunca') {
-    //     // actualizar()
-    //   } else {
-    //     // verificar si han pasado mas de 7 dias desde la ultima actualizacion
-    //     var fecha = "<?php echo $ultima_Act ?>";
-    //     var fecha = fecha.split('-');
-    //     var fecha = new Date(fecha[2], fecha[1] - 1, fecha[0]);
-    //     var hoy = new Date();
-    //     var dias = Math.floor((hoy - fecha) / (1000 * 60 * 60 * 24));
-    //     if (dias >= 7) {
-    //       actualizar()
-    //     }
-    //     $('#timeAgo').html('Hace ' + dias + ' dias')
-    //   }
-
-    // });
-=======
     function getNominas() {
 
 
@@ -449,14 +414,14 @@ $stmt->close();
         document.getElementById('nominasFiltroSection').innerHTML = ''
 
         fetch('../../back/modulo_nomina/nom_lista_nominas.php', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              tipo: tipo
-            })
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            tipo: tipo
           })
+        })
           .then(response => response.json())
           .then(data => {
 
@@ -498,7 +463,7 @@ $stmt->close();
 
 
     // cuando cargue la pagina, agrega 'pc-sidebar-hide' a .pc-sidebar
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
       if ("<?php echo $ultima_Act ?>" == 'Nunca') {
         actualizar()
       } else {
@@ -515,19 +480,14 @@ $stmt->close();
       }
 
     });
->>>>>>> e3a8f367d909920e59a5e953f86b52f0fe1f6269
 
     function actualizar() {
       document.querySelector('.pc-sidebar').classList.add('pc-sidebar-hide');
       document.querySelector('.pc-sidebar-collapse').classList.add('hide');
       // Prepare data object for AJAX request
-<<<<<<< HEAD
-      let data = { accion: 'get_data' }
-=======
       let data = {
         accion: 'get_data'
       }
->>>>>>> e3a8f367d909920e59a5e953f86b52f0fe1f6269
       $('#cargando').show()
 
 
@@ -617,7 +577,7 @@ $stmt->close();
           filtro: filtro.trim(),
           tabla_empleados: true
         },
-        success: function(response) {
+        success: function (response) {
           console.log(response)
           let empleados = JSON.parse(response);
           let tabla = '';
@@ -639,24 +599,24 @@ $stmt->close();
 
 
 
-    function guardarReporte(){
+    function guardarReporte() {
       let formato = document.getElementById('formato').value
       let almacenar = document.getElementById('almacenar').value
       let nombre = document.getElementById('nombre').value
       let condicion = document.getElementById('t_area-2').value
       let tipoFiltro = document.getElementById('filtrarXnomina').value
       let campos = document.querySelectorAll('.inputs-nominas');
-    
+
       let camposArray = [];
       let columnas = document.querySelectorAll('.campos');
       let columnasArray = [];
 
 
       columnas.forEach(input => {
-          if (input.checked) {
-            columnasArray.push(input.value);
-          }
-        });
+        if (input.checked) {
+          columnasArray.push(input.value);
+        }
+      });
 
 
       // Verificar si el tipo de filtro no es 'Ninguno'
@@ -678,7 +638,7 @@ $stmt->close();
         return toast_s('error', 'Debe indicar una condición');
       }
 
-     
+
       let data = {
         formato: formato,
         almacenar: almacenar,
@@ -688,16 +648,16 @@ $stmt->close();
         tipoFiltro: tipoFiltro,
         nominas: camposArray
       }
-    
+
       fetch('../../back/modulo_nomina/nom_reportes_form.php', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            data: data
-         })
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          data: data
         })
+      })
         .then(response => response.json())
         .then(data => {
           if (data.error) {
@@ -713,7 +673,7 @@ $stmt->close();
             document.getElementById('filtrarXnomina').value = 'Ninguno'
             document.getElementById('nominasFiltroSection').innerHTML = ''
             document.getElementById('result-em_nomina').innerHTML = ''
-            
+
           }
         })
         .catch(error => {
