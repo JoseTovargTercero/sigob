@@ -414,15 +414,16 @@ async function mapData(data) {
 
     // Datos dinámicos
 
-    empleado.nacionalidad = nacionalidad == 1 ? 'EXTRANJERO' : 'VENEZOLANO'
+    empleado.nacionalidad = nacionalidad == 'V' ? 'VENEZOLANO' : 'EXTRANJERO'
     // empleado.status = empleadoEstatus[empleado.status]
     discapacidades = discapacidades == 1 ? 'SI' : 'NO'
-    empleado.tipo_cuenta = tipo_cuenta = 1 ? 'AHORRO' : 'CORRIENTE'
     empleado.observacion = empleado.observacion
       ? empleado.observacion
       : 'No disponible'
 
-    id_dependencia = dependencias.find((el) => el.id == id_dependencia)
+    id_dependencia = dependencias.mappedInfo.find(
+      (el) => el.id == id_dependencia
+    )
     instruccion_academica = profesiones.find(
       (el) => el.id == instruccion_academica
     )

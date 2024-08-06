@@ -29,8 +29,8 @@ const tableLanguage = {
 }
 let dependenciaTable = new DataTable('#dependencias-table', {
   columns: [
-    { data: 'dependencia' },
     { data: 'cod_dependencia' },
+    { data: 'dependencia' },
     { data: 'acciones' },
   ],
   responsive: true,
@@ -52,15 +52,15 @@ let dependenciaTable = new DataTable('#dependencias-table', {
 export async function loadDependenciaTable() {
   console.log('hola')
 
-  let dependencias = await getDependencyData(true)
+  let dependencias = await getDependencyData()
 
   console.log(dependencias)
-  let datosOrdenados = [...dependencias].sort((a, b) => a.id - b.id)
+  let datosOrdenados = [...dependencias.fullInfo].sort((a, b) => a.id - b.id)
 
   let data = datosOrdenados.map((dependencia) => {
     return {
-      dependencia: dependencia.dependencia,
       cod_dependencia: dependencia.cod_dependencia,
+      dependencia: dependencia.dependencia,
       acciones: `
       <button class="btn btn-warning btn-sm" id="btn-detele" data-id="${dependencia.id}">Editar</button>
      `,
@@ -73,10 +73,10 @@ export async function loadDependenciaTable() {
   dependenciaTable.rows.add(data).draw()
 }
 
-// export const addDependenciaFila = ({ row }) => {
-//   console.log('añadiendooo', row)
-//   dependenciaTable.row.add(row).draw()
-// }
+export const addDependenciaFila = ({ row }) => {
+  console.log('añadiendooo', row)
+  dependenciaTable.row.add(row).draw()
+}
 
 // `
 // <button class="btn btn-primary btn-sm" data-correlativo="${

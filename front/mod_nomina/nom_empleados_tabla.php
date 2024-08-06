@@ -241,15 +241,20 @@ require_once '../../back/sistema_global/session.php';
               </div>
 
               <div class="form-group">
-                <div class="row">
-                  <label class="form-label" for="id_dependencia">DEPENDENCIAS
-                    LABORALES</label>
-                  <div class="col-sm-9">
-                    <select class="form-select employee-select" name="id_dependencia" id="search-select-dependencias">
+                <div class="row mx-auto">
 
+                  <div class="col-sm-4">
+                    <label class="form-label" for="id_dependencia">DEPENDENCIAS
+                      LABORALES</label>
+                    <select class="form-select employee-select" name="id_dependencia" id="search-select-dependencias">
                     </select>
                   </div>
-                  <div class="col-sm-1">
+                  <div class="col-sm-4 mt-auto">
+                    <label class="form-label" for="cod_dependencia">CÓDIGO DEPENDENCIA</label>
+                    <input type="text" class="form-control" name="cod_dependencia" id="cod_dependencia"
+                      placeholder="Codigo de dependencia" disabled>
+                  </div>
+                  <div class="col-sm-1 mt-auto">
                     <button type="button" id="add-dependency" class="btn btn-primary">+</button>
                   </div>
                 </div>
@@ -264,31 +269,39 @@ require_once '../../back/sistema_global/session.php';
 
               <!-- AÑADIR NUEVA DEPENDENCIA -->
 
-              <div id="modal-dependency" class="modal-window hide">
-                <div class="modal-box short slide-up-animation">
-                  <header class="modal-box-header">
-                    <h4>AÑADIR NUEVA DEPENDENCIA</h4>
-                    <button id="btn-close-dependency" type="button" class="btn btn-danger" aria-label="Close">
-                      &times;
-                    </button>
-                  </header>
-
-                  <div class="modal-box-content">
-                    <input class="employee-input form-control" type="text" name="dependencia"
-                      placeholder="NUEVA DEPENDENCIA..." id="dependencia">
-                  </div>
-
-                  <div class="modal-box-footer">
-                    <button class="btn-form btn btn-primary" id="dependency-save-btn">GUARDAR
-                      DEPENDENCIA</button>
-                  </div>
-
-
-
-                </div>
-              </div>
             </form>
 
+
+            <div id="modal-dependency" class="modal-window hide">
+              <div class="modal-box short slide-up-animation">
+                <header class="modal-box-header">
+                  <h4>AÑADIR NUEVA DEPENDENCIA</h4>
+                  <button id="btn-close-dependency" type="button" class="btn btn-danger" aria-label="Close">
+                    &times;
+                  </button>
+                </header>
+
+                <div class="modal-box-content">
+                  <form id="employee-dependencia-form">
+                    <div class="row">
+                      <div class="col-sm"><input class=" form-control" type="text" name="dependencia"
+                          placeholder="Nombre dependencia..." id="dependencia"></div>
+                      <div class="col-sm"><input type="number" class=" form-control" name="cod_dependencia"
+                          id="cod_dependencia" placeholder="Codigo de dependencia"></div>
+                    </div>
+                  </form>
+
+                </div>
+
+                <div class="modal-box-footer">
+                  <button class="btn-form btn btn-primary" id="dependency-save-btn">GUARDAR
+                    DEPENDENCIA</button>
+                </div>
+
+
+
+              </div>
+            </div>
           </div>
           <div class="modal-box-footer card-footer d-flex align-items-center justify-content-center gap-2 py-0">
             <button class="btn btn-primary " id="btn-employee-save">GUARDAR</button>

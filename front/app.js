@@ -92,12 +92,12 @@ d.addEventListener('DOMContentLoaded', (e) => {
         cuenta_bancaria: '',
         // tipo_cuenta: 0,
         id_dependencia: '',
-        dependencia: '',
         tipo_nomina: 0,
         cod_empleado: '441151',
         correcion: 0,
         observacion: '',
       },
+
       fieldListErrors: {
         nombres: {
           value: true,
@@ -174,11 +174,6 @@ d.addEventListener('DOMContentLoaded', (e) => {
           message: 'Elejir una dependencia',
           type: 'number',
         },
-        dependencia: {
-          value: null,
-          message: 'No puede estar vacío',
-          type: 'text',
-        },
         tipo_nomina: {
           value: null,
           message: 'Introducir un campo válido',
@@ -188,6 +183,22 @@ d.addEventListener('DOMContentLoaded', (e) => {
           value: null,
           message: 'Introducir un campo válido',
           type: 'text',
+        },
+      },
+      fieldListDependencias: {
+        dependencia: '',
+        cod_dependencia: '',
+      },
+      fieldListErrorsDependencias: {
+        dependencia: {
+          value: true,
+          message: 'No puede estar vacío',
+          type: 'text',
+        },
+        cod_dependencia: {
+          value: true,
+          message: 'No puede estar vacío',
+          type: 'number',
         },
       },
     })
@@ -279,7 +290,4 @@ d.addEventListener('click', (e) => {
       btnId: e.target.id,
       modalId: 'modal-secondary-form-tabulator',
     })
-
-  if (e.target.id === 'btn-close-dependency')
-    validateModal({ e: e, btnId: e.target.id, modalId: 'modal-dependency' })
 })

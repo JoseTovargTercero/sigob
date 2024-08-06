@@ -1,5 +1,4 @@
 import {
-  getDependencyData,
   getEmployeeData,
   getJobData,
   getProfessionData,

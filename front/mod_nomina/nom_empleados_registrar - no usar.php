@@ -180,14 +180,19 @@ require_once '../../back/sistema_global/session.php';
                                     </div>
 
                                     <div class="form-group">
-                                        <div class="row">
+                                        <div class="row mx-auto">
                                             <label class="form-label" for="id_dependencia">DEPENDENCIAS
                                                 LABORALES</label>
-                                            <div class="col-sm-9">
+                                            <div class="col-sm-4">
                                                 <select class="form-select employee-select" name="id_dependencia"
                                                     id="search-select-dependencias">
 
                                                 </select>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <input type="text" name="cod_dependencia" id="cod_dependencia"
+                                                    placeholder="Codigo de dependencia">
+
                                             </div>
                                             <div class="col-sm-1">
                                                 <button type="button" id="add-dependency"

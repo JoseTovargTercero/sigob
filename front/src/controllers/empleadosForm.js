@@ -26,6 +26,8 @@ const w = window
 
 let employeeId
 
+let dependenciasLaborales
+
 function validateEmployeeForm({
   formElement,
   employeeInputClass,
@@ -34,12 +36,17 @@ function validateEmployeeForm({
   btnAddId,
   fieldList = {},
   fieldListErrors = {},
+  fieldListDependencias = {},
+  fieldListErrorsDependencias = {},
   selectSearchInput,
   selectSearch,
 }) {
   const btnElement = d.getElementById(btnId)
   const btnAddElement = d.getElementById(btnAddId)
   const btnDependencySave = d.getElementById('dependency-save-btn')
+
+  const dependenciaFormElement = d.getElementById('employee-dependencia-form')
+
   const selectSearchInputElement = d.querySelectorAll(`.${selectSearchInput}`)
 
   const employeeInputElement = d.querySelectorAll(`.${employeeInputClass}`)
@@ -52,10 +59,12 @@ function validateEmployeeForm({
     let cargos = await getJobData()
     let profesiones = await getProfessionData()
     let dependencias = await getDependencyData()
+
+    dependenciasLaborales = dependencias.fullInfo
     let bancos = await getBankData()
     insertOptions({ input: 'cargo', data: cargos })
     insertOptions({ input: 'instruccion_academica', data: profesiones })
-    insertOptions({ input: 'dependencias', data: dependencias })
+    insertOptions({ input: 'dependencias', data: dependencias.mappedData })
     insertOptions({ input: 'bancos', data: bancos })
 
     // CÓDIGO PARA OBTENER EMPLEADO EN CASO DE EDITAR
@@ -78,7 +87,7 @@ function validateEmployeeForm({
       }
 
       // Vacíar campo de dependencia no necesario
-      employeeData.dependencia = ''
+      delete employeeData.dependencia
 
       employeeData.id = employeeData.id_empleado
       employeeId = employeeData.id_empleado
@@ -102,6 +111,7 @@ function validateEmployeeForm({
 
       employeeInputElementCopy.forEach((input) => {
         // SI EL VALOR NO ES UNDEFINED COLOCAR VALOR EN INPUT
+        console.log(input)
         if (
           employeeData[input.name] !== undefined &&
           input.name !== 'dependencia'
@@ -115,6 +125,8 @@ function validateEmployeeForm({
           type: fieldListErrors[input.name].type,
         })
       })
+
+      mostrarCodigoDependencia()
 
       // console.log(fieldList, fieldListErrors)
     } else {
@@ -135,8 +147,9 @@ function validateEmployeeForm({
 
   formElement.addEventListener('submit', (e) => e.preventDefault())
 
+  dependenciaFormElement.addEventListener('submit', (e) => e.preventDefault())
+
   formElement.addEventListener('input', (e) => {
-    // console.log(fieldList)
     if (e.target.classList.contains(employeeInputClass)) {
       fieldList = validateInput({
         target: e.target,
@@ -153,7 +166,22 @@ function validateEmployeeForm({
         fieldListErrors,
         type: fieldListErrors[e.target.name].type,
       })
+      if (e.target.name === 'id_dependencia') {
+        mostrarCodigoDependencia()
+      }
     }
+  })
+
+  dependenciaFormElement.addEventListener('input', (e) => {
+    console.log(e.target.value)
+    fieldListDependencias = validateInput({
+      target: e.target,
+      fieldList: fieldListDependencias,
+      fieldListErrors: fieldListErrorsDependencias,
+      type: fieldListErrorsDependencias[e.target.name].type,
+    })
+
+    console.log(fieldListDependencias)
   })
 
   formElement.addEventListener('focusout', (e) => {
@@ -205,33 +233,46 @@ function validateEmployeeForm({
       formElement.reset()
     }
 
-    if (e.target === btnAddElement) {
-      validateModal({
-        e: e,
-        btnId: btnAddElement.id,
-        modalId: 'modal-dependency',
-      })
+    if (e.target.id === 'add-dependency') {
+      openModal({ modalId: 'modal-dependency' })
+    }
+
+    if (e.target.id === 'btn-close-dependency') {
+      closeModal({ modalId: 'modal-dependency' })
+      dependenciaFormElement.reset()
     }
 
     if (e.target === btnDependencySave) {
-      let newDependency = { dependencia: fieldList.dependencia }
-      if (!fieldList.dependencia)
+      console.log(
+        dependenciaFormElement.cod_dependencia.value,
+        dependenciaFormElement.dependencia.value
+      )
+      let newDependency = {
+        dependencia: dependenciaFormElement.dependencia.value,
+        cod_dependencia: dependenciaFormElement.cod_dependencia.value,
+      }
+      if (!fieldListDependencias.dependencia)
         return confirmNotification({
           type: NOTIFICATIONS_TYPES.fail,
           message: 'No se puede enviar una dependencia vacía',
         })
-      if (!fieldListErrors.dependencia.value) {
-        validateNewDependency({ newDependency })
-        d.getElementById('dependencia').value = ''
-        fieldList.dependencia = ''
+
+      if (Object.values(fieldListDependencias).some((el) => el.value)) {
+        return confirmNotification({
+          type: NOTIFICATIONS_TYPES.fail,
+          message: 'Error al registrar dependencia',
+        })
       }
+
+      validateNewDependency({ newDependency })
+      dependenciaFormElement.reset()
+      fieldListDependencias.dependencia = ''
+      fieldListDependencias.cod_dependencia = ''
     }
 
     // ENVIAR DATOS
 
     if (e.target === btnElement) {
-      console.log(fieldList.dependencia)
-
       employeeSelectElementCopy.forEach((input) => {
         validateInput({
           target: input,
@@ -361,10 +402,27 @@ async function validateNewDependency({ newDependency }) {
   let isSend = await sendDependencyData({ newDependency })
   if (isSend) {
     getDependencyData().then((res) => {
-      insertOptions({ input: 'dependencias', data: res })
+      insertOptions({ input: 'dependencias', data: res.mappedData })
+      dependenciasLaborales = res.fullInfo
     })
   }
   closeModal({ modalId: 'modal-dependency' })
+}
+
+function mostrarCodigoDependencia() {
+  console.log(dependenciasLaborales)
+  const id_dependencia = d.getElementById('search-select-dependencias').value
+  const cod_dependenciaInput = d.getElementById('cod_dependencia')
+
+  const dependenciaSeleccionada = dependenciasLaborales.find(
+    (dep) => dep.id_dependencia == id_dependencia
+  )
+  console.log(dependenciaSeleccionada)
+  if (dependenciaSeleccionada) {
+    cod_dependenciaInput.value = dependenciaSeleccionada.cod_dependencia
+  } else {
+    cod_dependenciaInput.value = '' // Limpiar el input si no hay ninguna dependencia seleccionada
+  }
 }
 
 const activateSelect = ({ selectSearchId }) => {

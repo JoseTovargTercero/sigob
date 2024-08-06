@@ -331,7 +331,7 @@ const getProfessionData = async () => {
   }
 }
 
-const getDependencyData = async (fullInfo = false) => {
+const getDependencyData = async () => {
   showLoader()
   try {
     const res = await fetch(dependenciasUrl)
@@ -340,9 +340,12 @@ const getDependencyData = async (fullInfo = false) => {
 
     const json = await res.json()
 
-    if (fullInfo) return json
-
-    return mapData({ obj: json, name: 'dependencia', id: 'id_dependencia' })
+    let mappedData = mapData({
+      obj: json,
+      name: 'dependencia',
+      id: 'id_dependencia',
+    })
+    return { mappedData, fullInfo: json }
   } catch (e) {
     console.log(e)
     return confirmNotification({
@@ -380,11 +383,13 @@ const sendDependencyData = async ({ newDependency }) => {
   try {
     console.log(newDependency)
 
-    const dependencyData = await getDependencyData(false)
+    const dependencyData = await getDependencyData()
+    console.log(dependencyData)
     if (
-      dependencyData.some(
+      dependencyData.fullInfo.some(
         (el) =>
-          el.name.toUpperCase() === newDependency.dependencia.toUpperCase()
+          el.dependencia.toUpperCase() ===
+          newDependency.dependencia.toUpperCase()
       )
     )
       return confirmNotification({

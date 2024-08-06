@@ -48,20 +48,22 @@ require_once '../../back/sistema_global/session.php';
 
                             </div>
                         </div>
-                        <div class="card-body hide slide-up-animation" id="dependencia-form-container">
+                        <div class="mt-4 mx-auto hide slide-up-animation" id="dependencia-form-container">
                             <form id="dependencia-form">
-                                <div class="row">
-                                    <div class="col-sm">
+                                <div class="row mx-auto">
+                                    <div class="col-sm-6">
                                         <div class="form-group">
                                             <label for="dependencia" class="form-label">NOMBRE</label>
-                                            <input type="text" name="dependencia" class="form-control">
+                                            <input type="text" name="dependencia" class="form-control"
+                                                placeholder="Nombre dependencia...">
                                         </div>
                                     </div>
-                                    <div class="col">
+                                    <div class="col-sm-5">
                                         <div class="row">
                                             <label class="form-label" for="id_dependencia">CODIGO</label>
                                             <div class="col-sm-8 mb-2">
-                                                <input type="text" name="cod_dependencia" class="form-control">
+                                                <input type="text" name="cod_dependencia" class="form-control"
+                                                    placeholder="Código dependencia...">
                                             </div>
                                             <div class="col-sm-2">
                                                 <button type="button" id="dependencia-guardar"
@@ -73,13 +75,12 @@ require_once '../../back/sistema_global/session.php';
                             </form>
                         </div>
                         <div class="card-body">
-                            <div class="table-responsive p-1">
+                            <div class="">
                                 <table id="dependencias-table" class="table table-xs table-striped" style="width:100%">
                                     <thead class="w-100">
-                                        <th>NOMBRE</th>
                                         <th>CÓDIGO</th>
+                                        <th>NOMBRE</th>
                                         <th>ACCIONES</th>
-
                                     </thead>
                                     <tbody>
 
