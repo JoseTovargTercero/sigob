@@ -283,7 +283,7 @@ function validateEmployeeForm({
       })
 
       employeeInputElementCopy.forEach((input) => {
-        if (fieldListErrors[input.name] && input.name !== 'dependencia')
+        if (fieldListErrors[input.name])
           validateInput({
             target: input,
             fieldList,

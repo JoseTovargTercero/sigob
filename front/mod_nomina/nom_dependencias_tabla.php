@@ -49,6 +49,10 @@ require_once '../../back/sistema_global/session.php';
                             </div>
                         </div>
                         <div class="mt-4 mx-auto hide slide-up-animation" id="dependencia-form-container">
+                            <!-- <div>
+                                <h5 class="mb-0">Registra </h5>
+                                <small class="text-muted mt-0 mb-4">Administre las dependencias</small>
+                            </div> -->
                             <form id="dependencia-form">
                                 <div class="row mx-auto">
                                     <div class="col-sm-6">
@@ -75,6 +79,7 @@ require_once '../../back/sistema_global/session.php';
                             </form>
                         </div>
                         <div class="card-body">
+
                             <div class="">
                                 <table id="dependencias-table" class="table table-xs table-striped" style="width:100%">
                                     <thead class="w-100">

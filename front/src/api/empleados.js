@@ -10,6 +10,12 @@ const cargosUrl = '../../../../../sigob/back/modulo_nomina/nom_cargos_info.php'
 const dependenciasUrl =
   '../../../../../sigob/back/modulo_nomina/nom_dependencias_datos.php'
 
+const updateDependenciaUrl =
+  '../../../../../sigob/back/modulo_nomina/nom_dependencia_modif.php'
+
+const deleteDependencyUrl =
+  '../../../../../sigob/back/modulo_nomina/nom_dependencia_eliminar.php'
+
 const bancosUrl =
   '../../../../../sigob/back/modulo_nomina/nom_bancos_disponibles.php'
 
@@ -331,21 +337,30 @@ const getProfessionData = async () => {
   }
 }
 
-const getDependencyData = async () => {
+const getDependencyData = async (id) => {
   showLoader()
   try {
-    const res = await fetch(dependenciasUrl)
+    let res
+    if (id) {
+      res = await fetch(`${dependenciasUrl}?id=${id}`)
+    } else {
+      res = await fetch(dependenciasUrl)
+    }
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
 
     const json = await res.json()
 
+    if (!json.success) {
+      throw json
+    }
+
     let mappedData = mapData({
-      obj: json,
+      obj: json.data,
       name: 'dependencia',
       id: 'id_dependencia',
     })
-    return { mappedData, fullInfo: json }
+    return { mappedData, fullInfo: json.data }
   } catch (e) {
     console.log(e)
     return confirmNotification({
@@ -406,13 +421,22 @@ const sendDependencyData = async ({ newDependency }) => {
     })
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
-    else {
+
+    const json = await res.json()
+
+    if (json.success) {
       console.log(res)
       confirmNotification({
         type: NOTIFICATIONS_TYPES.done,
-        message: 'Dependencia añadida',
+        message: json.message,
       })
+
       return newDependency
+    } else {
+      confirmNotification({
+        type: NOTIFICATIONS_TYPES.fail,
+        message: json.message,
+      })
     }
   } catch (e) {
     console.log(e)
@@ -424,11 +448,82 @@ const sendDependencyData = async ({ newDependency }) => {
     hideLoader()
   }
 }
+
+const updateDependencyData = async ({ data }) => {
+  try {
+    const res = await fetch(updateDependenciaUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    const json = await res.json()
+
+    if (json.success) {
+      console.log(res)
+      confirmNotification({
+        type: NOTIFICATIONS_TYPES.done,
+        message: json.message,
+      })
+    } else {
+      confirmNotification({
+        type: NOTIFICATIONS_TYPES.fail,
+        message: json.message,
+      })
+    }
+  } catch (e) {
+    console.log(e)
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al actualizar dependencia',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
+const deleteDependencyData = async (id) => {
+  try {
+    const res = await fetch(`${deleteDependencyUrl}?id=${id}`)
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    const json = await res.json()
+
+    if (json.success) {
+      console.log(res)
+      confirmNotification({
+        type: NOTIFICATIONS_TYPES.done,
+        message: json.message,
+      })
+    } else {
+      confirmNotification({
+        type: NOTIFICATIONS_TYPES.fail,
+        message: json.message,
+      })
+    }
+  } catch (e) {
+    console.log(e)
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al eliminar dependencia',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
 export {
   getEmployeesData,
   getEmployeeData,
   getRegConEmployeeData,
   sendEmployeeData,
+  updateDependencyData,
+  deleteDependencyData,
   updateEmployeeData,
   updateRequestEmployeeData,
   updateEmployeeStatus,

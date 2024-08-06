@@ -62,7 +62,8 @@ export async function loadDependenciaTable() {
       cod_dependencia: dependencia.cod_dependencia,
       dependencia: dependencia.dependencia,
       acciones: `
-      <button class="btn btn-warning btn-sm" id="btn-detele" data-id="${dependencia.id}">Editar</button>
+      <button class="btn btn-warning btn-sm" id="btn-edit" data-id="${dependencia.id_dependencia}">Editar</button>
+      <button class="btn btn-danger btn-sm" id="btn-delete" data-id="${dependencia.id_dependencia}">Eliminar</button>
      `,
     }
   })
