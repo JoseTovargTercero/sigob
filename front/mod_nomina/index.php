@@ -578,47 +578,45 @@ $stmt->close();
 
 
 
-    function guardarReporte(){
-      let formato = document.getElementById('formato').value
-      let almacenar = document.getElementById('almacenar').value
-      let nombre = document.getElementById('nombre').value
-      let condicion = document.getElementById('t_area-2').value
-      let tipoFiltro = document.getElementById('filtrarXnomina').value
-      let campos = document.querySelectorAll('.inputs-nominas');
-    
-      let camposArray = [];
-      let columnas = document.querySelectorAll('.campos');
-      let columnasArray = [];
+function guardarReporte() {
+    let formato = document.getElementById('formato').value;
+    let almacenar = document.getElementById('almacenar').value;
+    let nombre = document.getElementById('nombre').value;
+    let condicion = document.getElementById('t_area-2').value;
+    let tipoFiltro = document.getElementById('filtrarXnomina').value;
+    let campos = document.querySelectorAll('.inputs-nominas');
 
+    let camposArray = [];
+    let columnas = document.querySelectorAll('.campos');
+    let columnasArray = [];
 
-      columnas.forEach(input => {
-          if (input.checked) {
+    // Obtener columnas seleccionadas
+    columnas.forEach(input => {
+        if (input.checked) {
             columnasArray.push(input.value);
-          }
-        });
+        }
+    });
 
-
-      // Verificar si el tipo de filtro no es 'Ninguno'
-      if (tipoFiltro != 'Ninguno') {
+    // Verificar si el tipo de filtro no es 'Ninguno'
+    if (tipoFiltro != 'Ninguno') {
         campos.forEach(campo => {
-          if (campo.checked) {
-            camposArray.push(campo.value);
-          }
+            if (campo.checked) {
+                camposArray.push(campo.value);
+            }
         });
 
         // Si no hay checkboxes seleccionados, mostrar mensaje de error
         if (camposArray.length == 0) {
-          return toast_s('error', 'Debe seleccionar al menos una nómina o grupo');
+            return toast_s('error', 'Debe seleccionar al menos una nómina o grupo');
         }
-      }
+    }
 
-      // Verificar si la condición y los checkboxes están vacíos
-      if (condicion == '' && camposArray.length == 0) {
+    // Verificar si la condición y los checkboxes están vacíos
+    if (condicion == '' && camposArray.length == 0) {
         return toast_s('error', 'Debe indicar una condición');
-      }
+    }
 
-     
-      let data = {
+    let data = {
         formato: formato,
         almacenar: almacenar,
         nombre: nombre,
@@ -626,39 +624,53 @@ $stmt->close();
         condicion: condicion,
         tipoFiltro: tipoFiltro,
         nominas: camposArray
-      }
-    
-      fetch('../../back/modulo_nomina/nom_reportes_form.php', {
-          method: 'POST',
-          headers: {
+    };
+
+    fetch('../../back/modulo_nomina/nom_reportes_form.php', {
+        method: 'POST',
+        headers: {
             'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            data: data
-         })
-        })
-        .then(response => response.json())
-        .then(data => {
-          if (data.error) {
-            console.error(data.error)
-          } else {
-            console.log(data)
-            toast_s('success', 'Reporte guardado correctamente')
-            // vaciar los campos
-            document.getElementById('formato').value = ''
-            document.getElementById('almacenar').value = ''
-            document.getElementById('nombre').value = ''
-            document.getElementById('t_area-2').value = ''
-            document.getElementById('filtrarXnomina').value = 'Ninguno'
-            document.getElementById('nominasFiltroSection').innerHTML = ''
-            document.getElementById('result-em_nomina').innerHTML = ''
-            
-          }
-        })
-        .catch(error => {
-          console.error('Error:', error);
-        });
-    }
+        },
+        body: JSON.stringify({ data: data })
+    })
+    .then(response => response.text()) // Cambiar a text() para verificar el contenido
+    .then(responseText => {
+        try {
+            let data = JSON.parse(responseText);
+            if (data.error) {
+                console.error(data.error);
+                toast_s('error', 'Error al generar el reporte');
+            } else {
+                console.log(data);
+                toast_s('success', 'Reporte guardado correctamente');
+                
+                // Vaciar los campos
+                document.getElementById('formato').value = '';
+                document.getElementById('almacenar').value = '';
+                document.getElementById('nombre').value = '';
+                document.getElementById('t_area-2').value = '';
+                document.getElementById('filtrarXnomina').value = 'Ninguno';
+                document.getElementById('nominasFiltroSection').innerHTML = '';
+                document.getElementById('result-em_nomina').innerHTML = '';
+                
+                // Redirigir a la URL del PDF para descargar si está disponible
+                if (data.pdfUrl) {
+                    window.location.href = data.pdfUrl;
+                }
+            }
+        } catch (error) {
+            console.error('Error al analizar la respuesta:', error);
+            toast_s('error', 'Error al procesar la respuesta del servidor');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        toast_s('error', 'Error al enviar la solicitud');
+    });
+}
+
+
+
 
 
 
