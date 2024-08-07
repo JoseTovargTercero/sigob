@@ -47,44 +47,9 @@ require_once '../../back/sistema_global/session.php';
 
 
               </div>
-              <nav class="nav nav-pills nav-justified">
-
-                <button class="nav-link active" data-tableid="employee-table-verificados">Verificados</button>
-                <button class="nav-link" data-tableid="employee-table-corregir">Por
-                  correciones</button>
-                <button class="nav-link" data-tableid="employee-table-revision">En revisión</button>
-              </nav>
             </div>
-            <div class="card-body d-block" id="employee-table-verificados-container">
-              <table id="employee-table-verificados" class="table table-striped" style="width:100%">
-                <thead class="w-100">
-                  <th>NOMBRES</th>
-                  <th>CEDULA</th>
-                  <th>DEPENDENCIA</th>
-                  <th>NOMINA</th>
-                  <th>ACCIONES</th>
-                </thead>
-                <tbody>
-
-                </tbody>
-              </table>
-            </div>
-            <div class="card-body d-none" id="employee-table-corregir-container">
-              <table id="employee-table-corregir" class="table table-striped" style="width:100%">
-                <thead class="w-100">
-                  <th>NOMBRES</th>
-                  <th>CEDULA</th>
-                  <th>DEPENDENCIA</th>
-                  <th>NOMINA</th>
-                  <th>ACCIONES</th>
-                </thead>
-                <tbody>
-
-                </tbody>
-              </table>
-            </div>
-            <div class="card-body d-none" id="employee-table-revision-container">
-              <table id="employee-table-revision" class="table table-striped" style="width:100%">
+            <div class="card-body d-block" id="employee-table-container">
+              <table id="employee-table" class="table table-striped" style="width:100%">
                 <thead class="w-100">
                   <th>NOMBRES</th>
                   <th>CEDULA</th>
