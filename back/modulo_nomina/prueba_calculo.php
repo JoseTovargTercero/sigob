@@ -8,8 +8,8 @@ $url = 'http://localhost/sigob/back/modulo_nomina/nom_calculonomina.php';
 
 // Datos a enviar (el objeto JSON)
 $data = array(
-    "nombre" => "Obreros Nacional",
-    "identificador" => "s1",
+    "nombre" => "004 Empleados  Empleados Nacional",
+    "identificador" => "s52",
 );
 
 // Convertir el array a formato JSON

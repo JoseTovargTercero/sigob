@@ -543,25 +543,58 @@ echo json_encode($response);
 } else {
    function calculoSalarioBase($conexion, $empleado, $nombre, $identificador) {
     // Consulta SQL con LEFT JOIN
-    if ($identificador == "s1") {
+   // Obtener la semana del año actual
+$semana_ano = intval(substr($identificador, 1));
+
+// Calcular la semana del mes
+$semana_mes = $semana_ano % 4;
+if ($semana_mes == 0) {
+    $semana_mes = 4; // Para que la semana 4, 8, 12, ... se considere la cuarta semana del mes
+}
+
+// Verificar el identificador con la semana correspondiente
+// Obtener el número de la semana del año del identificador
+$semana_ano = intval(substr($identificador, 1));
+
+// Calcular la semana del mes
+$semana_mes = ceil($semana_ano / 4);
+
+// Ajustar la semana del mes si el mes tiene más de 4 semanas
+if ($semana_mes > 5) {
+    $semana_mes = 5; // Considerar solo hasta la quinta semana
+}
+
+// Verificar el identificador con la semana correspondiente
+if ($semana_mes == 1) {
+    // Primera semana de cada mes
     $sql = "SELECT empleados.*, cargos_grados.grado,
         TIMESTAMPDIFF(YEAR, empleados.fecha_ingreso, CURDATE()) + empleados.otros_años AS antiguedad
     FROM empleados
     LEFT JOIN cargos_grados ON empleados.cod_cargo = cargos_grados.cod_cargo
     WHERE empleados.id = ?";
-} elseif ($identificador == "s2") {
+} elseif ($semana_mes == 2) {
+    // Segunda semana de cada mes
+    $sql = "SELECT empleados.*, cargos_grados.grado,
+        TIMESTAMPDIFF(YEAR, empleados.fecha_ingreso, DATE_ADD(CURDATE(), INTERVAL 7 DAY)) + empleados.otros_años AS antiguedad
+    FROM empleados
+    LEFT JOIN cargos_grados ON empleados.cod_cargo = cargos_grados.cod_cargo
+    WHERE empleados.id = ?";
+} elseif ($semana_mes == 3) {
+    // Tercera semana de cada mes
     $sql = "SELECT empleados.*, cargos_grados.grado,
         TIMESTAMPDIFF(YEAR, empleados.fecha_ingreso, DATE_ADD(CURDATE(), INTERVAL 14 DAY)) + empleados.otros_años AS antiguedad
     FROM empleados
     LEFT JOIN cargos_grados ON empleados.cod_cargo = cargos_grados.cod_cargo
     WHERE empleados.id = ?";
-} elseif ($identificador == "s3") {
-   $sql = "SELECT empleados.*, cargos_grados.grado,
+} elseif ($semana_mes == 4) {
+    // Cuarta semana de cada mes
+    $sql = "SELECT empleados.*, cargos_grados.grado,
         TIMESTAMPDIFF(YEAR, empleados.fecha_ingreso, DATE_ADD(CURDATE(), INTERVAL 21 DAY)) + empleados.otros_años AS antiguedad
     FROM empleados
     LEFT JOIN cargos_grados ON empleados.cod_cargo = cargos_grados.cod_cargo
     WHERE empleados.id = ?";
-} elseif ($identificador == "s4") {
+} elseif ($semana_mes == 5) {
+    // Quinta semana de cada mes (si es aplicable)
     $sql = "SELECT empleados.*, cargos_grados.grado,
         TIMESTAMPDIFF(YEAR, empleados.fecha_ingreso, DATE_ADD(CURDATE(), INTERVAL 28 DAY)) + empleados.otros_años AS antiguedad
     FROM empleados
@@ -667,9 +700,21 @@ function obtenerMonto($conexion, $grado, $paso, $tabulador, $identificador) {
 
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
-        if ($identificador == "s1" OR $identificador == "s2" OR $identificador == "s3" OR $identificador == "s4") {
+        // Obtener el número de la semana del año del identificador
+$semana_ano = intval(substr($identificador, 1));
+
+// Calcular la semana del mes
+$semana_mes = ceil($semana_ano / 4);
+
+// Ajustar la semana del mes si el mes tiene más de 4 semanas
+if ($semana_mes > 5) {
+    $semana_mes = 5; // Considerar solo hasta la quinta semana
+}
+
+// Aplicar el cálculo para el monto según la semana del mes
+        if ($semana_mes == 1 || $semana_mes == 2 || $semana_mes == 3 || $semana_mes == 4 || $semana_mes == 5) {
             $monto2 = $row["monto"];
-            $monto = round($monto2*0.25,2);
+            $monto = round(($monto2 * 0.25), 2);
         }elseif ($identificador == "q1" OR $identificador == "q2") {
             $monto2 = $row["monto"];
             $monto = round($monto2*0.50,2);
@@ -701,9 +746,21 @@ function obtenerValorConcepto($conexion, $nom_concepto, $salarioBase, $precio_do
         $tipo_calculo = $row["tipo_calculo"];
         $valor2 = $row["valor"];
         
-        if ($identificador == "s1" || $identificador == "s2" || $identificador == "s3" || $identificador == "s4") {
-            $valor = round($valor2 * 0.25, 2);
-        } elseif ($identificador == "q1" || $identificador == "q2") {
+        // Obtener el número de la semana del año del identificador
+$semana_ano = intval(substr($identificador, 1));
+
+// Calcular la semana del mes
+$semana_mes = ceil($semana_ano / 4);
+
+// Ajustar la semana del mes si el mes tiene más de 4 semanas
+if ($semana_mes > 5) {
+    $semana_mes = 5; // Considerar solo hasta la quinta semana
+}
+
+// Aplicar el cálculo para el valor según la semana del mes
+        if ($semana_mes >= 1 && $semana_mes <= 5) {
+        $valor = round(($valor2 * 0.25), 2);
+        }elseif ($identificador == "q1" || $identificador == "q2") {
             $valor = round($valor2 * 0.50, 2);
         } else {
             $valor = $row["valor"];

@@ -633,34 +633,27 @@ function guardarReporte() {
         },
         body: JSON.stringify({ data: data })
     })
-    .then(response => response.text()) // Cambiar a text() para verificar el contenido
-    .then(responseText => {
-        try {
-            let data = JSON.parse(responseText);
-            if (data.error) {
-                console.error(data.error);
-                toast_s('error', 'Error al generar el reporte');
-            } else {
-                console.log(data);
-                toast_s('success', 'Reporte guardado correctamente');
-                
-                // Vaciar los campos
-                document.getElementById('formato').value = '';
-                document.getElementById('almacenar').value = '';
-                document.getElementById('nombre').value = '';
-                document.getElementById('t_area-2').value = '';
-                document.getElementById('filtrarXnomina').value = 'Ninguno';
-                document.getElementById('nominasFiltroSection').innerHTML = '';
-                document.getElementById('result-em_nomina').innerHTML = '';
-                
-                // Redirigir a la URL del PDF para descargar si está disponible
-                if (data.pdfUrl) {
-                    window.location.href = data.pdfUrl;
-                }
-            }
-        } catch (error) {
-            console.error('Error al analizar la respuesta:', error);
-            toast_s('error', 'Error al procesar la respuesta del servidor');
+    .then(response => {
+        if (response.ok) {
+            return response.blob();
+        } else {
+            throw new Error('Error en la respuesta del servidor');
+        }
+    })
+    .then(blob => {
+        // Verificar si la respuesta es un archivo ZIP
+        let contentType = blob.type;
+        if (contentType === 'application/zip') {
+            let url = window.URL.createObjectURL(blob);
+            let a = document.createElement('a');
+            a.href = url;
+            a.download = 'reportes_' + new Date().toISOString().replace(/[-:.]/g, '') + '.zip'; // Nombre del archivo ZIP
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url); // Limpiar el URL creado
+        } else {
+            throw new Error('El contenido recibido no es un archivo ZIP');
         }
     })
     .catch(error => {
@@ -668,6 +661,9 @@ function guardarReporte() {
         toast_s('error', 'Error al enviar la solicitud');
     });
 }
+
+
+
 
 
 
