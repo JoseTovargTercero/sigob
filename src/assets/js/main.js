@@ -299,6 +299,12 @@ function checkTablesForData() {
 
 
    
+/**
+ * Displays a SweetAlert modal dialog.
+ *
+ * @param {string} type - The type of the alert. Can be "success", "error", "warning", "info", or "question".
+ * @param {string} text - The text to display in the alert.
+ */
 function swal(type, text) {
   Swal.fire({
     title: "Atención",
@@ -311,3 +317,13 @@ function swal(type, text) {
 
 
 
+
+/**
+ * Capitalizes the first letter of a string.
+ *
+ * @param {string} string - The input string.
+ * @returns {string} The input string with the first letter capitalized.
+ */
+function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}

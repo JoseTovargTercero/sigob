@@ -20,6 +20,8 @@ require_once '../../back/sistema_global/session.php';
 
 
 
+
+
   <div class="pc-container">
     <div class="pc-content">
       <div class="page-header">
