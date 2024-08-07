@@ -153,10 +153,10 @@ $stmt->close();
     function solicitarDatos() {
       let cedula = document.getElementById('cedula').value
 
- //     if (cedula == '') {
- //       toast_s('error', 'Debe ingresar una cédula para consultar')
- //       return
- //     }
+      if (cedula == '') {
+        toast_s('error', 'Debe ingresar una cédula para consultar')
+        return
+      }
 
       fetch('../../back/modulo_relaciones_laborales/rela_neto_pago.php', {
           method: 'POST',
@@ -267,7 +267,6 @@ $stmt->close();
           toast_s('error', 'Error al enviar la solicitud');
         });
     }
-    solicitarDatos()
 
     document.getElementById('btn-consultar').addEventListener('click', solicitarDatos)
 /*
