@@ -7,20 +7,20 @@ $data = json_decode(file_get_contents('php://input'), true);
 // Verificar si algún campo está vacío
 foreach ($data as $key => $value) {
     if ($value == '') {
-        echo json_encode(["error" => "Error: el campo $key no puede estar vacío."]);
+        echo json_encode(["success" => false, "message" => "Error: el campo $key no puede estar vacío."]);
         exit;
     }
 }
 
 // Verificar si el ID de dependencia está presente y no está vacío
 if (empty($data['id_dependencia'])) {
-    echo json_encode(["error" => "Error: el campo id_dependencia no puede estar vacío."]);
+    echo json_encode(["success" => false, "message" => "Error: el campo id_dependencia no puede estar vacío."]);
     exit;
 }
 
 // Verificar si cod_dependencia está presente y no está vacío
 if (empty($data['cod_dependencia'])) {
-    echo json_encode(["error" => "Error: el campo cod_dependencia no puede estar vacío."]);
+    echo json_encode(["success" => false, "message" => "Error: el campo cod_dependencia no puede estar vacío."]);
     exit;
 }
 
@@ -30,7 +30,7 @@ $stmt_dep->bind_param('s', $data["cod_dependencia"]);
 $stmt_dep->execute();
 $result = $stmt_dep->get_result();
 if ($result->num_rows > 0) {
-    echo json_encode(["error" => "Error: ya existe una dependencia con el mismo código."]);
+    echo json_encode(["success" => false, "message" => "Error: ya existe una dependencia con el mismo código."]);
     $stmt_dep->close();
     exit;
 }
@@ -47,9 +47,9 @@ $stmt->bind_param("sss", $data["dependencia"], $data["cod_dependencia"], $data["
 
 // Ejecutar la consulta preparada
 if ($stmt->execute()) {
-    echo json_encode(["success" => "Datos actualizados correctamente."]);
+    echo json_encode(["success" => true, "message" => "Datos actualizados correctamente."]);
 } else {
-    echo json_encode(["error" => "Error al actualizar datos: " . $conexion->error]);
+    echo json_encode(["success" => false, "message" => "Error al actualizar datos: " . $conexion->error]);
 }
 
 // Cerrar la declaración y la conexión

@@ -6,7 +6,7 @@ $data = json_decode(file_get_contents('php://input'), true);
 
 // Verificar si el campo id_dependencia está presente y no está vacío
 if (empty($data['id_dependencia'])) {
-    echo json_encode(["error" => "Error: el campo id_dependencia no puede estar vacío."]);
+    echo json_encode(["success" => false, "message" => "Error: el campo id_dependencia no puede estar vacío."]);
     exit;
 }
 
@@ -16,7 +16,7 @@ $stmt_emp->bind_param('s', $data["id_dependencia"]);
 $stmt_emp->execute();
 $result = $stmt_emp->get_result();
 if ($result->num_rows > 0) {
-    echo json_encode(["error" => "Error: existe un empleado registrado con esta dependencia."]);
+    echo json_encode(["success" => false, "message" => "Error: existe un empleado registrado con esta dependencia."]);
     $stmt_emp->close();
     exit;
 }
@@ -28,9 +28,9 @@ $stmt_dep->bind_param('s', $data["id_dependencia"]);
 
 // Ejecutar la consulta preparada
 if ($stmt_dep->execute()) {
-    echo json_encode(["success" => "Dependencia eliminada correctamente."]);
+    echo json_encode(["success" => true, "message" => "Dependencia eliminada correctamente."]);
 } else {
-    echo json_encode(["error" => "Error al eliminar la dependencia: " . $conexion->error]);
+    echo json_encode(["success" => false, "message" => "Error al eliminar la dependencia: " . $conexion->error]);
 }
 
 // Cerrar la declaración y la conexión

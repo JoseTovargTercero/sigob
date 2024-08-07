@@ -450,6 +450,7 @@ const sendDependencyData = async ({ newDependency }) => {
 }
 
 const updateDependencyData = async ({ data }) => {
+  console.log(data)
   try {
     const res = await fetch(updateDependenciaUrl, {
       method: 'POST',
@@ -488,7 +489,10 @@ const updateDependencyData = async ({ data }) => {
 
 const deleteDependencyData = async (id) => {
   try {
-    const res = await fetch(`${deleteDependencyUrl}?id=${id}`)
+    const res = await fetch(deleteDependencyUrl, {
+      method: 'POST',
+      body: JSON.stringify({ id_dependencia: id }),
+    })
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
 

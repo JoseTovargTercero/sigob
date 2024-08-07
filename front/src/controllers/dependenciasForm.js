@@ -60,6 +60,7 @@ export function validateDependenciaForm({
         message: '¿Desea borrar esta dependencia?',
         successFunction: async function () {
           await deleteDependencyData(e.target.dataset.id)
+          loadDependenciaTable()
         },
       })
     }
@@ -86,13 +87,13 @@ export function validateDependenciaForm({
     // GUARDAR DEPENDENCIA
 
     if (e.target.id === btnSaveId) {
-      validateInput({
+      fieldList = validateInput({
         target: formElement.dependencia,
         fieldList,
         fieldListErrors,
         type: fieldListErrors[formElement.dependencia.name],
       })
-      validateInput({
+      fieldList = validateInput({
         target: formElement.cod_dependencia,
         fieldList,
         fieldListErrors,
@@ -112,7 +113,7 @@ export function validateDependenciaForm({
           successFunction: async function () {
             await updateDependencyData({
               data: {
-                id,
+                id_dependencia: id,
                 dependencia: fieldList.dependencia,
                 cod_dependencia: fieldList.cod_dependencia,
               },
