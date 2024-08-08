@@ -121,6 +121,17 @@
 
 
         <?php } elseif ($_SESSION["u_oficina_id"] == 3) {  //_relaciones_laborales ?>
+          <li class="pc-item pc-caption">
+            <label>Inicio</label>
+            <i data-feather="sidebar"></i>
+          </li>
+          <li class="pc-item">
+            <a href="<?php echo constant('URL') ?>front/mod_relaciones_laborales/index" class="pc-link">
+              <span class="pc-micon"><i class='bx bx-detail'></i></span>
+              <span class="pc-mtext">Netos de pago</span>
+            </a>
+          </li>
+
 
         <?php } elseif ($_SESSION["u_oficina_id"] == 4) { //_atencion_trabajador ?>
 

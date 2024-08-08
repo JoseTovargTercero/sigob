@@ -24,6 +24,12 @@ $stmt->close();
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <style>
+    td{
+      padding: 7px !important;
+    }
+  </style>
+
 </head>
 <?php require_once '../includes/header.php' ?>
 
@@ -87,7 +93,7 @@ $stmt->close();
               <div class="row">
                 <div class="col-lg-12 m-a">
                   <div class="table-responsive">
-                    <table class="table table-hover table-borderless">
+                    <table class="table table-hover">
                       <thead>
                         <tr>
                           <th>Año</th>
@@ -124,23 +130,6 @@ $stmt->close();
   <script src="../../src/assets/js/notificaciones.js"></script>
   <script src="../../src/assets/js/main.js"></script>
   <script src="../../src/assets/js/ajax_class.js"></script>
-  <style>
-    .vista_detallada{
-      display: none;
-    }
-    .colorize {
-      background-color: #d1d1d1;
-    }
-    .colorize_2 {
-      background-color: #f0f0f0;
-    }
-    td{
-      padding: 7px !important;
-    }
-    .text-opacity{
-      color: #d1d1d1 !important;
-    }
-  </style>
 
   <script>
 
