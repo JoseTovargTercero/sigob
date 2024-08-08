@@ -1,4 +1,6 @@
-import { getDependencyData } from '../api/empleados.js'
+import { deleteDependencyData, getDependencyData } from '../api/empleados.js'
+import { confirmNotification } from '../helpers/helpers.js'
+import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 
 const d = document
 const w = window
@@ -77,6 +79,23 @@ export async function loadDependenciaTable() {
 export const addDependenciaFila = ({ row }) => {
   console.log('añadiendooo', row)
   dependenciaTable.row.add(row).draw()
+}
+
+export function confirmDeleteDependencia({ id, row, table }) {
+  confirmNotification({
+    type: NOTIFICATIONS_TYPES.delete,
+    successFunction: async function () {
+      let filteredRows = dependenciaTable.rows(function (idx, data, node) {
+        return node === row
+      })
+
+      let res = await deleteDependencyData(id)
+      if (res.error) return
+      // ELIMINAR FILA DE LA TABLA CON LA API DE DATATABLES
+      filteredRows.remove().draw()
+    },
+    message: '¿Deseas eliminar esta dependencia?',
+  })
 }
 
 // `

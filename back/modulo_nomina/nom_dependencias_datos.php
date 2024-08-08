@@ -24,8 +24,9 @@ $result = $conexion->query($sql);
 // Verificar si la consulta fue exitosa
 if ($result === false) {
     // Si hay un error en la consulta, mostrarlo y salir del script
-    $response['success'] = false;
-    $response['message'] = "Error en la consulta: " . $conexion->error;
+    $response['error'] = "Error en la consulta: " . $conexion->error;
+
+
 } else {
     $datos = array();
 
@@ -40,12 +41,12 @@ if ($result === false) {
             $datos[] = $tabulador;
         }
 
-        $response['success'] = true;
-        $response['data'] = $datos;
+        $response['success'] = $datos;
+
     } else {
         // Si no se encontraron resultados
-        $response['success'] = false;
-        $response['message'] = "No se encontraron resultados.";
+        $response['error'] = "No se encontraron resultados.";
+
     }
 }
 

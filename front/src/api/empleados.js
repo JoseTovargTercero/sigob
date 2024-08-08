@@ -2,6 +2,7 @@ import {
   confirmNotification,
   hideLoader,
   showLoader,
+  toastNotification,
 } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 
@@ -67,6 +68,7 @@ const getEmployeesData = async () => {
     const json = await res.json()
     return json
   } catch (e) {
+    console.log(e)
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
       message: 'Error al obtener empleados',
@@ -275,12 +277,13 @@ const deleteEmployee = async (id) => {
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
     else {
       console.log(res)
-      confirmNotification({
+      toastNotification({
         type: NOTIFICATIONS_TYPES.done,
-        message: 'Registro eliminado',
+        message: 'Empleado eliminado',
       })
     }
     const json = await res.text()
+    console.log(json)
     return json
   } catch (e) {
     console.error(e)
@@ -351,16 +354,16 @@ const getDependencyData = async (id) => {
 
     const json = await res.json()
 
-    if (!json.success) {
-      throw json
+    if (json.error) {
+      toastNotification({ type: 'error', message: json.error })
     }
 
     let mappedData = mapData({
-      obj: json.data,
+      obj: json.success,
       name: 'dependencia',
       id: 'id_dependencia',
     })
-    return { mappedData, fullInfo: json.data }
+    return { mappedData, fullInfo: json.success }
   } catch (e) {
     console.log(e)
     return confirmNotification({
@@ -399,7 +402,7 @@ const sendDependencyData = async ({ newDependency }) => {
     console.log(newDependency)
 
     const dependencyData = await getDependencyData()
-    console.log(dependencyData)
+
     if (
       dependencyData.fullInfo.some(
         (el) =>
@@ -407,7 +410,7 @@ const sendDependencyData = async ({ newDependency }) => {
           newDependency.dependencia.toUpperCase()
       )
     )
-      return confirmNotification({
+      return toastNotification({
         type: NOTIFICATIONS_TYPES.fail,
         message: 'Dependencia ya existe',
       })
@@ -423,20 +426,21 @@ const sendDependencyData = async ({ newDependency }) => {
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
 
     const json = await res.json()
+    console.log(json)
+    if (json.error) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.fail,
+        message: json.error,
+      })
+    }
 
     if (json.success) {
-      console.log(res)
-      confirmNotification({
+      toastNotification({
         type: NOTIFICATIONS_TYPES.done,
-        message: json.message,
+        message: json.success,
       })
 
       return newDependency
-    } else {
-      confirmNotification({
-        type: NOTIFICATIONS_TYPES.fail,
-        message: json.message,
-      })
     }
   } catch (e) {
     console.log(e)
@@ -463,17 +467,17 @@ const updateDependencyData = async ({ data }) => {
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
 
     const json = await res.json()
-
+    console.log(json)
     if (json.success) {
-      console.log(res)
       confirmNotification({
         type: NOTIFICATIONS_TYPES.done,
-        message: json.message,
+        message: json.success,
       })
-    } else {
+    }
+    if (json.error) {
       confirmNotification({
         type: NOTIFICATIONS_TYPES.fail,
-        message: json.message,
+        message: json.error,
       })
     }
   } catch (e) {
@@ -498,18 +502,17 @@ const deleteDependencyData = async (id) => {
 
     const json = await res.json()
 
+    console.log(json)
     if (json.success) {
-      console.log(res)
-      confirmNotification({
+      toastNotification({
         type: NOTIFICATIONS_TYPES.done,
-        message: json.message,
-      })
-    } else {
-      confirmNotification({
-        type: NOTIFICATIONS_TYPES.fail,
-        message: json.message,
+        message: json.success,
       })
     }
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
+    return json
   } catch (e) {
     console.log(e)
     return confirmNotification({

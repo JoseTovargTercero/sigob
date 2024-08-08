@@ -3,7 +3,7 @@ require_once '../sistema_global/conexion.php';
 require_once '../sistema_global/session.php';
 
 // Consulta SQL para obtener los datos del empleado y su dependencia
-$sql = "SELECT e.id, e.cedula, e.nombres, e.tipo_nomina, d.id_dependencia, d.dependencia, e.verificado
+$sql = "SELECT e.id, e.cedula, e.nombres, e.tipo_nomina, e.status, d.id_dependencia, d.dependencia, e.verificado
         FROM empleados AS e
         INNER JOIN dependencias AS d ON e.id_dependencia = d.id_dependencia";
 
@@ -32,6 +32,7 @@ if ($result->num_rows > 0) {
             "tipo_nomina" => $row["tipo_nomina"],
             "id_dependencia" => $row["id_dependencia"],
             "dependencia" => $row["dependencia"],
+            "status" => $row['status'],
             "verificado" => $row["verificado"]
         );
         $datos[] = $empleado;

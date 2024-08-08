@@ -47,9 +47,44 @@ require_once '../../back/sistema_global/session.php';
 
 
               </div>
+              <nav class="nav nav-pills nav-justified">
+
+                <button class="nav-link active" data-tableid="employee-table-verificados">Verificados</button>
+                <button class="nav-link" data-tableid="employee-table-corregir">Por
+                  correciones</button>
+                <button class="nav-link" data-tableid="employee-table-revision">En revisión</button>
+              </nav>
             </div>
-            <div class="card-body d-block" id="employee-table-container">
-              <table id="employee-table" class="table table-striped" style="width:100%">
+            <div class="card-body d-block" id="employee-table-verificados-container">
+              <table id="employee-table-verificados" class="table table-striped" style="width:100%">
+                <thead class="w-100">
+                  <th>NOMBRES</th>
+                  <th>CEDULA</th>
+                  <th>DEPENDENCIA</th>
+                  <th>NOMINA</th>
+                  <th>ACCIONES</th>
+                </thead>
+                <tbody>
+
+                </tbody>
+              </table>
+            </div>
+            <div class="card-body d-none" id="employee-table-corregir-container">
+              <table id="employee-table-corregir" class="table table-striped" style="width:100%">
+                <thead class="w-100">
+                  <th>NOMBRES</th>
+                  <th>CEDULA</th>
+                  <th>DEPENDENCIA</th>
+                  <th>NOMINA</th>
+                  <th>ACCIONES</th>
+                </thead>
+                <tbody>
+
+                </tbody>
+              </table>
+            </div>
+            <div class="card-body d-none" id="employee-table-revision-container">
+              <table id="employee-table-revision" class="table table-striped" style="width:100%">
                 <thead class="w-100">
                   <th>NOMBRES</th>
                   <th>CEDULA</th>
@@ -208,46 +243,31 @@ require_once '../../back/sistema_global/session.php';
               </div>
 
               <div class="form-group">
-                <div class="row ">
+                <div class="row mx-auto">
 
-                  <div class="col-sm-5 mt-2">
-                    <div class="form-group">
-
-                      <label class="form-label" for="cod_dependencia">DEPENDENCIA</label>
-                      
-                      <div class="input-group">
-                        
-
-                        <input type="text" class="input-group-text" name="cod_dependencia" id="cod_dependencia"
-                          placeholder="Código" disabled />
-
-                          <select class="form-select employee-select" name="id_dependencia" id="search-select-dependencias">
-                            </select>
-                            
-                            
-                            <button type="button" id="add-dependency" class="input-group-text btn btn-primary">+</button>
-                          </div>
-                        </div>
-
-
+                  <div class="col-sm-4">
+                    <label class="form-label" for="id_dependencia">DEPENDENCIAS
+                      LABORALES</label>
+                    <select class="form-select employee-select" name="id_dependencia" id="search-select-dependencias">
+                    </select>
                   </div>
-
-
-                  <div class="col-sm-7 mt-2">
-
-                  
-                    <div class="form-group">
-                      <label for="observacion">OBSERVACIONES</label>
-                      <textarea class="form-control employee-input" name="observacion"
-                        placeholder="Observación sobre el empleado..." id="observacion" style="height: 50px"></textarea>
-                    </div>
+                  <div class="col-sm-4 mt-auto">
+                    <label class="form-label" for="cod_dependencia">CÓDIGO DEPENDENCIA</label>
+                    <input type="text" class="form-control" name="cod_dependencia" id="cod_dependencia"
+                      placeholder="Codigo de dependencia" disabled>
                   </div>
-
+                  <div class="col-sm-1 mt-auto">
+                    <button type="button" id="add-dependency" class="btn btn-primary">+</button>
+                  </div>
                 </div>
               </div>
 
 
-
+              <div class="form-group">
+                <label for="observacion">OBSERVACIONES</label>
+                <textarea class="form-control employee-input" name="observacion"
+                  placeholder="Observación sobre el empleado..." id="observacion" style="height: 50px"></textarea>
+              </div>
 
               <!-- AÑADIR NUEVA DEPENDENCIA -->
 

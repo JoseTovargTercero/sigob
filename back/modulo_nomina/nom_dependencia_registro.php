@@ -6,8 +6,21 @@ $data = json_decode(file_get_contents('php://input'), true);
 
 // Comprobar que se reciben los dos parámetros necesarios
 if (!isset($data["dependencia"]) || !isset($data["cod_dependencia"])) {
-    $response = array("success" => false, "message" => "Los parámetros 'dependencia' y 'codigo dependencia' son obligatorios.");
+    $response = array("error" => "Los parámetros 'dependencia' y 'codigo dependencia' son obligatorios.");
 } else {
+
+    // Verificar si hay un registro con el mismo cod_dependencia
+    $stmt_dep = $conexion->prepare("SELECT * FROM `dependencias` WHERE cod_dependencia = ?");
+    $stmt_dep->bind_param('s', $data["cod_dependencia"]);
+    $stmt_dep->execute();
+    $result = $stmt_dep->get_result();
+    if ($result->num_rows > 0) {
+        echo json_encode(["error" => "Error: ya existe una dependencia con el mismo código."]);
+        $stmt_dep->close();
+        exit;
+    }
+    $stmt_dep->close();
+
     // Construir la consulta SQL para insertar datos
     $sql = "INSERT INTO dependencias (dependencia, cod_dependencia) VALUES (?, ?)";
 
@@ -19,9 +32,9 @@ if (!isset($data["dependencia"]) || !isset($data["cod_dependencia"])) {
 
     // Ejecutar la consulta preparada
     if ($stmt->execute()) {
-        $response = array("success" => true, "message" => "Dependencia registrada correctamente.");
+        $response = array("success" => "Dependencia registrada correctamente.");
     } else {
-        $response = array("success" => false, "message" => "Error al insertar datos: " . $conexion->error);
+        $response = array("error" => "Error al insertar datos: " . $conexion->error);
     }
 
     // Cerrar la declaración
