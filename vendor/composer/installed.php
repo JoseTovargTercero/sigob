@@ -147,5 +147,14 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
+        'shuchkin/simplexlsxgen' => array(
+            'pretty_version' => '1.4.12',
+            'version' => '1.4.12.0',
+            'reference' => '4dffbd72ffaaa57022a50d770f30fa1efe3500a0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../shuchkin/simplexlsxgen',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
     ),
 );

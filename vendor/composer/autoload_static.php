@@ -165,6 +165,7 @@ class ComposerStaticInit4bc78d9b826aee76748b4ece69ffc496
 
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+        'Shuchkin\\SimpleXLSXGen' => __DIR__ . '/..' . '/shuchkin/simplexlsxgen/src/SimpleXLSXGen.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
