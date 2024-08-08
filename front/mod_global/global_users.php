@@ -143,6 +143,7 @@ require_once '../../back/sistema_global/session.php';
     </div>
   </div>
 
+  <script src="../../src/assets/js/notificaciones.js"></script>
 
 
   <!-- [ Main Content ] end -->

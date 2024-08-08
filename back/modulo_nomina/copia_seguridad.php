@@ -24,18 +24,24 @@ if ($_SESSION["u_oficina_id"] == '1' && isset($data['accion'])) {
         exit();
     }
 
+
+
+
+    function backups($tabla, $id_table){
+        globaL $conexion;
+        globaL $remoteConn;
     // Obtener datos de la tabla local
-    $localResult = $conexion->query("SELECT * FROM empleados");
+    $localResult = $conexion->query("SELECT * FROM $tabla");
     $localData = [];
     while ($row = $localResult->fetch_assoc()) {
-        $localData[$row['id']] = $row;
+        $localData[$row[$id_table]] = $row;
     }
 
     // Obtener datos de la tabla del hosting
-    $remoteResult = $remoteConn->query("SELECT * FROM empleados");
+    $remoteResult = $remoteConn->query("SELECT * FROM $tabla");
     $remoteData = [];
     while ($row = $remoteResult->fetch_assoc()) {
-        $remoteData[$row['id']] = $row;
+        $remoteData[$row[$id_table]] = $row;
     }
 
     // Contadores de operaciones
@@ -54,26 +60,34 @@ if ($_SESSION["u_oficina_id"] == '1' && isset($data['accion'])) {
                     $set[] = "$key='" . $remoteConn->real_escape_string($value) . "'";
                 }
                 $set = implode(", ", $set);
-                $remoteConn->query("UPDATE empleados SET $set WHERE id='$id'");
+                $remoteConn->query("UPDATE $tabla SET $set WHERE $id_table='$id'");
                 $actualizados++;
             }
         } else {
             // Registro nuevo, insertar en el hosting
             $columns = implode(", ", array_keys($localRow));
             $values = implode("', '", array_map([$remoteConn, 'real_escape_string'], array_values($localRow)));
-            $remoteConn->query("INSERT INTO empleados ($columns) VALUES ('$values')");
+            $remoteConn->query("INSERT INTO $tabla ($columns) VALUES ('$values')");
             $agregados++;
         }
     }
 
-    // Eliminar registros que están en el hosting pero no en la tabla local
-    foreach ($remoteData as $id => $remoteRow) {
-        if (!isset($localData[$id])) {
-            $remoteConn->query("DELETE FROM empleados WHERE id='$id'");
-            $eliminados++;
+        // Eliminar registros que están en el hosting pero no en la tabla local
+        foreach ($remoteData as $id => $remoteRow) {
+            if (!isset($localData[$id])) {
+                $remoteConn->query("DELETE FROM $tabla WHERE $id_table='$id'");
+                $eliminados++;
+            }
         }
     }
 
+
+
+    backups('empleados', 'id');
+    backups('cargos_grados', 'id');
+    backups('empleados_por_grupo', 'id');
+    backups('nominas_grupos', 'id');
+    backups('dependencias', 'id_dependencia');
 
 
 
@@ -83,11 +97,6 @@ if ($_SESSION["u_oficina_id"] == '1' && isset($data['accion'])) {
     $fecha_actual = date('d-m-Y');
     $stmt->bind_param('ss', $user_id, $fecha_actual);
     $stmt->execute();
-
-
-
-
-
 
     // Crear arreglo con los resultados de la sincronización
     $resultado = [
