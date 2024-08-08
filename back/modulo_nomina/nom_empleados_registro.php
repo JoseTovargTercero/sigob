@@ -16,7 +16,7 @@ if ($stmt === false) {
 }
 
 // Crear variables para valores constantes
-$verificado = '0';
+$verificado = '1';
 $correcion = NULL;
 
 // Vincular parámetros y ejecutar la consulta

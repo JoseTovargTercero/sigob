@@ -172,8 +172,9 @@ if ($count > 0) {
     }
 } elseif (isset($_POST["consulta_nombre"])) {
     $nombre = clear($_POST["nombre"]);
-    $stmt = mysqli_prepare($conexion, "SELECT * FROM `conceptos` WHERE nom_concepto = ? LIMIT 1");
-    $stmt->bind_param("s", $nombre);
+    $codigo_concepto = clear($_POST["codigo_concepto"]);
+    $stmt = mysqli_prepare($conexion, "SELECT * FROM `conceptos` WHERE nom_concepto = ? OR codigo_concepto = ? LIMIT 1");
+    $stmt->bind_param("ss", $nombre, $codigo_concepto);
     $stmt->execute();
     $result = $stmt->get_result();
     if ($result->num_rows > 0) {

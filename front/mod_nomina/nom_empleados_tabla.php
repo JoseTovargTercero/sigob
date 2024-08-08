@@ -243,31 +243,46 @@ require_once '../../back/sistema_global/session.php';
               </div>
 
               <div class="form-group">
-                <div class="row mx-auto">
+                <div class="row ">
 
-                  <div class="col-sm-4">
-                    <label class="form-label" for="id_dependencia">DEPENDENCIAS
-                      LABORALES</label>
-                    <select class="form-select employee-select" name="id_dependencia" id="search-select-dependencias">
-                    </select>
+                  <div class="col-sm-5 mt-2">
+                    <div class="form-group">
+
+                      <label class="form-label" for="cod_dependencia">DEPENDENCIA</label>
+                      
+                      <div class="input-group">
+                        
+
+                        <input type="text" class="input-group-text" name="cod_dependencia" id="cod_dependencia"
+                          placeholder="Código" disabled />
+
+                          <select class="form-select employee-select" name="id_dependencia" id="search-select-dependencias">
+                            </select>
+                            
+                            
+                            <button type="button" id="add-dependency" class="input-group-text btn btn-primary">+</button>
+                          </div>
+                        </div>
+
+
                   </div>
-                  <div class="col-sm-4 mt-auto">
-                    <label class="form-label" for="cod_dependencia">CÓDIGO DEPENDENCIA</label>
-                    <input type="text" class="form-control" name="cod_dependencia" id="cod_dependencia"
-                      placeholder="Codigo de dependencia" disabled>
+
+
+                  <div class="col-sm-7 mt-2">
+
+                  
+                    <div class="form-group">
+                      <label for="observacion">OBSERVACIONES</label>
+                      <textarea class="form-control employee-input" name="observacion"
+                        placeholder="Observación sobre el empleado..." id="observacion" style="height: 50px"></textarea>
+                    </div>
                   </div>
-                  <div class="col-sm-1 mt-auto">
-                    <button type="button" id="add-dependency" class="btn btn-primary">+</button>
-                  </div>
+
                 </div>
               </div>
 
 
-              <div class="form-group">
-                <label for="observacion">OBSERVACIONES</label>
-                <textarea class="form-control employee-input" name="observacion"
-                  placeholder="Observación sobre el empleado..." id="observacion" style="height: 50px"></textarea>
-              </div>
+
 
               <!-- AÑADIR NUEVA DEPENDENCIA -->
 

@@ -1,4 +1,4 @@
-@charset "UTF-8";
+charset "UTF-8";
 /**======================================================================
 =========================================================================
 Template Name: Datta able - Bootstrap Admin Template
@@ -2989,4 +2989,8 @@ transition: visibility 0s linear 0s, opacity 0.25s 0s, transform 0.25s;
 }
 .text-opacity{
   color: #d1d1d1 !important;
+}
+
+#cod_dependencia{
+  width: 25% !important;
 }

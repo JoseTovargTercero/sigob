@@ -471,7 +471,6 @@ require_once '../../back/sistema_global/session.php';
       });
     }
 
-
     /**
      * This code iterates over the 'clasificador' object and appends options to the 'partidas' element.
      * Each option is created with the key and value from the 'clasificador' object.
@@ -479,7 +478,6 @@ require_once '../../back/sistema_global/session.php';
     for (var key in clasificador) {
       $('#partidas').append('<option value="' + key + '">' + key + ' - ' + clasificador[key] + '</option>');
     }
-
 
     /**
      * Creates a new concepto.
@@ -512,6 +510,7 @@ require_once '../../back/sistema_global/session.php';
           type: 'POST',
           data: {
             nombre: nombre,
+            codigo_concepto: codigo_concepto,
             consulta_nombre: true
           },
           success: function (response) {
@@ -520,7 +519,7 @@ require_once '../../back/sistema_global/session.php';
               $("#section-registro").removeClass('hide');
               $("#section-tabla").hide();
             } else {
-              toast_s('error', 'Ya existe un concepto con este nombre')
+              toast_s('error', 'Tanto el codigo como el nombre del concepto debe ser único.')
             }
           }
         })
