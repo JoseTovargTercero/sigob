@@ -392,6 +392,15 @@ function empleadosDiferencia(registroAnterior, registroActual) {
   return { empleadosEliminados, empleadosNuevos }
 }
 
+function toastNotification({ type, message }) {
+  if (type === NOTIFICATIONS_TYPES.done) {
+    toast_s('success', message)
+  }
+  if (type === NOTIFICATIONS_TYPES.fail) {
+    toast_s('error', message)
+  }
+}
+
 function confirmNotification({
   type,
   successFunction,
@@ -510,6 +519,7 @@ export {
   showLoader,
   hideLoader,
   confirmNotification,
+  toastNotification,
   errorMessage,
   validateStatusText,
   empleadosDiferencia,

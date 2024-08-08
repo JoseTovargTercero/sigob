@@ -6,7 +6,10 @@ import {
 } from '../api/empleados.js'
 import { confirmNotification, validateInput } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
-import { loadDependenciaTable } from './dependenciasTable.js'
+import {
+  confirmDeleteDependencia,
+  loadDependenciaTable,
+} from './dependenciasTable.js'
 
 const d = document
 let id
@@ -55,14 +58,9 @@ export function validateDependenciaForm({
     }
 
     if (e.target.id === 'btn-delete') {
-      confirmNotification({
-        type: NOTIFICATIONS_TYPES.delete,
-        message: '¿Desea borrar esta dependencia?',
-        successFunction: async function () {
-          await deleteDependencyData(e.target.dataset.id)
-          loadDependenciaTable()
-        },
-      })
+      let fila = e.target.closest('tr')
+
+      confirmDeleteDependencia({ id: e.target.dataset.id, row: fila })
     }
     if (e.target.id === 'btn-edit') {
       // EDITAR DEPENDENCIA
