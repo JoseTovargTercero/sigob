@@ -1,6 +1,7 @@
 import {
   getBankData,
   getDependencyData,
+  getEmployeeByCedula,
   getEmployeeData,
   getJobData,
   getProfessionData,
@@ -25,6 +26,7 @@ const d = document
 const w = window
 
 let employeeId
+let employeeCedula
 
 let dependenciasLaborales
 
@@ -59,8 +61,8 @@ function validateEmployeeForm({
     let cargos = await getJobData()
     let profesiones = await getProfessionData()
     let dependencias = await getDependencyData()
-
     dependenciasLaborales = dependencias.fullInfo
+
     let bancos = await getBankData()
     insertOptions({ input: 'cargo', data: cargos })
     insertOptions({ input: 'instruccion_academica', data: profesiones })
@@ -91,8 +93,10 @@ function validateEmployeeForm({
 
       employeeData.id = employeeData.id_empleado
       employeeId = employeeData.id_empleado
+      employeeCedula = employeeData.cedula
 
       console.log(employeeId)
+      console.log(employeeCedula)
 
       fieldList = employeeData
 
@@ -111,11 +115,10 @@ function validateEmployeeForm({
 
       employeeInputElementCopy.forEach((input) => {
         // SI EL VALOR NO ES UNDEFINED COLOCAR VALOR EN INPUT
-        console.log(input)
-        if (
-          employeeData[input.name] !== undefined &&
-          input.name !== 'dependencia'
-        )
+        if (input.name === 'cedula') {
+          input.setAttribute('disabled', 'true')
+        }
+        if (employeeData[input.name] !== undefined)
           input.value = employeeData[input.name]
 
         validateInput({
@@ -130,18 +133,9 @@ function validateEmployeeForm({
 
       // console.log(fieldList, fieldListErrors)
     } else {
-      validateInput({
-        type: 'reset',
-      })
-      employeeSelectElementCopy.forEach((select) => {
-        select.value = ''
-      })
-
-      employeeInputElementCopy.forEach((input) => {
-        input.value = ''
-      })
-
-      employeeId = undefined
+      delete fieldList.id
+      delete fieldList.employeeId
+      d.getElementById('cedula').removeAttribute('disabled')
     }
   }
 
@@ -185,6 +179,29 @@ function validateEmployeeForm({
   })
 
   formElement.addEventListener('focusout', (e) => {
+    if (e.target.name === 'cedula') {
+      getEmployeeByCedula({ cedula: e.target.value }).then((res) => {
+        if (!res.status) {
+          confirmNotification({
+            type: NOTIFICATIONS_TYPES.fail,
+            message: res.mensaje,
+            successFunction: function () {
+              // Resetear input si el status es falso
+              e.target.value = ''
+              fieldList = validateInput({
+                target: e.target,
+                fieldList,
+                fieldListErrors,
+                type: fieldListErrors[e.target.name].type,
+              })
+              console.log(fieldList)
+            },
+          })
+        } else {
+          // SI EL USUARIO EXISTE, SUMAR LOS OTROS AÑOS
+        }
+      })
+    }
     if (e.target.classList.contains(employeeInputClass)) {
       fieldList = validateInput({
         target: e.target,
@@ -231,6 +248,20 @@ function validateEmployeeForm({
     if (e.target.id === 'btn-employee-form-close') {
       closeModal({ modalId: 'modal-employee-form' })
       formElement.reset()
+
+      validateInput({
+        type: 'reset',
+      })
+      employeeSelectElementCopy.forEach((select) => {
+        select.value = ''
+      })
+
+      employeeInputElementCopy.forEach((input) => {
+        input.value = ''
+      })
+
+      employeeId = undefined
+      employeeCedula = undefined
     }
 
     if (e.target.id === 'add-dependency') {
@@ -274,7 +305,7 @@ function validateEmployeeForm({
 
     if (e.target === btnElement) {
       employeeSelectElementCopy.forEach((input) => {
-        validateInput({
+        fieldList = validateInput({
           target: input,
           fieldList,
           fieldListErrors,
@@ -284,7 +315,7 @@ function validateEmployeeForm({
 
       employeeInputElementCopy.forEach((input) => {
         if (fieldListErrors[input.name])
-          validateInput({
+          fieldList = validateInput({
             target: input,
             fieldList,
             fieldListErrors,
@@ -312,8 +343,6 @@ function validateEmployeeForm({
           othersFunctions: [
             function () {
               closeModal({ modalId: 'modal-employee-form' })
-            },
-            function () {
               validateEmployeeTable()
             },
           ],

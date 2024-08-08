@@ -163,7 +163,7 @@ require_once '../../back/sistema_global/session.php';
               <div class="form-group">
                 <div class="row">
                   <div class="col-sm">
-                    <label class="form-label" for="otros_años">AÑOS LABORALES</label>
+                    <label class="form-label" for="otros_años">OTROS AÑOS LABORALES</label>
                     <input class="employee-input form-control" type="number" name="otros_años"
                       placeholder="Cantidad de años" id="otros_años" />
                   </div>
@@ -214,20 +214,21 @@ require_once '../../back/sistema_global/session.php';
                     <div class="form-group">
 
                       <label class="form-label" for="cod_dependencia">DEPENDENCIA</label>
-                      
+
                       <div class="input-group">
-                        
+
 
                         <input type="text" class="input-group-text" name="cod_dependencia" id="cod_dependencia"
                           placeholder="Código" disabled />
 
-                          <select class="form-select employee-select" name="id_dependencia" id="search-select-dependencias">
-                            </select>
-                            
-                            
-                            <button type="button" id="add-dependency" class="input-group-text btn btn-primary">+</button>
-                          </div>
-                        </div>
+                        <select class="form-select employee-select" name="id_dependencia"
+                          id="search-select-dependencias">
+                        </select>
+
+
+                        <button type="button" id="add-dependency" class="input-group-text btn btn-primary">+</button>
+                      </div>
+                    </div>
 
 
                   </div>
@@ -235,7 +236,7 @@ require_once '../../back/sistema_global/session.php';
 
                   <div class="col-sm-7 mt-2">
 
-                  
+
                     <div class="form-group">
                       <label for="observacion">OBSERVACIONES</label>
                       <textarea class="form-control employee-input" name="observacion"

@@ -41,6 +41,9 @@ const getEmployeesUrl =
 const getEmployeeUrl =
   '../../../../../sigob/back/modulo_nomina/nom_empleado_datos.php'
 
+const getEmployeeByCedulaUrl =
+  '../../../../sigob/back/modulo_nomina/nom_empleados_cedula.php'
+
 const getRegConEmployeeUrl =
   '../../../../sigob/back/modulo_registro_control/regcon_empleado_datos.php'
 
@@ -92,6 +95,26 @@ const getEmployeeData = async (id) => {
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
       message: 'Error al obtener empleado',
+    })
+  }
+}
+
+const getEmployeeByCedula = async ({ cedula }) => {
+  try {
+    const res = await fetch(getEmployeeByCedulaUrl, {
+      method: 'POST',
+      body: JSON.stringify({ cedula }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+    const json = await res.json()
+    console.log(json)
+    return json
+  } catch (e) {
+    console.log(e)
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al consultar información por cédula',
     })
   }
 }
@@ -527,6 +550,7 @@ const deleteDependencyData = async (id) => {
 export {
   getEmployeesData,
   getEmployeeData,
+  getEmployeeByCedula,
   getRegConEmployeeData,
   sendEmployeeData,
   updateDependencyData,
