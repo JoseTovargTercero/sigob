@@ -2,6 +2,6 @@
     "require": {
         "mpdf/mpdf": "^8.2",
         "phpoffice/phpword": "dev-master",
-        "phpoffice/phpspreadsheet": "^1.12"
+        "shuchkin/simplexlsxgen": "^1.4"
     }
 }

@@ -2978,3 +2978,15 @@ transition: visibility 0s linear 0s, opacity 0.25s 0s, transform 0.25s;
 .w-30{
   width: 30% !important;
 }
+.vista_detallada{
+  display: none;
+}
+.colorize {
+  background-color: #d1d1d1;
+}
+.colorize_2 {
+  background-color: #f0f0f0;
+}
+.text-opacity{
+  color: #d1d1d1 !important;
+}

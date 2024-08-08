@@ -143,6 +143,7 @@ require_once '../../back/sistema_global/session.php';
     </div>
   </div>
 
+  <script src="../../src/assets/js/notificaciones.js"></script>
 
 
   <!-- [ Main Content ] end -->
@@ -339,6 +340,10 @@ require_once '../../back/sistema_global/session.php';
 
                       if (msgTrim == 'ok') {
                         toast_s('success', 'Guardado con éxito')
+                        cargarTabla()
+                        setVista('a')
+                        $('#form-data')[0].reset()
+                        
                       }else if (msgTrim == 'pass') {
                         toast_s('error', 'Las contraseñas no coinciden')
                       }else if (msgTrim == 'existe') {
