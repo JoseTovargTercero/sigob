@@ -1163,6 +1163,7 @@ foreach ($empleados_unicos as &$empleado) {
   // Agregar la información del empleado al array de recibos de pago
 $recibos_de_pago[] = array(
     'id_empleado' => $empleado['id'],
+    'salario_base' => $empleado['salario_base'],
     'asignaciones' => $empleado['asignaciones'],
     'deducciones' => $empleado['deducciones'],
     'aportes' => $empleado['aportes'],

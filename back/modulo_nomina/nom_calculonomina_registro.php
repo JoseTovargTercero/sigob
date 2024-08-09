@@ -117,6 +117,7 @@ if ($stmt_peticiones->affected_rows === 0) {
 // Registrar cada recibo de pago en la tabla 'recibo_pago'
 foreach ($recibos_de_pago as $recibo) {
     $id_empleado = $recibo['id_empleado'];
+    $sueldo_base = $recibo['sueldo_base'];
     // Ejemplo con las variables $asignaciones, $deducciones y $aportes
 $asignaciones =  substr(json_encode($recibo['asignaciones'], JSON_UNESCAPED_UNICODE), 1, -1);
 $deducciones = substr(json_encode($recibo['deducciones'], JSON_UNESCAPED_UNICODE), 1, -1);
@@ -139,7 +140,7 @@ $aportes_final = json_encode($resultado_aportes, JSON_UNESCAPED_UNICODE);
     $total_pagar = $recibo['total_a_pagar'];
     
     // Preparar la consulta SQL
-    $sql_recibo_pago = "INSERT INTO recibo_pago (id_empleado, asignaciones, deducciones, aportes, total_pagar, identificador, correlativo) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    $sql_recibo_pago = "INSERT INTO recibo_pago (id_empleado, sueldo_base, asignaciones, deducciones, aportes, total_pagar, identificador, fecha_pagar, correlativo) VALUES (?, ?, ?, ?, ?, ?, ?)";
     $stmt_recibo_pago = $conexion->prepare($sql_recibo_pago);
 
     if (!$stmt_recibo_pago) {
@@ -148,7 +149,7 @@ $aportes_final = json_encode($resultado_aportes, JSON_UNESCAPED_UNICODE);
     }
 
     // Vincular parámetros y ejecutar la consulta
-    $stmt_recibo_pago->bind_param("issssss", $id_empleado, $asignaciones_final, $deducciones_final, $aportes_final, $total_pagar, $identificador, $correlativo_formateado);
+    $stmt_recibo_pago->bind_param("issssssss", $id_empleado, $sueldo_base, $asignaciones_final, $deducciones_final, $aportes_final, $total_pagar, $identificador, $mes_anio_actual, $correlativo_formateado);
     $stmt_recibo_pago->execute();
 
     if ($stmt_recibo_pago->affected_rows === 0) {
