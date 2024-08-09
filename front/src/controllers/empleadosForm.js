@@ -16,6 +16,7 @@ import {
   closeModal,
   confirmNotification,
   openModal,
+  toastNotification,
   validateInput,
   validateModal,
 } from '../helpers/helpers.js'
@@ -199,6 +200,15 @@ function validateEmployeeForm({
           })
         } else {
           // SI EL USUARIO EXISTE, SUMAR LOS OTROS AÑOS
+          if (!res.otros_anios) return
+
+          toastNotification({
+            type: NOTIFICATIONS_TYPES.done,
+            message:
+              'Existe registro de este empleado. Se actualizará el campo otros años laborales',
+          })
+          formElement.otros_años.value =
+            formElement.otros_años.value + res.otros_anios
         }
       })
     }
@@ -304,6 +314,8 @@ function validateEmployeeForm({
     // ENVIAR DATOS
 
     if (e.target === btnElement) {
+      // VALIDAR EI BECAS CURSADAS ES MAYOR A HIJOS
+
       employeeSelectElementCopy.forEach((input) => {
         fieldList = validateInput({
           target: input,
@@ -330,6 +342,14 @@ function validateEmployeeForm({
           type: NOTIFICATIONS_TYPES.fail,
           message: 'Complete todo el formulario antes de avanzar',
         })
+      }
+
+      if (fieldList.beca > fieldList.hijos) {
+        toastNotification({
+          type: NOTIFICATIONS_TYPES.fail,
+          message: 'Becas cursadas no puede ser mayor a la cantidad de hijos.',
+        })
+        return
       }
       delete fieldList.correcion
 

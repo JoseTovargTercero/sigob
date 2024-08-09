@@ -218,15 +218,16 @@ require_once '../../back/sistema_global/session.php';
                       <div class="input-group">
 
 
-                        <input type="text" class="input-group-text" name="cod_dependencia" id="cod_dependencia"
+                        <input type="text" class="input-group-text mb-auto" name="cod_dependencia" id="cod_dependencia"
                           placeholder="Código" disabled />
+                        <div>
+                          <select class="form-select employee-select" name="id_dependencia"
+                            id="search-select-dependencias">
+                          </select>
+                        </div>
 
-                        <select class="form-select employee-select" name="id_dependencia"
-                          id="search-select-dependencias">
-                        </select>
-
-
-                        <button type="button" id="add-dependency" class="input-group-text btn btn-primary">+</button>
+                        <button type="button" id="add-dependency"
+                          class="input-group-text btn btn-primary mb-auto">+</button>
                       </div>
                     </div>
 
