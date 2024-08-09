@@ -181,6 +181,10 @@ function validateEmployeeForm({
 
   formElement.addEventListener('focusout', (e) => {
     if (e.target.name === 'cedula') {
+      if (e.target.value === employeeCedula) {
+        return
+      }
+      employeeCedula = e.target.value
       getEmployeeByCedula({ cedula: e.target.value }).then((res) => {
         if (!res.status) {
           confirmNotification({
@@ -195,12 +199,16 @@ function validateEmployeeForm({
                 fieldListErrors,
                 type: fieldListErrors[e.target.name].type,
               })
-              console.log(fieldList)
+
+              formElement.otros_años.value = ''
             },
           })
         } else {
           // SI EL USUARIO EXISTE, SUMAR LOS OTROS AÑOS
-          if (!res.otros_anios) return
+          if (!res.otros_anios) {
+            formElement.otros_años.value = ''
+            return
+          }
 
           toastNotification({
             type: NOTIFICATIONS_TYPES.done,
@@ -208,7 +216,7 @@ function validateEmployeeForm({
               'Existe registro de este empleado. Se actualizará el campo otros años laborales',
           })
           formElement.otros_años.value =
-            formElement.otros_años.value + res.otros_anios
+            Number(formElement.otros_años.value) + res.otros_anios
         }
       })
     }
