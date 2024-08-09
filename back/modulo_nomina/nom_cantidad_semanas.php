@@ -50,8 +50,7 @@ if (end($weeksByMonth[12]) == "01") {
     array_pop($weeksByMonth[12]);
 }
 
-// Imprimir el resultado
-foreach ($weeksByMonth as $month => $weeks) {
-    echo "Mes: $month, Semanas: " . implode(", ", $weeks) . "<br>";
-}
+// Imprimir el resultado en formato JSON
+header('Content-Type: application/json');
+echo json_encode($weeksByMonth);
 ?>
