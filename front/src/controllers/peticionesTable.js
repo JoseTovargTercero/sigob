@@ -61,7 +61,7 @@ export async function loadRequestTable() {
   let datosOrdenados = [...peticiones].sort(
     (a, b) => a.correlativo - b.correlativo
   )
-
+  console.log(peticiones)
   let data = datosOrdenados.map((peticion) => {
     return {
       correlativo: peticion.correlativo,
@@ -86,7 +86,8 @@ export async function loadRequestTable() {
 }
 
 function validarIdentificador(identificador) {
-  if (identificador.startsWith('s')) return `Semana ${identificador.charAt(1)}`
+  if (identificador.startsWith('s'))
+    return `Semana ${identificador.slice(1, identificador.length)}`
   if (identificador.startsWith('q'))
     return `Quincena ${identificador.charAt(1)}`
   if (identificador === 'unico') return `Mensual`

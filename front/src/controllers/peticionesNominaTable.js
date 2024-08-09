@@ -101,7 +101,7 @@ export async function createTable({ nominaData, columns }) {
 
   let employeePayTable = new DataTable('#request-employee-table', {
     columns: columnTable,
-    scrollY: 200,
+    scrollY: 350,
     responsive: true,
     language: tableLanguage,
     layout: {

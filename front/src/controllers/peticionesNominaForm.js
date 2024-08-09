@@ -7,6 +7,7 @@ import {
   getComparacionNomina2,
   getNominas,
   getPeticionesNomina,
+  getSemanasDelAnio,
 } from '../api/peticionesNomina.js'
 import {
   loadEmployeeList,
@@ -78,9 +79,17 @@ export async function validateRequestForm({
   let requestFormInformationBody = d.getElementById(
     'request-form-information-body'
   )
+
   let selectNomina = d.getElementById(selectNominaId)
   let selectGrupo = d.getElementById(selectGrupoId)
   let selectFrecuencia = d.getElementById(selectFrecuenciaId)
+
+  let selectMes = d.getElementById('mes')
+  let date = new Date()
+  let meses = await getSemanasDelAnio()
+
+  selectMes.value = date.getMonth() + 1
+  selectMes.options[selectMes.selectedIndex].scrollIntoView()
 
   let btnNext = d.getElementById(btnNextId)
   let btnPrevius = d.getElementById(btnPreviusId)
@@ -152,13 +161,16 @@ export async function validateRequestForm({
 
     if (e.target === selectNomina) {
       if (!e.target.value) return
+
+      selectMes.parentElement.classList.add('hide')
+
       fieldList.nomina = e.target.value
 
       fieldList.frecuencia = nominas.find(
         (nomina) => nomina.nombre === e.target.value
       ).frecuencia
 
-      console.log(fieldList.frecuencia)
+      // console.log(fieldList.frecuencia)
 
       selectFrecuencia.innerHTML = ''
 
@@ -166,13 +178,12 @@ export async function validateRequestForm({
 
       switch (fieldList.frecuencia) {
         case '1':
-          FRECUENCY_TYPES[fieldList.frecuencia].forEach(
-            (identificadorNomina, index) => {
-              identificadorOpciones += `<option value='${identificadorNomina}'>Semana ${
-                index + 1
-              }</option>`
-            }
-          )
+          selectMes.parentElement.classList.remove('hide')
+          selectMes.value = date.getMonth() + 1
+
+          meses[date.getMonth() + 1].forEach((identificadorNomina, index) => {
+            identificadorOpciones += `<option value='s${identificadorNomina}'>Semana ${identificadorNomina}</option>`
+          })
           break
         case '2':
           FRECUENCY_TYPES[fieldList.frecuencia].forEach(
@@ -201,8 +212,21 @@ export async function validateRequestForm({
         default:
           break
       }
+      console.log(identificadorOpciones)
       selectFrecuencia.insertAdjacentHTML('beforeend', identificadorOpciones)
     }
+
+    if (e.target === selectMes) {
+      let identificadorOpciones = ''
+      selectFrecuencia.innerHTML = ''
+
+      meses[e.target.value].forEach((identificadorNomina, index) => {
+        identificadorOpciones += `<option value='s${identificadorNomina}'>Semana ${identificadorNomina}</option>`
+      })
+
+      selectFrecuencia.insertAdjacentHTML('beforeend', identificadorOpciones)
+    }
+
     if (e.target === selectFrecuencia) {
       if (!fieldList.nomina)
         return confirmNotification({

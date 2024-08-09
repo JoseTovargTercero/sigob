@@ -171,7 +171,7 @@ d.addEventListener('DOMContentLoaded', (e) => {
         // },
         id_dependencia: {
           value: true,
-          message: 'Elejir una dependencia',
+          message: 'Elegir una dependencia',
           type: 'number',
         },
         tipo_nomina: {

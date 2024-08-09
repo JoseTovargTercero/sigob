@@ -11,7 +11,7 @@ require_once '../../back/sistema_global/session.php';
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.1/css/dataTables.dataTables.css" />
+
     <link rel="stylesheet" href="../src/styles/style.css">
 
 </head>
@@ -55,7 +55,7 @@ require_once '../../back/sistema_global/session.php';
                                     <h5 class="mb-0">Peticion de nomina</h5>
                                     <small class="text-muted mt-0">Administre las peticiones de nomina</small>
                                 </div>
-                                <button class="btn btn-primary" id="btn-new-dependencia">Nueva petición</button>
+                                <button class="btn btn-primary" id="btn-new-request">Nueva petición</button>
 
                             </div>
                         </div>
@@ -86,12 +86,12 @@ require_once '../../back/sistema_global/session.php';
                                     <h5 class="mb-2">Peticion de nomina</h5>
                                     <div class="row">
 
-                                        <div class="mb-2 col-sm w-100">
+                                        <div class="mb-2 col-sm-3 ">
                                             <label for="grupo" class="form-label">Grupo de nomina</label>
                                             <small class="text-muted mt-0 d-block mb-2">Seleccione un grupo de
                                                 nomina</small>
 
-                                            <select id="grupo" name="grupo" class="form-control" size="3">
+                                            <select id="grupo" name="grupo" class="form-control" size="4">
                                                 <?php
                                                 $stmt = mysqli_prepare($conexion, "SELECT id, codigo, nombre FROM `nominas_grupos` ORDER BY codigo");
                                                 $stmt->execute();
@@ -107,23 +107,44 @@ require_once '../../back/sistema_global/session.php';
                                         </div>
 
 
-                                        <div class="mb-2 col-sm w-100">
+                                        <div class="mb-2 col-sm-3 ">
                                             <label for="nomina" class="form-label">Nómina</label>
                                             <small class="text-muted mt-0 d-block mb-2">Seleccione la nómina a
                                                 registrar</small>
-                                            <select id="nomina" name="nomina" class="form-control" size="3">
+                                            <select id="nomina" name="nomina" class="form-control" size="4">
                                                 <option value="">Seleccionar grupo de nómina</option>
                                             </select>
                                         </div>
-                                        <div class="mb-2 col-sm w-100">
+                                        <div class="mb-2 col-sm-3  hide slide-up-animation">
+                                            <label for="frecuencia" class="form-label">Mes del año</label>
+                                            <small class="text-muted mt-0 d-block mb-2">Seleccione el mes</small>
+
+                                            <select id="mes" name="mes" class="form-control" size="4">
+                                                <option value="1">Enero</option>
+                                                <option value="2">Febrero</option>
+                                                <option value="3">Marzo</option>
+                                                <option value="4">Abril</option>
+                                                <option value="5">Mayo</option>
+                                                <option value="6">Junio</option>
+                                                <option value="7">Julio</option>
+                                                <option value="8">Agosto</option>
+                                                <option value="9">Septiembre</option>
+                                                <option value="10">Octubre</option>
+                                                <option value="11">Noviembre</option>
+                                                <option value="12">Diciembre</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-2 col-sm-3 ">
                                             <label for="frecuencia" class="form-label">Frecuencia</label>
-                                            <small class="text-muted mt-0 d-block mb-2">Seleccione la frecuencia</small>
-                                            <select id="frecuencia" name="frecuencia" class="form-control" size="3">
+                                            <small class="text-muted mt-0 d-block mb-2">Seleccione cuando se
+                                                pagará</small>
+                                            <select id="frecuencia" name="frecuencia" class="form-control" size="4">
                                                 <option value="">Seleccionar una nómina</option>
 
 
                                             </select>
                                         </div>
+
                                     </div>
 
                                 </div>

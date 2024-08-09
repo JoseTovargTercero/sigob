@@ -19,6 +19,9 @@ const calculoNominaUrl =
 const enviarCalculoNominaUrl =
   '../../../../../sigob/back/modulo_nomina/nom_calculonomina_registro.php'
 
+const getSemanasDelAnioUrl =
+  '../../../../sigob/back/modulo_nomina/nom_cantidad_semanas.php'
+
 const comparacionNominaUrl =
   '../../../../../sigob/back/modulo_nomina/nom_comparacion_nominas.php'
 const comparacionNominaUrl2 =
@@ -245,6 +248,7 @@ const enviarCalculoNomina = async (requestInfo) => {
 const confirmarPeticionNomina = async (correlativo) => {
   let formData = new FormData()
   formData.append('correlativo', correlativo)
+  showLoader()
   try {
     let res = await fetch(confirmarPeticionNominaUrl, {
       method: 'POST',
@@ -262,6 +266,28 @@ const confirmarPeticionNomina = async (correlativo) => {
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
       message: 'Error al obtener nominas',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
+const getSemanasDelAnio = async () => {
+  try {
+    const res = await fetch(getSemanasDelAnioUrl)
+
+    if (!res.ok) {
+      throw new Error('Error al descargar archivo')
+    }
+
+    const json = await res.json()
+
+    return json
+  } catch (e) {
+    console.log(e)
+    confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener semanas del año',
     })
   }
 }
@@ -375,6 +401,7 @@ export {
   enviarCalculoNomina,
   getPeticionesNomina,
   getRegConPeticionesNomina,
+  getSemanasDelAnio,
   // getNominaTxt,
   generarNominaTxt,
   descargarNominaTxt,
@@ -421,7 +448,8 @@ async function mapData(data) {
       ? empleado.observacion
       : 'No disponible'
 
-    id_dependencia = dependencias.mappedInfo.find(
+    console.log(dependencias)
+    id_dependencia = dependencias.mappedData.find(
       (el) => el.id == id_dependencia
     )
     instruccion_academica = profesiones.find(
