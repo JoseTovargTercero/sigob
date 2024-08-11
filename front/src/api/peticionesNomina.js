@@ -256,11 +256,11 @@ const confirmarPeticionNomina = async (correlativo) => {
     })
 
     let text = await res.text()
-
-    return await confirmNotification({
+    confirmNotification({
       type: NOTIFICATIONS_TYPES.done,
       message: text,
     })
+    return
   } catch (e) {
     console.log(e)
     return confirmNotification({

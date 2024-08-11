@@ -34,7 +34,7 @@ foreach ($daysInMonth as $month => $days) {
     // Recorrer cada día del mes
     for ($day = 1; $day <= $days; $day++) {
         $currentDate = strtotime("$year-$month-$day");
-        $currentWeek = date("W", $currentDate);
+        $currentWeek = (int)date("W", $currentDate);  // Convertir la semana a entero
 
         // Verificar si la semana ya está registrada en el mes actual
         if ($currentWeek !== $previousWeek && !in_array($currentWeek, $weeksByMonth[$month])) {
@@ -46,7 +46,7 @@ foreach ($daysInMonth as $month => $days) {
 }
 
 // Eliminar la primera semana del año en diciembre, si aparece debido al desbordamiento
-if (end($weeksByMonth[12]) == "01") {
+if (end($weeksByMonth[12]) === 1) {
     array_pop($weeksByMonth[12]);
 }
 
