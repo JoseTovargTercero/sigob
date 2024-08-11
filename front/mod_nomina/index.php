@@ -477,7 +477,9 @@ $stmt->close();
               rows += `
                 <tr>
                   <td><img  src="../../src/assets/images/icons-png/${item.formato}.svg" width="26px" alt="activity-user"></td>
-                  <td>${item.nombre}</td>
+                  <td><h5 class="mb-0">${item.nombre}</h5>
+                  <span class="text-muted">Por: ${item.u_nombre}</span>
+                  </td>
                   <td><button type="button" onclick="generarReporteGuardado(${item.id})" class="btn btn-icon btn-light-primary"><i class="bx bx-download"></i></button></td>
                 </tr>`;
             }
