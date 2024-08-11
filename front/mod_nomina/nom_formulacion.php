@@ -145,7 +145,6 @@ while ($r = $query->fetch_object()) {
                                 <option value="">Seleccione</option>
                                 <option value="1">Semanal</option>
                                 <option value="2">Quincenal</option>
-                                <option value="3">Mensual</option>
                                 <option value="4">Una vez al mes</option>
                               </select>
                             </div>
@@ -413,6 +412,7 @@ while ($r = $query->fetch_object()) {
   <script src="../../src/assets/js/pcoded.js"></script>
   <script src="../../src/assets/js/plugins/feather.min.js"></script>
   <script src="../../src/assets/js/main.js"></script>
+  <script src="../../src/assets/js/ajax_class.js"></script>
 
   <script>
     const url_back = '../../back/modulo_nomina/nom_formulacion_back';
@@ -481,8 +481,6 @@ while ($r = $query->fetch_object()) {
     $stmt->close();
     ?> // aqui se cargan los empleados del grupo
  
-
-
 
 
     /**
@@ -902,6 +900,18 @@ while ($r = $query->fetch_object()) {
         'nominas_restar': nominas_restar
       };
 
+    //  console.log(concepto)
+
+
+
+
+
+
+
+
+
+
+
       console.log(concepto)
 
       conceptosAplicados[concepto_aplicar] = concepto;
@@ -953,12 +963,11 @@ while ($r = $query->fetch_object()) {
       <option value="s1">Primera semana</option>
       <option value="s2">Segunda semana</option>
       <option value="s3">Tercera semana</option>
-      <option value="s4">Cuarta semana</option>`,
+      <option value="s4">Cuarta semana</option>
+      <option value="s5">Quinta semana</option>`,
         '2': `
       <option value="q1">Primera quincena</option>
       <option value="q2">Segunda quincena</option>`,
-        '3': `
-      <option value="m">Pago Mensual</option>`,
         '4': `
       <option value="um">Pago Unico Mensual</option>`,
       };
@@ -1090,7 +1099,7 @@ while ($r = $query->fetch_object()) {
             }
           }
 
-          console.log(conceptosAplicados)
+         // console.log(conceptosAplicados)
         }
       });
     }
