@@ -140,7 +140,7 @@ $aportes_final = json_encode($resultado_aportes, JSON_UNESCAPED_UNICODE);
     $total_pagar = $recibo['total_a_pagar'];
     
     // Preparar la consulta SQL
-    $sql_recibo_pago = "INSERT INTO recibo_pago (id_empleado, sueldo_base, asignaciones, deducciones, aportes, total_pagar, identificador, fecha_pagar, correlativo) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    $sql_recibo_pago = "INSERT INTO recibo_pago (id_empleado, sueldo_base, asignaciones, deducciones, aportes, total_pagar, identificador, fecha_pagar, correlativo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt_recibo_pago = $conexion->prepare($sql_recibo_pago);
 
     if (!$stmt_recibo_pago) {
