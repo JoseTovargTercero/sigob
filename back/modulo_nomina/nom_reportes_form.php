@@ -49,12 +49,79 @@ function addToZip($zip, $filename, $content) {
     }
 }
 
-if ($formato == "pdf" || $formato == "xlsx") {
-    // Consulta a la base de datos
+// Determinar la consulta principal según el valor de $tipoFiltro
+$query = "";  // Inicializamos $query para evitar el error de variable no definida
+
+if ($tipoFiltro === "Ninguno") {
     $query = "SELECT " . implode(", ", array_map(function($col) use ($conexion) {
         return mysqli_real_escape_string($conexion, $col);
     }, $columnas)) . " FROM empleados WHERE $condicion";
+} elseif ($tipoFiltro === "nominas") {
+    // Convertir los valores de $nominas en una cadena para la consulta
+    $nominas_string = implode(", ", array_map('intval', $nominas));
 
+    // Consulta para obtener los nombres de las nóminas
+    $query_nominas = "SELECT nombre FROM nominas WHERE id IN ($nominas_string)";
+    $result_nominas = $conexion->query($query_nominas);
+
+    if ($result_nominas && $result_nominas->num_rows > 0) {
+        $nombres_nominas = [];
+        while ($row = $result_nominas->fetch_assoc()) {
+            $nombres_nominas[] = $row['nombre'];
+        }
+
+        // Unir los nombres de nóminas para usarlos más adelante
+        $nombres_nominas_string = implode("', '", $nombres_nominas);
+    } else {
+        echo json_encode(['error' => 'No se encontraron nombres de nóminas para los IDs proporcionados']);
+        exit;
+    }
+
+    // Consulta a conceptos_aplicados para obtener los empleados con Sueldo Base
+    $query_conceptos = "SELECT empleados FROM conceptos_aplicados WHERE nom_concepto = 'Sueldo Base' AND nombre_nomina IN ('$nombres_nominas_string')";
+    $result_conceptos = $conexion->query($query_conceptos);
+
+    if ($result_conceptos && $result_conceptos->num_rows > 0) {
+        $empleados = [];
+        while ($row = $result_conceptos->fetch_assoc()) {
+            $empleados = array_merge($empleados, json_decode($row['empleados'], true));
+        }
+
+        $empleados_string = implode(", ", array_map('intval', $empleados));
+
+        $query = "SELECT " . implode(", ", array_map(function($col) use ($conexion) {
+            return mysqli_real_escape_string($conexion, $col);
+        }, $columnas)) . " FROM empleados WHERE $condicion AND id IN ($empleados_string)";
+    } else {
+        echo json_encode(['error' => 'No se encontraron empleados para las nóminas seleccionadas']);
+        exit;
+    }
+} elseif ($tipoFiltro === "nominas_g") {
+    // Convertir los valores de $nominas en una cadena para la consulta
+    $nominas_string = implode(", ", array_map('intval', $nominas));
+
+    // Consulta a empleados_por_grupo para obtener los empleados del grupo
+    $query_empleados_grupo = "SELECT id_empleado FROM empleados_por_grupo WHERE id_grupo IN ($nominas_string)";
+    $result_empleados_grupo = $conexion->query($query_empleados_grupo);
+
+    if ($result_empleados_grupo && $result_empleados_grupo->num_rows > 0) {
+        $empleados = [];
+        while ($row = $result_empleados_grupo->fetch_assoc()) {
+            $empleados[] = $row['id_empleado'];
+        }
+
+        $empleados_string = implode(", ", array_map('intval', $empleados));
+
+        $query = "SELECT " . implode(", ", array_map(function($col) use ($conexion) {
+            return mysqli_real_escape_string($conexion, $col);
+        }, $columnas)) . " FROM empleados WHERE $condicion AND id IN ($empleados_string)";
+    } else {
+        echo json_encode(['error' => 'No se encontraron empleados para los grupos seleccionados']);
+        exit;
+    }
+}
+
+if ($formato == "pdf" || $formato == "xlsx") {
     $result = $conexion->query($query);
 
     if ($result) {
@@ -135,17 +202,36 @@ if ($formato == "pdf" || $formato == "xlsx") {
                 unlink($xlsxFilename);
             }
 
-            exit;
+            if ($almacenar == "Si") {
+                // Inserción en la tabla reportes
+            $columnas_serializadas = json_encode($columnas);
+             $sql = "INSERT INTO reportes (furmulacion, nominas, columnas, formato, nombre, user, creacion)
+            VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+    // Preparar la declaración SQL
+    $stmt = $conexion->prepare($sql);
+
+    // Vincular parámetros y ejecutar la consulta
+    $stmt->bind_param("sssssss", $condicion, $nominas_string, $columnas_serializadas, $formato, $nombre, $id_usuario, $creacion );
+
+     // Ejecutar la consulta preparada
+    if ($stmt->execute()) {
+        json_encode(['sucess' => 'Datos Insertados correctamente']);
+    } else {
+        json_encode(['error' => 'Error al insertar datos:']);
+    }
+            }
+           
+
         } else {
-            echo json_encode(['error' => 'No se encontraron registros que cumplan con la condición']);
-            exit;
+            echo json_encode(['error' => 'No se encontraron registros']);
         }
     } else {
-        echo json_encode(['error' => 'Error en la consulta SQL: ' . $conexion->error]);
-        exit;
+        echo json_encode(['error' => 'Error en la consulta']);
     }
 } else {
-    echo json_encode(['error' => 'Formato no soportado']);
-    exit;
+    echo json_encode(['error' => 'Formato no válido']);
 }
+
+$conexion->close();
 ?>
