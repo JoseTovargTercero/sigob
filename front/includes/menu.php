@@ -47,6 +47,9 @@
               <li class="pc-item"><a class="pc-link"
                   href="<?php echo constant('URL') ?>front/mod_nomina/nom_empleados_tabla">Empleados</a>
               </li>
+
+              <li class="pc-item"><a class="pc-link"
+              href="<?php echo constant('URL') ?>front/mod_nomina/nom_dependencias_tabla">Dependencias</a></li>
               <!-- <li class="pc-item"><a class="pc-link"
                   href="<?php echo constant('URL') ?>front/mod_nomina/nom_empleados_registrar">Registrar Personal</a>
               </li> -->
@@ -69,11 +72,11 @@
               <li class="pc-item"><a class="pc-link"
                   href="<?php echo constant('URL') ?>front/mod_nomina/nom_grupos">Registro de nominas</a></li>
               <li class="pc-item"><a class="pc-link"
-                  href="<?php echo constant('URL') ?>front/mod_nomina/nom_peticiones_form">Peticiones</a></li>
-              <li class="pc-item"><a class="pc-link"
-                  href="<?php echo constant('URL') ?>front/mod_nomina/nom_dependencias_tabla">Dependencias</a></li>
-
-
+                  href="<?php echo constant('URL') ?>front/mod_nomina/nom_peticiones_form">Pagar nomina</a></li>
+                  <li class="pc-item"><a class="pc-link"
+                  href="<?php echo constant('URL') ?>front/mod_nomina/nom_historico">Consulta de histórico</a></li>
+                  <li class="pc-item"><a class="pc-link"
+                  href="<?php echo constant('URL') ?>front/mod_nomina/nom_resumen">Resumen de pago</a></li>
             </ul>
           </li>
         <?php } elseif ($_SESSION["u_oficina_id"] == 2) { //_registro_control ?>

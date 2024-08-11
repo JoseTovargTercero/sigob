@@ -97,7 +97,6 @@ require_once '../../back/sistema_global/session.php';
 <script src="https://cdn.datatables.net/2.0.1/js/dataTables.bootstrap5.js"></script>
 <script src="../../src/assets/js/plugins/simplebar.min.js"></script>
 <script src="../../src/assets/js/plugins/bootstrap.min.js"></script>
-<script src="../../src/assets/js/fonts/custom-font.js"></script>
 <script src="../../src/assets/js/pcoded.js"></script>
 <script src="../../src/assets/js/plugins/feather.min.js"></script>
 
