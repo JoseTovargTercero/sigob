@@ -327,8 +327,28 @@ $stmt->close();
         </div>
         <!-- [ Recent Users ] end -->
 
+        <div class="col-xl-6 col-md-6">
+          <div class="card">
+            <div class="card-header">
+              <h5>Reportes guardados</h5>
+            </div>
+            <div class="card-body"  style="max-height: 50vh; overflow-y: auto;">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th class="w-5"></th>
+                    <th>Reporte</th>
+                    <th class="w-5"></th>
+                  </tr>
+                </thead>
+                <tbody id="table_reportes">
 
+                </tbody>
+              </table>
 
+            </div>
+          </div>
+        </div>
 
 
         <!-- [ worldLow section ] start -->
@@ -384,15 +404,16 @@ $stmt->close();
 
 
   <script>
+    /**
+     * Retrieves and displays a list of nominas based on the selected tipo.
+     */
     function getNominas() {
-
-
-      let tipo = this.value
+      let tipo = this.value;
 
       if (tipo == 'Ninguno') {
-        document.getElementById('nominasFiltroSection').innerHTML = ''
+        document.getElementById('nominasFiltroSection').innerHTML = '';
       } else {
-        document.getElementById('nominasFiltroSection').innerHTML = ''
+        document.getElementById('nominasFiltroSection').innerHTML = '';
 
         fetch('../../back/modulo_nomina/nom_lista_nominas.php', {
             method: 'POST',
@@ -407,22 +428,22 @@ $stmt->close();
           .then(data => {
 
             if (data.error) {
-              console.error(data.error)
+              console.error(data.error);
             } else {
 
               let html = document.getElementById('nominasFiltroSection');
-              html.innerHTML = ''
-              // recorre 'data' y verifica si es igual a 1 o 0 remplazas con si y no, sino imprimes el resultado normal
+              html.innerHTML = '';
+
+              // Iterate over 'data' and replace 1 or 0 with 'si' and 'no', otherwise print the normal result
               data = data.map(value => {
                 let val = value;
-                // agrega al resutdiv
+                // Add to the result div
                 html.innerHTML += `<li class="list-group-item">
-        <label class="pointer d-flex justify-content-between align-items-start">
-                  <div class="ms-2 me-auto">
-                    <div class="fw-bold">${val.nombre}</div>
-                  </div>
-                  <input type="checkbox" class="form-check-input inputs-nominas" value="${val.id}"/>
-
+                  <label class="pointer d-flex justify-content-between align-items-start">
+                    <div class="ms-2 me-auto">
+                      <div class="fw-bold">${val.nombre}</div>
+                    </div>
+                    <input type="checkbox" class="form-check-input inputs-nominas" value="${val.id}"/>
                   </label>
                 </li>`;
               });
@@ -432,14 +453,61 @@ $stmt->close();
             console.error('Error:', error);
           });
       }
-
     }
-
-
 
     document.getElementById('filtrarXnomina').addEventListener('change', getNominas)
 
 
+    let reportes = []
+
+    /**
+     * Fetches and populates a table with saved reports using AJAX.
+     */
+    function tabla_reportes() {
+      $.ajax({
+        url: '../../back/modulo_nomina/nom_tabla_reportes_guardados.php',
+        type: 'POST',
+        contentType: 'application/json',
+        success: function(response) {
+          reportes = response;
+          let rows = '';
+          for (let key in response) {
+            if (response.hasOwnProperty(key)) {
+              let item = response[key];
+              rows += `
+                <tr>
+                  <td><img  src="../../src/assets/images/icons-png/${item.formato}.svg" width="26px" alt="activity-user"></td>
+                  <td>${item.nombre}</td>
+                  <td><button type="button" onclick="generarReporteGuardado(${item.id})" class="btn btn-icon btn-light-primary"><i class="bx bx-download"></i></button></td>
+                </tr>`;
+            }
+            document.getElementById('table_reportes').innerHTML = rows;
+          }
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+          console.error('Error en la solicitud AJAX:', textStatus, errorThrown);
+          try {
+            const response = JSON.parse(jqXHR.responseText);
+            console.error('Error del servidor:', response.mensaje, 'Archivo:', response.archivo, 'Línea:', response.linea);
+            toast_s('error', 'Error del servidor: ' + response.mensaje);
+          } catch (e) {
+            console.error('Error al parsear la respuesta de error:', e);
+            toast_s('error', 'Error en la solicitud: ' + textStatus);
+          }
+          if (typeof onError === 'function') {
+            onError({
+              textStatus,
+              errorThrown
+            });
+          }
+        },
+        complete: function() {
+          //  console.log('Solicitud AJAX completada');
+        }
+      });
+    }
+
+    tabla_reportes()
 
 
 
@@ -462,6 +530,11 @@ $stmt->close();
 
     });
 
+    /**
+     * This function is responsible for updating the data.
+     * It hides the sidebar, prepares the data object for an AJAX request,
+     * sends the AJAX request to add the employee, and handles the success and error responses.
+     */
     function actualizar() {
       document.querySelector('.pc-sidebar').classList.add('pc-sidebar-hide');
       document.querySelector('.pc-sidebar-collapse').classList.add('hide');
@@ -577,73 +650,46 @@ $stmt->close();
 
 
 
-
-function guardarReporte() {
-    let formato = document.getElementById('formato').value;
-    let almacenar = document.getElementById('almacenar').value;
-    let nombre = document.getElementById('nombre').value;
-    let condicion = document.getElementById('t_area-2').value;
-    let tipoFiltro = document.getElementById('filtrarXnomina').value;
-    let campos = document.querySelectorAll('.inputs-nominas');
-
-    let camposArray = [];
-    let columnas = document.querySelectorAll('.campos');
-    let columnasArray = [];
-
-    // Obtener columnas seleccionadas
-    columnas.forEach(input => {
-        if (input.checked) {
-            columnasArray.push(input.value);
-        }
-    });
-
-    // Verificar si el tipo de filtro no es 'Ninguno'
-    if (tipoFiltro != 'Ninguno') {
-        campos.forEach(campo => {
-            if (campo.checked) {
-                camposArray.push(campo.value);
-            }
-        });
-
-        // Si no hay checkboxes seleccionados, mostrar mensaje de error
-        if (camposArray.length == 0) {
-            return toast_s('error', 'Debe seleccionar al menos una nómina o grupo');
-        }
-    }
-
-    // Verificar si la condición y los checkboxes están vacíos
-    if (condicion == '' && camposArray.length == 0) {
-        return toast_s('error', 'Debe indicar una condición');
-    }
-
-    let data = {
+    function generarReporteGuardado(id) {
+      let formato = reportes[id]['formato'];
+      let almacenar = 'No';
+      let nombre = reportes[id]['nombre'];
+      let condicion = reportes[id]['furmulacion'];
+      let columnasArray = reportes[id]['columnas'];
+      let nominas = reportes[id]['nominas'];
+      let tipoFiltro = ''
+     
+     let data = {
         formato: formato,
         almacenar: almacenar,
         nombre: nombre,
-        columnas: columnasArray,
+        columnas: JSON.parse(columnasArray),
         condicion: condicion,
         tipoFiltro: tipoFiltro,
-        nominas: camposArray
-    };
+        nominas: (nominas != '' ? JSON.parse(nominas) : [])
+      };
 
-    fetch('../../back/modulo_nomina/nom_reportes_form.php', {
-        method: 'POST',
-        headers: {
+      // Send data to server to generate report
+      fetch('../../back/modulo_nomina/nom_reportes_form.php', {
+          method: 'POST',
+          headers: {
             'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ data: data })
-    })
-    .then(response => {
-        if (response.ok) {
+          },
+          body: JSON.stringify({
+            data: data
+          })
+        })
+        .then(response => {
+          if (response.ok) {
             return response.blob();
-        } else {
+          } else {
             throw new Error('Error en la respuesta del servidor');
-        }
-    })
-    .then(blob => {
-        // Verificar si la respuesta es un archivo ZIP
-        let contentType = blob.type;
-        if (contentType === 'application/zip') {
+          }
+        })
+        .then(blob => {
+          // Verificar si la respuesta es un archivo ZIP
+          let contentType = blob.type;
+          if (contentType === 'application/zip') {
             let url = window.URL.createObjectURL(blob);
             let a = document.createElement('a');
             a.href = url;
@@ -652,15 +698,115 @@ function guardarReporte() {
             a.click();
             a.remove();
             window.URL.revokeObjectURL(url); // Limpiar el URL creado
-        } else {
+          } else {
             throw new Error('El contenido recibido no es un archivo ZIP');
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          toast_s('error', 'Error al enviar la solicitud');
+        });
+
+
+    }
+
+
+
+    /**
+     * Function to save a report.
+     * 
+     * This function retrieves the values from the form inputs and sends them to the server to generate a report.
+     * The generated report is downloaded as a ZIP file if the response from the server is a ZIP file.
+     * 
+     * @returns {void}
+     */
+    function guardarReporte() {
+      // Retrieve values from form inputs
+      let formato = document.getElementById('formato').value;
+      let almacenar = document.getElementById('almacenar').value;
+      let nombre = document.getElementById('nombre').value;
+      let condicion = document.getElementById('t_area-2').value;
+      let tipoFiltro = document.getElementById('filtrarXnomina').value;
+      let campos = document.querySelectorAll('.inputs-nominas');
+
+      let nominas_filtrar = [];
+      let columnas = document.querySelectorAll('.campos');
+      let columnasArray = [];
+
+      // Obtener columnas seleccionadas
+      columnas.forEach(input => {
+        if (input.checked) {
+          columnasArray.push(input.value);
         }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        toast_s('error', 'Error al enviar la solicitud');
-    });
-}
+      });
+
+      // Verificar si el tipo de filtro no es 'Ninguno'
+      if (tipoFiltro != 'Ninguno') {
+        campos.forEach(campo => {
+          if (campo.checked) {
+            nominas_filtrar.push(campo.value);
+          }
+        });
+
+        // Si no hay checkboxes seleccionados, mostrar mensaje de error
+        if (nominas_filtrar.length == 0) {
+          return toast_s('error', 'Debe seleccionar al menos una nómina o grupo');
+        }
+      }
+
+      // Verificar si la condición y los checkboxes están vacíos
+      if (condicion == '' && nominas_filtrar.length == 0) {
+        return toast_s('error', 'Debe indicar una condición');
+      }
+
+      let data = {
+        formato: formato,
+        almacenar: almacenar,
+        nombre: nombre,
+        columnas: columnasArray,
+        condicion: condicion,
+        tipoFiltro: tipoFiltro,
+        nominas: nominas_filtrar
+      };
+
+      // Send data to server to generate report
+      fetch('../../back/modulo_nomina/nom_reportes_form.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            data: data
+          })
+        })
+        .then(response => {
+          if (response.ok) {
+            return response.blob();
+          } else {
+            throw new Error('Error en la respuesta del servidor');
+          }
+        })
+        .then(blob => {
+          // Verificar si la respuesta es un archivo ZIP
+          let contentType = blob.type;
+          if (contentType === 'application/zip') {
+            let url = window.URL.createObjectURL(blob);
+            let a = document.createElement('a');
+            a.href = url;
+            a.download = 'reportes_' + new Date().toISOString().replace(/[-:.]/g, '') + '.zip'; // Nombre del archivo ZIP
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url); // Limpiar el URL creado
+          } else {
+            throw new Error('El contenido recibido no es un archivo ZIP');
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          toast_s('error', 'Error al enviar la solicitud');
+        });
+    }
 
 
 

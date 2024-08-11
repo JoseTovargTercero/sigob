@@ -7436,7 +7436,7 @@ INSERT INTO `reportes` (`id`, `furmulacion`, `columnas`, `formato`, `nombre`, `u
 (10, 'discapacidades=\'0\' ', '[\"nombres\",\"cedula\"]', 'pdf', 'moises', 1, '2024-08-06 23:07:41');
 
 -- --------------------------------------------------------
-
+ALTER TABLE `reportes` ADD `nominas` LONGTEXT NOT NULL AFTER `furmulacion`;
 --
 -- Estructura de tabla para la tabla `system_users`
 --

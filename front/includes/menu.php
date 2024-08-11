@@ -76,7 +76,7 @@
                   <li class="pc-item"><a class="pc-link"
                   href="<?php echo constant('URL') ?>front/mod_nomina/nom_historico">Consulta de histórico</a></li>
                   <li class="pc-item"><a class="pc-link"
-                  href="<?php echo constant('URL') ?>front/mod_nomina/nom_resumen">Resumen de pago</a></li>
+                  href="<?php echo constant('URL') ?>front/mod_nomina/nom_resumen">Recibo de pago</a></li>
             </ul>
           </li>
         <?php } elseif ($_SESSION["u_oficina_id"] == 2) { //_registro_control ?>
