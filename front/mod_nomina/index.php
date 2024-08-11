@@ -104,7 +104,7 @@ $stmt->close();
                                   <div class="mb-3"><label class="form-label">Formulación</label>
                                     <div class="input-group mb-3">
                                       <textarea class="form-control condicion" rows="1" id="t_area-2"></textarea>
-                                      <button class="btn btn-primary" onclick="validarFormula('t_area-2', 'emp_pre_seleccionados-list')" type="button">Obtener</button>
+                                  
                                     </div>
                                   </div>
 
@@ -581,7 +581,7 @@ $stmt->close();
 
 
 
-    /**
+    /** 
      * Adds an event listener to the 'btn-obtener' button and performs a specific action when clicked.
      * 
      * @param {Event} event - The event object.
