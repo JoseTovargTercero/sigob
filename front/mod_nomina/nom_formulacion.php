@@ -795,6 +795,43 @@ while ($r = $query->fetch_object()) {
 
     document.getElementById('nominas_restar').addEventListener('change', verificarElementosResta)
 
+    let semanas_anio;
+    
+    function getSemanas() {
+      const data = {}
+
+      $.ajax({
+      url: '../../back/modulo_nomina/nom_cantidad_semanas.php',
+      type: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify(data),
+      success: function(response) {
+       semanas_anio = response
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+        console.error('Error en la solicitud AJAX:', textStatus, errorThrown);
+        try {
+          const response = JSON.parse(jqXHR.responseText);
+          console.error('Error del servidor:', response.mensaje, 'Archivo:', response.archivo, 'Línea:', response.linea);
+          toast_s('error', 'Error del servidor: ' + response.mensaje);
+          
+        } catch (e) {
+          console.error('Error al parsear la respuesta de error:', e);
+          toast_s('error', 'Error en la solicitud: ' + textStatus);
+        }
+        if (typeof onError === 'function') {
+          onError({textStatus, errorThrown});
+        }
+      },
+      complete: function() {
+      //  console.log('Solicitud AJAX completada');
+      }
+    });
+
+
+
+    }
+    getSemanas()
     /**
      * Function to save a concept.
      * 
@@ -804,9 +841,10 @@ while ($r = $query->fetch_object()) {
      */
     async function guardar_concepto() {
       const concepto_aplicar = $('#concepto_aplicar').val();
-      const fechas_aplicar = $('#fechas_aplicar').val();
+      let fechas_aplicar = $('#fechas_aplicar').val();
       const concepto_aplicados = $('#concepto_aplicados').val();
       const nominas_restar = $('#nominas_restar').val()
+      const frecuenciaPago = $('#frecuencia_pago').val();
 
       if (conceptosAplicados[concepto_aplicar]) {
         return toast_s('error', 'No puede agregar el mismo concepto más de una vez');
@@ -816,7 +854,7 @@ while ($r = $query->fetch_object()) {
         return toast_s('error', 'Debe seleccionar algún concepto');
       }
 
-      if ($('#frecuencia_pago').val() == '1' || $('#frecuencia_pago').val() == '2') {
+      if (frecuenciaPago == '1' || frecuenciaPago == '2') {
         if (fechas_aplicar == '') {
           return toast_s('error', 'Debe indicar una fecha a aplicar');
         }
@@ -885,6 +923,25 @@ while ($r = $query->fetch_object()) {
         console.log(cantidad_t)
       }
 
+      if (semanas_anio == '' || semanas_anio == undefined) {
+        toast_s('error', 'No se pudo obtener la información del servidor')
+        return
+      }
+
+      if (frecuenciaPago == '1') {
+          let numeroSemanasSeleccionadas = [];
+
+          for (let mes in semanas_anio) {
+            for (let i = 0; i < fechas_aplicar.length; i++) {
+              let semanaIndex = parseInt(fechas_aplicar[i].slice(1)) - 1;
+              if (semanaIndex < semanas_anio[mes].length) {
+                numeroSemanasSeleccionadas.push(`s${semanas_anio[mes][semanaIndex]}`);
+              }
+            }
+          }
+
+          fechas_aplicar = numeroSemanasSeleccionadas; 
+      }
       let concepto = {
         'concepto_id': concepto_aplicar,
         'nom_concepto': nombreConcepto,
@@ -899,15 +956,6 @@ while ($r = $query->fetch_object()) {
         'nombre_nomina': nombre_nomina,
         'nominas_restar': nominas_restar
       };
-
-    //  console.log(concepto)
-
-
-
-
-
-
-
 
 
 
