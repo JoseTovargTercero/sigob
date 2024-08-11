@@ -1,3 +1,6 @@
+<?php
+require_once '../sistema_global/conexion.php';
+ ?>
 <!DOCTYPE html
   PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="es" lang="es">
@@ -112,14 +115,7 @@
       font-size: 8pt;
     }
 
-    table,
-    tbody {
-      vertical-align: top;
-      overflow: visible;
-      border-collapse: collapse;
-      border-left: 0px solid !important;
-      border-right: 0px solid !important;
-    }
+   
 
     .d-flex {
       display: flex !important;
@@ -214,13 +210,8 @@
 
 <body>
 <?php
-function generarNetoInformacion($correlativo, $id_empleado)
+function generarNetoInformacion($fecha_pagar, $id_empleado, $conn)
 {
-    // Conexión a la base de datos
-    $conn = new PDO('mysql:host=localhost;dbname=sigob', 'root', '');
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-    // La consulta SQL
     $query = "SELECT
                 e.cedula AS cedula, 
                 e.nombres AS nombres, 
@@ -232,6 +223,10 @@ function generarNetoInformacion($correlativo, $id_empleado)
                 rp.aportes AS aporte, 
                 rp.total_pagar AS total_pagar, 
                 rp.sueldo_base AS sueldo_base,
+                rp.fecha_pagar AS fecha_pagar2,
+                rp.nombre_nomina AS nombre_nomina,
+                n.id AS id_nomina, 
+                n.frecuencia AS frecuencia_nomina,
                 e.banco AS centro_de_pago, 
                 e.cod_cargo AS co_cargo, 
                 e.cuenta_bancaria AS cuenta_bancaria 
@@ -241,26 +236,28 @@ function generarNetoInformacion($correlativo, $id_empleado)
                 empleados e ON rp.id_empleado = e.id 
             JOIN 
                 cargos_grados cg ON e.cod_cargo = cg.cod_cargo 
+            LEFT JOIN 
+                nominas n ON rp.nombre_nomina = n.nombre 
             WHERE 
-                rp.correlativo = :correlativo 
-                AND id_empleado = :id_empleado";
+                rp.fecha_pagar = :fecha_pagar 
+                AND rp.id_empleado = :id_empleado";
 
-    // Preparar y ejecutar la consulta
     $stmt = $conn->prepare($query);
-    $stmt->bindValue(':correlativo', $correlativo, PDO::PARAM_STR);
+    $stmt->bindValue(':fecha_pagar', $fecha_pagar, PDO::PARAM_STR);
     $stmt->bindValue(':id_empleado', $id_empleado, PDO::PARAM_INT);
     $stmt->execute();
 
     $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Definir arrays para almacenar datos
+
+
+    $pagos = count($results);
+
     $datosRetornados = [];
 
-    // Consulta para obtener el codigo_concepto
     $conceptoQuery = "SELECT codigo_concepto FROM conceptos WHERE nom_concepto = :nom_concepto";
     $conceptoStmt = $conn->prepare($conceptoQuery);
 
-    // Función para obtener el codigo_concepto
     function obtenerCodigoConcepto($conceptoStmt, $nom_concepto) {
         $conceptoStmt->bindValue(':nom_concepto', $nom_concepto, PDO::PARAM_STR);
         $conceptoStmt->execute();
@@ -268,112 +265,114 @@ function generarNetoInformacion($correlativo, $id_empleado)
         return $result ? $result['codigo_concepto'] : null;
     }
 
-    // Bucle para procesar los resultados
+    $asignacionesTotales = [];
+    $deduccionesTotales = [];
+    $aportesTotales = [];
+    $sueldoTotal = 0;
+
     foreach ($results as $row) {
-        // Obtener asignaciones, deducciones y aportes como arrays
+        $sueldoTotal += $row['sueldo_base'];
+
         $asignaciones = json_decode($row['asignacion'], true);
         $deducciones = json_decode($row['deduccion'], true);
         $aportes = json_decode($row['aporte'], true);
 
-        // Procesar asignaciones para obtener codigo_concepto
-        $asignacionesProcesadas = [];
         foreach ($asignaciones as $nom_concepto => $valor) {
             $codigo_concepto = obtenerCodigoConcepto($conceptoStmt, $nom_concepto);
-            $asignacionesProcesadas[] = [
-                'nom_concepto' => $nom_concepto,
-                'codigo_concepto' => $codigo_concepto,
-                'valor' => $valor
-            ];
+            if (!isset($asignacionesTotales[$codigo_concepto])) {
+                $asignacionesTotales[$codigo_concepto] = ['nom_concepto' => $nom_concepto, 'valor' => 0];
+            }
+            $asignacionesTotales[$codigo_concepto]['valor'] += $valor;
         }
 
-        // Procesar deducciones para obtener codigo_concepto
-        $deduccionesProcesadas = [];
         foreach ($deducciones as $nom_concepto => $valor) {
             $codigo_concepto = obtenerCodigoConcepto($conceptoStmt, $nom_concepto);
-            $deduccionesProcesadas[] = [
-                'nom_concepto' => $nom_concepto,
-                'codigo_concepto' => $codigo_concepto,
-                'valor' => $valor
-            ];
+            if (!isset($deduccionesTotales[$codigo_concepto])) {
+                $deduccionesTotales[$codigo_concepto] = ['nom_concepto' => $nom_concepto, 'valor' => 0];
+            }
+            $deduccionesTotales[$codigo_concepto]['valor'] += $valor;
         }
 
-        // Procesar aportes para obtener codigo_concepto
-        $aportesProcesadas = [];
         foreach ($aportes as $nom_concepto => $valor) {
             $codigo_concepto = obtenerCodigoConcepto($conceptoStmt, $nom_concepto);
-            $aportesProcesadas[] = [
-                'nom_concepto' => $nom_concepto,
-                'codigo_concepto' => $codigo_concepto,
-                'valor' => $valor
-            ];
+            if (!isset($aportesTotales[$codigo_concepto])) {
+                $aportesTotales[$codigo_concepto] = ['nom_concepto' => $nom_concepto, 'valor' => 0];
+            }
+            $aportesTotales[$codigo_concepto]['valor'] += $valor;
         }
-
-        // Añadir variables a datos retornados
-        $datosRetornados[] = [
-            'cedula' => $row['cedula'],
-            'nombres' => $row['nombres'],
-            'cargo' => $row['cargo'],
-            'fecha_de_ingreso' => $row['fecha_de_ingreso'],
-            'fecha_de_egreso' => $row['fecha_de_egreso'],
-            'centro_de_pago' => $row['centro_de_pago'],
-            'cuenta_bancaria' => $row['cuenta_bancaria'],
-            'co_cargo' => $row['co_cargo'],
-            'sueldo' => $row['sueldo_base'],
-            'asignaciones' => $asignacionesProcesadas,
-            'deducciones' => $deduccionesProcesadas,
-            'aportes' => $aportesProcesadas
-        ];
     }
 
-    // Retornar todos los datos procesados
-    return $datosRetornados[0];
+    $datosRetornados[] = [
+        'cedula' => $results[0]['cedula'],
+        'nombres' => $results[0]['nombres'],
+        'cargo' => $results[0]['cargo'],
+        'fecha_de_ingreso' => $results[0]['fecha_de_ingreso'],
+        'fecha_de_egreso' => $results[0]['fecha_de_egreso'],
+        'centro_de_pago' => $results[0]['centro_de_pago'],
+        'cuenta_bancaria' => $results[0]['cuenta_bancaria'],
+        'co_cargo' => $results[0]['co_cargo'],
+        'id_nomina' => $results[0]['id_nomina'],
+        'fecha_pagar2' => $results[0]['fecha_pagar2'],
+        'frecuencia_nomina' => $results[0]['frecuencia_nomina'],
+        'nombre_nomina' => $results[0]['nombre_nomina'],
+        'sueldo' => $sueldoTotal,
+        'asignaciones' => $asignacionesTotales,
+        'deducciones' => $deduccionesTotales,
+        'aportes' => $aportesTotales
+    ];
+
+    return ['datos' => $datosRetornados[0], 'pagos' => $pagos];
 }
 
+// Conexión a la base de datos usando PDO
+$conn = new PDO('mysql:host=localhost;dbname=sigob', 'root', '');
+$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
+// Obtén los parámetros de la URL
+$cedula = isset($_GET['cedula']) ? $_GET['cedula'] : '';
+$fecha_pagar = isset($_GET['fecha_pagar']) ? $_GET['fecha_pagar'] : '';
 
+if ($cedula && $fecha_pagar) {
+    $stmt = $conn->prepare("SELECT id FROM empleados WHERE cedula = :cedula");
+    $stmt->bindValue(':cedula', $cedula, PDO::PARAM_STR);
+    $stmt->execute();
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
+    if ($result) {
+        $id_empleado = $result['id'];
+        $netoDatos = generarNetoInformacion($fecha_pagar, $id_empleado, $conn);
+    } else {
+        echo "Empleado no encontrado.";
+    }
+} else {
+    echo "Parámetros 'cedula' y 'fecha_pagar' son requeridos.";
+}
 
+$conn = null;
+
+$nombres = $netoDatos['datos']['nombres'];
+$cedula = $netoDatos['datos']['cedula'];
+$cuenta_bancaria = $netoDatos['datos']['cuenta_bancaria'];
+$cargo = $netoDatos['datos']['cargo'];
+$centro_de_pago = $netoDatos['datos']['centro_de_pago'];
+$sueldo = $netoDatos['datos']['sueldo'];
+$co_cargo = $netoDatos['datos']['co_cargo'];
+$nombre_nomina = $netoDatos['datos']['nombre_nomina'];
+$id_nomina = $netoDatos['datos']['id_nomina'];
+$fecha_pagar2 = $netoDatos['datos']['fecha_pagar2'];
+$frecuencia_nomina = $netoDatos['datos']['frecuencia_nomina'];
+$pagos = $netoDatos['pagos'];
+
+$asignacionesTotal = $sueldo;
+$deduccionesTotal = 0;
+$aporteTotal = 0;
 ?>
 
-
-<?php
- global $nomina;
-
-    $netoDatos = generarNetoInformacion('00001', '1');
-
-    $nombres = $netoDatos['nombres'];
-    $cedula = $netoDatos['cedula'];
-    $cuenta_bancaria = $netoDatos['cuenta_bancaria'];
-    $cargo = $netoDatos['cargo'];
-    $sueldo = $netoDatos['sueldo'];
-    $co_cargo = $netoDatos['co_cargo'];
-
-    // Inicializar la fila de sueldo y sumar el sueldo a las asignaciones
-    
-
-    $asignacionesTotal = $sueldo; // Incluir el sueldo en el total de asignaciones
-    $deduccionesrow = '';
-    $aporterow = '';
-    $aporteTotal = 0;
-    $deduccionesTotal = 0;
-
-    
-    // Procesar deducciones
-   
-
-    
-
-
-
-
-
-
- ?>
   <p style="text-indent: 0pt;text-align: left;"><br /></p>
   <table style="width: 100%; padding: 5px; ">
     <tr>
       <td style="width: 20%; text-align: left; padding-left: 20px;">
-        <img width="84" height="55" src="IMAGEN1.jpg" />
+        <img width="84" height="55" src="../../img/IMAGEN1.jpg" />
       </td>
       <td style="width: 60%; text-align: center;">
         <p class="s1">
@@ -382,18 +381,33 @@ function generarNetoInformacion($correlativo, $id_empleado)
         <table style="width: 100%; margin-top: 10px;">
           <tr>
             <td style="width: 50%; text-align: left; padding-right: 55px;">
-              <p class="st s1">CANCELACION A: <span class="s2">EMPLEADO ADMINISTRATIVO</span></p>
-              <p class="st s1">Nomina Nro : <span class="s2">001 </span></p>
+              <p class="st s1">CANCELACION A: <span class="s2"><?php echo $nombre_nomina ?></span></p>
+              <p class="st s1">Nomina Nro : <span class="s2"><?php echo $id_nomina ?></span></p>
             </td>
             <td style="width: 50%; text-align: left;">
+              <?php
+              if ($frecuencia_nomina == "1") {
+              ?>
+              <p class="st s1"> SEMANAL / 2024</p>
+              <?php
+              }elseif ($frecuencia_nomina == "2") {
+              ?>
               <p class="st s1"> QUINCENAL / 2024</p>
-              <p class="st s1">Fecha Nomina: <span class="s2">30 / 05 / 2024</span></p>
+              <?php
+              }else{
+              ?>
+              <p class="st s1"> MENSUAL / 2024</p>
+              <?php
+              }
+
+               ?>
+              <p class="st s1">Fecha Nomina: <span class="s2"><?php echo $fecha_pagar2 ?></span></p>
             </td>
           </tr>
         </table>
       </td>
       <td style="width: 20%; text-align: right; padding-right: 20px;">
-        <img width="84" height="55" src="n_amazonas.jpeg" />
+        <img width="84" height="55" src="../../img/n_amazonas.jpeg" />
       </td>
     </tr>
   </table>
@@ -410,12 +424,25 @@ function generarNetoInformacion($correlativo, $id_empleado)
       <td class="b-t b-l" colspan="4" rowspan="2">
         <p><br /></p>
         <p class="s1" style="padding-left: 3pt;text-indent: 0pt;text-align: left;">FECHA DE EMISION : <span
-            class="s2">03/06/2024</span></p>
+            class="s2"><?php echo date('d-m-Y') ?></span></p>
       </td>
     </tr>
     <tr>
       <td colspan="2">
-        <p class="s2" style="padding-left: 9pt;text-indent: 0pt;text-align: left;">VENEZUELA</p>
+        <p class="s2" style="padding-left: 9pt;text-indent: 0pt;text-align: left;">
+          <?php if ($centro_de_pago == "0102") {
+           echo "VENEZUELA";
+          }elseif ($centro_de_pago == "0175") {
+            echo "BICENTENARIO";
+          }elseif ($centro_de_pago == "0128") {
+           echo "CARONI";
+          }else{
+            echo "TESORO";
+          }
+          ?>
+          
+
+        </p>
       </td>
       <td colspan="2">
         <p class="s2" style="padding-left: 9pt;text-indent: 0pt;text-align: left;"> <b>CTA :
@@ -474,7 +501,7 @@ function generarNetoInformacion($correlativo, $id_empleado)
         </p>
       </td>
       <td class="b-t">
-        <p class="s2" style="padding-top: 2pt;padding-right: 13pt;text-indent: 0pt;text-align: center;">1</p>
+        <p class="s2" style="padding-top: 2pt;padding-right: 13pt;text-indent: 0pt;text-align: center;"><?php echo $pagos ?></p>
       </td>
     </tr>
 
@@ -497,31 +524,27 @@ function generarNetoInformacion($correlativo, $id_empleado)
             <th class="s1">SALDO</th>
           </tr>
           <?php
-          $asignacionerow = "<tr>
-            <td class='s2'>COD.</td>
-            <td class='s2'>SUELDO</td>
-            <td class='s2'>{$sueldo}</td>
-            <td class='s2'></td>
-          </tr>";
-           ?>
+$asignacionerow = "<tr>
+    <td class='s2'>COD.</td>
+    <td class='s2'>SUELDO</td>
+    <td class='s2'>{$sueldo}</td>
+    <td class='s2'></td>
+</tr>";
 
-          <?php
-          // Procesar asignaciones
-    foreach ($netoDatos["asignaciones"] as $asignacion) {
-        $codigo = $asignacion['codigo_concepto'];
-        $nom_concepto = $asignacion['nom_concepto'];
-        $valor = $asignacion['valor'];
+// Procesar asignaciones
+foreach ($netoDatos['datos']["asignaciones"] as $codigo => $asignacion) {
+    $nom_concepto = $asignacion['nom_concepto'];
+    $valor = $asignacion['valor'];
 
-        $asignacionesTotal += $valor;
+    $asignacionesTotal += $valor;
 
-        $asignacionerow .= "<tr>
+    $asignacionerow .= "<tr>
         <td class='s2'>{$codigo}</td>
         <td class='s2'>{$nom_concepto}</td>
         <td class='s2'>{$valor}</td>
         <td class='s2'></td>
-        </tr>";
-        
-    }
+    </tr>";
+}
 echo $asignacionerow;
            ?>
 
@@ -537,35 +560,35 @@ echo $asignacionerow;
           </tr>
 
           <?php
-           foreach ($netoDatos["deducciones"] as $deduccion) {
-        $codigo = $deduccion['codigo_concepto'];
-        $nom_concepto = $deduccion['nom_concepto'];
-        $valor = $deduccion['valor'];
+       $deduccionesrow = '';
+foreach ($netoDatos['datos']["deducciones"] as $codigo => $deduccion) {
+    $nom_concepto = $deduccion['nom_concepto'];
+    $valor = $deduccion['valor'];
 
-        $deduccionesTotal += $valor;
+    $deduccionesTotal += $valor;
 
-        $deduccionesrow .= "<tr>
+    $deduccionesrow .= "<tr>
         <td class='s2'>{$codigo}</td>
         <td class='s2'>{$nom_concepto}</td>
         <td class='s2'>{$valor}</td>
         <td class='s2'></td>
-        </tr>";
-    }
+    </tr>";
+}
   echo $deduccionesrow;
-           foreach ($netoDatos["aportes"] as $aporte) {
-        $codigo = $aporte['codigo_concepto'];
-        $nom_concepto = $aporte['nom_concepto'];
-        $valor = $aporte['valor'];
+$aporterow = '';
+foreach ($netoDatos['datos']["aportes"] as $codigo => $aporte) {
+    $nom_concepto = $aporte['nom_concepto'];
+    $valor = $aporte['valor'];
 
-        $aporteTotal += $valor;
+    $aporteTotal += $valor;
 
-        $aporterow .= "<tr>
+    $aporterow .= "<tr>
         <td class='s2'>{$codigo}</td>
         <td class='s2'>{$nom_concepto}</td>
         <td class='s2'>{$valor}</td>
         <td class='s2'></td>
-        </tr>";
-    }
+    </tr>";
+}
     echo $aporterow;
            ?>
 
