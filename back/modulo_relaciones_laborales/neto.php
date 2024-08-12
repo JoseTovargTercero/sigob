@@ -1,6 +1,6 @@
 <?php
 require_once '../sistema_global/conexion.php';
- ?>
+?>
 <!DOCTYPE html
   PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="es" lang="es">
@@ -28,13 +28,14 @@ require_once '../sistema_global/conexion.php';
     }
 
     .table-container {
-
+      vertical-align: top;
       padding: 0;
       border-collapse: collapse;
 
     }
 
     .table-container td {
+
       padding: 2px;
       text-align: left;
       border-left: 1px solid black;
@@ -115,7 +116,7 @@ require_once '../sistema_global/conexion.php';
       font-size: 8pt;
     }
 
-   
+
 
     .d-flex {
       display: flex !important;
@@ -209,9 +210,9 @@ require_once '../sistema_global/conexion.php';
 </head>
 
 <body>
-<?php
-function generarNetoInformacion($fecha_pagar, $id_empleado, $conn)
-{
+  <?php
+  function generarNetoInformacion($fecha_pagar, $id_empleado, $conn)
+  {
     $query = "SELECT
                 e.cedula AS cedula, 
                 e.nombres AS nombres, 
@@ -258,11 +259,12 @@ function generarNetoInformacion($fecha_pagar, $id_empleado, $conn)
     $conceptoQuery = "SELECT codigo_concepto FROM conceptos WHERE nom_concepto = :nom_concepto";
     $conceptoStmt = $conn->prepare($conceptoQuery);
 
-    function obtenerCodigoConcepto($conceptoStmt, $nom_concepto) {
-        $conceptoStmt->bindValue(':nom_concepto', $nom_concepto, PDO::PARAM_STR);
-        $conceptoStmt->execute();
-        $result = $conceptoStmt->fetch(PDO::FETCH_ASSOC);
-        return $result ? $result['codigo_concepto'] : null;
+    function obtenerCodigoConcepto($conceptoStmt, $nom_concepto)
+    {
+      $conceptoStmt->bindValue(':nom_concepto', $nom_concepto, PDO::PARAM_STR);
+      $conceptoStmt->execute();
+      $result = $conceptoStmt->fetch(PDO::FETCH_ASSOC);
+      return $result ? $result['codigo_concepto'] : null;
     }
 
     $asignacionesTotales = [];
@@ -271,102 +273,102 @@ function generarNetoInformacion($fecha_pagar, $id_empleado, $conn)
     $sueldoTotal = 0;
 
     foreach ($results as $row) {
-        $sueldoTotal += $row['sueldo_base'];
+      $sueldoTotal += $row['sueldo_base'];
 
-        $asignaciones = json_decode($row['asignacion'], true);
-        $deducciones = json_decode($row['deduccion'], true);
-        $aportes = json_decode($row['aporte'], true);
+      $asignaciones = json_decode($row['asignacion'], true);
+      $deducciones = json_decode($row['deduccion'], true);
+      $aportes = json_decode($row['aporte'], true);
 
-        foreach ($asignaciones as $nom_concepto => $valor) {
-            $codigo_concepto = obtenerCodigoConcepto($conceptoStmt, $nom_concepto);
-            if (!isset($asignacionesTotales[$codigo_concepto])) {
-                $asignacionesTotales[$codigo_concepto] = ['nom_concepto' => $nom_concepto, 'valor' => 0];
-            }
-            $asignacionesTotales[$codigo_concepto]['valor'] += $valor;
+      foreach ($asignaciones as $nom_concepto => $valor) {
+        $codigo_concepto = obtenerCodigoConcepto($conceptoStmt, $nom_concepto);
+        if (!isset($asignacionesTotales[$codigo_concepto])) {
+          $asignacionesTotales[$codigo_concepto] = ['nom_concepto' => $nom_concepto, 'valor' => 0];
         }
+        $asignacionesTotales[$codigo_concepto]['valor'] += $valor;
+      }
 
-        foreach ($deducciones as $nom_concepto => $valor) {
-            $codigo_concepto = obtenerCodigoConcepto($conceptoStmt, $nom_concepto);
-            if (!isset($deduccionesTotales[$codigo_concepto])) {
-                $deduccionesTotales[$codigo_concepto] = ['nom_concepto' => $nom_concepto, 'valor' => 0];
-            }
-            $deduccionesTotales[$codigo_concepto]['valor'] += $valor;
+      foreach ($deducciones as $nom_concepto => $valor) {
+        $codigo_concepto = obtenerCodigoConcepto($conceptoStmt, $nom_concepto);
+        if (!isset($deduccionesTotales[$codigo_concepto])) {
+          $deduccionesTotales[$codigo_concepto] = ['nom_concepto' => $nom_concepto, 'valor' => 0];
         }
+        $deduccionesTotales[$codigo_concepto]['valor'] += $valor;
+      }
 
-        foreach ($aportes as $nom_concepto => $valor) {
-            $codigo_concepto = obtenerCodigoConcepto($conceptoStmt, $nom_concepto);
-            if (!isset($aportesTotales[$codigo_concepto])) {
-                $aportesTotales[$codigo_concepto] = ['nom_concepto' => $nom_concepto, 'valor' => 0];
-            }
-            $aportesTotales[$codigo_concepto]['valor'] += $valor;
+      foreach ($aportes as $nom_concepto => $valor) {
+        $codigo_concepto = obtenerCodigoConcepto($conceptoStmt, $nom_concepto);
+        if (!isset($aportesTotales[$codigo_concepto])) {
+          $aportesTotales[$codigo_concepto] = ['nom_concepto' => $nom_concepto, 'valor' => 0];
         }
+        $aportesTotales[$codigo_concepto]['valor'] += $valor;
+      }
     }
 
     $datosRetornados[] = [
-        'cedula' => $results[0]['cedula'],
-        'nombres' => $results[0]['nombres'],
-        'cargo' => $results[0]['cargo'],
-        'fecha_de_ingreso' => $results[0]['fecha_de_ingreso'],
-        'fecha_de_egreso' => $results[0]['fecha_de_egreso'],
-        'centro_de_pago' => $results[0]['centro_de_pago'],
-        'cuenta_bancaria' => $results[0]['cuenta_bancaria'],
-        'co_cargo' => $results[0]['co_cargo'],
-        'id_nomina' => $results[0]['id_nomina'],
-        'fecha_pagar2' => $results[0]['fecha_pagar2'],
-        'frecuencia_nomina' => $results[0]['frecuencia_nomina'],
-        'nombre_nomina' => $results[0]['nombre_nomina'],
-        'sueldo' => $sueldoTotal,
-        'asignaciones' => $asignacionesTotales,
-        'deducciones' => $deduccionesTotales,
-        'aportes' => $aportesTotales
+      'cedula' => $results[0]['cedula'],
+      'nombres' => $results[0]['nombres'],
+      'cargo' => $results[0]['cargo'],
+      'fecha_de_ingreso' => $results[0]['fecha_de_ingreso'],
+      'fecha_de_egreso' => $results[0]['fecha_de_egreso'],
+      'centro_de_pago' => $results[0]['centro_de_pago'],
+      'cuenta_bancaria' => $results[0]['cuenta_bancaria'],
+      'co_cargo' => $results[0]['co_cargo'],
+      'id_nomina' => $results[0]['id_nomina'],
+      'fecha_pagar2' => $results[0]['fecha_pagar2'],
+      'frecuencia_nomina' => $results[0]['frecuencia_nomina'],
+      'nombre_nomina' => $results[0]['nombre_nomina'],
+      'sueldo' => $sueldoTotal,
+      'asignaciones' => $asignacionesTotales,
+      'deducciones' => $deduccionesTotales,
+      'aportes' => $aportesTotales
     ];
 
     return ['datos' => $datosRetornados[0], 'pagos' => $pagos];
-}
+  }
 
-// Conexión a la base de datos usando PDO
-$conn = new PDO('mysql:host=localhost;dbname=sigob', 'root', '');
-$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+  // Conexión a la base de datos usando PDO
+  $conn = new PDO('mysql:host=localhost;dbname=sigob', 'root', '');
+  $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-// Obtén los parámetros de la URL
-$cedula = isset($_GET['cedula']) ? $_GET['cedula'] : '';
-$fecha_pagar = isset($_GET['fecha_pagar']) ? $_GET['fecha_pagar'] : '';
+  // Obtén los parámetros de la URL
+  $cedula = isset($_GET['cedula']) ? $_GET['cedula'] : '';
+  $fecha_pagar = isset($_GET['fecha_pagar']) ? $_GET['fecha_pagar'] : '';
 
-if ($cedula && $fecha_pagar) {
+  if ($cedula && $fecha_pagar) {
     $stmt = $conn->prepare("SELECT id FROM empleados WHERE cedula = :cedula");
     $stmt->bindValue(':cedula', $cedula, PDO::PARAM_STR);
     $stmt->execute();
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($result) {
-        $id_empleado = $result['id'];
-        $netoDatos = generarNetoInformacion($fecha_pagar, $id_empleado, $conn);
+      $id_empleado = $result['id'];
+      $netoDatos = generarNetoInformacion($fecha_pagar, $id_empleado, $conn);
     } else {
-        echo "Empleado no encontrado.";
+      echo "Empleado no encontrado.";
     }
-} else {
+  } else {
     echo "Parámetros 'cedula' y 'fecha_pagar' son requeridos.";
-}
+  }
 
-$conn = null;
+  $conn = null;
 
-$nombres = $netoDatos['datos']['nombres'];
-$cedula = $netoDatos['datos']['cedula'];
-$cuenta_bancaria = $netoDatos['datos']['cuenta_bancaria'];
-$cargo = $netoDatos['datos']['cargo'];
-$centro_de_pago = $netoDatos['datos']['centro_de_pago'];
-$sueldo = $netoDatos['datos']['sueldo'];
-$co_cargo = $netoDatos['datos']['co_cargo'];
-$nombre_nomina = $netoDatos['datos']['nombre_nomina'];
-$id_nomina = $netoDatos['datos']['id_nomina'];
-$fecha_pagar2 = $netoDatos['datos']['fecha_pagar2'];
-$frecuencia_nomina = $netoDatos['datos']['frecuencia_nomina'];
-$pagos = $netoDatos['pagos'];
+  $nombres = $netoDatos['datos']['nombres'];
+  $cedula = $netoDatos['datos']['cedula'];
+  $cuenta_bancaria = $netoDatos['datos']['cuenta_bancaria'];
+  $cargo = $netoDatos['datos']['cargo'];
+  $centro_de_pago = $netoDatos['datos']['centro_de_pago'];
+  $sueldo = $netoDatos['datos']['sueldo'];
+  $co_cargo = $netoDatos['datos']['co_cargo'];
+  $nombre_nomina = $netoDatos['datos']['nombre_nomina'];
+  $id_nomina = $netoDatos['datos']['id_nomina'];
+  $fecha_pagar2 = $netoDatos['datos']['fecha_pagar2'];
+  $frecuencia_nomina = $netoDatos['datos']['frecuencia_nomina'];
+  $pagos = $netoDatos['pagos'];
 
-$asignacionesTotal = $sueldo;
-$deduccionesTotal = 0;
-$aporteTotal = 0;
-?>
+  $asignacionesTotal = $sueldo;
+  $deduccionesTotal = 0;
+  $aporteTotal = 0;
+  ?>
 
   <p style="text-indent: 0pt;text-align: left;"><br /></p>
   <table style="width: 100%; padding: 5px; ">
@@ -387,20 +389,20 @@ $aporteTotal = 0;
             <td style="width: 50%; text-align: left;">
               <?php
               if ($frecuencia_nomina == "1") {
-              ?>
-              <p class="st s1"> SEMANAL / 2024</p>
-              <?php
-              }elseif ($frecuencia_nomina == "2") {
-              ?>
-              <p class="st s1"> QUINCENAL / 2024</p>
-              <?php
-              }else{
-              ?>
-              <p class="st s1"> MENSUAL / 2024</p>
-              <?php
+                ?>
+                <p class="st s1"> SEMANAL / 2024</p>
+                <?php
+              } elseif ($frecuencia_nomina == "2") {
+                ?>
+                <p class="st s1"> QUINCENAL / 2024</p>
+                <?php
+              } else {
+                ?>
+                <p class="st s1"> MENSUAL / 2024</p>
+                <?php
               }
 
-               ?>
+              ?>
               <p class="st s1">Fecha Nomina: <span class="s2"><?php echo $fecha_pagar2 ?></span></p>
             </td>
           </tr>
@@ -431,16 +433,16 @@ $aporteTotal = 0;
       <td colspan="2">
         <p class="s2" style="padding-left: 9pt;text-indent: 0pt;text-align: left;">
           <?php if ($centro_de_pago == "0102") {
-           echo "VENEZUELA";
-          }elseif ($centro_de_pago == "0175") {
+            echo "VENEZUELA";
+          } elseif ($centro_de_pago == "0175") {
             echo "BICENTENARIO";
-          }elseif ($centro_de_pago == "0128") {
-           echo "CARONI";
-          }else{
+          } elseif ($centro_de_pago == "0128") {
+            echo "CARONI";
+          } else {
             echo "TESORO";
           }
           ?>
-          
+
 
         </p>
       </td>
@@ -484,7 +486,9 @@ $aporteTotal = 0;
       <td
         style="width:73pt;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
         colspan="2">
-        <p class="s2" style="padding-top: 2pt;padding-left: 18pt;text-indent: 0pt;text-align: left;"><?php echo $co_cargo ?></p>
+        <p class="s2" style="padding-top: 2pt;padding-left: 18pt;text-indent: 0pt;text-align: left;">
+          <?php echo $co_cargo ?>
+        </p>
       </td>
       <td
         style="width:85pt;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
@@ -497,11 +501,14 @@ $aporteTotal = 0;
       <td
         style="width:291pt;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
         colspan="3">
-        <p class="s2" style="padding-top: 2pt;padding-left: 18pt;text-indent: 0pt;text-align: left;"><?php echo $nombres ?>
+        <p class="s2" style="padding-top: 2pt;padding-left: 18pt;text-indent: 0pt;text-align: left;">
+          <?php echo $nombres ?>
         </p>
       </td>
       <td class="b-t">
-        <p class="s2" style="padding-top: 2pt;padding-right: 13pt;text-indent: 0pt;text-align: center;"><?php echo $pagos ?></p>
+        <p class="s2" style="padding-top: 2pt;padding-right: 13pt;text-indent: 0pt;text-align: center;">
+          <?php echo $pagos ?>
+        </p>
       </td>
     </tr>
 
@@ -524,29 +531,29 @@ $aporteTotal = 0;
             <th class="s1">SALDO</th>
           </tr>
           <?php
-$asignacionerow = "<tr>
+          $asignacionerow = "<tr>
     <td class='s2'>COD.</td>
     <td class='s2'>SUELDO</td>
     <td class='s2'>{$sueldo}</td>
     <td class='s2'></td>
 </tr>";
 
-// Procesar asignaciones
-foreach ($netoDatos['datos']["asignaciones"] as $codigo => $asignacion) {
-    $nom_concepto = $asignacion['nom_concepto'];
-    $valor = $asignacion['valor'];
+          // Procesar asignaciones
+          foreach ($netoDatos['datos']["asignaciones"] as $codigo => $asignacion) {
+            $nom_concepto = $asignacion['nom_concepto'];
+            $valor = $asignacion['valor'];
 
-    $asignacionesTotal += $valor;
+            $asignacionesTotal += $valor;
 
-    $asignacionerow .= "<tr>
+            $asignacionerow .= "<tr>
         <td class='s2'>{$codigo}</td>
         <td class='s2'>{$nom_concepto}</td>
         <td class='s2'>{$valor}</td>
         <td class='s2'></td>
     </tr>";
-}
-echo $asignacionerow;
-           ?>
+          }
+          echo $asignacionerow;
+          ?>
 
         </table>
       </td>
@@ -560,37 +567,37 @@ echo $asignacionerow;
           </tr>
 
           <?php
-       $deduccionesrow = '';
-foreach ($netoDatos['datos']["deducciones"] as $codigo => $deduccion) {
-    $nom_concepto = $deduccion['nom_concepto'];
-    $valor = $deduccion['valor'];
+          $deduccionesrow = '';
+          foreach ($netoDatos['datos']["deducciones"] as $codigo => $deduccion) {
+            $nom_concepto = $deduccion['nom_concepto'];
+            $valor = $deduccion['valor'];
 
-    $deduccionesTotal += $valor;
+            $deduccionesTotal += $valor;
 
-    $deduccionesrow .= "<tr>
+            $deduccionesrow .= "<tr>
         <td class='s2'>{$codigo}</td>
         <td class='s2'>{$nom_concepto}</td>
         <td class='s2'>{$valor}</td>
         <td class='s2'></td>
     </tr>";
-}
-  echo $deduccionesrow;
-$aporterow = '';
-foreach ($netoDatos['datos']["aportes"] as $codigo => $aporte) {
-    $nom_concepto = $aporte['nom_concepto'];
-    $valor = $aporte['valor'];
+          }
+          echo $deduccionesrow;
+          $aporterow = '';
+          foreach ($netoDatos['datos']["aportes"] as $codigo => $aporte) {
+            $nom_concepto = $aporte['nom_concepto'];
+            $valor = $aporte['valor'];
 
-    $aporteTotal += $valor;
+            $aporteTotal += $valor;
 
-    $aporterow .= "<tr>
+            $aporterow .= "<tr>
         <td class='s2'>{$codigo}</td>
         <td class='s2'>{$nom_concepto}</td>
         <td class='s2'>{$valor}</td>
         <td class='s2'></td>
     </tr>";
-}
-    echo $aporterow;
-           ?>
+          }
+          echo $aporterow;
+          ?>
 
         </table>
       </td>
@@ -608,7 +615,7 @@ foreach ($netoDatos['datos']["aportes"] as $codigo => $aporte) {
       <th class="s1 b-l">NETO <span class="s5"><?php
       $netoTotal = $asignacionesTotal - $deduccionesTotal - $aporteTotal;
 
-       echo round($netoTotal,2) ?></span></th>
+      echo round($netoTotal, 2) ?></span></th>
     </tr>
 
   </table>
@@ -668,7 +675,9 @@ foreach ($netoDatos['datos']["aportes"] as $codigo => $aporte) {
     </tr>
     <tr style="height:27pt">
       <td colspan="4">
-        <p class="s6 b-b" style="padding-top: 6pt;padding-left: 4pt;text-indent: 0pt;text-align: left;"><?php echo $cargo ?></p>
+        <p class="s6 b-b" style="padding-top: 6pt;padding-left: 4pt;text-indent: 0pt;text-align: left;">
+          <?php echo $cargo ?>
+        </p>
       </td>
       <td class="b-l b-t" colspan="4">
         <p style="text-indent: 0pt;text-align: left;"><br /></p>
