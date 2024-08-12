@@ -1,6 +1,5 @@
 <?php
-function generarNetoInformacion($id_empleado, $conn)
-{
+function generarNetoInformacion($id_empleado, $conn){
     $query = "SELECT
                 e.cedula AS cedula, 
                 e.nombres AS nombres, 
@@ -160,9 +159,19 @@ function generarNetoInformacion($id_empleado, $conn)
     return $datosRetornados;
 }
 
+
+// Captura el cuerpo de la solicitud
+$json = file_get_contents('php://input');
+
+// Decodifica el JSON a un array asociativo
+$data = json_decode($json, true);
+
+
+
 // El código de conexión y consulta
-if (isset($_GET['cedula'])) {
-    $cedula = $_GET['cedula'];
+if (isset($data['cedula'])) {
+    $cedula = $data['cedula'];
+
 
     $conn = new PDO('mysql:host=localhost;dbname=sigob;charset=utf8', 'root', '');
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -185,7 +194,7 @@ if (isset($_GET['cedula'])) {
     }
 } else {
     header('Content-Type: application/json');
-    echo json_encode(['error' => "Parámetro 'cedula' es requerido."]);
+    echo json_encode(['error' => "Parametro 'cedula' es requerido."]);
 }
 
 $conn = null;

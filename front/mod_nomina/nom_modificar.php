@@ -546,16 +546,21 @@ while ($r = $query->fetch_object()) {
           accion: 'registro_masivo',
           empleados: empleadosSeleccionados
         };
+        //loader
+        $('#cargando').show();
+
         const ajaxRequest = new AjaxRequest('application/json', data, url_back);
         const onSuccess = (response) => {
           toast_s('success', 'Registrados con éxito');
           cargarListaEmpleados();
           document.getElementById('tabla_empleados').classList.remove('hide');
           document.getElementById('seleccion_empleados').classList.add('hide');
+          $('#cargando').hide();
         };
         const onError = (response) => {
           console.log('Error:', response);
           toast_s('error', 'Error: ' + response);
+          $('#cargando').hide();
         };
         ajaxRequest.send(onSuccess, onError);
       }
