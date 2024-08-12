@@ -312,7 +312,7 @@ $stmt->close();
                             <div class="me-2"><button class="previous btn btn-secondary" onclick="beforeStep('2')">Regresar
                                 </button=>
                             </div>
-                            <div class="next"><button onclick="guardarReporte()" class="btn btn-primary mt-3 mt-md-0"> <i class="bx bx-save"></i> Guardar</button></div>
+                            <div class="next"><button onclick="guardarReporte()" class="btn btn-primary mt-3 mt-md-0"> <i class="bx bx-save"></i> Generar</button></div>
                           </div>
                         </div>
                       </section>
@@ -332,7 +332,7 @@ $stmt->close();
             <div class="card-header">
               <h5>Reportes guardados</h5>
             </div>
-            <div class="card-body"  style="max-height: 50vh; overflow-y: auto;">
+            <div class="card-body h-50">
               <table class="table">
                 <thead>
                   <tr>
@@ -357,7 +357,7 @@ $stmt->close();
             <div class="card-header">
               <h5>Estado del sistema</h5>
             </div>
-            <div class="card-body d-flex">
+            <div class="card-body d-flex h-50">
               <div class="m-a">
                 <div class="file-upload width-338p">
                   <div class="upload-area">
@@ -659,7 +659,7 @@ $stmt->close();
       let condicion = reportes[id]['furmulacion'];
       let columnasArray = reportes[id]['columnas'];
       let nominas = reportes[id]['nominas'];
-      let tipoFiltro = ''
+      let tipoFiltro = reportes[id]['tipoFiltro']
      
      let data = {
         formato: formato,
@@ -670,6 +670,9 @@ $stmt->close();
         tipoFiltro: tipoFiltro,
         nominas: (nominas != '' ? JSON.parse(nominas) : [])
       };
+      $('#cargando').show()
+
+      console.log(data)
 
       // Send data to server to generate report
       fetch('../../back/modulo_nomina/nom_reportes_form.php', {
@@ -689,6 +692,8 @@ $stmt->close();
           }
         })
         .then(blob => {
+         $('#cargando').hide()
+
           // Verificar si la respuesta es un archivo ZIP
           let contentType = blob.type;
           if (contentType === 'application/zip') {
@@ -705,6 +710,8 @@ $stmt->close();
           }
         })
         .catch(error => {
+         $('#cargando').hide()
+
           console.error('Error:', error);
           toast_s('error', 'Error al enviar la solicitud');
         });
@@ -770,6 +777,9 @@ $stmt->close();
         tipoFiltro: tipoFiltro,
         nominas: nominas_filtrar
       };
+      $('#cargando').show()
+      console.log(data)
+
 
       // Send data to server to generate report
       fetch('../../back/modulo_nomina/nom_reportes_form.php', {
@@ -789,6 +799,11 @@ $stmt->close();
           }
         })
         .then(blob => {
+         $('#cargando').hide()
+         if (almacenar == 'Si') {
+          tabla_reportes()
+         }
+          
           // Verificar si la respuesta es un archivo ZIP
           let contentType = blob.type;
           if (contentType === 'application/zip') {
@@ -805,6 +820,8 @@ $stmt->close();
           }
         })
         .catch(error => {
+         $('#cargando').hide()
+
           console.error('Error:', error);
           toast_s('error', 'Error al enviar la solicitud');
         });

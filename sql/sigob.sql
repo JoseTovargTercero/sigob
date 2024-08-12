@@ -3410,7 +3410,7 @@ INSERT INTO `reportes` (`id`, `furmulacion`, `nominas`, `columnas`, `formato`, `
 (17, 'discapacidades=\'0\' ', '31', '[\"nombres\",\"cedula\"]', 'pdf', 'moises2', 1, '2024-08-11 17:19:53');
 
 -- --------------------------------------------------------
-
+ALTER TABLE `reportes` ADD `tipoFiltro` VARCHAR(255) NOT NULL AFTER `creacion`;
 --
 -- Estructura de tabla para la tabla `system_users`
 --

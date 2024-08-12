@@ -1,12 +1,12 @@
 <?php
 require_once '../sistema_global/conexion.php';
+require_once '../sistema_global/session.php';
 require_once '../../vendor/autoload.php'; // Ajusta la ruta según la ubicación de mpdf y SimpleXLSXGen
 require_once 'pdf_files_config.php'; // Incluir el archivo de configuración
 
 use Mpdf\Mpdf;
 use Shuchkin\SimpleXLSXGen;
 
-// Datos recibidos desde $data
 $data = json_decode(file_get_contents('php://input'), true)['data'];
 
 $formato = $data['formato'];
@@ -16,6 +16,7 @@ $columnas = $data['columnas'];
 $condicion = $data['condicion'];
 $tipoFiltro = $data['tipoFiltro'];
 $nominas = $data['nominas'];
+
 
 // Palabras clave prohibidas
 $palabras_prohibidas = ['DROP', 'DELETE', 'INSERT', 'UPDATE', 'SELECT'];
@@ -29,7 +30,7 @@ foreach ($palabras_prohibidas as $palabra) {
 }
 
 // Preparación de datos para almacenar
-$id_usuario = 1; // Asegúrate de que la sesión contiene el id del usuario
+$id_usuario = $_SESSION['u_id']; // Asegúrate de que la sesión contiene el id del usuario
 $columnas_serializadas = json_encode($columnas);
 $creacion = date('Y-m-d H:i:s');
 
@@ -49,6 +50,9 @@ function addToZip($zip, $filename, $content) {
     }
 }
 
+$nominas_string = implode(", ", array_map('intval', $nominas));
+
+
 // Determinar la consulta principal según el valor de $tipoFiltro
 $query = "";  // Inicializamos $query para evitar el error de variable no definida
 
@@ -58,7 +62,6 @@ if ($tipoFiltro === "Ninguno") {
     }, $columnas)) . " FROM empleados WHERE $condicion";
 } elseif ($tipoFiltro === "nominas") {
     // Convertir los valores de $nominas en una cadena para la consulta
-    $nominas_string = implode(", ", array_map('intval', $nominas));
 
     // Consulta para obtener los nombres de las nóminas
     $query_nominas = "SELECT nombre FROM nominas WHERE id IN ($nominas_string)";
@@ -201,27 +204,30 @@ if ($formato == "pdf" || $formato == "xlsx") {
             if (isset($xlsxFilename) && file_exists($xlsxFilename)) {
                 unlink($xlsxFilename);
             }
-
             if ($almacenar == "Si") {
                 // Inserción en la tabla reportes
             $columnas_serializadas = json_encode($columnas);
-             $sql = "INSERT INTO reportes (furmulacion, nominas, columnas, formato, nombre, user, creacion)
-            VALUES (?, ?, ?, ?, ?, ?, ?)";
-
-    // Preparar la declaración SQL
-    $stmt = $conexion->prepare($sql);
-
-    // Vincular parámetros y ejecutar la consulta
-    $stmt->bind_param("sssssss", $condicion, $nominas_string, $columnas_serializadas, $formato, $nombre, $id_usuario, $creacion );
-
-     // Ejecutar la consulta preparada
-    if ($stmt->execute()) {
-        json_encode(['sucess' => 'Datos Insertados correctamente']);
-    } else {
-        json_encode(['error' => 'Error al insertar datos:']);
-    }
+             $sql = "INSERT INTO reportes (furmulacion, nominas, columnas, formato, nombre, user, creacion, tipoFiltro)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            
+                    // Preparar la declaración SQL
+                    $stmt = $conexion->prepare($sql);
+            
+                    // Vincular parámetros y ejecutar la consulta
+                    $stmt->bind_param("ssssssss", $condicion, $nominas_string, $columnas_serializadas, $formato, $nombre, $id_usuario, $creacion, $tipoFiltro );
+            
+                    // Ejecutar la consulta preparada
+                    if ($stmt->execute()) {
+                         json_encode(['success' => 'Datos Insertados correctamente']);
+                    } else {
+                         json_encode([
+                            'error' => 'Error al insertar datos:',
+                            'details' => $stmt->error // Muestra el mensaje de error
+                        ]);
+                    }
+                    
             }
-           
+            
 
         } else {
             echo json_encode(['error' => 'No se encontraron registros']);
