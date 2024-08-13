@@ -1,4 +1,5 @@
 import { getPeticionesNomina } from '../api/peticionesNomina.js'
+import { validarIdentificador } from './peticionesNominaForm.js'
 
 const d = document
 const w = window
@@ -40,7 +41,7 @@ let requestTable = new DataTable('#request-nom-table', {
     { data: 'acciones' },
   ],
   responsive: true,
-  scrollY: 150,
+  scrollY: 350,
   language: tableLanguage,
   layout: {
     topEnd: function () {
@@ -85,16 +86,6 @@ export async function loadRequestTable() {
   requestTable.rows.add(data).draw()
 }
 
-function validarIdentificador(identificador) {
-  if (identificador.startsWith('s'))
-    return `Semana ${identificador.slice(1, identificador.length)}`
-  if (identificador.startsWith('q'))
-    return `Quincena ${identificador.charAt(1)}`
-  if (identificador === 'unico') return `Mensual`
-  if (identificador === 'um') return `Mensual`
-
-  return identificador
-}
 // `
 // <button class="btn btn-primary btn-sm" data-correlativo="${
 //   peticion.correlativo

@@ -75,7 +75,7 @@ require_once '../../back/sistema_global/session.php';
                                 </table>
                             </div>
 
-                            <div class="request-step-container hide slide-up-animation" id="form-request-id">
+                            <form class="request-step-container hide slide-up-animation" id="form-request-container">
                                 <nav class="my-auto nav nav-pills nav-justified">
                                     <span class="nav-link active" data-part="part1">Empezar cálculo</span>
                                     <span class="nav-link" data-part="part2">Verificar empleados</span>
@@ -174,7 +174,7 @@ require_once '../../back/sistema_global/session.php';
                                     <button class="btn btn-primary" id="btn-next">Siguiente</button>
                                 </div>
 
-                            </div>
+                            </form>
 
 
                         </div>
@@ -186,16 +186,16 @@ require_once '../../back/sistema_global/session.php';
                         </div>
                     </div>
 
-                    <div class="card hide" id="request-form-information">
-                        <div class="card-header">
-                            <div class="d-flex align-items-center justify-content-between">
+                    <div class="hide" id="request-form-information">
+                        <div class="card">
+                            <div class="card-header d-flex align-items-center justify-content-between">
 
                                 <h5 class="mb-0">Información de la petición</h5>
                                 <small class="text-muted mt-0">Verifique los datos de la petición</small>
 
                             </div>
                         </div>
-                        <div class="" id="request-form-information-body"></div>
+                        <div id="request-form-information-body"></div>
                     </div>
                 </div>
                 <!-- [ worldLow section ] end -->

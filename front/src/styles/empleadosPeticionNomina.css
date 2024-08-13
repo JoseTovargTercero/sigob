@@ -45,6 +45,9 @@
   gap: 1rem;
   min-height: 300px;
 }
+#request-comparation-container table {
+  font-size: 12px;
+}
 
 .request-list-container {
   display: grid;
@@ -53,6 +56,7 @@
   justify-items: center;
 }
 .request-list-container table {
+  font-size: 12px;
 }
 
 .request-list-container table td {

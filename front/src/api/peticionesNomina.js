@@ -448,7 +448,7 @@ async function mapData(data) {
       ? empleado.observacion
       : 'No disponible'
 
-    console.log(dependencias)
+    // console.log(dependencias)
     id_dependencia = dependencias.mappedData.find(
       (el) => el.id == id_dependencia
     )

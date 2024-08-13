@@ -248,7 +248,7 @@ d.addEventListener('DOMContentLoaded', (e) => {
       requestTableId: 'request-table',
       requestFormId: 'request-form',
       requeFormInformationId: 'request-form-information',
-      newRequestFormId: 'form-request-id',
+      newRequestFormId: 'form-request-container',
       selectGrupoId: 'grupo',
       selectNominaId: 'nomina',
       selectFrecuenciaId: 'frecuencia',
