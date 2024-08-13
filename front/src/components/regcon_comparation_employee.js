@@ -49,7 +49,7 @@ export async function nom_comparation_employee({
         { data: 'dependencia' },
       ],
       responsive: true,
-      scrollY: 250,
+      scrollY: 100,
       language: tableLanguage,
       layout: {
         topEnd: function () {
@@ -69,7 +69,7 @@ export async function nom_comparation_employee({
   let empleadosNuevosTabla = new DataTable('#peticion-empleados-nuevos', {
     columns: [{ data: 'nombres' }, { data: 'cedula' }, { data: 'dependencia' }],
     responsive: true,
-    scrollY: 250,
+    scrollY: 100,
     language: tableLanguage,
     layout: {
       topEnd: function () {
@@ -107,7 +107,6 @@ export async function nom_comparation_employee({
     let datosOrdenados = [...empleadosEliminadosInformacion].sort(
       (a, b) => a.id - b.id
     )
-    console.log(datosOrdenados)
 
     let dataEliminados = datosOrdenados.map((empleado) => {
       console.log(empleado)

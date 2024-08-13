@@ -84,7 +84,7 @@ export async function validateRequestNomForm({
       console.log(peticiones)
 
       requestComparationForm.insertAdjacentHTML(
-        'beforeend',
+        'afterend',
         createComparationContainer({ data: peticiones })
       )
 

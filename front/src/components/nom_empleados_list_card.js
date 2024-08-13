@@ -94,7 +94,7 @@ export const nom_empleados_list_card = () => {
               &times;
             </button>
         </div>
-        <div class='modal-box-content h-100'>
+        <div class='modal-box-content'>
           <table
             id='employee-list-table'
             class='table table-striped mx-auto'
@@ -109,7 +109,7 @@ export const nom_empleados_list_card = () => {
           </table>
         </div>
         <div class='modal-box-footer card-footer'>
-        <button class="btn btn-primary w-100 my-auto" id="btn-confirm-list">Confirmar</button>
+        <button class="btn btn-primary w-100 my-auto" id="btn-confirm-list" disabled>Sin modificaciones</button>
         </div>
       </div>
     </div>`

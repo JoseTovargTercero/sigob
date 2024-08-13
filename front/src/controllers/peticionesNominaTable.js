@@ -56,23 +56,18 @@ export function employeePayTableHTML({ nominaData, columns }) {
     })
     .join('')
 
-  let table = `<div class='' id='request-employee-table-card'>
+  let table = ` <div class='card rounded' id='request-employee-table-card'>
       <div class='card-header'>
-        <div class=''>
-          <div>
-            <h5 class='mb-2'>Nómina ${nombre_nomina}</h5>
-          
-            <ul class='d-block'>
-              <li><strong>Empleados en nómina:</strong> ${cantidad_emplados} empleado/s</li>
-              <li><strong>Total a pagar:</strong> ${total_a_pagar} Bs</li>
-            </ul>
-
-            <small class='d-block text-center py-0'>
-            Utilice la barra horizontal para observar la información de la
-            nómina
-          </small>
-          </div>
-        </div>
+        
+          <h5 class='mb-2'>Lista de empleados de la nomina "${nombre_nomina}"</h5>
+          <p class='m-0'>
+            <strong>Empleados en nómina:</strong> ${cantidad_emplados} 
+            empleado/s
+          </p>
+          <p class='m-0'>
+            <strong>Total a pagar:</strong> ${total_a_pagar} Bs
+          </p>
+        
       </div>
       <div class='card-body'>
         <table
@@ -81,8 +76,7 @@ export function employeePayTableHTML({ nominaData, columns }) {
           style='width:100%'
         >
           <thead>${columnsTh}</thead>
-          <tbody>
-          ${rowsTr}</tbody>
+          <tbody>${rowsTr}</tbody>
         </table>
       </div>
     </div>`

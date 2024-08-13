@@ -1,7 +1,3 @@
-import { getRegConEmployeeData } from '../api/empleados.js'
-import { empleadosDiferencia } from '../helpers/helpers.js'
-import { nom_comparation_employee } from './regcon_comparation_employee.js'
-
 const d = document
 const w = window
 
@@ -9,20 +5,25 @@ export function createComparationContainer({ data, tablaDiferencia }) {
   if (!data) return
   let { registro_actual, registro_anterior, confirmBtn } = data
 
-  return `<div
-      class='border-bottom border-2 border-secondary border-opacity-25 request-comparation-container mb-4'
-      id='request-comparation-container'
-    >
+  return `
+    <div class='' id='request-comparation-container'>
       ${createCard({
         actual: registro_actual,
         anterior: registro_anterior,
         confirmBtn,
       })}
-      
-      <div class='row justify-content-center'>
-        <div class='col-sm-6 mb-4'>
-        <h5 class="mb-0">Empleados eliminados de nomina</h5>
-        <small class="mt-0 text-muted">Visualice los empleados eliminados com respecto a la nomina anterior</small>
+    </div>
+      <div class='card rounded row mx-0 justify-content-center'>
+    
+
+      <div class="row gap-2 mx-0 request-list-container">
+        <div class='col mb-2'> 
+          <div class='card-header py-2 pb-2'>
+          <h5 class='card-title mb-0 text-center'>Empleados eliminados de nomina</h5>
+           <small class='d-block mt-0 text-center text-muted'>
+             Visualice los empleados eliminados con respecto a la nomina anterior
+           </small>  
+      </div>
           <table
             id='peticion-empleados-eliminados'
             class='table table-xs table-striped'
@@ -36,9 +37,14 @@ export function createComparationContainer({ data, tablaDiferencia }) {
             <tbody></tbody>
           </table>
         </div>
-       <div class='col-sm-6 mb-4'>
-         <h5 class="mb-0">Empleados nuevos en nomina</h5>
-        <small class="mt-0 text-muted">Visualice los empleados añadidos com respecto a la nomina anterior</small>
+        <div class='col mb-2'>
+   <div class='card-header py-2 pb-2'>
+     
+          <h5 class='card-title mb-0 text-center'>Empleados nuevos en nomina</h5>
+         <small class='d-block mt-0 text-center text-muted'>
+           Visualice los empleados nuevos con respecto a la nomina anterior
+         </small>
+      </div>
           <table
             id='peticion-empleados-nuevos'
             class='table table-xs table-striped'
@@ -51,18 +57,18 @@ export function createComparationContainer({ data, tablaDiferencia }) {
             </thead>
             <tbody></tbody>
           </table>
-        </div>
+        </div>  
       </div>
-    </div>
-    
-     ${
-       confirmBtn
-         ? `<div class='form-group'>
-            <button class='btn btn-primary w-100' id="confirm-request" data-correlativo="${registro_actual.correlativo}">CONFIRMAR PETICIÓN</button>
+      </div>
+       ${
+         confirmBtn
+           ? `<div class='d-flex justify-content-center gap-2 mb-2'>
+         <button class='btn btn-danger' id="deny-request" data-correlativo="${registro_actual.correlativo}">RECHAZAR</button>
+          <button class='btn btn-primary' id="confirm-request" data-correlativo="${registro_actual.correlativo}">CONFIRMAR</button>
           </div>`
-         : ''
-     }
-    `
+           : ''
+       }
+  `
 }
 
 const createCard = ({ actual, anterior, confirmBtn }) => {
@@ -120,8 +126,8 @@ const createCard = ({ actual, anterior, confirmBtn }) => {
   )
 
   return `
-    <div class='p-2 slide-up-animation'>
-      <div class='card-header row py-2'>
+    <div class='card slide-up-animation'>
+      <div class='card-header row p-0'>
      ${
        anterior
          ? `<div class="col">
@@ -129,7 +135,7 @@ const createCard = ({ actual, anterior, confirmBtn }) => {
           <b>Nómina Anterior:</b>
         </h5>
         <h5 class='card-title text-center m-2'>
-          <b>Nombre nómina:</b> ${correlativoAnterior} - ${nombreNominaAnterior}
+         ${correlativoAnterior} - ${nombreNominaAnterior}
         </h5>
         <h6 class='card-subtitle text-center mb-2'>
           <b>Cantidad de empleados: </b>${totalEmpleadosAnterior}
@@ -149,7 +155,7 @@ const createCard = ({ actual, anterior, confirmBtn }) => {
         <b>Nómina consultada:</b>
       </h5>
       <h5 class='card-title text-center m-2'>
-        <b>Nombre nómina:</b> ${correlativoActual} - ${nombreNominaActual}
+        ${correlativoActual} - ${nombreNominaActual}
       </h5>
       <h6 class='card-subtitle text-center mb-2'>
         <b>Cantidad de empleados: </b>${totalEmpleadosActual}
@@ -163,7 +169,7 @@ const createCard = ({ actual, anterior, confirmBtn }) => {
     </div>
       </div>
 
-      <div class='row gap-2 m-auto request-list-container border-bottom border-2 border-secondary border-opacity-25 mb-4'>
+      <div class='row gap-2 mx-0 request-list-container'>
       
       
         ${

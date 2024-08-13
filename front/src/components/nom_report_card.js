@@ -49,7 +49,7 @@ export const nomReportCard = ({ data }) => {
           </button>
         </header>
         <div
-          class='card h-100 p-2 slide-up-animation d-flex flex-column align-items-center gap-2 nom-report-card'
+          class='card p-2 slide-up-animation d-flex flex-column align-items-center gap-2 nom-report-card'
           id='nom-report-card'
         >
           <div class='card-header py-5 text-center'>

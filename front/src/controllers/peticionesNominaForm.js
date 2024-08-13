@@ -97,6 +97,8 @@ export async function validateRequestForm({
   let requestStepPart2 = d.getElementById('request-step-2')
   let requestStepPart3 = d.getElementById('request-step-3')
 
+  requestForm.addEventListener('submit', (e) => e.preventDefault())
+
   d.addEventListener('change', async (e) => {
     if (e.target.dataset.employeeid) {
       let id = e.target.dataset.employeeid
@@ -108,6 +110,8 @@ export async function validateRequestForm({
       if (e.target.value === defaultValue) {
         employeeNewStatus = employeeNewStatus.filter((el) => el.id !== id)
         console.log(employeeNewStatus)
+        d.getElementById('btn-confirm-list').setAttribute('disabled', 'true')
+        d.getElementById('btn-confirm-list').textContent = 'Sin modificaciones'
         return
       }
 
@@ -128,6 +132,13 @@ export async function validateRequestForm({
           defaultValue,
         })
       }
+
+      console.log(employeeNewStatus.length)
+
+      if (employeeNewStatus.length > 0) {
+        d.getElementById('btn-confirm-list').removeAttribute('disabled')
+        d.getElementById('btn-confirm-list').textContent = 'Confirmar'
+      }
       console.log(employeeNewStatus)
     }
 
@@ -140,7 +151,6 @@ export async function validateRequestForm({
       })
 
       nominas = await getNominas(e.target.value)
-      console.log(nominas)
 
       selectNomina.innerHTML = ''
 
@@ -165,7 +175,7 @@ export async function validateRequestForm({
       selectMes.parentElement.classList.add('hide')
 
       fieldList.nomina = e.target.value
-
+      console.log(nominas)
       fieldList.frecuencia = nominas.find(
         (nomina) => nomina.nombre === e.target.value
       ).frecuencia
@@ -212,7 +222,7 @@ export async function validateRequestForm({
         default:
           break
       }
-      console.log(identificadorOpciones)
+
       selectFrecuencia.insertAdjacentHTML('beforeend', identificadorOpciones)
     }
 
@@ -241,7 +251,6 @@ export async function validateRequestForm({
         })
 
       // Mostrar contenedor de información
-      requestFormInformation.classList.remove('hide')
 
       fieldList.identificador = e.target.value
 
@@ -249,6 +258,8 @@ export async function validateRequestForm({
         type: NOTIFICATIONS_TYPES.send,
         successFunction: async function () {
           console.log('CONFIRMADOOO')
+
+          requestFormInformation.classList.remove('hide')
 
           let employeePayTableCard = d.getElementById(
             'request-employee-table-card'
@@ -288,8 +299,12 @@ export async function validateRequestForm({
           createTable({ nominaData: nominaMapped, columns })
 
           toast_s('success', 'Se ha realizado el cálculo')
+
+          d.getElementById('btn-next').click()
         },
-        message: `Está seguro de realizar el cálculo de la nomina ${fieldList.nomina.toLocaleUpperCase()} con frecuencia ${fieldList.identificador.toLocaleUpperCase()}`,
+        message: `Está seguro de realizar el cálculo de la nomina ${fieldList.nomina.toLocaleUpperCase()} con frecuencia ${validarIdentificador(
+          fieldList.identificador.toLowerCase()
+        )}`,
       })
 
       if (!result) {
@@ -356,7 +371,7 @@ export async function validateRequestForm({
     if (e.target.id === 'btn-confirm-list') {
       confirmNotification({
         message:
-          'Al guardar los cambios se realizará el cálculo nuevamente ¿Desea continuar?',
+          'Esto guardará los cambios permanentes de los empleados seleccionados y se re-calculará la nomina nuevamente ¿Desea seguir?',
         type: NOTIFICATIONS_TYPES.send,
         successFunction: async () => {
           let res = await updateEmployeeStatus({ data: employeeNewStatus })
@@ -445,7 +460,7 @@ export async function validateRequestForm({
     if (e.target.id === 'btn-send-request') {
       confirmNotification({
         type: NOTIFICATIONS_TYPES.send,
-        message: 'Deseas realizar esta petición?',
+        message: '¿Deseas cancelar esta petición?',
         successFunction: enviarCalculoNomina,
         successFunctionParams: calculoInformacion,
         othersFunctions: [
@@ -467,6 +482,7 @@ export async function validateRequestForm({
           return
         }
 
+        btnPrevius.textContent = 'Cancelar petición'
         requestStepPart1.classList.add('hide')
         requestStepPart2.classList.remove('hide')
 
@@ -517,6 +533,7 @@ export async function validateRequestForm({
         requestStepPart2.classList.add('hide')
         requestStepPart3.classList.remove('hide')
 
+        btnPrevius.textContent = 'Anterior'
         //  Habilitar
         btnNext.setAttribute('disabled', '')
 
@@ -530,24 +547,41 @@ export async function validateRequestForm({
     if (e.target.id === 'btn-previus') {
       scroll(0, 0)
       if (formFocus === 3) {
+        e.target.textContent = 'Cancelar petición'
+
         requestStepPart2.classList.remove('hide')
         requestStepPart3.classList.add('hide')
 
         //  Habilitar
         btnNext.removeAttribute('disabled')
+        btnPrevius.textContent = 'Cancelar peticion'
         formFocus--
         validateNavPill()
         return
       }
 
       if (formFocus === 2) {
-        requestStepPart2.classList.add('hide')
-        requestStepPart1.classList.remove('hide')
+        confirmNotification({
+          type: NOTIFICATIONS_TYPES.send,
+          message:
+            'Hacer esto borrará el calculo y se tendrá que realizar de nuevo ¿Desea continuar?',
+          successFunction: function () {
+            // Resetear formulario
 
-        // Deshabilitar
-        btnPrevius.setAttribute('disabled', '')
-        formFocus--
-        validateNavPill()
+            btnPrevius.textContent = 'Anterior'
+            btnPrevius.setAttribute('disabled', '')
+
+            requestStepPart2.classList.add('hide')
+            requestStepPart1.classList.remove('hide')
+
+            resetForm()
+            // Deshabilitar
+            btnPrevius.setAttribute('disabled', '')
+            formFocus--
+            validateNavPill()
+          },
+        })
+
         return
       }
     }
@@ -565,6 +599,23 @@ export async function validateRequestForm({
     }
     // console.log(formFocus)
   })
+
+  function resetForm() {
+    newRequestForm.reset()
+    requestFormInformation.classList.add('hide')
+    let employeePayTableCard = d.getElementById('request-employee-table-card')
+    let card = d.getElementById('employee-new-status-card')
+    let requestComparationContainer = d.getElementById(
+      'request-comparation-container'
+    )
+    if (employeePayTableCard) employeePayTableCard.remove()
+    if (card) card.remove()
+    if (requestComparationContainer) requestComparationContainer.remove()
+
+    for (let key in fieldList) {
+      fieldList[key] = ''
+    }
+  }
 }
 
 function validateNavPill() {
@@ -574,6 +625,17 @@ function validateNavPill() {
   d.querySelectorAll(`[data-part="part${formFocus}"]`)[0].classList.add(
     'active'
   )
+}
+
+export function validarIdentificador(identificador) {
+  if (identificador.startsWith('s'))
+    return `Semana ${identificador.slice(1, identificador.length)}`
+  if (identificador.startsWith('q'))
+    return `Quincena ${identificador.charAt(1)}`
+  if (identificador === 'unico') return `Mensual`
+  if (identificador === 'um') return `Mensual`
+
+  return identificador
 }
 
 function empleadosModificados(listaEmpleados) {
