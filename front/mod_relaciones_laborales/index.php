@@ -96,12 +96,7 @@ $stmt->close();
                   <li class="nav-item" role="presentation"><a class="nav-link text-uppercase active" id="home-tab" data-bs-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Vista trimestral</a></li>
                   <li class="nav-item" role="presentation"><a class="nav-link text-uppercase" id="profile-tab" data-bs-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false" tabindex="-1">Vista mensual</a></li>
                 </ul>
-
               </div>
-
-
-
-
 
               <div class="tab-content" id="myTabContent">
                 <div class="tab-pane fade active show" id="home" role="tabpanel" aria-labelledby="home-tab">
@@ -146,14 +141,8 @@ $stmt->close();
                       </tbody>
                     </table>
                   </div>
-
-
                 </div>
               </div>
-
-
-
-
             </div>
             <!-- [ Recent Users ] end -->
           </div>
@@ -211,71 +200,6 @@ $stmt->close();
     <script>
       let informacion_neto, cedula_consulta
 
-      let data = {
-        2024: {
-          "datos_por_fecha": {
-            "07-2024": {
-              "asignaciones": {
-                "003": {
-                  "nom_concepto": "PRIMA POR TRANSPORTE",
-                  "valor": 16
-                }
-              },
-              "deducciones": [],
-              "aportes": [],
-              "sueldo_total": 48.75
-            },
-            "08-2024": {
-              "asignaciones": {
-                "001": {
-                  "nom_concepto": "SUELDO BASE",
-                  "valor": 33.75
-                },
-                "003": {
-                  "nom_concepto": "PRIMA POR TRANSPORTE",
-                  "valor": 15
-                }
-              },
-              "deducciones": [],
-              "aportes": [],
-              "sueldo_total": 48.75
-            }
-          },
-          "datos_por_trimestre": {
-            "Q1": {
-              "asignaciones": [],
-              "deducciones": [],
-              "aportes": [],
-              "sueldo_total": 0
-            },
-            "Q2": {
-              "asignaciones": [],
-              "deducciones": [],
-              "aportes": [],
-              "sueldo_total": 0
-            },
-            "Q3": {
-              "asignaciones": {
-                "003": {
-                  "nom_concepto": "PRIMA POR TRANSPORTE",
-                  "valor": 15
-                }
-              },
-              "deducciones": [],
-              "aportes": [],
-              "sueldo_total": 48.75
-            },
-            "Q4": {
-              "asignaciones": [],
-              "deducciones": [],
-              "aportes": [],
-              "sueldo_total": 0
-            }
-          }
-        }
-      } // Quitar
-
-
       const nomenclaturaTrimestre = {
         'Q1': 'Primer trimestre',
         'Q2': 'Segundo trimestre',
@@ -297,6 +221,18 @@ $stmt->close();
         '11': 'Noviembre',
         '12': 'Diciembre'
       };
+      /**
+       * Retrieves the key from an associative array based on its corresponding value.
+       *
+       * @param mixed $value The value to search for in the associative array.
+       * @return mixed|null The key corresponding to the given value, or null if the value is not found.
+       */
+      function getKeyByValue(value) {
+        const key = Object.keys(nomenclaturaMensual).find(key => nomenclaturaMensual[key] === value);
+        return key;
+      }
+
+
 
       /**
        * Calculates the total values for assignments, deductions, and contributions based on the provided data.
@@ -304,31 +240,40 @@ $stmt->close();
        * @param {Object} datos - The data object containing assignments, deductions, and contributions.
        * @returns {Object} - An object containing the calculated total values for assignments, deductions, and contributions.
        */
-      function calcularValores(datos) {
+      function calcularValores(datos, esTrimestre) {
         let valorAsignaciones = 0;
         let valorDeducciones = 0;
         let valorAportes = 0;
 
+        // Iterar sobre cada tipo de dato (asignaciones, deducciones, aportes)
         for (let tipo in datos) {
-          if (datos.hasOwnProperty(tipo)) {
-            for (let item in datos[tipo]) {
-              if (datos[tipo].hasOwnProperty(item)) {
-                switch (tipo) {
-                  case 'asignaciones':
-                    valorAsignaciones += datos[tipo][item].valor;
-                    break;
-                  case 'deducciones':
-                    valorDeducciones += datos[tipo][item].valor;
-                    break;
-                  case 'aportes':
-                    valorAportes += datos[tipo][item].valor;
-                    break;
+          if (tipo === 'asignaciones' || tipo === 'deducciones' || tipo === 'aportes') {
+            if (datos.hasOwnProperty(tipo)) {
+
+              // Verificar si es un objeto (no una lista) y recorrerlo
+              if (typeof datos[tipo] === 'object' || Array.isArray(datos[tipo])) {
+                for (let key in datos[tipo]) {
+                  if (datos[tipo].hasOwnProperty(key)) {
+                    let item = datos[tipo][key];
+                    switch (tipo) {
+                      case 'asignaciones':
+                        valorAsignaciones += item.valor || 0;
+                        break;
+                      case 'deducciones':
+                        valorDeducciones += item.valor || 0;
+                        break;
+                      case 'aportes':
+                        valorAportes += item.valor || 0;
+                        break;
+                    }
+                  }
                 }
               }
             }
           }
         }
 
+        // Formatear los valores para ser mostrados
         valorAsignaciones = valorAsignaciones === 0 ? '<span class="text-opacity">0 Bs</span>' : `${valorAsignaciones} Bs`;
         valorDeducciones = valorDeducciones === 0 ? '<span class="text-opacity">0 Bs</span>' : `${valorDeducciones} Bs`;
         valorAportes = valorAportes === 0 ? '<span class="text-opacity">0 Bs</span>' : `${valorAportes} Bs`;
@@ -339,6 +284,7 @@ $stmt->close();
           valorAportes
         };
       }
+
       /**
        * Generates HTML rows based on the provided data.
        *
@@ -347,68 +293,96 @@ $stmt->close();
        * @param {boolean} esTrimestre - Indicates whether the data is for trimesters or not.
        * @returns {string} - The generated HTML rows.
        */
-      function generarFilas(datos, tipo, esTrimestre) {
+      function generarFilas(datos, year, esTrimestre) {
+        if (!datos) {
+          console.error('Datos no definidos:', datos);
+          return ''; // Retorna una cadena vacía si los datos no están definidos
+        }
+
         let row = '';
 
-        for (let year in datos) {
-          if (datos.hasOwnProperty(year)) {
-            const datosPorPeriodo = datos[year][tipo];
-            const numeroDePeriodos = Object.keys(datosPorPeriodo).length;
+        // Obtener los datos para el año especificado
+        const datosPorPeriodo = datos[year];
 
-            let firstPeriodo = true;
-            for (let periodo in datosPorPeriodo) {
-              if (datosPorPeriodo.hasOwnProperty(periodo)) {
-                const {
-                  valorAsignaciones,
-                  valorDeducciones,
-                  valorAportes
-                } = calcularValores(datosPorPeriodo[periodo]);
+        // Verificar que los datos para el año existan
+        if (!datosPorPeriodo) {
+          console.error(`Datos no definidos para el año ${year}:`, datosPorPeriodo);
+          return ''; // Retorna una cadena vacía si los datos para el año no están definidos
+        }
 
-                row += `<tr>`;
-                if (firstPeriodo) {
-                  row += `<td rowspan="${numeroDePeriodos}">${year}</td>`;
-                  firstPeriodo = false;
-                }
-                row += `<td>${esTrimestre ? nomenclaturaTrimestre[periodo] : periodo}</td>`;
-                row += `<td class="text-center">${valorAsignaciones}</td>`;
-                row += `<td class="text-center">${valorDeducciones}</td>`;
-                row += `<td class="text-center">${valorAportes}</td>`;
-                row += `<td class="text-center">${datosPorPeriodo[periodo].sueldo_total} Bs</td>`;
-                row += `<td class="text-center"><button onclick="detallesPeriodo('${year}', '${tipo}', '${esTrimestre ? periodo : periodo}')" type="button" class="btn btn-sm btn-outline-info d-inline-flex">Info</button></td>`;
-                row += `</tr>`;
-              }
+        const numeroDePeriodos = Object.keys(datosPorPeriodo).length;
+        let firstPeriodo = true;
+
+        // Iterar sobre cada periodo en los datos del año especificado
+        for (let periodo in datosPorPeriodo) {
+          if (datosPorPeriodo.hasOwnProperty(periodo)) {
+            const periodoDatos = datosPorPeriodo[periodo];
+
+
+            // Calcular los valores de asignaciones, deducciones y aportes para el periodo actual
+            const {
+              valorAsignaciones,
+              valorDeducciones,
+              valorAportes
+            } = calcularValores(periodoDatos, esTrimestre);
+
+
+
+
+            row += `<tr>`;
+            if (firstPeriodo) {
+              row += `<td rowspan="${numeroDePeriodos}">${year}</td>`;
+              firstPeriodo = false;
             }
+            row += `<td>${esTrimestre ? nomenclaturaTrimestre[periodo] : periodo}</td>`;
+            row += `<td class="text-center">${valorAsignaciones}</td>`;
+            row += `<td class="text-center">${valorDeducciones}</td>`;
+            row += `<td class="text-center">${valorAportes}</td>`;
+            row += `<td class="text-center">${periodoDatos.sueldo_total} Bs</td>`;
+            row += `<td class="text-center"><button onclick="detallesPeriodo('${year}', '${periodo}', ${esTrimestre})" type="button" class="btn btn-sm btn-outline-info d-inline-flex">Info</button></td>`;
+            row += `</tr>`;
           }
         }
+
         return row;
       }
+
 
       /**
        * Function to display details of a specific period.
        *
        * @param {string} anio - The year of the period.
-       * @param {string} tipo - The type of period ('datos_por_trimestre' or 'datos_por_mes').
+       * @param {string} tipo - The type of period ('datos_por_trimestre' or 'datos_por_ano_mes').
        * @param {string} periodo - The period to display details for.
        */
-      function detallesPeriodo(anio, tipo, periodo) {
-        // alert(anio + ' - ' + tipo + ' - ' + trimestral)
+      function detallesPeriodo(anio, mes_trimestre, esTrimestre) {
 
         let info_pago = document.getElementById('info-pago');
-        if (tipo == 'datos_por_trimestre') {
-          info_pago.innerHTML = nomenclaturaTrimestre[periodo] + ' del ' + anio;
+        if (esTrimestre) {
+          info_pago.innerHTML = nomenclaturaTrimestre[mes_trimestre] + ' del ' + anio;
           $('#btn-donwload').hide();
         } else {
-          let explode_periodo = periodo.split('-');
-          info_pago.innerHTML = nomenclaturaMensual[explode_periodo[0]] + ' del ' + explode_periodo[1];
+          info_pago.innerHTML = mes_trimestre + ' del ' + anio;
+          let mes_anio = getKeyByValue(mes_trimestre) + '-' + anio;
+
           $('#btn-donwload').show();
-          $('#btn-donwload').attr('onclick', 'descarga("' + cedula_consulta + '", "' + periodo + '")');
-        } // MOSTRAR LA INFORMACION DEL PERIODO
+          $('#btn-donwload').attr('onclick', 'descarga("' + cedula_consulta + '", "' + mes_anio + '")');
+        }
 
+
+        // Display the information of the period
         const tablaDetalles = document.getElementById('tabla-detalles');
-        tablaDetalles.innerHTML = ''; // Limpiar la tabla antes de agregar nuevos datos
+        tablaDetalles.innerHTML = ''; // Clear the table before adding new data
 
-        if (informacion_neto.hasOwnProperty(anio) && informacion_neto[anio].hasOwnProperty(tipo)) {
-          const datosDelPeriodo = informacion_neto[anio][tipo][periodo];
+
+        
+
+        
+
+
+
+        if (informacion_neto[(esTrimestre ? 'datos_por_trimestre':'datos_por_ano_mes')][anio][mes_trimestre]) {
+          const datosDelPeriodo = informacion_neto[(esTrimestre ? 'datos_por_trimestre':'datos_por_ano_mes')][anio][mes_trimestre];
           let row = '';
           let totalAsignaciones = 0;
           let totalDeducciones = 0;
@@ -421,26 +395,29 @@ $stmt->close();
            * @param {string} tipoConcepto - The type of concept (asignaciones, deducciones, or aportes).
            */
           const agregarFilasDeConceptos = (conceptos, tipoConcepto) => {
-            for (let concepto in conceptos) {
-              if (conceptos.hasOwnProperty(concepto)) {
-                const valor = conceptos[concepto].valor;
-                const nomConcepto = conceptos[concepto].nom_concepto;
+            if (typeof conceptos === 'object') {
+              for (let key in conceptos) {
+                if (conceptos.hasOwnProperty(key)) {
+                  const item = conceptos[key];
+                  const valor = item.valor;
+                  const nomConcepto = item.nom_concepto;
 
-                row += `<tr>`;
-                row += `<td>${nomConcepto}</td>`;
-                row += `<td class="text-center">${tipoConcepto === 'asignaciones' ? valor + ' Bs' : '<span class="text-opacity">0 Bs</span>'}</td>`;
-                row += `<td class="text-center">${tipoConcepto === 'deducciones' ? valor + ' Bs' : '<span class="text-opacity">0 Bs</span>'}</td>`;
-                row += `<td class="text-center">${tipoConcepto === 'aportes' ? valor + ' Bs' : '<span class="text-opacity">0 Bs</span>'}</td>`;
-                row += `<td class="text-center"></td>`;
-                row += `</tr>`;
+                  row += `<tr>`;
+                  row += `<td>${nomConcepto}</td>`;
+                  row += `<td class="text-center">${tipoConcepto === 'asignaciones' ? valor + ' Bs' : '<span class="text-opacity">0 Bs</span>'}</td>`;
+                  row += `<td class="text-center">${tipoConcepto === 'deducciones' ? valor + ' Bs' : '<span class="text-opacity">0 Bs</span>'}</td>`;
+                  row += `<td class="text-center">${tipoConcepto === 'aportes' ? valor + ' Bs' : '<span class="text-opacity">0 Bs</span>'}</td>`;
+                  row += `<td class="text-center"></td>`;
+                  row += `</tr>`;
 
-                // Acumulate totals
-                if (tipoConcepto === 'asignaciones') {
-                  totalAsignaciones += valor;
-                } else if (tipoConcepto === 'deducciones') {
-                  totalDeducciones += valor;
-                } else if (tipoConcepto === 'aportes') {
-                  totalAportes += valor;
+                  // Accumulate totals
+                  if (tipoConcepto === 'asignaciones') {
+                    totalAsignaciones += valor;
+                  } else if (tipoConcepto === 'deducciones') {
+                    totalDeducciones += valor;
+                  } else if (tipoConcepto === 'aportes') {
+                    totalAportes += valor;
+                  }
                 }
               }
             }
@@ -461,18 +438,22 @@ $stmt->close();
           row += `</tr>`;
 
           tablaDetalles.innerHTML = row;
+          toggleDialogs();
+
         } else {
           console.error('Periodo no encontrado en los datos.');
         }
-
-        // Show modal
-        toggleDialogs();
       }
 
-
+      /**
+       * Function to download a report.
+       *
+       * @param {string} cedula - The identification number.
+       * @param {string} periodo - The period to generate the report for.
+       */
       function descarga(cedula, periodo) {
-
-        $('#cargando').show()
+        // Show loading spinner and toggle dialogs
+        $('#cargando').show();
         toggleDialogs();
 
         // Send data to server to generate report
@@ -490,11 +471,11 @@ $stmt->close();
             if (response.ok) {
               let contentType = response.headers.get('content-type');
 
-              // Verificar si el tipo de contenido es JSON
+              // Check if the content type is JSON
               if (contentType && contentType.includes('application/json')) {
                 return response.json().then(json => {
-                  // Manejar JSON de error
-                  console.error('Error JSON recibido:', json);
+                  // Handle JSON error
+                  console.error('Error JSON received:', json);
                   throw new Error('Error en la respuesta del servidor: ' + json.message);
                 });
               } else if (contentType && contentType === 'application/zip') {
@@ -507,40 +488,38 @@ $stmt->close();
             }
           })
           .then(blob => {
+            // Hide loading spinner and toggle dialogs
             $('#cargando').hide();
             toggleDialogs();
 
-
-            // Verificar si la respuesta es un archivo ZIP
+            // Check if the response is a ZIP file
             let url = window.URL.createObjectURL(blob);
             let a = document.createElement('a');
             a.href = url;
-            a.download = 'reportes_' + new Date().toISOString().replace(/[-:.]/g, '') + '.zip'; // Nombre del archivo ZIP
+            a.download = 'reportes_' + new Date().toISOString().replace(/[-:.]/g, '') + '.zip'; // ZIP file name
             document.body.appendChild(a);
             a.click();
             a.remove();
-            window.URL.revokeObjectURL(url); // Limpiar el URL creado
+            window.URL.revokeObjectURL(url); // Clean up the created URL
           })
           .catch(error => {
+            // Hide loading spinner and toggle dialogs
             $('#cargando').hide();
             toggleDialogs();
 
             console.error('Error:', error);
             toast_s('error', 'Error al enviar la solicitud');
           });
-
-
-
       }
       /**
        * Function to request data from the server based on the provided ID.
        */
       function solicitarDatos() {
-        let cedula = document.getElementById('cedula').value
-        cedula_consulta = cedula
+        let cedula = document.getElementById('cedula').value;
+        cedula_consulta = cedula;
         if (cedula == '') {
-          toast_s('error', 'Debe ingresar una cédula para consultar')
-          return
+          toast_s('error', 'Debe ingresar una cédula para consultar');
+          return;
         }
 
         fetch('../../back/modulo_relaciones_laborales/rela_neto_informacion_front.php', {
@@ -552,15 +531,10 @@ $stmt->close();
               cedula: cedula
             })
           })
-          .then(response => response.text()) // Change to text() to verify the content
+          .then(response => response.json()) // Change to text() to verify the content
           .then(responseText => {
-
-            //const resumen_pagos = responseText;
-            const resumen_pagos = data;
-
-
-            informacion_neto = resumen_pagos; // TO ACCESS FROM DETAIL / BY QUARTER OR MONTH
-
+            const resumen_pagos = responseText; 
+            informacion_neto = responseText; // TO ACCESS FROM DETAIL / BY QUARTER OR MONTH
             try {
               if (resumen_pagos.error) {
                 console.error(resumen_pagos.error);
@@ -568,11 +542,11 @@ $stmt->close();
               } else {
                 // Generate rows for the quarterly table
                 let tablaTrimestre = document.getElementById('tabla-datos');
-                tablaTrimestre.innerHTML = generarFilas(resumen_pagos, 'datos_por_trimestre', true);
+                tablaTrimestre.innerHTML = generarFilas(resumen_pagos.datos_por_trimestre, '2024', true);
 
                 // Generate rows for the monthly table
                 let tablaMes = document.getElementById('tabla-datos-mes');
-                tablaMes.innerHTML = generarFilas(resumen_pagos, 'datos_por_fecha', false);
+                tablaMes.innerHTML = generarFilas(resumen_pagos.datos_por_ano_mes, '2024', false);
               }
             } catch (error) {
               console.error('Error al analizar la respuesta:', error);
@@ -580,15 +554,13 @@ $stmt->close();
             }
           })
           .catch(error => {
-            console.error('Error:', error);
-            toast_s('error', 'Error al enviar la solicitud');
+            console.error('Error en la solicitud:', error);
+            toast_s('error', 'Error al comunicarse con el servidor');
           });
       }
 
       document.getElementById('btn-consultar').addEventListener('click', solicitarDatos)
-
     </script>
-
 
 </body>
 
