@@ -1,5 +1,6 @@
 <?php
-function generarNetoInformacion($id_empleado, $conn){
+function generarNetoInformacion($id_empleado, $conn)
+{
     $query = "SELECT
                 e.cedula AS cedula, 
                 e.nombres AS nombres, 
@@ -35,36 +36,58 @@ function generarNetoInformacion($id_empleado, $conn){
 
     $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    $datosRetornados = [];
+    $datosPorAnoMes = [];
+    $datosPorTrimestre = [];
 
-    $conceptoQuery = "SELECT codigo_concepto FROM conceptos WHERE nom_concepto = :nom_concepto";
-    $conceptoStmt = $conn->prepare($conceptoQuery);
-
-    function obtenerCodigoConcepto($conceptoStmt, $nom_concepto) {
-        $conceptoStmt->bindValue(':nom_concepto', $nom_concepto, PDO::PARAM_STR);
-        $conceptoStmt->execute();
-        $result = $conceptoStmt->fetch(PDO::FETCH_ASSOC);
-        return $result ? $result['codigo_concepto'] : null;
-    }
-
-    $datosPorFecha = [];
-    $datosPorTrimestre = [
-        'Q1' => ['asignaciones' => [], 'deducciones' => [], 'aportes' => [], 'sueldo_total' => 0],
-        'Q2' => ['asignaciones' => [], 'deducciones' => [], 'aportes' => [], 'sueldo_total' => 0],
-        'Q3' => ['asignaciones' => [], 'deducciones' => [], 'aportes' => [], 'sueldo_total' => 0],
-        'Q4' => ['asignaciones' => [], 'deducciones' => [], 'aportes' => [], 'sueldo_total' => 0],
+    $mesesEspañol = [
+        '01' => 'Enero', '02' => 'Febrero', '03' => 'Marzo',
+        '04' => 'Abril', '05' => 'Mayo', '06' => 'Junio',
+        '07' => 'Julio', '08' => 'Agosto', '09' => 'Septiembre',
+        '10' => 'Octubre', '11' => 'Noviembre', '12' => 'Diciembre'
     ];
 
+    $codigoSueldoBase = "sueldo_base";
+
     foreach ($results as $row) {
-        $sueldoTotal = $row['sueldo_base'];
+        $sueldoBase = $row['sueldo_base'];
+        $total_pagar = $row['total_pagar'];
 
         $asignaciones = json_decode($row['asignacion'], true);
         $deducciones = json_decode($row['deduccion'], true);
         $aportes = json_decode($row['aporte'], true);
 
         $fecha_pagar2 = $row['fecha_pagar2'];
-        if (!isset($datosPorFecha[$fecha_pagar2])) {
-            $datosPorFecha[$fecha_pagar2] = [
+
+        $fechaParts = explode('-', $fecha_pagar2);
+        if (count($fechaParts) == 2) {
+            $mes = str_pad($fechaParts[0], 2, '0', STR_PAD_LEFT);
+            $año = $fechaParts[1];
+            $fechaFormateada = "$año-$mes-01";
+        } else {
+            echo "Formato de fecha no válido: $fecha_pagar2\n";
+            continue;
+        }
+
+        $fecha = DateTime::createFromFormat('Y-m-d', $fechaFormateada);
+        if ($fecha === false) {
+            echo "Error al crear objeto DateTime para la fecha: $fechaFormateada\n";
+            continue;
+        }
+
+        $mes = $fecha->format('m');
+        $año = $fecha->format('Y');
+        $mesTexto = $mesesEspañol[$mes];
+        $anoMes = $mesTexto;  // Solo el nombre del mes
+        $trimestre = 'Q' . ceil((int)$fecha->format('m') / 3);
+
+        // Agrupar por año
+        if (!isset($datosPorAnoMes[$año])) {
+            $datosPorAnoMes[$año] = [];
+        }
+
+        // Datos por Año/Mes
+        if (!isset($datosPorAnoMes[$año][$anoMes])) {
+            $datosPorAnoMes[$año][$anoMes] = [
                 'asignaciones' => [],
                 'deducciones' => [],
                 'aportes' => [],
@@ -73,92 +96,89 @@ function generarNetoInformacion($id_empleado, $conn){
         }
 
         foreach ($asignaciones as $nom_concepto => $valor) {
-            $codigo_concepto = obtenerCodigoConcepto($conceptoStmt, $nom_concepto);
-            if ($codigo_concepto !== null) {
-                if (!isset($datosPorFecha[$fecha_pagar2]['asignaciones'][$codigo_concepto])) {
-                    $datosPorFecha[$fecha_pagar2]['asignaciones'][$codigo_concepto] = ['nom_concepto' => $nom_concepto, 'valor' => 0];
-                }
-                $datosPorFecha[$fecha_pagar2]['asignaciones'][$codigo_concepto]['valor'] += $valor;
+            if (!isset($datosPorAnoMes[$año][$anoMes]['asignaciones'][$nom_concepto])) {
+                $datosPorAnoMes[$año][$anoMes]['asignaciones'][$nom_concepto] = [
+                    'nom_concepto' => $nom_concepto,
+                    'valor' => 0
+                ];
             }
+            $datosPorAnoMes[$año][$anoMes]['asignaciones'][$nom_concepto]['valor'] += $valor;
+        }
+
+        if ($codigoSueldoBase !== null) {
+            if (!isset($datosPorAnoMes[$año][$anoMes]['asignaciones'][$codigoSueldoBase])) {
+                $datosPorAnoMes[$año][$anoMes]['asignaciones'][$codigoSueldoBase] = [
+                    'nom_concepto' => 'Sueldo Base',
+                    'valor' => 0
+                ];
+            }
+            $datosPorAnoMes[$año][$anoMes]['asignaciones'][$codigoSueldoBase]['valor'] += $sueldoBase;
         }
 
         foreach ($deducciones as $nom_concepto => $valor) {
-            $codigo_concepto = obtenerCodigoConcepto($conceptoStmt, $nom_concepto);
-            if ($codigo_concepto !== null) {
-                if (!isset($datosPorFecha[$fecha_pagar2]['deducciones'][$codigo_concepto])) {
-                    $datosPorFecha[$fecha_pagar2]['deducciones'][$codigo_concepto] = ['nom_concepto' => $nom_concepto, 'valor' => 0];
-                }
-                $datosPorFecha[$fecha_pagar2]['deducciones'][$codigo_concepto]['valor'] += $valor;
+            if (!isset($datosPorAnoMes[$año][$anoMes]['deducciones'][$nom_concepto])) {
+                $datosPorAnoMes[$año][$anoMes]['deducciones'][$nom_concepto] = [
+                    'nom_concepto' => $nom_concepto,
+                    'valor' => 0
+                ];
             }
+            $datosPorAnoMes[$año][$anoMes]['deducciones'][$nom_concepto]['valor'] += $valor;
         }
 
         foreach ($aportes as $nom_concepto => $valor) {
-            $codigo_concepto = obtenerCodigoConcepto($conceptoStmt, $nom_concepto);
-            if ($codigo_concepto !== null) {
-                if (!isset($datosPorFecha[$fecha_pagar2]['aportes'][$codigo_concepto])) {
-                    $datosPorFecha[$fecha_pagar2]['aportes'][$codigo_concepto] = ['nom_concepto' => $nom_concepto, 'valor' => 0];
-                }
-                $datosPorFecha[$fecha_pagar2]['aportes'][$codigo_concepto]['valor'] += $valor;
+            if (!isset($datosPorAnoMes[$año][$anoMes]['aportes'][$nom_concepto])) {
+                $datosPorAnoMes[$año][$anoMes]['aportes'][$nom_concepto] = [
+                    'nom_concepto' => $nom_concepto,
+                    'valor' => 0
+                ];
             }
+            $datosPorAnoMes[$año][$anoMes]['aportes'][$nom_concepto]['valor'] += $valor;
         }
 
-        $datosPorFecha[$fecha_pagar2]['sueldo_total'] += $sueldoTotal;
+        $datosPorAnoMes[$año][$anoMes]['sueldo_total'] += $total_pagar;
 
-        // Ajustar el análisis de DateTime para 'mm-yyyy'
-        $fecha = DateTime::createFromFormat('m-Y', $fecha_pagar2);
-        if ($fecha === false) {
-            echo "Error al crear objeto DateTime para la fecha: $fecha_pagar2\n";
-            continue;
+        // Datos por Trimestre
+        if (!isset($datosPorTrimestre[$año])) {
+            $datosPorTrimestre[$año] = [
+                'Q1' => ['asignaciones' => [], 'deducciones' => [], 'aportes' => [], 'sueldo_total' => 0, 'ultimo_mes' => ''],
+                'Q2' => ['asignaciones' => [], 'deducciones' => [], 'aportes' => [], 'sueldo_total' => 0, 'ultimo_mes' => ''],
+                'Q3' => ['asignaciones' => [], 'deducciones' => [], 'aportes' => [], 'sueldo_total' => 0, 'ultimo_mes' => ''],
+                'Q4' => ['asignaciones' => [], 'deducciones' => [], 'aportes' => [], 'sueldo_total' => 0, 'ultimo_mes' => ''],
+            ];
         }
 
-        $mes = (int) $fecha->format('m');
-        $año = $fecha->format('Y');
-        $trimestre = 'Q' . ceil($mes / 3);
+        $trimestreDatos = &$datosPorTrimestre[$año][$trimestre];
 
-        if (!isset($datosPorTrimestre[$trimestre])) {
-            echo "Trimestre $trimestre no encontrado en datosPorTrimestre\n";
-            continue;
-        }
-
-        foreach ($asignaciones as $nom_concepto => $valor) {
-            $codigo_concepto = obtenerCodigoConcepto($conceptoStmt, $nom_concepto);
-            if ($codigo_concepto !== null) {
-                if (!isset($datosPorTrimestre[$trimestre]['asignaciones'][$codigo_concepto])) {
-                    $datosPorTrimestre[$trimestre]['asignaciones'][$codigo_concepto] = ['nom_concepto' => $nom_concepto, 'valor' => 0];
-                }
-                $datosPorTrimestre[$trimestre]['asignaciones'][$codigo_concepto]['valor'] += $valor;
-            }
-        }
-
-        foreach ($deducciones as $nom_concepto => $valor) {
-            $codigo_concepto = obtenerCodigoConcepto($conceptoStmt, $nom_concepto);
-            if ($codigo_concepto !== null) {
-                if (!isset($datosPorTrimestre[$trimestre]['deducciones'][$codigo_concepto])) {
-                    $datosPorTrimestre[$trimestre]['deducciones'][$codigo_concepto] = ['nom_concepto' => $nom_concepto, 'valor' => 0];
-                }
-                $datosPorTrimestre[$trimestre]['deducciones'][$codigo_concepto]['valor'] += $valor;
-            }
-        }
-
-        foreach ($aportes as $nom_concepto => $valor) {
-            $codigo_concepto = obtenerCodigoConcepto($conceptoStmt, $nom_concepto);
-            if ($codigo_concepto !== null) {
-                if (!isset($datosPorTrimestre[$trimestre]['aportes'][$codigo_concepto])) {
-                    $datosPorTrimestre[$trimestre]['aportes'][$codigo_concepto] = ['nom_concepto' => $nom_concepto, 'valor' => 0];
-                }
-                $datosPorTrimestre[$trimestre]['aportes'][$codigo_concepto]['valor'] += $valor;
-            }
-        }
-
-        $datosPorTrimestre[$trimestre]['sueldo_total'] += $sueldoTotal;
+        // Reemplazar los datos del trimestre con los del último mes
+        $trimestreDatos['asignaciones'] = $asignaciones;
+        $trimestreDatos['deducciones'] = $deducciones;
+        $trimestreDatos['aportes'] = $aportes;
+        $trimestreDatos['sueldo_total'] = $total_pagar;
+        $trimestreDatos['ultimo_mes'] = $anoMes;
     }
 
-    $datosRetornados['datos_por_fecha'] = $datosPorFecha;
-    $datosRetornados['datos_por_trimestre'] = $datosPorTrimestre;
+    // Ajustar los valores de asignaciones, deducciones y aportes por trimestre
+    foreach ($datosPorTrimestre as $anio => &$trimestres) {
+        foreach ($trimestres as $trimestre => &$datos) {
+            if ($datos['ultimo_mes'] !== '') {
+                $mesTrimestre = $datos['ultimo_mes'];
+                $anioTrimestre = $anio;
 
-    return $datosRetornados;
+                if (isset($datosPorAnoMes[$anioTrimestre][$mesTrimestre])) {
+                    $datos['asignaciones'] = array_values($datosPorAnoMes[$anioTrimestre][$mesTrimestre]['asignaciones']);
+                    $datos['deducciones'] = array_values($datosPorAnoMes[$anioTrimestre][$mesTrimestre]['deducciones']);
+                    $datos['aportes'] = array_values($datosPorAnoMes[$anioTrimestre][$mesTrimestre]['aportes']);
+                    $datos['sueldo_total'] = $datosPorAnoMes[$anioTrimestre][$mesTrimestre]['sueldo_total'];
+                }
+            }
+        }
+    }
+
+    return [
+        'datos_por_ano_mes' => $datosPorAnoMes,
+        'datos_por_trimestre' => $datosPorTrimestre
+    ];
 }
-
 
 // Captura el cuerpo de la solicitud
 $json = file_get_contents('php://input');
@@ -166,20 +186,16 @@ $json = file_get_contents('php://input');
 // Decodifica el JSON a un array asociativo
 $data = json_decode($json, true);
 
-
-
-// El código de conexión y consulta
 if (isset($data['cedula'])) {
     $cedula = $data['cedula'];
 
-
-    $conn = new PDO('mysql:host=localhost;dbname=sigob;charset=utf8', 'root', '');
+    $conn = new PDO('mysql:host=localhost;dbname=sigob', 'root', '');
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    $query = "SELECT id FROM empleados WHERE cedula = :cedula";
-    $stmt = $conn->prepare($query);
+    $stmt = $conn->prepare("SELECT id FROM empleados WHERE cedula = :cedula");
     $stmt->bindValue(':cedula', $cedula, PDO::PARAM_STR);
     $stmt->execute();
+
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($result) {
@@ -187,15 +203,12 @@ if (isset($data['cedula'])) {
         $netoDatos = generarNetoInformacion($id_empleado, $conn);
 
         header('Content-Type: application/json');
-        echo json_encode($netoDatos, JSON_PRETTY_PRINT);
+        echo json_encode($netoDatos);
     } else {
-        header('Content-Type: application/json');
-        echo json_encode(['error' => 'Empleado no encontrado.']);
+        echo json_encode(['error' => 'Empleado no encontrado']);
     }
-} else {
+}else {
     header('Content-Type: application/json');
     echo json_encode(['error' => "Parametro 'cedula' es requerido."]);
 }
-
-$conn = null;
 ?>
