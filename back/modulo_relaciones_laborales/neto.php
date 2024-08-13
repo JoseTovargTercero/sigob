@@ -8,7 +8,7 @@ require_once '../sistema_global/conexion.php';
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <title>35386bdf-4f85-4021-814b-8ac614b90a85</title>
-  <meta name="author" content="SETI-PATRIA" />
+  <meta name="author" content="SIGOB" />
 
   <style type="text/css">
     body {

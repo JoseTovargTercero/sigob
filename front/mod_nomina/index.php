@@ -652,6 +652,11 @@ $stmt->close();
 
 
 
+    /**
+     * Generates a saved report based on the provided ID.
+     *
+     * @param {number} id - The ID of the report.
+     */
     function generarReporteGuardado(id) {
       let formato = reportes[id]['formato'];
       let almacenar = 'No';
@@ -715,8 +720,6 @@ $stmt->close();
           console.error('Error:', error);
           toast_s('error', 'Error al enviar la solicitud');
         });
-
-
     }
 
 

@@ -1,15 +1,29 @@
 <?php
+include('../sistema_global/session.php');
 
 require_once '../../vendor/autoload.php'; // Ajusta la ruta según la ubicación de mpdf
 require_once 'pdf_files_config.php'; // Incluir el archivo de configuración
 
 use Mpdf\Mpdf;
 
-$fecha_pagar = $_GET['fecha_pagar'];
-$cedula = $_GET['cedula'];
+// Leer el cuerpo de la solicitud HTTP
+$request_body = file_get_contents('php://input');
+$data = json_decode($request_body, true);
+
+// Obtener 'fecha_pagar' y 'cedula' desde el JSON recibido
+$fecha_pagar = $data['fecha_pagar'];
+$cedula = $data['cedula'];
+
+if ($fecha_pagar == '' || $cedula == '') {
+    header('Content-Type: application/json');
+    echo json_encode(['error' => 'Cedula y fecha son requeridos']);
+    exit;
+}
+
+
 
 $pdf_files = [
-    "{$base_url}neto.php?fecha_pagar=$fecha_pagar&cedula=$cedula" => "neto{$cedula}.pdf",
+    "{$base_url}neto.php?fecha_pagar=$fecha_pagar&cedula=$cedula" => "Neto {$cedula}.pdf",
 ];
 
 // Nombre del archivo ZIP que se generará
@@ -59,6 +73,7 @@ readfile($zip_filename);
 
 // Eliminar el archivo ZIP del servidor después de la descarga
 unlink($zip_filename);
+
 
 // Salir del script
 exit;
