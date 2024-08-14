@@ -131,7 +131,7 @@ while ($r = $query->fetch_object()) {
                                   <span id="prefijo_nomina"><?php echo $codigo . ' ' . $nombre ?></span> &nbsp;
                                   <span id="prefijo_nomina2"></span>
                                 </span>
-                                <input type="text" class="form-control" id="nombre_nomina" aria-describedby="Nombre de la nomina">
+                                <input type="text" class="form-control" value="namen" id="nombre_nomina" aria-describedby="Nombre de la nomina">
                               </div>
                             </div>
 
@@ -142,8 +142,8 @@ while ($r = $query->fetch_object()) {
                             <div class="mb-3">
                               <label class="form-label">Frecuencia de pago</label>
                               <select class="form-control" id="frecuencia_pago">
-                                <option value="">Seleccione</option>
                                 <option value="1">Semanal</option>
+                                <option value="">Seleccione</option>
                                 <option value="2">Quincenal</option>
                                 <option value="4">Una vez al mes</option>
                               </select>
@@ -153,8 +153,8 @@ while ($r = $query->fetch_object()) {
                             <div class="mb-3">
                               <label class="form-label">Tipo de nomina</label>
                               <select class="form-control" id="tipo_nomina">
-                                <option value="">Seleccione</option>
                                 <option value="1">Normal</option>
+                                <option value="">Seleccione</option>
                                 <option value="2">Especial</option>
                               </select>
                             </div>
@@ -163,8 +163,8 @@ while ($r = $query->fetch_object()) {
                             <div class="mb-3">
                               <label class="form-label">Tipo de pago</label>
                               <select class="form-control" id="tipo_pago">
-                                <option value="">Seleccione</option>
                                 <option value="1">Estándar</option>
+                                <option value="">Seleccione</option>
                                 <option value="2">Diferencia de sueldo</option>
                               </select>
                             </div>
@@ -195,17 +195,31 @@ while ($r = $query->fetch_object()) {
 
                       <section class="hide" id="nuevo_concepto-sec">
                         <div class="mb-3">
-                          <label class="form-label" for="concepto_aplicar">Seleccione el concepto de desea
-                            agregar</label>
+                          <label class="form-label" for="concepto_aplicar">Seleccione el concepto de deseaagregar</label>
+                        
+
+
                           <div class="input-group">
-                            <select class="form-control" id="concepto_aplicar">
+                          <select class="form-control" id="concepto_aplicar">
                               <option value="">Seleccione</option>
                               <option value="sueldo_base">-- SUELDO BASE --</option>
                               <option id="diferencia_sueldoconcepto" style="display: none;" value="sueldo_diferencia">-- DIFERENCIA DE SUELDO --</option>
-                            </select>
+                          </select>
 
-                            <span class="input-group-text" onclick="getData('conceptos')"><i class='bx bx-refresh reload-icon pointer'></i></span>
+                          <div class="btn-group">
+                              <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Acciones</button>
+                              <div class="dropdown-menu">
+                                  <a class="dropdown-item" onclick="getData('conceptos')" href="#">Actualizar conceptos</a>
+                                  <a class="dropdown-item" onclick="creaConcepto()" href="#">Crear nuevo concepto</a>
+                              </div>
                           </div>
+                      </div>
+
+
+
+
+
+
                         </div>
 
 
@@ -408,15 +422,33 @@ while ($r = $query->fetch_object()) {
   <!-- [ Main Content ] end -->
   <script src="../../src/assets/js/notificaciones.js"></script>
   <script src="../../src/assets/js/plugins/simplebar.min.js"></script>
+
+  <!-- Popper.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.8/umd/popper.min.js"></script>
+
+
+
   <script src="../../src/assets/js/plugins/bootstrap.min.js"></script>
+  <!-- Bootstrap JS (popper.js incluido) -->
+
   <script src="../../src/assets/js/pcoded.js"></script>
   <script src="../../src/assets/js/plugins/feather.min.js"></script>
   <script src="../../src/assets/js/main.js"></script>
   <script src="../../src/assets/js/ajax_class.js"></script>
 
+
+
   <script>
     const url_back = '../../back/modulo_nomina/nom_formulacion_back';
     let textarea = 't_area-1';
+
+
+
+
+
+    function creaConcepto(){
+      
+    }
 
 
     /**
@@ -471,16 +503,16 @@ while ($r = $query->fetch_object()) {
         if ($row["otros_años"] !== null) {
           $anios_actuales = $row["anios_totales_calculados"] - $row["otros_años"];
         } else {
-            $anios_actuales = $row["antiguedad"];
+          $anios_actuales = $row["antiguedad"];
         }
 
-        echo 'empleadosSeleccionados.push(['.$row["id"].',"'.$row["nacionalidad"].'","'.$row["cedula"].'","'.$row["nombres"].'","'.$row["fecha_ingreso"].'",'.$anios_actuales.','.$row["otros_años"].','.$row["anios_totales_calculados"].',"'.$row["status"].'","'.$row['observacion'].'","'.$row["cod_cargo"].'",'.$row["hijos"].','.$row["instruccion_academica"].','.$row["discapacidades"].','.$row["id_dependencia"].','.$row["verificado"].'])'.PHP_EOL;
+        echo 'empleadosSeleccionados.push([' . $row["id"] . ',"' . $row["nacionalidad"] . '","' . $row["cedula"] . '","' . $row["nombres"] . '","' . $row["fecha_ingreso"] . '",' . $anios_actuales . ',' . $row["otros_años"] . ',' . $row["anios_totales_calculados"] . ',"' . $row["status"] . '","' . $row['observacion'] . '","' . $row["cod_cargo"] . '",' . $row["hijos"] . ',' . $row["instruccion_academica"] . ',' . $row["discapacidades"] . ',' . $row["id_dependencia"] . ',' . $row["verificado"] . '])' . PHP_EOL;
       }
     }
 
     $stmt->close();
     ?> // aqui se cargan los empleados del grupo
- 
+
 
 
     /**
@@ -523,7 +555,7 @@ while ($r = $query->fetch_object()) {
 
 
 
-    
+
     /**
      * Checks or unchecks all checkboxes with the class 'itemCheckbox'.
      *
@@ -544,20 +576,20 @@ while ($r = $query->fetch_object()) {
      * This function is responsible for saving the selected employees for the payroll.
      * It retrieves all the selected checkboxes and adds the corresponding employees to the 'empleadosSeleccionados' array.
      */
- /*   function guardar_empleados_nomina() {
-      empleadosSeleccionados = []
-      let itemCheckboxes = document.querySelectorAll('.itemCheckbox');
-      itemCheckboxes.forEach(checkbox => {
-        if (checkbox.checked) {
-          empleadosSeleccionados.push(empleadosFiltro[checkbox.value]);
-        }
-      });
-    }*/
+    /*   function guardar_empleados_nomina() {
+         empleadosSeleccionados = []
+         let itemCheckboxes = document.querySelectorAll('.itemCheckbox');
+         itemCheckboxes.forEach(checkbox => {
+           if (checkbox.checked) {
+             empleadosSeleccionados.push(empleadosFiltro[checkbox.value]);
+           }
+         });
+       }*/
 
 
     /* ACA SE CARGA LA LISTA DE EMPLEADOS DEL 'NOM_MODIFICAR' */
 
-    
+
     /**
      * Adds an event listener to the 'btn-obtener' button and performs a specific action when clicked.
      * 
@@ -572,7 +604,7 @@ while ($r = $query->fetch_object()) {
       if (condicion == '') {
         return toast_s('error', 'Debe indicar una condición');
       } else { //emp_pre_seleccionados-list
-      /*  if (result_list == 'emp_pre_seleccionados-list') {
+        /*  if (result_list == 'emp_pre_seleccionados-list') {
   
         } else {
           let accion = 'todos'; // Definir 'accion' aquí si es necesario
@@ -796,37 +828,40 @@ while ($r = $query->fetch_object()) {
     document.getElementById('nominas_restar').addEventListener('change', verificarElementosResta)
 
     let semanas_anio;
-    
+
     function getSemanas() {
       const data = {}
 
       $.ajax({
-      url: '../../back/modulo_nomina/nom_cantidad_semanas.php',
-      type: 'POST',
-      contentType: 'application/json',
-      data: JSON.stringify(data),
-      success: function(response) {
-       semanas_anio = response
-      },
-      error: function(jqXHR, textStatus, errorThrown) {
-        console.error('Error en la solicitud AJAX:', textStatus, errorThrown);
-        try {
-          const response = JSON.parse(jqXHR.responseText);
-          console.error('Error del servidor:', response.mensaje, 'Archivo:', response.archivo, 'Línea:', response.linea);
-          toast_s('error', 'Error del servidor: ' + response.mensaje);
-          
-        } catch (e) {
-          console.error('Error al parsear la respuesta de error:', e);
-          toast_s('error', 'Error en la solicitud: ' + textStatus);
+        url: '../../back/modulo_nomina/nom_cantidad_semanas.php',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(data),
+        success: function(response) {
+          semanas_anio = response
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+          console.error('Error en la solicitud AJAX:', textStatus, errorThrown);
+          try {
+            const response = JSON.parse(jqXHR.responseText);
+            console.error('Error del servidor:', response.mensaje, 'Archivo:', response.archivo, 'Línea:', response.linea);
+            toast_s('error', 'Error del servidor: ' + response.mensaje);
+
+          } catch (e) {
+            console.error('Error al parsear la respuesta de error:', e);
+            toast_s('error', 'Error en la solicitud: ' + textStatus);
+          }
+          if (typeof onError === 'function') {
+            onError({
+              textStatus,
+              errorThrown
+            });
+          }
+        },
+        complete: function() {
+          //  console.log('Solicitud AJAX completada');
         }
-        if (typeof onError === 'function') {
-          onError({textStatus, errorThrown});
-        }
-      },
-      complete: function() {
-      //  console.log('Solicitud AJAX completada');
-      }
-    });
+      });
 
 
 
@@ -912,7 +947,7 @@ while ($r = $query->fetch_object()) {
 
       let prefijo = $('#prefijo_nomina').html() + ' ' + $('#prefijo_nomina2').html() + ' ';
 
-      let nombre_nomina = prefijo+document.getElementById('nombre_nomina').value;
+      let nombre_nomina = prefijo + document.getElementById('nombre_nomina').value;
 
       if (tipoCalculo !== 6) {
         cantidad_t = empleadosDelConcepto.length;
@@ -929,18 +964,18 @@ while ($r = $query->fetch_object()) {
       }
 
       if (frecuenciaPago == '1') {
-          let numeroSemanasSeleccionadas = [];
+        let numeroSemanasSeleccionadas = [];
 
-          for (let mes in semanas_anio) {
-            for (let i = 0; i < fechas_aplicar.length; i++) {
-              let semanaIndex = parseInt(fechas_aplicar[i].slice(1)) - 1;
-              if (semanaIndex < semanas_anio[mes].length) {
-                numeroSemanasSeleccionadas.push(`s${semanas_anio[mes][semanaIndex]}`);
-              }
+        for (let mes in semanas_anio) {
+          for (let i = 0; i < fechas_aplicar.length; i++) {
+            let semanaIndex = parseInt(fechas_aplicar[i].slice(1)) - 1;
+            if (semanaIndex < semanas_anio[mes].length) {
+              numeroSemanasSeleccionadas.push(`s${semanas_anio[mes][semanaIndex]}`);
             }
           }
+        }
 
-          fechas_aplicar = numeroSemanasSeleccionadas; 
+        fechas_aplicar = numeroSemanasSeleccionadas;
       }
       let concepto = {
         'concepto_id': concepto_aplicar,
@@ -1147,7 +1182,7 @@ while ($r = $query->fetch_object()) {
             }
           }
 
-         // console.log(conceptosAplicados)
+          // console.log(conceptosAplicados)
         }
       });
     }
@@ -1190,7 +1225,7 @@ while ($r = $query->fetch_object()) {
         }
       }
       $('#nomina_resumen').append('</ul>')
-        /*
+      /*
       return
 
       let tabla = '';
@@ -1296,9 +1331,9 @@ while ($r = $query->fetch_object()) {
           toggleStep('conceptos', 'resumen');
           document.getElementById('progressbar').style.width = '100%';
           resumenDeNomina()
-          
+
         }
-      } 
+      }
     }
 
     /**
@@ -1445,10 +1480,10 @@ while ($r = $query->fetch_object()) {
      */
     function guardarNomina() {
       const prefijo = $('#prefijo_nomina').html() + ' ' + $('#prefijo_nomina2').html() + ' ';
-      const nombre = prefijo+$('#nombre_nomina').val()
+      const nombre = prefijo + $('#nombre_nomina').val()
       const frecuencia = $('#frecuencia_pago').val()
       const tipo = $('#tipo_nomina').val()
-  
+
       $.ajax({
         url: '../../back/modulo_nomina/guardar_nominas.php',
         type: 'POST',
