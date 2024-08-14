@@ -267,18 +267,18 @@ require_once '../../back/sistema_global/session.php';
 
                 <div class="modal-box-content">
                   <form id="employee-dependencia-form">
-                    <div class="row">
+                    <div class="row mx-0">
                       <div class="col-sm"><input class=" form-control" type="text" name="dependencia"
                           placeholder="Nombre dependencia..." id="dependencia"></div>
-                      <div class="col-sm"><input type="number" class=" form-control" name="cod_dependencia"
-                          id="cod_dependencia" placeholder="Codigo de dependencia"></div>
+                      <div class="col-sm"><input type="number" class=" form-control" name="cod_dependencia-input"
+                          id="cod_dependencia-input" placeholder="Codigo de dependencia"></div>
                     </div>
                   </form>
 
                 </div>
 
                 <div class="modal-box-footer">
-                  <button class="btn-form btn btn-primary" id="dependency-save-btn">GUARDAR
+                  <button class="btn btn-primary" id="dependency-save-btn">GUARDAR
                     DEPENDENCIA</button>
                 </div>
 

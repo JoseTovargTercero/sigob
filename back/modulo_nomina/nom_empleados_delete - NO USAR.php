@@ -86,24 +86,25 @@ if (isset($_GET['id'])) {
     if (!$stmt) {
         die("Error en la preparación de la declaración INSERT empleados_pasados: " . $conexion->error);
     }
-    $stmt->bind_param("ssssssssssssssssss", 
-        $empleado['nacionalidad'], 
-        $empleado['cedula'], 
-        $empleado['nombres'], 
-        $empleado['antiguedad_total'], 
-        $status_empleado, 
-        $empleado['observacion'], 
-        $empleado['cod_cargo'], 
-        $empleado['banco'], 
-        $empleado['cuenta_bancaria'], 
-        $empleado['hijos'], 
-        $empleado['instruccion_academica'], 
-        $empleado['discapacidades'], 
+    $stmt->bind_param(
+        "ssssssssssssssssss",
+        $empleado['nacionalidad'],
+        $empleado['cedula'],
+        $empleado['nombres'],
+        $empleado['antiguedad_total'],
+        $status_empleado,
+        $empleado['observacion'],
+        $empleado['cod_cargo'],
+        $empleado['banco'],
+        $empleado['cuenta_bancaria'],
+        $empleado['hijos'],
+        $empleado['instruccion_academica'],
+        $empleado['discapacidades'],
         $tipo_nomina2, // Convertir el array a JSON para almacenarlo
-        $empleado['id_dependencia'], 
-        $empleado['verificado'], 
-        $empleado['correcion'], 
-        $empleado['beca'], 
+        $empleado['id_dependencia'],
+        $empleado['verificado'],
+        $empleado['correcion'],
+        $empleado['beca'],
         $empleado['fecha_ingreso']
     );
     $stmt->execute();
