@@ -30,7 +30,7 @@ const updateEmployeeUrl =
   '../../../../../sigob/back/modulo_nomina/nom_empleados_modif.php'
 
 const updateRequestEmployeeUrl =
-  '../../../../../sigob/back/modulo_nomina/nom_editar_solicitud.php'
+  '../../../../../sigob/back/modulo_nomina/nom_empleados_editar.php'
 
 const updateEmployeeStatusUrl =
   '../../../../sigob/back/modulo_nomina/nom_cambiar_status.php'
@@ -48,7 +48,7 @@ const getRegConEmployeeUrl =
   '../../../../sigob/back/modulo_registro_control/regcon_empleado_datos.php'
 
 const deleteEmployeeUrl =
-  '../../../../../sigob/back/modulo_nomina/nom_empleados_delete.php'
+  '../../../../../sigob/back/modulo_nomina/nom_empleados_eliminar.php'
 
 const sendDependencyUrl =
   '../../../../../sigob/back/modulo_nomina/nom_dependencia_registro.php'
@@ -82,7 +82,6 @@ const getEmployeesData = async () => {
 }
 
 const getEmployeeData = async (id) => {
-  console.log(id)
   try {
     const res = await fetch(`${getEmployeeUrl}?id=${id}`)
 
@@ -151,57 +150,64 @@ const sendEmployeeData = async ({ data }) => {
       },
       body: JSON.stringify(data),
     })
-
+    console.log(res)
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
-    else {
-      console.log(res)
-      confirmNotification({
-        type: NOTIFICATIONS_TYPES.done,
-        message: 'Datos guardados',
-      })
-    }
+
     const json = await res.json()
     console.log(json)
+    if (json.success)
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.done,
+        message: json.success,
+      })
+
+    if (json.error)
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.done,
+        message: json.error,
+      })
+
+    return json
   } catch (e) {
     console.error(e)
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
-      message: 'Error al guardar datos del empleado',
+      message: 'Error de conexión con el servidor',
     })
   }
 }
 
-const updateEmployeeData = async ({ id }) => {
-  console.log(id)
-  try {
-    const res = await fetch(updateEmployeeUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ id }),
-    })
+// const updateEmployeeData = async ({ id }) => {
+//   console.log(id)
+//   try {
+//     const res = await fetch(updateEmployeeUrl, {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify({ id }),
+//     })
 
-    if (!res.ok) throw { status: res.status, statusText: res.statusText }
-    else {
-      console.log(res)
-      confirmNotification({
-        type: NOTIFICATIONS_TYPES.done,
-        message: 'Datos guardados',
-      })
-      // setTimeout(() => {
-      //   location.assign('nom_empleados_tabla.php')
-      // }, 1500)
-    }
-    const json = await res.json()
-    console.log(json)
-  } catch (e) {
-    return confirmNotification({
-      type: NOTIFICATIONS_TYPES.fail,
-      message: 'Error al enviar datos del empleado',
-    })
-  }
-}
+//     if (!res.ok) throw { status: res.status, statusText: res.statusText }
+//     else {
+//       console.log(res)
+//       confirmNotification({
+//         type: NOTIFICATIONS_TYPES.done,
+//         message: 'Datos guardados',
+//       })
+//       // setTimeout(() => {
+//       //   location.assign('nom_empleados_tabla.php')
+//       // }, 1500)
+//     }
+//     const json = await res.json()
+//     console.log(json)
+//   } catch (e) {
+//     return confirmNotification({
+//       type: NOTIFICATIONS_TYPES.fail,
+//       message: 'Error al enviar datos del empleado',
+//     })
+//   }
+// }
 
 const updateRequestEmployeeData = async ({ data = [] }) => {
   console.log(data)
@@ -215,29 +221,23 @@ const updateRequestEmployeeData = async ({ data = [] }) => {
       body: JSON.stringify(data),
     })
 
-    if (!res.ok) {
-      console.log(res)
-      confirmNotification({
-        type: NOTIFICATIONS_TYPES.done,
-        message: 'Error al enviar los datos',
-      })
-      return
-    }
+    console.log(res)
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
 
     const json = await res.json()
     console.log(json)
 
     if (json.errores.length > 0) {
-      confirmNotification({
+      toastNotification({
         type: NOTIFICATIONS_TYPES.fail,
-        message: `Los siguientes datos ya están en revisión: ${json.errores.join(
+        message: `Se prosentan error con los siguientes campos: ${json.errores.join(
           ', '
-        )} Los demás se enviaron.`,
+        )}.`,
       })
     } else {
-      confirmNotification({
+      toastNotification({
         type: NOTIFICATIONS_TYPES.done,
-        message: `Solicitud de modificación enviada para su revisión`,
+        message: `Se ha actualizado el empleado`,
       })
     }
 
@@ -297,22 +297,29 @@ const deleteEmployee = async (id) => {
       },
     })
 
+    console.log(res)
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
-    else {
-      console.log(res)
+
+    const json = await res.json()
+    console.log(json)
+    if (json.success) {
       toastNotification({
         type: NOTIFICATIONS_TYPES.done,
-        message: 'Empleado eliminado',
+        message: json.success,
       })
     }
-    const json = await res.text()
-    console.log(json)
+    if (json.error) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.fail,
+        message: json.error,
+      })
+    }
     return json
   } catch (e) {
     console.error(e)
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
-      message: 'Error al enviar datos del empleado',
+      message: 'Error de conexión con el servidor',
     })
   }
 }
@@ -555,7 +562,6 @@ export {
   sendEmployeeData,
   updateDependencyData,
   deleteDependencyData,
-  updateEmployeeData,
   updateRequestEmployeeData,
   updateEmployeeStatus,
   deleteEmployee,

@@ -187,7 +187,7 @@ d.addEventListener('DOMContentLoaded', (e) => {
       },
       fieldListDependencias: {
         dependencia: '',
-        cod_dependencia: '',
+        'cod_dependencia-input': '',
       },
       fieldListErrorsDependencias: {
         dependencia: {
@@ -195,7 +195,7 @@ d.addEventListener('DOMContentLoaded', (e) => {
           message: 'No puede estar vacío',
           type: 'text',
         },
-        cod_dependencia: {
+        'cod_dependencia-input': {
           value: true,
           message: 'No puede estar vacío',
           type: 'number',

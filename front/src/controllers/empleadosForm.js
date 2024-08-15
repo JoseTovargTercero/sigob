@@ -7,7 +7,6 @@ import {
   getProfessionData,
   sendDependencyData,
   sendEmployeeData,
-  updateEmployeeData,
   updateRequestEmployeeData,
 } from '../api/empleados.js'
 import { nomCorrectionAlert } from '../components/nom_correcion_alert.js'
@@ -27,7 +26,6 @@ const d = document
 const w = window
 
 let employeeId
-let employeeCedula
 
 let dependenciasLaborales
 
@@ -94,10 +92,8 @@ function validateEmployeeForm({
 
       employeeData.id = employeeData.id_empleado
       employeeId = employeeData.id_empleado
-      employeeCedula = employeeData.cedula
 
       console.log(employeeId)
-      console.log(employeeCedula)
 
       fieldList = employeeData
 
@@ -181,28 +177,22 @@ function validateEmployeeForm({
 
   formElement.addEventListener('focusout', (e) => {
     if (e.target.name === 'cedula') {
-      if (e.target.value === employeeCedula) {
-        return
-      }
-      employeeCedula = e.target.value
       getEmployeeByCedula({ cedula: e.target.value }).then((res) => {
         if (!res.status) {
-          confirmNotification({
+          toastNotification({
             type: NOTIFICATIONS_TYPES.fail,
             message: res.mensaje,
-            successFunction: function () {
-              // Resetear input si el status es falso
-              e.target.value = ''
-              fieldList = validateInput({
-                target: e.target,
-                fieldList,
-                fieldListErrors,
-                type: fieldListErrors[e.target.name].type,
-              })
-
-              formElement.otros_años.value = ''
-            },
           })
+          // Resetear input si el status es falso
+          e.target.value = ''
+          fieldList = validateInput({
+            target: e.target,
+            fieldList,
+            fieldListErrors,
+            type: fieldListErrors[e.target.name].type,
+          })
+
+          formElement.otros_años.value = ''
         } else {
           // SI EL USUARIO EXISTE, SUMAR LOS OTROS AÑOS
           if (!res.otros_anios) {
@@ -279,7 +269,6 @@ function validateEmployeeForm({
       })
 
       employeeId = undefined
-      employeeCedula = undefined
     }
 
     if (e.target.id === 'add-dependency') {
@@ -293,12 +282,12 @@ function validateEmployeeForm({
 
     if (e.target === btnDependencySave) {
       console.log(
-        dependenciaFormElement.cod_dependencia.value,
+        dependenciaFormElement['cod_dependencia-input'].value,
         dependenciaFormElement.dependencia.value
       )
       let newDependency = {
         dependencia: dependenciaFormElement.dependencia.value,
-        cod_dependencia: dependenciaFormElement.cod_dependencia.value,
+        cod_dependencia: dependenciaFormElement['cod_dependencia-input'].value,
       }
       if (!fieldListDependencias.dependencia)
         return confirmNotification({
@@ -316,7 +305,7 @@ function validateEmployeeForm({
       validateNewDependency({ newDependency })
       dependenciaFormElement.reset()
       fieldListDependencias.dependencia = ''
-      fieldListDependencias.cod_dependencia = ''
+      fieldListDependencias['cod_dependencia-input'] = ''
     }
 
     // ENVIAR DATOS
@@ -366,32 +355,28 @@ function validateEmployeeForm({
       if (employeeId)
         return confirmNotification({
           type: NOTIFICATIONS_TYPES.send,
-          successFunction: sendEmployeeInformationRequest,
-          successFunctionParams: { data: fieldList },
-          othersFunctions: [
-            function () {
+          successFunction: function () {
+            sendEmployeeInformationRequest({ data: fieldList }).then((res) => {
               closeModal({ modalId: 'modal-employee-form' })
+              loadEmployeeData()
               validateEmployeeTable()
-            },
-          ],
-          message: 'Los datos del empleado serán modificados.',
+            })
+          },
+          message: '¿Desea actualizar la información de este empleado?',
         })
 
       // REGISTRAR EMPLEADO
       return confirmNotification({
         type: NOTIFICATIONS_TYPES.send,
-        successFunction: sendEmployeeData,
-        successFunctionParams: { data: fieldList },
-        othersFunctions: [
-          loadEmployeeData,
-          function () {
+        successFunction: function () {
+          sendEmployeeData({ data: fieldList }).then((res) => {
             closeModal({ modalId: 'modal-employee-form' })
-          },
-          function () {
+            loadEmployeeData()
             validateEmployeeTable()
-          },
-        ],
-        message: 'Se enviará este empleado para su revisión',
+          })
+        },
+
+        message: '¿Desea registrar este empleado?',
       })
     }
   })
@@ -433,6 +418,7 @@ async function sendEmployeeInformationRequest({ data }) {
       ])
     }
   })
+  console.log(updateData)
   if (updateData.length === 0) {
     toast_s('error', 'No hay cambios para este empleado')
     return
@@ -459,15 +445,17 @@ async function validateNewDependency({ newDependency }) {
   let isSend = await sendDependencyData({ newDependency })
   if (isSend) {
     getDependencyData().then((res) => {
-      insertOptions({ input: 'dependencias', data: res.mappedData })
       dependenciasLaborales = res.fullInfo
+      insertOptions({ input: 'dependencias', data: res.mappedData })
+      d.getElementById('cod_dependencia').value = ''
     })
   }
+  mostrarCodigoDependencia()
   closeModal({ modalId: 'modal-dependency' })
 }
 
 function mostrarCodigoDependencia() {
-  console.log(dependenciasLaborales)
+  // console.log(dependenciasLaborales)
   const id_dependencia = d.getElementById('search-select-dependencias').value
   const cod_dependenciaInput = d.getElementById('cod_dependencia')
 
