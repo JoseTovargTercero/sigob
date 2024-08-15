@@ -6,11 +6,208 @@
     <link rel="shortcut icon" type="image/png" href="img/favicon.png">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <style>
+        body {
+      border: 1px solid black;
+      margin: 10px;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      line-height: 1.5;
+      border-collapse: collapse;
+    }
+
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+
+    }
+
+    .table-container {
+      vertical-align: top;
+      padding: 0;
+      border-collapse: collapse;
+
+    }
+
+    .table-container td {
+
+      padding: 2px;
+      text-align: left;
+      border-left: 1px solid black;
+      border-right: 1px solid black;
+    }
+
+    .table-container th {
+      border: 1px solid #000;
+    }
+
+    .table-title {
+      display: block;
+      padding: 1rem;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+
+
+    * {
+      margin: 0;
+      padding: 0;
+      text-indent: 0;
+    }
+
+    .s1 {
+      color: black;
+      font-family: Arial, sans-serif;
+      font-style: normal;
+      font-weight: bold;
+      text-decoration: none;
+      font-size: 8.5pt;
+    }
+
+    .s2 {
+      color: black;
+      font-family: Arial, sans-serif;
+      font-style: normal;
+      font-weight: normal;
+      text-decoration: none;
+      font-size: 6.5pt;
+    }
+
+    .s3 {
+      color: black;
+      font-family: Arial, sans-serif;
+      font-style: normal;
+      font-weight: normal;
+      text-decoration: none;
+      font-size: 6pt;
+    }
+
+    .s4 {
+      color: black;
+      font-family: Arial, sans-serif;
+      font-style: normal;
+      font-weight: bold;
+      text-decoration: none;
+      font-size: 9pt;
+    }
+
+    .s5 {
+      color: black;
+      font-family: Arial, sans-serif;
+      font-style: normal;
+      font-weight: bold;
+      text-decoration: none;
+      font-size: 9pt;
+    }
+
+    .s6 {
+      color: black;
+      font-family: Arial, sans-serif;
+      font-style: normal;
+      font-weight: normal;
+      text-decoration: none;
+      font-size: 8pt;
+    }
+
+
+
+    .d-flex {
+      display: flex !important;
+    }
+
+    .justify-content-between {
+      justify-content: space-between !important;
+    }
+
+    .p-3 {
+      padding: 3rem;
+    }
+
+    .p-2 {
+      padding: 2rem;
+    }
+
+    .p-1 {
+      padding: 1rem;
+    }
+
+    .text-center {
+      text-align: center;
+    }
+
+    .w-100 {
+      width: 100%;
+    }
+
+    .b-t {
+      border-top: 1px solid black;
+    }
+
+    .b-l {
+      border-left: 1px solid black;
+    }
+
+    .w-50 {
+      width: 50%;
+    }
+
+    .mt-3 {
+      margin-top: 3rem;
+    }
+
+    .mb-3 {
+      margin-bottom: 3rem;
+    }
+
+    .mt-2 {
+      margin-top: 2rem;
+    }
+
+    .mb-2 {
+      margin-bottom: 2rem;
+    }
+
+    .mt-1 {
+      margin-top: 1rem;
+    }
+
+    .mb-1 {
+      margin-bottom: 1rem;
+    }
+
+    .s1>.st {
+      text-align: left !important;
+      margin-bottom: 5px !important;
+    }
+
+    .mr-3 {
+      margin-right: 3rem;
+    }
+
+    /* td {
+            padding: 2px !important;
+        } */
+
+    .b-r {
+      border-right-width: 1pt
+    }
+
+    .b-b {
+      border-bottom-width: 1pt
+    }
+
+    .b-l {
+      border-left-width: 1pt
+    }
+  </style>
 </head>
 <body>
     <div style="font-size: 10px;">
         <img src="../../img/logo.jpg" style="height: 110px; width: 250px;">
-        <center><h1>Relacion Deposito Banco</h1></center>
+        <h1 style="text-align:center;">Relacion Deposito Banco</h1>
         <table style="width: 100%;" border="1">
             <thead>
                 <tr>

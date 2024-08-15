@@ -1,6 +1,6 @@
 <?php
 require_once '../sistema_global/conexion.php';
-
+require_once '../sistema_global/session.php';
 // URL del servidor
 $url = 'http://localhost/sigob/back/modulo_nomina/nom_reportes_form.php';
 
@@ -10,9 +10,9 @@ $data = array(
     "almacenar" => "Si",
     "nombre" => "Reporte de Empleados",
     "columnas" => array("nombres", "cedula"),
-    "condicion" => "discapacidades='0'", // Cambia esto a la condición que desees
-    "tipoFiltro" => "Ninguno",
-    "nominas" => array("1", "2") // Puedes agregar los datos de nóminas si es necesario
+    "condicion" => "", // Cambia esto a la condición que desees
+    "tipoFiltro" => "nominas",
+    "nominas" => array("33") // Puedes agregar los datos de nóminas si es necesario
 );
 
 // Convertir el array a formato JSON

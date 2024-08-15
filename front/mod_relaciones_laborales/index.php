@@ -451,66 +451,77 @@ $stmt->close();
        * @param {string} cedula - The identification number.
        * @param {string} periodo - The period to generate the report for.
        */
-      function descarga(cedula, periodo) {
-        // Show loading spinner and toggle dialogs
-        $('#cargando').show();
+  function descarga(cedula, periodo) {
+    // Show loading spinner and toggle dialogs
+    $('#cargando').show();
+    toggleDialogs();
+
+    // Send data to server to generate report
+    fetch('../../back/modulo_relaciones_laborales/rela_neto_pdf.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            cedula: cedula,
+            fecha_pagar: periodo
+        })
+    })
+    .then(response => {
+        if (response.ok) {
+            let contentType = response.headers.get('content-type');
+
+            // Check if the content type is JSON
+            if (contentType && contentType.includes('application/json')) {
+                return response.json().then(json => {
+                    // Handle JSON error
+                    console.error('Error JSON received:', json);
+                    throw new Error('Error en la respuesta del servidor: ' + json.message);
+                });
+            } else if (contentType && contentType === 'application/zip') {
+                // Extract the file name from the Content-Disposition header if available
+                let disposition = response.headers.get('Content-Disposition');
+                let fileName = 'reportes_' + new Date().toISOString().replace(/[-:.]/g, '') + '.zip'; // Default file name
+
+                if (disposition && disposition.indexOf('filename=') !== -1) {
+                    fileName = disposition.split('filename=')[1].replace(/["']/g, ''); // Extract filename
+                }
+
+                return response.blob().then(blob => {
+                    return { blob, fileName };
+                });
+            } else {
+                throw new Error('El contenido recibido no es un archivo ZIP ni JSON');
+            }
+        } else {
+            throw new Error('Error en la respuesta del servidor');
+        }
+    })
+    .then(({ blob, fileName }) => {
+        // Hide loading spinner and toggle dialogs
+        $('#cargando').hide();
         toggleDialogs();
 
-        // Send data to server to generate report
-        fetch('../../back/modulo_relaciones_laborales/rela_neto_pdf.php', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              cedula: cedula,
-              fecha_pagar: periodo
-            })
-          })
-          .then(response => {
-            if (response.ok) {
-              let contentType = response.headers.get('content-type');
+        // Check if the response is a ZIP file
+        let url = window.URL.createObjectURL(blob);
+        let a = document.createElement('a');
+        a.href = url;
+        a.download = fileName; // Use the filename from the server
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url); // Clean up the created URL
+    })
+    .catch(error => {
+        // Hide loading spinner and toggle dialogs
+        $('#cargando').hide();
+        toggleDialogs();
 
-              // Check if the content type is JSON
-              if (contentType && contentType.includes('application/json')) {
-                return response.json().then(json => {
-                  // Handle JSON error
-                  console.error('Error JSON received:', json);
-                  throw new Error('Error en la respuesta del servidor: ' + json.message);
-                });
-              } else if (contentType && contentType === 'application/zip') {
-                return response.blob();
-              } else {
-                throw new Error('El contenido recibido no es un archivo ZIP ni JSON');
-              }
-            } else {
-              throw new Error('Error en la respuesta del servidor');
-            }
-          })
-          .then(blob => {
-            // Hide loading spinner and toggle dialogs
-            $('#cargando').hide();
-            toggleDialogs();
+        console.error('Error:', error);
+        toast_s('error', 'Error al enviar la solicitud');
+    });
+}
 
-            // Check if the response is a ZIP file
-            let url = window.URL.createObjectURL(blob);
-            let a = document.createElement('a');
-            a.href = url;
-            a.download = 'reportes_' + new Date().toISOString().replace(/[-:.]/g, '') + '.zip'; // ZIP file name
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            window.URL.revokeObjectURL(url); // Clean up the created URL
-          })
-          .catch(error => {
-            // Hide loading spinner and toggle dialogs
-            $('#cargando').hide();
-            toggleDialogs();
-
-            console.error('Error:', error);
-            toast_s('error', 'Error al enviar la solicitud');
-          });
-      }
       /**
        * Function to request data from the server based on the provided ID.
        */

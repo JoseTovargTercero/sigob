@@ -1,6 +1,5 @@
 <?php
 require_once '../sistema_global/conexion.php';
-require_once '../sistema_global/session.php';
 require_once '../../vendor/autoload.php'; // Ajusta la ruta según la ubicación de mpdf y SimpleXLSXGen
 require_once 'pdf_files_config.php'; // Incluir el archivo de configuración
 
@@ -17,7 +16,6 @@ $condicion = $data['condicion'];
 $tipoFiltro = $data['tipoFiltro'];
 $nominas = $data['nominas'];
 
-
 // Palabras clave prohibidas
 $palabras_prohibidas = ['DROP', 'DELETE', 'INSERT', 'UPDATE', 'SELECT'];
 
@@ -30,13 +28,13 @@ foreach ($palabras_prohibidas as $palabra) {
 }
 
 // Preparación de datos para almacenar
-$id_usuario = $_SESSION['u_id']; // Asegúrate de que la sesión contiene el id del usuario
+$id_usuario = 1; // Asegúrate de que la sesión contiene el id del usuario
 $columnas_serializadas = json_encode($columnas);
 $creacion = date('Y-m-d H:i:s');
 
 // Crear archivo ZIP
 $zip = new ZipArchive();
-$zipFilename = 'reportes_' . date('YmdHis') . '.zip';
+$zipFilename = $nombre . '_' . date('YmdHis') . '.zip'; // Usa $nombre para el nombre del archivo ZIP
 if ($zip->open($zipFilename, ZipArchive::CREATE) !== TRUE) {
     echo json_encode(['error' => 'No se pudo crear el archivo ZIP']);
     exit;
@@ -50,10 +48,8 @@ function addToZip($zip, $filename, $content) {
     }
 }
 
-$nominas_string = implode(", ", array_map('intval', $nominas));
+$nominas_json = json_encode($nominas);
 
-
-// Determinar la consulta principal según el valor de $tipoFiltro
 $query = "";  // Inicializamos $query para evitar el error de variable no definida
 
 if ($tipoFiltro === "Ninguno") {
@@ -61,10 +57,7 @@ if ($tipoFiltro === "Ninguno") {
         return mysqli_real_escape_string($conexion, $col);
     }, $columnas)) . " FROM empleados WHERE $condicion";
 } elseif ($tipoFiltro === "nominas") {
-    // Convertir los valores de $nominas en una cadena para la consulta
-
-    // Consulta para obtener los nombres de las nóminas
-    $query_nominas = "SELECT nombre FROM nominas WHERE id IN ($nominas_string)";
+    $query_nominas = "SELECT nombre FROM nominas WHERE id IN (" . implode(", ", array_map('intval', $nominas)) . ")";
     $result_nominas = $conexion->query($query_nominas);
 
     if ($result_nominas && $result_nominas->num_rows > 0) {
@@ -72,15 +65,12 @@ if ($tipoFiltro === "Ninguno") {
         while ($row = $result_nominas->fetch_assoc()) {
             $nombres_nominas[] = $row['nombre'];
         }
-
-        // Unir los nombres de nóminas para usarlos más adelante
         $nombres_nominas_string = implode("', '", $nombres_nominas);
     } else {
         echo json_encode(['error' => 'No se encontraron nombres de nóminas para los IDs proporcionados']);
         exit;
     }
 
-    // Consulta a conceptos_aplicados para obtener los empleados con Sueldo Base
     $query_conceptos = "SELECT empleados FROM conceptos_aplicados WHERE nom_concepto = 'Sueldo Base' AND nombre_nomina IN ('$nombres_nominas_string')";
     $result_conceptos = $conexion->query($query_conceptos);
 
@@ -89,21 +79,23 @@ if ($tipoFiltro === "Ninguno") {
         while ($row = $result_conceptos->fetch_assoc()) {
             $empleados = array_merge($empleados, json_decode($row['empleados'], true));
         }
-
         $empleados_string = implode(", ", array_map('intval', $empleados));
 
-        $query = "SELECT " . implode(", ", array_map(function($col) use ($conexion) {
+        if ($condicion == "") {
+            $query = "SELECT " . implode(", ", array_map(function($col) use ($conexion) {
+            return mysqli_real_escape_string($conexion, $col);
+        }, $columnas)) . " FROM empleados WHERE id IN ($empleados_string)";
+        } else {
+            $query = "SELECT " . implode(", ", array_map(function($col) use ($conexion) {
             return mysqli_real_escape_string($conexion, $col);
         }, $columnas)) . " FROM empleados WHERE $condicion AND id IN ($empleados_string)";
+        }
     } else {
         echo json_encode(['error' => 'No se encontraron empleados para las nóminas seleccionadas']);
         exit;
     }
 } elseif ($tipoFiltro === "nominas_g") {
-    // Convertir los valores de $nominas en una cadena para la consulta
     $nominas_string = implode(", ", array_map('intval', $nominas));
-
-    // Consulta a empleados_por_grupo para obtener los empleados del grupo
     $query_empleados_grupo = "SELECT id_empleado FROM empleados_por_grupo WHERE id_grupo IN ($nominas_string)";
     $result_empleados_grupo = $conexion->query($query_empleados_grupo);
 
@@ -112,12 +104,16 @@ if ($tipoFiltro === "Ninguno") {
         while ($row = $result_empleados_grupo->fetch_assoc()) {
             $empleados[] = $row['id_empleado'];
         }
-
         $empleados_string = implode(", ", array_map('intval', $empleados));
-
-        $query = "SELECT " . implode(", ", array_map(function($col) use ($conexion) {
+        if ($condicion == "") {
+            $query = "SELECT " . implode(", ", array_map(function($col) use ($conexion) {
+            return mysqli_real_escape_string($conexion, $col);
+        }, $columnas)) . " FROM empleados WHERE id IN ($empleados_string)";
+        } else {
+            $query = "SELECT " . implode(", ", array_map(function($col) use ($conexion) {
             return mysqli_real_escape_string($conexion, $col);
         }, $columnas)) . " FROM empleados WHERE $condicion AND id IN ($empleados_string)";
+        }
     } else {
         echo json_encode(['error' => 'No se encontraron empleados para los grupos seleccionados']);
         exit;
@@ -186,17 +182,14 @@ if ($formato == "pdf" || $formato == "xlsx") {
                 $zip->addFile($xlsxFilename, $xlsxFilename);
             }
 
-            // Cerrar y enviar el ZIP
+            // Cerrar el ZIP
             $zip->close();
 
-            // Asegúrate de que no hay salida previa
-            if (headers_sent()) {
-                echo json_encode(['error' => 'Headers already sent']);
-                exit;
-            }
-
+            // Enviar el archivo ZIP al cliente
             header('Content-Type: application/zip');
             header('Content-Disposition: attachment; filename="' . $zipFilename . '"');
+            header('Content-Length: ' . filesize($zipFilename));
+            flush(); // Limpiar el buffer de salida
             readfile($zipFilename);
 
             // Borrar archivos temporales
@@ -204,31 +197,29 @@ if ($formato == "pdf" || $formato == "xlsx") {
             if (isset($xlsxFilename) && file_exists($xlsxFilename)) {
                 unlink($xlsxFilename);
             }
+
             if ($almacenar == "Si") {
                 // Inserción en la tabla reportes
-            $columnas_serializadas = json_encode($columnas);
-             $sql = "INSERT INTO reportes (furmulacion, nominas, columnas, formato, nombre, user, creacion, tipoFiltro)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-            
-                    // Preparar la declaración SQL
-                    $stmt = $conexion->prepare($sql);
-            
-                    // Vincular parámetros y ejecutar la consulta
-                    $stmt->bind_param("ssssssss", $condicion, $nominas_string, $columnas_serializadas, $formato, $nombre, $id_usuario, $creacion, $tipoFiltro );
-            
-                    // Ejecutar la consulta preparada
-                    if ($stmt->execute()) {
-                         json_encode(['success' => 'Datos Insertados correctamente']);
-                    } else {
-                         json_encode([
-                            'error' => 'Error al insertar datos:',
-                            'details' => $stmt->error // Muestra el mensaje de error
-                        ]);
-                    }
-                    
-            }
-            
+                $sql = "INSERT INTO reportes (furmulacion, nominas, columnas, formato, nombre, user, creacion, tipoFiltro)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
+                // Preparar la declaración SQL
+                $stmt = $conexion->prepare($sql);
+
+                // Vincular parámetros y ejecutar la consulta
+                $stmt->bind_param("ssssssss", $condicion, $nominas_json, $columnas_serializadas, $formato, $nombre, $id_usuario, $creacion, $tipoFiltro);
+
+                // Ejecutar la consulta preparada
+                if ($stmt->execute()) {
+                    // Salida exitosa, no se envía más JSON
+                    exit;
+                } else {
+                    echo json_encode([
+                        'error' => 'Error al insertar datos:',
+                        'details' => $stmt->error // Muestra el mensaje de error
+                    ]);
+                }
+            }
         } else {
             echo json_encode(['error' => 'No se encontraron registros']);
         }

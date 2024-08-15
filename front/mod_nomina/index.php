@@ -658,15 +658,15 @@ $stmt->close();
      * @param {number} id - The ID of the report.
      */
     function generarReporteGuardado(id) {
-      let formato = reportes[id]['formato'];
-      let almacenar = 'No';
-      let nombre = reportes[id]['nombre'];
-      let condicion = reportes[id]['furmulacion'];
-      let columnasArray = reportes[id]['columnas'];
-      let nominas = reportes[id]['nominas'];
-      let tipoFiltro = reportes[id]['tipoFiltro']
-     
-     let data = {
+    let formato = reportes[id]['formato'];
+    let almacenar = 'No';
+    let nombre = reportes[id]['nombre'];
+    let condicion = reportes[id]['furmulacion'];
+    let columnasArray = reportes[id]['columnas'];
+    let nominas = reportes[id]['nominas'];
+    let tipoFiltro = reportes[id]['tipoFiltro'];
+
+    let data = {
         formato: formato,
         almacenar: almacenar,
         nombre: nombre,
@@ -674,53 +674,54 @@ $stmt->close();
         condicion: condicion,
         tipoFiltro: tipoFiltro,
         nominas: (nominas != '' ? JSON.parse(nominas) : [])
-      };
-      $('#cargando').show()
+    };
 
-      console.log(data)
+    $('#cargando').show();
 
-      // Send data to server to generate report
-      fetch('../../back/modulo_nomina/nom_reportes_form.php', {
-          method: 'POST',
-          headers: {
+    console.log(data);
+
+    // Send data to server to generate report
+    fetch('../../back/modulo_nomina/nom_reportes_form.php', {
+        method: 'POST',
+        headers: {
             'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
+        },
+        body: JSON.stringify({
             data: data
-          })
         })
-        .then(response => {
-          if (response.ok) {
+    })
+    .then(response => {
+        if (response.ok) {
             return response.blob();
-          } else {
+        } else {
             throw new Error('Error en la respuesta del servidor');
-          }
-        })
-        .then(blob => {
-         $('#cargando').hide()
+        }
+    })
+    .then(blob => {
+        $('#cargando').hide();
 
-          // Verificar si la respuesta es un archivo ZIP
-          let contentType = blob.type;
-          if (contentType === 'application/zip') {
+        // Verificar si la respuesta es un archivo ZIP
+        let contentType = blob.type;
+        if (contentType === 'application/zip') {
             let url = window.URL.createObjectURL(blob);
             let a = document.createElement('a');
             a.href = url;
-            a.download = 'reportes_' + new Date().toISOString().replace(/[-:.]/g, '') + '.zip'; // Nombre del archivo ZIP
+            a.download = nombre + '.zip'; // Usa el nombre proporcionado en el backend
             document.body.appendChild(a);
             a.click();
             a.remove();
             window.URL.revokeObjectURL(url); // Limpiar el URL creado
-          } else {
+        } else {
             throw new Error('El contenido recibido no es un archivo ZIP');
-          }
-        })
-        .catch(error => {
-         $('#cargando').hide()
+        }
+    })
+    .catch(error => {
+        $('#cargando').hide();
+        console.error('Error:', error);
+        toast_s('error', 'Error al enviar la solicitud');
+    });
+}
 
-          console.error('Error:', error);
-          toast_s('error', 'Error al enviar la solicitud');
-        });
-    }
 
 
 
@@ -784,50 +785,50 @@ $stmt->close();
       console.log(data)
 
 
-      // Send data to server to generate report
-      fetch('../../back/modulo_nomina/nom_reportes_form.php', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            data: data
-          })
-        })
-        .then(response => {
-          if (response.ok) {
-            return response.blob();
-          } else {
-            throw new Error('Error en la respuesta del servidor');
-          }
-        })
-        .then(blob => {
-         $('#cargando').hide()
-         if (almacenar == 'Si') {
-          tabla_reportes()
-         }
-          
-          // Verificar si la respuesta es un archivo ZIP
-          let contentType = blob.type;
-          if (contentType === 'application/zip') {
-            let url = window.URL.createObjectURL(blob);
-            let a = document.createElement('a');
-            a.href = url;
-            a.download = 'reportes_' + new Date().toISOString().replace(/[-:.]/g, '') + '.zip'; // Nombre del archivo ZIP
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            window.URL.revokeObjectURL(url); // Limpiar el URL creado
-          } else {
-            throw new Error('El contenido recibido no es un archivo ZIP');
-          }
-        })
-        .catch(error => {
-         $('#cargando').hide()
+     // Send data to server to generate report
+fetch('../../back/modulo_nomina/nom_reportes_form.php', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+        data: data
+    })
+})
+.then(response => {
+    if (response.ok) {
+        return response.blob();
+    } else {
+        throw new Error('Error en la respuesta del servidor');
+    }
+})
+.then(blob => {
+    $('#cargando').hide();
+    if (almacenar == 'Si') {
+        tabla_reportes();
+    }
 
-          console.error('Error:', error);
-          toast_s('error', 'Error al enviar la solicitud');
-        });
+    // Verificar si la respuesta es un archivo ZIP
+    let contentType = blob.type;
+    if (contentType === 'application/zip') {
+        let url = window.URL.createObjectURL(blob);
+        let a = document.createElement('a');
+        a.href = url;
+        a.download = nombre + '.zip'; // Usa el nombre proporcionado en el backend
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url); // Limpiar el URL creado
+    } else {
+        throw new Error('El contenido recibido no es un archivo ZIP');
+    }
+})
+.catch(error => {
+    $('#cargando').hide();
+    console.error('Error:', error);
+    toast_s('error', 'Error al enviar la solicitud');
+});
+
     }
 
 

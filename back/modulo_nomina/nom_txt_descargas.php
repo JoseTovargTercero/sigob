@@ -2,8 +2,31 @@
 
 require_once '../../vendor/autoload.php'; // Ajusta la ruta según la ubicación de mpdf
 require_once 'pdf_files_config.php'; // Incluir el archivo de configuración
+require_once 'lib/TCPDF/tcpdf.php';
+require 'lib/FPDI-2.6.0/src/autoload.php';
+require_once 'lib/libmergepdf-master/src/Merger.php';
 
 use Mpdf\Mpdf;
+
+// Autoload manual de clases
+spl_autoload_register(function ($class) {
+    $prefix = 'iio\\libmergepdf\\';
+    $base_dir = __DIR__ . '/lib/libmergepdf-master/src/';
+
+    $len = strlen($prefix);
+    if (strncmp($prefix, $class, $len) !== 0) {
+        return;
+    }
+
+    $relative_class = substr($class, $len);
+    $file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
+
+    if (file_exists($file)) {
+        require $file;
+    }
+});
+
+use iio\libmergepdf\Merger;
 
 $correlativo = $_POST['correlativo'];
 $identificador = $_POST['identificador'];
@@ -51,15 +74,9 @@ if ($zip->open($zip_filename, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== TR
     exit("No se puede abrir el archivo ZIP");
 }
 
-// Agregar archivos TXT al ZIP
-foreach ($txt_files as $txt_file) {
-    $file_path = "../../txt/" . $txt_file;
-    if (file_exists($file_path)) {
-        $zip->addFile($file_path, $txt_file);
-    }
-}
+$merger = new Merger(); // Crear instancia de Merger para combinar los PDFs
 
-// Generar PDFs por cada página y agregarlos al ZIP
+// Generar PDFs por cada página y agregar al merger (no se agregan al ZIP individualmente)
 for ($pagina = 1; $pagina <= $totalPaginas; $pagina++) {
     $pdf_filename = "Recibos_de_pago_{$correlativo}_Pagina_{$pagina}.pdf";
     $url = "{$base_url}nom_recibos_pagos.php?correlativo=$correlativo&pagina=$pagina";
@@ -71,11 +88,29 @@ for ($pagina = 1; $pagina <= $totalPaginas; $pagina++) {
     $mpdf = new Mpdf();
     $mpdf->WriteHTML($html);
 
-    // Obtener el contenido del PDF generado
-    $pdf_content = $mpdf->Output('', 'S');
+    // Guardar el PDF generado temporalmente en el servidor
+    $mpdf->Output($pdf_filename, 'F');
 
-    // Agregar el PDF al archivo ZIP
-    $zip->addFromString($pdf_filename, $pdf_content);
+    // Agregar el archivo PDF a la lista de PDFs a unificar
+    $merger->addFile($pdf_filename);
+}
+
+// Unificar los PDFs generados
+$combinedPdf = $merger->merge();
+
+// Guardar el PDF unificado en el servidor
+$combinedPdfFilename = "Recibos_de_pago_unificado_{$correlativo}.pdf";
+file_put_contents($combinedPdfFilename, $combinedPdf);
+
+// Agregar el PDF unificado al archivo ZIP
+$zip->addFile($combinedPdfFilename);
+
+// Agregar archivos TXT al ZIP
+foreach ($txt_files as $txt_file) {
+    $file_path = "../../txt/" . $txt_file;
+    if (file_exists($file_path)) {
+        $zip->addFile($file_path, $txt_file);
+    }
 }
 
 // Agregar PDFs relacionados con bancos al ZIP
@@ -87,12 +122,13 @@ foreach ($pdf_files as $url => $pdf_filename) {
     $mpdf = new Mpdf();
     $mpdf->WriteHTML($html);
 
-    // Obtener el contenido del PDF generado
-    $pdf_content = $mpdf->Output('', 'S');
+    // Guardar el PDF generado temporalmente en el servidor
+    $mpdf->Output($pdf_filename, 'F');
 
     // Agregar el PDF al archivo ZIP
-    $zip->addFromString($pdf_filename, $pdf_content);
+    $zip->addFile($pdf_filename);
 }
+
 // Construir la consulta SQL para actualizar datos
 $sql2 = "UPDATE peticiones SET status_archivos = :status_archivos WHERE correlativo = :correlativo";
 
@@ -113,9 +149,9 @@ if ($stm3->execute() === false) {
     $errorInfo = $stm3->errorInfo();
     die("Error al ejecutar la consulta: " . $errorInfo[2]);
 }
+
 // Cerrar el archivo ZIP
 $zip->close();
-
 
 // Configurar las cabeceras para la descarga del archivo ZIP
 header('Content-Description: File Transfer');
@@ -134,11 +170,15 @@ flush();
 // Leer el archivo ZIP y enviarlo al navegador para su descarga
 readfile($zip_filename);
 
-// Eliminar el archivo ZIP del servidor después de la descarga
+// Eliminar los archivos temporales (ZIP y PDFs) del servidor después de la descarga
 unlink($zip_filename);
-
-
-
+unlink($combinedPdfFilename);
+for ($pagina = 1; $pagina <= $totalPaginas; $pagina++) {
+    unlink("Recibos_de_pago_{$correlativo}_Pagina_{$pagina}.pdf");
+}
+foreach ($pdf_files as $pdf_filename) {
+    unlink($pdf_filename);
+}
 
 // Salir del script
 exit;
