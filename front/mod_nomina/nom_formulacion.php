@@ -131,7 +131,7 @@ while ($r = $query->fetch_object()) {
                                   <span id="prefijo_nomina"><?php echo $codigo . ' ' . $nombre ?></span> &nbsp;
                                   <span id="prefijo_nomina2"></span>
                                 </span>
-                                <input type="text" class="form-control" value="namen" id="nombre_nomina" aria-describedby="Nombre de la nomina">
+                                <input type="text" class="form-control" id="nombre_nomina" aria-describedby="Nombre de la nomina">
                               </div>
                             </div>
 
@@ -142,8 +142,8 @@ while ($r = $query->fetch_object()) {
                             <div class="mb-3">
                               <label class="form-label">Frecuencia de pago</label>
                               <select class="form-control" id="frecuencia_pago">
-                                <option value="1">Semanal</option>
                                 <option value="">Seleccione</option>
+                                <option value="1">Semanal</option>
                                 <option value="2">Quincenal</option>
                                 <option value="4">Una vez al mes</option>
                               </select>
@@ -153,8 +153,8 @@ while ($r = $query->fetch_object()) {
                             <div class="mb-3">
                               <label class="form-label">Tipo de nomina</label>
                               <select class="form-control" id="tipo_nomina">
-                                <option value="1">Normal</option>
                                 <option value="">Seleccione</option>
+                                <option value="1">Normal</option>
                                 <option value="2">Especial</option>
                               </select>
                             </div>
@@ -163,8 +163,8 @@ while ($r = $query->fetch_object()) {
                             <div class="mb-3">
                               <label class="form-label">Tipo de pago</label>
                               <select class="form-control" id="tipo_pago">
-                                <option value="1">Estándar</option>
                                 <option value="">Seleccione</option>
+                                <option value="1">Estándar</option>
                                 <option value="2">Diferencia de sueldo</option>
                               </select>
                             </div>
@@ -191,29 +191,38 @@ while ($r = $query->fetch_object()) {
                       </small>
                     </div>
                     <div class="row mt-4">
-
-
                       <section class="hide" id="nuevo_concepto-sec">
+
+                      
+                      <div class="mb-3">
+                        <label class="form-label" for="enlistar_conceptos">¿Que conceptos desea agregar?</label>
+
+                        <select class="form-control" id="enlistar_conceptos">
+                          <option value="">Seleccione</option>
+                          <option value="grupo">Solo los conceptos del grupo</option>
+                          <option value="todos">Todos los conceptos</option>
+                        </select>
+
+                      </div>
+
+
                         <div class="mb-3">
-                          <label class="form-label" for="concepto_aplicar">Seleccione el concepto de deseaagregar</label>
-                        
-
-
+                          <label class="form-label" for="concepto_aplicar">Seleccione el concepto de desea agregar</label>
                           <div class="input-group">
-                          <select class="form-control" id="concepto_aplicar">
+                            <select class="form-control" id="concepto_aplicar">
                               <option value="">Seleccione</option>
                               <option value="sueldo_base">-- SUELDO BASE --</option>
                               <option id="diferencia_sueldoconcepto" style="display: none;" value="sueldo_diferencia">-- DIFERENCIA DE SUELDO --</option>
-                          </select>
+                            </select>
 
-                          <div class="btn-group">
+                            <div class="btn-group">
                               <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Acciones</button>
                               <div class="dropdown-menu">
-                                  <a class="dropdown-item" onclick="getData('conceptos')" href="#">Actualizar conceptos</a>
-                                  <a class="dropdown-item" onclick="creaConcepto()" href="#">Crear nuevo concepto</a>
+                                <a class="dropdown-item" onclick="getData('conceptos', $('#enlistar_conceptos').val())" href="#">Actualizar conceptos</a>
+                                <a class="dropdown-item" onclick="creaConcepto()" href="#">Crear nuevo concepto</a>
                               </div>
+                            </div>
                           </div>
-                      </div>
 
 
 
@@ -422,34 +431,32 @@ while ($r = $query->fetch_object()) {
   <!-- [ Main Content ] end -->
   <script src="../../src/assets/js/notificaciones.js"></script>
   <script src="../../src/assets/js/plugins/simplebar.min.js"></script>
-
   <!-- Popper.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.8/umd/popper.min.js"></script>
-
-
-
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.8/umd/popper.min.js"></script>
   <script src="../../src/assets/js/plugins/bootstrap.min.js"></script>
   <!-- Bootstrap JS (popper.js incluido) -->
-
   <script src="../../src/assets/js/pcoded.js"></script>
   <script src="../../src/assets/js/plugins/feather.min.js"></script>
   <script src="../../src/assets/js/main.js"></script>
   <script src="../../src/assets/js/ajax_class.js"></script>
-
-
-
   <script>
     const url_back = '../../back/modulo_nomina/nom_formulacion_back';
     let textarea = 't_area-1';
 
 
+    function creaConcepto() {
+      let grupo_nomina = "<?php echo $i ?>";
+      var procesoRegistro = window.open('nom_conceptos.php?n=' + grupo_nomina);
+      $('#cargando').show();
 
-
-
-    function creaConcepto(){
-      
+      // Configurar un intervalo para verificar si la ventana emergente se cierra
+      var checkWindowClosed = setInterval(function() {
+        if (procesoRegistro.closed) {
+          clearInterval(checkWindowClosed); // Detener el intervalo
+          getConceptos('verificar')
+        }
+      }, 1000); // Comprobar cada segundo
     }
-
 
     /**
      * Adds an event listener to the 'filtro_empleados' element and performs different actions based on the selected value.
@@ -625,13 +632,16 @@ while ($r = $query->fetch_object()) {
      * @param {string} value - The value to be sent to the server.
      * @returns {Promise} - A promise that resolves with the parsed JSON response from the server.
      */
-    function loadData(value) {
+    function loadData(value, filtro) {
+      console.log(filtro)
       return new Promise((resolve, reject) => {
         $.ajax({
           url: url_back,
           type: 'POST',
           data: {
-            loadData: value
+            loadData: value,
+            filtro: filtro,
+            nomina_g: "<?php echo $i ?>" 
           },
           success: function(response) {
             resolve(JSON.parse(response));
@@ -655,9 +665,9 @@ while ($r = $query->fetch_object()) {
      * @param {string} value - The value indicating which dropdown list to populate.
      * @returns {Promise<void>} - A promise that resolves once the data is loaded and the dropdown lists are populated.
      */
-    async function getData(value) {
+    async function getData(value, filtro = null) {
       try {
-        const data = await loadData(value);
+        const data = await loadData(value, filtro);
 
         if (value == 'tabulador') {
           data.forEach(d => {
@@ -676,7 +686,7 @@ while ($r = $query->fetch_object()) {
             conceptos_formulacion[d.id] = d;
           });
 
-          $('#concepto_aplicar').html('   <option value="sueldo_base">-- SUELDO BASE --</option><option id="diferencia_sueldoconcepto"  style="display: none;" value="sueldo_diferencia">-- DIFERENCIA DE SUELDO --</option>');
+          $('#concepto_aplicar').html('                     <option value="">Seleccione</option> <option value="sueldo_base">-- SUELDO BASE --</option><option id="diferencia_sueldoconcepto"  style="display: none;" value="sueldo_diferencia">-- DIFERENCIA DE SUELDO --</option>');
           data1.forEach(d => {
             $('#concepto_aplicar').append(`<option value="${d.id}">${d.nom_concepto}</option>`);
           });
@@ -688,7 +698,14 @@ while ($r = $query->fetch_object()) {
 
 
     getData('tabulador')
-    getData('conceptos')
+  //  getData('conceptos')
+
+    
+    
+
+    document.getElementById('enlistar_conceptos').addEventListener('change', function () {
+      getData('conceptos', this.value)
+    })
 
     /**
      * Handles the logic for determining the type of concept.
@@ -947,7 +964,7 @@ while ($r = $query->fetch_object()) {
 
       let prefijo = $('#prefijo_nomina').html() + ' ' + $('#prefijo_nomina2').html() + ' ';
 
-      let nombre_nomina = prefijo + document.getElementById('nombre_nomina').value;
+      let nombre_nomina = limpiarEspacios(prefijo + document.getElementById('nombre_nomina').value);
 
       if (tipoCalculo !== 6) {
         cantidad_t = empleadosDelConcepto.length;
@@ -1468,7 +1485,17 @@ while ($r = $query->fetch_object()) {
     })
 
 
-
+    /**
+     * Function to clean up spaces in a string.
+     *
+     * @param string $str The string to be cleaned.
+     * @return string The cleaned string.
+     */
+    function limpiarEspacios(str) {
+      str = str.trim();
+      str = str.replace(/\s+/g, ' ');
+      return str;
+    }
 
 
 
@@ -1490,7 +1517,7 @@ while ($r = $query->fetch_object()) {
         contentType: 'application/json',
         data: JSON.stringify({
           grupo_nomina: '<?php echo $i ?>',
-          nombre: nombre,
+          nombre: limpiarEspacios(nombre),
           frecuencia: frecuencia,
           tipo: tipo,
           conceptosAplicados: conceptosAplicados
@@ -1533,6 +1560,56 @@ while ($r = $query->fetch_object()) {
         }
       });
     }
+
+    var cantidadConceptosRegistrados
+
+    /**
+     * Retrieves the number of concepts from the server and performs actions based on the given moment.
+     *
+     * @param {string} moment - The moment when the function is called. Possible values are 'load' or any other value.
+     * @returns {void}
+     */
+
+    function getConceptos(moment) {
+      $.ajax({
+        url: url_back,
+        type: 'POST',
+        data: {
+          get_cantidad_conceptos: true,
+          grupo_nomina: "<?php echo $i ?>"
+        },
+        success: function(response) {
+          let cantidad = JSON.parse(response).cantidad
+
+          if (moment == 'load') {
+            cantidadConceptosRegistrados = cantidad;
+          } else {
+            $('#cargando').hide();
+            if (cantidad != cantidadConceptosRegistrados) {
+              // se registro uno nuevo
+              Swal.fire({
+                title: "Concepto registrado",
+                text: "Se ha registrado un nuevo concepto",
+                icon: "success",
+                confirmButtonText: "Ok",
+              })
+              let enlistar_conceptos = $('#enlistar_conceptos').val()
+              getData('conceptos', enlistar_conceptos)
+            } else {
+              // no se registro ninguno
+              Swal.fire({
+                title: "Atención",
+                text: "No se ha registrado ningún concepto",
+                icon: "error",
+                confirmButtonColor: "#d33",
+                confirmButtonText: "Cerrar",
+              })
+            }
+          }
+        }
+      });
+    }
+    getConceptos('load')
   </script>
 </body>
 

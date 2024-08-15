@@ -1,5 +1,41 @@
 <?php
+require_once '../../back/sistema_global/conexion.php';
 require_once '../../back/sistema_global/session.php';
+
+$nomina = @$_GET["n"];
+if (!$nomina || $nomina == '') {
+  $nomina = false;
+}
+
+
+
+/**
+ * Retrieves data from the `nominas_grupos` table based on the provided ID.
+ *
+ * @param mysqli $conexion The mysqli connection object.
+ * @param int $i The ID of the record to retrieve.
+ * @return array|null Returns an array containing the retrieved data or null if no records found.
+ */
+
+if ($nomina) {
+  $stmt = mysqli_prepare($conexion, "SELECT * FROM `nominas_grupos` WHERE id = ?");
+  $stmt->bind_param('i', $nomina);
+  $stmt->execute();
+  $result = $stmt->get_result();
+  if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+      $nombre = $row['nombre'];
+      $codigo = $row['codigo'];
+    }
+  } else {
+    header("Location: nom_grupos");
+  }
+  $stmt->close();
+}
+
+
+
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -177,7 +213,15 @@ require_once '../../back/sistema_global/session.php';
           <div class="card">
             <div class="card-header">
               <div class="d-flex align-items-start justify-content-between">
-                <h5 class="mb-0">Lista de conceptos</h5>
+                <div>
+                  <h5 class="mb-0">Lista de conceptos</h5>
+                  <?php
+                    if ($nomina) {
+                      echo '<span>Grupo de nómina <b>' . $codigo . ' - ' . $nombre . '</b></span>';
+                    }
+                  ?>
+
+                </div>
                 <button class="btn btn-light" id="btn-svr" onclick="setVistaRegistro()"> Nuevo Concepto</button>
               </div>
             </div>
@@ -186,6 +230,7 @@ require_once '../../back/sistema_global/session.php';
                 <table id="table" class="table">
                   <thead>
                     <tr>
+                      <th>Nómina</th>
                       <th>Código</th>
                       <th>Nombre</th>
                       <th>Tipo</th>
@@ -194,6 +239,7 @@ require_once '../../back/sistema_global/session.php';
                       <th class="w-15"></th>
                     </tr>
                     <tr id="section_registro" class="hide">
+                      <th></th>
                       <th>
                         <input type="text" class="form-control" name="codigo_concepto" id="codigo_concepto"
                           placeholder="Código">
@@ -203,10 +249,6 @@ require_once '../../back/sistema_global/session.php';
 
                         <input type="text" class="form-control" placeholder="Nombre del concepto" name="nombre"
                           id="nombre">
-
-
-
-
                       </th>
 
 
@@ -255,6 +297,8 @@ require_once '../../back/sistema_global/session.php';
       'P': 'Aporte'
     }
     const url_back = '../../back/modulo_nomina/nom_conceptos_back.php';
+    const nomina_g = "<?php echo ($nomina ? $nomina : '0') ?>";
+
 
     /**
      * Function to load the table data using AJAX.
@@ -264,9 +308,10 @@ require_once '../../back/sistema_global/session.php';
         url: url_back,
         type: 'POST',
         data: {
-          tabla: true
+          tabla: true,
+          g_nomina: nomina_g
         },
-        success: function (response) {
+        success: function(response) {
           $('#table tbody').html('');
 
           if (response) {
@@ -277,9 +322,11 @@ require_once '../../back/sistema_global/session.php';
               var codigo_concepto = data[i].codigo_concepto;
               var tipo = data[i].tipo_concepto;
               var cod_partida = data[i].cod_partida;
+              var nombre_grupo = data[i].nombre_grupo;
+              var codigo_grupo = data[i].codigo_grupo;
               var id = data[i].id;
 
-              $('#table tbody').append('<tr><td>' + codigo_concepto + ' </td><td>' + nombre + '</td><td>' + tipo_concepto[tipo] + '</td><td>' + cod_partida + '</td><td><a href="#!" class="badge me-2 bg-brand-color-1 text-white f-12" onclick="editar(' + id + ')">Editar</a></td><td><a href="#!" class="badge me-2 bg-brand-color-2 text-white f-12" onclick="eliminar(' + id + ')">Eliminar</a></td></tr>');
+              $('#table tbody').append('<tr><td>' + codigo_grupo + ' - ' + nombre_grupo + '</td><td>' + codigo_concepto + ' </td><td>' + nombre + '</td><td>' + tipo_concepto[tipo] + '</td><td>' + cod_partida + '</td><td><a href="#!" class="badge me-2 bg-brand-color-1 text-white f-12" onclick="editar(' + id + ')">Editar</a></td><td><a href="#!" class="badge me-2 bg-brand-color-2 text-white f-12" onclick="eliminar(' + id + ')">Eliminar</a></td></tr>');
             }
           }
         }
@@ -308,7 +355,7 @@ require_once '../../back/sistema_global/session.php';
           editar_getData: true,
           id: id
         },
-        success: function (response) {
+        success: function(response) {
           if (response) {
             var data = JSON.parse(response);
             conceptoEditar = data;
@@ -404,7 +451,7 @@ require_once '../../back/sistema_global/session.php';
             id: conceptoEditar.id,
             valor: valores
           },
-          success: function (response) {
+          success: function(response) {
 
             let result = JSON.parse(response)
             if (result.status == 'ok') {
@@ -457,7 +504,7 @@ require_once '../../back/sistema_global/session.php';
               eliminar: true,
               id: id,
             },
-            success: function (response) {
+            success: function(response) {
               if (response.trim() == "ok") {
                 cargarTabla();
 
@@ -513,7 +560,7 @@ require_once '../../back/sistema_global/session.php';
             codigo_concepto: codigo_concepto,
             consulta_nombre: true
           },
-          success: function (response) {
+          success: function(response) {
             $('#cargando').hide();
             if (response.trim() == 'ok') {
               $("#section-registro").removeClass('hide');
@@ -628,9 +675,10 @@ require_once '../../back/sistema_global/session.php';
           valor: valor,
           valores: valores,
           maxValue: maxValue,
+          nomina_g: nomina_g,
           registro: true
         },
-        success: function (text) {
+        success: function(text) {
 
           console.log(nombre + ' - ' + tipo + ' - ' + partida + ' - ' + tipo_calculo + ' - ' + valor + ' - ' + tipo_calculo_aplicado)
           $('#cargando').hide();
@@ -656,11 +704,15 @@ require_once '../../back/sistema_global/session.php';
             toast_s('error', 'error' + text)
           }
 
+          if (nomina_g != '0') {
+              window.close()
+          }
+
         }
       });
     }
 
-    $(document).ready(function () {
+    $(document).ready(function() {
       document.getElementById('btn-continuar').addEventListener('click', nuevoConcepto);
       document.getElementById('btn-registrar').addEventListener('click', finalizarRegistroConcepto);
     });
@@ -668,7 +720,7 @@ require_once '../../back/sistema_global/session.php';
     /**
      * Initializes the DataTable.
      */
-    $(document).ready(function () {
+    $(document).ready(function() {
       var DataTable = $("#table").DataTable({
         language: {
           decimal: "",
@@ -696,7 +748,7 @@ require_once '../../back/sistema_global/session.php';
         columnDefs: [{
           targets: [0, 1],
           className: "text-start",
-        },],
+        }, ],
       });
     });
 
@@ -710,19 +762,19 @@ require_once '../../back/sistema_global/session.php';
      */
 
     let textarea = 't_area-1';
-    $(document).on('click', 'textarea', function () {
+    $(document).on('click', 'textarea', function() {
       textarea = $(this).attr('id');
     });
 
 
-    $(document).on('click', '.invalidate', function () {
+    $(document).on('click', '.invalidate', function() {
       $(this).removeClass('invalidate')
     });
 
 
     const palabrasProhibidas = ['UPDATE', 'DELETE', 'DROP', 'TRUNCATE', 'INSERT', 'ALTER', 'GRANT', 'REVOKE'];
 
-    $(document).on('change', 'textarea', function () {
+    $(document).on('change', 'textarea', function() {
       if ($(this).val() != '') {
 
         var condicion = $(this).val();
@@ -762,7 +814,7 @@ require_once '../../back/sistema_global/session.php';
           validarConceptoFormulado: true,
           condicion: condicion
         },
-        success: function (response) {
+        success: function(response) {
           const trimmedResponse = response.trim();
           const textAreaElement = $('#' + textArea);
 
@@ -904,7 +956,7 @@ require_once '../../back/sistema_global/session.php';
           valorMultiplicado: true,
           campo: campo
         },
-        success: function (response) {
+        success: function(response) {
           let tabla = document.getElementById('result')
           tabla.innerHTML = `<p>Ejemplo de posibles aplicaciones: </p>`
 
@@ -982,14 +1034,14 @@ require_once '../../back/sistema_global/session.php';
 
 
       fetch('../../back/modulo_nomina/nom_columnas_return.php', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          columna: condicionante
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            columna: condicionante
+          })
         })
-      })
         .then(response => response.json())
         .then(data => {
           if (data.error) {

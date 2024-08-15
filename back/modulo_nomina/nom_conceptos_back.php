@@ -4,8 +4,12 @@ require_once '../sistema_global/session.php';
 require_once '../sistema_global/notificaciones.php';
 
 if (isset($_POST["tabla"])) {
+    $g_nomina = $_POST["g_nomina"];
 
-    $stmt = mysqli_prepare($conexion, "SELECT * FROM `conceptos` ORDER BY nom_concepto");
+    $stmt = mysqli_prepare($conexion, "SELECT nominas_grupos.nombre AS nombre_grupo, nominas_grupos.codigo AS codigo_grupo, conceptos.* FROM `conceptos`
+    LEFT JOIN nominas_grupos ON nominas_grupos.id=conceptos.nomina_grupo
+     WHERE nomina_grupo = ? ORDER BY nom_concepto");
+    $stmt->bind_param('s', $g_nomina);
     $stmt->execute();
     $result = $stmt->get_result();
     if ($result->num_rows > 0) {
@@ -20,6 +24,7 @@ if (isset($_POST["tabla"])) {
 
     $nombre = clear($_POST["nombre"]);
     $tipo = $_POST["tipo"];
+    $nomina_g = $_POST["nomina_g"];
     $partida = clear($_POST["partida"]);
     $tipo_calculo = clear($_POST["tipo_calculo"]);
     $valor = clear($_POST["valor"]);
@@ -57,11 +62,11 @@ if (isset($_POST["tabla"])) {
         }
 
         // Insertar en `conceptos`
-        $stmt = mysqli_prepare($conexion, "INSERT INTO `conceptos` (nom_concepto, tipo_concepto, cod_partida, tipo_calculo, valor, maxval, tipo_calculo_origen, codigo_concepto) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt = mysqli_prepare($conexion, "INSERT INTO `conceptos` (nom_concepto, nomina_grupo, tipo_concepto, cod_partida, tipo_calculo, valor, maxval, tipo_calculo_origen, codigo_concepto) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
         if (!$stmt) {
             die('Error en la preparación del statement: ' . mysqli_error($conexion));
         }
-        $stmt->bind_param("ssssssss", $nombre, $tipo, $partida, $tipo_calculo, $valor, $maxValue, $tipo_calculo_origen, $codigo_concepto);
+        $stmt->bind_param("sssssssss", $nombre, $nomina_g, $tipo, $partida, $tipo_calculo, $valor, $maxValue, $tipo_calculo_origen, $codigo_concepto);
 
         if ($stmt->execute()) {
             echo 'ok';

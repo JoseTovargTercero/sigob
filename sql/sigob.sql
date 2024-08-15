@@ -657,7 +657,7 @@ INSERT INTO `conceptos` (`id`, `nom_concepto`, `cod_partida`, `tipo_concepto`, `
 (38, 'CONCEPTO FALSO', '3.00.00.00.00', 'A', 1, '15', 0, 0, '015');
 
 -- --------------------------------------------------------
-
+ALTER TABLE `conceptos` ADD `nomina_grupo` VARCHAR(255) NOT NULL AFTER `id`;
 --
 -- Estructura de tabla para la tabla `conceptos_aplicados`
 --
