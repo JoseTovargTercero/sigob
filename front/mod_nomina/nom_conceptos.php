@@ -133,17 +133,25 @@ if ($nomina) {
               <div class="row">
                 <div class="col-lg-6">
                   <div class="mb-3">
-                    <label class="form-label" for="tipo_calculo">Tipo de Calculo</label>
+                    <label class="form-label" for="tipo_calculo">Como se calcula?</label>
                     <select class="form-control" onchange="tipoCalculo(this.value)" name="tipo_calculo"
                       id="tipo_calculo">
                       <option value="">Seleccione</option>
-                      <option value="1">Monto neto en BS</option>
-                      <option value="2">Monto neto indexado</option>
-                      <option value="3">Porcentaje al sueldo base</option>
-                      <option value="4">Porcentaje al integral</option>
-                      <option value="5">Porcentaje a N conceptos</option>
-                      <option value="7">Valor multiplicado</option>
-                      <option value="6">Formulado</option>
+
+                      <optgroup label="Normales">
+
+                        <option value="1">Monto neto en BS</option>
+                        <option value="2">Monto neto indexado</option>
+                        <option value="3">Porcentaje al sueldo base</option>
+                        <option value="4">Porcentaje al integral</option>
+                        <option value="5">Porcentaje a N conceptos</option>
+                        <option value="7">Valor multiplicado</option>
+                        <option value="6">Formulado</option>
+                      </optgroup>
+                      <optgroup label="Especiales">
+                        <option value="8">Porcentaje al integral de otra nómina</option>
+                        <option value="9">Fracción en base al integral de otra nómina</option>
+                      </optgroup>
                     </select>
                   </div>
                   <section class="mb-3 hide" id="section-valor">
@@ -160,7 +168,8 @@ if ($nomina) {
                         <option value="1">Monto neto en BS</option>
                         <option value="2">Monto neto indexado</option>
                         <option value="3">Porcentaje al sueldo base</option>
-                        <option value="4">Porcentaje al integral</option>
+                        <option value="4">Porcentaje al integral de la misma nómina</option>
+                        <option value="5">Porcentaje al integral de otra nómina (del mismo grupo)</option>
                       </select>
                     </div>
 
@@ -216,9 +225,9 @@ if ($nomina) {
                 <div>
                   <h5 class="mb-0">Lista de conceptos</h5>
                   <?php
-                    if ($nomina) {
-                      echo '<span>Grupo de nómina <b>' . $codigo . ' - ' . $nombre . '</b></span>';
-                    }
+                  if ($nomina) {
+                    echo '<span>Grupo de nómina <b>' . $codigo . ' - ' . $nombre . '</b></span>';
+                  }
                   ?>
 
                 </div>
@@ -325,8 +334,9 @@ if ($nomina) {
               var nombre_grupo = data[i].nombre_grupo;
               var codigo_grupo = data[i].codigo_grupo;
               var id = data[i].id;
+              let nombre_nomina = (codigo_grupo == null ? '' : codigo_grupo + ' - ' + nombre_grupo);
 
-              $('#table tbody').append('<tr><td>' + codigo_grupo + ' - ' + nombre_grupo + '</td><td>' + codigo_concepto + ' </td><td>' + nombre + '</td><td>' + tipo_concepto[tipo] + '</td><td>' + cod_partida + '</td><td><a href="#!" class="badge me-2 bg-brand-color-1 text-white f-12" onclick="editar(' + id + ')">Editar</a></td><td><a href="#!" class="badge me-2 bg-brand-color-2 text-white f-12" onclick="eliminar(' + id + ')">Eliminar</a></td></tr>');
+              $('#table tbody').append('<tr><td>' + nombre_nomina + '</td><td>' + codigo_concepto + ' </td><td>' + nombre + '</td><td>' + tipo_concepto[tipo] + '</td><td>' + cod_partida + '</td><td><a href="#!" class="badge me-2 bg-brand-color-1 text-white f-12" onclick="editar(' + id + ')">Editar</a></td><td><a href="#!" class="badge me-2 bg-brand-color-2 text-white f-12" onclick="eliminar(' + id + ')">Eliminar</a></td></tr>');
             }
           }
         }
@@ -705,7 +715,7 @@ if ($nomina) {
           }
 
           if (nomina_g != '0') {
-              window.close()
+            window.close()
           }
 
         }
@@ -921,7 +931,8 @@ if ($nomina) {
       '1': 'BS',
       '2': '$',
       '3': '%',
-      '4': '%'
+      '4': '%',
+      '9': '%'
     }
 
     function validarContenido() {
@@ -1080,13 +1091,28 @@ if ($nomina) {
 
 
 
-    const titulos_placeholders = {
+
+    const labes = {
       '1': 'Monto neto en BS',
       '2': 'Monto neto indexado',
       '3': 'Porcentaje al sueldo base',
       '4': 'Porcentaje al integral',
-      '5': 'Porcentaje a N conceptos'
+      '5': 'Porcentaje a N conceptos',
+      '8': 'Porcentaje al integral de otra nomina',
+      '9': 'Fracción en base al integral de otra nomina',
     }
+
+    const titulos_placeholders = {
+      '1': 'Indique el monto expresado en BS',
+      '2': 'Indique el monto expresado en $',
+      '3': 'Indique el porcentaje',
+      '4': 'Indique el porcentaje',
+      '5': 'Indique el porcentaje',
+      '8': 'Indique el porcentaje',
+      '9': 'Indique el divisor',
+    }
+
+
 
     /**
      * Updates the visibility of sections based on the selected type.
@@ -1121,7 +1147,7 @@ if ($nomina) {
       } else {
         $('.section-formulado').addClass('hide');
         $('#section-valor').removeClass('hide');
-        $('#section-valor label').html(titulos_placeholders[type]);
+        $('#section-valor label').html(labes[type]);
         $('#section-valor input').attr('placeholder', titulos_placeholders[type]);
       }
     }

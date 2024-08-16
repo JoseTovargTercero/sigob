@@ -6,10 +6,19 @@ require_once '../sistema_global/notificaciones.php';
 if (isset($_POST["tabla"])) {
     $g_nomina = $_POST["g_nomina"];
 
-    $stmt = mysqli_prepare($conexion, "SELECT nominas_grupos.nombre AS nombre_grupo, nominas_grupos.codigo AS codigo_grupo, conceptos.* FROM `conceptos`
+    if ($g_nomina == '0') {
+        $stmt = mysqli_prepare($conexion, "SELECT nominas_grupos.nombre AS nombre_grupo, nominas_grupos.codigo AS codigo_grupo, conceptos.* FROM `conceptos`
+    LEFT JOIN nominas_grupos ON nominas_grupos.id=conceptos.nomina_grupo
+     ORDER BY nom_concepto");
+    }else {
+        $stmt = mysqli_prepare($conexion, "SELECT nominas_grupos.nombre AS nombre_grupo, nominas_grupos.codigo AS codigo_grupo, conceptos.* FROM `conceptos`
     LEFT JOIN nominas_grupos ON nominas_grupos.id=conceptos.nomina_grupo
      WHERE nomina_grupo = ? ORDER BY nom_concepto");
-    $stmt->bind_param('s', $g_nomina);
+        $stmt->bind_param('s', $g_nomina);
+    }
+
+
+
     $stmt->execute();
     $result = $stmt->get_result();
     if ($result->num_rows > 0) {
