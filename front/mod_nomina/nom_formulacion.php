@@ -131,7 +131,7 @@ while ($r = $query->fetch_object()) {
                                   <span id="prefijo_nomina"><?php echo $codigo . ' ' . $nombre ?></span> &nbsp;
                                   <span id="prefijo_nomina2"></span>
                                 </span>
-                                <input type="text" class="form-control" id="nombre_nomina" aria-describedby="Nombre de la nomina">
+                                <input type="text" value="hola" class="form-control" id="nombre_nomina" aria-describedby="Nombre de la nomina">
                               </div>
                             </div>
 
@@ -143,9 +143,9 @@ while ($r = $query->fetch_object()) {
                               <label class="form-label">Frecuencia de pago</label>
                               <select class="form-control" id="frecuencia_pago">
                                 <option value="">Seleccione</option>
-                                <option value="1">Semanal</option>
-                                <option value="2">Quincenal</option>
-                                <option value="4">Una vez al mes</option>
+                                <option class="_normal" value="2">Quincenal</option>
+                                <option class="_normal" value="1">Semanal</option>
+                                <option class="_especial" value="3">Una vez al mes</option>
                               </select>
                             </div>
                           </div>
@@ -163,9 +163,9 @@ while ($r = $query->fetch_object()) {
                             <div class="mb-3">
                               <label class="form-label">Tipo de pago</label>
                               <select class="form-control" id="tipo_pago">
-                                <option value="">Seleccione</option>
                                 <option value="1">Estándar</option>
-                                <option value="2">Diferencia de sueldo</option>
+                                <option value="">Seleccione</option>
+                                <option class="_normal" value="2">Diferencia de sueldo</option>
                               </select>
                             </div>
                           </div>
@@ -177,7 +177,7 @@ while ($r = $query->fetch_object()) {
                   <div class="d-flex w-100 mt-3">
                     <div class="d-flex m-a">
                       <div class="me-2"><button class="btn btn-secondary disabled">Regresar</button></div>
-                      <div class="next"><button class="btn btn-secondary mt-3 mt-md-0" onclick="nextStep('1')">Siguiente</button></div>
+                      <div class="next"><button class="btn btn-primary mt-3 mt-md-0" onclick="nextStep('1')">Siguiente</button></div>
                     </div>
                   </div>
 
@@ -211,8 +211,8 @@ while ($r = $query->fetch_object()) {
                           <div class="input-group">
                             <select class="form-control" id="concepto_aplicar">
                               <option value="">Seleccione</option>
-                              <option value="sueldo_base">-- SUELDO BASE --</option>
-                              <option id="diferencia_sueldoconcepto" style="display: none;" value="sueldo_diferencia">-- DIFERENCIA DE SUELDO --</option>
+                              <option class="_normal" value="sueldo_base">-- SUELDO BASE --</option>
+                              <option class="_normal" id="diferencia_sueldoconcepto" style="display: none;" value="sueldo_diferencia">-- DIFERENCIA DE SUELDO --</option>
                             </select>
 
                             <div class="btn-group">
@@ -232,8 +232,8 @@ while ($r = $query->fetch_object()) {
                         </div>
 
 
-                        <div class="mb-3" id="section_fechas">
-                          <label class="form-label" for="fechas_aplicar">¿Cuando se debe aplicar el conceto?</label>
+                        <div class="mb-3 _normal" id="section_fechas">
+                          <label class="form-label" for="fechas_aplicar">¿Cuando se debe aplicar el concepto?</label>
                           <select multiple="" class="form-select" id="fechas_aplicar">
                           </select>
                           <small>Mantén presionada la tecla shift o presiona ctrl para selección múltiple.</small>
@@ -280,6 +280,39 @@ while ($r = $query->fetch_object()) {
                         </section>
 
 
+                        
+
+                        <div class="mb-3 _especial">
+                          <div class="row">
+                          <div class="col-lg-6 mb-3">
+                            <label for="multiplicador" class="form-label">Multiplicador del concepto</label>
+                            <input type="text" class="form-control" value="1" onchange="minValue(this.value, 1)" id="multiplicador">
+                          </div>
+                          <div class="col-lg-6 mb-3">
+                            <label for="otra_nomina" class="form-label">Nominas</label>
+                           <select id="otra_nomina" class="form-control">
+                            <option value="">Seleccione</option>
+                            <?php
+                                $stmt = mysqli_prepare($conexion, "SELECT * FROM `nominas` WHERE tipo='1' AND grupo_nomina = $i");
+                                $stmt->execute();
+                                $result = $stmt->get_result();
+                                if ($result->num_rows > 0) {
+                                  while ($row = $result->fetch_assoc()) {
+                                    $id = $row['id'];
+                                    $nomina = $row['nombre'];
+                                    echo "<option value='$id'>$nomina</option>";
+                                  }
+                                }
+                                $stmt->close();
+  
+                                ?>
+                           </select>
+                          </div>
+                          </div>
+                        </div>
+
+
+
                         <section id="n_conceptos_porcentajes" class="hide mb-3">
 
                           <label class="form-label" for="concepto_aplicados">Conceptos ya aplicados</label>
@@ -291,7 +324,7 @@ while ($r = $query->fetch_object()) {
 
                         </section>
 
-                        <section id="aplicacion_conceptos-options" class="hide">
+                        <section id="aplicacion_conceptos-options" class="hide mb-3">
                           <div class="mb-3">
                             <label class="form-label" for="tipo_aplicacion_concept">¿Como desea aplicar el concepto?</label>
                             <select class="form-control" id="tipo_aplicacion_concept">
@@ -359,10 +392,6 @@ while ($r = $query->fetch_object()) {
                           </div>
                         </section>
 
-
-
-
-
                         <div class="d-flex justify-content-between mt-3">
                           <button class="btn btn-secondary" onclick="setViewRegistro()">Cancelar</button>
                           <button class="btn btn-primary" id="guardar_concepto">Guardar concepto</button>
@@ -389,7 +418,7 @@ while ($r = $query->fetch_object()) {
                     <div class="d-flex w-100 mt-3">
                       <div class="d-flex m-a">
                         <div class=" me-2"><button class="previous btn btn-secondary" onclick="beforeStep('1')">Regresar</button></div>
-                        <div class="next"><button class="previous btn btn-secondary mt-3 mt-md-0" onclick="nextStep('2')">Siguiente</button></div>
+                        <div class="next"><button class="previous btn btn-primary mt-3 mt-md-0" onclick="nextStep('2')">Siguiente</button></div>
                       </div>
                     </div>
                   </div>
@@ -444,6 +473,58 @@ while ($r = $query->fetch_object()) {
     let textarea = 't_area-1';
 
 
+
+
+      /**
+       * Validates if the given value is less than the minimum value.
+       * If the value is less than the minimum, it displays an error toast message and sets the value to the minimum.
+       *
+       * @param {number} valor - The value to be validated.
+       * @param {number} minimo - The minimum value allowed.
+       * @returns {void}
+       */
+      function minValue(valor, minimo){
+        if(valor < minimo){
+          toast_s('error', 'El valor minimo es ' + minimo)
+          document.getElementById('multiplo').value = minimo
+        }
+      }
+
+
+    function get_tipo_nomina(){
+      let tipo_nomina = document.getElementById('tipo_nomina').value
+      setFrecueciaPago()
+      if(tipo_nomina == 2){
+        // el select 'frecuencia_pago' pago se cambia a '3'
+        // los options con clase 'frecuencia_normal' desaparecen y se muestra el option con clase 'frecuencia_especial'
+        document.getElementById('frecuencia_pago').value = 3
+        $('._normal').hide()
+        $('._especial').show()
+      }else{
+        // el select 'frecuencia_pago' pago se cambia a '2'
+        // los options con clase 'frecuencia_normal' aparecen y se oculta el option con clase 'frecuencia_especial'
+        document.getElementById('frecuencia_pago').value = ''
+        $('._normal').show()
+        $('._especial').hide()
+      }
+    }
+
+    document.getElementById('tipo_nomina').addEventListener('click', get_tipo_nomina)
+
+
+
+
+
+    /**
+     * Function to create a concept.
+     *
+     * This function opens a new window to the 'nom_conceptos.php' page with the 'grupo_nomina' parameter.
+     * It also shows a loading spinner with the ID 'cargando'.
+     * 
+     * It sets up an interval to check if the popup window is closed. Once the window is closed, it clears the interval and calls the 'getConceptos' function with the 'verificar' parameter.
+     *
+     * @return void
+     */
     function creaConcepto() {
       let grupo_nomina = "<?php echo $i ?>";
       var procesoRegistro = window.open('nom_conceptos.php?n=' + grupo_nomina);
@@ -542,7 +623,7 @@ while ($r = $query->fetch_object()) {
           tabla_empleados: true
         },
         success: function(response) {
-          console.log(response)
+        //  console.log(response)
           let empleados = JSON.parse(response);
           let tabla = '';
 
@@ -633,7 +714,7 @@ while ($r = $query->fetch_object()) {
      * @returns {Promise} - A promise that resolves with the parsed JSON response from the server.
      */
     function loadData(value, filtro) {
-      console.log(filtro)
+    //  console.log(filtro)
       return new Promise((resolve, reject) => {
         $.ajax({
           url: url_back,
@@ -686,10 +767,30 @@ while ($r = $query->fetch_object()) {
             conceptos_formulacion[d.id] = d;
           });
 
-          $('#concepto_aplicar').html('                     <option value="">Seleccione</option> <option value="sueldo_base">-- SUELDO BASE --</option><option id="diferencia_sueldoconcepto"  style="display: none;" value="sueldo_diferencia">-- DIFERENCIA DE SUELDO --</option>');
+          $('#concepto_aplicar').html(`
+          <option value="">Seleccione</option>
+          <option class="_normal" value="sueldo_base">-- SUELDO BASE --</option>
+          <option class="_normal" id="diferencia_sueldoconcepto"  style="display: none;" value="sueldo_diferencia">-- DIFERENCIA DE SUELDO --</option>
+          `);
           data1.forEach(d => {
-            $('#concepto_aplicar').append(`<option value="${d.id}">${d.nom_concepto}</option>`);
+            let clase;
+            if (d.tipo_calculo == '8' || d.tipo_calculo == '9') {
+              clase = '_especial';
+            } else {
+              clase = '_normal';
+            }
+
+            $('#concepto_aplicar').append(`<option class="${clase}" value="${d.id}">${d.nom_concepto}</option>`);
           });
+
+          let tipo_nomina = document.getElementById('tipo_nomina').value
+          if(tipo_nomina == 2){
+            $('._normal').hide()
+            $('._especial').show()
+          }else{
+            $('._normal').hide()
+            $('._especial').show()
+          }
         }
       } catch (error) {
         console.error('Error loading data:', error);
@@ -745,6 +846,8 @@ while ($r = $query->fetch_object()) {
         aplicacionConceptosOptions.removeClass('hide');
       } else if (tipoCalculo != '6') {
         aplicacionConceptosOptions.removeClass('hide');
+      } else if(tipoCalculo == '8' || tipoCalculo == '9'){
+        // enlista las nominas del mismo grupo
       } else {
         n_conceptos_porcentajes.toggleClass('hide', true);
         aplicacionConceptosOptions.toggleClass('hide', tipoCalculo == '6');
@@ -893,7 +996,7 @@ while ($r = $query->fetch_object()) {
      */
     async function guardar_concepto() {
       const concepto_aplicar = $('#concepto_aplicar').val();
-      let fechas_aplicar = $('#fechas_aplicar').val();
+      var fechas_aplicar = $('#fechas_aplicar').val();
       const concepto_aplicados = $('#concepto_aplicados').val();
       const nominas_restar = $('#nominas_restar').val()
       const frecuenciaPago = $('#frecuencia_pago').val();
@@ -972,7 +1075,6 @@ while ($r = $query->fetch_object()) {
         infoResolve = await cantidadFormulada(concepto_aplicar, Object.keys(empleadosFiltro))
         empleadosDelConcepto = infoResolve
         cantidad_t = infoResolve.length
-        console.log(cantidad_t)
       }
 
       if (semanas_anio == '' || semanas_anio == undefined) {
@@ -994,6 +1096,20 @@ while ($r = $query->fetch_object()) {
 
         fechas_aplicar = numeroSemanasSeleccionadas;
       }
+      
+      let tipo_nom = document.getElementById('tipo_nomina').value;
+      let multiplicador = document.getElementById('multiplicador').value;
+      let otra_nomina = document.getElementById('otra_nomina').value;
+      
+      multiplicador = (tipo_nom == '2' ? multiplicador : 1)
+      otra_nomina = (tipo_nom == '2' ? otra_nomina : null)
+
+      if (tipo_nom == '2') {
+        fechas_aplicar = ['fecha_unica']
+      }
+
+
+
       let concepto = {
         'concepto_id': concepto_aplicar,
         'nom_concepto': nombreConcepto,
@@ -1001,18 +1117,16 @@ while ($r = $query->fetch_object()) {
         'formulacionConcepto': {
           'TipoCalculo': tipoCalculo,
           'n_conceptos': concepto_aplicados, // Solo en caso de que tipoCalculo == 5
-          'emp_cantidad': cantidad_t
+          'emp_cantidad': cantidad_t,
+          'multiplicador': multiplicador,
+          'otra_nomina': otra_nomina
         },
         'tabulador': tabulador, // solo en caso de que sea sueldo_base
         'empleados': empleadosDelConcepto,
         'nombre_nomina': nombre_nomina,
         'nominas_restar': nominas_restar
       };
-
-
-
-
-      console.log(concepto)
+     console.log(concepto)
 
       conceptosAplicados[concepto_aplicar] = concepto;
 
@@ -1068,8 +1182,8 @@ while ($r = $query->fetch_object()) {
         '2': `
       <option value="q1">Primera quincena</option>
       <option value="q2">Segunda quincena</option>`,
-        '4': `
-      <option value="um">Pago Unico Mensual</option>`,
+        '3': `
+      <option selected value="um">Pago Unico Mensual</option>`,
       };
 
       const value = this.value;
@@ -1150,7 +1264,7 @@ while ($r = $query->fetch_object()) {
             empleados: e
           },
           success: function(response) {
-            console.log(response)
+          //  console.log(response)
             try {
               resolve(JSON.parse(response));
             } catch (parseError) {
@@ -1341,6 +1455,19 @@ while ($r = $query->fetch_object()) {
         } catch (error) {
           return toast_s('error', error);
         }
+        /*
+        
+        let tipo_nomina = document.getElementById('tipo_nomina').value
+        if(tipo_nomina == 2){
+          document.querySelectorAll('._normal').forEach(e => e.style.display = 'none')
+          document.querySelector('._especial').style.display = 'block'
+          console.log('especial')
+        }else{
+          document.querySelectorAll('._normal').forEach(e => e.style.display = 'block')
+          document.querySelector('._especial').style.display = 'none'
+        }
+           */
+
       } else if (step == '2') {
         if (Object.keys(conceptosAplicados).length === 0) {
           return toast_s('error', 'Debe seleccionar al menos un concepto');
@@ -1547,7 +1674,7 @@ while ($r = $query->fetch_object()) {
             });
 
           } else {
-            console.log(response.message);
+         //   console.log(response.message);
             toast_s('error', 'Error: ' + response.message);
           }
         },
