@@ -191,13 +191,13 @@ const getComparacionNomina2 = async ({ nombre_nomina }) => {
   }
 }
 
-const calculoNomina = async ({ nombre, identificador }) => {
+const calculoNomina = async ({ nombre, identificador, tipo }) => {
   showLoader()
   console.log(nombre, identificador)
   try {
     let res = await fetch(calculoNominaUrl, {
       method: 'POST',
-      body: JSON.stringify({ nombre: nombre, identificador }),
+      body: JSON.stringify({ nombre, identificador, tipo }),
     })
 
     let json = await res.json()

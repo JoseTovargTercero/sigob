@@ -32,6 +32,7 @@ let fieldList = {
   grupo: '',
   frecuencia: '',
   identificador: '',
+  tipo: '',
 }
 
 let fieldListErrors = {
@@ -180,14 +181,16 @@ export async function validateRequestForm({
       if (!e.target.value) return
 
       selectMes.parentElement.classList.add('hide')
-
-      fieldList.nomina = e.target.value
-      console.log(nominas)
-      fieldList.frecuencia = nominas.find(
+     let nominaFind = nominas.find(
         (nomina) => nomina.nombre === e.target.value
-      ).frecuencia
+      )
+      fieldList.nomina = e.target.value
 
-      // console.log(fieldList.frecuencia)
+      console.log(nominas)
+      fieldList.frecuencia = nominaFind.frecuencia
+      fieldList.tipo = nominaFind.tipo
+
+      console.log(fieldList)
 
       selectFrecuencia.innerHTML = ''
 
@@ -282,6 +285,7 @@ export async function validateRequestForm({
           calculoInformacion = await calculoNomina({
             nombre: fieldList.nomina,
             identificador: fieldList.identificador,
+            tipo: fieldList.tipo
           })
           console.log(calculoInformacion)
 
