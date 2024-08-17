@@ -992,6 +992,9 @@ function obtenerEmpleadoPorID($conexion, $id_empleado) {
 // Array para almacenar la información de los empleados
 $recibos_de_pago = array();
 
+// Inicializar la suma del salario base en el array de sumas de asignaciones
+$suma_asignaciones['salario_base'] = 0;
+
 // Iterar sobre cada registro de conceptos_aplicados
 foreach ($conceptos_aplicados as &$concepto) {
     // Obtener los IDs de empleados de este concepto
@@ -1017,6 +1020,9 @@ foreach ($conceptos_aplicados as &$concepto) {
                 // Calcular el salario base del empleado
                 $empleado['salario_base'] = calculoSalarioBase($conexion, $empleado, $nombre, $identificador);
                 $empleado['id'] = $id_empleado;
+
+                // Sumar el salario base al array de sumas de asignaciones
+                $suma_asignaciones['salario_base'] += $empleado['salario_base'];
 
                 // Inicializar el salario integral con el salario base
                 $empleado['salario_integral'] = $empleado['salario_base'];
@@ -1348,6 +1354,12 @@ if ($semana_mes > 5) {
     if ($semana_mes == 1 || $semana_mes == 2 || $semana_mes == 3 || $semana_mes == 4 || $semana_mes == 5) {
             $monto2 = $row["monto"];
             $monto = round(($monto2 * 0.25), 2);
+        }
+}else{
+    if ($semana_mes == 1 || $semana_mes == 2 || $semana_mes == 3 || $semana_mes == 4) {
+            $monto2 = $row["monto"];
+            $monto = round(($monto2 * 0.25), 2);
+
 }
         }
        
@@ -1690,6 +1702,7 @@ function obtenerEmpleadoPorID($conexion, $id_empleado) {
 
 // Array para almacenar la información de los empleados
 $recibos_de_pago = array();
+$suma_asignaciones['SALARIO BASE'] = 0;
 
 // Iterar sobre cada registro de conceptos_aplicados
 foreach ($conceptos_aplicados as &$concepto) {
@@ -1716,8 +1729,17 @@ foreach ($conceptos_aplicados as &$concepto) {
                 // Calcular el salario base del empleado
                 $empleado['salario_base'] = calculoSalarioBase($conexion, $empleado, $nombre, $identificador, $frecuencia);
 
+                // Redondear el salario base a dos decimales
+                $empleado['salario_base'] = round($empleado['salario_base'], 2);
+
                 // Inicializar el salario integral con el salario base
                 $empleado['salario_integral'] = $empleado['salario_base'];
+
+                // Sumar el salario base redondeado al array de sumas de asignaciones
+                $suma_asignaciones['SALARIO BASE'] += $empleado['salario_base'];
+
+                // Redondear nuevamente para evitar decimales inesperados en la suma
+                $suma_asignaciones['SALARIO BASE'] = round($suma_asignaciones['SALARIO BASE'], 2);
 
                 // Inicializar arrays para asignaciones, deducciones y aportes
                 $empleado['asignaciones'] = array();
@@ -1770,6 +1792,7 @@ foreach ($conceptos_aplicados as &$concepto) {
         }
     }
 }
+
 $id_empleados_detalles = array();
 $total_a_pagar_empleados = array();
 $informacion_empleados = array();
