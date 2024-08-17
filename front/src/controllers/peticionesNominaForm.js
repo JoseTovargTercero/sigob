@@ -181,7 +181,7 @@ export async function validateRequestForm({
       if (!e.target.value) return
 
       selectMes.parentElement.classList.add('hide')
-     let nominaFind = nominas.find(
+      let nominaFind = nominas.find(
         (nomina) => nomina.nombre === e.target.value
       )
       fieldList.nomina = e.target.value
@@ -284,8 +284,9 @@ export async function validateRequestForm({
 
           calculoInformacion = await calculoNomina({
             nombre: fieldList.nomina,
+            frecuencia: fieldList.frecuencia,
             identificador: fieldList.identificador,
-            tipo: fieldList.tipo
+            tipo: fieldList.tipo,
           })
           console.log(calculoInformacion)
 
