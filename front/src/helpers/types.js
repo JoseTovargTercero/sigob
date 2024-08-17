@@ -19,8 +19,8 @@ const ALERT_TYPES = {
 const FRECUENCY_TYPES = {
   1: ['s1', 's2', 's3', 's4'],
   2: ['q1', 'q2'],
-  3: ['unico'],
-  4: ['unico'],
+  3: ['fecha_unica'],
+  4: ['fecha_unica'],
 }
 
 export { NOTIFICATIONS_TYPES, FRECUENCY_TYPES, ALERT_TYPES }
