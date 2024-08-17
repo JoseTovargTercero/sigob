@@ -26,6 +26,10 @@
               <li class="pc-item"><a class="pc-link"
                   href="<?php echo constant('URL') ?>front/mod_nomina/nom_errores">Estatus</a></li>
 
+              <li class="pc-item"><a class="pc-link"
+                  href="<?php echo constant('URL') ?>front/mod_nomina/nom_columnas">Nuevos campos</a></li>
+              <li class="pc-item"><a class="pc-link"
+                  href="<?php echo constant('URL') ?>front/mod_nomina/nom_valores">Asignar valores</a></li>
             </ul>
           </li>
 
