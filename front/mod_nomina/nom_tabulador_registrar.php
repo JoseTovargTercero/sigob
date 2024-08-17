@@ -26,7 +26,10 @@ require_once '../../back/sistema_global/session.php';
         </button>
       </header>
 
-      <div class="tabulator-matrix" id="tabulator-matrix"></div>
+      <div class="modal-box-content">
+        <div class="tabulator-matrix" id="tabulator-matrix"></div>
+
+      </div>
 
       <button class="btn-form btn btn-primary" id="tabulator-save-btn">ENVIAR TABULADOR</button>
 

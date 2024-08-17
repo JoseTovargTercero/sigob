@@ -2,6 +2,7 @@ import { validateDependenciaForm } from './src/controllers/dependenciasForm.js'
 import { loadDependenciaTable } from './src/controllers/dependenciasTable.js'
 import { validateEmployeeForm } from './src/controllers/empleadosForm.js'
 import { validateEmployeeTable } from './src/controllers/empleadosTable.js'
+import { loadRequestTableHistorico } from './src/controllers/peticionesHistoricoTable.js'
 import { validateRequestForm } from './src/controllers/peticionesNominaForm.js'
 // import { validatePayNomForm } from './src/controllers/pagarNominaForm.js'
 // import { validateEmployeePayForm } from './src/controllers/peticionesNominaForm.js'
@@ -21,6 +22,7 @@ d.addEventListener('DOMContentLoaded', (e) => {
   const employeeForm = d.getElementById('employee-form')
   const requestNomForm = d.getElementById('request-nom-form')
   const requestForm = d.getElementById('request-form')
+  const requestHistorial = d.getElementById('request-historial')
   const dependenciaTable = d.getElementById('dependencia-table')
 
   if (tabulatorForm) {
@@ -256,6 +258,10 @@ d.addEventListener('DOMContentLoaded', (e) => {
       btnNextId: 'btn-next',
       btnPreviusId: 'btn-previus',
     })
+  }
+
+  if(requestHistorial){
+    loadRequestTableHistorico()
   }
 
   if (requestNomForm) {

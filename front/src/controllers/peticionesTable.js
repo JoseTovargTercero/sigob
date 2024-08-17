@@ -4,8 +4,6 @@ import { validarIdentificador } from './peticionesNominaForm.js'
 const d = document
 const w = window
 
-let requestInfo
-
 const tableLanguage = {
   decimal: '',
   emptyTable: 'No hay datos disponibles en la tabla',
@@ -31,7 +29,7 @@ const tableLanguage = {
   },
 }
 
-let requestTable = new DataTable('#request-nom-table', {
+let requestTableConfirmado = new DataTable('#request-nom-table-confirmado', {
   columns: [
     { data: 'correlativo' },
     { data: 'nombre' },
@@ -57,33 +55,140 @@ let requestTable = new DataTable('#request-nom-table', {
   },
 })
 
+let requestTableRevision = new DataTable('#request-nom-table-revision', {
+  columns: [
+    { data: 'correlativo' },
+    { data: 'nombre' },
+    { data: 'status' },
+    { data: 'identificador' },
+    { data: 'fecha' },
+    // { data: 'acciones' },
+  ],
+  responsive: true,
+  scrollY: 350,
+  language: tableLanguage,
+  layout: {
+    topEnd: function () {
+      let toolbar = document.createElement('div')
+      toolbar.innerHTML = `
+      `
+
+      return toolbar
+    },
+    topStart: { search: { placeholder: 'Buscar...' } },
+    bottomStart: 'info',
+    bottomEnd: 'paging',
+  },
+})
+
 export async function loadRequestTable() {
   let peticiones = await getPeticionesNomina()
   let datosOrdenados = [...peticiones].sort(
     (a, b) => a.correlativo - b.correlativo
   )
-  console.log(peticiones)
-  let data = datosOrdenados.map((peticion) => {
-    return {
-      correlativo: peticion.correlativo,
-      nombre: peticion.nombre_nomina,
-      status: Number(peticion.status) === 1 ? 'Revisado' : 'Pendiente',
-      identificador: validarIdentificador(peticion.identificador),
-      fecha: peticion.creacion,
-      acciones: `
-      <button class="btn btn-primary btn-sm" data-correlativo="${
-        peticion.correlativo
-      }" ${
-        Number(peticion.status) === 0 ? 'disabled' : ''
-      } id="btn-show-request">Informacion</button>
-     `,
+
+  let dataObj = {
+    revision: [],
+    confirmado: [],
+  }
+
+  datosOrdenados.forEach((peticion) => {
+    if (
+      Number(peticion.status) === 1 &&
+      Number(peticion.status_Archivos) === 0
+    ) {
+      dataObj.confirmado.push({
+        correlativo: peticion.correlativo,
+        nombre: peticion.nombre_nomina,
+        status: `<span class="btn btn-success btn-sm">Revisado sin descargar</span>`,
+        identificador: validarIdentificador(peticion.identificador),
+        fecha: peticion.creacion,
+        //   acciones: `
+        //   <button class="btn btn-primary btn-sm" data-correlativo="${
+        //     peticion.correlativo
+        //   }" ${
+        //     Number(peticion.status) === 0 ? 'disabled' : ''
+        //   } id="btn-show-request">Informacion</button>
+        //  `,
+      })
+    }
+
+    if (Number(peticion.status) === 0) {
+      dataObj.revision.push({
+        correlativo: peticion.correlativo,
+        nombre: peticion.nombre_nomina,
+        status: `<span class="btn btn-warning">Pendiente</span>`,
+        identificador: validarIdentificador(peticion.identificador),
+        fecha: peticion.creacion,
+        acciones: `
+        <button class="btn btn-primary btn-sm" data-correlativo="${
+          peticion.correlativo
+        }" ${
+          Number(peticion.status) === 0 ? 'disabled' : ''
+        } id="btn-show-request">Informacion</button>
+       `,
+      })
     }
   })
 
-  requestTable.clear().draw()
+  console.log(peticiones)
+  console.log(dataObj)
+  // let data = datosOrdenados.map((peticion) => {
+  //   return {
+  //     correlativo: peticion.correlativo,
+  //     nombre: peticion.nombre_nomina,
+  //     status: Number(peticion.status) === 1 ? 'Revisado' : 'Pendiente',
+  //     identificador: validarIdentificador(peticion.identificador),
+  //     fecha: peticion.creacion,
+  //     acciones: `
+  //     <button class="btn btn-primary btn-sm" data-correlativo="${
+  //       peticion.correlativo
+  //     }" ${
+  //       Number(peticion.status) === 0 ? 'disabled' : ''
+  //     } id="btn-show-request">Informacion</button>
+  //    `,
+  //   }
+  // })
+
+  requestTableConfirmado.clear().draw()
+  requestTableRevision.clear().draw()
+
+  requestTableConfirmado.rows.add(dataObj.confirmado).draw()
+  requestTableRevision.rows.add(dataObj.revision).draw()
 
   // console.log(datosOrdenados)
-  requestTable.rows.add(data).draw()
+}
+
+d.addEventListener('click', (e) => {
+  if (e.target.dataset.tableid) {
+    console.log(e.target.dataset)
+    mostrarTabla(e.target.dataset.tableid)
+    d.querySelectorAll('.nav-link').forEach((el) => {
+      el.classList.remove('active')
+    })
+
+    e.target.classList.add('active')
+  }
+})
+
+function mostrarTabla(tablaId) {
+  let confirmadoId = 'request-table-confirmado'
+  let revisionId = 'request-table-revision'
+
+  let confirmadoTable = d.getElementById(`${confirmadoId}-container`)
+  let revisionTable = d.getElementById(`${revisionId}-container`)
+
+  if (tablaId === confirmadoId) {
+    confirmadoTable.classList.add('d-block')
+    confirmadoTable.classList.remove('d-none')
+    revisionTable.classList.add('d-none')
+    revisionTable.classList.remove('d-block')
+  } else if (tablaId === revisionId) {
+    confirmadoTable.classList.add('d-none')
+    confirmadoTable.classList.remove('d-block')
+    revisionTable.classList.add('d-block')
+    revisionTable.classList.remove('d-none')
+  }
 }
 
 // `

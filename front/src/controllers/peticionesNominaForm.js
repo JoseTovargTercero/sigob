@@ -73,7 +73,14 @@ export async function validateRequestForm({
 }) {
   loadRequestTable()
   let requestForm = d.getElementById(requestFormId)
-  let requestTable = d.getElementById(requestTableId)
+  let requestTableRevision = d.getElementById(
+    'request-table-revision-container'
+  )
+  let requestTableConfirmado = d.getElementById(
+    'request-table-confirmado-container'
+  )
+  let requestTableOptions = d.getElementById('request-table-options')
+
   let newRequestForm = d.getElementById(newRequestFormId)
   let requestFormInformation = d.getElementById('request-form-information')
   let requestFormInformationBody = d.getElementById(
@@ -276,6 +283,7 @@ export async function validateRequestForm({
             nombre: fieldList.nomina,
             identificador: fieldList.identificador,
           })
+          console.log(calculoInformacion)
 
           let nominaMapped = { ...calculoInformacion }
 
@@ -349,16 +357,29 @@ export async function validateRequestForm({
         e.target.classList.remove('active')
 
         e.target.textContent = 'Nueva petición'
-        requestTable.classList.remove('hide')
+
+        requestTableRevision.classList.add('d-block')
+        requestTableConfirmado.classList.add('d-none')
+        requestTableRevision.classList.remove('d-none')
+        requestTableConfirmado.classList.remove('d-block')
+        requestTableOptions.classList.remove('hide')
+
         newRequestForm.classList.add('hide')
         requestFormInformation.classList.add('hide')
 
-        location.reload()
+        // location.reload()
+        resetForm()
       } else {
         e.target.classList.add('active')
 
         e.target.textContent = 'Cancelar petición'
-        requestTable.classList.add('hide')
+
+        requestTableRevision.classList.add('d-none')
+        requestTableConfirmado.classList.add('d-none')
+        requestTableRevision.classList.remove('d-block')
+        requestTableConfirmado.classList.remove('d-block')
+        requestTableOptions.classList.add('hide')
+
         newRequestForm.classList.remove('hide')
         // requestFormInformation.classList.remove('hide')
       }
@@ -577,7 +598,7 @@ export async function validateRequestForm({
             resetForm()
             // Deshabilitar
             btnPrevius.setAttribute('disabled', '')
-            formFocus--
+
             validateNavPill()
           },
         })
@@ -601,8 +622,22 @@ export async function validateRequestForm({
   })
 
   function resetForm() {
+    // Resetear fo rmulario
     newRequestForm.reset()
+
+    calculoInformacion = ''
+    nominas = ''
+    employeeNewStatus = []
+    // Volocar la vista en la primera parte del formulario
+    formFocus = 1
+    requestStepPart1.classList.remove('hide')
+    requestStepPart2.classList.add('hide')
+    requestStepPart3.classList.add('hide')
+
+    validateNavPill()
+    // Ocultar información adicional
     requestFormInformation.classList.add('hide')
+    // Eliminar cards de información
     let employeePayTableCard = d.getElementById('request-employee-table-card')
     let card = d.getElementById('employee-new-status-card')
     let requestComparationContainer = d.getElementById(
@@ -612,6 +647,7 @@ export async function validateRequestForm({
     if (card) card.remove()
     if (requestComparationContainer) requestComparationContainer.remove()
 
+    // Resetear lista de valores
     for (let key in fieldList) {
       fieldList[key] = ''
     }

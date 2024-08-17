@@ -78,7 +78,7 @@
               <li class="pc-item"><a class="pc-link"
                   href="<?php echo constant('URL') ?>front/mod_nomina/nom_peticiones_form">Pagar nomina</a></li>
                   <li class="pc-item"><a class="pc-link"
-                  href="<?php echo constant('URL') ?>front/mod_nomina/nom_historico">Consulta de histórico</a></li>
+                  href="<?php echo constant('URL') ?>front/mod_nomina/nom_peticiones_historico">Consulta de histórico</a></li>
                   <li class="pc-item"><a class="pc-link"
                   href="<?php echo constant('URL') ?>front/mod_nomina/nom_resumen">Recibo de pago</a></li>
             </ul>
