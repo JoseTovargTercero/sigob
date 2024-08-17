@@ -19,7 +19,7 @@ export async function tabulatorCard({ id, elementToInsert }) {
 
   let tabulatorCardElement = `
     <div class='modal-window slide-up-animation' id='modal-tabulator'>
-      <div class='modal-box card w-90 h-80 overflow-auto'>
+      <div class='modal-box card w-90 overflow-auto'>
         <div class='row'>
           <div class='modal-box-header'>
             <h2 class='card-title'>${fieldList.nombre}</h2>
@@ -33,8 +33,8 @@ export async function tabulatorCard({ id, elementToInsert }) {
             </button>
           </div>
         </div>
-        <div class="tabulator-matrix" id="tabulator-matrix"></div>
-      </div>
+        <div class="modal-box-content" id="tabulator-matrix">
+        </div>
     </div>
   `
 
@@ -67,6 +67,7 @@ function generateMatrix({
 
   matrixElement.style.display = 'grid'
   matrixElement.style.gridTemplateRows = `repeat(${Number(rows) + 1}, 1fr)`
+  matrixElement.classList.add('tabulator-matrix')
 
   for (let i = 0; i <= rows; i++) {
     const matrixRow = d.createElement('div')

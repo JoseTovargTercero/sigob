@@ -50,7 +50,7 @@ require_once '../../back/sistema_global/session.php';
                 <div class="col-xl-12">
                     <div class="card" id="request-form">
                         <div class="card-header">
-                            <div class="d-flex align-items-center justify-content-between mb-2">
+                            <div class="d-flex align-items-center justify-content-between">
                                 <div>
                                     <h5 class="mb-0">Peticion de nomina</h5>
                                     <small class="text-muted mt-0">Administre las peticiones de nomina</small>
@@ -58,32 +58,11 @@ require_once '../../back/sistema_global/session.php';
                                 <button class="btn btn-primary" id="btn-new-request">Nueva petición</button>
 
                             </div>
-                            <nav class="nav nav-pills nav-justified" id="request-table-options">
-
-                                <button class="nav-link active" data-tableid="request-table-revision">Revision</button>
-                                <button class="nav-link" data-tableid="request-table-confirmado">Confirmadas</button>
-
-                            </nav>
                         </div>
-                        <div class="card-body request-table-container">
+                        <div class="card-body request-table-container ">
 
-                            <div class="d-block mb-2 mx-auto slide-up-animation" id="request-table-revision-container">
-                                <table id='request-nom-table-revision' class='table table-striped mx-auto'
-                                    style='width:100%'>
-                                    <thead>
-                                        <th class="w-5">CORRELATIVO</th>
-                                        <th class="w-10">NOMBRE</th>
-                                        <th class="w-10">STATUS</th>
-                                        <th class="w-10">IDENTIFICADOR</th>
-                                        <th class="w-5">FECHA</th>
-                                        <!-- <th class="w-5">ACCIONES</th> -->
-                                    </thead>
-                                    <tbody></tbody>
-                                </table>
-                            </div>
-                            <div class="d-none mb-2 mx-auto slide-up-animation" id="request-table-confirmado-container">
-                                <table id='request-nom-table-confirmado' class='table table-striped mx-auto'
-                                    style='width:100%'>
+                            <div class="mb-2 mx-auto slide-up-animation" id="request-table">
+                                <table id='request-nom-table' class='table table-striped mx-auto' style='width:100%'>
                                     <thead>
                                         <th class="w-5">CORRELATIVO</th>
                                         <th class="w-10">NOMBRE</th>
