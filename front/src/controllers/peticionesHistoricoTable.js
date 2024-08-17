@@ -1,4 +1,5 @@
 import { getPeticionesNomina } from '../api/peticionesNomina.js'
+import { nomReportCard } from '../components/nom_report_card.js'
 import { validarIdentificador } from './peticionesNominaForm.js'
 
 const d = document
@@ -31,7 +32,7 @@ const tableLanguage = {
   },
 }
 
-let requestTable = new DataTable('#request-nom-table', {
+let requestTable = new DataTable('#request-table-historial', {
   columns: [
     { data: 'correlativo' },
     { data: 'nombre' },
@@ -57,41 +58,16 @@ let requestTable = new DataTable('#request-nom-table', {
   },
 })
 
-export async function loadRequestTable() {
+export async function loadRequestTableHistorico() {
   let peticiones = await getPeticionesNomina()
   let datosOrdenados = [...peticiones].sort(
     (a, b) => a.correlativo - b.correlativo
   )
 
-  let dataObj = {
-    revision: [],
-    confirmados: [],
-  }
 
-  datosOrdenados.forEach((peticion) => {
-    if (
-      Number(peticion.status) === 1 &&
-      Number(peticion.status_Archivos) === 1
-    ) {
-      data.confirmados.push({
-        correlativo: peticion.correlativo,
-        nombre: peticion.nombre_nomina,
-        status: `<span class="btn btn-success">Revisado</span>`,
-        identificador: validarIdentificador(peticion.identificador),
-        fecha: peticion.creacion,
-        acciones: `
-        <button class="btn btn-primary btn-sm" data-correlativo="${
-          peticion.correlativo
-        }" ${
-          Number(peticion.status) === 0 ? 'disabled' : ''
-        } id="btn-show-request">Informacion</button>
-       `,
-      })
-    }
-  })
 
   console.log(peticiones)
-  let data = datosOrdenados.map((peticion) => {
+  let data = datosOrdenados.filter(peticion=> Number(peticion.status) !== 0 ).map((peticion) => {
     return {
       correlativo: peticion.correlativo,
       nombre: peticion.nombre_nomina,
@@ -113,6 +89,36 @@ export async function loadRequestTable() {
   // console.log(datosOrdenados)
   requestTable.rows.add(data).draw()
 }
+
+d.addEventListener('click', async e=>{
+  if (e.target.id === 'btn-show-request') {
+    e.preventDefault()
+    let peticiones = await getPeticionesNomina()
+    let peticion = peticiones.find(
+      (el) => el.correlativo === e.target.dataset.correlativo
+    )
+
+    console.log(peticion);
+  
+    // fieldList.frecuencia = peticion.frecuencia
+    // let reportCard = d.getElementById('modal-report')
+    // if (reportCard) reportCard.remove()
+  
+    // requestForm.insertAdjacentHTML(
+    //   'beforeend',
+    //   nomReportCard({ data: peticion })
+    // )
+  }
+  
+  // if (e.target.id === 'btn-close-report') {
+  //   let reportCard = d.getElementById('modal-report')
+  //   reportCard.remove()
+  // }
+
+})
+
+
+
 
 // `
 // <button class="btn btn-primary btn-sm" data-correlativo="${

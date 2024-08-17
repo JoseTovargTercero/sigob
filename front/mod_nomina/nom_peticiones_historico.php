@@ -48,7 +48,7 @@ require_once '../../back/sistema_global/session.php';
             <div class="row mb3">
                 <!-- [ worldLow section ] start -->
                 <div class="col-xl-12">
-                    <div class="card" id="request-form">
+                    <div class="card" id="request-historial">
                         <div class="card-header">
                             <div class="d-flex align-items-center justify-content-between">
                                 <div>
@@ -62,7 +62,7 @@ require_once '../../back/sistema_global/session.php';
                         <div class="card-body request-table-container ">
 
                             <div class="mb-2 mx-auto slide-up-animation" id="request-table">
-                                <table id='request-nom-table' class='table table-striped mx-auto' style='width:100%'>
+                                <table id='request-table-historial' class='table table-striped mx-auto' style='width:100%'>
                                     <thead>
                                         <th class="w-5">CORRELATIVO</th>
                                         <th class="w-10">NOMBRE</th>
@@ -211,7 +211,7 @@ require_once '../../back/sistema_global/session.php';
     <script src="../../src/assets/js/notificaciones.js"></script>
 
     <!-- <script type="module" src="../src/controllers/peticionesNominaForm.js"></script> -->
-    <script type="module" src="../src/controllers/peticionesTable.js"></script>
+    <script type="module" src="../src/controllers/peticionesHistoricoTable.js"></script>
     <script src="https://cdn.datatables.net/2.0.1/js/dataTables.js"></script>
     <script src="https://cdn.datatables.net/2.0.1/js/dataTables.bootstrap5.js"></script>
     <script src="../../src/assets/js/plugins/simplebar.min.js"></script>
