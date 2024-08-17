@@ -72,6 +72,7 @@
      */
 
     let empleadosFiltro = []
+    let empleadosDatos = []
 
     function aplicar_filtro(tipo, filtro, result_list) {
       empleadosFiltro = []
@@ -89,6 +90,8 @@
 
           empleados.forEach(e => {
             empleadosFiltro[e.id] = [e.id];
+            empleadosDatos[e.id] = [e.cedula, e.nombres];
+
             tabla += '<tr>';
             tabla += '<td>' + e.cedula + '</td>';
             tabla += '<td>' + e.nombres + '</td>';

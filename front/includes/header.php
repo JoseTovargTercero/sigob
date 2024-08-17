@@ -3,6 +3,8 @@
 
 <head>
   <meta charset="utf-8">
+  <!-- icon png -->
+  <link rel="icon" href="<?php echo constant('URL') ?>/src/assets/images/logo.png" type="image/png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">

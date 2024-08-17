@@ -3058,3 +3058,7 @@ transition: visibility 0s linear 0s, opacity 0.25s 0s, transform 0.25s;
 ._especial{
   display: none;
 }
+a.link {
+  color: #3a67b9 !important;
+  text-decoration: underline !important;
+}
