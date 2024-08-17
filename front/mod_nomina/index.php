@@ -567,7 +567,7 @@ $stmt->close();
       const onError = (response) => {
         console.log('Error:', response);
         toast_s('error', 'Error: ' + response);
-        // actualizar()
+        actualizar()
       };
 
       ajaxRequest.send(onSuccess, onError);
