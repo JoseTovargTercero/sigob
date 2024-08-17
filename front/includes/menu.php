@@ -6,7 +6,8 @@
     </div>
     <div class="navbar-content">
       <ul class="pc-navbar">
-        <?php if ($_SESSION["u_oficina_id"] == 1) { //nomina ?>
+        <?php if ($_SESSION["u_oficina_id"] == 1) { //nomina 
+        ?>
 
           <li class="pc-item pc-caption">
             <label>Nómina</label>
@@ -43,9 +44,9 @@
               </span>
               <span class="pc-mtext">Movimientos</span><span class="pc-arrow"><i class="ti ti-chevron-right"></i></span>
             </a>
-            <ul class="pc-submenu"> 
+            <ul class="pc-submenu">
               <li class="pc-item"><a class="pc-link"
-                  href="<?php  echo constant('URL') ?>front/mod_nomina/nom_conceptos">Conceptos</a></li> 
+                  href="<?php echo constant('URL') ?>front/mod_nomina/nom_conceptos">Conceptos</a></li>
               <li class="pc-item"><a class="pc-link"
                   href="<?php echo constant('URL') ?>front/mod_nomina/nom_tabulador_tabla">Tabuladores</a></li>
               <li class="pc-item"><a class="pc-link"
@@ -53,7 +54,7 @@
               </li>
 
               <li class="pc-item"><a class="pc-link"
-              href="<?php echo constant('URL') ?>front/mod_nomina/nom_dependencias_tabla">Dependencias</a></li>
+                  href="<?php echo constant('URL') ?>front/mod_nomina/nom_dependencias_tabla">Dependencias</a></li>
               <!-- <li class="pc-item"><a class="pc-link"
                   href="<?php echo constant('URL') ?>front/mod_nomina/nom_empleados_registrar">Registrar Personal</a>
               </li> -->
@@ -77,13 +78,14 @@
                   href="<?php echo constant('URL') ?>front/mod_nomina/nom_grupos">Registro de nominas</a></li>
               <li class="pc-item"><a class="pc-link"
                   href="<?php echo constant('URL') ?>front/mod_nomina/nom_peticiones_form">Pagar nomina</a></li>
-                  <li class="pc-item"><a class="pc-link"
+              <li class="pc-item"><a class="pc-link"
                   href="<?php echo constant('URL') ?>front/mod_nomina/nom_peticiones_historico">Consulta de histórico</a></li>
-                  <li class="pc-item"><a class="pc-link"
+              <li class="pc-item"><a class="pc-link"
                   href="<?php echo constant('URL') ?>front/mod_nomina/nom_resumen">Recibo de pago</a></li>
             </ul>
           </li>
-        <?php } elseif ($_SESSION["u_oficina_id"] == 2) { //_registro_control ?>
+        <?php } elseif ($_SESSION["u_oficina_id"] == 2) { //_registro_control 
+        ?>
 
           <li class="pc-item pc-caption">
             <label>Registro y control</label>
@@ -91,47 +93,32 @@
           </li>
 
 
-          <li class="pc-item pc-hasmenu">
-            <a href="#!" class="pc-link">
-              <span class="pc-micon">
-                <i class='bx bx-group'></i>
-              </span>
-              <span class="pc-mtext">Gestión de Empleados</span><span class="pc-arrow"><i
-                  class="ti ti-chevron-right"></i></span>
-            </a>
-            <ul class="pc-submenu">
-              <li class="pc-item"><a class="pc-link"
-                  href="<?php echo constant('URL') ?>front/mod_registro_control/regcon_empleados_verificar">Nuevos
-                  empleados</a></li>
-              <li class="pc-item"><a class="pc-link"
-                  href="<?php echo constant('URL') ?>front/mod_registro_control/regcon_modificacion_empleados">Actualización
-                  de datos</a></li>
-            </ul>
-          </li>
 
-          <li class="pc-item pc-hasmenu">
-            <a href="#!" class="pc-link">
-              <span class="pc-micon">
+          <li class="pc-item">
+            <a href="<?php echo constant('URL') ?>front/mod_registro_control/index" class="pc-link">
+            <span class="pc-micon">
                 <i class='bx bx-file'></i>
               </span>
-              <span class="pc-mtext">Nómina</span><span class="pc-arrow"><i class="ti ti-chevron-right"></i></span>
-            </a>
-            <ul class="pc-submenu">
-              <li class="pc-item"><a class="pc-link"
-                  href="<?php echo constant('URL') ?>front/mod_registro_control/regcon_nomina_comparar">Pago de Nómina</a>
-              </li>
+            <span class="pc-mtext">Pagos de Nómina</span></a>
+          </li>
 
-
-
-            </ul>
+          <li class="pc-item">
+            <a href="<?php echo constant('URL') ?>front/mod_registro_control/regcom_reintegros" class="pc-link">
+            <span class="pc-micon">
+               <i class='bx bx-refresh'></i>
+              </span>
+            <span class="pc-mtext">Reintegros</span></a>
           </li>
 
 
-        <?php } elseif ($_SESSION["u_oficina_id"] == 3) {  //_relaciones_laborales ?>
+
+        <?php } elseif ($_SESSION["u_oficina_id"] == 3) {  //_relaciones_laborales 
+        ?>
           <li class="pc-item pc-caption">
             <label>Inicio</label>
             <i data-feather="sidebar"></i>
           </li>
+
           <li class="pc-item">
             <a href="<?php echo constant('URL') ?>front/mod_relaciones_laborales/index" class="pc-link">
               <span class="pc-micon"><i class='bx bx-detail'></i></span>
@@ -140,7 +127,8 @@
           </li>
 
 
-        <?php } elseif ($_SESSION["u_oficina_id"] == 4) { //_atencion_trabajador ?>
+        <?php } elseif ($_SESSION["u_oficina_id"] == 4) { //_atencion_trabajador 
+        ?>
 
         <?php } ?>
 
@@ -171,26 +159,6 @@
           </li>
 
         <?php } ?>
-
-
-
-
-
-
-
-        <!--
-          <li class="pc-item">
-            <a href="other/sample-page.html" class="pc-link">
-              <span class="pc-micon"><i data-feather="sidebar"></i></span>
-              <span class="pc-mtext">Calculo</span>
-            </a>
-          </li>
-
--->
-
-
-
-
 
 
 

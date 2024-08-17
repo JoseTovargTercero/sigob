@@ -4284,7 +4284,7 @@ INSERT INTO `historico_reintegros` (`id`, `id_empleado`, `sueldo_base`, `asignac
 (652, '24', '324.69', '{\"CONTRIBUCION POR DISCAPACIDAD\":\"5\",\"PRIMA POR HIJO EMPLEADOS\":\"5\",\"PRIMA POR TRANSPORTE\":\"50\",\"PRIMA POR ANTIGUEDAD EMPLEADOS\":\"10\",\"PRIMA POR ESCALAFON\":\"5\"}', '[]', '[]', '399.69', '004 Empleados  Empleados Regional', '05-2024'),
 (653, '24', '324.69', '{\"CONTRIBUCION POR DISCAPACIDAD\":\"5\",\"PRIMA POR HIJO EMPLEADOS\":\"5\",\"PRIMA POR TRANSPORTE\":\"60\",\"PRIMA POR ANTIGUEDAD EMPLEADOS\":\"10\",\"PRIMA POR ESCALAFON\":\"5\"}', '[]', '[]', '409.69', '004 Empleados  Empleados Regional', '06-2024'),
 (654, '24', '324.69', '{\"CONTRIBUCION POR DISCAPACIDAD\":\"5\",\"PRIMA POR HIJO EMPLEADOS\":\"5\",\"PRIMA POR TRANSPORTE\":\"60\",\"PRIMA POR ANTIGUEDAD EMPLEADOS\":\"10\",\"PRIMA POR ESCALAFON\":\"5\"}', '[]', '[]', '409.69', '004 Empleados  Empleados Regional', '07-2024');
-
+ALTER TABLE `historico_reintegros` ADD `time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER `fecha`;
 -- --------------------------------------------------------
 
 --

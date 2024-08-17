@@ -5,7 +5,7 @@ require_once '../../back/sistema_global/session.php';
 <html lang="en">
 
 <head>
-  <title>Nuevos empleados</title>
+  <title>Reintegros</title>
   <!-- [Meta] -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
@@ -34,7 +34,7 @@ require_once '../../back/sistema_global/session.php';
           <div class="row align-items-center">
             <div class="col-md-12">
               <div class="page-header-title">
-                <h5 class="mb-0">Actualización de datos</h5>
+                <h5 class="mb-0">Reintegros</h5>
               </div>
             </div>
           </div>
@@ -48,8 +48,8 @@ require_once '../../back/sistema_global/session.php';
             <div class="card-header">
               <div class="d-flex align-items-start justify-content-between">
                 <div>
-                  <h5 class="mb-0">Actualizaciones por aprobar</h5>
-                  <small class="text-muded">Lista de empleados con actualizaciones pendientes</small>
+                  <h5 class="mb-0">Pago de reintegros</h5>
+                  <small class="text-muded">Gestione los pagos de reintegros a empleados</small>
                 </div>
               </div>
             </div>

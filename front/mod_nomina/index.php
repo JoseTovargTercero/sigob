@@ -58,7 +58,7 @@ $stmt->close();
       <!-- [ Main Content ] start -->
       <div class="row">
         <!-- [ Recent Users ] start -->
-        <div class="col-xl-12 col-md-6">
+        <div class="col-lg-12 col-md-6">
           <div class="card Recent-Users">
             <div class="card-header">
               <h5>Reportes</h5>
@@ -327,7 +327,7 @@ $stmt->close();
         </div>
         <!-- [ Recent Users ] end -->
 
-        <div class="col-xl-6 col-md-6">
+        <div class="col-lg-6 col-md-6">
           <div class="card">
             <div class="card-header">
               <h5>Reportes guardados</h5>
@@ -352,7 +352,7 @@ $stmt->close();
 
 
         <!-- [ worldLow section ] start -->
-        <div class="col-xl-6 col-md-6">
+        <div class="col-lg-6 col-md-6">
           <div class="card">
             <div class="card-header">
               <h5>Estado del sistema</h5>
