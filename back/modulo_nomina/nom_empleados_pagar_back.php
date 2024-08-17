@@ -14,7 +14,8 @@ if (isset($_POST["select"])) {
         while ($row = $result->fetch_assoc()) {
             $data[] = array(
                 'nombre' => $row['nombre'],
-                'frecuencia' => $row['frecuencia']
+                'frecuencia' => $row['frecuencia'],
+                'tipo' => $row['tipo']
             );
         }
     }
