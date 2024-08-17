@@ -630,6 +630,11 @@ export async function validateRequestForm({
     // Resetear fo rmulario
     newRequestForm.reset()
 
+    let option = `<option value="">Grupo de nómina vacío</option>`
+
+    selectNomina.innerHTML = ''
+    selectNomina.insertAdjacentHTML('beforeend', option)
+
     calculoInformacion = ''
     nominas = ''
     employeeNewStatus = []
