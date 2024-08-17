@@ -3,9 +3,9 @@ require_once '../sistema_global/conexion.php';
 require_once '../sistema_global/session.php';
 header('Content-Type: application/json');
 
-// Consulta SQL para obtener registros de peticiones y la frecuencia de nominas con nombres coincidentes y status_archivos igual a 0
+// Consulta SQL para obtener registros de peticiones, la frecuencia de nóminas y el tipo, con nombres coincidentes y status_archivos igual a 0
 $sql = "
-    SELECT p.*, n.frecuencia
+    SELECT p.*, n.frecuencia, n.tipo
     FROM peticiones p
     JOIN nominas n ON p.nombre_nomina = n.nombre
     WHERE p.status_archivos = 0
