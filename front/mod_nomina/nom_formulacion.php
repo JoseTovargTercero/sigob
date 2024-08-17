@@ -131,7 +131,7 @@ while ($r = $query->fetch_object()) {
                                   <span id="prefijo_nomina"><?php echo $codigo . ' ' . $nombre ?></span> &nbsp;
                                   <span id="prefijo_nomina2"></span>
                                 </span>
-                                <input type="text" value="hola" class="form-control" id="nombre_nomina" aria-describedby="Nombre de la nomina">
+                                <input type="text" class="form-control" id="nombre_nomina" aria-describedby="Nombre de la nomina">
                               </div>
                             </div>
 
@@ -163,8 +163,8 @@ while ($r = $query->fetch_object()) {
                             <div class="mb-3">
                               <label class="form-label">Tipo de pago</label>
                               <select class="form-control" id="tipo_pago">
-                                <option value="1">Estándar</option>
                                 <option value="">Seleccione</option>
+                                <option value="1">Estándar</option>
                                 <option class="_normal" value="2">Diferencia de sueldo</option>
                               </select>
                             </div>
@@ -493,23 +493,24 @@ while ($r = $query->fetch_object()) {
 
     function get_tipo_nomina(){
       let tipo_nomina = document.getElementById('tipo_nomina').value
+      let frecuencia_pago = document.getElementById('frecuencia_pago').value
       setFrecueciaPago()
-      if(tipo_nomina == 2){
-        // el select 'frecuencia_pago' pago se cambia a '3'
-        // los options con clase 'frecuencia_normal' desaparecen y se muestra el option con clase 'frecuencia_especial'
+
+
+      if(tipo_nomina === '2'){
         document.getElementById('frecuencia_pago').value = 3
-        $('._normal').hide()
-        $('._especial').show()
+        $('._normal').addClass('hide')
+        $('._especial').removeClass('hide')
       }else{
-        // el select 'frecuencia_pago' pago se cambia a '2'
-        // los options con clase 'frecuencia_normal' aparecen y se oculta el option con clase 'frecuencia_especial'
-        document.getElementById('frecuencia_pago').value = ''
-        $('._normal').show()
-        $('._especial').hide()
+        if (frecuencia_pago == '3') {
+          document.getElementById('frecuencia_pago').value = ''
+        }
+        $('._normal').removeClass('hide')
+        $('._especial').addClass('hide')
       }
     }
 
-    document.getElementById('tipo_nomina').addEventListener('click', get_tipo_nomina)
+    document.getElementById('tipo_nomina').addEventListener('change', get_tipo_nomina)
 
 
 
@@ -610,9 +611,9 @@ while ($r = $query->fetch_object()) {
      * @param {string} filtro - The filter criteria.
      * @param {string} result_list - The ID of the HTML element where the filtered employee list will be displayed.
      */
-    let empleadosFiltro = []
+    var empleadosFiltro = []
 
-    function aplicar_filtro(tipo, filtro, result_list) {
+    function aplicar_filtro(tipo, filtro, result_list = null) {
       empleadosFiltro = []
       $.ajax({
         url: '../../back/modulo_nomina/nom_formulacion_back',
@@ -635,13 +636,12 @@ while ($r = $query->fetch_object()) {
             tabla += '<td class="text-center"><input class="form-check-input itemCheckbox"  type="checkbox" value="' + e.id + '"></td>';
             tabla += '</tr>';
           });
-
-          document.getElementById(result_list).innerHTML = tabla;
+          if (result_list != null) {
+            document.getElementById(result_list).innerHTML = tabla;
+          }
         }
       });
     }
-
-
 
 
     /**
@@ -658,24 +658,6 @@ while ($r = $query->fetch_object()) {
       //guardar_empleados_nomina()
     }
 
-
-
-    /**
-     * This function is responsible for saving the selected employees for the payroll.
-     * It retrieves all the selected checkboxes and adds the corresponding employees to the 'empleadosSeleccionados' array.
-     */
-    /*   function guardar_empleados_nomina() {
-         empleadosSeleccionados = []
-         let itemCheckboxes = document.querySelectorAll('.itemCheckbox');
-         itemCheckboxes.forEach(checkbox => {
-           if (checkbox.checked) {
-             empleadosSeleccionados.push(empleadosFiltro[checkbox.value]);
-           }
-         });
-       }*/
-
-
-    /* ACA SE CARGA LA LISTA DE EMPLEADOS DEL 'NOM_MODIFICAR' */
 
 
     /**
@@ -714,7 +696,7 @@ while ($r = $query->fetch_object()) {
      * @returns {Promise} - A promise that resolves with the parsed JSON response from the server.
      */
     function loadData(value, filtro) {
-    //  console.log(filtro)
+      //console.log(filtro)
       return new Promise((resolve, reject) => {
         $.ajax({
           url: url_back,
@@ -784,12 +766,12 @@ while ($r = $query->fetch_object()) {
           });
 
           let tipo_nomina = document.getElementById('tipo_nomina').value
-          if(tipo_nomina == 2){
-            $('._normal').hide()
-            $('._especial').show()
+          if(tipo_nomina === '2'){
+            $('._normal').addClass('hide')
+            $('._especial').removeClass('hide')
           }else{
-            $('._normal').hide()
-            $('._especial').show()
+            $('._normal').removeClass('hide')
+            $('._especial').addClass('hide')
           }
         }
       } catch (error) {
@@ -799,10 +781,7 @@ while ($r = $query->fetch_object()) {
 
 
     getData('tabulador')
-  //  getData('conceptos')
-
-    
-    
+    //  getData('conceptos')
 
     document.getElementById('enlistar_conceptos').addEventListener('change', function () {
       getData('conceptos', this.value)
@@ -1072,7 +1051,8 @@ while ($r = $query->fetch_object()) {
       if (tipoCalculo !== 6) {
         cantidad_t = empleadosDelConcepto.length;
       } else {
-        infoResolve = await cantidadFormulada(concepto_aplicar, Object.keys(empleadosFiltro))
+
+        infoResolve = await cantidadFormulada(concepto_aplicar)
         empleadosDelConcepto = infoResolve
         cantidad_t = infoResolve.length
       }
@@ -1239,9 +1219,9 @@ while ($r = $query->fetch_object()) {
      * @param {array} empleados - The list of employees for whom the quantity is being calculated.
      * @returns {Promise<number>} - A promise that resolves to the formulated quantity.
      */
-    async function cantidadFormulada(concepto, empleados) {
+    async function cantidadFormulada(concepto) {
       try {
-        return await cargarCantidad(concepto, empleados);
+        return await cargarCantidad(concepto);
       } catch (error) {
         console.error('Error loading data:', error);
       }
@@ -1261,10 +1241,10 @@ while ($r = $query->fetch_object()) {
           type: 'POST',
           data: {
             concepto: c,
-            empleados: e
+            grupo: "<?php echo $i ?>" 
           },
           success: function(response) {
-          //  console.log(response)
+            console.log(response)
             try {
               resolve(JSON.parse(response));
             } catch (parseError) {
@@ -1455,18 +1435,7 @@ while ($r = $query->fetch_object()) {
         } catch (error) {
           return toast_s('error', error);
         }
-        /*
-        
-        let tipo_nomina = document.getElementById('tipo_nomina').value
-        if(tipo_nomina == 2){
-          document.querySelectorAll('._normal').forEach(e => e.style.display = 'none')
-          document.querySelector('._especial').style.display = 'block'
-          console.log('especial')
-        }else{
-          document.querySelectorAll('._normal').forEach(e => e.style.display = 'block')
-          document.querySelector('._especial').style.display = 'none'
-        }
-           */
+
 
       } else if (step == '2') {
         if (Object.keys(conceptosAplicados).length === 0) {

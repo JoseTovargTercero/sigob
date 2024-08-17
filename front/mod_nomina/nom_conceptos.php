@@ -574,7 +574,7 @@ if ($nomina) {
             $('#cargando').hide();
             if (response.trim() == 'ok') {
               $("#section-registro").removeClass('hide');
-              $("#section-tabla").hide();
+              $("#section-tabla").addClass('hide');
             } else {
               toast_s('error', 'Tanto el codigo como el nombre del concepto debe ser único.')
             }
@@ -696,8 +696,8 @@ if ($nomina) {
           if (text == 'ok') {
 
             setVistaRegistro()
-            $("#section-registro").hide();
-            $("#section-tabla").show(300);
+            $("#section-registro").addClass('hide');
+            $("#section-tabla").removeClass('hide');
 
             Swal.fire({
               title: "Concepto creado",
@@ -925,7 +925,7 @@ if ($nomina) {
 
         }
       }
-
+      addOptionsCamposCondicionantes()
     }
     let tipoCalculoSimbolo = {
       '1': 'BS',

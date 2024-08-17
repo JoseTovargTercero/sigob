@@ -46,139 +46,140 @@ if (isset($_POST["tabla_empleados"])) {
     $params = array();
 
     if ($tipo_filtro == 3) {
-    // Pendiente: Mostrar empleados de otras nóminas
+        // Pendiente: Mostrar empleados de otras nóminas
 
-   $nombre = $_POST["filtro"]; 
+        $nombre = $_POST["filtro"];
 
-    // Función auxiliar para referencias
-    function refValues($arr) {
-        $refs = [];
-        foreach ($arr as $key => $value) {
-            $refs[$key] = &$arr[$key];
-        }
-        return $refs;
-    }
-
-
-
-    // Verificar si la nomina existe
-    $stmt = mysqli_prepare($conexion, "SELECT * FROM `nominas` WHERE nombre = ?");
-    $stmt->bind_param('s', $nombre);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    if ($result->num_rows > 0) {
-        $empleados = array();
-        $stmt_emp = mysqli_prepare($conexion, "SELECT DISTINCT(empleados) FROM `conceptos_aplicados` WHERE nombre_nomina = ?");
-        $stmt_emp->bind_param('s', $nombre);
-        $stmt_emp->execute();
-        $result = $stmt_emp->get_result();
-        if ($result->num_rows > 0) {
-            while ($row = $result->fetch_assoc()) {
-                array_push($empleados, $row['empleados']);
+        // Función auxiliar para referencias
+        function refValues($arr)
+        {
+            $refs = [];
+            foreach ($arr as $key => $value) {
+                $refs[$key] = &$arr[$key];
             }
-        }
-        $stmt_emp->close();
-
-        $all_ids = [];
-
-        foreach ($empleados as $row) {
-            // Convertir cada string en un array
-            $ids = json_decode($row, true);
-            // Unir los arrays
-            $all_ids = array_merge($all_ids, $ids);
+            return $refs;
         }
 
-        // Eliminar los valores duplicados
-        $unique_ids = array_unique($all_ids);
 
-        // Paso 4: Generar la consulta para obtener la información de los empleados
-        $placeholders = implode(',', array_fill(0, count($unique_ids), '?'));
 
-        // Preparar la consulta
-        $query = "SELECT *, TIMESTAMPDIFF(YEAR, fecha_ingreso, CURDATE()) AS antiguedad, 
+        // Verificar si la nomina existe
+        $stmt = mysqli_prepare($conexion, "SELECT * FROM `nominas` WHERE nombre = ?");
+        $stmt->bind_param('s', $nombre);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if ($result->num_rows > 0) {
+            $empleados = array();
+            $stmt_emp = mysqli_prepare($conexion, "SELECT DISTINCT(empleados) FROM `conceptos_aplicados` WHERE nombre_nomina = ?");
+            $stmt_emp->bind_param('s', $nombre);
+            $stmt_emp->execute();
+            $result = $stmt_emp->get_result();
+            if ($result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    array_push($empleados, $row['empleados']);
+                }
+            }
+            $stmt_emp->close();
+
+            $all_ids = [];
+
+            foreach ($empleados as $row) {
+                // Convertir cada string en un array
+                $ids = json_decode($row, true);
+                // Unir los arrays
+                $all_ids = array_merge($all_ids, $ids);
+            }
+
+            // Eliminar los valores duplicados
+            $unique_ids = array_unique($all_ids);
+
+            // Paso 4: Generar la consulta para obtener la información de los empleados
+            $placeholders = implode(',', array_fill(0, count($unique_ids), '?'));
+
+            // Preparar la consulta
+            $query = "SELECT *, TIMESTAMPDIFF(YEAR, fecha_ingreso, CURDATE()) AS antiguedad, 
                 otros_años, TIMESTAMPDIFF(YEAR, fecha_ingreso, CURDATE()) + otros_años AS anios_totales 
                 FROM empleados WHERE id IN (" . implode(',', array_fill(0, count($unique_ids), '?')) . ") AND verificado = 1";
-        $stmt = $conexion->prepare($query);
+            $stmt = $conexion->prepare($query);
 
-        if ($stmt === false) {
-            die('Error en la preparación de la consulta: ' . $conexion->error);
-        }
-
-        // Crear un array con referencias a los valores únicos
-        $types = str_repeat('i', count($unique_ids)); // Suponiendo que los IDs son enteros
-        $params = array_merge([$types], $unique_ids);
-
-        // Usar call_user_func_array para vincular los parámetros
-        call_user_func_array([$stmt, 'bind_param'], refValues($params));
-
-        // Ejecutar la consulta
-        $stmt->execute();
-
-        // Obtener los resultados
-        $result = $stmt->get_result();
-        $empleados_info = $result->fetch_all(MYSQLI_ASSOC);
-
-        // Construir el array de empleados con la estructura especificada
-        $empleados = array();
-        foreach ($empleados_info as $row) {
-            // Calcular años actuales según la lógica proporcionada
-            if ($row["otros_años"] !== null) {
-                $anios_actuales = $row["anios_totales"] - $row["otros_años"];
-            } else {
-                $anios_actuales = $row["antiguedad"];
+            if ($stmt === false) {
+                die('Error en la preparación de la consulta: ' . $conexion->error);
             }
 
-            $empleados[] = array(
-                "id" => $row["id"],
-                "nacionalidad" => $row["nacionalidad"],
-                "cedula" => $row["cedula"],
-                "nombres" => $row["nombres"],
-                "fecha_ingreso" => $row["fecha_ingreso"],
-                "anios_actuales" => $anios_actuales,
-                "otros_anios" => $row["otros_años"],
-                "anios_totales" => $row["anios_totales"],
-                "status" => $row["status"],
-                "observacion" => $row["observacion"],
-                "cod_cargo" => $row["cod_cargo"],
-                "hijos" => $row["hijos"],
-                "instruccion_academica" => $row["instruccion_academica"],
-                "discapacidades" => $row["discapacidades"],
-                "id_dependencia" => $row["id_dependencia"],
-                "verificado" => $row["verificado"],
-            );
+            // Crear un array con referencias a los valores únicos
+            $types = str_repeat('i', count($unique_ids)); // Suponiendo que los IDs son enteros
+            $params = array_merge([$types], $unique_ids);
+
+            // Usar call_user_func_array para vincular los parámetros
+            call_user_func_array([$stmt, 'bind_param'], refValues($params));
+
+            // Ejecutar la consulta
+            $stmt->execute();
+
+            // Obtener los resultados
+            $result = $stmt->get_result();
+            $empleados_info = $result->fetch_all(MYSQLI_ASSOC);
+
+            // Construir el array de empleados con la estructura especificada
+            $empleados = array();
+            foreach ($empleados_info as $row) {
+                // Calcular años actuales según la lógica proporcionada
+                if ($row["otros_años"] !== null) {
+                    $anios_actuales = $row["anios_totales"] - $row["otros_años"];
+                } else {
+                    $anios_actuales = $row["antiguedad"];
+                }
+
+                $empleados[] = array(
+                    "id" => $row["id"],
+                    "nacionalidad" => $row["nacionalidad"],
+                    "cedula" => $row["cedula"],
+                    "nombres" => $row["nombres"],
+                    "fecha_ingreso" => $row["fecha_ingreso"],
+                    "anios_actuales" => $anios_actuales,
+                    "otros_anios" => $row["otros_años"],
+                    "anios_totales" => $row["anios_totales"],
+                    "status" => $row["status"],
+                    "observacion" => $row["observacion"],
+                    "cod_cargo" => $row["cod_cargo"],
+                    "hijos" => $row["hijos"],
+                    "instruccion_academica" => $row["instruccion_academica"],
+                    "discapacidades" => $row["discapacidades"],
+                    "id_dependencia" => $row["id_dependencia"],
+                    "verificado" => $row["verificado"],
+                );
+            }
+
+            // Enviar la respuesta como JSON
+            echo json_encode($empleados);
+
+            // Cerrar la declaración y la conexión
+            $stmt->close();
+            $conexion->close();
+        } else {
+            echo json_encode(array("error" => "No existe"));
         }
 
-        // Enviar la respuesta como JSON
-        echo json_encode($empleados);
-
-        // Cerrar la declaración y la conexión
-        $stmt->close();
-        $conexion->close();
-    } else {
-        echo json_encode(array("error" => "No existe"));
-    }
 
 
 
 
 
-
-    exit();
+        exit();
     } elseif ($tipo_filtro == 2) {
-    // Analizar el filtro para determinar las condiciones
-    if (preg_match('/^antiguedad([<>]=?)(\d+)$/', $filtro, $matches)) {
-        $operator = $matches[1];
-        $anios_antiguedad = (int)$matches[2];
-        $sql = "SELECT *, TIMESTAMPDIFF(YEAR, fecha_ingreso, CURDATE()) AS antiguedad, 0 AS otros_años, TIMESTAMPDIFF(YEAR, fecha_ingreso, CURDATE()) AS anios_totales FROM empleados WHERE verificado = 1 AND TIMESTAMPDIFF(YEAR, fecha_ingreso, CURDATE()) $operator ?";
-        $params[] = $anios_antiguedad;
-    } elseif (preg_match('/^antiguedad_total([<>]=?)(\d+)$/', $filtro, $matches)) {
-        $operator = $matches[1];
-        $anios_total = (int)$matches[2];
-        $sql = "SELECT *, 0 AS antiguedad, otros_años, TIMESTAMPDIFF(YEAR, fecha_ingreso, CURDATE()) + otros_años AS anios_totales FROM empleados WHERE verificado = 1 AND TIMESTAMPDIFF(YEAR, fecha_ingreso, CURDATE()) + otros_años $operator ?";
-        $params[] = $anios_total;
-    } else {
-        $sql = "SELECT *, TIMESTAMPDIFF(YEAR, fecha_ingreso, CURDATE()) AS antiguedad, otros_años, TIMESTAMPDIFF(YEAR, fecha_ingreso, CURDATE()) + otros_años AS anios_totales FROM empleados WHERE verificado = 1 AND $filtro";
-    }
+        // Analizar el filtro para determinar las condiciones
+        if (preg_match('/^antiguedad([<>]=?)(\d+)$/', $filtro, $matches)) {
+            $operator = $matches[1];
+            $anios_antiguedad = (int)$matches[2];
+            $sql = "SELECT *, TIMESTAMPDIFF(YEAR, fecha_ingreso, CURDATE()) AS antiguedad, 0 AS otros_años, TIMESTAMPDIFF(YEAR, fecha_ingreso, CURDATE()) AS anios_totales FROM empleados WHERE verificado = 1 AND TIMESTAMPDIFF(YEAR, fecha_ingreso, CURDATE()) $operator ?";
+            $params[] = $anios_antiguedad;
+        } elseif (preg_match('/^antiguedad_total([<>]=?)(\d+)$/', $filtro, $matches)) {
+            $operator = $matches[1];
+            $anios_total = (int)$matches[2];
+            $sql = "SELECT *, 0 AS antiguedad, otros_años, TIMESTAMPDIFF(YEAR, fecha_ingreso, CURDATE()) + otros_años AS anios_totales FROM empleados WHERE verificado = 1 AND TIMESTAMPDIFF(YEAR, fecha_ingreso, CURDATE()) + otros_años $operator ?";
+            $params[] = $anios_total;
+        } else {
+            $sql = "SELECT *, TIMESTAMPDIFF(YEAR, fecha_ingreso, CURDATE()) AS antiguedad, otros_años, TIMESTAMPDIFF(YEAR, fecha_ingreso, CURDATE()) + otros_años AS anios_totales FROM empleados WHERE verificado = 1 AND $filtro";
+        }
     } else {
         // Todos los empleados
         $sql = "SELECT *, TIMESTAMPDIFF(YEAR, fecha_ingreso, CURDATE()) AS antiguedad, otros_años, TIMESTAMPDIFF(YEAR, fecha_ingreso, CURDATE()) + otros_años AS anios_totales FROM empleados WHERE verificado = 1 ";
@@ -260,16 +261,15 @@ if (isset($_POST["tabla_empleados"])) {
     }
     $stmt->close();
     echo json_encode($tabuladores);
-
 } elseif (isset($_POST["loadData"]) && $_POST["loadData"] == 'conceptos') {
 
-    $filtro = $_POST["filtro"]; 
-    
+    $filtro = $_POST["filtro"];
+
     $conceptos = array();
     if ($filtro == 'grupo') {
-        $nomina_g = $_POST["nomina_g"]; 
+        $nomina_g = $_POST["nomina_g"];
         $stmt = $conexion->prepare("SELECT * FROM `conceptos` where nomina_grupo = $nomina_g");
-    }else{
+    } else {
         $stmt = $conexion->prepare("SELECT * FROM `conceptos` ");
     }
     $stmt->execute();
@@ -305,13 +305,13 @@ if (isset($_POST["tabla_empleados"])) {
         }
     }
     $stmt->close();
-    
+
     $response = array(
         "data1" => $conceptos,
         "data2" => $conceptos_formulacion
     );
-    
-    
+
+
     echo json_encode($response);
 } elseif (isset($_POST["get_cantidad_conceptos"])) {
     $grupo_nomina = $_POST["grupo_nomina"];

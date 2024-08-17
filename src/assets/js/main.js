@@ -327,3 +327,59 @@ function swal(type, text) {
 function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
+
+
+
+
+
+
+const columnas_sistema = ["id", "nacionalidad", "cedula", "nombres", "otros_años", "status", "observacion", "cod_cargo", "banco", "cuenta_bancaria", "hijos", "instruccion_academica", "discapacidades", "tipo_nomina", "id_dependencia", "verificado", "correcion", "beca", "fecha_ingreso", "id", "nacionalidad", "cedula", "nombres", "otros_años", "status", "observacion", "cod_cargo", "banco", "cuenta_bancaria", "hijos", "instruccion_academica", "discapacidades", "tipo_nomina", "id_dependencia", "verificado", "correcion", "beca", "fecha_ingreso"]
+
+function es_columnas_sistema(column){
+  // verificar nombre no contenga nada de palabras_ban
+  for (let i = 0; i < columnas_sistema.length; i++) {
+    if (column.includes(columnas_sistema[i])) {
+      return true
+    }
+  }
+}
+
+function addOptionsCamposCondicionantes() {
+  $('#campo_condiciona').html(` <option value="">Seleccione</option>
+    <option value="cod_cargo">Código de cargo</option>
+    <option value="discapacidades">Discapacidades</option>
+    <option value="instruccion_academica">Instrucción académica</option>
+    <option value="hijos">Hijos</option>
+    <option value="antiguedad">Antigüedad (desde la fecha de ingreso)</option>
+    <option value="antiguedad_total">Antigüedad (Sumando años anteriores)</option>
+    <option value="tipo_nomina">Tipo de nomina</option>`)
+
+
+            
+    $.ajax({
+      url: '../../back/modulo_nomina/nom_columnas_back.php',
+      type: 'POST',
+      data: {
+        tabla: true
+      },
+      cache: false,
+      success: function (response) {
+
+        $('#campo_condiciona').append('<optgroup label="Columnas creadas por el usuario" >');
+        if (response) {
+          var data = JSON.parse(response);
+
+          for (var i = 0; i < data.length; i++) {
+            const columna = data[i].COLUMN_NAME;
+            let columnas_s = es_columnas_sistema(columna.trim());
+            if (!columnas_s) {
+              $('#campo_condiciona').append('<option value="'+columna+'">'+columna+'</option>');
+            }
+          }
+        }
+        $('#campo_condiciona').append('</optgroup>');
+      }
+    });
+}
+
+addOptionsCamposCondicionantes()

@@ -4,7 +4,28 @@ require_once '../sistema_global/conexion.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
     // Recibe los datos del concepto y empleados
     $concepto = $_POST['concepto'];
-    $empleados = $_POST['empleados'];
+    $grupo = $_POST['grupo'];
+
+
+
+
+    $empleados = [];
+
+
+    
+    $stmt = mysqli_prepare($conexion, "SELECT id_empleado FROM `empleados_por_grupo` WHERE id_grupo = ?");
+    $stmt->bind_param('s', $grupo);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            array_push($empleados, $row['id_empleado']);
+        }
+    }
+    $stmt->close();
+
+
+
 
     // Asegúrate de que $empleados sea un array y no esté vacío
     if (!is_array($empleados) || empty($empleados)) {

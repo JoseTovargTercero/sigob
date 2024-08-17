@@ -268,7 +268,7 @@ require_once '../../back/sistema_global/session.php';
 
   <script>
     const url_back = '../../back/modulo_nomina/nom_valores_back.php';
-
+    let textarea = 't_area-1';
 
 
     function mostrarInicio(){
@@ -331,6 +331,7 @@ require_once '../../back/sistema_global/session.php';
       dataResumen()
       $('#resumen').html('Se establecerá el valor del campo <b>' + columnaEditar + '</b> en <b>' + valorEditar + '</b> para <b>' + empleados.length + '</b> empleados')
       
+
       $('#resumen_antes_guardar').removeClass('hide')
       $('#seleccion_empleados').addClass('hide')
     }

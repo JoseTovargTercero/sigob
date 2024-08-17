@@ -117,17 +117,6 @@ require_once '../../back/sistema_global/session.php';
   <script>
     const url_back = '../../back/modulo_nomina/nom_columnas_back.php';
 
-    const columnas_sistema = ["id", "nacionalidad", "cedula", "nombres", "otros_años", "status", "observacion", "cod_cargo", "banco", "cuenta_bancaria", "hijos", "instruccion_academica", "discapacidades", "tipo_nomina", "id_dependencia", "verificado", "correcion", "beca", "fecha_ingreso", "id", "nacionalidad", "cedula", "nombres", "otros_años", "status", "observacion", "cod_cargo", "banco", "cuenta_bancaria", "hijos", "instruccion_academica", "discapacidades", "tipo_nomina", "id_dependencia", "verificado", "correcion", "beca", "fecha_ingreso"]
-
-
-    function es_columnas_sistema(column){
-      // verificar nombre no contenga nada de palabras_ban
-      for (let i = 0; i < columnas_sistema.length; i++) {
-        if (column.includes(columnas_sistema[i])) {
-          return true
-        }
-      }
-    }
 
 
     function cargarTabla() {
