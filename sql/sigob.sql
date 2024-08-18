@@ -4328,6 +4328,8 @@ CREATE TABLE `modificaciones_empleados` (
 
 -- --------------------------------------------------------
 
+
+
 --
 -- Estructura de tabla para la tabla `movimientos`
 --
@@ -4351,6 +4353,17 @@ INSERT INTO `movimientos` (`id`, `id_empleado`, `id_nomina`, `fecha_movimiento`,
 (10, 1061, '0', '2024-07-15 19:54:52', 'UPDATE', 'Se han modificado los campos: hijos: 2. ', 1);
 
 -- --------------------------------------------------------
+
+
+CREATE TABLE `frecuencias_por_grupo` (
+  `id` int(11) NOT NULL,
+  `id_grupo` int(11) NOT NULL,
+  `tipo` varchar(10) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+INSERT INTO `frecuencias_por_grupo` (`id`, `id_grupo`, `tipo`) VALUES
+(1, 2, 'Q');
+
 
 --
 -- Estructura de tabla para la tabla `nominas`
@@ -7791,7 +7804,11 @@ INSERT INTO `txt` (`id`, `id_empleado`, `total_a_pagar`, `nombre_nomina`, `ident
 --
 -- Índices para tablas volcadas
 --
+ALTER TABLE `frecuencias_por_grupo`
+  ADD PRIMARY KEY (`id`);
 
+  ALTER TABLE `frecuencias_por_grupo`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 --
 -- Indices de la tabla `backups`
 --
