@@ -142,7 +142,7 @@ require_once '../../back/sistema_global/session.php';
               const maxlenght = data[i].CHARACTER_MAXIMUM_LENGTH;
               let columnas_s = es_columnas_sistema(columna.trim());
 
-              $('#table tbody').append(`<tr class="` + (columnas_s? '_especial':'') + `">
+              $('#table tbody').append(`<tr class="` + (columnas_s? '_especial hide':'') + `">
                 <td>${cont++}</td>
                 <td>${(columnas_s? 'Sistema':'Usuario')}</td>
                 <td>${columna}</td>
@@ -214,14 +214,14 @@ require_once '../../back/sistema_global/session.php';
 
     function mostrar_sistema(){
       // verifica si ._especial tiene display none, de ser positivo se lo quitas, de ser negativo se lo agregas
-      if ($('._especial').css('display') == 'none') {
-        $('._especial').show()
+      if ($("._especial").hasClass("hide")) {
+        $('._especial').removeClass('hide')
         $('#btn-show-sistema').removeClass('btn-secondary')
         $('#btn-show-sistema').addClass('btn-primary')
       }else{
         $('#btn-show-sistema').addClass('btn-secondary')
         $('#btn-show-sistema').removeClass('btn-primary')
-        $('._especial').hide()
+        $('._especial').addClass('hide')
       }
     }
 

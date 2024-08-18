@@ -129,6 +129,12 @@ require_once '../../back/sistema_global/session.php';
               var nombre = data[i].nombre;
               var id = data[i].id;
               var grupo_existe = data[i].grupo_existe;
+              var frecuenciaPago = data[i].tipo;
+              let edit = true
+
+              if (grupo_existe == '0' || frecuenciaPago == null) {
+                edit = false
+              }
 
               $('#table tbody').append(`<tr>
               <td><img class="rounded-circle" src="../../src/assets/images/icons-png/folder.png" alt="activity-user"></td>
@@ -137,7 +143,7 @@ require_once '../../back/sistema_global/session.php';
 
               <td><a class="pointer btn-wicon badge me-2 bg-brand-color-3 text-white f-12" href="nom_modificar?i=` + id + `"> <i class="bx bx-cog me-1"></i> Modificar</a></td>
               <td>
-              `+ (grupo_existe == '0' ? `<span title="No hay empleados agregados al grupo" onclick="swal('error', 'No hay empleados asociados al grupo de nomina, cree un nuevo listado para continuar')" class="btn-wicon badge me-2 bg-light-dark  f-12 text-muted"> <i class="bx bx-add-to-queue me-1"></i> Agregar</span>` : `<a href="nom_formulacion?i=` + id + `" class="pointer btn-wicon badge me-2 bg-brand-color-1 text-white f-12"> <i class="bx bx-add-to-queue me-1"></i> Agregar</a>`) +`
+              `+ (edit? `<a href="nom_formulacion?i=` + id + `" class="pointer btn-wicon badge me-2 bg-brand-color-1 text-white f-12"> <i class="bx bx-add-to-queue me-1"></i> Agregar</a>` : `<span title="No hay empleados agregados al grupo o  no se ha establecido una frecuencia de pago" onclick="noticiaEdit('${grupo_existe}', ${frecuenciaPago})" class="btn-wicon badge me-2 bg-light-dark  f-12 text-muted"> <i class="bx bx-add-to-queue me-1"></i> Agregar</span>`) +`
               </td>
 
               <td><a class="pointer btn-wicon badge me-2 bg-brand-color-2 text-white f-12" onclick="eliminar(` + id + `)"><i class="bx bx-trash me-1"></i> Eliminar</a></td>
@@ -149,9 +155,23 @@ require_once '../../back/sistema_global/session.php';
 
       });
     }
+
+    function noticiaEdit(empleados, frecuenciaPago) {
+      let texto = '';
+      if (empleados === 0) {
+        texto = 'No hay empleados asociados al grupo de nómina, cree un nuevo listado para continuar. ';
+      }
+      if (!frecuenciaPago) {
+        texto += (empleados === 0 ? 'Adicionalmente, ' : '') + 'no hay una frecuencia de pago establecida para el grupo.';
+      }
+      if (texto) {
+        swal('error', texto);
+      }
+    }
+
     // ready function
     cargarTabla()
-
+//
 
     /**
      * Deletes a record with the specified ID.

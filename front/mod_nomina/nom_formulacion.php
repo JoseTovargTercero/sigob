@@ -30,6 +30,20 @@ if ($result->num_rows > 0) {
 $stmt->close();
 
 
+
+$stmt = mysqli_prepare($conexion, "SELECT * FROM `frecuencias_por_grupo` WHERE id_grupo = ?");
+$stmt->bind_param('s', $i);
+$stmt->execute();
+$result = $stmt->get_result();
+if ($result->num_rows > 0) {
+  while ($row = $result->fetch_assoc()) {
+    $frecuenciaPagoNormal = $row['tipo'];
+  }
+} else {
+  header("Location: nom_grupos");
+}
+
+
 /**
  * Retrieves all records from the 'nominas' table.
  *
@@ -134,20 +148,6 @@ while ($r = $query->fetch_object()) {
                                 <input type="text" class="form-control" id="nombre_nomina" aria-describedby="Nombre de la nomina">
                               </div>
                             </div>
-
-
-
-                          </div>
-                          <div class="col-sm-6">
-                            <div class="mb-3">
-                              <label class="form-label">Frecuencia de pago</label>
-                              <select class="form-control" id="frecuencia_pago">
-                                <option value="">Seleccione</option>
-                                <option class="_normal" value="2">Quincenal</option>
-                                <option class="_normal" value="1">Semanal</option>
-                                <option class="_especial" value="3">Una vez al mes</option>
-                              </select>
-                            </div>
                           </div>
                           <div class="col-sm-6">
                             <div class="mb-3">
@@ -159,6 +159,24 @@ while ($r = $query->fetch_object()) {
                               </select>
                             </div>
                           </div>
+                          <div class="col-sm-6">
+                            <div class="mb-3">
+                              <label class="form-label">Frecuencia de pago</label>
+                              <select class="form-control" id="frecuencia_pago">
+                                <option value="">Seleccione</option>
+                                <?php
+                                if ($frecuenciaPagoNormal == 'Q') {
+                                  echo '<option class="_normal" value="2">Quincenal</option>';
+                                } else {
+                                  echo '<option class="_normal" value="1">Semanal</option>';
+                                }
+                                ?>
+                                <option class="_especial hide" value="3">Una vez al mes</option>
+                                <option class="_especial hide" value="5">Fraccionado</option>
+                              </select>
+                            </div>
+                          </div>
+                        
                           <div class="col-sm-6">
                             <div class="mb-3">
                               <label class="form-label">Tipo de pago</label>
@@ -193,17 +211,17 @@ while ($r = $query->fetch_object()) {
                     <div class="row mt-4">
                       <section class="hide" id="nuevo_concepto-sec">
 
-                      
-                      <div class="mb-3">
-                        <label class="form-label" for="enlistar_conceptos">¿Que conceptos desea agregar?</label>
 
-                        <select class="form-control" id="enlistar_conceptos">
-                          <option value="">Seleccione</option>
-                          <option value="grupo">Solo los conceptos del grupo</option>
-                          <option value="todos">Todos los conceptos</option>
-                        </select>
+                        <div class="mb-3">
+                          <label class="form-label" for="enlistar_conceptos">¿Que conceptos desea agregar?</label>
 
-                      </div>
+                          <select class="form-control" id="enlistar_conceptos">
+                            <option value="">Seleccione</option>
+                            <option value="grupo">Solo los conceptos del grupo</option>
+                            <option value="todos">Todos los conceptos</option>
+                          </select>
+
+                        </div>
 
 
                         <div class="mb-3">
@@ -212,7 +230,7 @@ while ($r = $query->fetch_object()) {
                             <select class="form-control" id="concepto_aplicar">
                               <option value="">Seleccione</option>
                               <option class="_normal" value="sueldo_base">-- SUELDO BASE --</option>
-                              <option class="_normal" id="diferencia_sueldoconcepto" style="display: none;" value="sueldo_diferencia">-- DIFERENCIA DE SUELDO --</option>
+                              <option id="diferencia_sueldoconcepto" value="sueldo_diferencia">-- DIFERENCIA DE SUELDO --</option>
                             </select>
 
                             <div class="btn-group">
@@ -223,31 +241,19 @@ while ($r = $query->fetch_object()) {
                               </div>
                             </div>
                           </div>
-
-
-
-
-
-
                         </div>
 
 
-                        <div class="mb-3 _normal" id="section_fechas">
+                        <div class="mb-3" id="section_fechas">
                           <label class="form-label" for="fechas_aplicar">¿Cuando se debe aplicar el concepto?</label>
                           <select multiple="" class="form-select" id="fechas_aplicar">
                           </select>
                           <small>Mantén presionada la tecla shift o presiona ctrl para selección múltiple.</small>
                         </div>
-
-
                         <section id="diferenciaNomina-options" class="hide">
-
-
-
-                          <div class="mb-3" id="section_fechas">
+                          <div class="mb-3">
                             <label class="form-label" for="nominas_restar">Nominas a restar</label>
                             <select multiple="" class="form-select" id="nominas_restar">
-
                               <?php
                               $stmt = mysqli_prepare($conexion, "SELECT * FROM `nominas` WHERE tipo='1' AND grupo_nomina = $codigo");
                               $stmt->execute();
@@ -260,16 +266,11 @@ while ($r = $query->fetch_object()) {
                                 }
                               }
                               $stmt->close();
-
                               ?>
-
                             </select>
                             <small>Mantén presionada la tecla shift o presiona ctrl para seleccionar las nominas que desea restar.</small>
                           </div>
-
                         </section>
-
-
                         <section id="sueldo-options" class="hide">
                           <div class="mb-3">
                             <label class="form-label" for="tabulador">Seleccione el tabulador</label>
@@ -279,20 +280,17 @@ while ($r = $query->fetch_object()) {
                           </div>
                         </section>
 
-
-                        
-
-                        <div class="mb-3 _especial">
+                        <div class="mb-3 hide" id="section_c89">
                           <div class="row">
-                          <div class="col-lg-6 mb-3">
-                            <label for="multiplicador" class="form-label">Multiplicador del concepto</label>
-                            <input type="text" class="form-control" value="1" onchange="minValue(this.value, 1)" id="multiplicador">
-                          </div>
-                          <div class="col-lg-6 mb-3">
-                            <label for="otra_nomina" class="form-label">Nominas</label>
-                           <select id="otra_nomina" class="form-control">
-                            <option value="">Seleccione</option>
-                            <?php
+                            <div class="col-lg-6 mb-3">
+                              <label for="multiplicador" class="form-label">Multiplicador del concepto</label>
+                              <input type="text" class="form-control" value="1" onchange="minValue(this.value, 1)" id="multiplicador">
+                            </div>
+                            <div class="col-lg-6 mb-3">
+                              <label for="otra_nomina" class="form-label">Nominas</label>
+                              <select id="otra_nomina" class="form-control">
+                                <option value="">Seleccione</option>
+                                <?php
                                 $stmt = mysqli_prepare($conexion, "SELECT * FROM `nominas` WHERE tipo='1' AND grupo_nomina = $i");
                                 $stmt->execute();
                                 $result = $stmt->get_result();
@@ -304,10 +302,10 @@ while ($r = $query->fetch_object()) {
                                   }
                                 }
                                 $stmt->close();
-  
+
                                 ?>
-                           </select>
-                          </div>
+                              </select>
+                            </div>
                           </div>
                         </div>
 
@@ -471,43 +469,42 @@ while ($r = $query->fetch_object()) {
   <script>
     const url_back = '../../back/modulo_nomina/nom_formulacion_back';
     let textarea = 't_area-1';
+    let frecuencia_normal = "<?php echo $frecuenciaPagoNormal ?>"
+    frecuencia_normal = (frecuencia_normal == 'Q' ? '2' : '1')
 
-
-
-
-      /**
-       * Validates if the given value is less than the minimum value.
-       * If the value is less than the minimum, it displays an error toast message and sets the value to the minimum.
-       *
-       * @param {number} valor - The value to be validated.
-       * @param {number} minimo - The minimum value allowed.
-       * @returns {void}
-       */
-      function minValue(valor, minimo){
-        if(valor < minimo){
-          toast_s('error', 'El valor minimo es ' + minimo)
-          document.getElementById('multiplo').value = minimo
-        }
+    /**
+     * Validates if the given value is less than the minimum value.
+     * If the value is less than the minimum, it displays an error toast message and sets the value to the minimum.
+     *
+     * @param {number} valor - The value to be validated.
+     * @param {number} minimo - The minimum value allowed.
+     * @returns {void}
+     */
+    function minValue(valor, minimo) {
+      if (valor < minimo) {
+        toast_s('error', 'El valor minimo es ' + minimo)
+        document.getElementById('multiplo').value = minimo
       }
+    }
 
 
-    function get_tipo_nomina(){
+    function get_tipo_nomina() {
       let tipo_nomina = document.getElementById('tipo_nomina').value
       let frecuencia_pago = document.getElementById('frecuencia_pago').value
-      setFrecueciaPago()
 
-
-      if(tipo_nomina === '2'){
-        document.getElementById('frecuencia_pago').value = 3
+      if (tipo_nomina === '2') { // especia
+        console.log(tipo_nomina)
+        $("#frecuencia_pago" + " option[value='']").attr("selected", true);
         $('._normal').addClass('hide')
         $('._especial').removeClass('hide')
-      }else{
-        if (frecuencia_pago == '3') {
-          document.getElementById('frecuencia_pago').value = ''
-        }
+      } else {
+        $("#frecuencia_pago" + " option[value='" + frecuencia_normal + "']").attr("selected", true);
         $('._normal').removeClass('hide')
         $('._especial').addClass('hide')
       }
+      setFrecueciaPago()
+      set_tipoPago()
+
     }
 
     document.getElementById('tipo_nomina').addEventListener('change', get_tipo_nomina)
@@ -624,7 +621,7 @@ while ($r = $query->fetch_object()) {
           tabla_empleados: true
         },
         success: function(response) {
-        //  console.log(response)
+          //  console.log(response)
           let empleados = JSON.parse(response);
           let tabla = '';
 
@@ -704,7 +701,7 @@ while ($r = $query->fetch_object()) {
           data: {
             loadData: value,
             filtro: filtro,
-            nomina_g: "<?php echo $i ?>" 
+            nomina_g: "<?php echo $i ?>"
           },
           success: function(response) {
             resolve(JSON.parse(response));
@@ -752,28 +749,24 @@ while ($r = $query->fetch_object()) {
           $('#concepto_aplicar').html(`
           <option value="">Seleccione</option>
           <option class="_normal" value="sueldo_base">-- SUELDO BASE --</option>
-          <option class="_normal" id="diferencia_sueldoconcepto"  style="display: none;" value="sueldo_diferencia">-- DIFERENCIA DE SUELDO --</option>
+          <option id="diferencia_sueldoconcepto" value="sueldo_diferencia">-- DIFERENCIA DE SUELDO --</option>
           `);
           data1.forEach(d => {
-            let clase;
-            if (d.tipo_calculo == '8' || d.tipo_calculo == '9') {
-              clase = '_especial';
-            } else {
-              clase = '_normal';
-            }
+          
 
-            $('#concepto_aplicar').append(`<option class="${clase}" value="${d.id}">${d.nom_concepto}</option>`);
+            $('#concepto_aplicar').append(`<option  value="${d.id}">${d.nom_concepto}</option>`);
           });
 
           let tipo_nomina = document.getElementById('tipo_nomina').value
-          if(tipo_nomina === '2'){
+          if (tipo_nomina === '2') {
             $('._normal').addClass('hide')
             $('._especial').removeClass('hide')
-          }else{
+          } else {
             $('._normal').removeClass('hide')
             $('._especial').addClass('hide')
           }
         }
+        setTipoPago()
       } catch (error) {
         console.error('Error loading data:', error);
       }
@@ -783,7 +776,7 @@ while ($r = $query->fetch_object()) {
     getData('tabulador')
     //  getData('conceptos')
 
-    document.getElementById('enlistar_conceptos').addEventListener('change', function () {
+    document.getElementById('enlistar_conceptos').addEventListener('change', function() {
       getData('conceptos', this.value)
     })
 
@@ -813,6 +806,7 @@ while ($r = $query->fetch_object()) {
 
       resetValsConceptos()
       sueldoOptions.addClass('hide');
+      $('#section_c89').addClass('hide')
 
       if (this.value == 'sueldo_base') {
         aplicacionConceptosOptions.removeClass('hide');
@@ -825,8 +819,9 @@ while ($r = $query->fetch_object()) {
         aplicacionConceptosOptions.removeClass('hide');
       } else if (tipoCalculo != '6') {
         aplicacionConceptosOptions.removeClass('hide');
-      } else if(tipoCalculo == '8' || tipoCalculo == '9'){
-        // enlista las nominas del mismo grupo
+      } else if (tipoCalculo == '8' || tipoCalculo == '9') {
+        $('#section_c89').removeClass('hide')
+
       } else {
         n_conceptos_porcentajes.toggleClass('hide', true);
         aplicacionConceptosOptions.toggleClass('hide', tipoCalculo == '6');
@@ -1076,17 +1071,16 @@ while ($r = $query->fetch_object()) {
 
         fechas_aplicar = numeroSemanasSeleccionadas;
       }
-      
+
       let tipo_nom = document.getElementById('tipo_nomina').value;
       let multiplicador = document.getElementById('multiplicador').value;
       let otra_nomina = document.getElementById('otra_nomina').value;
-      
+
       multiplicador = (tipo_nom == '2' ? multiplicador : 1)
       otra_nomina = (tipo_nom == '2' ? otra_nomina : null)
 
-      if (tipo_nom == '2') {
-        fechas_aplicar = ['fecha_unica']
-      }
+
+
 
 
 
@@ -1106,7 +1100,7 @@ while ($r = $query->fetch_object()) {
         'nombre_nomina': nombre_nomina,
         'nominas_restar': nominas_restar
       };
-     console.log(concepto)
+      console.log(concepto)
 
       conceptosAplicados[concepto_aplicar] = concepto;
 
@@ -1163,10 +1157,19 @@ while ($r = $query->fetch_object()) {
       <option value="q1">Primera quincena</option>
       <option value="q2">Segunda quincena</option>`,
         '3': `
-      <option selected value="um">Pago Unico Mensual</option>`,
+      <option selected value="fecha_unica">Pago único Mensual</option>`,
+        '5': `
+      <option value="p1">Periodo 1</option>
+      <option value="p2">Periodo 2</option>
+      <option value="p3">Periodo 3</option>
+      <option value="p4">Periodo 4</option> 
+      <option value="p5">Periodo 5</option>
+      <option value="p6">Periodo 6</option>
+      <option value="p7">Periodo 7</option>
+      <option value="p8">Periodo 8</option>`
       };
 
-      const value = this.value;
+      const value = document.getElementById('frecuencia_pago').value;
       const fechasAplicar = $('#fechas_aplicar');
       const sectionFechas = $('#section_fechas');
 
@@ -1184,7 +1187,7 @@ while ($r = $query->fetch_object()) {
 
       if (Object.keys(conceptosAplicados).length === 0) {
         actualizarOpciones();
-        valorPrevio_frecuencia_pago = this.value;
+        valorPrevio_frecuencia_pago = document.getElementById('frecuencia_pago').value;
       } else {
         Swal.fire({
           title: "¿Estás seguro?",
@@ -1241,7 +1244,7 @@ while ($r = $query->fetch_object()) {
           type: 'POST',
           data: {
             concepto: c,
-            grupo: "<?php echo $i ?>" 
+            grupo: "<?php echo $i ?>"
           },
           success: function(response) {
             console.log(response)
@@ -1336,35 +1339,7 @@ while ($r = $query->fetch_object()) {
         }
       }
       $('#nomina_resumen').append('</ul>')
-      /*
-      return
-
-      let tabla = '';
-
-      for (const key in conceptosAplicados) {
-        if (conceptosAplicados.hasOwnProperty(key)) {
-          const element = conceptosAplicados[key];
-          let cantidad = element.formulacionConcepto.emp_cantidad;
-          let concepto = conceptos[key];
-          let total = cantidad * concepto.valor;
-          tabla += `
-         
-            <p>${concepto.nom_concepto}</p>
-            <p>${cantidad}</p>
-            <p>${concepto.valor}</p>
-            <p>${total}</p>
-
-          `;
-
-          if (concepto.tipo_concepto == 1) {
-            totalPrimas += total;
-          } else if (concepto.tipo_concepto == 2) {
-            totalDeducciones += total;
-          } else if (concepto.tipo_concepto == 3) {
-            totalAportes += total;
-          }
-        }
-      }*/
+ 
     }
 
 
@@ -1543,43 +1518,49 @@ while ($r = $query->fetch_object()) {
 
 
     document.getElementById('tipo_pago').addEventListener('change', function() {
-
-
-      function setTipoPago() {
-        if (document.getElementById('tipo_pago').value == 2) {
-          document.getElementById('diferencia_sueldoconcepto').style.display = 'block';
-          document.getElementById('prefijo_nomina2').innerHTML = ' (Diferencia)';
-        } else {
-          document.getElementById('diferencia_sueldoconcepto').style.display = 'none';
-          // quitar contenido del campo nombre_nomina y disabled false
-          document.getElementById('prefijo_nomina2').innerHTML = '';
-        }
-      }
-      if (Object.keys(conceptosAplicados).length != 0) {
-
-        Swal.fire({
-          title: "¿Estás seguro?",
-          text: "Esta acción borrará los conceptos registrados y deberá agregarlos nuevamente",
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonColor: "#04a9f5",
-          cancelButtonColor: "#d33",
-          confirmButtonText: "Sí, eliminarlo!",
-          cancelButtonText: "Cancelar",
-        }).then((result) => {
-          if (result.isConfirmed) {
-            conceptosAplicados = {};
-            $('#table-conceptos').html('');
-            $('#concepto_aplicados').html('');
-            setTipoPago()
-          }
-        });
-
-      } else {
-        setTipoPago()
+      if (this.value != '') {
+        set_tipoPago()
       }
     })
 
+
+    function setTipoPago() {
+          if (document.getElementById('tipo_pago').value == 2) { // Diferencia
+            document.getElementById('diferencia_sueldoconcepto').style.display = 'block';
+            document.getElementById('prefijo_nomina2').innerHTML = ' (Diferencia)';
+          } else { // estandar
+            document.getElementById('diferencia_sueldoconcepto').style.display = 'none';
+            document.getElementById('prefijo_nomina2').innerHTML = '';
+          }
+        }
+
+
+    function set_tipoPago(){
+          setTipoPago()
+        if (Object.keys(conceptosAplicados).length != 0) {
+
+          Swal.fire({
+            title: "¿Estás seguro?",
+            text: "Esta acción borrará los conceptos registrados y deberá agregarlos nuevamente",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#04a9f5",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Sí, eliminarlo!",
+            cancelButtonText: "Cancelar",
+          }).then((result) => {
+            if (result.isConfirmed) {
+              conceptosAplicados = {};
+              $('#table-conceptos').html('');
+              $('#concepto_aplicados').html('');
+              setTipoPago()
+            }
+          });
+
+          } else {
+          setTipoPago()
+        }
+    }
 
     /**
      * Function to clean up spaces in a string.
@@ -1607,6 +1588,8 @@ while ($r = $query->fetch_object()) {
       const frecuencia = $('#frecuencia_pago').val()
       const tipo = $('#tipo_nomina').val()
 
+
+      
       $.ajax({
         url: '../../back/modulo_nomina/guardar_nominas.php',
         type: 'POST',
@@ -1643,7 +1626,7 @@ while ($r = $query->fetch_object()) {
             });
 
           } else {
-         //   console.log(response.message);
+            //   console.log(response.message);
             toast_s('error', 'Error: ' + response.message);
           }
         },

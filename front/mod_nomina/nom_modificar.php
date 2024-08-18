@@ -30,6 +30,10 @@ if ($result->num_rows > 0) {
 $stmt->close();
 
 
+
+
+
+
 /**
  * This script handles the POST requests and returns JSON data based on the request parameters.
  */
@@ -429,7 +433,7 @@ while ($r = $query->fetch_object()) {
                       </section>
 
                       <div class="text-end">
-                                <button class="btn btn-primary" onclick="finalizarRegistroNuevoEmpleado()">Finalizar</button>
+                        <button class="btn btn-primary" onclick="finalizarRegistroNuevoEmpleado()">Finalizar</button>
                       </div>
                     </div>
 
@@ -443,38 +447,113 @@ while ($r = $query->fetch_object()) {
             </div>
           </div>
         </div>
-
-
         <div class="col-5">
-
-          <div class="card">
-            <div class="card-body">
-              <div class="card-head mb-3">
-                <h5>Opciones disponibles</h5>
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="card mb-3">
+                <div class="card-header">
+                  <h5>Opciones disponibles</h5>
+                </div>
+                <div class="card-body">
+                  <ul class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                    <li><a class="nav-link active" id="v-listaEmpleados-tab" data-bs-toggle="pill" href="#v-listaEmpleados" role="tab" aria-controls="v-listaEmpleados" aria-selected="false" tabindex="-1">Lista de empleados</a></li>
+                    <?php if ($statusGrupo == 'conRegistros') { ?>
+                      <li><a class="nav-link" id="v-pills-addEmpleado-tab" data-bs-toggle="pill" href="#v-pills-addEmpleado" role="tab" aria-controls="v-pills-addEmpleado" aria-selected="false" tabindex="-1">Agregar empleado al grupo</a></li>
+                    <?php } ?>
+                    <li><a class="nav-link" id="v-pills-settings-tab" data-bs-toggle="pill" href="#v-pills-settings" role="tab" aria-controls="v-pills-settings" aria-selected="true">Cambiar estatus</a></li>
+                  </ul>
+                </div>
               </div>
-              <ul class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                <li><a class="nav-link active" id="v-listaEmpleados-tab" data-bs-toggle="pill" href="#v-listaEmpleados" role="tab" aria-controls="v-listaEmpleados" aria-selected="false" tabindex="-1">Lista de empleados</a></li>
-                <?php if ($statusGrupo == 'conRegistros') { ?>
-                  <li><a class="nav-link" id="v-pills-addEmpleado-tab" data-bs-toggle="pill" href="#v-pills-addEmpleado" role="tab" aria-controls="v-pills-addEmpleado" aria-selected="false" tabindex="-1">Agregar empleado al grupo</a></li>
-                <?php } ?>
-                <li><a class="nav-link" id="v-pills-settings-tab" data-bs-toggle="pill" href="#v-pills-settings" role="tab" aria-controls="v-pills-settings" aria-selected="true">Cambiar estatus</a></li>
-              </ul>
+            </div>
+            <div class="col-lg-12">
+
+              <div class="card mb-3">
+                <div class="card-header">
+                  <h5>Frecuencia de pago normal</h5>
+                </div>
+                <div class="card-body">
+
+                  <?php
+
+
+                  $stmt = mysqli_prepare($conexion, "SELECT * FROM `frecuencias_por_grupo` WHERE id_grupo = ?");
+                  $stmt->bind_param('s', $i);
+                  $stmt->execute();
+                  $result = $stmt->get_result();
+                  if ($result->num_rows > 0) {
+                    while ($row = $result->fetch_assoc()) {
+                        echo '<input type="text" class="form-control text-center" disabled value="'.($row['tipo'] == 'Q'?'Quincenal':'Semanal').'">';
+                    }
+                  } else {
+                  ?>
+
+                  <form id="myForm" action="../../back/modulo_nomina/nom_frecuencia_pago.php" method="POST">
+                    <input type="hidden" name="id_grupo" value="<?php echo $i; ?>">
+
+                    <div class="mb-3">
+                      <label class="form-label" for="frecuencia_pago">Frecuencia de pago normal</label>
+                      <select class="form-select" name="frecuencia_pago" id="frecuencia_pago">
+                        <option value="">Seleccione</option>
+                        <option value="Q">Quincenal</option>
+                        <option value="S">Semanal</option>
+                      </select>
+                    </div>
+
+                    <div class="text-end">
+                      <button class="btn btn-primary" type="submit">Establecer</button>
+                    </div>
+                  </form>
+
+                  <script>
+                    
+
+                      document.getElementById('myForm').addEventListener('submit', function(event) {
+                          event.preventDefault(); // Evita que el formulario se envíe inmediatamente
+
+                          Swal.fire({
+                            title: '¿Estás seguro?',
+                            text: "Esta acción establecerá la frecuencia de pago y no podrá ser cambiado.",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Sí, continuar',
+                            cancelButtonText: 'Cancelar'
+                          }).then((result) => {
+                            if (result.isConfirmed) {
+                              this.submit(); // Envía el formulario si se confirma
+                            }
+                          });
+                        });
+
+
+                  </script>
+
+
+                  <?php
+                  }
+                  $stmt->close();
+
+                  ?>
+
+
+             
+
+
+
+
+                </div>
+              </div>
             </div>
           </div>
-        </div>
 
-        <script>
-          /*$('#v-listaEmpleados-tab').on('shown.bs.tab', function(e) {
-            console.log('v-listaEmpleados-tab activado');
-          })*/
-        </script>
-        <!-- [ worldLow section ] end -->
-        <!-- [ Recent Users ] end -->
+
+
+
+        </div>
       </div>
-      <!-- [ Main Content ] end -->
     </div>
   </div>
-  <!-- [ Main Content ] end -->
   <script src="../../src/assets/js/notificaciones.js"></script>
   <script src="../../src/assets/js/plugins/simplebar.min.js"></script>
   <script src="../../src/assets/js/plugins/bootstrap.min.js"></script>
@@ -487,6 +566,9 @@ while ($r = $query->fetch_object()) {
   } ?>
 
   <script>
+
+
+
     const url_back = '../../back/modulo_nomina/nom_modificar.php';
     let textarea = 't_area-1';
 
@@ -537,7 +619,7 @@ while ($r = $query->fetch_object()) {
        * @return void
        */
       function guardarListaEmpleados() {
-        
+
         if (empleadosSeleccionados.length === 0) {
           return toast_s('error', 'Debe seleccionar al menos un empleado');
         }
@@ -701,7 +783,7 @@ while ($r = $query->fetch_object()) {
       document.getElementById('resultado_busqueda').innerHTML = ''
       document.getElementById('resultado_nominas_disponibles').innerHTML = ''
 
-      if(document.getElementById('btn-agregar-empleado')){
+      if (document.getElementById('btn-agregar-empleado')) {
 
         document.getElementById('btn-agregar-empleado').classList.remove('hide')
       }
@@ -748,13 +830,14 @@ while ($r = $query->fetch_object()) {
      * Checks or unchecks all checkboxes with the class 'itemCheckbox'.
      *
      * @param {boolean} status - The status to set for all checkboxes.
-     *//*
-    function checkAll(status, subfijo) {
-      let itemCheckboxes = document.querySelectorAll('.itemCheckbox' + subfijo);
-      itemCheckboxes.forEach(checkbox => {
-        checkbox.checked = status;
-      });
-    }*/
+     */
+    /*
+        function checkAll(status, subfijo) {
+          let itemCheckboxes = document.querySelectorAll('.itemCheckbox' + subfijo);
+          itemCheckboxes.forEach(checkbox => {
+            checkbox.checked = status;
+          });
+        }*/
 
 
 
@@ -837,7 +920,7 @@ while ($r = $query->fetch_object()) {
      *
      * @return void
      */
-    function finalizarRegistroNuevoEmpleado(){
+    function finalizarRegistroNuevoEmpleado() {
       // Retrieve values from input fields
       let fecha_especifica = document.getElementById('fecha_especifica').value
       let desde_cuando_pagar = document.getElementById('desde_cuando_pagar').value
@@ -851,26 +934,28 @@ while ($r = $query->fetch_object()) {
       if (reintegro_aplica == '1' && desde_cuando_pagar == '2' && fecha_especifica == '') {
         return swal('error', 'Debe seleccionar una fecha específica')
       }
-      if (reintegro_aplica == '1' && desde_cuando_pagar =='2' && new Date(fecha_especifica) < new Date(fecha_ingreso)) {
+      if (reintegro_aplica == '1' && desde_cuando_pagar == '2' && new Date(fecha_especifica) < new Date(fecha_ingreso)) {
         return swal('error', 'La fecha específica debe ser mayor o igual a la fecha de ingreso')
       }
 
       // Prepare info_reintegro object based on reintegro_aplica value
       if (reintegro_aplica == '1') {
         info_reintegro['reintegro'] = {
-          'reintegro' : '1',
-          'datos' : {
+          'reintegro': '1',
+          'datos': {
             'pagarDesde': desde_cuando_pagar,
             'fechaIngreso': fecha_ingreso,
             'fechaEspecifica': fecha_especifica
-          }} 
-      }else{
+          }
+        }
+      } else {
         info_reintegro['reintegro'] = {
-          'reintegro' : '0',
-          'datos' : {
+          'reintegro': '0',
+          'datos': {
             'pagarDesde': '',
             'fechaEspecifica': ''
-          }}
+          }
+        }
       }
 
       // Prepare data object for AJAX request
@@ -884,112 +969,108 @@ while ($r = $query->fetch_object()) {
 
       console.log(data);
 
-// Send AJAX request to add the employee
-// const ajaxRequest = new AjaxRequest('application/json', data, '../../back/modulo_nomina/nom_modificar_agregar_empleado.php');
-// console.log(ajaxRequest);
-// const onSuccess = (response) => {
-//   console.log(response)
-//   if (response.status == 'success') {
-//     toast_s('success', 'Empleado agregado con éxito')
-//     agregarEmpleadoCancelar()
-//   } else {
-//     toast_s('error', response.mensaje)
-//   }
-// };
-// const onError = (response) => {
-//   console.log('Error:', response.mensaje);
-//   toast_s('error', 'Error: ' + response.mensaje);
-// };
-// ajaxRequest.send(onSuccess, onError);
+      // Send AJAX request to add the employee
+      // const ajaxRequest = new AjaxRequest('application/json', data, '../../back/modulo_nomina/nom_modificar_agregar_empleado.php');
+      // console.log(ajaxRequest);
+      // const onSuccess = (response) => {
+      //   console.log(response)
+      //   if (response.status == 'success') {
+      //     toast_s('success', 'Empleado agregado con éxito')
+      //     agregarEmpleadoCancelar()
+      //   } else {
+      //     toast_s('error', response.mensaje)
+      //   }
+      // };
+      // const onError = (response) => {
+      //   console.log('Error:', response.mensaje);
+      //   toast_s('error', 'Error: ' + response.mensaje);
+      // };
+      // ajaxRequest.send(onSuccess, onError);
 
-// const fetchRequest = fetch('../../back/modulo_nomina/nom_modificar_agregar_empleado.php', {
-//   method: 'POST',
-//   body: JSON.stringify(data)
-// })
+      // const fetchRequest = fetch('../../back/modulo_nomina/nom_modificar_agregar_empleado.php', {
+      //   method: 'POST',
+      //   body: JSON.stringify(data)
+      // })
 
-// fetchRequest.then(res=>res.json())
-// .then(json=>{
-//   console.log(json);
-//   if (json.status == 'success') {
-//     toast_s('success', 'Empleado agregado con éxito')
-//     console.log(data.info_reintegro.reintegro.reintegro);
-//     if(data.info_reintegro.reintegro.reintegro === 1 || data.info_reintegro.reintegro.reintegro === '1'){
-//       let reintegroRequest = fetch(`../../back/modulo_nomina/nom_reintegro_pdf.php?id_empleado=${data.empleado}`).then(res=> res.blob()).then(blob=> {
-//         const url = window.URL.createObjectURL(blob);
-//           const a = document.createElement('a');
-//           a.href = url;
-//           a.download = 'archivo.bin';
-//           a.click();
-//           window.URL.revokeObjectURL(url);
-//       toast_s('success', 'Reintegro generado')
+      // fetchRequest.then(res=>res.json())
+      // .then(json=>{
+      //   console.log(json);
+      //   if (json.status == 'success') {
+      //     toast_s('success', 'Empleado agregado con éxito')
+      //     console.log(data.info_reintegro.reintegro.reintegro);
+      //     if(data.info_reintegro.reintegro.reintegro === 1 || data.info_reintegro.reintegro.reintegro === '1'){
+      //       let reintegroRequest = fetch(`../../back/modulo_nomina/nom_reintegro_pdf.php?id_empleado=${data.empleado}`).then(res=> res.blob()).then(blob=> {
+      //         const url = window.URL.createObjectURL(blob);
+      //           const a = document.createElement('a');
+      //           a.href = url;
+      //           a.download = 'archivo.bin';
+      //           a.click();
+      //           window.URL.revokeObjectURL(url);
+      //       toast_s('success', 'Reintegro generado')
 
-//       }).catch(error => {
-//             console.error('Error al descargar el archivo:', error);
-//         });
-//     }
-//     agregarEmpleadoCancelar()
-    
-//   } else {
-//     toast_s('error', json.mensaje)
-//   }
-// }).catch(error=>{
-//   console.log('Error:', error);
-//   toast_s('error', 'Error: ' + error);
-// })
+      //       }).catch(error => {
+      //             console.error('Error al descargar el archivo:', error);
+      //         });
+      //     }
+      //     agregarEmpleadoCancelar()
+
+      //   } else {
+      //     toast_s('error', json.mensaje)
+      //   }
+      // }).catch(error=>{
+      //   console.log('Error:', error);
+      //   toast_s('error', 'Error: ' + error);
+      // })
 
 
-const descargarArchivo = async (url) => {
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error('No se pudo descargar el archivo');
-  }
-  
-  const blob = await response.blob();
-  const urlBlob = window.URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = urlBlob;
-  a.download = `Reintegro_${data.empleado}.rar`;
-  a.click();
-  window.URL.revokeObjectURL(urlBlob);
-};
+      const descargarArchivo = async (url) => {
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error('No se pudo descargar el archivo');
+        }
 
-const procesarEmpleado = async (data) => {
-  try {
-    const res = await fetch('../../back/modulo_nomina/nom_modificar_agregar_empleado.php', {
-      method: 'POST',
-      body: JSON.stringify(data)
-    });
+        const blob = await response.blob();
+        const urlBlob = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = urlBlob;
+        a.download = `Reintegro_${data.empleado}.rar`;
+        a.click();
+        window.URL.revokeObjectURL(urlBlob);
+      };
 
-    
-  
-    let json = await res.json();
+      const procesarEmpleado = async (data) => {
+        try {
+          const res = await fetch('../../back/modulo_nomina/nom_modificar_agregar_empleado.php', {
+            method: 'POST',
+            body: JSON.stringify(data)
+          });
 
-    if (json.status === 'success') {
-      toast_s('success', 'Empleado agregado con éxito');
-      
-      if (data.info_reintegro.reintegro.reintegro === 1 || data.info_reintegro.reintegro.reintegro === '1') {
-        await descargarArchivo(`../../back/modulo_nomina/nom_reintegro_pdf.php?id_empleado=${data.empleado}`);
-        toast_s('success', 'Reintegro generado');
-      }
 
-      agregarEmpleadoCancelar();
-    } else {
-      toast_s('error', json.mensaje);
+
+          let json = await res.json();
+
+          if (json.status === 'success') {
+            toast_s('success', 'Empleado agregado con éxito');
+
+            if (data.info_reintegro.reintegro.reintegro === 1 || data.info_reintegro.reintegro.reintegro === '1') {
+              await descargarArchivo(`../../back/modulo_nomina/nom_reintegro_pdf.php?id_empleado=${data.empleado}`);
+              toast_s('success', 'Reintegro generado');
+            }
+
+            agregarEmpleadoCancelar();
+          } else {
+            toast_s('error', json.mensaje);
+          }
+        } catch (error) {
+          console.error('Error en el proceso:', error);
+          toast_s('error', 'Error: ' + error.message);
+        }
+      };
+
+      // Llamar a la función procesarEmpleado con los datos necesarios
+      procesarEmpleado(data);
+
     }
-  } catch (error) {
-    console.error('Error en el proceso:', error);
-    toast_s('error', 'Error: ' + error.message);
-  }
-};
-
-// Llamar a la función procesarEmpleado con los datos necesarios
-procesarEmpleado(data);
-
-}
-
-
-
-
   </script>
 </body>
 
