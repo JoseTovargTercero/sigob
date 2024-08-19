@@ -7,8 +7,7 @@ $precio_dolar = 36;
 header('Content-Type: application/json');
 $data = json_decode(file_get_contents('php://input'), true);
 
-/*
-{
+/*{
     "accion":"agregar_empleado",  # La acción a realizar
     "empleado":875, # el ID del empleado en la tabla 'empleados'
     "grupo_nomina":"3", # El grupo de nomina al que se esta haciendo el cambio

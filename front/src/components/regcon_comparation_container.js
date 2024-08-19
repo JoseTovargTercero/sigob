@@ -183,7 +183,7 @@ const createCard = ({ actual, anterior, confirmBtn }) => {
           <b>Total a pagar: </b>${totalPagarAnterior}bs
         </h6>
         <h6 class='card-subtitle text-center mb-2'>
-          <b>Estado: </b>${estadoAnterior == 0 ? 'En revisión' : 'Revisado'}
+          <b>Estatus: </b>${estadoAnterior == 0 ? 'En revisión' : 'Revisado'}
         </h6>
       </div>`
          : ''
@@ -206,7 +206,7 @@ const createCard = ({ actual, anterior, confirmBtn }) => {
         <b>Total a pagar: </b>${totalPagarActual}bs
       </h6>
       <h6 class='card-subtitle text-center mb-2'>
-        <b>Estado: </b>${estadoActual == 0 ? 'En revisión' : 'Revisado'}
+        <b>Estatus: </b>${estadoActual == 0 ? 'En revisión' : 'Revisado'}
       </h6>
     </div>
       </div>

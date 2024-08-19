@@ -355,7 +355,7 @@ $stmt->close();
         <div class="col-lg-6 col-md-6">
           <div class="card">
             <div class="card-header">
-              <h5>Estado del sistema</h5>
+              <h5>Estatus del sistema</h5>
             </div>
             <div class="card-body d-flex h-50">
               <div class="m-a">

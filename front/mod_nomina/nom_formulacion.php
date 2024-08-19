@@ -172,7 +172,7 @@ while ($r = $query->fetch_object()) {
                                 }
                                 ?>
                                 <option class="_especial hide" value="3">Una vez al mes</option>
-                                <option class="_especial hide" value="5">Fraccionado</option>
+                                <option class="_especial hide" value="5">Pago de integral fraccionado</option>
                               </select>
                             </div>
                           </div>
@@ -1589,7 +1589,7 @@ while ($r = $query->fetch_object()) {
       const tipo = $('#tipo_nomina').val()
 
 
-      
+
       $.ajax({
         url: '../../back/modulo_nomina/guardar_nominas.php',
         type: 'POST',

@@ -83,7 +83,7 @@ export const nom_empleados_list_card = () => {
         <div class='modal-box-header card-header'>
         <div>
           <h3>Lista de empleados</h3>
-          <small class="text-secondary">Verifica el estado de los empleados en nomina</small>
+          <small class="text-secondary">Verifica el estatus de los empleados en nomina</small>
           </div>
           <button
               id='btn-close-employee-list-card'
