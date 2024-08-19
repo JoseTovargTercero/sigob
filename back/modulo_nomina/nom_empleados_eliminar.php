@@ -133,7 +133,7 @@ try {
             $fecha_movimiento = date('Y-m-d H:i:s');
             $accion = 'Eliminar';
             $descripcion = "Desactivacion de empleado: $id";
-            $status = 1;
+            $status = 0;
             $tipo_nomina_json = json_encode($tipo_nomina);
 
             $stmt_mov = $conexion->prepare("INSERT INTO movimientos (id_empleado, id_nomina, fecha_movimiento, accion, descripcion, status) VALUES (?, ?, ?, ?, ?, ?)");

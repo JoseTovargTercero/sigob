@@ -1,0 +1,41 @@
+[
+    {
+      "id": 1,
+      "id_empleado": 101,
+      "id_nomina": 2001,
+      "fecha_movimiento": "2024-08-17",
+      "accion": "insert",
+      "descripcion": "Se ha agregado un nuevo empleado al sistema",
+      "valor_anterior": "null",
+      "valor_nuevo": "Juan Pérez",
+      "status": 0,
+      "correcion": "sin correciones",
+      "campo": null
+    },
+    {
+      "id": 2,
+      "id_empleado": 102,
+      "id_nomina": 2002,
+      "fecha_movimiento": "2024-08-17",
+      "accion": "update",
+      "descripcion": "Se actualizó el campo 'salario'",
+      "valor_anterior": "2000",
+      "valor_nuevo": "2100",
+      "status": 1,
+      "correcion": "sin correciones",
+      "campo": "salario"
+    },
+    {
+      "id": 3,
+      "id_empleado": 103,
+      "id_nomina": 2003,
+      "fecha_movimiento": "2024-08-17",
+      "accion": "delete",
+      "descripcion": "Se ha eliminado un registro obsoleto",
+      "valor_anterior": "null",
+      "valor_nuevo": "null",
+      "status": 0,
+      "correcion": "sin correciones",
+      "campo": null
+    } 
+  ]

@@ -7,17 +7,22 @@ require_once '../sistema_global/notificaciones.php';
 $data = json_decode(file_get_contents('php://input'), true);
 $empleado_id = 0;
 $movimiento = "Se han modificado los campos: ";
+$valor_anterior = '';
+$valor_nuevo = '';
+$campo = '';
+$tabla = "empleados";
 $errores = array();
 
 // Iterar sobre el array recibido e insertar cada conjunto de valores
 foreach ($data as $item) {
     $empleado_id = $item[0];
     $campo = $item[1];
-    $valor = $item[2];
-    $movimiento .= "$campo: $valor. ";
-    
+    $valor_nuevo = $item[2];
+    $valor_anterior = $item[3];
+    $movimiento .= "$campo: $valor_nuevo. ";
+
     $stmt2 = mysqli_prepare($conexion, "UPDATE empleados SET $campo = ? WHERE id = ?");
-    $stmt2->bind_param('si', $valor, $empleado_id);
+    $stmt2->bind_param('si', $valor_nuevo, $empleado_id);
     if (!$stmt2->execute()) {
         array_push($errores, $campo);
     }
@@ -69,11 +74,13 @@ $accion = 'UPDATE';
 $fecha_movimiento = date('Y-m-d H:i:s');
 
 // Insertar en la tabla movimientos
-$stmt_o = $conexion->prepare("INSERT INTO movimientos (id_empleado, id_nomina, fecha_movimiento, accion, descripcion, status) VALUES (?, ?, ?, ?, ?, 1)");
+$stmt_o = $conexion->prepare("INSERT INTO movimientos (id_empleado, id_nomina, fecha_movimiento, accion, tabla, campo, descripcion, valor_anterior, valor_nuevo, usuario_id, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)");
 if (!$stmt_o) {
     die("Error en la preparación de la declaración INSERT movimientos: " . $conexion->error);
 }
-$stmt_o->bind_param("issss", $empleado_id, $id_nomina, $fecha_movimiento, $accion, $movimiento);
+$stmt_o->bind_param("issssssssi", $empleado_id, $id_nomina, $fecha_movimiento, $accion, $tabla, $campo, $movimiento, $valor_anterior, $valor_nuevo, $_SESSION['u_id']);
+
+// $stmt_o->bind_param("isssssi", $empleado_id, $id_nomina, $fecha_movimiento, $accion, $tabla, $campo, $movimiento, $valor_anterior, $valor_nuevo, $_SESSION['u_id']);
 $stmt_o->execute();
 $stmt_o->close();
 

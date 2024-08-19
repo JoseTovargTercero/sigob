@@ -536,6 +536,7 @@ export async function validateRequestForm({
           deducciones: calculoInformacion.suma_deducciones,
           aportes: calculoInformacion.suma_aportes,
           empleados: calculoInformacion.empleados,
+          identificador: calculoInformacion.identificador,
           status: 'En proceso',
           total_pagar: calculoInformacion.total_pagar,
           nombre_nomina: calculoInformacion.nombre_nomina,

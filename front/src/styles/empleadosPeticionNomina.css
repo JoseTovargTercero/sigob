@@ -49,6 +49,10 @@
   font-size: 12px;
 }
 
+#request-comparation-container table .table-blue-gray {
+  background-color: #e3edff;
+}
+
 .request-list-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));

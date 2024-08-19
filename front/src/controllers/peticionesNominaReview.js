@@ -1,15 +1,22 @@
 import { getRegConEmployeeData } from '../api/empleados.js'
 import {
+  getMovimiento,
+  getRegConMovimiento,
+  updateRegConMovimiento,
+} from '../api/movimientos.js'
+import {
   confirmarPeticionNomina,
   generarNominaTxt,
   getComparacionNomina,
   getPeticionesNomina,
   getRegConPeticionesNomina,
 } from '../api/peticionesNomina.js'
+import { movimientoCard } from '../components/movimientoCard.js'
 import { createComparationContainer } from '../components/regcon_comparation_container.js'
 import { nom_comparation_employee } from '../components/regcon_comparation_employee.js'
 import { confirmNotification, validateInput } from '../helpers/helpers.js'
 import { FRECUENCY_TYPES, NOTIFICATIONS_TYPES } from '../helpers/types.js'
+import { loadMovimientosTable } from './movimientosTable.js'
 
 const d = document
 const w = window
@@ -27,6 +34,9 @@ let fieldListErrors = {
 }
 
 let nominas = {}
+
+let correciones = []
+let movimientosId = []
 
 export async function validateRequestNomForm({
   selectId,
@@ -55,6 +65,8 @@ export async function validateRequestNomForm({
   selectNom.insertAdjacentHTML('beforeend', selectValues)
 
   selectNom.addEventListener('change', (e) => {
+    movimientosId = []
+    correciones = []
     fieldList = validateInput({
       target: e.target,
       fieldList,
@@ -93,16 +105,35 @@ export async function validateRequestNomForm({
         actual: peticiones.registro_actual.empleados,
         obtenerEmpleado: getRegConEmployeeData,
       })
+      let tablaMovimietnos = await loadMovimientosTable()
     }
 
     if (e.target.id === 'confirm-request') {
       console.log(e.target.dataset.correlativo)
       confirmNotification({
         type: NOTIFICATIONS_TYPES.send,
-        successFunction: confirmarPeticionNomina,
-        successFunctionParams: e.target.dataset.correlativo,
+        successFunction: function () {
+          // confirmarPeticionNomina(e.target.dataset.correlativo)
+          updateRegConMovimiento({ accion: 'status', informacion: correciones })
+          resetInput()
+          validateRequestFrecuency()
+        },
         othersFunctions: [resetInput, validateRequestFrecuency],
         message: '¿Seguro de aceptar esta petición?',
+      })
+    }
+
+    if (e.target.classList.contains('btn-corregir')) {
+      getRegConMovimiento(e.target.dataset.id).then((res) => {
+        console.log(res)
+        let correcion = movimientoCard({
+          elementToInsertId: 'request-comparation-container',
+          info: res,
+          correciones,
+          movimientosId,
+        })
+
+        console.log(correciones, movimientosId)
       })
     }
   })

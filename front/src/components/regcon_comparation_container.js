@@ -1,10 +1,11 @@
+import { validarIdentificador } from '../controllers/peticionesNominaForm.js'
+
 const d = document
 const w = window
 
 export function createComparationContainer({ data, tablaDiferencia }) {
   if (!data) return
   let { registro_actual, registro_anterior, confirmBtn } = data
-
   return `
     <div class='' id='request-comparation-container'>
       ${createCard({
@@ -13,9 +14,39 @@ export function createComparationContainer({ data, tablaDiferencia }) {
         confirmBtn,
       })}
     </div>
+    <div class="card rounded">
+     <div class='card-header py-2 pb-2'>
+          <h5 class='card-title mb-0 text-center'>Movimientos</h5>
+           <small class='d-block mt-0 text-center text-muted'>
+             Visualice movimientos realizados a los empleados de está petición:
+           </small>  
+        </div>
+        <div class="row mx-0">
+          <table
+            id='movimientos-table-regcon'
+            class='table table-xs table-striped'
+            style='width:100%;'
+          >
+            <thead>
+              <th>id_empleado</th>
+              <th>NOMBRES</th>
+              <th>cedula</th>
+              <th>accion</th>
+              <th>campo</th>
+              <th>valor_anterior</th>
+              <th>valor_nuevo</th>
+              <th>fecha_movimiento</th>
+              <th>usuario</th>
+              <th>descripción</th>
+              <th>acciones</th>
+              
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+   
+    </div>
       <div class='card rounded row mx-0 justify-content-center'>
-    
-
       <div class="row gap-2 mx-0 request-list-container">
         <div class='col mb-2'> 
           <div class='card-header py-2 pb-2'>
@@ -23,7 +54,7 @@ export function createComparationContainer({ data, tablaDiferencia }) {
            <small class='d-block mt-0 text-center text-muted'>
              Visualice los empleados eliminados con respecto a la nomina anterior
            </small>  
-      </div>
+        </div>
           <table
             id='peticion-empleados-eliminados'
             class='table table-xs table-striped'
@@ -80,12 +111,16 @@ const createCard = ({ actual, anterior, confirmBtn }) => {
     .reduce((acc, el) => el + acc, 0)
     .toFixed(2)
 
+  console.log(actual.identificador)
+  let identificadorActual = validarIdentificador(actual.identificador)
+
   let correlativoAnterior,
     nombreNominaAnterior,
     estadoAnterior,
     totalEmpleadosAnterior,
     totalPagarAnterior,
-    diferenciaEmpleados
+    diferenciaEmpleados,
+    identificadorAnterior
 
   if (anterior) {
     correlativoAnterior = anterior.correlativo
@@ -95,6 +130,7 @@ const createCard = ({ actual, anterior, confirmBtn }) => {
     totalPagarAnterior = anterior.total_pagar
       .reduce((acc, el) => el + acc, 0)
       .toFixed(2)
+    identificadorAnterior = validarIdentificador(anterior.identificador)
   }
 
   let listaAsignaciones = createObjectList(
@@ -138,6 +174,9 @@ const createCard = ({ actual, anterior, confirmBtn }) => {
          ${correlativoAnterior} - ${nombreNominaAnterior}
         </h5>
         <h6 class='card-subtitle text-center mb-2'>
+          <b>${identificadorAnterior}</b>
+        </h6>
+        <h6 class='card-subtitle text-center mb-2'>
           <b>Cantidad de empleados: </b>${totalEmpleadosAnterior}
         </h6>
         <h6 class='card-subtitle text-center mb-2'>
@@ -157,6 +196,9 @@ const createCard = ({ actual, anterior, confirmBtn }) => {
       <h5 class='card-title text-center m-2'>
         ${correlativoActual} - ${nombreNominaActual}
       </h5>
+       <h6 class='card-subtitle text-center mb-2'>
+          <b>${identificadorActual}</b>
+        </h6>
       <h6 class='card-subtitle text-center mb-2'>
         <b>Cantidad de empleados: </b>${totalEmpleadosActual}
       </h6>
@@ -211,7 +253,7 @@ const createObjectList = (anterior, actual, title) => {
 
   const celdaDiferencia = (diferencia) => {
     if (diferencia > 0) return `<td class="table-success">+${diferencia}</td>`
-    if (diferencia < 0) return `<td class="table-danger">${diferencia}</td>`
+    if (diferencia < 0) return `<td class="table-blue-gray">${diferencia}</td>`
     return `<td class="table-info">${diferencia}</td>`
   }
 
