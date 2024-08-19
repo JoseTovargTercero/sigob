@@ -92,12 +92,12 @@ $suma_asignaciones_json = json_encode($data['suma_asignaciones']);
 $suma_deducciones_json = json_encode($data['suma_deducciones']);
 $suma_aportes_json = json_encode($data['suma_aportes']);
 $total_pagar_json = json_encode($data['total_pagar']);
-$coreccion = "";
+$correccion = "";
 $status = "0";
 $status_archivos = "0";
 $creacion = Date('m-Y');
 
-$sql_peticiones = "INSERT INTO peticiones (empleados, asignaciones, deducciones, aportes, total_pagar, correlativo, status, nombre_nomina, creacion, identificador, status_archivos, coreccion) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+$sql_peticiones = "INSERT INTO peticiones (empleados, asignaciones, deducciones, aportes, total_pagar, correlativo, status, nombre_nomina, creacion, identificador, status_archivos, correccion) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 $stmt_peticiones = $conexion->prepare($sql_peticiones);
 
 if (!$stmt_peticiones) {
@@ -105,7 +105,7 @@ if (!$stmt_peticiones) {
     exit();
 }
 
-$stmt_peticiones->bind_param("ssssssssssss", $empleados_json, $suma_asignaciones_json, $suma_deducciones_json, $suma_aportes_json, $total_pagar_json, $correlativo_formateado, $status, $nombre_nomina, $creacion, $identificador, $status_archivos, $coreccion);
+$stmt_peticiones->bind_param("ssssssssssss", $empleados_json, $suma_asignaciones_json, $suma_deducciones_json, $suma_aportes_json, $total_pagar_json, $correlativo_formateado, $status, $nombre_nomina, $creacion, $identificador, $status_archivos, $correccion);
 $stmt_peticiones->execute();
 
 if ($stmt_peticiones->affected_rows === 0) {

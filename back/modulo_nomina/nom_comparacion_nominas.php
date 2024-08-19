@@ -9,7 +9,11 @@ $correlativo = $data['correlativo'];
 $nombre_nomina = $data['nombre_nomina'];
 
 // Consultar la información del registro que tenga el mismo correlativo y nombre_nomina
-$sql = "SELECT * FROM peticiones WHERE correlativo = ? AND nombre_nomina = ?";
+$sql = "
+    SELECT p.*, n.id AS nomina_id
+    FROM peticiones p
+    JOIN nominas n ON p.nombre_nomina = n.nombre_nomina
+    WHERE p.correlativo = ? AND p.nombre_nomina = ?";
 $stmt = $conexion->prepare($sql);
 $stmt->bind_param("ss", $correlativo, $nombre_nomina);
 $stmt->execute();
@@ -25,9 +29,11 @@ if ($result->num_rows > 0) {
 
 // Consultar el registro anterior al correlativo actual que tenga el mismo nombre_nomina y status = 1
 $sql_anterior = "
-    SELECT * FROM peticiones 
-    WHERE nombre_nomina = ? AND correlativo < ? AND status = 1
-    ORDER BY correlativo DESC 
+    SELECT p.*, n.id AS nomina_id
+    FROM peticiones p
+    JOIN nominas n ON p.nombre_nomina = n.nombre_nomina
+    WHERE p.nombre_nomina = ? AND p.correlativo < ? AND p.status = 1
+    ORDER BY p.correlativo DESC 
     LIMIT 1";
 $stmt_anterior = $conexion->prepare($sql_anterior);
 $stmt_anterior->bind_param("ss", $nombre_nomina, $correlativo);
@@ -50,4 +56,5 @@ echo json_encode($response);
 
 // Cerrar la conexión
 $conexion->close();
+
 ?>
