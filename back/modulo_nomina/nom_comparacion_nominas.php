@@ -12,7 +12,7 @@ $nombre_nomina = $data['nombre_nomina'];
 $sql = "
     SELECT p.*, n.id AS nomina_id
     FROM peticiones p
-    JOIN nominas n ON p.nombre_nomina = n.nombre_nomina
+    JOIN nominas n ON p.nombre_nomina = n.nombre
     WHERE p.correlativo = ? AND p.nombre_nomina = ?";
 $stmt = $conexion->prepare($sql);
 $stmt->bind_param("ss", $correlativo, $nombre_nomina);
@@ -31,7 +31,7 @@ if ($result->num_rows > 0) {
 $sql_anterior = "
     SELECT p.*, n.id AS nomina_id
     FROM peticiones p
-    JOIN nominas n ON p.nombre_nomina = n.nombre_nomina
+    JOIN nominas n ON p.nombre_nomina = n.nombre
     WHERE p.nombre_nomina = ? AND p.correlativo < ? AND p.status = 1
     ORDER BY p.correlativo DESC 
     LIMIT 1";
