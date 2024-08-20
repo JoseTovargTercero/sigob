@@ -41,11 +41,14 @@ if (isset($_POST["select"])) {
                 $stmt_conceptos->close();
             }
 
+            // Quitar la letra y dejar solo el número
+            $concepto_valor_max = preg_replace('/\D/', '', $concepto_valor_max);
+
             $data[] = array(
                 'nombre' => $nombre_nomina,
                 'frecuencia' => $frecuencia,
                 'tipo' => $tipo,
-                'concepto_valor_max' => $concepto_valor_max // Guardar el valor máximo
+                'concepto_valor_max' => $concepto_valor_max // Guardar solo el número
             );
         }
     }
