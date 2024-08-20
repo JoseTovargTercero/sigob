@@ -189,6 +189,7 @@ export async function validateRequestForm({
       console.log(nominas)
       fieldList.frecuencia = nominaFind.frecuencia
       fieldList.tipo = nominaFind.tipo
+      fieldList.concepto_valor_max = nominaFind.concepto_valor_max
 
       console.log(fieldList)
 
@@ -227,6 +228,12 @@ export async function validateRequestForm({
               identificadorOpciones += `<option value='${identificadorNomina}'>Mensual</option>`
             }
           )
+          break
+        case '5':
+          console.log('hola')
+          for (let i = 1; i <= fieldList.concepto_valor_max; i++) {
+            identificadorOpciones += `<option value='p${i}'>Periodo ${i}</option>`
+          }
           break
 
         default:
@@ -287,6 +294,7 @@ export async function validateRequestForm({
             frecuencia: fieldList.frecuencia,
             identificador: fieldList.identificador,
             tipo: fieldList.tipo,
+            concepto_valor_max: fieldList.concepto_valor_max,
           })
           console.log(calculoInformacion)
 
