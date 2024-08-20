@@ -1,11 +1,16 @@
 <?php
 require_once '../sistema_global/conexion.php';
+require_once '../sistema_global/session.php';
+$id_user = $_SESSION["u_id"];
 
 // Recibir el array enviado desde el primer archivo
 $data = json_decode(file_get_contents('php://input'), true);
 
 // Array para almacenar los IDs de nómina
 $tipo_nomina = array();
+
+// Preparar Consultas
+// Preparar Consultas
 
 foreach ($data as $item) {
     if (empty($item['id']) || empty($item['value'])) {
@@ -49,87 +54,72 @@ foreach ($data as $item) {
         }
     }
 
+
+    // OBTENER DATOS DEL EMPLEADO
+    $stmt_datos_empleado = mysqli_prepare($conexion, "SELECT status, cedula FROM empleados WHERE id = ?");
+    $stmt_datos_empleado->bind_param('s', $id);
+    $stmt_datos_empleado->execute();
+    $stmt_datos_empleado->bind_result($valor_anterior, $cedula_e);
+    $stmt_datos_empleado->fetch();
+    $stmt_datos_empleado->close();
+    // OBTENER DATOS DEL EMPLEADO
+
     // Actualizar el campo status en la tabla empleados
-    $sql = "UPDATE empleados SET status = ? WHERE id = ?";
-    $stmt = $conexion->prepare($sql);
-
-    if (!$stmt) {
-        die("Error en la preparación de la declaración UPDATE: " . $conexion->error);
-    }
-
-    $stmt->bind_param('si', $valor, $id);
-
-    if (!$stmt->execute()) {
-        echo "Error al actualizar el status del empleado con id: $id" . $conexion->error;
+    $stmt_update = mysqli_prepare($conexion, "UPDATE empleados SET status = ? WHERE id = ?");
+    $stmt_update->bind_param('si', $valor, $id);
+    if (!$stmt_update->execute()) {
+        echo "Error al actualizar el status del empleado con id $id" . $conexion->error;
         exit;
     }
+    $stmt_update->close();
 
-    $stmt->close();
-}
 
-// Insertar en la tabla movimientos una sola vez
-if ($valor == 'A') {
+    // Actualizar el campo status en la tabla empleados
+
+    /*
+    if ($valor == 'A') {
+        // Se elimina el movimiento si no ha pasado por revición (Que el movimiento este en status NO REVISADO)
+        exit();
+    }else{
+    */
+    $prefix = 'Modificó el estatus del empleado ';
+    $tipo_nomina_json = json_encode($tipo_nomina);
+
+    $valores = array(
+        'A' => array(
+            'accion' => 'ACTIVÓ',
+            'descripcion' => $prefix . $cedula_e . ' a ACTIVO'
+        ),
+        'R' => array(
+            'accion' => 'RETIRÓ',
+            'descripcion' => $prefix . $cedula_e . ' a RETIRADO'
+        ),
+        'S' => array(
+            'accion' => 'SUSPENDIÓ',
+            'descripcion' => $prefix . $cedula_e . ' a SUSPENDIDO'
+        ),
+        'C' => array(
+            'accion' => 'COLOCÓ EN COMISIÓN DE SERVICIO',
+            'descripcion' => $prefix . $cedula_e . ' a COMISIÓN DE SERVICIO'
+        )
+    );
+
+    $accion = $valores[$valor]['accion'];
+    $descripcion = $valores[$valor]['descripcion'];
     $fecha_movimiento = date('Y-m-d H:i:s');
-    $accion = 'UPDATE';
-    $descripcion = "Cambio de Status a Activo de empleado: $id";
-    $status = 1;
-    $tipo_nomina_json = json_encode($tipo_nomina);
+    $tabla_info = ['empleados', 'status'];
 
-    $stmt_mov = $conexion->prepare("INSERT INTO movimientos (id_empleado, id_nomina, fecha_movimiento, accion, descripcion, status) VALUES (?, ?, ?, ?, ?, ?)");
-    if (!$stmt_mov) {
-        die("Error en la preparación de la declaración INSERT movimientos: " . $conexion->error);
-    }
-    $stmt_mov->bind_param("issssi", $id, $tipo_nomina_json, $fecha_movimiento, $accion, $descripcion, $status);
+    // ISERTAR EL MOVIMIENTO
+    $stmt_mov = mysqli_prepare($conexion,"INSERT INTO movimientos (id_empleado, id_nomina, fecha_movimiento, accion, tabla, campo, descripcion, valor_anterior, valor_nuevo, usuario_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt_mov->bind_param("isssssssss", $id, $tipo_nomina_json, $fecha_movimiento, $accion, $tabla_info[0], $tabla_info[1], $descripcion, $valor_anterior, $valor,  $id_user);
     $stmt_mov->execute();
     $stmt_mov->close();
-} elseif ($valor == 'S') {
-    $fecha_movimiento = date('Y-m-d H:i:s');
-    $accion = 'UPDATE';
-    $descripcion = "Cambio de Status a Suspendido de empleado: $id";
-    $status = 1;
-    $tipo_nomina_json = json_encode($tipo_nomina);
-
-    $stmt_mov = $conexion->prepare("INSERT INTO movimientos (id_empleado, id_nomina, fecha_movimiento, accion, descripcion, status) VALUES (?, ?, ?, ?, ?, ?)");
-    if (!$stmt_mov) {
-        die("Error en la preparación de la declaración INSERT movimientos: " . $conexion->error);
-    }
-    $stmt_mov->bind_param("issssi", $id, $tipo_nomina_json, $fecha_movimiento, $accion, $descripcion, $status);
-    $stmt_mov->execute();
-    $stmt_mov->close();
-} elseif ($valor == 'C') {
-   $fecha_movimiento = date('Y-m-d H:i:s');
-    $accion = 'UPDATE';
-    $descripcion = "Cambio de Status a Comision de Servicio de empleado: $id";
-    $status = 1;
-    $tipo_nomina_json = json_encode($tipo_nomina);
-
-    $stmt_mov = $conexion->prepare("INSERT INTO movimientos (id_empleado, id_nomina, fecha_movimiento, accion, descripcion, status) VALUES (?, ?, ?, ?, ?, ?)");
-    if (!$stmt_mov) {
-        die("Error en la preparación de la declaración INSERT movimientos: " . $conexion->error);
-    }
-    $stmt_mov->bind_param("issssi", $id, $tipo_nomina_json, $fecha_movimiento, $accion, $descripcion, $status);
-    $stmt_mov->execute();
-    $stmt_mov->close();
-} else {
-   $fecha_movimiento = date('Y-m-d H:i:s');
-    $accion = 'UPDATE';
-    $descripcion = "Cambio de Status a Retirado de empleado: $id";
-    $status = 1;
-    $tipo_nomina_json = json_encode($tipo_nomina);
-
-    $stmt_mov = $conexion->prepare("INSERT INTO movimientos (id_empleado, id_nomina, fecha_movimiento, accion, descripcion, status) VALUES (?, ?, ?, ?, ?, ?)");
-    if (!$stmt_mov) {
-        die("Error en la preparación de la declaración INSERT movimientos: " . $conexion->error);
-    }
-    $stmt_mov->bind_param("issssi", $id, $tipo_nomina_json, $fecha_movimiento, $accion, $descripcion, $status);
-    $stmt_mov->execute();
-    $stmt_mov->close();
+    // ISERTAR EL MOVIMIENTO
+    //}
 }
 
 
 
-
-       
 
 // Si valor es 'R', eliminar al empleado de conceptos_aplicados
 foreach ($data as $item) {
@@ -138,7 +128,7 @@ foreach ($data as $item) {
         $stmt = $conexion->prepare("SELECT id, nombre_nomina, empleados FROM conceptos_aplicados");
         if (!$stmt) {
             die("Error en la preparación de la declaración SELECT: " . $conexion->error);
-    }
+        }
 
         $stmt->execute();
         $result = $stmt->get_result();
@@ -173,4 +163,4 @@ foreach ($data as $item) {
 $conexion->close();
 
 echo json_encode(["status" => "success", "mensaje" => "Los status de los empleados fueron modificados correctamente"]);
-?>
+

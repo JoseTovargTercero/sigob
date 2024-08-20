@@ -206,7 +206,7 @@ require_once '../../back/sistema_global/session.php';
            
             $('#nombre_empleado').val(data.nombres)
             $('#nomina_empleado').val(data.nombreNomina)
-            $('#status_empleado').val(data.status)
+            $('#status_empleado').val(status[data.status])
             $('#fecha__suspension').val('')
 
 

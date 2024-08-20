@@ -460,7 +460,6 @@ while ($r = $query->fetch_object()) {
                     <?php if ($statusGrupo == 'conRegistros') { ?>
                       <li><a class="nav-link" id="v-pills-addEmpleado-tab" data-bs-toggle="pill" href="#v-pills-addEmpleado" role="tab" aria-controls="v-pills-addEmpleado" aria-selected="false" tabindex="-1">Agregar empleado al grupo</a></li>
                     <?php } ?>
-                    <li><a class="nav-link" id="v-pills-settings-tab" data-bs-toggle="pill" href="#v-pills-settings" role="tab" aria-controls="v-pills-settings" aria-selected="true">Cambiar estatus</a></li>
                   </ul>
                 </div>
               </div>

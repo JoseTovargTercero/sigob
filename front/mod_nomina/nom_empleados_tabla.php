@@ -122,13 +122,13 @@ require_once '../../back/sistema_global/session.php';
                       placeholder="CEDULA..." maxlength="9" />
                   </div>
                   <div class="col-sm">
-                    <label class="form-label" for="status">ESTADO DEL TRABAJADOR</label>
+                    <label class="form-label" for="status">ESTATUS DEL TRABAJADOR</label>
                     <select name="status" id="status" class="form-select employee-select">
                       <option value="" selected>ELEGIR...</option>
                       <option value="A">ACTIVO</option>
                       <option value="R">RETIRADO</option>
                       <option value="S">SUSPENDIDO</option>
-                      <option value="C">COMISION DE SERVICIO</option>
+                      <option value="C">COMISIÓN DE SERVICIO</option>
                     </select>
                   </div>
                 </div>
