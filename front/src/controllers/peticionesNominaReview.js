@@ -11,6 +11,7 @@ import {
   getPeticionesNomina,
   getRegConPeticionesNomina,
 } from '../api/peticionesNomina.js'
+import { rechazarPeticionCard } from '../components/rechazarPeticionCard.js'
 import { movimientoCard } from '../components/movimientoCard.js'
 import { createComparationContainer } from '../components/regcon_comparation_container.js'
 import { nom_comparation_employee } from '../components/regcon_comparation_employee.js'
@@ -35,7 +36,7 @@ let fieldListErrors = {
 
 let nominas = {}
 
-let correciones = []
+let correcciones = []
 let movimientosId = []
 
 export async function validateRequestNomForm({
@@ -66,7 +67,7 @@ export async function validateRequestNomForm({
 
   selectNom.addEventListener('change', (e) => {
     movimientosId = []
-    correciones = []
+    correcciones = []
     fieldList = validateInput({
       target: e.target,
       fieldList,
@@ -87,6 +88,7 @@ export async function validateRequestNomForm({
       )
       fieldList.frecuencia = result.frecuencia
       fieldList.identificador = result.identificador
+      fieldList.id = result.id
 
       if (comparationContainer) comparationContainer.remove()
 
@@ -105,7 +107,9 @@ export async function validateRequestNomForm({
         actual: peticiones.registro_actual.empleados,
         obtenerEmpleado: getRegConEmployeeData,
       })
-      let tablaMovimietnos = await loadMovimientosTable()
+      let tablaMovimietnos = await loadMovimientosTable({
+        id_nomina: peticiones.registro_actual.nomina_id,
+      })
     }
 
     if (e.target.id === 'confirm-request') {
@@ -114,7 +118,10 @@ export async function validateRequestNomForm({
         type: NOTIFICATIONS_TYPES.send,
         successFunction: function () {
           // confirmarPeticionNomina(e.target.dataset.correlativo)
-          updateRegConMovimiento({ accion: 'status', informacion: correciones })
+          updateRegConMovimiento({
+            accion: 'status',
+            informacion: correcciones,
+          })
           resetInput()
           validateRequestFrecuency()
         },
@@ -126,14 +133,23 @@ export async function validateRequestNomForm({
     if (e.target.classList.contains('btn-corregir')) {
       getRegConMovimiento(e.target.dataset.id).then((res) => {
         console.log(res)
-        let correcion = movimientoCard({
+        let correccion = movimientoCard({
           elementToInsertId: 'request-comparation-container',
           info: res,
-          correciones,
+          correcciones,
           movimientosId,
+          peticionId: fieldList.id,
         })
+      })
+    }
 
-        console.log(correciones, movimientosId)
+    if (e.target.id === 'deny-request') {
+      rechazarPeticionCard({
+        elementToInsertId: 'request-comparation-container',
+        peticionId: fieldList.id,
+        correcciones,
+        movimientosId,
+        resetInput,
       })
     }
   })

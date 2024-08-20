@@ -94,8 +94,9 @@ export function createComparationContainer({ data, tablaDiferencia }) {
        ${
          confirmBtn
            ? `<div class='d-flex justify-content-center gap-2 mb-2'>
-         <button class='btn btn-danger' id="deny-request" data-correlativo="${registro_actual.correlativo}">RECHAZAR</button>
-          <button class='btn btn-primary' id="confirm-request" data-correlativo="${registro_actual.correlativo}">CONFIRMAR</button>
+         <button class='btn btn-secondary btn-lg' id="reset-request">DEVOLVER</button>
+         <button class='btn btn-danger btn-lg' id="deny-request" data-correlativo="${registro_actual.id}">RECHAZAR</button>
+          <button class='btn btn-primary btn-lg' id="confirm-request" data-correlativo="${registro_actual.correlativo}">CONFIRMAR</button>
           </div>`
            : ''
        }
