@@ -139,6 +139,8 @@ const getComparacionNomina = async (obj) => {
 
     let data = await res.json()
 
+    console.log(data)
+
     let { registro_actual, registro_anterior } = data
 
     if (data.registro_anterior.id !== 0) {

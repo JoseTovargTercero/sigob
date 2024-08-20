@@ -62,7 +62,7 @@ let requestTableRevision = new DataTable('#request-nom-table-revision', {
     { data: 'status' },
     { data: 'identificador' },
     { data: 'fecha' },
-    // { data: 'acciones' },
+    { data: 'acciones' },
   ],
   responsive: true,
   scrollY: 350,
@@ -103,13 +103,29 @@ export async function loadRequestTable() {
         status: `<span class="btn btn-success btn-sm">Revisado sin descargar</span>`,
         identificador: validarIdentificador(peticion.identificador),
         fecha: peticion.creacion,
-        //   acciones: `
-        //   <button class="btn btn-primary btn-sm" data-correlativo="${
-        //     peticion.correlativo
-        //   }" ${
-        //     Number(peticion.status) === 0 ? 'disabled' : ''
-        //   } id="btn-show-request">Informacion</button>
-        //  `,
+        acciones: `
+          <button class="btn btn-primary btn-sm" data-correlativo="${
+            peticion.correlativo
+          }" ${
+          Number(peticion.status) === 0 ? 'disabled' : ''
+        } id="btn-show-request">Informacion</button>
+         `,
+      })
+    }
+    if (Number(peticion.status) === 2) {
+      dataObj.revision.push({
+        correlativo: peticion.correlativo,
+        nombre: peticion.nombre_nomina,
+        status: `<span class="btn btn-danger">Rechazada</span>`,
+        identificador: validarIdentificador(peticion.identificador),
+        fecha: peticion.creacion,
+        acciones: `
+        <button class="btn btn-secondary btn-sm" data-correlativo="${
+          peticion.correlativo
+        }" ${
+          Number(peticion.status) === 0 ? 'disabled' : ''
+        } id="btn-show-correciones">Corregir</button>
+       `,
       })
     }
 
@@ -125,7 +141,7 @@ export async function loadRequestTable() {
           peticion.correlativo
         }" ${
           Number(peticion.status) === 0 ? 'disabled' : ''
-        } id="btn-show-request">Informacion</button>
+        }>Informacion</button>
        `,
       })
     }

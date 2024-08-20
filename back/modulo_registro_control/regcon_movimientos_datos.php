@@ -14,9 +14,15 @@ try {
         $id = $_GET['id'];
         $sql = "SELECT m.*, e.nombres, e.cedula FROM movimientos as m LEFT JOIN empleados as e on m.id_empleado = e.id WHERE m.id = $id";
     } else {
-        $sql = "SELECT m.*, e.nombres, e.cedula FROM movimientos as m LEFT JOIN empleados as e on m.id_empleado = e.id;";
-    }
+        if (isset($_GET["id_nomina"])) {
+            $id_nomina = $_GET['id_nomina'];
 
+            $sql = "SELECT m.*, e.nombres, e.cedula FROM movimientos as m LEFT JOIN empleados as e on m.id_empleado = e.id WHERE JSON_CONTAINS(m.id_nomina, $id_nomina)";
+        } else {
+            throw new Exception("No se ha otorgado una nomina");
+        }
+
+    }
 
     $result = $conexion->query($sql);
     if ($result === false) {
@@ -29,7 +35,7 @@ try {
         if ($result->num_rows > 0) {
             // Llenar el array con los datos obtenidos de la consulta
             while ($row = $result->fetch_assoc()) {
-                $tabulador = array(
+                $movimiento = array(
                     "id" => $row["id"],
                     "id_empleado" => $row["id_empleado"],
                     "id_nomina" => $row["id_nomina"],
@@ -45,7 +51,7 @@ try {
                     "cedula" => $row["cedula"],
                     "nombres" => $row["nombres"],
                 );
-                $datos[] = $tabulador;
+                $datos[] = $movimiento;
             }
 
             $conexion->close();
@@ -55,7 +61,7 @@ try {
 
         } else {
             // Si no se encontraron resultados
-            throw new Exception("No se encontraron resultados.");
+            $response = json_encode(["success" => "No hay movimientos registrados en esta nomina"]);
         }
 
     }

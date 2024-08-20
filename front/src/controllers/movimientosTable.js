@@ -41,7 +41,7 @@ const tableLanguage = {
 }
 let movimientosTableRegCon
 
-export const loadMovimientosTable = async () => {
+export const loadMovimientosTable = async ({ id_nomina }) => {
   let movimientosRegConElement = d.getElementById('movimientos-table-regcon')
   let movimientosNominaElement = d.getElementById('movimientos-table-nomina')
 
@@ -70,7 +70,7 @@ export const loadMovimientosTable = async () => {
     console.log('cargando movimientos')
     movimientosTableRegCon = new DataTable('#movimientos-table-regcon', {
       responsive: true,
-      scrollY: 300,
+      scrollY: 200,
       language: tableLanguage,
       layout: {
         topEnd: '',
@@ -95,26 +95,26 @@ export const loadMovimientosTable = async () => {
 
     movimientosTableRegCon.clear().draw()
 
-    let movimientos = await getRegConMovimientos()
+    let movimientos = await getRegConMovimientos({ id_nomina })
 
-    console.log(movimientos)
+    if (!Array.isArray(movimientos)) return
 
     let movimientosOrdenados = [...movimientos].sort((a, b) => b.id - a.id)
 
     let data = movimientosOrdenados.map((movimiento) => {
       return {
         id_empleado: movimiento.id_empleado,
-        nombres: 'NOMBRES',
-        cedula: 'CEDULA',
+        nombres: movimiento.nombres,
+        cedula: movimiento.cedula,
         accion: movimiento.accion,
         campo: movimiento.campo,
         valor_anterior: movimiento.valor_anterior,
         valor_nuevo: movimiento.valor_nuevo,
         fecha_movimiento: movimiento.fecha_movimiento,
-        usuario: 'USUARIO',
+        usuario: movimiento.usuario_id,
         descripcion: movimiento.descripcion,
         acciones: `
-        <button class="btn btn-info btn-sm btn-corregir" data-id="${movimiento.id}"><i class="bx bx-detail me-1"></i>Corregir</button>`,
+        <button class="btn btn-info btn-sm btn-corregir" data-id="${movimiento.id}" data-nominaid="${movimiento.id_nomina}"><i class="bx bx-detail me-1"></i>Corregir</button>`,
       }
     })
 
