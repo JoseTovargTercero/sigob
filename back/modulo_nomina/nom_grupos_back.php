@@ -8,7 +8,8 @@ if (isset($_POST["tabla"])) {
     nominas_grupos.codigo, 
     nominas_grupos.nombre, 
     nominas_grupos.id,
-    EXISTS (SELECT 1 FROM empleados_por_grupo WHERE empleados_por_grupo.id_grupo = nominas_grupos.id) AS grupo_existe
+    EXISTS (SELECT 1 FROM empleados_por_grupo WHERE empleados_por_grupo.id_grupo = nominas_grupos.id) AS grupo_existe,
+    EXISTS (SELECT 1 FROM frecuencias_por_grupo WHERE frecuencias_por_grupo.id_grupo = nominas_grupos.id) AS frecuenciaPago
 FROM 
     nominas_grupos 
 ORDER BY  codigo");

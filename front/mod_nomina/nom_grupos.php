@@ -129,7 +129,7 @@ require_once '../../back/sistema_global/session.php';
               var nombre = data[i].nombre;
               var id = data[i].id;
               var grupo_existe = data[i].grupo_existe;
-              var frecuenciaPago = data[i].tipo;
+              var frecuenciaPago = data[i].frecuenciaPago;
               let edit = true
 
               if (grupo_existe == '0' || frecuenciaPago == null) {
