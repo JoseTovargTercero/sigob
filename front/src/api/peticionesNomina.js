@@ -257,8 +257,6 @@ const calculoNomina = async ({
 
     console.log(json)
 
-    hideLoader()
-
     json.informacion_empleados = await mapData(json.informacion_empleados)
 
     return json
@@ -283,7 +281,7 @@ const enviarCalculoNomina = async (requestInfo) => {
 
     let json = await res.json()
 
-    await confirmNotification({
+    confirmNotification({
       type: NOTIFICATIONS_TYPES.done,
       message: json.success,
     })
