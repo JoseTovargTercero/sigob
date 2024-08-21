@@ -16,7 +16,7 @@ if (isset($_POST["select"])) {
             $frecuencia = $row['frecuencia'];
             $tipo = $row['tipo'];
 
-            $concepto_valor_max = null;
+            $concepto_valor_max = 0;
 
             if ($frecuencia == 5 && $tipo == 2) {
                 // Consulta para obtener las fechas de aplicar
@@ -32,7 +32,7 @@ if (isset($_POST["select"])) {
                         if ($fechas && is_array($fechas)) {
                             // Tomar el valor más alto de las fechas
                             $valor_max_actual = max($fechas);
-                            if ($concepto_valor_max === null || $valor_max_actual > $concepto_valor_max) {
+                            if ($concepto_valor_max === 0 || $valor_max_actual > $concepto_valor_max) {
                                 $concepto_valor_max = $valor_max_actual;
                             }
                         }
