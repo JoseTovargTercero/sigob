@@ -1,4 +1,5 @@
 import { getEmployeeData, updateEmployeeStatus } from '../api/empleados.js'
+import { getPeticionMovimientos } from '../api/movimientos.js'
 import {
   calculoNomina,
   descargarNominaTxt,
@@ -7,8 +8,10 @@ import {
   getComparacionNomina2,
   getNominas,
   getPeticionesNomina,
+  getPeticionNomina,
   getSemanasDelAnio,
 } from '../api/peticionesNomina.js'
+import { nomCorregirCard } from '../components/nom_corregir_card.js'
 import {
   loadEmployeeList,
   nom_empleados_list_card,
@@ -351,6 +354,18 @@ export async function validateRequestForm({
         'beforeend',
         nomReportCard({ data: peticion })
       )
+    }
+
+    if (e.target.dataset.corregir) {
+      console.log('hola')
+      let movimientosPeticion = await getPeticionMovimientos({
+        id_peticion: Number(e.target.dataset.corregir),
+      })
+      let peticion = await getPeticionNomina(e.target.dataset.corregir)
+
+      console.log(movimientosPeticion)
+      console.log(peticion)
+      nomCorregirCard({ elementToInsertId: 'request-form' })
     }
 
     if (e.target.id === 'btn-close-report') {

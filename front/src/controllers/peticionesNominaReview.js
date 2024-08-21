@@ -1,9 +1,5 @@
 import { getRegConEmployeeData } from '../api/empleados.js'
-import {
-  getMovimiento,
-  getRegConMovimiento,
-  updateRegConMovimiento,
-} from '../api/movimientos.js'
+import { getRegConMovimiento } from '../api/movimientos.js'
 import {
   confirmarPeticionNomina,
   generarNominaTxt,
@@ -117,11 +113,7 @@ export async function validateRequestNomForm({
       confirmNotification({
         type: NOTIFICATIONS_TYPES.send,
         successFunction: function () {
-          // confirmarPeticionNomina(e.target.dataset.correlativo)
-          updateRegConMovimiento({
-            accion: 'status',
-            informacion: correcciones,
-          })
+          confirmarPeticionNomina(e.target.dataset.correlativo)
           resetInput()
           validateRequestFrecuency()
         },

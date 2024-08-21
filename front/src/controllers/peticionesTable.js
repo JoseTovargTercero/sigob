@@ -116,15 +116,13 @@ export async function loadRequestTable() {
       dataObj.revision.push({
         correlativo: peticion.correlativo,
         nombre: peticion.nombre_nomina,
-        status: `<span class="btn btn-danger">Rechazada</span>`,
+        status: `<span class="btn btn-danger btn-sm">Rechazada</span>`,
         identificador: validarIdentificador(peticion.identificador),
         fecha: peticion.creacion,
         acciones: `
-        <button class="btn btn-secondary btn-sm" data-correlativo="${
-          peticion.correlativo
-        }" ${
-          Number(peticion.status) === 0 ? 'disabled' : ''
-        } id="btn-show-correciones">Corregir</button>
+        <button class="btn btn-secondary btn-sm" data-corregir="${
+          peticion.id
+        }" ${Number(peticion.status) === 0 ? 'disabled' : ''}>Corregir</button>
        `,
       })
     }
@@ -133,7 +131,7 @@ export async function loadRequestTable() {
       dataObj.revision.push({
         correlativo: peticion.correlativo,
         nombre: peticion.nombre_nomina,
-        status: `<span class="btn btn-warning">Pendiente</span>`,
+        status: `<span class="btn btn-warning btn-sm">Pendiente</span>`,
         identificador: validarIdentificador(peticion.identificador),
         fecha: peticion.creacion,
         acciones: `

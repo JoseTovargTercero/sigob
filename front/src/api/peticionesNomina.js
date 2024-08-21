@@ -73,7 +73,9 @@ const getPeticionesNomina = async () => {
     let res = await fetch(obtenerPeticionesNominaUrl)
 
     let data = await res.json()
-    data.forEach((el) => {
+
+    console.log(data)
+    data.success.forEach((el) => {
       el.empleados = JSON.parse(el.empleados)
       el.asignaciones = JSON.parse(el.asignaciones)
       el.deducciones = JSON.parse(el.deducciones)
@@ -84,7 +86,39 @@ const getPeticionesNomina = async () => {
 
     // data.informacion_empleados = JSON.parse(data.informacion_empleados)
 
-    return data
+    return data.success
+  } catch (e) {
+    console.log(e)
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener nominas',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+const getPeticionNomina = async (id) => {
+  showLoader()
+
+  try {
+    let res = await fetch(`${obtenerPeticionesNominaUrl}?id="${id}"`)
+
+    let data = await res.json()
+
+    // console.log(data)
+
+    data.success.forEach((el) => {
+      el.empleados = JSON.parse(el.empleados)
+      el.asignaciones = JSON.parse(el.asignaciones)
+      el.deducciones = JSON.parse(el.deducciones)
+      el.aportes = JSON.parse(el.aportes)
+
+      el.total_a_pagar = JSON.parse(el.total_pagar)
+    })
+
+    // data.informacion_empleados = JSON.parse(data.informacion_empleados)
+
+    return data.success[0]
   } catch (e) {
     console.log(e)
     return confirmNotification({
@@ -238,12 +272,7 @@ const enviarCalculoNomina = async (requestInfo) => {
       body: JSON.stringify(requestInfo),
     })
 
-    let clone = res.clone()
-    let text = await res.text()
-
     let json = await res.json()
-
-    hideLoader()
 
     await confirmNotification({
       type: NOTIFICATIONS_TYPES.done,
@@ -259,6 +288,7 @@ const enviarCalculoNomina = async (requestInfo) => {
 
     return false
   } finally {
+    hideLoader()
   }
 }
 
@@ -417,6 +447,7 @@ export {
   calculoNomina,
   enviarCalculoNomina,
   getPeticionesNomina,
+  getPeticionNomina,
   getRegConPeticionesNomina,
   getSemanasDelAnio,
   // getNominaTxt,

@@ -5,19 +5,24 @@ function procesarPeticion($id_peticion, $conexion)
 {
     $response = [];
 
+
     try {
+        $status = null;
+
         // Verificar el status de la petición
-        $consultaPeticion = "SELECT status FROM peticiones WHERE id = :id_peticion";
+        $consultaPeticion = "SELECT status FROM peticiones WHERE id = ?";
+
+
         $stmtPeticion = $conexion->prepare($consultaPeticion);
-        $stmtPeticion->bindParam(':id_peticion', $id_peticion, PDO::PARAM_INT);
+        $stmtPeticion->bind_param('i', $id_peticion);
         $stmtPeticion->execute();
+        $stmtPeticion->store_result();
+        $stmtPeticion->bind_result($status);
+        $stmtPeticion->fetch();
 
-        $peticion = $stmtPeticion->fetch(PDO::FETCH_ASSOC);
-
-        if ($peticion && $peticion['status'] == 2) {
+        if ($stmtPeticion->num_rows > 0 && $status == 2) {
             // Consultar correcciones
-            $consultaCorrecciones = "
-                SELECT 
+            $consultaCorrecciones = "SELECT 
                     corr.*, 
                     mov.id AS movimiento_id, mov.id_empleado, mov.tabla, mov.campo, mov.valor_anterior, mov.valor_nuevo, mov.status AS movimiento_status 
                 FROM 
@@ -25,21 +30,21 @@ function procesarPeticion($id_peticion, $conexion)
                 JOIN 
                     movimientos mov ON mov.id = corr.movimiento_id
                 WHERE 
-                    corr.peticion_id = :id_peticion 
+                    corr.peticion_id = ? 
                 AND 
                     mov.status = 1
             ";
 
             $stmtCorrecciones = $conexion->prepare($consultaCorrecciones);
-            $stmtCorrecciones->bindParam(':id_peticion', $id_peticion, PDO::PARAM_INT);
+            $stmtCorrecciones->bind_param('i', $id_peticion);
             $stmtCorrecciones->execute();
+            $resultCorrecciones = $stmtCorrecciones->get_result();
 
-            $correcciones = $stmtCorrecciones->fetchAll(PDO::FETCH_ASSOC);
-
-            if ($correcciones) {
-                $response = json_encode(["success" => true, "correcciones" => $correcciones]);
+            if ($resultCorrecciones->num_rows > 0) {
+                $correcciones = $resultCorrecciones->fetch_all(MYSQLI_ASSOC);
+                $response = json_encode(["success" => $correcciones]);
             } else {
-                $response = json_encode(["error" => "No se encontraron correcciones con el ID de petición proporcionado."]);
+                throw new Exception("No se encontraron correcciones con el ID de petición proporcionado.");
             }
         } else {
             $response = json_encode(["error" => "La petición no tiene un status de 2 o no se encontró."]);

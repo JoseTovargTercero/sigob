@@ -12,6 +12,9 @@ const getMovimientosUrl =
 const getRegConMovimientosUrl =
   '../../../../sigob/back/modulo_registro_control/regcon_movimientos_datos.php'
 
+const getPeticionesMovimientosUrl =
+  '../../../../sigob/back/modulo_nomina/nom_peticiones_cambios.php'
+
 const updateRegConMovimientosUrl =
   '../../../../sigob/back/modulo_registro_control/regcon_movimientos_datos.php'
 
@@ -198,6 +201,36 @@ const rechazarPeticion = async ({ peticion, movimientos, correcciones }) => {
   }
 }
 
+const getPeticionMovimientos = async ({ id_peticion }) => {
+  try {
+    let res = await fetch(getPeticionesMovimientosUrl, {
+      method: 'POST',
+      body: JSON.stringify({ id_peticion }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    let json = await res.json()
+
+    if (json.success) {
+      return json.success
+    }
+
+    if (json.error) {
+      confirmNotification({
+        type: NOTIFICATIONS_TYPES.fail,
+        message: json.error,
+      })
+    }
+  } catch (e) {
+    console.log(e)
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener movimientos de peticion',
+    })
+  }
+}
+
 export {
   getMovimientos,
   getMovimiento,
@@ -205,4 +238,5 @@ export {
   getRegConMovimiento,
   updateRegConMovimiento,
   rechazarPeticion,
+  getPeticionMovimientos,
 }
