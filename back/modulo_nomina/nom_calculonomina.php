@@ -19,6 +19,7 @@ $identificador = $data['identificador'];
 $nombre = $data['nombre'];
 $tipo = $data['tipo'];
 $frecuencia = $data['frecuencia'];
+$concepto_valor_max = $data['concepto_valor_max'];
 $palabrasClave = ['diferencia', 'Diferencia', 'DIFERENCIA', 'diferencias', 'DIFERENCIAS', 'Diferencias'];
 
 $contienePalabraClave = false;
@@ -991,9 +992,9 @@ function obtenerEmpleadoPorID($conexion, $id_empleado) {
 
 // Array para almacenar la información de los empleados
 $recibos_de_pago = array();
-
+$suma_asignaciones['SALARIO BASE'] = 0;
 // Inicializar la suma del salario base en el array de sumas de asignaciones
-$suma_asignaciones['salario_base'] = 0;
+
 
 // Iterar sobre cada registro de conceptos_aplicados
 foreach ($conceptos_aplicados as &$concepto) {
@@ -1022,7 +1023,11 @@ foreach ($conceptos_aplicados as &$concepto) {
                 $empleado['id'] = $id_empleado;
 
                 // Sumar el salario base al array de sumas de asignaciones
-                $suma_asignaciones['salario_base'] += $empleado['salario_base'];
+                // Sumar el salario base redondeado al array de sumas de asignaciones
+                $suma_asignaciones['SALARIO BASE'] += $empleado['salario_base'];
+
+                // Redondear nuevamente para evitar decimales inesperados en la suma
+                $suma_asignaciones['SALARIO BASE'] = round($suma_asignaciones['SALARIO BASE'], 2);
 
                 // Inicializar el salario integral con el salario base
                 $empleado['salario_integral'] = $empleado['salario_base'];
@@ -1048,32 +1053,63 @@ foreach ($conceptos_aplicados as &$concepto) {
             $empleados_unicos[$id_empleado]['asignaciones'][] = array($concepto['nom_concepto'] => $valor_concepto);
             // Sumar al salario integral si no es el salario base
             if ($concepto['nom_concepto'] !== "salario_base") {
-                $empleados_unicos[$id_empleado]['salario_integral'] += $valor_concepto;
+                if ($frecuencia == "5" AND $tipo == "2") {
+                    $empleados_unicos[$id_empleado]['salario_integral'] += $valor_concepto/$concepto_valor_max;
+                }else{
+                    $empleados_unicos[$id_empleado]['salario_integral'] += $valor_concepto;
+                }
+                 
+                
             }
 
             // Sumar al array de sumas de asignaciones
             if (isset($suma_asignaciones[$concepto['nom_concepto']])) {
-                $suma_asignaciones[$concepto['nom_concepto']] += $valor_concepto;
+                 if ($frecuencia == "5" AND $tipo == "2") {
+                    $suma_asignaciones[$concepto['nom_concepto']] += $valor_concepto/$concepto_valor_max;
+                }else{
+                    $suma_asignaciones[$concepto['nom_concepto']] += $valor_concepto;
+                }
             } else {
-                $suma_asignaciones[$concepto['nom_concepto']] = $valor_concepto;
+                if ($frecuencia == "5" AND $tipo == "2") {
+                    $suma_asignaciones[$concepto['nom_concepto']] = $valor_concepto/$concepto_valor_max;
+                }else{
+                    $suma_asignaciones[$concepto['nom_concepto']] = $valor_concepto;
+                }
             }
         } elseif ($tipo_concepto === "D") {
             $empleados_unicos[$id_empleado]['deducciones'][] = array($concepto['nom_concepto'] => $valor_concepto);
 
             // Sumar al array de sumas de deducciones
             if (isset($suma_deducciones[$concepto['nom_concepto']])) {
-                $suma_deducciones[$concepto['nom_concepto']] += $valor_concepto;
+                if ($frecuencia == "5" AND $tipo == "2") {
+                     $suma_deducciones[$concepto['nom_concepto']] += $valor_concepto/$concepto_valor_max;
+                }else{
+                     $suma_deducciones[$concepto['nom_concepto']] += $valor_concepto;
+                }
+
             } else {
-                $suma_deducciones[$concepto['nom_concepto']] = $valor_concepto;
+                if ($frecuencia == "5" AND $tipo == "2") {
+                     $suma_deducciones[$concepto['nom_concepto']] = $valor_concepto/$concepto_valor_max;
+                }else{
+                     $suma_deducciones[$concepto['nom_concepto']] = $valor_concepto;
+                }
             }
         } elseif ($tipo_concepto === "P") {
             $empleados_unicos[$id_empleado]['aportes'][] = array($concepto['nom_concepto'] => $valor_concepto);
 
             // Sumar al array de sumas de aportes
             if (isset($suma_aportes[$concepto['nom_concepto']])) {
-                $suma_aportes[$concepto['nom_concepto']] += $valor_concepto;
+                if ($frecuencia == "5" AND $tipo == "2") {
+                     $suma_aportes[$concepto['nom_concepto']] += $valor_concepto/$concepto_valor_max;
+                }else{
+                     $suma_aportes[$concepto['nom_concepto']] += $valor_concepto;
+                }
             } else {
-                $suma_aportes[$concepto['nom_concepto']] = $valor_concepto;
+                if ($frecuencia == "5" AND $tipo == "2") {
+                     $suma_aportes[$concepto['nom_concepto']] = $valor_concepto/$concepto_valor_max;
+                }else{
+                     $suma_aportes[$concepto['nom_concepto']] = $valor_concepto;
+                }
             }
         }
     }
@@ -1089,21 +1125,35 @@ foreach ($empleados_unicos as &$empleado) {
     // Sumar las asignaciones
     foreach ($empleado['asignaciones'] as $asignacion) {
         foreach ($asignacion as $valor) {
-            $total_a_pagar_empleado += $valor;
+            if ($frecuencia == "5" AND $tipo == "2") {
+                $total_a_pagar_empleado += $valor/$concepto_valor_max;
+                }else{
+                    $total_a_pagar_empleado -= $valor;
+                }
+            
         }
     }
 
     // Restar las deducciones
     foreach ($empleado['deducciones'] as $deduccion) {
         foreach ($deduccion as $valor) {
-            $total_a_pagar_empleado -= $valor;
+            if ($frecuencia == "5" AND $tipo == "2") {
+                $total_a_pagar_empleado -= $valor/$concepto_valor_max;
+                }else{
+                    $total_a_pagar_empleado -= $valor;
+                }
+           
         }
     }
 
     // Restar los aportes
     foreach ($empleado['aportes'] as $aporte) {
         foreach ($aporte as $valor) {
-            $total_a_pagar_empleado -= $valor;
+            if ($frecuencia == "5" AND $tipo == "2") {
+                $total_a_pagar_empleado -= $valor/$concepto_valor_max;
+                }else{
+                    $total_a_pagar_empleado -= $valor;
+                }
         }
     }
 
@@ -1138,6 +1188,21 @@ $nombre_nomina = $data['nombre'];
 
 
 // Preparar la respuesta con los resultados
+// Redondear los valores en suma_asignaciones
+foreach ($suma_asignaciones as $key => $value) {
+    $suma_asignaciones[$key] = round($value, 2);
+}
+
+// Redondear los valores en suma_deducciones
+foreach ($suma_deducciones as $key => $value) {
+    $suma_deducciones[$key] = round($value, 2);
+}
+
+// Redondear los valores en suma_aportes
+foreach ($suma_aportes as $key => $value) {
+    $suma_aportes[$key] = round($value, 2);
+}
+
 $response = array(
     'informacion_empleados' => $informacion_empleados,
     'empleados' => $id_empleados_detalles,
