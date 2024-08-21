@@ -462,6 +462,9 @@ export async function validateRequestForm({
           calculoInformacion = await calculoNomina({
             nombre: fieldList.nomina,
             identificador: fieldList.identificador,
+            frecuencia: fieldList.frecuencia,
+            tipo: fieldList.tipo,
+            concepto_valor_max: fieldList.concepto_valor_max,
           })
 
           let nominaMapped = { ...calculoInformacion }
@@ -702,8 +705,8 @@ export function validarIdentificador(identificador) {
     return `Semana ${identificador.slice(1, identificador.length)}`
   if (identificador.startsWith('q'))
     return `Quincena ${identificador.charAt(1)}`
-  if (identificador === 'unico') return `Mensual`
-  if (identificador === 'um') return `Mensual`
+  if (identificador.startsWith('p')) return `Periodo ${identificador.charAt(1)}`
+  if (identificador === 'fecha_unica') return `Mensual`
 
   return identificador
 }

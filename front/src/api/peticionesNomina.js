@@ -248,7 +248,14 @@ const calculoNomina = async ({
       }),
     })
 
+    let clone = res.clone()
+    let text = await clone.text()
+
+    console.log(text)
+
     let json = await res.json()
+
+    console.log(json)
 
     json.informacion_empleados = await mapData(json.informacion_empleados)
 
