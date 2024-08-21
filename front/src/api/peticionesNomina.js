@@ -257,6 +257,8 @@ const calculoNomina = async ({
 
     console.log(json)
 
+    hideLoader()
+
     json.informacion_empleados = await mapData(json.informacion_empleados)
 
     return json
