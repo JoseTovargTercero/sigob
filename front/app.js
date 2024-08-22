@@ -260,7 +260,7 @@ d.addEventListener('DOMContentLoaded', (e) => {
     })
   }
 
-  if(requestHistorial){
+  if (requestHistorial) {
     loadRequestTableHistorico()
   }
 

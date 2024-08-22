@@ -356,16 +356,20 @@ export async function validateRequestForm({
       )
     }
 
-    if (e.target.dataset.corregir) {
+    if (e.target.dataset.revisar) {
       console.log('hola')
       let movimientosPeticion = await getPeticionMovimientos({
-        id_peticion: Number(e.target.dataset.corregir),
+        id_peticion: Number(e.target.dataset.revisar),
       })
-      let peticion = await getPeticionNomina(e.target.dataset.corregir)
+      let peticion = await getPeticionNomina(e.target.dataset.revisar)
 
       console.log(movimientosPeticion)
       console.log(peticion)
-      nomCorregirCard({ elementToInsertId: 'request-form' })
+      nomCorregirCard({
+        elementToInsertId: 'request-form',
+        peticionInfo: peticion,
+        peticionCorrecciones: movimientosPeticion,
+      })
     }
 
     if (e.target.id === 'btn-close-report') {

@@ -9,6 +9,9 @@ import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 const getMovimientosUrl =
   '../../../../sigob/back/modulo_nomina/nom_movimientos_datos.php'
 
+const revertirCambiosUrl =
+  '../../../../sigob/back/modulo_nomina/nom_revertir_cambios.php'
+
 const getRegConMovimientosUrl =
   '../../../../sigob/back/modulo_registro_control/regcon_movimientos_datos.php'
 
@@ -217,7 +220,7 @@ const getPeticionMovimientos = async ({ id_peticion }) => {
     }
 
     if (json.error) {
-      confirmNotification({
+      toastNotification({
         type: NOTIFICATIONS_TYPES.fail,
         message: json.error,
       })
@@ -230,7 +233,45 @@ const getPeticionMovimientos = async ({ id_peticion }) => {
     })
   }
 }
+const revertirCambios = async ({ revertir, manual }) => {
+  try {
+    let res = await fetch(revertirCambiosUrl, {
+      method: 'POST',
+      body: JSON.stringify({ revertir, manual }),
+    })
 
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    let clone = res.clone()
+    let text = await clone.text()
+    console.log(text)
+
+    let json = await res.json()
+
+    console.log(json)
+
+    if (json.success) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.done,
+        message: 'Correciones enviadas. Petición eliminada',
+      })
+      return json.success
+    }
+
+    if (json.error) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.fail,
+        message: json.error,
+      })
+    }
+  } catch (e) {
+    console.log(e)
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener movimientos de peticion',
+    })
+  }
+}
 export {
   getMovimientos,
   getMovimiento,
@@ -239,4 +280,5 @@ export {
   updateRegConMovimiento,
   rechazarPeticion,
   getPeticionMovimientos,
+  revertirCambios,
 }

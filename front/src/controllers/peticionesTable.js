@@ -120,9 +120,9 @@ export async function loadRequestTable() {
         identificador: validarIdentificador(peticion.identificador),
         fecha: peticion.creacion,
         acciones: `
-        <button class="btn btn-secondary btn-sm" data-corregir="${
+        <button class="btn btn-secondary btn-sm" data-revisar="${
           peticion.id
-        }" ${Number(peticion.status) === 0 ? 'disabled' : ''}>Corregir</button>
+        }" ${Number(peticion.status) === 0 ? 'disabled' : ''}>Revisar</button>
        `,
       })
     }

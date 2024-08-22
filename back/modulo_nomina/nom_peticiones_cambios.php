@@ -24,7 +24,7 @@ function procesarPeticion($id_peticion, $conexion)
             // Consultar correcciones
             $consultaCorrecciones = "SELECT 
                     corr.*, 
-                    mov.id AS movimiento_id, mov.id_empleado, mov.tabla, mov.campo, mov.valor_anterior, mov.valor_nuevo, mov.status AS movimiento_status 
+                    mov.id AS movimiento_id, mov.id_empleado, mov.tabla, mov.campo, mov.valor_anterior, mov.valor_nuevo, mov.descripcion AS movimiento_descripcion,mov.status AS movimiento_status 
                 FROM 
                     correcciones corr
                 JOIN 
