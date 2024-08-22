@@ -10696,6 +10696,9 @@ INSERT INTO `txt` (`id`, `id_empleado`, `total_a_pagar`, `nombre_nomina`, `ident
 (60316, 1360, '95', '003 Obreros Obreros Nacional', 'q1', '08-2024', '00009'),
 (60317, 1361, '95', '003 Obreros Obreros Nacional', 'q1', '08-2024', '00009');
 
+
+
+ALTER TABLE `empleados` ADD `categoria` LONGTEXT NOT NULL AFTER `fecha_ingreso`, ADD `partida` LONGTEXT NOT NULL AFTER `categoria`;
 --
 -- Índices para tablas volcadas
 --

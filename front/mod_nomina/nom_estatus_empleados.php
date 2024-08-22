@@ -43,7 +43,7 @@ require_once '../../back/sistema_global/session.php';
       <!-- [ Main Content ] start -->
       <div class="row mb3">
         <!-- [ worldLow section ] start -->
-        <div class="col-lg-12">
+        <div class="col-lg-12 mb-3">
           <div class="card">
             <div class="card-header">
               <div class="d-flex align-items-start justify-content-between">
@@ -84,6 +84,45 @@ require_once '../../back/sistema_global/session.php';
             </div>
           </div>
         </div>
+
+
+
+
+        <div class="col-lg-12 mb-3">
+          <div class="card">
+            <div class="card-header">
+              <div class="d-flex align-items-start justify-content-between">
+                <div>
+                  <h5 class="mb-0">Movimientos realizados</h5>
+                  <small class="text-muded">Sus movimientos. En caso de ser requerido, puede revertir un movimiento en un plazo de 5 minutos</small>
+                </div>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Fecha</th>
+                      <th>Acción</th>
+                      <th>Cambio</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody id="tabla-movimientos">
+
+                  </tbody>
+
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
+
       </div>
       <!-- [ worldLow section ] end -->
       <!-- [ Recent Users ] end -->
@@ -117,6 +156,8 @@ require_once '../../back/sistema_global/session.php';
     </div>
   </div>
 
+  
+
   <!-- [ Main Content ] end -->
   <script src="../../src/assets/js/notificaciones.js"></script>
   <script src="../../src/assets/js/plugins/simplebar.min.js"></script>
@@ -126,6 +167,59 @@ require_once '../../back/sistema_global/session.php';
   <script src="../../src/assets/js/main.js"></script>
   <script>
     var id_revision, reintegros_por_empleados, id_empleado
+    const url_back= '../../back/modulo_nomina/nom_estatus_empleados_back.php'
+  
+    function verificarFecha(fechaMovimiento) {
+      const fechaMovimientoDate = new Date(fechaMovimiento);
+      const fechaActual = new Date();
+      // Calcular la diferencia en milisegundos
+      const diferenciaMs = fechaActual - fechaMovimientoDate;
+      // Convertir la diferencia a minutos
+      const diferenciaMinutos = diferenciaMs / (1000 * 60);
+      return diferenciaMinutos > 180000;
+    }
+
+    function tabla_movimientos(section) {
+      $('#' + section).html('')
+
+      $.ajax({
+        url: url_back,
+        type: 'POST',
+        data: {
+          movimientos: true
+        },
+        cache: false,
+        success: function(data) {
+          var datos = JSON.parse(data)
+          
+          try {
+            if (datos.error) {
+              console.log(datos.error)
+            } else if(datos.status != 'vacio'){
+              if (datos) {
+                let contador = 1
+                datos.forEach(element => {
+                  $('#' + section).append(`<tr>
+                  <td>${contador++}</td>
+                  <td>${element.fecha_movimiento}</td>
+                  <td>${element.accion}</td>
+                  <td>`+element.valor_anterior +' -> '+ element.valor_nuevo+`</td>
+                  <td>${(!verificarFecha(element.fecha_movimiento) ? '<button class="btn btn-primary btn-sm" onclick="eliminar(\''+element.id+'\')">Deshacer</button>':'')}</td>
+                  </tr>`)
+                });
+              }
+            }
+
+          } catch (error) {
+            console.error('No se puede cargar: ' + error)
+          }
+        }
+      });
+    }
+    // actualiza cada 30 segundos tabla_movimientos('tabla-movimientos')
+
+    tabla_movimientos('tabla-movimientos')
+    setInterval(tabla_movimientos, 30000, 'tabla-movimientos')
 
     let status = {
       'A': 'ACTIVO',
@@ -133,6 +227,8 @@ require_once '../../back/sistema_global/session.php';
       'S': 'SUSPENDIDO',
       'C': 'COMISIÓN DE SERVICIO',
     }
+
+
 
     function getDatosEmpleados() {
       let cedula = this.value
@@ -164,6 +260,9 @@ require_once '../../back/sistema_global/session.php';
       });
     }
 
+
+
+    
     document.getElementById('cedula_empleado').addEventListener('change', getDatosEmpleados)
 
     function cambiar_estatus() {
@@ -185,15 +284,15 @@ require_once '../../back/sistema_global/session.php';
       }
 
       const datos = [{
-          id: id_empleado,
-          value: nuevo_status
-        }];
+        id: id_empleado,
+        value: nuevo_status
+      }];
 
-
-
+      let text_extra = (nuevo_status == 'R' ? 'Esta accion no se podrá revertir':'En caso de ser requerido, puede revertir este movimiento en un plazo de 3 minutos')
+      
       Swal.fire({
         title: '¿Estás seguro?',
-        text: "Esta acción modificara el estatus del empleado y se generara un movimiento en la nomina a la que pertenece.",
+        html: "Esta acción modificara el estatus del empleado y se generara un movimiento en la nomina a la que pertenece.<br><b>* "+text_extra+"</b>",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
@@ -213,31 +312,66 @@ require_once '../../back/sistema_global/session.php';
             .then(response => response.json())
             .then(data => {
               if (data.status == 'success') {
-
                 $('#btn-cambiar_estatus').addClass('hide')
                 $('#cedula_empleado').val('')
                 $('#nombre_empleado').val('')
                 $('#nomina_empleado').val('')
                 $('#status_empleado').val('')
                 $('#nuevo_status').html('<option value="" selected>Seleccione</option>')
-
-
                 toast_s('success', 'El estatus del empleado se actualizo correctamente')
-
+                tabla_movimientos('tabla-movimientos')
               } else {
                 toast_s('error', 'Ocurrió un error')
               }
             })
-          /*        .catch(error => {
-            console.error('Error:', error);
-          });
-*/
         }
       });
-
     }
-
     document.getElementById('btn-cambiar_estatus').addEventListener('click', cambiar_estatus)
+
+
+
+
+    /**
+     * Deletes a record with the specified ID.
+     * @param {number} id - The ID of the record to be deleted.
+     * @returns {boolean} - Returns true if the record is deleted successfully, false otherwise.
+     */
+    function eliminar(id) {
+      Swal.fire({
+        title: "¿Estás seguro?",
+        text: "¡Se eliminará el movimiento y se revertirá la acción!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#04a9f5",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Sí, eliminarlo!",
+        cancelButtonText: "Cancelar",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          $.ajax({
+            url: url_back,
+            type: "POST",
+            data: {
+              eliminar: true,
+              id: id,
+            },
+            success: function(response) {
+        console.log(response)
+
+              let data = JSON.parse(response)
+              
+              if (data.status == "success") {
+                tabla_movimientos('tabla-movimientos')
+                toast_s("success", "Eliminado con éxito");
+              } else {
+                toast_s("error", data.mensaje);
+              }
+            },
+          });
+        }
+      });
+    }
   </script>
 
 </body>
