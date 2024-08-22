@@ -14,14 +14,15 @@ function revertirAccion($revertirArray, $conexion)
                 JOIN 
                     movimientos mov ON mov.id = corr.movimiento_id
                 WHERE 
-                    corr.id = :id_correccion
+                    corr.id = ?
             ";
 
             $stmt = $conexion->prepare($consulta);
-            $stmt->bindParam(':id_correccion', $id_correccion, PDO::PARAM_INT);
+            $stmt->bind_param('i', $id_correccion);
             $stmt->execute();
 
-            $movimiento = $stmt->fetch(PDO::FETCH_ASSOC);
+            $result = $stmt->get_result();
+            $movimiento = $result->fetch_assoc();
 
             if ($movimiento) {
                 $movimiento_id = $movimiento['movimiento_id'];
@@ -30,21 +31,19 @@ function revertirAccion($revertirArray, $conexion)
                 $campo = $movimiento['campo'];
                 $valor_anterior = $movimiento['valor_anterior'];
 
-                $updateConsulta = "UPDATE $tabla SET $campo = :valor_anterior WHERE id = :id_empleado";
-
+                $updateConsulta = "UPDATE $tabla SET $campo = ? WHERE id = ?";
                 $updateStmt = $conexion->prepare($updateConsulta);
-                $updateStmt->bindParam(':valor_anterior', $valor_anterior, PDO::PARAM_STR);
-                $updateStmt->bindParam(':id_empleado', $id_empleado, PDO::PARAM_INT);
+                $updateStmt->bind_param('si', $valor_anterior, $id_empleado);
                 $updateStmt->execute();
 
-                $deleteMovimientoConsulta = "DELETE FROM movimientos WHERE id = :movimiento_id";
+                $deleteMovimientoConsulta = "DELETE FROM movimientos WHERE id = ?";
                 $deleteMovimientoStmt = $conexion->prepare($deleteMovimientoConsulta);
-                $deleteMovimientoStmt->bindParam(':movimiento_id', $movimiento_id, PDO::PARAM_INT);
+                $deleteMovimientoStmt->bind_param('i', $movimiento_id);
                 $deleteMovimientoStmt->execute();
 
-                $deleteCorreccionConsulta = "DELETE FROM correcciones WHERE id = :id_correccion";
+                $deleteCorreccionConsulta = "DELETE FROM correcciones WHERE id = ?";
                 $deleteCorreccionStmt = $conexion->prepare($deleteCorreccionConsulta);
-                $deleteCorreccionStmt->bindParam(':id_correccion', $id_correccion, PDO::PARAM_INT);
+                $deleteCorreccionStmt->bind_param('i', $id_correccion);
                 $deleteCorreccionStmt->execute();
             } else {
                 return json_encode(["error" => "No se encontró el movimiento con el ID proporcionado."]);
@@ -76,33 +75,32 @@ function manualAccion($data, $conexion)
                 JOIN 
                     movimientos mov ON mov.id = corr.movimiento_id
                 WHERE 
-                    corr.id = :id_correccion
+                    corr.id = ?
             ";
 
             $stmt = $conexion->prepare($consulta);
-            $stmt->bindParam(':id_correccion', $id_correccion, PDO::PARAM_INT);
+            $stmt->bind_param('i', $id_correccion);
             $stmt->execute();
 
-            $movimiento = $stmt->fetch(PDO::FETCH_ASSOC);
+            $result = $stmt->get_result();
+            $movimiento = $result->fetch_assoc();
 
             if ($movimiento) {
                 $movimiento_id = $movimiento['movimiento_id'];
 
-                $updateConsulta = "UPDATE $tabla SET $campo = :nuevo_valor WHERE id = :id_empleado";
-
+                $updateConsulta = "UPDATE $tabla SET $campo = ? WHERE id = ?";
                 $updateStmt = $conexion->prepare($updateConsulta);
-                $updateStmt->bindParam(':nuevo_valor', $nuevo_valor, PDO::PARAM_STR);
-                $updateStmt->bindParam(':id_empleado', $id_empleado, PDO::PARAM_INT);
+                $updateStmt->bind_param('si', $nuevo_valor, $id_empleado);
                 $updateStmt->execute();
 
-                $updateMovimientoConsulta = "UPDATE movimientos SET status = 2 WHERE id = :movimiento_id";
+                $updateMovimientoConsulta = "UPDATE movimientos SET status = 2 WHERE id = ?";
                 $updateMovimientoStmt = $conexion->prepare($updateMovimientoConsulta);
-                $updateMovimientoStmt->bindParam(':movimiento_id', $movimiento_id, PDO::PARAM_INT);
+                $updateMovimientoStmt->bind_param('i', $movimiento_id);
                 $updateMovimientoStmt->execute();
 
-                $updateCorreccionConsulta = "UPDATE correcciones SET status = 1 WHERE id = :id_correccion";
+                $updateCorreccionConsulta = "UPDATE correcciones SET status = 1 WHERE id = ?";
                 $updateCorreccionStmt = $conexion->prepare($updateCorreccionConsulta);
-                $updateCorreccionStmt->bindParam(':id_correccion', $id_correccion, PDO::PARAM_INT);
+                $updateCorreccionStmt->bind_param('i', $id_correccion);
                 $updateCorreccionStmt->execute();
             } else {
                 return json_encode(["error" => "No se encontró la corrección con el ID proporcionado."]);
