@@ -73,8 +73,7 @@ a {
 }
 
 .modal-box {
-  height: 90%;
-  max-height: 1000px;
+  max-height: 90vh;
   width: 90%;
   max-width: 1000px;
   display: grid;

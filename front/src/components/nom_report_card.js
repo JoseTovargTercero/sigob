@@ -1,7 +1,7 @@
 import { descargarNominaTxt } from '../api/peticionesNomina.js'
 import { FRECUENCY_TYPES } from '../helpers/types.js'
 
-export const nomReportCard = ({ data }) => {
+export const nomReportCard = ({ data, elementToInsert }) => {
   if (!data)
     return `<div class='modal-window' id='modal-report'>
         <div class='modal-box'>
@@ -34,26 +34,21 @@ export const nomReportCard = ({ data }) => {
   console.log(data)
 
   let frecuencia = data.frecuencia
-
-  return `<div class='modal-window' id='modal-report'>
-      <div class='modal-box'>
-        <header class='modal-box-header'>
-          <h5>Gestionar información</h5>
-          <button
-            id='btn-close-report'
-            type='button'
-            class='btn btn-danger'
-            aria-label='Close'
-          >
-            ×
-          </button>
-        </header>
-        <div
-          class='card p-2 slide-up-animation d-flex flex-column align-items-center gap-2 nom-report-card'
-          id='nom-report-card'
-        >
-          <div class='card-header py-5 text-center'>
-            <small class='d-block text-center w-100 py-0'>
+  let card2 = ` <div class='modal-window' id='modal-report'>
+  <div class='modal-box slide-up-animation'>
+    <header class='modal-box-header'>
+      <h5 class=' mb-0 text-center'>Gestionar información de petición</h5>
+      <button
+        id='btn-close-report'
+        type='button'
+        class='btn btn-danger'
+        aria-label='Close'
+      >
+        &times;
+      </button>
+    </header>
+    <div class='modal-box-content text-center'>
+     <small class='d-block text-center w-100 py-0 mb-2'>
               Generar reportes (PDF, TXT, ETC)
             </small>
             <p class=' mb-0'>CORRELATIVO: </p>
@@ -66,26 +61,27 @@ export const nomReportCard = ({ data }) => {
             <h5 class=' mb-2'>${totalEmpleados} empleado/s</h5>
             <p class=' mb-0'>Fecha de creación: </p>
             <h5 class=' mb-2'>${fechaCreacion}</h5>
-          </div>
-          <div class='card-body'>
-            <h5 class='text-center mb-2'>Generar reportes:</h5>
-            <div class='btn-report-actions'>
-              <button
+     
+    </div>
+    <div class="modal-box-footer card-footer d-flex align-items-center justify-content-center gap-2 py-0">
+       <h5 class='text-center mb-2'>Generar reportes:</h5>
+        <button
               data-correlativo="${correlativo}"        
               data-identificador="${identificador}"        
-                class='mx-auto btn btn-secondary size-change-animation'
+                class='btn btn-secondary size-change-animation'
                 id='generar-txt'
               >
                GENERAR 📁
               </button>
-              
-            </div>
-          </div>
-        </div>
       </div>
-    </div>`
+  </div>
+</div>`
+
+  document
+    .getElementById(elementToInsert)
+    .insertAdjacentHTML('beforebegin', card2)
 }
 
-{
-  /* <i class='bx bxs-file-txt bx-sm'></i> */
-}
+// {
+//   /* <i class='bx bxs-file-txt bx-sm'></i> */
+// }

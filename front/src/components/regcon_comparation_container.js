@@ -282,7 +282,7 @@ const createObjectList = (anterior, actual, title) => {
         : ''
     }
     <td class='table-secondary'>${totalListActual}</td>${
-      totalListAnterior ? celdaDiferencia(totalDiferencia) : ''
+      totalListAnterior ? celdaDiferencia(totalDiferencia.toFixed(2)) : ''
     }
   </tr>`
   }

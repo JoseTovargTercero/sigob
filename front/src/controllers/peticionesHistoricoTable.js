@@ -1,4 +1,8 @@
-import { getPeticionesNomina } from '../api/peticionesNomina.js'
+import {
+  descargarNominaTxt,
+  getPeticionesNomina,
+  getPeticionNomina,
+} from '../api/peticionesNomina.js'
 import { nomReportCard } from '../components/nom_report_card.js'
 import { validarIdentificador } from './peticionesNominaForm.js'
 
@@ -64,25 +68,25 @@ export async function loadRequestTableHistorico() {
     (a, b) => a.correlativo - b.correlativo
   )
 
-
-
   console.log(peticiones)
-  let data = datosOrdenados.filter(peticion=> Number(peticion.status) !== 0 ).map((peticion) => {
-    return {
-      correlativo: peticion.correlativo,
-      nombre: peticion.nombre_nomina,
-      status: Number(peticion.status) === 1 ? 'Revisado' : 'Pendiente',
-      identificador: validarIdentificador(peticion.identificador),
-      fecha: peticion.creacion,
-      acciones: `
+  let data = datosOrdenados
+    .filter((peticion) => Number(peticion.status) !== 0)
+    .map((peticion) => {
+      return {
+        correlativo: peticion.correlativo,
+        nombre: peticion.nombre_nomina,
+        status: Number(peticion.status) === 1 ? 'Revisado' : 'Pendiente',
+        identificador: validarIdentificador(peticion.identificador),
+        fecha: peticion.creacion,
+        acciones: `
       <button class="btn btn-primary btn-sm" data-correlativo="${
         peticion.correlativo
-      }" ${
-        Number(peticion.status) === 0 ? 'disabled' : ''
-      } id="btn-show-request">Informacion</button>
+      }" ${Number(peticion.status) === 0 ? 'disabled' : ''} data-show="${
+          peticion.id
+        }">Informacion</button>
      `,
-    }
-  })
+      }
+    })
 
   requestTable.clear().draw()
 
@@ -90,35 +94,30 @@ export async function loadRequestTableHistorico() {
   requestTable.rows.add(data).draw()
 }
 
-d.addEventListener('click', async e=>{
-  if (e.target.id === 'btn-show-request') {
+d.addEventListener('click', async (e) => {
+  if (e.target.dataset.show) {
     e.preventDefault()
-    let peticiones = await getPeticionesNomina()
-    let peticion = peticiones.find(
-      (el) => el.correlativo === e.target.dataset.correlativo
-    )
+    let peticion = await getPeticionNomina(e.target.dataset.show)
+    console.log(peticion)
 
-    console.log(peticion);
-  
-    // fieldList.frecuencia = peticion.frecuencia
-    // let reportCard = d.getElementById('modal-report')
-    // if (reportCard) reportCard.remove()
-  
-    // requestForm.insertAdjacentHTML(
-    //   'beforeend',
-    //   nomReportCard({ data: peticion })
-    // )
+    let reportCard = d.getElementById('modal-report')
+    if (reportCard) reportCard.remove()
+
+    nomReportCard({ data: peticion, elementToInsert: 'request-historial' })
   }
-  
-  // if (e.target.id === 'btn-close-report') {
-  //   let reportCard = d.getElementById('modal-report')
-  //   reportCard.remove()
-  // }
 
+  if (e.target.id === 'btn-close-report') {
+    let reportCard = d.getElementById('modal-report')
+    reportCard.remove()
+  }
+
+  if (e.target.id === 'generar-txt') {
+    let descargatxt = await descargarNominaTxt({
+      identificador: e.target.dataset.identificador,
+      correlativo: e.target.dataset.correlativo,
+    })
+  }
 })
-
-
-
 
 // `
 // <button class="btn btn-primary btn-sm" data-correlativo="${

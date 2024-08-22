@@ -96,9 +96,9 @@ export async function employeeCard({ id, elementToInsert }) {
 
   let employeeCardElement = `
     <div class='modal-window slide-up-animation' id='modal-employee'>
-      <div class='modal-box card w-90 h-80 overflow-auto'>
+      <div class='modal-box card w-90'>
         <div class='row'>
-          <div class='modal-box-header'>
+          <div class='card-header modal-box-header'>
             <h2 class='card-title'>Perfil de Empleado</h2>
             <button
               id='btn-close-employee-card'
@@ -111,7 +111,7 @@ export async function employeeCard({ id, elementToInsert }) {
           </div>
         </div>
 
-        <div class='card-body'>
+        <div class='modal-box-contentcard-body'>
           <div class='row'>
             <div class='col'>
               <h3>${nombres}</h3>

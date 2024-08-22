@@ -108,17 +108,23 @@ const getPeticionNomina = async (id) => {
     let res = await fetch(`${obtenerPeticionesNominaUrl}?id="${id}"`)
 
     let data = await res.json()
+    console.log(data)
 
-    // console.log(data)
+    if (data.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: data.error })
+      return
+    }
 
-    data.success.forEach((el) => {
-      el.empleados = JSON.parse(el.empleados)
-      el.asignaciones = JSON.parse(el.asignaciones)
-      el.deducciones = JSON.parse(el.deducciones)
-      el.aportes = JSON.parse(el.aportes)
+    if (data.success) {
+      data.success.forEach((el) => {
+        el.empleados = JSON.parse(el.empleados)
+        el.asignaciones = JSON.parse(el.asignaciones)
+        el.deducciones = JSON.parse(el.deducciones)
+        el.aportes = JSON.parse(el.aportes)
 
-      el.total_a_pagar = JSON.parse(el.total_pagar)
-    })
+        el.total_a_pagar = JSON.parse(el.total_pagar)
+      })
+    }
 
     // data.informacion_empleados = JSON.parse(data.informacion_empleados)
 
