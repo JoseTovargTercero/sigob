@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 22-08-2024 a las 17:04:53
+-- Tiempo de generación: 22-08-2024 a las 23:01:27
 -- Versión del servidor: 10.4.16-MariaDB
 -- Versión de PHP: 7.4.12
 
@@ -630,6 +630,98 @@ CREATE TABLE `categorias` (
   `categoria` varchar(255) NOT NULL,
   `categoria_nombre` longtext NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `categorias`
+--
+
+INSERT INTO `categorias` (`id`, `categoria`, `categoria_nombre`) VALUES
+(1, '01-04-00-51', 'DESPACHO Y SEGUIMIENTO DE LA GESTIÓN PUBLICA'),
+(2, '01-04-00-52', 'SECRETARIA DE GOBIERNO'),
+(3, '01-04-00-53', 'OFICINA DE LICITACIONES'),
+(4, '01-04-00-54', 'ASESORÍA JURÍDICA'),
+(5, '01-05-00-51', 'SECRETARIO EJECUTIVO'),
+(6, '01-05-00-52', 'SERVICIOS DE INF. Y CUSTODIO DOC.'),
+(7, '01-05-00-53', 'ASESORAMIENTO JURÍDICO'),
+(8, '01-05-00-54', 'ASUNTOS POLÍTICOS'),
+(9, '01-05-00-55', 'OFICINA DEL FONDO DE COMPENSACIÓN INTERTERRITORIAL'),
+(10, '01-06-00-51', 'SECRETARIA DE GESTIÓN HUMANA'),
+(11, '01-06-00-52', 'RECLUTAMIENTO, SELECCIÓN Y EVALUACIÓN DE PERSONAL'),
+(12, '01-06-00-53', 'REGISTRO Y CONTROL'),
+(13, '01-06-00-54', 'PREVISIÓN SOCIAL'),
+(14, '01-06-00-55', 'RELACIONES LABORALES'),
+(15, '01-06-00-56', 'AUDITORIA, CONTROL Y FISCALIZACIÓN LABORAL'),
+(16, '01-06-00-57', 'SEGURO SOCIAL'),
+(17, '01-06-00-58', 'ELABORACIÓN DE NOMINAS'),
+(18, '01-07-00-51', 'SECRETARIA DE PLANIFICACIÓN, PROYECTOS Y PRESUPUESTO'),
+(19, '01-07-00-52', 'FORMULACIÓN Y EVALUACIÓN PRESUPUESTARIA'),
+(20, '01-07-00-53', 'CONTROL Y EJECUCIÓN PRESUPUESTARIA'),
+(21, '01-07-00-54', 'PLANIFICACIÓN Y EVALUACIÓN DE PROYECTO'),
+(22, '01-08-00-51', 'SERVICIOS DE ADMINISTRACIÓN'),
+(23, '01-08-00-52', 'SERVICIOS CONTABLES'),
+(24, '01-08-00-53', 'SERVICIOS DE COMPRAS Y SUMINISTROS'),
+(25, '01-09-00-51', 'TESORERÍA'),
+(26, '01-09-00-52', 'SERVICIOS CONTABLES DEL TESORO'),
+(27, '01-09-00-53', 'UNIDAD DE ORDENAMIENTO DE PAGO'),
+(28, '01-09-00-54', 'SERVICIO DE APOYO FISCAL'),
+(29, '01-10-00-51', 'SECRETARIA EJECUTIVA INDÍGENA'),
+(30, '01-11-00-51', 'AUDITORIA INTERNA'),
+(31, '01-11-00-52', 'OFICINA DE AUDITORIA'),
+(32, '01-11-00-53', 'OFICINA DE CONTROL DE GESTIÓN'),
+(33, '01-11-00-54', 'OFICINA DE ASUNTOS LEGALES'),
+(34, '01-13-00-51', 'SECRETARIA EJECUTIVA DE BIENES Y SERVICIOS'),
+(35, '01-13-00-52', 'OFICINA DE REGISTRO Y CONTROL DE BIENES MUEBLES E INMUEBLES'),
+(36, '01-13-00-53', 'OFICINA DE CONTABILIDAD'),
+(37, '01-13-00-54', 'OFICINA DE INVENTARIO'),
+(38, '01-13-00-55', 'SEGURIDAD Y VIGILANCIA'),
+(39, '01-13-00-56', 'OFICINA DE REGISTRO Y CONTROL ACTA DE RECEPCIÓN Y ENTREGA'),
+(40, '06-01-00-51', 'SECRETARIA DE TURISMO'),
+(41, '08-03-00-51', 'SEC. EJEC. PARA LA ATENCIÓN DE LA JUVENTUD Y ESTUDIANTES UNIVERSITARIOS'),
+(42, '08-03-00-52', 'JEFATURA PARA LOS ASUNTOS DE LA JUVENTUD'),
+(43, '08-03-00-53', 'JEFATURA DE LOS ESTUDIANTES'),
+(44, '08-03-00-54', 'JEFATURA DE ORIENTACIÓN Y PREVENCIÓN A LOS ESTUDIANTES'),
+(45, '09-01-00-51', 'SECRETARIA EJEC. DEL SISTEMA DE INFOR. Y COMUNICACIÓN'),
+(46, '09-01-00-52', 'JEFATURA DE PRENSA'),
+(47, '09-01-00-53', 'UNIDAD DE PROTOCOLO'),
+(48, '09-01-00-54', 'UNIDAD DE MEDIOS INFORMATIVOS'),
+(49, '09-01-00-55', 'OFICINA DE REDES SOCIALES'),
+(50, '09-02-00-51', 'ADMINISTRATIVO DE LA I.A.B.N'),
+(51, '09-03-00-51', 'SECRETARIA DE CULTURA'),
+(52, '09-04-00-51', 'SECRETARIA EJECUTIVA DE LAS TECNOLOGÍAS DE INFORMACIÓN'),
+(53, '09-04-00-52', 'UNIDAD DE ASESORÍA LEGAL'),
+(54, '09-04-00-53', 'UNIDAD DE ALMACÉN'),
+(55, '09-04-00-54', 'OFICINA DE FORMACIÓN TECNOLÓGICA'),
+(56, '09-04-00-55', 'OFICINA DE SISTEMA DESARROLLO E INNOVACIÓN'),
+(57, '09-04-00-56', 'OFICINA DE SISTEMATIZACIÓN, AUTOMATIZACIÓN Y CALCULO'),
+(58, '09-04-00-57', 'OFICINA DE SERVICIOS Y SOPORTE TÉCNICO'),
+(59, '09-04-00-58', 'OFICINA DE REDES Y TELECOMUNICACIONES'),
+(60, '11-01-00-51', 'SECRETARIA DE INFRAESTRUCTURA'),
+(61, '11-01-00-52', 'DIVISION DE PROYECTOS'),
+(62, '11-01-00-52', 'DIVISIÓN DE PROYECTOS'),
+(63, '11-01-00-53', 'PROYECTOS Y SERVICIOS TÉCNICOS'),
+(64, '11-02-00-51', 'SECRETARIA EJECUTIVA DE SERVICIOS Y MANTENIMIENTOS GENERALES'),
+(65, '11-02-00-52', 'JEFATURA DE ORGANIZACIÓN Y MANTENIMIENTO TERRITORIAL'),
+(66, '11-02-00-53', 'JEFATURA DE REGISTRO Y CONTROL DE GESTIÓN HUMANA'),
+(67, '12-01-00-51', 'ADMINISTRATIVOS MALARIA - GOBERNACIÓN'),
+(68, '13-01-00-51', 'JEFATURA DE PARTICIPACIÓN POPULAR'),
+(69, '13-01-00-52', 'COORDINACIÓN DE PROGRAMAS ESPECIALES'),
+(70, '13-01-00-53', 'COORDINACIÓN DE SALUD, PENSIONES Y FAMILIA'),
+(71, '13-01-00-54', 'COORDINACIÓN DE NUTRICIÓN, ATENCIÓN A LA JUVENTUD Y LOS ESTUDIANTES'),
+(72, '13-01-00-55', 'COORDINACIÓN DE PARTICIPACIÓN COMUNITARIA'),
+(73, '13-01-00-56', 'OFICINA ANTIDROGAS'),
+(74, '13-02-00-51', 'SECRETARIA EJECUTIVA DE PARTICIPACIÓN POPULAR'),
+(75, '13-02-00-52', 'OFICINA DE ASESORÍA LEGAL'),
+(76, '13-02-00-53', 'JEFATURA DE FORMACIÓN CIUDADANA'),
+(77, '13-04-00-51', 'SECRETARIA EJECUTIVA DE PROTECCIÓN SOCIAL'),
+(78, '13-04-00-52', 'JEFATURA DE PROGRAMAS SOCIALES'),
+(79, '13-04-00-53', 'JEFATURA DE ATENCIÓN AL SERVIDOR PUBLICO'),
+(80, '13-04-00-54', 'JEFATURA DE GESTIÓN INSTITUCIONAL'),
+(81, '13-04-00-54', 'JEFATURA DE GESTION INSTITUCIONAL'),
+(82, '14-01-00-51', 'CONTRATACION COLECTIVA DE EMPLEADOS'),
+(83, '14-01-00-51', 'CONTRATACION COLECTIVA DE EMPLEADOS'),
+(84, '14-01-00-54', 'EMPLEADOS CONTRATADOS'),
+(85, '14-01-00-54', 'CONTRATADOS GOBERNACIÓN'),
+(86, '14-01-00-55', 'PERSONAL DE ALTO NIVEL Y JEFATURAS');
 
 -- --------------------------------------------------------
 
@@ -4531,14 +4623,130 @@ INSERT INTO `notificaciones` (`id`, `user_1`, `user_2`, `tipo`, `guia`, `date`, 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `partidad_presupuestarias`
+-- Estructura de tabla para la tabla `partidas_presupuestarias`
 --
 
-CREATE TABLE `partidad_presupuestarias` (
+CREATE TABLE `partidas_presupuestarias` (
   `id` int(11) NOT NULL,
   `partida` varchar(255) NOT NULL,
   `descripcion` longtext NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `partidas_presupuestarias`
+--
+
+INSERT INTO `partidas_presupuestarias` (`id`, `partida`, `descripcion`) VALUES
+(1, '401.01.01.00.0000', 'Sueldos básicos personal fijo a tiempo completo'),
+(2, '401.05.01.00.0000', 'Aguinaldos al personal empleado'),
+(3, '401.05.03.00.0000', 'Bono vacacional al personal empleado'),
+(4, '401.07.01.00.0000', 'Capacitacion y adiestramiento a empleados'),
+(5, '401.05.01.00.0000', 'Aguinaldo al personal empleado'),
+(6, '401.02.01.00.0000', 'Compensaciones previstas en las escalas de sueldos al personal empleado fijo a tiempo completo'),
+(7, '401.03.02.00.0000', 'Primas de transporte al personal empleado'),
+(8, '401.03.03.00.0000', 'Primas por hogar para la protección y estabilidad familiar del personal empleado.'),
+(9, '401.03.04.00.0000', 'Primas por hijos e hijas al personal empleado'),
+(10, '401.03.06.00.0000', 'Primas por residencia al personal empleado'),
+(11, '401.03.08.00.0000', 'Primas de profesionalización al personal empleado'),
+(12, '401.03.09.00.0000', 'Primas por antigüedad al personal empleado'),
+(13, '401.03.10.00.0001', 'Primas por jerarquía o responsabilidad en el cargo'),
+(14, '401.03.97.00.0001', 'Primas por frontersa al personal empleado'),
+(15, '401.03.97.00.0012', 'Prima por dedicacion al sistema publico de salud'),
+(16, '401.03.97.00.0013', 'Prima por discapacidad a empleados'),
+(17, '401.03.97.00.0014', 'Prima por escalafón a empleados'),
+(18, '401.04.02.00.0000', 'Complemento al personal empleado por trabajo nocturno'),
+(19, '401.04.96.00.0001', 'Bono sindical a empleados'),
+(20, '401.04.96.00.0002', 'Reconocimiento por 15 años de servicios'),
+(21, '401.04.96.00.0003', 'Días feriados a empleados'),
+(22, '401.04.96.00.0009', 'Reconocimiento por 10 años de servicios'),
+(23, '401.04.96.00.0012', 'Reconocimiento por antiguedad a empleados'),
+(24, '401.04.96.00.0012', 'Reconocimiento por 25 años de servicios'),
+(25, '401.06.01.00.0000', 'Aporte patronal al Instituto Venezolano de los Seguros Sociales (I.V.S.S.) al personal empleado'),
+(26, '401.06.03.00.0000', 'Aporte patronal al Fondo de Jubilaciones al personal empleado'),
+(27, '401.06.04.00.0000', 'Aporte patronal al Fondo Contributivo del Régimen Prestacional de Empleo al personal empleado'),
+(28, '401.06.05.00.0000', 'Aporte patronal al Fondo de Ahorro Obligatorio para la Vivienda al personal empleado'),
+(29, '401.07.02.00.0000', 'Becas a empleados'),
+(30, '401.07.03.00.0000', 'Ayudas por matrimonio a empleados'),
+(31, '401.07.04.00.0000', 'Ayudas por nacimientos de hijos de empleados'),
+(32, '401.07.05.00.0000', 'Aporte patronal al Fondo de Ahorro Obligatorio para la Vivienda al personal empleado'),
+(33, '401.07.06.00.0000', 'Ayudas para medicinas, gastos médicos, odontológicos y de hospitalización al personal empleado'),
+(34, '401.07.07.00.0000', 'Aporte patronal a cajas de ahorro por empleados'),
+(35, '401.07.08.00.0000', 'Aporte patronal a los servicios de salud, accidentes personales y gastos funerarios por empleados'),
+(36, '401.07.09.00.0000', 'Ayuda a empleados para la adquisicion de de uniformes y utiles escolares para sus hijos'),
+(37, '401.07.10.00.0000', 'Dotacion de uniformes'),
+(38, '401.07.12.00.0000', 'Aporte para la adquisicion de juguetes para los hijos del personal empleados'),
+(39, '401.07.96.00.0000', 'Otras subvenciones a empleados'),
+(40, '401.07.96.00.0001', 'Bono de estabilidad economica a empleados'),
+(41, '401.08.01.00.0000', 'Prestaciones sociales y otras indemnizaciones a empleados'),
+(42, '403.09.01.00.0000', 'Viaticos y pasajes dentro del pais'),
+(43, '401.01.18.10.0000', 'Remuneraciones al personal contratado a tiempo determinado'),
+(44, '401.01.18.20.0000', 'Remuneraciones por honorarios profesionales'),
+(45, '401.02.01.00.0001', 'compensaciones previstas en las escalas de sueldos al personal obrero contratado'),
+(46, '401.03.37.00.0001', 'Primas de transporte al personal empleado contratado'),
+(47, '401.03.39.00.0001', 'Primas por hijos e hijas al personal contratado'),
+(48, '401.03.40.00.0001', 'Primas de profesionalización al personal empleado contratado'),
+(49, '401.03.41.00.0001', 'Primas por antigüedad al personal empleado contratado'),
+(50, '401.03.96.00.0001', 'Prima por dedicacion al sistema publico de salud a empleados contratados'),
+(51, '401.03.96.00.0003', 'Prima por discapacidad a empleados contratados'),
+(52, '401.03.96.00.0004', 'Prima por escalafón a empleados contratados'),
+(53, '401.03.97.00.0001', 'Prima por frontera a empleados contratados'),
+(54, '401.04.24.00.0001', 'Complemento al personal empleados contratados x horas extraordinarias'),
+(55, '401.05.01.00.0000', 'Aguinaldos al personal contratado'),
+(56, '401.05.08.00.0001', 'Bono vacacional al personal empleado contratado'),
+(57, '401.06.25.00.0001', 'Aporte legal al Instituto Venezolano de los Seguros Sociales (IVSS) por personal empleado contratado'),
+(58, '401.06.26.00.0001', 'Aporte patronal al Fondo de Ahorro Obligatorio para la Vivienda por personal empleado contratado'),
+(59, '401.06.27.00.0001', 'Aporte patronal al Fondo Contributivo del Régimen Prestacional de Empleo al personal empleado contratado'),
+(60, '401.06.28.00.0001', 'Aporte patronal al Fondo de Jubilaciones por personal empleado contratado'),
+(61, '401.07.12.00.0001', 'Aportes para la adquisición de juguetes para los hijos e hijas del personal empleado contratado'),
+(62, '401.07.75.00.0001', 'Becas al personal empleado contratado'),
+(63, '401.07.99.00.000', 'Otras subvenciones al personal empleado contratado'),
+(64, '401.07.99.00.0001', 'Bono de estabilidad economica a empleados contratados'),
+(65, '401.08.03.00.0001', 'Prestaciones sociales y otras indemnizaciones al personal empleados contratados'),
+(66, '401.93.01.00.0001', 'Bono de compensacion por servicios de salud a empleados contratados'),
+(67, '401.01.35.00.0000', 'Sueldo básico de los altos funcionarios y altas funcionarias del poder público y de elección popular'),
+(68, '401.01.36.00.0000', 'Sueldo básico del personal de alto nivel y de dirección'),
+(69, '401.02.06.00.0000', 'Compensaciones previstas en las escalas de sueldos de los altos funcionarios y altas funcionarias del poder público y de elección popular'),
+(70, '401.02.07.00.0000', 'Compensaciones previstas en las escalas de sueldos del personal de alto nivel y de dirección'),
+(71, '401.03.43.00.0000', 'Primas de profesionalización de los altos funcionarios y altas funcionarias del poder público y de elección popular'),
+(72, '401.03.44.00.0000', 'Primas por antigüedad de los altos funcionarios y altas funcionarias del poder público y de elección popular'),
+(73, '401.03.45.00.0000', 'Primas por hijos e hijas al personal de alto nivel y de dirección'),
+(74, '401.03.48.00.0000', 'Primas de profesionalización al personal de alto nivel y de dirección'),
+(75, '401.03.49.00.0000', 'Primas de antigüedad al personal de alto nivel y de dirección'),
+(76, '401.03.51.00.0000', 'Primas por hogar para la protección y estabilidad familiar al personal de alto nivel y de dirección'),
+(77, '401.03.95.00.0000', 'Otras primas al personal de alto nivel y de dirección'),
+(78, '401.03.95.00.0002', 'Prima por discapacidad al personal de alto nivel y de dirección'),
+(79, '401.03.95.00.0003', 'Prima por transporte al personal de alto nivel y de dirección'),
+(80, '401.03.95.00.0004', 'prima por residencia al personal de alto nively de direccion'),
+(81, '401.03.95.00.0004', 'prima por residencia al personal de alto nively de dirección'),
+(82, '401.03.95.00.0005', 'Prima por jerarquia en el cargo al personal de alto nivel y de direccion'),
+(83, '401.03.95.00.0005', 'Prima por jerarquia en el cargo al personal de alto nivel y de dirección'),
+(84, '401.03.95.00.0006', 'Prima por frontera al personal de alto nivel y de direccion'),
+(85, '401.05.13.00.0000', 'Aguinaldos a altos funcionarios y altas funcionarias del poder público y de elección popular'),
+(86, '401.05.15.00.0000', 'Bono vacacional a altos funcionarios y altas funcionarias del poder público y de elección popular'),
+(87, '401.05.16.00.0000', 'Aguinaldos al personal de alto nivel y de dirección'),
+(88, '401.05.18.00.0000', 'Bono vacacional al personal de alto nivel y de dirección'),
+(89, '401.06.31.00.0000', 'Aporte patronal al Instituto Venezolano de los Seguros Sociales (IVSS) por altos funcionarios y altas funcionarias del poder público y de elección popular'),
+(90, '401.06.33.00.0000', 'Aporte patronal al Fondo de Jubilaciones por altos funcionarios y altas funcionarias del poder público y de elección popular'),
+(91, '401.06.34.00.0000', 'Aporte patronal al Fondo de Ahorro Obligatorio para la Vivienda por altos funcionarios y altas funcionarias del poder público y de elección popular'),
+(92, '401.06.35.00.0000', 'Aporte patronal al Fondo Contributivo del Régimen Prestacional de Empleo por altos funcionarios y altas funcionarias del poder público y de elección popular'),
+(93, '401.06.39.00.0000', 'Aporte patronal al Instituto Venezolano de los Seguros Sociales (IVSS) por personal de alto nivel y de dirección'),
+(94, '401.06.41.00.0000', 'Aporte patronal al Fondo de Jubilaciones por personal de alto nivel y de dirección'),
+(95, '401.06.42.00.0000', 'Aporte patronal al Fondo de Ahorro Obligatorio para la Vivienda por personal de alto nivel y de dirección'),
+(96, '401.06.43.00.0000', 'Aporte patronal al Fondo Contributivo del Régimen Prestacional de Empleo por personal de alto nivel y de dirección'),
+(97, '401.06.94.00.0000', 'Otros aportes patronales por el personal de alto nivel y de dirección'),
+(98, '401.07.57.00.0000', 'Aporte patronal a cajas de ahorro por altos funcionarios y altas funcionarias del poder público y de elección popular'),
+(99, '401.07.59.00.0000', 'Becas a altos funcionarios y altas funcionarias del poder público y de elección popular'),
+(100, '401.07.64.00.0000', 'Ayudas por matrimonio al personal de alto nivel y de dirección'),
+(101, '401.07.65.00.0000', 'Ayudas por nacimiento de hijos e hijas al personal de alto nivel y de dirección'),
+(102, '401.07.66.00.0000', 'Ayudas por defunción al personal de alto nivel y de dirección'),
+(103, '401.07.67.00.0000', 'Ayudas para medicinas, gastos médicos, odontológicos y de hospitalización al personal de alto nivel y de dirección'),
+(104, '401.07.68.00.0000', 'Aporte patronal a cajas de ahorro por personal de alto nivel y de dirección'),
+(105, '401.07.71.00.0000', 'Aportes para la adquisición de juguetes para los hijos e hijas del personal de alto nivel y de dirección.'),
+(106, '401.07.72.00.0000', 'Becas al personal de alto nivel y de dirección'),
+(107, '401.07.94.00.0001', 'Bono de estabilidad economica a altos funcionarios de eleccion popular'),
+(108, '401.07.95.00.0000', 'Otras subvenciones al personal de alto nivel y de dirección'),
+(109, '401.07.95.00.0001', 'bono de estabilidad economica al personal de alto nivel y de direccion'),
+(110, '401.08.07.00.0000', 'Prestaciones sociales y otras indemnizaciones al personal de alto nivel y direccion');
 
 -- --------------------------------------------------------
 
@@ -10859,9 +11067,9 @@ ALTER TABLE `notificaciones`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indices de la tabla `partidad_presupuestarias`
+-- Indices de la tabla `partidas_presupuestarias`
 --
-ALTER TABLE `partidad_presupuestarias`
+ALTER TABLE `partidas_presupuestarias`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -10951,7 +11159,7 @@ ALTER TABLE `cargos_grados`
 -- AUTO_INCREMENT de la tabla `categorias`
 --
 ALTER TABLE `categorias`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=87;
 
 --
 -- AUTO_INCREMENT de la tabla `conceptos`
@@ -11062,10 +11270,10 @@ ALTER TABLE `notificaciones`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
--- AUTO_INCREMENT de la tabla `partidad_presupuestarias`
+-- AUTO_INCREMENT de la tabla `partidas_presupuestarias`
 --
-ALTER TABLE `partidad_presupuestarias`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `partidas_presupuestarias`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=111;
 
 --
 -- AUTO_INCREMENT de la tabla `password_resets`
