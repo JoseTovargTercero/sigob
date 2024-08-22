@@ -1,4 +1,3 @@
-import { descargarNominaTxt } from '../api/peticionesNomina.js'
 import { FRECUENCY_TYPES } from '../helpers/types.js'
 
 export const nomReportCard = ({ data, elementToInsert }) => {
@@ -39,7 +38,7 @@ export const nomReportCard = ({ data, elementToInsert }) => {
     <header class='modal-box-header'>
       <h5 class=' mb-0 text-center'>Gestionar información de petición</h5>
       <button
-        id='btn-close-report'
+        data-close='btn-close-report'
         type='button'
         class='btn btn-danger'
         aria-label='Close'
@@ -66,10 +65,9 @@ export const nomReportCard = ({ data, elementToInsert }) => {
     <div class="modal-box-footer card-footer d-flex align-items-center justify-content-center gap-2 py-0">
        <h5 class='text-center mb-2'>Generar reportes:</h5>
         <button
-              data-correlativo="${correlativo}"        
+              data-correlativotxt="${correlativo}"        
               data-identificador="${identificador}"        
                 class='btn btn-secondary size-change-animation'
-                id='generar-txt'
               >
                GENERAR 📁
               </button>

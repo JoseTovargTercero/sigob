@@ -1,6 +1,7 @@
 import { getRegConEmployeeData } from '../api/empleados.js'
 import { empleadosDiferencia } from '../helpers/helpers.js'
 
+const d = document
 let requestInfo
 
 const tableLanguage = {
@@ -32,13 +33,69 @@ export async function nom_comparation_employee({
   actual,
   anterior,
   obtenerEmpleado,
+  elementToInsert,
 }) {
   let { empleadosEliminados, empleadosNuevos } = empleadosDiferencia(
     anterior,
     actual
   )
 
-  if (!empleadosEliminados.length && !empleadosNuevos.length) return false
+  let cardElement = d.getElementById('nom-comparation-employee')
+  if (cardElement) cardElement.remove()
+
+  // if (!empleadosEliminados.length && !empleadosNuevos.length) return false
+
+  let card = ` <div class='card rounded row mx-0 justify-content-center' id="nom-comparation-employee">
+      <div class='row gap-2 mx-0 request-list-container'>
+        <div class='col mb-2'>
+          <div class='card-header py-2 pb-2'>
+            <h5 class='card-title mb-0 text-center'>
+              Empleados eliminados de nomina
+            </h5>
+            <small class='d-block mt-0 text-center text-muted'>
+              Visualice los empleados eliminados con respecto a la nomina
+              anterior
+            </small>
+          </div>
+          <table
+            id='peticion-empleados-eliminados'
+            class='table table-xs table-striped'
+            style='width:100%;'
+          >
+            <thead class='w-100'>
+              <th>NOMBRES</th>
+              <th>CEDULA</th>
+              <th>DEPENDENCIA</th>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class='col mb-2'>
+          <div class='card-header py-2 pb-2'>
+            <h5 class='card-title mb-0 text-center'>
+              Empleados nuevos en nomina
+            </h5>
+            <small class='d-block mt-0 text-center text-muted'>
+              Visualice los empleados nuevos con respecto a la nomina anterior
+            </small>
+          </div>
+          <table
+            id='peticion-empleados-nuevos'
+            class='table table-xs table-striped'
+            style='width:100%'
+          >
+            <thead class='w-100'>
+              <th>NOMBRES</th>
+              <th>CEDULA</th>
+              <th>DEPENDENCIA</th>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>`
+
+  d.getElementById(elementToInsert).insertAdjacentHTML('afterbegin', card)
 
   let empleadosEliminadosTabla = new DataTable(
     '#peticion-empleados-eliminados',

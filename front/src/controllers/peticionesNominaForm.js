@@ -284,11 +284,17 @@ export async function validateRequestForm({
           let employeePayTableCard = d.getElementById(
             'request-employee-table-card'
           )
+          let movimientosTable = d.getElementById('movimientos-table')
+          let employeeComparationCard = d.getElementById(
+            'nom-comparation-employee'
+          )
           let card = d.getElementById('employee-new-status-card')
           let requestComparationContainer = d.getElementById(
             'request-comparation-container'
           )
           if (employeePayTableCard) employeePayTableCard.remove()
+          if (movimientosTable) movimientosTable.remove()
+          if (employeeComparationCard) employeeComparationCard.remove()
           if (card) card.remove()
           if (requestComparationContainer) requestComparationContainer.remove()
 
@@ -316,11 +322,14 @@ export async function validateRequestForm({
           let columns = Object.keys(nominaMapped.informacion_empleados[0])
 
           // Insertar tabla en formulario
-          requestFormInformationBody.insertAdjacentHTML(
-            'beforeend',
-            employeePayTableHTML({ nominaData: nominaMapped, columns })
-          )
-          createTable({ nominaData: nominaMapped, columns })
+
+          employeePayTableHTML({
+            nominaData: nominaMapped,
+            columns,
+            elementToInsert: 'request-form-information-body',
+          })
+          // requestFormInformationBody.insertAdjacentHTML('beforeend')
+          // createTable({ nominaData: nominaMapped, columns })
 
           toast_s('success', 'Se ha realizado el cálculo')
 
@@ -350,10 +359,7 @@ export async function validateRequestForm({
       let reportCard = d.getElementById('modal-report')
       if (reportCard) reportCard.remove()
 
-      requestForm.insertAdjacentHTML(
-        'beforeend',
-        nomReportCard({ data: peticion })
-      )
+      nomReportCard({ data: peticion, elementToInsert: 'request-form' })
     }
 
     if (e.target.dataset.revisar) {
@@ -372,16 +378,17 @@ export async function validateRequestForm({
       })
     }
 
-    if (e.target.id === 'btn-close-report') {
+    if (e.target.dataset.close === 'btn-close-report') {
       let reportCard = d.getElementById('modal-report')
       reportCard.remove()
     }
 
-    if (e.target.id === 'generar-txt') {
-      let descargatxt = await descargarNominaTxt({
+    if (e.target.dataset.correlativotxt) {
+      console.log(e.target.dataset)
+      descargarNominaTxt({
         identificador: e.target.dataset.identificador,
-        correlativo: e.target.dataset.correlativo,
-      })
+        correlativo: e.target.dataset.correlativotxt,
+      }).then((res) => loadRequestTable())
     }
 
     if (e.target.id === btnNewRequestId) {
@@ -577,14 +584,16 @@ export async function validateRequestForm({
         )
         if (requestComparationContainer) requestComparationContainer.remove()
 
-        requestFormInformationBody.insertAdjacentHTML(
-          'afterbegin',
-          createComparationContainer({ data })
-        )
+        createComparationContainer({
+          data,
+          elementToInsert: 'request-form-information-body',
+        })
+
         let tablaDiferencia = await nom_comparation_employee({
           anterior: data.registro_anterior.empleados,
           actual: data.registro_actual.empleados,
           obtenerEmpleado: getEmployeeData,
+          elementToInsert: 'request-form-information-body',
         })
 
         requestStepPart2.classList.add('hide')

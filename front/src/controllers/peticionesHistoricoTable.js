@@ -70,7 +70,10 @@ export async function loadRequestTableHistorico() {
 
   console.log(peticiones)
   let data = datosOrdenados
-    .filter((peticion) => Number(peticion.status) !== 0)
+    .filter(
+      (peticion) =>
+        Number(peticion.status) === 1 && Number(peticion.status_archivos) === 1
+    )
     .map((peticion) => {
       return {
         correlativo: peticion.correlativo,
@@ -106,12 +109,12 @@ d.addEventListener('click', async (e) => {
     nomReportCard({ data: peticion, elementToInsert: 'request-historial' })
   }
 
-  if (e.target.id === 'btn-close-report') {
+  if (e.target.dataset.close === 'btn-close-report') {
     let reportCard = d.getElementById('modal-report')
     reportCard.remove()
   }
 
-  if (e.target.id === 'generar-txt') {
+  if (e.target.dataset.correlativotxt === 'generar-txt') {
     let descargatxt = await descargarNominaTxt({
       identificador: e.target.dataset.identificador,
       correlativo: e.target.dataset.correlativo,

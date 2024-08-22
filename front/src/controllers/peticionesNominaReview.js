@@ -47,7 +47,8 @@ export async function validateRequestNomForm({
   let selectNom = d.getElementById(selectId)
   let consultNom = d.getElementById(consultBtnId)
   let requestComparationForm = d.getElementById(formId)
-  let comparationContainer = d.getElementById('request-comparation-container')
+
+  let requestInformation = d.getElementById('request-information')
 
   let selectValues = requestInfo
     .map((el) => {
@@ -62,8 +63,6 @@ export async function validateRequestNomForm({
   selectNom.insertAdjacentHTML('beforeend', selectValues)
 
   selectNom.addEventListener('change', (e) => {
-    movimientosId = []
-    correcciones = []
     fieldList = validateInput({
       target: e.target,
       fieldList,
@@ -76,48 +75,53 @@ export async function validateRequestNomForm({
   d.addEventListener('click', async (e) => {
     if (fieldList['select-nomina'] === '') return
 
-    comparationContainer = d.getElementById('request-comparation-container')
-
     if (e.target === consultNom) {
+      movimientosId = []
+      correcciones = []
       let result = requestInfo.find(
         (el) => el.correlativo === fieldList['select-nomina']
       )
       fieldList.frecuencia = result.frecuencia
       fieldList.identificador = result.identificador
       fieldList.id = result.id
+      fieldList.correlativo = result.correlativo
 
-      if (comparationContainer) comparationContainer.remove()
+      console.log(fieldList)
 
       let peticiones = await getComparacionNomina(result)
       peticiones.confirmBtn = true
 
       console.log(peticiones)
 
-      requestComparationForm.insertAdjacentHTML(
-        'afterend',
-        createComparationContainer({ data: peticiones })
-      )
+      requestInformation.classList.remove('hide')
+
+      let tablaMovimietnos = await loadMovimientosTable({
+        id_nomina: peticiones.registro_actual.nomina_id,
+        elementToInsert: 'request-information',
+      })
 
       let tablaDiferencia = await nom_comparation_employee({
         anterior: peticiones.registro_anterior.empleados,
         actual: peticiones.registro_actual.empleados,
+        elementToInsert: 'request-information',
         obtenerEmpleado: getRegConEmployeeData,
       })
-      let tablaMovimietnos = await loadMovimientosTable({
-        id_nomina: peticiones.registro_actual.nomina_id,
+
+      createComparationContainer({
+        data: peticiones,
+        elementToInsert: 'request-information',
       })
     }
 
     if (e.target.id === 'confirm-request') {
-      console.log(e.target.dataset.correlativo)
       confirmNotification({
         type: NOTIFICATIONS_TYPES.send,
         successFunction: function () {
-          confirmarPeticionNomina(e.target.dataset.correlativo)
+          confirmarPeticionNomina(fieldList.correlativo)
           resetInput()
           validateRequestFrecuency()
         },
-        othersFunctions: [resetInput, validateRequestFrecuency],
+
         message: '¿Seguro de aceptar esta petición?',
       })
     }
@@ -147,9 +151,7 @@ export async function validateRequestNomForm({
   })
 
   async function resetInput() {
-    let comparationContainer = d.getElementById('request-comparation-container')
-
-    if (comparationContainer) comparationContainer.remove()
+    requestInformation.classList.add('hide')
 
     selectNom.value = ''
     selectNom.innerHTML = ''

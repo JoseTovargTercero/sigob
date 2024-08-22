@@ -95,7 +95,7 @@ export async function loadRequestTable() {
   datosOrdenados.forEach((peticion) => {
     if (
       Number(peticion.status) === 1 &&
-      Number(peticion.status_Archivos) === 0
+      Number(peticion.status_archivos) === 0
     ) {
       dataObj.confirmado.push({
         correlativo: peticion.correlativo,

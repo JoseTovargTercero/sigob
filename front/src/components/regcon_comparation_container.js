@@ -3,104 +3,24 @@ import { validarIdentificador } from '../controllers/peticionesNominaForm.js'
 const d = document
 const w = window
 
-export function createComparationContainer({ data, tablaDiferencia }) {
+export function createComparationContainer({ data, elementToInsert }) {
   if (!data) return
   let { registro_actual, registro_anterior, confirmBtn } = data
-  return `
-    <div class='' id='request-comparation-container'>
-      ${createCard({
-        actual: registro_actual,
-        anterior: registro_anterior,
-        confirmBtn,
-      })}
-    </div>
-    <div class="card rounded">
-     <div class='card-header py-2 pb-2'>
-          <h5 class='card-title mb-0 text-center'>Movimientos</h5>
-           <small class='d-block mt-0 text-center text-muted'>
-             Visualice movimientos realizados a los empleados de está petición:
-           </small>  
-        </div>
-        <div class="row mx-0">
-          <table
-            id='movimientos-table-regcon'
-            class='table table-xs table-striped'
-            style='width:100%;'
-          >
-            <thead>
-              <th>id_empleado</th>
-              <th>NOMBRES</th>
-              <th>cedula</th>
-              <th>accion</th>
-              <th>campo</th>
-              <th>valor_anterior</th>
-              <th>valor_nuevo</th>
-              <th>fecha_movimiento</th>
-              <th>usuario</th>
-              <th>descripción</th>
-              <th>acciones</th>
-              
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
-   
-    </div>
-      <div class='card rounded row mx-0 justify-content-center'>
-      <div class="row gap-2 mx-0 request-list-container">
-        <div class='col mb-2'> 
-          <div class='card-header py-2 pb-2'>
-          <h5 class='card-title mb-0 text-center'>Empleados eliminados de nomina</h5>
-           <small class='d-block mt-0 text-center text-muted'>
-             Visualice los empleados eliminados con respecto a la nomina anterior
-           </small>  
-        </div>
-          <table
-            id='peticion-empleados-eliminados'
-            class='table table-xs table-striped'
-            style='width:100%;'
-          >
-            <thead class='w-100'>
-              <th>NOMBRES</th>
-              <th>CEDULA</th>
-              <th>DEPENDENCIA</th>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
-        <div class='col mb-2'>
-   <div class='card-header py-2 pb-2'>
-     
-          <h5 class='card-title mb-0 text-center'>Empleados nuevos en nomina</h5>
-         <small class='d-block mt-0 text-center text-muted'>
-           Visualice los empleados nuevos con respecto a la nomina anterior
-         </small>
-      </div>
-          <table
-            id='peticion-empleados-nuevos'
-            class='table table-xs table-striped'
-            style='width:100%'
-          >
-            <thead class='w-100'>
-              <th>NOMBRES</th>
-              <th>CEDULA</th>
-              <th>DEPENDENCIA</th>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>  
-      </div>
-      </div>
-       ${
-         confirmBtn
-           ? `<div class='d-flex justify-content-center gap-2 mb-2'>
-         <button class='btn btn-secondary btn-lg' id="reset-request">DEVOLVER</button>
-         <button class='btn btn-danger btn-lg' id="deny-request" data-correlativo="${registro_actual.id}">RECHAZAR</button>
-          <button class='btn btn-primary btn-lg' id="confirm-request" data-correlativo="${registro_actual.correlativo}">CONFIRMAR</button>
-          </div>`
-           : ''
-       }
-  `
+
+  let cardElement = d.getElementById('request-comparation-container')
+  if (cardElement) cardElement.remove()
+
+  let card = `<div class='' id='request-comparation-container'>
+  ${createCard({
+    actual: registro_actual,
+    anterior: registro_anterior,
+    confirmBtn,
+  })}
+</div>
+  
+`
+
+  d.getElementById(elementToInsert).insertAdjacentHTML('afterbegin', card)
 }
 
 const createCard = ({ actual, anterior, confirmBtn }) => {

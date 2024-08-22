@@ -28,7 +28,7 @@ const tableLanguage = {
   },
 }
 
-export function employeePayTableHTML({ nominaData, columns }) {
+export function employeePayTableHTML({ nominaData, columns, elementToInsert }) {
   requestInfo = nominaData
 
   let { informacion_empleados, nombre_nomina } = nominaData
@@ -56,6 +56,9 @@ export function employeePayTableHTML({ nominaData, columns }) {
     })
     .join('')
 
+  let card = d.getElementById('request-employee-table-card')
+  if (card) card.remove()
+
   let table = ` <div class='card rounded' id='request-employee-table-card'>
       <div class='card-header'>
         
@@ -81,10 +84,12 @@ export function employeePayTableHTML({ nominaData, columns }) {
       </div>
     </div>`
 
-  return table
+  d.getElementById(elementToInsert).insertAdjacentHTML('beforebegin', table)
+
+  createTable({ nominaData, columns })
 }
 
-export async function createTable({ nominaData, columns }) {
+export function createTable({ nominaData, columns }) {
   let { informacion_empleados, nombre_nomina } = nominaData
 
   // let datosOrdenados = [...informacion_empleados].sort((a, b) => a.id - b.id)

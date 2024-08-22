@@ -449,6 +449,7 @@ const generarNominaTxt = async ({ correlativo, identificador }) => {
   }
 }
 const descargarNominaTxt = async ({ correlativo, identificador }) => {
+  console.log('Descargar txt:', correlativo, identificador)
   let loader = document.getElementById('cargando')
   let data = new FormData()
   data.append('correlativo', correlativo)

@@ -41,7 +41,43 @@ const tableLanguage = {
 }
 let movimientosTableRegCon
 
-export const loadMovimientosTable = async ({ id_nomina }) => {
+export const loadMovimientosTable = async ({ id_nomina, elementToInsert }) => {
+  let cardElement = d.getElementById('movimientos-table')
+  if (cardElement) cardElement.remove()
+
+  let tableHtml = `  <div class='card rounded' id='movimientos-table'>
+      <div class='card-header py-2 pb-2'>
+        <h5 class='card-title mb-0 text-center'>Movimientos</h5>
+        <small class='d-block mt-0 text-center text-muted'>
+          Visualice movimientos realizados a los empleados de está petición:
+        </small>
+      </div>
+      <div class='row mx-0'>
+        <table
+          id='movimientos-table-regcon'
+          class='table table-xs table-striped'
+          style='width:100%;'
+        >
+          <thead>
+            <th>id_empleado</th>
+            <th>NOMBRES</th>
+            <th>cedula</th>
+            <th>accion</th>
+            <th>campo</th>
+            <th>valor_anterior</th>
+            <th>valor_nuevo</th>
+            <th>fecha_movimiento</th>
+            <th>usuario</th>
+            <th>descripción</th>
+            <th>acciones</th>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>`
+
+  d.getElementById(elementToInsert).insertAdjacentHTML('afterbegin', tableHtml)
+
   let movimientosRegConElement = d.getElementById('movimientos-table-regcon')
   let movimientosNominaElement = d.getElementById('movimientos-table-nomina')
 
