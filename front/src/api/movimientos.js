@@ -199,7 +199,7 @@ const rechazarPeticion = async ({ peticion, movimientos, correcciones }) => {
     console.log(e)
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
-      message: 'Error al obtener movimiento',
+      message: 'Error al rechazar petición',
     })
   }
 }
@@ -253,7 +253,7 @@ const revertirCambios = async ({ revertir, manual }) => {
     if (json.success) {
       toastNotification({
         type: NOTIFICATIONS_TYPES.done,
-        message: 'Correciones enviadas. Petición eliminada',
+        message: json.success,
       })
       return json.success
     }
@@ -268,7 +268,7 @@ const revertirCambios = async ({ revertir, manual }) => {
     console.log(e)
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
-      message: 'Error al obtener movimientos de peticion',
+      message: 'Error al enviar correciones de peticion',
     })
   }
 }

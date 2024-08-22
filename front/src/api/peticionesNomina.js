@@ -2,6 +2,7 @@ import {
   confirmNotification,
   hideLoader,
   showLoader,
+  toastNotification,
 } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 import {
@@ -32,6 +33,9 @@ const confirmarPeticionNominaUrl =
 
 const obtenerPeticionesNominaUrl =
   '../../../../../sigob/back/modulo_nomina/nom_peticiones.php'
+
+const eliminarPeticionNominaUrl =
+  '../../../../sigob/back/modulo_nomina/nom_peticiones_borrar.php'
 
 const regConObtenerPeticionesNominaUrl =
   '../../../../sigob/back/modulo_registro_control/regcon_peticiones.php'
@@ -127,6 +131,46 @@ const getPeticionNomina = async (id) => {
     })
   } finally {
     hideLoader()
+  }
+}
+
+const eliminarPeticionNomina = async ({ id_peticion, correlativo }) => {
+  try {
+    let res = await fetch(eliminarPeticionNominaUrl, {
+      method: 'POST',
+      body: JSON.stringify({ id_peticion, correlativo }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    let clone = res.clone()
+    let text = await clone.text()
+    console.log(text)
+
+    let json = await res.json()
+
+    console.log(json)
+
+    if (json.success) {
+      confirmNotification({
+        type: NOTIFICATIONS_TYPES.done,
+        message: json.success,
+      })
+      return json.success
+    }
+
+    if (json.error) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.fail,
+        message: json.error,
+      })
+    }
+  } catch (e) {
+    console.log(e)
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener movimientos de peticion',
+    })
   }
 }
 
@@ -457,6 +501,7 @@ export {
   getPeticionNomina,
   getRegConPeticionesNomina,
   getSemanasDelAnio,
+  eliminarPeticionNomina,
   // getNominaTxt,
   generarNominaTxt,
   descargarNominaTxt,

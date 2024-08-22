@@ -1,5 +1,7 @@
 import { getDependencyData, getJobData } from '../api/empleados.js'
 import { revertirCambios } from '../api/movimientos.js'
+import { eliminarPeticionNomina } from '../api/peticionesNomina.js'
+import { loadRequestTable } from '../controllers/peticionesTable.js'
 import {
   confirmNotification,
   toastNotification,
@@ -487,6 +489,15 @@ export const nomCorregirCard = ({
           type: NOTIFICATIONS_TYPES.send,
           message:
             'Se realizaran los cambios dada las correciones realizadas y se eliminará la petición actual ¿Desea continuar?',
+          successFunction: async function () {
+            let res2 = await eliminarPeticionNomina({
+              id_peticion: peticionInfo.id,
+              correlativo: peticionInfo.correlativo,
+            })
+            closeModalCard()
+            await loadRequestTable()
+            console.log(res2)
+          },
         })
         return
       }
@@ -513,10 +524,14 @@ export const nomCorregirCard = ({
               revertir: movimientosRevertidos,
               manual: correcionesManuales,
             })
-            console.log(res)
+            let res2 = await eliminarPeticionNomina({
+              id_peticion: peticionInfo.id,
+              correlativo: peticionInfo.correlativo,
+            })
+            closeModalCard()
+            await loadRequestTable()
           },
         })
-        revertirCambios
       }
     }
   }

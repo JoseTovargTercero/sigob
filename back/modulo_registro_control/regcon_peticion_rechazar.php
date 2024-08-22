@@ -1,6 +1,7 @@
 <?php
 require_once '../sistema_global/conexion.php';
 require_once '../sistema_global/session.php';
+require_once '../sistema_global/notificaciones.php';
 
 $data = json_decode(file_get_contents('php://input'), true);
 
@@ -91,6 +92,7 @@ try {
 
     }
     $conexion->commit();
+    notificar(['nomina'], 8);
     $response = json_encode(["success" => "Petición rechazada. Correcciones enviadas con éxito."]);
 
 } catch (\Exception $e) {
