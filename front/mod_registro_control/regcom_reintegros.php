@@ -57,72 +57,84 @@ require_once '../../back/sistema_global/session.php';
             <div class="card-body">
 
 
-            <section class="hide" id="section_registro">
+              <section class="hide" id="section_registro">
 
-            <div class="row">
-              
-            <div class="mb-3 col-lg-6">
-                <label for="" class="form-label">Cédula del empleado</label>
-                <input type="number" id="cedula_empleado" class="form-control">
-              </div>
-              
-              <div class="mb-3 col-lg-6">
-                <label for="" class="form-label">Nombre</label>
-                <input type="text" disabled id="nombre_empleado" class="form-control">
-              </div>
+                <div class="row">
 
-              <div class="mb-3 col-lg-6">
-                <label for="" class="form-label">Nomina</label>
-                <input type="text" disabled id="nomina_empleado" class="form-control">
-              </div>
+                  <div class="mb-3 col-lg-6">
+                    <label for="" class="form-label">Cédula del empleado</label>
+                    <input type="number" id="cedula_empleado" class="form-control">
+                  </div>
 
-              <div class="mb-3 col-lg-6">
-                <label for="" class="form-label">Estatus</label>
-                <input type="text" disabled id="status_empleado" class="form-control">
-              </div>
+                  <div class="mb-3 col-lg-6">
+                    <label for="" class="form-label">Nombre</label>
+                    <input type="text" disabled id="nombre_empleado" class="form-control">
+                  </div>
 
+                  <div class="mb-3 col-lg-6">
+                    <label for="" class="form-label">Nomina</label>
+                    <input type="text" disabled id="nomina_empleado" class="form-control">
+                  </div>
 
-              <div class="mb-3 col-lg-6">
-                <label for="" class="form-label">Fecha de suspensión</label>
-                <input type="text" disabled id="fecha__suspension" class="form-control">
-              </div>
+                  <div class="mb-3 col-lg-6">
+                    <label for="" class="form-label">Estatus</label>
+                    <input type="text" disabled id="status_empleado" class="form-control">
+                  </div>
 
 
-              <div class="mb-3 col-lg-6">
-                <label for="demo-month-only" class="form-label">Desde cuando pagar</label> 
-                <input class="form-control" type="month" id="pagar_desde">
-              </div>
+                  <div class="mb-3 col-lg-6">
+                    <label for="" class="form-label">Fecha de suspensión</label>
+                    <input type="text" disabled id="fecha__suspension" class="form-control">
+                  </div>
 
-            </div>
-           
-              <button id="btn-section-reintegro" class="btn btn-primary">Iniciar pago de reintegro</button>
-              
+                  <div class="mb-3 col-lg-6">
+                    <label for="demo-month-only" class="form-label">Desde cuando pagar</label>
+                    <select id="desde_cuando_pagas" onchange="(this.value == 1 ? $('#fecha_especifica').addClass('hide'):$('#fecha_especifica').removeClass('hide'))" class="form-control">
+                      <option value="">Seleccione</option>
+                      <option value="1">Iniciar el pago desde el mes que fue suspendido</option>
+                      <option value="2">Indicar una fecha especifica</option>
+                    </select>
+                  </div>
 
 
 
-            </section>
+                  <div class="mb-3 col-lg-6">
+                    <section id="fecha_especifica" class="hide">
+                      <label for="demo-month-only" class="form-label">Fecha de inicio</label>
+                      <input class="form-control" type="month" id="pagar_desde">
+                    </section>
+                  </div>
+
+                </div>
+
+                <button id="btn-section-reintegro" class="btn btn-primary">Iniciar pago de reintegro</button>
 
 
-            <section id="section_tabla">
 
-            <div class="table-responsive p-1">
-                <table id="table" class="table table-hover">
-                  <thead>
-                    <tr>
-                      <th class="w-10"></th>
-                      <th class="w-20">Cédula</th>
-                      <th class="w-30">Nombre</th>
-                      <th class="w-30">Reintegros</th>
-                      <th class="w-30">Total</th>
-                      <th class="w-5"></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                  </tbody>
 
-                </table>
-              </div>
-            </section>
+              </section>
+
+
+              <section id="section_tabla">
+
+                <div class="table-responsive p-1">
+                  <table id="table" class="table table-hover">
+                    <thead>
+                      <tr>
+                        <th class="w-10"></th>
+                        <th class="w-20">Cédula</th>
+                        <th class="w-30">Nombre</th>
+                        <th class="w-30">Reintegros</th>
+                        <th class="w-30">Total</th>
+                        <th class="w-5"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+
+                  </table>
+                </div>
+              </section>
 
 
 
@@ -185,16 +197,21 @@ require_once '../../back/sistema_global/session.php';
       $('#section_tabla').toggleClass('hide')
     }
     document.getElementById('btn-nuevo-pago').addEventListener('click', section_registro)
-    
-    
-    
+
+    let status = {
+      'A': 'ACTIVO',
+      'R': 'RETIRADO',
+      'S': 'SUSPENDIDO',
+      'C': 'COMISIÓN DE SERVICIO',
+    }
+
     function getDatosEmpleados() {
       let cedula = this.value
       $.ajax({
         url: '../../back/modulo_registro_control/regcon_reintegros_datos_empleados.php',
         type: 'POST',
         data: {
-          cedula : cedula
+          cedula: cedula
         },
         cache: false,
         success: function(data) {
@@ -202,8 +219,9 @@ require_once '../../back/sistema_global/session.php';
 
           if (data.error) {
             toast_s('error', 'El empleado no existe')
-          }else{
-           
+          } else {
+            console.log(data)
+
             $('#nombre_empleado').val(data.nombres)
             $('#nomina_empleado').val(data.nombreNomina)
             $('#status_empleado').val(status[data.status])
@@ -336,13 +354,13 @@ require_once '../../back/sistema_global/session.php';
         showCancelButton: true,
         confirmButtonText: 'Continuar',
         cancelButtonText: 'Cancelar',
-        }).then((result) => {
-          if (result.value) {
-            window.location.href = '../../back/modulo_registro_control/regcon_reintegro_pdf.php?id_empleado='+id+'&fecha='+fecha
-          }
-          toggleDialogs()
+      }).then((result) => {
+        if (result.value) {
+          window.location.href = '../../back/modulo_registro_control/regcon_reintegro_pdf.php?id_empleado=' + id + '&fecha=' + fecha
+        }
+        toggleDialogs()
 
-        })
+      })
 
 
 

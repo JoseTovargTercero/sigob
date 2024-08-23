@@ -58,13 +58,16 @@
         .w-50 {
             width: 50% !important;
         }
-        .w-5{
+
+        .w-5 {
             width: 5% !important;
         }
-        .w-10{
+
+        .w-10 {
             width: 10% !important;
         }
-        .text-left{
+
+        .text-left {
             text-align: left;
         }
 
@@ -80,27 +83,34 @@
             padding: 1px 2px;
             font-size: 8px !important;
         }
-        th{
+
+        th {
             font-size: 9px !important;
         }
-        .b-tb{
+
+        .b-tb {
             border-top: 1px solid black;
             border-bottom: 1px solid black;
         }
-        .my-1{
+
+        .my-1 {
             margin-top: 4px !important;
             margin-bottom: 4px !important;
 
         }
-        .bt{
+
+        .bt {
             border-top: 1px solid black;
         }
-        .bb{
+
+        .bb {
             border-bottom: 1px solid black;
         }
-        .text-center{
+
+        .text-center {
             text-align: center !important;
         }
+
         /* Other existing styles */
     </style>
 </head>
@@ -123,7 +133,9 @@
         </table>
 
         <h2 class="mb-0" align="center">
-            Nomina de Pago por Nivel Organizacional </h2>
+            Nomina de Pago por Nivel Organizacional
+        </h2>
+
 
         <hr>
 
@@ -215,7 +227,6 @@
                 <th></th>
                 <th></th>
                 <th></th>
-                <th></th>
             </tr>
         </thead>
         <tbody>";
@@ -262,7 +273,7 @@
                 <th class='bt bb text-center'>Saldo</th>
                 </tr>";
 
-                            // Detalle de conceptos
+            // Detalle de conceptos
             echo "<tr>
                 <td >001</td>
                 <td >SUELDO</td>
@@ -287,10 +298,10 @@
                         <td >{$codigo_concepto}</td>
                         <td>{$concepto}</td>
                         <td class='text-center'></td>
-                        <td class='text-center'>".number_format($valor, 2, '.', ',')."</td>
-                        <td class='text-center'>".number_format(0, 2, '.', ',')."</td>
-                        <td class='text-center'>".number_format(0, 2, '.', ',')."</td>
-                        <td class='text-center'>".number_format($valor, 2, '.', ',')."</td>
+                        <td class='text-center'>" . number_format($valor, 2, '.', ',') . "</td>
+                        <td class='text-center'>" . number_format(0, 2, '.', ',') . "</td>
+                        <td class='text-center'>" . number_format(0, 2, '.', ',') . "</td>
+                        <td class='text-center'>" . number_format($valor, 2, '.', ',') . "</td>
                     </tr>";
                 $totalAsignaciones += $valor;
                 $saldo += $valor;
@@ -305,15 +316,14 @@
                         <td >{$codigo_concepto}</td>
                         <td>{$concepto}</td>
                         <td class='text-center'></td>
-                        <td class='text-center'>".number_format(0, 2, '.', ',')."</td>
-                        <td class='text-center'>".number_format($valor, 2, '.', ',')."</td>
-                        <td class='text-center'>".number_format(0, 2, '.', ',')."</td>
-                        <td class='text-center'>".number_format($valor, 2, '.', ',')."</td>
+                        <td class='text-center'>" . number_format(0, 2, '.', ',') . "</td>
+                        <td class='text-center'>" . number_format($valor, 2, '.', ',') . "</td>
+                        <td class='text-center'>" . number_format(0, 2, '.', ',') . "</td>
+                        <td class='text-center'>" . number_format($valor, 2, '.', ',') . "</td>
                     </tr>";
                 $totalDeducciones += $valor;
                 $saldo += $valor;
                 $neto -= $valor;
-
             }
 
             // Mostrar aportes
@@ -324,15 +334,14 @@
                         <td>{$codigo_concepto}</td>
                         <td>{$concepto}</td>
                         <td class='text-center'></td>
-                        <td class='text-center'>".number_format(0, 2, '.', ',')." </td>
-                        <td class='text-center'>".number_format(0, 2, '.', ',')." </td>
-                        <td class='text-center'>".number_format($valor, 2, '.', ',')."</td>
-                        <td class='text-center'>".number_format($valor, 2, '.', ',')."</td>
+                        <td class='text-center'>" . number_format(0, 2, '.', ',') . " </td>
+                        <td class='text-center'>" . number_format(0, 2, '.', ',') . " </td>
+                        <td class='text-center'>" . number_format($valor, 2, '.', ',') . "</td>
+                        <td class='text-center'>" . number_format($valor, 2, '.', ',') . "</td>
                     </tr>";
                 $totalAportes += $valor;
                 $saldo += $valor;
                 $neto -= $valor;
-
             }
 
             // Mostrar totales
@@ -340,18 +349,18 @@
                     <td class='text-center'></td>
                     <td class='text-center'></td>
                     <td class='bt text-center '><b>Total</b></td>
-                    <td class='bt text-center'><strong>".number_format($totalAsignaciones, 2, '.', ',')."</strong></td>
-                    <td class='bt text-center'><strong>".number_format($totalDeducciones, 2, '.', ',')."</strong></td>
-                    <td class='bt text-center'><strong>".number_format($totalAportes, 2, '.', ',')."</strong></td>
-                    <td class='bt text-center'><strong>".number_format($saldo, 2, '.', ',')."</strong></td>
+                    <td class='bt text-center'><strong>" . number_format($totalAsignaciones, 2, '.', ',') . "</strong></td>
+                    <td class='bt text-center'><strong>" . number_format($totalDeducciones, 2, '.', ',') . "</strong></td>
+                    <td class='bt text-center'><strong>" . number_format($totalAportes, 2, '.', ',') . "</strong></td>
+                    <td class='bt text-center'><strong>" . number_format($saldo, 2, '.', ',') . "</strong></td>
                 </tr>";
 
-             // ROW CON LA INFORMACION DEL NETO
+            // ROW CON LA INFORMACION DEL NETO
             echo "<tr>
                     <td></td>
                     <td></td>
                     <td></td>
-                    <td class='bg-gray text-center'><strong>NETO: ".number_format($neto, 2, '.', ',')."</strong></td>
+                    <td class='bg-gray text-center'><strong>NETO: " . number_format($neto, 2, '.', ',') . "</strong></td>
                     <td></td>
                     <td></td>
                     <td></td>
