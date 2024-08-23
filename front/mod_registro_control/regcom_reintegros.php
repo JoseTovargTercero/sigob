@@ -192,6 +192,50 @@ require_once '../../back/sistema_global/session.php';
   <script>
     var id_revision, reintegros_por_empleados
 
+    function pagarReintegro() {
+      var cedula_empleado = document.getElementById('cedula_empleado').value
+      var desde_cuando_pagas = document.getElementById('desde_cuando_pagas').value
+      var pagar_desde = document.getElementById('pagar_desde').value
+
+      /*
+      * desde_cuando_pagas
+         <option value="1">Iniciar el pago desde el mes que fue suspendido</option>
+        <option value="2">Indicar una fecha especifica</option>
+      */
+
+      // fecht
+      $.ajax({
+        type: "POST",
+        url: "../../back/modulo_registro_control/regcon_pagar_reintegro.php",
+        data: {
+          cedula_empleado: cedula_empleado,
+          desde_cuando_pagas: desde_cuando_pagas,
+          pagar_desde: pagar_desde
+        },
+        success: function(response) {
+          let data = JSON.parse(response)
+          console.log(data)
+          try {
+            if (data.status == 'success') {
+              toast_s('success', data.mensaje)
+              location.reload()
+            } else {
+              toast_s('error', data.mensaje)
+            }
+          } catch (error) {
+            console.error('Ocurrio un error' + error)
+
+          }
+        },
+        error: function(xhr, status, error) {
+          console.log(xhr.responseText);
+        }
+      });
+
+
+
+    }
+
     function section_registro() {
       $('#section_registro').toggleClass('hide')
       $('#section_tabla').toggleClass('hide')
