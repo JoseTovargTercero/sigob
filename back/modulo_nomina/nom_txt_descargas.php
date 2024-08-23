@@ -99,7 +99,7 @@ for ($pagina = 1; $pagina <= $totalPaginas; $pagina++) {
 $combinedPdf = $merger->merge();
 
 // Guardar el PDF unificado en el servidor
-$combinedPdfFilename = "Recibos_de_pago_unificado_{$correlativo}.pdf";
+$combinedPdfFilename = "NOMINA_.pdf";
 file_put_contents($combinedPdfFilename, $combinedPdf);
 
 // Agregar el PDF unificado al archivo ZIP
