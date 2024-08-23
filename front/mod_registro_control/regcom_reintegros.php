@@ -197,11 +197,7 @@ require_once '../../back/sistema_global/session.php';
       var desde_cuando_pagas = document.getElementById('desde_cuando_pagas').value
       var pagar_desde = document.getElementById('pagar_desde').value
 
-      /*
-      * desde_cuando_pagas
-         <option value="1">Iniciar el pago desde el mes que fue suspendido</option>
-        <option value="2">Indicar una fecha especifica</option>
-      */
+
 
       // fecht
       $.ajax({
