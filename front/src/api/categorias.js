@@ -1,0 +1,99 @@
+import {
+  confirmNotification,
+  hideLoader,
+  mapData,
+  showLoader,
+  toastNotification,
+} from '../helpers/helpers.js'
+import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
+
+const categoriasUrl =
+  '../../../../sigob/back/modulo_nomina/nom_categoria_datos.php'
+
+const getCategorias = async (id) => {
+  try {
+    let res
+    if (id) res = await fetch(`${categoriasUrl}?id=${id}`)
+    else res = await fetch(categoriasUrl)
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+    const json = await res.json()
+
+    if (json.success) {
+      let mappedData = mapData({
+        obj: json.success,
+        name: 'categoria_nombre',
+        id: 'id',
+      })
+
+      return { mappedData, fullInfo: json.success }
+    }
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
+  } catch (e) {
+    console.log(e)
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener categorias',
+    })
+  }
+}
+
+const sendCategoria = async ({ informacion }) => {
+  try {
+    let res = await fetch(categoriasUrl, {
+      method: 'POST',
+      body: JSON.stringify({ informacion, accion: 'insertar' }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+    const json = await res.json()
+
+    if (json.success) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.done,
+        message: json.success,
+      })
+    }
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
+  } catch (e) {
+    console.log(e)
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al registrar categoria',
+    })
+  }
+}
+
+const updateCategoria = async ({ informacion }) => {
+  try {
+    let res = await fetch(categoriasUrl, {
+      method: 'POST',
+      body: JSON.stringify({ informacion, accion: 'actualizar' }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+    const json = await res.json()
+
+    if (json.success) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.done,
+        message: json.success,
+      })
+    }
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
+  } catch (e) {
+    console.log(e)
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al regactistrar categoria',
+    })
+  }
+}
+
+export { getCategorias, sendCategoria, updateCategoria }

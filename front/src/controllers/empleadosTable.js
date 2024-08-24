@@ -91,6 +91,8 @@ export const validateEmployeeTable = async () => {
   employeeTable.rows.add(data).draw()
 }
 
+validateEmployeeTable()
+
 d.addEventListener('click', (e) => {
   if (e.target.classList.contains('btn-delete')) {
     let fila = e.target.closest('tr')

@@ -209,15 +209,58 @@ require_once '../../back/sistema_global/session.php';
 
               <div class="form-group">
                 <div class="row ">
+                  <div class="col-sm ">
+                    <label class="form-label" for="id_dependencia">UNIDAD</label>
+                    <div class="input-group">
+                      <div class="w-80">
+                        <select class="form-select employee-select" name="id_dependencia"
+                          id="search-select-dependencias">
+                        </select>
+                      </div>
+                      <div class="input-group-prepend">
 
-                  <div class="col-sm-5 mt-2">
+                        <button type="button" id="add-dependency" class="input-group-text btn btn-primary">+</button>
+                      </div>
+
+                    </div>
+                  </div>
+                  <div class="col-sm ">
+                    <label class="form-label" for="id_categoria">CATEGORIA</label>
+                    <div class="input-group">
+                      <div class="w-80">
+                        <select class="form-select employee-select" name="id_categoria" id="search-select-categorias">
+                        </select>
+                      </div>
+                      <div class="input-group-prepend">
+                        <button type="button" id="add-category" class="input-group-text btn btn-primary">+</button>
+                      </div>
+
+
+                    </div>
+                  </div>
+                  <div class="col-sm ">
+                    <label class="form-label" for="id_partida">PARTIDA</label>
+                    <div class="input-group">
+                      <div class="w-80">
+                        <input class="employee-input form-control" type="text" name="id_partida"
+                          placeholder="Partida..." id="id_partida" list="partidas-list">
+                      </div>
+
+                      <div class="input-group-prepend">
+                        <button type="button" id="add-dependency" class="input-group-text btn btn-primary">+</button>
+                      </div>
+
+                    </div>
+                  </div>
+                  <datalist id="partidas-list">
+
+                  </datalist>
+                  <!-- <div class="col-sm ">
                     <div class="form-group">
 
-                      <label class="form-label" for="cod_dependencia">DEPENDENCIA</label>
+                      <label class="form-label" for="cod_dependencia">UNIDAD</label>
 
                       <div class="input-group">
-
-
                         <input type="text" class="input-group-text mb-auto" name="cod_dependencia" id="cod_dependencia"
                           placeholder="Código" disabled />
                         <div>
@@ -230,21 +273,25 @@ require_once '../../back/sistema_global/session.php';
                           class="input-group-text btn btn-primary mb-auto">+</button>
                       </div>
                     </div>
+                  </div> -->
+                </div>
+              </div>
 
-
+              <div class="form-group">
+                <div class="row">
+                  <div class="form-group">
+                    <button class="btn btn-secondary">ACTUALIZAR OPCIONES</button>
                   </div>
+                </div>
+              </div>
 
-
-                  <div class="col-sm-7 mt-2">
-
-
-                    <div class="form-group">
-                      <label for="observacion">OBSERVACIONES</label>
-                      <textarea class="form-control employee-input" name="observacion"
-                        placeholder="Observación sobre el empleado..." id="observacion" style="height: 50px"></textarea>
-                    </div>
+              <div class="form-group">
+                <div class="row">
+                  <div class="form-group">
+                    <label for="observacion">OBSERVACIONES</label>
+                    <textarea class="form-control employee-input" name="observacion"
+                      placeholder="Observación sobre el empleado..." id="observacion" style="height: 50px"></textarea>
                   </div>
-
                 </div>
               </div>
 
@@ -253,39 +300,41 @@ require_once '../../back/sistema_global/session.php';
 
               <!-- AÑADIR NUEVA DEPENDENCIA -->
 
+
             </form>
-
-
-            <div id="modal-dependency" class="modal-window hide">
-              <div class="modal-box short slide-up-animation">
-                <header class="modal-box-header">
-                  <h4>AÑADIR NUEVA DEPENDENCIA</h4>
-                  <button id="btn-close-dependency" type="button" class="btn btn-danger" aria-label="Close">
+            <div id='modal-dependency' class='modal-window hide'>
+              <div class='modal-box short slide-up-animation'>
+                <header class='modal-box-header'>
+                  <h4>AÑADIR NUEVA unidad</h4>
+                  <button id='btn-close-dependency' type='button' class='btn btn-danger' aria-label='Close'>
                     &times;
                   </button>
                 </header>
 
-                <div class="modal-box-content">
-                  <form id="employee-dependencia-form">
-                    <div class="row mx-0">
-                      <div class="col-sm"><input class=" form-control" type="text" name="dependencia"
-                          placeholder="Nombre dependencia..." id="dependencia"></div>
-                      <div class="col-sm"><input type="number" class=" form-control" name="cod_dependencia-input"
-                          id="cod_dependencia-input" placeholder="Codigo de dependencia"></div>
+                <div class='modal-box-content'>
+                  <form id='employee-dependencia-form'>
+                    <div class='row mx-0'>
+                      <div class='col-sm'>
+                        <input class=' form-control' type='text' name='dependencia' placeholder='Nombre dependencia...'
+                          id='dependencia' />
+                      </div>
+                      <div class='col-sm'>
+                        <input type='number' class=' form-control' name='cod_dependencia-input'
+                          id='cod_dependencia-input' placeholder='Codigo de dependencia' />
+                      </div>
                     </div>
                   </form>
-
                 </div>
 
-                <div class="modal-box-footer">
-                  <button class="btn btn-primary" id="dependency-save-btn">GUARDAR
-                    DEPENDENCIA</button>
+                <div class='modal-box-footer'>
+                  <button class='btn btn-primary' id='dependency-save-btn'>
+                    GUARDAR UNIDAD
+                  </button>
                 </div>
-
-
-
               </div>
             </div>
+
+
           </div>
           <div class="modal-box-footer card-footer d-flex align-items-center justify-content-center gap-2 py-0">
             <button class="btn btn-primary " id="btn-employee-save">GUARDAR</button>

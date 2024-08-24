@@ -1,3 +1,4 @@
+import { loadCategoriasTable } from './src/controllers/categoriasTable.js'
 import { validateDependenciaForm } from './src/controllers/dependenciasForm.js'
 import { loadDependenciaTable } from './src/controllers/dependenciasTable.js'
 import { validateEmployeeForm } from './src/controllers/empleadosForm.js'
@@ -24,6 +25,7 @@ d.addEventListener('DOMContentLoaded', (e) => {
   const requestForm = d.getElementById('request-form')
   const requestHistorial = d.getElementById('request-historial')
   const dependenciaTable = d.getElementById('dependencia-table')
+  const categoriaTable = d.getElementById('categoria-table')
 
   if (tabulatorForm) {
     validateTabulatorForm({
@@ -78,133 +80,7 @@ d.addEventListener('DOMContentLoaded', (e) => {
       selectSearchInput: 'select-search-input',
       selectSearch: ['cargo'],
       btnAddId: 'add-dependency',
-      fieldList: {
-        nombres: '',
-        nacionalidad: '',
-        cedula: 0,
-        status: '',
-        instruccion_academica: '',
-        cod_cargo: '',
-        fecha_ingreso: '',
-        otros_años: 0,
-        hijos: 0,
-        beca: 0,
-        discapacidades: '',
-        banco: '',
-        cuenta_bancaria: '',
-        // tipo_cuenta: 0,
-        id_dependencia: '',
-        tipo_nomina: 0,
-        cod_empleado: '441151',
-        correcion: 0,
-        observacion: '',
-      },
-
-      fieldListErrors: {
-        nombres: {
-          value: true,
-          message: 'Introducir un campo válido',
-          type: 'text',
-        },
-        nacionalidad: {
-          value: true,
-          message: 'Introducir un campo válido',
-          type: 'text',
-        },
-        cedula: {
-          value: true,
-          message: 'Introduzca cédula válida',
-          type: 'cedula',
-        },
-        status: {
-          value: false,
-          message: 'Elija una opción',
-          type: 'text',
-        },
-        instruccion_academica: {
-          value: true,
-          message: 'Elija una opción',
-          type: 'text',
-        },
-        cod_cargo: {
-          value: true,
-          message: 'Elija un cargo',
-          type: 'number',
-        },
-        fecha_ingreso: {
-          value: true,
-          message: 'Fecha inválida o mayor',
-          type: 'date',
-        },
-        otros_años: {
-          value: true,
-          message: 'Introducir cantidad o "0"',
-          type: 'number2',
-        },
-        hijos: {
-          value: true,
-          message: 'Introducir cantidad o "0"',
-          type: 'number2',
-        },
-        beca: {
-          value: true,
-          message: 'Introducir cantidad o "0"',
-          type: 'number2',
-        },
-        banco: {
-          value: true,
-          message: 'Elija un banco',
-          type: 'text',
-        },
-        cuenta_bancaria: {
-          value: true,
-          message: 'Introducir N° de cuenta válido',
-          type: 'cuenta_bancaria',
-        },
-        discapacidades: {
-          value: true,
-          message: 'Elija una opción',
-          type: 'number2',
-        },
-        // tipo_cuenta: {
-        //   value: true,
-        //   message: 'Elegir tipo de cuenta',
-        //   type: 'number2',
-        // },
-        id_dependencia: {
-          value: true,
-          message: 'Elegir una dependencia',
-          type: 'number',
-        },
-        tipo_nomina: {
-          value: null,
-          message: 'Introducir un campo válido',
-          type: 'number2',
-        },
-        observacion: {
-          value: null,
-          message: 'Introducir un campo válido',
-          type: 'text',
-        },
-      },
-      fieldListDependencias: {
-        dependencia: '',
-        'cod_dependencia-input': '',
-      },
-      fieldListErrorsDependencias: {
-        dependencia: {
-          value: true,
-          message: 'No puede estar vacío',
-          type: 'text',
-        },
-        'cod_dependencia-input': {
-          value: true,
-          message: 'No puede estar vacío',
-          type: 'number',
-        },
-      },
     })
-    return
   }
 
   if (dependenciaTable) {
@@ -231,6 +107,11 @@ d.addEventListener('DOMContentLoaded', (e) => {
         },
       },
     })
+  }
+
+  if (categoriaTable) {
+    loadCategoriasTable()
+    // VALIDAR FORMULARIO DE CATEGORIA
   }
 
   // if (requestForm) {

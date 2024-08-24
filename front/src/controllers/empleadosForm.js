@@ -1,3 +1,4 @@
+import { getCategorias } from '../api/categorias.js'
 import {
   getBankData,
   getDependencyData,
@@ -9,6 +10,7 @@ import {
   sendEmployeeData,
   updateRequestEmployeeData,
 } from '../api/empleados.js'
+import { getPartidas } from '../api/partidas.js'
 import { nomCorrectionAlert } from '../components/nom_correcion_alert.js'
 import { employeeCard } from '../components/nom_empleado_card.js'
 import {
@@ -21,6 +23,145 @@ import {
 } from '../helpers/helpers.js'
 import { ALERT_TYPES, NOTIFICATIONS_TYPES } from '../helpers/types.js'
 import { validateEmployeeTable } from './empleadosTable.js'
+
+let fieldList = {
+  nombres: '',
+  nacionalidad: '',
+  cedula: 0,
+  status: '',
+  instruccion_academica: '',
+  cod_cargo: '',
+  fecha_ingreso: '',
+  otros_años: 0,
+  hijos: 0,
+  beca: 0,
+  discapacidades: '',
+  banco: '',
+  cuenta_bancaria: '',
+  // tipo_cuenta: 0,
+  id_dependencia: '',
+  id_categoria: '',
+  id_partida: '',
+
+  tipo_nomina: 0,
+  correcion: 0,
+  observacion: '',
+}
+
+let fieldListErrors = {
+  nombres: {
+    value: true,
+    message: 'Introducir un campo válido',
+    type: 'text',
+  },
+  nacionalidad: {
+    value: true,
+    message: 'Introducir un campo válido',
+    type: 'text',
+  },
+  cedula: {
+    value: true,
+    message: 'Introduzca cédula válida',
+    type: 'cedula',
+  },
+  status: {
+    value: false,
+    message: 'Elija una opción',
+    type: 'text',
+  },
+  instruccion_academica: {
+    value: true,
+    message: 'Elija una opción',
+    type: 'text',
+  },
+  cod_cargo: {
+    value: true,
+    message: 'Elija un cargo',
+    type: 'number',
+  },
+  fecha_ingreso: {
+    value: true,
+    message: 'Fecha inválida o mayor',
+    type: 'date',
+  },
+  otros_años: {
+    value: true,
+    message: 'Introducir cantidad o "0"',
+    type: 'number2',
+  },
+  hijos: {
+    value: true,
+    message: 'Introducir cantidad o "0"',
+    type: 'number2',
+  },
+  beca: {
+    value: true,
+    message: 'Introducir cantidad o "0"',
+    type: 'number2',
+  },
+  banco: {
+    value: true,
+    message: 'Elija un banco',
+    type: 'text',
+  },
+  cuenta_bancaria: {
+    value: true,
+    message: 'Introducir N° de cuenta válido',
+    type: 'cuenta_bancaria',
+  },
+  discapacidades: {
+    value: true,
+    message: 'Elija una opción',
+    type: 'number2',
+  },
+  // tipo_cuenta: {
+  //   value: true,
+  //   message: 'Elegir tipo de cuenta',
+  //   type: 'number2',
+  // },
+  id_dependencia: {
+    value: true,
+    message: 'Elegir una dependencia',
+    type: 'number',
+  },
+  id_categoria: {
+    value: true,
+    message: 'Elegir una unidad',
+    type: 'number',
+  },
+  id_partida: {
+    value: true,
+    message: 'Elegir una partida',
+    type: 'number',
+  },
+  tipo_nomina: {
+    value: null,
+    message: 'Introducir un campo válido',
+    type: 'number2',
+  },
+  observacion: {
+    value: null,
+    message: 'Introducir un campo válido',
+    type: 'text',
+  },
+}
+
+let fieldListDependencias = {
+  dependencia: '',
+  'cod_dependencia-input': '',
+}
+let fieldListErrorsDependencias = {
+  dependencia: {
+    value: true,
+    message: 'No puede estar vacío',
+    type: 'text',
+  },
+  'cod_dependencia-input': {
+    value: true,
+    message: 'No puede estar vacío',
+    type: 'number',
+  },
+}
 
 const d = document
 const w = window
@@ -35,10 +176,6 @@ function validateEmployeeForm({
   employeeSelectClass,
   btnId,
   btnAddId,
-  fieldList = {},
-  fieldListErrors = {},
-  fieldListDependencias = {},
-  fieldListErrorsDependencias = {},
   selectSearchInput,
   selectSearch,
 }) {
@@ -60,13 +197,29 @@ function validateEmployeeForm({
     let cargos = await getJobData()
     let profesiones = await getProfessionData()
     let dependencias = await getDependencyData()
+    let categorias = await getCategorias()
+    let partidas = await getPartidas()
+
     dependenciasLaborales = dependencias.fullInfo
 
     let bancos = await getBankData()
     insertOptions({ input: 'cargo', data: cargos })
     insertOptions({ input: 'instruccion_academica', data: profesiones })
     insertOptions({ input: 'dependencias', data: dependencias.mappedData })
+    insertOptions({ input: 'categorias', data: categorias.mappedData })
     insertOptions({ input: 'bancos', data: bancos })
+    ;(() => {
+      let partidasList = d.getElementById('partidas-list')
+      partidasList.innerHTML = ''
+      let options = partidas.fullInfo
+        .map((option) => {
+          return `<option value="${option.id}">${option.partida} - ${option.descripcion}</option>`
+        })
+        .join('')
+
+      partidasList.innerHTML = options
+      return
+    })()
 
     // CÓDIGO PARA OBTENER EMPLEADO EN CASO DE EDITAR
     if (id) {
@@ -126,7 +279,7 @@ function validateEmployeeForm({
         })
       })
 
-      mostrarCodigoDependencia()
+      // mostrarCodigoDependencia()
 
       // console.log(fieldList, fieldListErrors)
     } else {
@@ -158,7 +311,7 @@ function validateEmployeeForm({
         type: fieldListErrors[e.target.name].type,
       })
       if (e.target.name === 'id_dependencia') {
-        mostrarCodigoDependencia()
+        // mostrarCodigoDependencia()
       }
     }
   })
@@ -450,7 +603,7 @@ async function validateNewDependency({ newDependency }) {
       d.getElementById('cod_dependencia').value = ''
     })
   }
-  mostrarCodigoDependencia()
+  // mostrarCodigoDependencia()
   closeModal({ modalId: 'modal-dependency' })
 }
 
