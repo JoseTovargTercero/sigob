@@ -370,6 +370,8 @@ function hideLoader(loaderId) {
   loader.style.display = 'none'
 }
 
+// DIFERENCIA DE EMPLEADOS
+
 function empleadosDiferencia(registroAnterior, registroActual) {
   let empleadosEliminados = [],
     empleadosNuevos = []
@@ -391,6 +393,8 @@ function empleadosDiferencia(registroAnterior, registroActual) {
 
   return { empleadosEliminados, empleadosNuevos }
 }
+
+// NOTIFICACIONES
 
 function toastNotification({ type, message }) {
   if (type === NOTIFICATIONS_TYPES.done) {
@@ -511,6 +515,13 @@ const validateStatusText = ({ value, confirmText, NegativeText }) => {
   return value ? confirmText : NegativeText
 }
 
+// mapear información para select
+const mapData = ({ obj, name, id }) => {
+  return obj.map((el) => {
+    return { name: el[name], id: el[id] }
+  })
+}
+
 export {
   validateInput,
   validateModal,
@@ -523,4 +534,5 @@ export {
   errorMessage,
   validateStatusText,
   empleadosDiferencia,
+  mapData,
 }
