@@ -1,4 +1,5 @@
-import { getDependencyData, getJobData } from '../api/empleados.js'
+import { getDependencias } from '../api/dependencias.js'
+import { getJobData } from '../api/empleados.js'
 import { revertirCambios } from '../api/movimientos.js'
 import { eliminarPeticionNomina } from '../api/peticionesNomina.js'
 import { loadRequestTable } from '../controllers/peticionesTable.js'
@@ -266,7 +267,7 @@ export const nomCorregirCard = ({
                     </select>`
 
     if (type === 'id_ependencia') {
-      let cod_cargo = await getDependencyData()
+      let cod_cargo = await getDependencias()
       let options = insertOptions(cod_cargo)
 
       return `<select class="form-select" name="cod_cargo">${options}</select>`

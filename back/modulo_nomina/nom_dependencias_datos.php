@@ -1,59 +1,219 @@
 <?php
+
 require_once '../sistema_global/conexion.php';
-require_once '../sistema_global/session.php';
+header('Content-Type: application/json');
 
 // Inicializar el array de respuesta
-$response = array();
 
 // Verificar si se recibió un ID y limpiarlo
-if (isset($_GET['id'])) {
-    $id = $conexion->real_escape_string($_GET['id']);
 
-    // Consulta SQL para obtener los datos de una fila específica por su ID
-    $sql = "SELECT *
-            FROM dependencias
-            WHERE id_dependencia = $id";
-} else {
-    // Consulta SQL para obtener todos los registros
-    $sql = "SELECT *
-            FROM dependencias";
-}
+function obtenerDependencias()
+{
+    global $conexion;
 
-$result = $conexion->query($sql);
+    try {
 
-// Verificar si la consulta fue exitosa
-if ($result === false) {
-    // Si hay un error en la consulta, mostrarlo y salir del script
-    $response['error'] = "Error en la consulta: " . $conexion->error;
+        if (isset($_GET['id'])) {
+            $id = intval($_GET['id']);
 
-
-} else {
-    $datos = array();
-
-    if ($result->num_rows > 0) {
-        // Llenar el array con los datos obtenidos de la consulta
-        while ($row = $result->fetch_assoc()) {
-            $tabulador = array(
-                "id_dependencia" => $row["id_dependencia"],
-                "dependencia" => $row["dependencia"],
-                "cod_dependencia" => $row["cod_dependencia"],
-            );
-            $datos[] = $tabulador;
+            $sql = "SELECT * FROM dependencias WHERE id_dependencia = ?";
+            $stmt = $conexion->prepare($sql);
+            $stmt->bind_param("i", $id);
+        } else {
+            $sql = "SELECT * FROM dependencias";
+            $stmt = $conexion->prepare($sql);
         }
 
-        $response['success'] = $datos;
+        $stmt->execute();
+        $result = $stmt->get_result();
 
-    } else {
-        // Si no se encontraron resultados
-        $response['error'] = "No se encontraron resultados.";
+        if ($result === false) {
+            throw new Exception("Error en la consulta: $conexion->error");
+        }
 
+        $datos = array();
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $datos[] = $row;
+            }
+            $response = json_encode(["success" => $datos]);
+        } else {
+            $response = json_encode(["error" => "No se encontraron unidades registradas"]);
+        }
+
+        $stmt->close();
+        $conexion->close();
+
+        return $response;
+    } catch (Exception $e) {
+        // Registrar el error en un archivo de registro
+        // error_log('Error: ' . $e->getMessage(), 3, '/ruta/al/archivo_de_error.log');
+        return json_encode(['error' => $e->getMessage()]);
     }
 }
 
-// Cerrar la conexión a la base de datos
-$conexion->close();
+function crearDependencia($informacion)
+{
+    global $conexion;
 
-// Pasar la respuesta a la vista en formato JSON
-header('Content-Type: application/json');
-echo json_encode($response);
+    try {
+        if (!isset($informacion["dependencia"]) || !isset($informacion["cod_dependencia"])) {
+            throw new Exception('El campo código o nombre están vacíos');
+        }
+        $dependencia = $informacion["dependencia"];
+        $cod_dependencia = $informacion["cod_dependencia"];
+
+        $stmt_dep = $conexion->prepare("SELECT * FROM `dependencias` WHERE cod_dependencia = ?");
+        $stmt_dep->bind_param('s', $cod_dependencia);
+        $stmt_dep->execute();
+        $result = $stmt_dep->get_result();
+        if ($result->num_rows > 0) {
+            throw new Exception("Ya existe una unidad con el mismo código.");
+        }
+
+
+        $sql = "INSERT INTO dependencias (dependencia, cod_dependencia) VALUES (?, ?)";
+
+        $stmt = $conexion->prepare($sql);
+        $stmt->bind_param("ss", $dependencia, $cod_dependencia);
+        $stmt->execute();
+
+        if ($stmt->affected_rows > 0) {
+            $response = json_encode(["success" => "Dependencia creada con éxito"]);
+        } else {
+            throw new Exception("Error al insertar la categoría: $conexion->error");
+        }
+
+        $stmt->close();
+        $conexion->close();
+
+        return $response;
+    } catch (Exception $e) {
+        // Registrar el error en un archivo de registro
+        // error_log('Error: ' . $e->getMessage(), 3, '/ruta/al/archivo_de_error.log');
+
+        return json_encode(['error' => $e->getMessage()]);
+    }
+}
+
+function actualizarDependencia($informacion)
+{
+    global $conexion;
+
+    try {
+        if (!isset($informacion["id"])) {
+            throw new Exception('No se ha indicado el ID de unidad a actualizar');
+        }
+        if (!isset($informacion["dependencia"]) || !isset($informacion["cod_dependencia"])) {
+            throw new Exception('El campo código o nombre están vacíos');
+        }
+        $id = $informacion["id"];
+        $dependencia = $informacion["dependencia"];
+        $cod_dependencia = $informacion["cod_dependencia"];
+
+        $stmt_dep = $conexion->prepare("SELECT * FROM `dependencias` WHERE cod_dependencia = ?");
+        $stmt_dep->bind_param('s', $cod_dependencia);
+        $stmt_dep->execute();
+        $result = $stmt_dep->get_result();
+        if ($result->num_rows > 0) {
+            throw new Exception("Ya existe una unidad con el mismo código.");
+        }
+
+        $sql = "UPDATE dependencias SET dependencia = ?, cod_dependencia = ? WHERE id_dependencia = ?";
+        $stmt = $conexion->prepare($sql);
+        $stmt->bind_param("ssi", $dependencia, $cod_dependencia, $id);
+        $stmt->execute();
+
+        if ($stmt->affected_rows > 0) {
+            $response = json_encode(["success" => "Unidad actualizada creada con éxito"]);
+        } else {
+            throw new Exception("No se ha cambiado ningún valor");
+        }
+
+        $stmt->close();
+        $conexion->close();
+
+        return $response;
+    } catch (Exception $e) {
+        // Registrar el error en un archivo de registro
+        // error_log('Error: ' . $e->getMessage(), 3, '/ruta/al/archivo_de_error.log');
+        return json_encode(['error' => $e->getMessage()]);
+    }
+}
+
+function eliminarDependencia($informacion)
+{
+
+    global $conexion;
+
+    try {
+        if (!isset($informacion["id"])) {
+            throw new Exception('No se ha indicado el ID de unidad a eño,omar');
+        }
+        $id = $informacion["id"];
+
+        $stmt_emp = $conexion->prepare("SELECT * FROM `empleados` WHERE id_dependencia = ?");
+        $stmt_emp->bind_param('s', $id);
+        $stmt_emp->execute();
+        $result = $stmt_emp->get_result();
+        if ($result->num_rows > 0) {
+            throw new Exception("Ya existe un empleado registrado con esta dependencia");
+        }
+
+
+        $stmt_dep = $conexion->prepare("DELETE FROM `dependencias` WHERE id_dependencia = ?");
+        $stmt_dep->bind_param('s', $id);
+
+
+        if ($stmt_dep->execute()) {
+            $response = json_encode(["success" => "Dependencia eliminada correctamente."]);
+        } else {
+            throw new Exception("Error al eliminar la dependencia: " . $conexion->error);
+        }
+
+        $stmt_dep->close();
+        $conexion->close();
+
+        return $response;
+    } catch (Exception $e) {
+        // Registrar el error en un archivo de registro
+        // error_log('Error: ' . $e->getMessage(), 3, '/ruta/al/archivo_de_error.log');
+        return json_encode(['error' => $e->getMessage()]);
+    }
+}
+
+
+
+$data = json_decode(file_get_contents("php://input"), true);
+function procesarPeticion($data)
+{
+
+    if (isset($data["accion"])) {
+        $accion = $data["accion"];
+        if ($accion === "insertar") {
+            if (!isset($data["informacion"]))
+                return json_encode(['error' => "Acción no posee informacion"]);
+
+            return crearDependencia($data["informacion"]);
+        }
+        if ($accion === "actualizar") {
+            return actualizarDependencia($data["informacion"]);
+        }
+        if ($accion === "eliminar") {
+            return eliminarDependencia($data["informacion"]);
+        }
+
+        return json_encode(['error' => "Acción no aceptada"]);
+    } else {
+
+        return obtenerDependencias();
+    }
+
+
+}
+
+$response = procesarPeticion($data);
+
+echo $response;
+
 ?>

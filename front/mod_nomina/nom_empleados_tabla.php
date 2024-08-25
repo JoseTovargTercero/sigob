@@ -240,17 +240,17 @@ require_once '../../back/sistema_global/session.php';
                   </div>
                   <div class="col-sm ">
                     <label class="form-label" for="id_partida">PARTIDA</label>
-                    <div class="input-group">
+                    <input class="employee-input form-control" type="text" name="id_partida" placeholder="Partida..."
+                      id="id_partida" list="partidas-list">
+                    <!-- <div class="input-group">
                       <div class="w-80">
-                        <input class="employee-input form-control" type="text" name="id_partida"
-                          placeholder="Partida..." id="id_partida" list="partidas-list">
                       </div>
 
                       <div class="input-group-prepend">
                         <button type="button" id="add-dependency" class="input-group-text btn btn-primary">+</button>
                       </div>
 
-                    </div>
+                    </div> -->
                   </div>
                   <datalist id="partidas-list">
 
@@ -280,7 +280,7 @@ require_once '../../back/sistema_global/session.php';
               <div class="form-group">
                 <div class="row">
                   <div class="form-group">
-                    <button class="btn btn-secondary">ACTUALIZAR OPCIONES</button>
+                    <button class="btn btn-secondary" id="actualizar-opciones">ACTUALIZAR OPCIONES</button>
                   </div>
                 </div>
               </div>
@@ -302,37 +302,7 @@ require_once '../../back/sistema_global/session.php';
 
 
             </form>
-            <div id='modal-dependency' class='modal-window hide'>
-              <div class='modal-box short slide-up-animation'>
-                <header class='modal-box-header'>
-                  <h4>AÑADIR NUEVA unidad</h4>
-                  <button id='btn-close-dependency' type='button' class='btn btn-danger' aria-label='Close'>
-                    &times;
-                  </button>
-                </header>
 
-                <div class='modal-box-content'>
-                  <form id='employee-dependencia-form'>
-                    <div class='row mx-0'>
-                      <div class='col-sm'>
-                        <input class=' form-control' type='text' name='dependencia' placeholder='Nombre dependencia...'
-                          id='dependencia' />
-                      </div>
-                      <div class='col-sm'>
-                        <input type='number' class=' form-control' name='cod_dependencia-input'
-                          id='cod_dependencia-input' placeholder='Codigo de dependencia' />
-                      </div>
-                    </div>
-                  </form>
-                </div>
-
-                <div class='modal-box-footer'>
-                  <button class='btn btn-primary' id='dependency-save-btn'>
-                    GUARDAR UNIDAD
-                  </button>
-                </div>
-              </div>
-            </div>
 
 
           </div>

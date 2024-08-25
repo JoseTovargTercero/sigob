@@ -40,9 +40,9 @@ let requestTable = new DataTable('#request-table-historial', {
   columns: [
     { data: 'correlativo' },
     { data: 'nombre' },
-    { data: 'status' },
     { data: 'identificador' },
     { data: 'fecha' },
+    { data: 'status' },
     { data: 'acciones' },
   ],
   responsive: true,
@@ -78,9 +78,9 @@ export async function loadRequestTableHistorico() {
       return {
         correlativo: peticion.correlativo,
         nombre: peticion.nombre_nomina,
-        status: Number(peticion.status) === 1 ? 'Revisado' : 'Pendiente',
         identificador: validarIdentificador(peticion.identificador),
         fecha: peticion.creacion,
+        status: `<span class="btn btn-success btn-sm">Revisado</span>`,
         acciones: `
       <button class="btn btn-primary btn-sm" data-correlativo="${
         peticion.correlativo

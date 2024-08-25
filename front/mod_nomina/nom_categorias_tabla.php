@@ -44,7 +44,7 @@ require_once '../../back/sistema_global/session.php';
                                     <h5 class="mb-0">Categorias</h5>
                                     <small class="text-muted mt-0">Administre las categorias</small>
                                 </div>
-                                <button class="btn btn-primary" id="dependencia-nueva">Nueva categoria</button>
+                                <button class="btn btn-primary" id="categoria-nueva">Nueva categoria</button>
 
                             </div>
                         </div>

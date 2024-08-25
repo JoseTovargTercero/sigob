@@ -5,11 +5,8 @@ import {
   toastNotification,
 } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
-import {
-  getDependencyData,
-  getJobData,
-  getProfessionData,
-} from './empleados.js'
+import { getDependencias } from './dependencias.js'
+import { getJobData, getProfessionData } from './empleados.js'
 
 const obtenerNominasUrl =
   '../../../../../sigob/back/modulo_nomina/nom_empleados_pagar_back.php'
@@ -264,6 +261,7 @@ const getComparacionNomina2 = async ({ nombre_nomina }) => {
     } else {
       data.registro_anterior = false
     }
+    console.log(registro_anterior)
 
     return registro_anterior
   } catch (e) {
@@ -486,6 +484,10 @@ const descargarNominaTxt = async ({ correlativo, identificador }) => {
     // Liberar la URL del objeto una vez que se haya iniciado la descarga
     URL.revokeObjectURL(url)
 
+    toastNotification({
+      type: NOTIFICATIONS_TYPES.done,
+      message: 'Documentos generados',
+    })
     return true
   } catch (e) {
     console.log(e)
@@ -533,7 +535,7 @@ function mapComparationRequest(obj) {
 async function mapData(data) {
   let cargos = await getJobData()
 
-  let dependencias = await getDependencyData()
+  let dependencias = await getDependencias()
   let profesiones = await getProfessionData()
   return data.map((empleado) => {
     let {

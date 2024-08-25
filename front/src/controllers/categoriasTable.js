@@ -87,10 +87,13 @@ export function confirmDeleteCategoria({ id, row, table }) {
         return node === row
       })
 
-      let res = await deleteDependencyData(id)
-      if (res.error) return
+      if (res) {
+        if (res.error) return
+        filteredRows.remove().draw()
+      }
+      // let res = await deleteDependencyData(id)
+      // if (res.error) return
       // ELIMINAR FILA DE LA TABLA CON LA API DE DATATABLES
-      filteredRows.remove().draw()
     },
     message: '¿Deseas eliminar esta categoria?',
   })

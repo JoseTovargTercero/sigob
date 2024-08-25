@@ -1,17 +1,18 @@
 import { getCategorias } from '../api/categorias.js'
+import { getDependencias } from '../api/dependencias.js'
 import {
   getBankData,
-  getDependencyData,
   getEmployeeByCedula,
   getEmployeeData,
   getJobData,
   getProfessionData,
-  sendDependencyData,
   sendEmployeeData,
   updateRequestEmployeeData,
 } from '../api/empleados.js'
-import { getPartidas } from '../api/partidas.js'
+import { consultarPartida, getPartidas } from '../api/partidas.js'
+import { nom_categoria_form_card } from '../components/nom_categoria_form_card.js'
 import { nomCorrectionAlert } from '../components/nom_correcion_alert.js'
+import { nom_dependencia_form_card } from '../components/nom_dependencia_form_card.js'
 import { employeeCard } from '../components/nom_empleado_card.js'
 import {
   closeModal,
@@ -171,7 +172,6 @@ let employeeId
 let dependenciasLaborales
 
 function validateEmployeeForm({
-  formElement,
   employeeInputClass,
   employeeSelectClass,
   btnId,
@@ -179,6 +179,7 @@ function validateEmployeeForm({
   selectSearchInput,
   selectSearch,
 }) {
+  const formElement = d.getElementById('employee-form')
   const btnElement = d.getElementById(btnId)
   const btnAddElement = d.getElementById(btnAddId)
   const btnDependencySave = d.getElementById('dependency-save-btn')
@@ -196,7 +197,7 @@ function validateEmployeeForm({
   const loadEmployeeData = async (id = false) => {
     let cargos = await getJobData()
     let profesiones = await getProfessionData()
-    let dependencias = await getDependencyData()
+    let dependencias = await getDependencias()
     let categorias = await getCategorias()
     let partidas = await getPartidas()
 
@@ -291,7 +292,7 @@ function validateEmployeeForm({
 
   formElement.addEventListener('submit', (e) => e.preventDefault())
 
-  dependenciaFormElement.addEventListener('submit', (e) => e.preventDefault())
+  // dependenciaFormElement.addEventListener('submit', (e) => e.preventDefault())
 
   formElement.addEventListener('input', (e) => {
     if (e.target.classList.contains(employeeInputClass)) {
@@ -316,17 +317,17 @@ function validateEmployeeForm({
     }
   })
 
-  dependenciaFormElement.addEventListener('input', (e) => {
-    console.log(e.target.value)
-    fieldListDependencias = validateInput({
-      target: e.target,
-      fieldList: fieldListDependencias,
-      fieldListErrors: fieldListErrorsDependencias,
-      type: fieldListErrorsDependencias[e.target.name].type,
-    })
+  // dependenciaFormElement.addEventListener('input', (e) => {
+  //   console.log(e.target.value)
+  //   fieldListDependencias = validateInput({
+  //     target: e.target,
+  //     fieldList: fieldListDependencias,
+  //     fieldListErrors: fieldListErrorsDependencias,
+  //     type: fieldListErrorsDependencias[e.target.name].type,
+  //   })
 
-    console.log(fieldListDependencias)
-  })
+  //   console.log(fieldListDependencias)
+  // })
 
   formElement.addEventListener('focusout', (e) => {
     if (e.target.name === 'cedula') {
@@ -360,6 +361,20 @@ function validateEmployeeForm({
           })
           formElement.otros_años.value =
             Number(formElement.otros_años.value) + res.otros_anios
+        }
+      })
+    }
+
+    if (e.target.name === 'id_partida') {
+      if (e.target.value === '') return
+      consultarPartida({ informacion: { id: e.target.value } }).then((res) => {
+        if (res.success) {
+        } else {
+          toastNotification({
+            type: NOTIFICATIONS_TYPES.fail,
+            message: res.error,
+          })
+          e.target.value = ''
         }
       })
     }
@@ -409,7 +424,6 @@ function validateEmployeeForm({
     if (e.target.id === 'btn-employee-form-close') {
       closeModal({ modalId: 'modal-employee-form' })
       formElement.reset()
-
       validateInput({
         type: 'reset',
       })
@@ -425,41 +439,69 @@ function validateEmployeeForm({
     }
 
     if (e.target.id === 'add-dependency') {
+      nom_dependencia_form_card({
+        elementToInsert: 'modal-employee-form',
+        reloadSelect: loadDependencias,
+      })
       openModal({ modalId: 'modal-dependency' })
     }
 
-    if (e.target.id === 'btn-close-dependency') {
-      closeModal({ modalId: 'modal-dependency' })
-      dependenciaFormElement.reset()
+    if (e.target.id === 'add-category') {
+      nom_categoria_form_card({
+        elementToInsert: 'modal-employee-form',
+        reloadSelect: loadCategorias,
+      })
     }
 
-    if (e.target === btnDependencySave) {
-      console.log(
-        dependenciaFormElement['cod_dependencia-input'].value,
-        dependenciaFormElement.dependencia.value
-      )
-      let newDependency = {
-        dependencia: dependenciaFormElement.dependencia.value,
-        cod_dependencia: dependenciaFormElement['cod_dependencia-input'].value,
-      }
-      if (!fieldListDependencias.dependencia)
-        return confirmNotification({
-          type: NOTIFICATIONS_TYPES.fail,
-          message: 'No se puede enviar una dependencia vacía',
-        })
+    if (e.target.id === 'actualizar-opciones') {
+      loadCategorias()
+      loadDependencias()
+      const numeroFinal = 0
+      let contador = 5
+      let intervalo
+      e.target.innerText = `ACTUALIZAR OPCIONES EN ${contador}`
+      e.target.setAttribute('disabled', true)
 
-      if (Object.values(fieldListDependencias).some((el) => el.value)) {
-        return confirmNotification({
-          type: NOTIFICATIONS_TYPES.fail,
-          message: 'Error al registrar dependencia',
-        })
+      if (contador >= numeroFinal) {
+        intervalo = setInterval(function () {
+          contador--
+          e.target.innerText = `ACTUALIZAR OPCIONES EN ${contador}`
+          if (contador === numeroFinal) {
+            clearInterval(intervalo)
+            e.target.removeAttribute('disabled')
+            e.target.innerText = 'ACTUALIZAR OPCIONESS'
+          }
+        }, 1000) // Intervalo de 1 segundo (1000 milisegundos)
       }
-
-      validateNewDependency({ newDependency })
-      dependenciaFormElement.reset()
-      fieldListDependencias.dependencia = ''
-      fieldListDependencias['cod_dependencia-input'] = ''
     }
+
+    // if (e.target === btnDependencySave) {
+    //   console.log(
+    //     dependenciaFormElement['cod_dependencia-input'].value,
+    //     dependenciaFormElement.dependencia.value
+    //   )
+    //   let newDependency = {
+    //     dependencia: dependenciaFormElement.dependencia.value,
+    //     cod_dependencia: dependenciaFormElement['cod_dependencia-input'].value,
+    //   }
+    //   if (!fieldListDependencias.dependencia)
+    //     return confirmNotification({
+    //       type: NOTIFICATIONS_TYPES.fail,
+    //       message: 'No se puede enviar una dependencia vacía',
+    //     })
+
+    //   if (Object.values(fieldListDependencias).some((el) => el.value)) {
+    //     return confirmNotification({
+    //       type: NOTIFICATIONS_TYPES.fail,
+    //       message: 'Error al registrar dependencia',
+    //     })
+    //   }
+
+    //   validateNewDependency({ newDependency })
+    //   dependenciaFormElement.reset()
+    //   fieldListDependencias.dependencia = ''
+    //   fieldListDependencias['cod_dependencia-input'] = ''
+    // }
 
     // ENVIAR DATOS
 
@@ -594,17 +636,20 @@ function insertOptions({ input, data }) {
   selectElement.appendChild(fragment)
 }
 
-async function validateNewDependency({ newDependency }) {
-  let isSend = await sendDependencyData({ newDependency })
-  if (isSend) {
-    getDependencyData().then((res) => {
-      dependenciasLaborales = res.fullInfo
-      insertOptions({ input: 'dependencias', data: res.mappedData })
-      d.getElementById('cod_dependencia').value = ''
-    })
-  }
-  // mostrarCodigoDependencia()
-  closeModal({ modalId: 'modal-dependency' })
+async function loadDependencias() {
+  getDependencias().then((res) => {
+    // dependenciasLaborales = res.fullInfo
+    insertOptions({ input: 'dependencias', data: res.mappedData })
+  })
+
+  //  mostrarCodigoDependencia()
+}
+
+async function loadCategorias() {
+  getCategorias().then((res) => {
+    // dependenciasLaborales = res.fullInfo
+    insertOptions({ input: 'categorias', data: res.mappedData })
+  })
 }
 
 function mostrarCodigoDependencia() {

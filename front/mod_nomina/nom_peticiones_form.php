@@ -71,12 +71,12 @@ require_once '../../back/sistema_global/session.php';
                                 <table id='request-nom-table-revision' class='table table-striped mx-auto'
                                     style='width:100%'>
                                     <thead>
-                                        <th class="w-5">CORRELATIVO</th>
-                                        <th class="w-10">NOMBRE</th>
-                                        <th class="w-10">STATUS</th>
-                                        <th class="w-10">IDENTIFICADOR</th>
-                                        <th class="w-5">FECHA</th>
-                                        <th class="w-5">ACCIONES</th>
+                                        <th class="">CORRELATIVO</th>
+                                        <th class="">NOMBRE</th>
+                                        <th class="">IDENTIFICADOR</th>
+                                        <th class="">FECHA</th>
+                                        <th class="">STATUS</th>
+                                        <th class="">ACCIONES</th>
                                     </thead>
                                     <tbody></tbody>
                                 </table>
@@ -85,12 +85,12 @@ require_once '../../back/sistema_global/session.php';
                                 <table id='request-nom-table-confirmado' class='table table-striped mx-auto'
                                     style='width:100%'>
                                     <thead>
-                                        <th class="w-5">CORRELATIVO</th>
-                                        <th class="w-10">NOMBRE</th>
-                                        <th class="w-10">STATUS</th>
-                                        <th class="w-10">IDENTIFICADOR</th>
-                                        <th class="w-5">FECHA</th>
-                                        <th class="w-5">ACCIONES</th>
+                                        <th class="">CORRELATIVO</th>
+                                        <th class="">NOMBRE</th>
+                                        <th class="">IDENTIFICADOR</th>
+                                        <th class="">FECHA</th>
+                                        <th class="">ESTATUS</th>
+                                        <th class="">ACCIONES</th>
                                     </thead>
                                     <tbody></tbody>
                                 </table>

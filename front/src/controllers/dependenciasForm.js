@@ -1,9 +1,8 @@
 import {
-  deleteDependencyData,
-  getDependencyData,
-  sendDependencyData,
-  updateDependencyData,
-} from '../api/empleados.js'
+  getDependencias,
+  sendDependencia,
+  updateDependencia,
+} from '../api/dependencias.js'
 import { confirmNotification, validateInput } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 import {
@@ -13,14 +12,31 @@ import {
 
 const d = document
 let id
-export function validateDependenciaForm({
-  formId,
-  formContainerId,
-  btnNewId,
-  btnSaveId,
-  fieldList,
-  fieldListErrors,
-}) {
+
+let fieldList = {
+  dependencia: '',
+  cod_dependencia: '',
+}
+
+let fieldListErrors = {
+  dependencia: {
+    value: true,
+    message: 'Campo inválido',
+    type: 'text',
+  },
+  cod_dependencia: {
+    value: true,
+    message: 'Campo inválido',
+    type: 'number',
+  },
+}
+
+export function validateDependenciaForm() {
+  let formId = 'dependencia-form',
+    formContainerId = 'dependencia-form-container',
+    btnNewId = 'dependencia-nueva',
+    btnSaveId = 'dependencia-guardar'
+
   const formElement = d.getElementById(formId)
   const formContainerElement = d.getElementById(formContainerId)
   const btnNewElement = d.getElementById(btnNewId)
@@ -75,7 +91,7 @@ export function validateDependenciaForm({
         formContainerElement.classList.remove('hide')
         btnNewElement.textContent = 'Cancelar'
       }
-      let dependenciaData = await getDependencyData(id)
+      let dependenciaData = await getDependencias(id)
 
       let { cod_dependencia, dependencia } = dependenciaData.fullInfo[0]
       formElement.dependencia.value = dependencia
@@ -95,7 +111,7 @@ export function validateDependenciaForm({
         target: formElement.cod_dependencia,
         fieldList,
         fieldListErrors,
-        type: fieldListErrors[formElement.dependencia.name],
+        type: fieldListErrors[formElement.cod_dependencia.name],
       })
       if (Object.values(fieldListErrors).some((el) => el.value)) {
         return confirmNotification({
@@ -109,9 +125,9 @@ export function validateDependenciaForm({
           type: NOTIFICATIONS_TYPES.send,
           message: `Deseas actualizar esta dependencia a: "${formElement.dependencia.value} - ${formElement.cod_dependencia.value}?`,
           successFunction: async function () {
-            await updateDependencyData({
-              data: {
-                id_dependencia: id,
+            await updateDependencia({
+              informacion: {
+                id: id,
                 dependencia: fieldList.dependencia,
                 cod_dependencia: fieldList.cod_dependencia,
               },
@@ -131,8 +147,8 @@ export function validateDependenciaForm({
           type: NOTIFICATIONS_TYPES.send,
           successFunction: async function () {
             // ENVIAR DEPENDENCIA
-            await sendDependencyData({
-              newDependency: {
+            await sendDependencia({
+              informacion: {
                 dependencia: formElement.dependencia.value,
                 cod_dependencia: formElement.cod_dependencia.value,
               },

@@ -64,12 +64,12 @@ require_once '../../back/sistema_global/session.php';
                             <div class="mb-2 mx-auto slide-up-animation" id="request-table">
                                 <table id='request-table-historial' class='table table-striped mx-auto' style='width:100%'>
                                     <thead>
-                                        <th class="w-5">CORRELATIVO</th>
-                                        <th class="w-10">NOMBRE</th>
-                                        <th class="w-10">STATUS</th>
-                                        <th class="w-10">IDENTIFICADOR</th>
-                                        <th class="w-5">FECHA</th>
-                                        <th class="w-5">ACCIONES</th>
+                                        <th class="">CORRELATIVO</th>
+                                        <th class="">NOMBRE</th>
+                                        <th class="">IDENTIFICADOR</th>
+                                        <th class="">FECHA</th>
+                                        <th class="">ESTATUS</th>
+                                        <th class="">ACCIONES</th>
                                     </thead>
                                     <tbody></tbody>
                                 </table>

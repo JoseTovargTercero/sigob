@@ -1,3 +1,5 @@
+import { separarMiles } from '../helpers/helpers.js'
+
 const d = document
 const w = window
 
@@ -33,10 +35,12 @@ export function employeePayTableHTML({ nominaData, columns, elementToInsert }) {
 
   let { informacion_empleados, nombre_nomina } = nominaData
 
-  let cantidad_emplados = informacion_empleados.length
-  let total_a_pagar = informacion_empleados
-    .reduce((acc, el) => Number(el.total_a_pagar) + acc, 0)
-    .toFixed(2)
+  let cantidad_emplados = separarMiles(informacion_empleados.length)
+  let total_a_pagar = separarMiles(
+    informacion_empleados
+      .reduce((acc, el) => Number(el.total_a_pagar) + acc, 0)
+      .toFixed(2)
+  )
 
   let rowsTr = informacion_empleados
     .map((row) => {

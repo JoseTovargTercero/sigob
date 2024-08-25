@@ -1,3 +1,4 @@
+import { separarMiles } from '../helpers/helpers.js'
 import { FRECUENCY_TYPES } from '../helpers/types.js'
 
 export const nomReportCard = ({ data, elementToInsert }) => {
@@ -22,13 +23,13 @@ export const nomReportCard = ({ data, elementToInsert }) => {
       </div>`
 
   let nombre_nomina = data.nombre_nomina
-  let totalEmpleados = data.empleados.length
+  let totalEmpleados = separarMiles(data.empleados.length)
   let fechaCreacion = data.creacion
   let correlativo = data.correlativo
   let identificador = data.identificador
-  let totalPagar = data.total_a_pagar
-    .reduce((value, acc) => value + acc, 0)
-    .toFixed(2)
+  let totalPagar = separarMiles(
+    data.total_a_pagar.reduce((value, acc) => value + acc, 0).toFixed(2)
+  )
 
   console.log(data)
 

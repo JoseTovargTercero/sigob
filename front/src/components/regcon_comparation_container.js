@@ -1,4 +1,5 @@
 import { validarIdentificador } from '../controllers/peticionesNominaForm.js'
+import { separarMiles } from '../helpers/helpers.js'
 
 const d = document
 const w = window
@@ -98,10 +99,10 @@ const createCard = ({ actual, anterior, confirmBtn }) => {
           <b>${identificadorAnterior}</b>
         </h6>
         <h6 class='card-subtitle text-center mb-2'>
-          <b>Cantidad de empleados: </b>${totalEmpleadosAnterior}
+          <b>Cantidad de empleados: </b>${separarMiles(totalEmpleadosAnterior)}
         </h6>
         <h6 class='card-subtitle text-center mb-2'>
-          <b>Total a pagar: </b>${totalPagarAnterior}bs
+          <b>Total a pagar: </b>${separarMiles(totalPagarAnterior)}bs
         </h6>
         <h6 class='card-subtitle text-center mb-2'>
           <b>Estatus: </b>${estadoAnterior == 0 ? 'En revisión' : 'Revisado'}
@@ -121,10 +122,10 @@ const createCard = ({ actual, anterior, confirmBtn }) => {
           <b>${identificadorActual}</b>
         </h6>
       <h6 class='card-subtitle text-center mb-2'>
-        <b>Cantidad de empleados: </b>${totalEmpleadosActual}
+        <b>Cantidad de empleados: </b>${separarMiles(totalEmpleadosActual)}
       </h6>
       <h6 class='card-subtitle text-center mb-2'>
-        <b>Total a pagar: </b>${totalPagarActual}bs
+        <b>Total a pagar: </b>${separarMiles(totalPagarActual)}bs
       </h6>
       <h6 class='card-subtitle text-center mb-2'>
         <b>Estatus: </b>${estadoActual == 0 ? 'En revisión' : 'Revisado'}
@@ -201,7 +202,7 @@ const createObjectList = (anterior, actual, title) => {
         ? `<td class="table-secondary">${totalListAnterior}</td>`
         : ''
     }
-    <td class='table-secondary'>${totalListActual}</td>${
+    <td class='table-secondary'>${separarMiles(totalListActual)}</td>${
       totalListAnterior ? celdaDiferencia(totalDiferencia.toFixed(2)) : ''
     }
   </tr>`

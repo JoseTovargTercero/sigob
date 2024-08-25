@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id'])) {
     $sql = "SELECT e.id, e.cedula, e.nombres, e.tipo_nomina, d.id_dependencia, d.dependencia,
                    e.nacionalidad, e.fecha_ingreso, e.otros_años, e.status, 
                    e.observacion, e.cod_cargo, e.banco, e.cuenta_bancaria, e.hijos, 
-                   e.instruccion_academica, e.discapacidades, e.tipo_nomina, e.correcion, e.beca, e.verificado
+                   e.instruccion_academica, e.discapacidades, e.tipo_nomina, e.correcion, e.beca, e.verificado, e.id_partida, e.id_categoria
             FROM empleados AS e
             INNER JOIN dependencias AS d ON e.id_dependencia = d.id_dependencia
             WHERE e.id = ?";
@@ -54,7 +54,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id'])) {
                 "discapacidades" => $row["discapacidades"],
                 "correcion" => $row["correcion"],
                 "beca" => $row["beca"],
-                "verificado" => $row["verificado"]
+                "verificado" => $row["verificado"],
+                "id_categoria" => $row["id_categoria"],
+                "id_partida" => $row["id_partida"]
             );
             $datos[] = $empleado;
         }

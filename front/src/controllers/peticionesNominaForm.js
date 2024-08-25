@@ -388,7 +388,10 @@ export async function validateRequestForm({
       descargarNominaTxt({
         identificador: e.target.dataset.identificador,
         correlativo: e.target.dataset.correlativotxt,
-      }).then((res) => loadRequestTable())
+      }).then((res) => {
+        loadRequestTable()
+        d.getElementById('modal-report').remove()
+      })
     }
 
     if (e.target.id === btnNewRequestId) {
@@ -493,11 +496,11 @@ export async function validateRequestForm({
           let columns = Object.keys(nominaMapped.informacion_empleados[0])
 
           // Insertar tabla en formulario
-          requestFormInformationBody.insertAdjacentHTML(
-            'beforeend',
-            employeePayTableHTML({ nominaData: nominaMapped, columns })
-          )
-          createTable({ nominaData: nominaMapped, columns })
+          employeePayTableHTML({
+            nominaData: nominaMapped,
+            columns,
+            elementToInsert: 'request-form-information-body',
+          })
 
           toast_s('success', 'Se ha realizado el cálculo')
         },

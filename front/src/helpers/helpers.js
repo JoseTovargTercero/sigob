@@ -63,6 +63,29 @@ function validateInput({ target, fieldList = {}, fieldListErrors = {}, type }) {
       }
     }
 
+    // VALIDACIÓN PARA CATEGORIAS
+    if (type === 'categoria') {
+      let isCategory = regularExpressions.CATEGORY.test(value)
+
+      if (!isCategory) {
+        target.classList.add('input-error')
+        fieldListErrors[target.name].value = true
+        errorMessage(target, message)
+        fieldList = {
+          ...fieldList,
+          [target.name]: target.value,
+        }
+      } else {
+        fieldListErrors[target.name].value = false
+        target.classList.remove('input-error')
+        errorMessage(target, message)
+        fieldList = {
+          ...fieldList,
+          [target.name]: target.value,
+        }
+      }
+    }
+
     // VALIDACIÓN PARA CUENTAS BANCARIAS Y QUE CORRESPONDA AL BANCO SELECCIONADO
 
     if (type === 'cuenta_bancaria') {
@@ -522,6 +545,31 @@ const mapData = ({ obj, name, id }) => {
   })
 }
 
+// SEPARADOR DE MILES
+
+function separarMiles(numero) {
+  console.log(numero)
+  if (isNaN(numero)) {
+    return `!${numero}`
+  }
+
+  if (typeof numero !== 'number' && typeof numero !== 'string') {
+    return `!${numero}`
+  }
+
+  if (typeof numero === 'string') {
+    numero = parseFloat(numero)
+  }
+
+  if (!Number.isInteger(numero) && typeof numero !== 'number') {
+    return `!${numero}`
+  }
+
+  return Number(numero)
+    .toString()
+    .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+}
+
 export {
   validateInput,
   validateModal,
@@ -535,4 +583,5 @@ export {
   validateStatusText,
   empleadosDiferencia,
   mapData,
+  separarMiles,
 }
