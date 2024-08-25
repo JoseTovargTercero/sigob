@@ -64,7 +64,6 @@ let employeeTable = new DataTable('#employee-table', {
 })
 
 export const validateEmployeeTable = async () => {
-  console.log('hola')
   if (!d.getElementById('employee-form')) return
 
   employeeTable.clear().draw()

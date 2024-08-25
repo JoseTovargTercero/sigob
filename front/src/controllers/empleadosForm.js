@@ -133,7 +133,7 @@ let fieldListErrors = {
   id_partida: {
     value: true,
     message: 'Elegir una partida',
-    type: 'number',
+    type: 'text',
   },
   tipo_nomina: {
     value: null,
@@ -169,7 +169,7 @@ const w = window
 
 let employeeId
 
-let dependenciasLaborales
+let partidas
 
 function validateEmployeeForm({
   employeeInputClass,
@@ -199,9 +199,7 @@ function validateEmployeeForm({
     let profesiones = await getProfessionData()
     let dependencias = await getDependencias()
     let categorias = await getCategorias()
-    let partidas = await getPartidas()
-
-    dependenciasLaborales = dependencias.fullInfo
+    partidas = await getPartidas()
 
     let bancos = await getBankData()
     insertOptions({ input: 'cargo', data: cargos })
@@ -214,7 +212,7 @@ function validateEmployeeForm({
       partidasList.innerHTML = ''
       let options = partidas.fullInfo
         .map((option) => {
-          return `<option value="${option.id}">${option.partida} - ${option.descripcion}</option>`
+          return `<option value="${option.partida}">${option.descripcion}</option>`
         })
         .join('')
 
@@ -226,6 +224,10 @@ function validateEmployeeForm({
     if (id) {
       // Obtener datos de empleado dada su ID
       let employeeData = await getEmployeeData(id)
+
+      let partidaSelect = partidas.fullInfo.find(
+        (partida) => partida.id === Number(employeeData.id_partida)
+      ).partida
 
       // SI EL EMPLEADO TIENE EL VERIFICADO EN 2, COLOCAR CORRECIÓN EN FORMULARCIÓN DE EDICIÓN
 
@@ -269,9 +271,13 @@ function validateEmployeeForm({
         if (input.name === 'cedula') {
           input.setAttribute('disabled', 'true')
         }
+
         if (employeeData[input.name] !== undefined)
           input.value = employeeData[input.name]
 
+        if (input.name === 'id_partida') {
+          input.value = partidaSelect
+        }
         validateInput({
           target: input,
           fieldList,
@@ -366,17 +372,34 @@ function validateEmployeeForm({
     }
 
     if (e.target.name === 'id_partida') {
-      if (e.target.value === '') return
-      consultarPartida({ informacion: { id: e.target.value } }).then((res) => {
-        if (res.success) {
-        } else {
-          toastNotification({
-            type: NOTIFICATIONS_TYPES.fail,
-            message: res.error,
-          })
-          e.target.value = ''
-        }
-      })
+      // if (e.target.value === '') return
+      let partidaEncontrada = partidas.fullInfo.find(
+        (partida) => partida.partida === e.target.value
+      )
+
+      if (!partidaEncontrada) {
+        toastNotification({
+          type: NOTIFICATIONS_TYPES.fail,
+          message: `Partida "${e.target.value}" no se encuentra registrada`,
+        })
+        e.target.value = ''
+      } else {
+        toastNotification({
+          type: NOTIFICATIONS_TYPES.done,
+          message: `Partida "${e.target.value}" verificada  `,
+        })
+      }
+
+      // consultarPartida({ informacion: { id: e.target.value } }).then((res) => {
+      //   if (res.success) {
+      //   } else {
+      //     toastNotification({
+      //       type: NOTIFICATIONS_TYPES.fail,
+      //       message: res.error,
+      //     })
+      //     e.target.value = ''
+      //   }
+      // })
     }
     if (e.target.classList.contains(employeeInputClass)) {
       fieldList = validateInput({
@@ -395,6 +418,7 @@ function validateEmployeeForm({
         type: fieldListErrors[e.target.name].type,
       })
     }
+    console.log(fieldList)
   })
 
   // selectSearchInputElement.forEach((input) => {
@@ -535,6 +559,13 @@ function validateEmployeeForm({
           message: 'Complete todo el formulario antes de avanzar',
         })
       }
+
+      let id_partida = partidas.fullInfo.find(
+        (partida) => partida.partida === fieldList.id_partida
+      ).id
+      fieldList.id_partida = id_partida
+
+      console.log(fieldList)
 
       if (fieldList.beca > fieldList.hijos) {
         toastNotification({

@@ -21,7 +21,7 @@ export function createComparationContainer({ data, elementToInsert }) {
   
 `
 
-  d.getElementById(elementToInsert).insertAdjacentHTML('afterbegin', card)
+  d.getElementById(elementToInsert).insertAdjacentHTML('beforebegin', card)
 }
 
 const createCard = ({ actual, anterior, confirmBtn }) => {
@@ -52,6 +52,7 @@ const createCard = ({ actual, anterior, confirmBtn }) => {
     totalPagarAnterior = anterior.total_pagar
       .reduce((acc, el) => el + acc, 0)
       .toFixed(2)
+
     identificadorAnterior = validarIdentificador(anterior.identificador)
   }
 
@@ -102,7 +103,7 @@ const createCard = ({ actual, anterior, confirmBtn }) => {
           <b>Cantidad de empleados: </b>${separarMiles(totalEmpleadosAnterior)}
         </h6>
         <h6 class='card-subtitle text-center mb-2'>
-          <b>Total a pagar: </b>${separarMiles(totalPagarAnterior)}bs
+          <b>Total a pagar: </b>${separarMiles(totalPagarAnterior)} bs
         </h6>
         <h6 class='card-subtitle text-center mb-2'>
           <b>Estatus: </b>${estadoAnterior == 0 ? 'En revisión' : 'Revisado'}
@@ -174,10 +175,14 @@ const createObjectList = (anterior, actual, title) => {
   let cantidadPropiedades = Object.values(actual).length
 
   const celdaDiferencia = (diferencia) => {
-    if (diferencia > 0) return `<td class="table-success">+${diferencia}</td>`
-    if (diferencia < 0) return `<td class="table-blue-gray">${diferencia}</td>`
-    return `<td class="table-info">${diferencia}</td>`
+    if (diferencia > 0)
+      return `<td class="table-success">+${Number(diferencia).toFixed(2)}</td>`
+    if (diferencia < 0)
+      return `<td class="table-blue-gray">${Number(diferencia).toFixed(2)}</td>`
+    return `<td class="table-info">${Number(diferencia).toFixed(2)}</td>`
   }
+
+  // lista de petición consultada
 
   for (const key in actual) {
     let diferencia = anterior ? actual[key] - anterior[key] : ''
@@ -186,25 +191,35 @@ const createObjectList = (anterior, actual, title) => {
     tr += `
       <tr>
         <td>${key.toLocaleLowerCase()}</td>
-         ${anterior ? `<td class="table-secondary">${anterior[key]}</td>` : ''}
-        <td class="table-secondary">${actual[key]}</td>
+         ${
+           anterior
+             ? `<td class="table-secondary">${separarMiles(
+                 anterior[key].toFixed(2)
+               )}</td>`
+             : ''
+         }
+        <td class="table-secondary">${separarMiles(actual[key].toFixed(2))}</td>
          ${anterior ? celdaDiferencia(diferencia) : ''}
       </tr>`
   }
 
   let totalDiferencia = totalListActual - totalListAnterior
 
-  if (cantidadPropiedades > 1) {
+  // lista de petición anterior
+
+  if (cantidadPropiedades >= 1) {
     tr += `<tr class="p-0 table-primary">
     <td>TOTAL</td>
     ${
       totalListAnterior
-        ? `<td class="table-secondary">${totalListAnterior}</td>`
+        ? `<td class="table-secondary">${separarMiles(
+            totalListAnterior.toFixed(2)
+          )}</td>`
         : ''
     }
-    <td class='table-secondary'>${separarMiles(totalListActual)}</td>${
-      totalListAnterior ? celdaDiferencia(totalDiferencia.toFixed(2)) : ''
-    }
+    <td class='table-secondary'>${separarMiles(
+      totalListActual.toFixed(2)
+    )}</td>${totalListAnterior ? celdaDiferencia(totalDiferencia) : ''}
   </tr>`
   }
 
