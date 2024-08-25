@@ -23,7 +23,7 @@ const getDependencias = async (id) => {
       let mappedData = mapData({
         obj: json.success,
         name: 'dependencia',
-        id: 'id',
+        id: 'id_dependencia',
       })
 
       return { mappedData, fullInfo: json.success }

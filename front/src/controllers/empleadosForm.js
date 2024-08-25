@@ -172,7 +172,6 @@ let employeeId
 let dependenciasLaborales
 
 function validateEmployeeForm({
-  formElement,
   employeeInputClass,
   employeeSelectClass,
   btnId,
@@ -180,6 +179,7 @@ function validateEmployeeForm({
   selectSearchInput,
   selectSearch,
 }) {
+  const formElement = d.getElementById('employee-form')
   const btnElement = d.getElementById(btnId)
   const btnAddElement = d.getElementById(btnAddId)
   const btnDependencySave = d.getElementById('dependency-save-btn')

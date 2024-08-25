@@ -64,6 +64,9 @@ let employeeTable = new DataTable('#employee-table', {
 })
 
 export const validateEmployeeTable = async () => {
+  console.log('hola')
+  if (!d.getElementById('employee-form')) return
+
   employeeTable.clear().draw()
 
   let empleados = await getEmployeesData()
@@ -90,8 +93,6 @@ export const validateEmployeeTable = async () => {
   // AÑADIR FILAS A TABLAS
   employeeTable.rows.add(data).draw()
 }
-
-validateEmployeeTable()
 
 d.addEventListener('click', (e) => {
   if (e.target.classList.contains('btn-delete')) {

@@ -261,6 +261,7 @@ const getComparacionNomina2 = async ({ nombre_nomina }) => {
     } else {
       data.registro_anterior = false
     }
+    console.log(registro_anterior)
 
     return registro_anterior
   } catch (e) {
@@ -483,6 +484,10 @@ const descargarNominaTxt = async ({ correlativo, identificador }) => {
     // Liberar la URL del objeto una vez que se haya iniciado la descarga
     URL.revokeObjectURL(url)
 
+    toastNotification({
+      type: NOTIFICATIONS_TYPES.done,
+      message: 'Documentos generados',
+    })
     return true
   } catch (e) {
     console.log(e)

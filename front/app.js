@@ -21,7 +21,7 @@ const employeeTableElement = d.getElementById('employee-table')
 const tabulatorTableElement = d.getElementById('tabulator-table')
 d.addEventListener('DOMContentLoaded', (e) => {
   const tabulatorForm = d.getElementById('tabulator-primary-form')
-  const employeeForm = d.getElementById('employee-form')
+  const employeeTable = d.getElementById('employee-table-view')
   const requestNomForm = d.getElementById('request-nom-form')
   const requestForm = d.getElementById('request-form')
   const requestHistorial = d.getElementById('request-historial')
@@ -71,10 +71,9 @@ d.addEventListener('DOMContentLoaded', (e) => {
     })
   }
 
-  if (employeeForm) {
+  if (employeeTable) {
     validateEmployeeTable()
     validateEmployeeForm({
-      formElement: employeeForm,
       employeeInputClass: 'employee-input',
       employeeSelectClass: 'employee-select',
       btnId: 'btn-employee-save',
@@ -82,6 +81,7 @@ d.addEventListener('DOMContentLoaded', (e) => {
       selectSearch: ['cargo'],
       btnAddId: 'add-dependency',
     })
+    return
   }
 
   if (dependenciaTable) {
