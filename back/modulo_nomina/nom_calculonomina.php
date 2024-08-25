@@ -1929,7 +1929,9 @@ $response = array(
     'nombre_nomina' => $nombre_nomina,
     'suma_asignaciones' => $suma_asignaciones,
     'suma_deducciones' => $suma_deducciones,
-    'suma_aportes' => $suma_aportes
+    'suma_aportes' => $suma_aportes,
+    'identificador' => $identificador,
+    'recibos_pagos' => $recibos_de_pago,
 );
 }
 echo json_encode($response);
