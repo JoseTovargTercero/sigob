@@ -371,7 +371,8 @@ $stmt->close();
                     </div>
 
 
-                    <button id="respaldar-btn" class="browse-btn">Respaldar</button>
+                    <!--      <button id="respaldar-btn" class="browse-btn">Respaldar</button>
+-->
                   </div>
                 </div>
                 <p class="text-sm text-muted mt-3 text-center width-338p">
@@ -510,13 +511,15 @@ $stmt->close();
     }
 
     tabla_reportes()
-
+    var actualizados = "<?php echo $ultima_Act ?>"
+    actualizados = actualizados.split(',')
 
 
     // cuando cargue la pagina, agrega 'pc-sidebar-hide' a .pc-sidebar
     document.addEventListener('DOMContentLoaded', function() {
       if ("<?php echo $ultima_Act ?>" == 'Nunca') {
-        actualizar()
+        actualizados = []
+        verificarTablasActualizadas('nuevo')
       } else {
         // verificar si han pasado mas de 7 dias desde la ultima actualizacion
         var fecha = "<?php echo $ultima_Act ?>";
@@ -525,56 +528,108 @@ $stmt->close();
         var hoy = new Date();
         var dias = Math.floor((hoy - fecha) / (1000 * 60 * 60 * 24));
         if (dias >= 7) {
-          actualizar()
+          actualizados = []
+          verificarTablasActualizadas('nuevo')
+        } else {
+          verificarTablasActualizadas('existente')
         }
         $('#timeAgo').html('Hace ' + dias + ' dias')
       }
 
     });
 
+
+
+    let updates = ['empleados', 'cargos_grados', 'empleados_por_grupo', 'nominas_grupos', 'dependencias']
+
     /**
      * This function is responsible for updating the data.
      * It hides the sidebar, prepares the data object for an AJAX request,
      * sends the AJAX request to add the employee, and handles the success and error responses.
      */
-    function actualizar() {
+    function actualizar(tabla, condicion) {
       $('#cargando').show()
 
       document.querySelector('.pc-sidebar').classList.add('pc-sidebar-hide');
       document.querySelector('.pc-sidebar-collapse').classList.add('hide');
       // Prepare data object for AJAX request
-      let data = {
-        accion: 'get_data'
-      }
 
+      $.ajax({
+        url: '../../back/modulo_nomina/copia_seguridad.php',
+        type: 'POST',
+        data: {
+          tabla: tabla,
+          condicion: condicion
+        },
+        success: function(response) {
+          try {
+            if (typeof response !== 'object') {
+              response = JSON.parse(response);
+            }
+          } catch (e) {
+            console.error('Error al parsear la respuesta JSON:', e);
+            toast_s('error', 'Respuesta del servidor no válida');
+            return;
+          }
 
-      // Send AJAX request to add the employee
-      const ajaxRequest = new AjaxRequest('application/json', data, '../../back/modulo_nomina/copia_seguridad.php');
-      const onSuccess = (response) => {
-        //console.log(response)
-        if (response.status == 'ok') {
-          swal('success', 'Actualizado correctamente')
-          let fecha = new Date();
-          document.getElementById('ultima_Act').innerHTML = fecha.getDate() + '-' + (fecha.getMonth() + 1) + '-' + fecha.getFullYear()
-          $('#timeAgo').html('Hace 0 dias')
-          $('#cargando').hide()
+          if (response.status === 'ok') {
+            if (typeof onSuccess === 'function') {
+              onSuccess(response);
+            }
+          } else {
+            console.log(response.message);
+            toast_s('error', 'Error: ' + response.message);
+            if (typeof onError === 'function') {
+              onError(response);
+            }
+          }
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+          console.error('Error en la solicitud AJAX:', textStatus, errorThrown);
+          try {
+            const response = JSON.parse(jqXHR.responseText);
+            console.error('Error del servidor:', response.mensaje, 'Archivo:', response.archivo, 'Línea:', response.linea);
+            toast_s('error', 'Error del servidor: ' + response.mensaje);
 
-        } else {
-          swal('error', response.mensaje)
+          } catch (e) {
+            console.error('Error al parsear la respuesta de error:', e);
+            toast_s('error', 'Error en la solicitud: ' + textStatus);
+          }
+          if (typeof onError === 'function') {
+            onError({
+              textStatus,
+              errorThrown
+            });
+          }
+        },
+        complete: function(response) {
+          console.log(response)
         }
-        document.querySelector('.pc-sidebar').classList.remove('pc-sidebar-hide');
-        document.querySelector('.pc-sidebar-collapse').classList.remove('hide');
-      };
-      const onError = (response) => {
-        console.log('Error:', response);
-        toast_s('error', 'Error: ' + response);
-        actualizar()
-      };
-
-      ajaxRequest.send(onSuccess, onError);
+      });
     }
 
-    document.getElementById('respaldar-btn').addEventListener('click', actualizar)
+
+
+
+    function verificarTablasActualizadas(condicion) {
+      /* updates.forEach(element => {
+         // verificar si element esta en el array 'actualizados'
+         if (actualizados.indexOf(element) != -1) {
+           //eliminar element de updates
+           actualizar(element, condicion)
+         }
+       });*/
+    }
+
+
+
+
+
+
+
+
+
+    //    document.getElementById('respaldar-btn').addEventListener('click', verificarTablasActualizadas)
 
 
 

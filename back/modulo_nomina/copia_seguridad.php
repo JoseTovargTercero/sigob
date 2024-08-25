@@ -3,9 +3,7 @@ require_once '../sistema_global/conexion.php';
 require_once '../sistema_global/session.php';
 header('Content-Type: application/json');
 
-$data = json_decode(file_get_contents('php://input'), true);
-
-if ($_SESSION["u_oficina_id"] == '1' && isset($data['accion']) || true) {
+if ($_SESSION["u_oficina_id"] == '1' && isset($_GET['tabla']) || true) {
     //192.99.18.84
 
     // Configuración de conexión a la base de datos remota
@@ -154,21 +152,55 @@ if ($_SESSION["u_oficina_id"] == '1' && isset($data['accion']) || true) {
         }
     }
 
+    $ids = array(
+        'empleados' => 'id',
+        'cargos_grados' => 'id',
+        'empleados_por_grupo' => 'id',
+        'nominas_grupos' => 'id',
+        'dependencias' => 'id_dependencia'
+    );
+    $tabla = $_GET['tabla'];
+    $condicion = $_GET["condicion"];
 
-    backups('empleados', 'id');
-    backups('cargos_grados', 'id');
-    backups('empleados_por_grupo', 'id');
-    backups('nominas_grupos', 'id');
-    backups('dependencias', 'id_dependencia');
+
+
+    backups($tabla, $ids[$tabla]);
+
+
+    if ($condicion == 'nuevo') {
+
+        // update 'backups' campos: user, fecha
+        $stmt = mysqli_prepare($conexion, "INSERT INTO `backups` (user, fecha, tablas) VALUES (?, ?, ?)");
+        $user_id = $_SESSION['u_id'];
+        $fecha_actual = date('d-m-Y');
+        $stmt->bind_param('sss', $user_id, $fecha_actual, $tabla);
+        $stmt->execute();
+       
+        
+
+    } else {
+        // obtiene el valor de tabla del ultimo registro y le concatena ', $tqbla' mediante un UPDATE
+
+        $stmt = mysqli_prepare($conexion, "SELECT tablas, id FROM `backups` ORDER BY id DESC LIMIT 1");
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $id = $row['id'];
+                $tablasActualizadas = $row['tablas'];
+            }
+        }
+        $stmt->close();
+
+        $tablasActualizadas = $tablasActualizadas . ', ' . $tabla;
 
 
 
-    // update 'backups' campos: user, fecha
-    $stmt = mysqli_prepare($conexion, "INSERT INTO `backups` (user, fecha) VALUES (?, ?)");
-    $user_id = $_SESSION['u_id'];
-    $fecha_actual = date('d-m-Y');
-    $stmt->bind_param('ss', $user_id, $fecha_actual);
-    $stmt->execute();
+        $stmt2 = $conexion->prepare("UPDATE `backups` SET `tablas`='$tablasActualizadas' WHERE id=?");
+        $stmt2->bind_param("s", $id);
+        $stmt2->execute();
+        $stmt2->close();
+    }
 
     // Crear arreglo con los resultados de la sincronización
     $resultado = [

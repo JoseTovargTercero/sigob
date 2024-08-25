@@ -42,7 +42,7 @@ INSERT INTO `backups` (`id`, `user`, `fecha`) VALUES
 (3, 31, '06-08-2024'),
 (4, 31, '17-08-2024'),
 (5, 31, '17-08-2024');
-
+ALTER TABLE `backups` ADD `tablas` VARCHAR(255) NOT NULL AFTER `fecha`;
 -- --------------------------------------------------------
 
 --
