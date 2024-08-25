@@ -13,7 +13,10 @@ import { createComparationContainer } from '../components/regcon_comparation_con
 import { nom_comparation_employee } from '../components/regcon_comparation_employee.js'
 import { confirmNotification, validateInput } from '../helpers/helpers.js'
 import { FRECUENCY_TYPES, NOTIFICATIONS_TYPES } from '../helpers/types.js'
-import { loadMovimientosTable } from './movimientosTable.js'
+import {
+  loadMovimientosTable,
+  reloadTableMovimientos,
+} from './movimientosTable.js'
 
 const d = document
 const w = window
@@ -123,6 +126,28 @@ export async function validateRequestNomForm({
         },
 
         message: '¿Seguro de aceptar esta petición?',
+      })
+    }
+
+    if (e.target.id === 'reset-request') {
+      movimientosId = []
+      correcciones = []
+      let result = requestInfo.find(
+        (el) => el.correlativo === fieldList['select-nomina']
+      )
+      fieldList.frecuencia = result.frecuencia
+      fieldList.identificador = result.identificador
+      fieldList.id = result.id
+      fieldList.correlativo = result.correlativo
+
+      console.log(fieldList)
+
+      let peticiones = await getComparacionNomina(result)
+      peticiones.confirmBtn = true
+
+      console.log(peticiones)
+      reloadTableMovimientos({
+        id_nomina: peticiones.registro_actual.nomina_id,
       })
     }
 

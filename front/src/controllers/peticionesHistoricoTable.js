@@ -114,10 +114,13 @@ d.addEventListener('click', async (e) => {
     reportCard.remove()
   }
 
-  if (e.target.dataset.correlativotxt === 'generar-txt') {
-    let descargatxt = await descargarNominaTxt({
+  if (e.target.dataset.correlativotxt) {
+    console.log(e.target.dataset)
+    descargarNominaTxt({
       identificador: e.target.dataset.identificador,
-      correlativo: e.target.dataset.correlativo,
+      correlativo: e.target.dataset.correlativotxt,
+    }).then((res) => {
+      d.getElementById('modal-report').remove()
     })
   }
 })

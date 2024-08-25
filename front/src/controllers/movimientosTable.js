@@ -9,6 +9,7 @@ import {
   closeModal,
   confirmNotification,
   openModal,
+  toastNotification,
   validateModal,
 } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
@@ -81,26 +82,26 @@ export const loadMovimientosTable = async ({ id_nomina, elementToInsert }) => {
   let movimientosRegConElement = d.getElementById('movimientos-table-regcon')
   let movimientosNominaElement = d.getElementById('movimientos-table-nomina')
 
-  if (movimientosNominaElement) {
-    let employeeTable = new DataTable('#movimientos-table-nomina', {
-      responsive: true,
-      scrollY: 300,
-      language: tableLanguage,
-      layout: {
-        topEnd: employeeFormButton,
-        topStart: { search: { placeholder: 'Buscar...' } },
-        bottomStart: 'info',
-        bottomEnd: 'paging',
-      },
-      columns: [
-        { data: 'nombres' },
-        { data: 'cedula' },
-        { data: 'dependencia' },
-        { data: 'nomina' },
-        { data: 'acciones' },
-      ],
-    })
-  }
+  // if (movimientosNominaElement) {
+  //   let employeeTable = new DataTable('#movimientos-table-nomina', {
+  //     responsive: true,
+  //     scrollY: 300,
+  //     language: tableLanguage,
+  //     layout: {
+  //       topEnd: employeeFormButton,
+  //       topStart: { search: { placeholder: 'Buscar...' } },
+  //       bottomStart: 'info',
+  //       bottomEnd: 'paging',
+  //     },
+  //     columns: [
+  //       { data: 'nombres' },
+  //       { data: 'cedula' },
+  //       { data: 'dependencia' },
+  //       { data: 'nomina' },
+  //       { data: 'acciones' },
+  //     ],
+  //   })
+  // }
 
   if (movimientosRegConElement) {
     console.log('cargando movimientos')
@@ -164,4 +165,40 @@ export const deleteRowMovimiento = (row) => {
     return node === row
   })
   filteredRows.remove().draw()
+}
+
+export const reloadTableMovimientos = async ({ id_nomina }) => {
+  movimientosTableRegCon.clear().draw()
+
+  let movimientos = await getRegConMovimientos({ id_nomina })
+
+  if (!Array.isArray(movimientos)) return
+
+  toastNotification({
+    type: NOTIFICATIONS_TYPES.done,
+    message:
+      'Se han borrado las correciones y recargado la tabla de movimientos',
+  })
+
+  let movimientosOrdenados = [...movimientos].sort((a, b) => b.id - a.id)
+
+  let data = movimientosOrdenados.map((movimiento) => {
+    return {
+      id_empleado: movimiento.id_empleado,
+      nombres: movimiento.nombres,
+      cedula: movimiento.cedula,
+      accion: movimiento.accion,
+      campo: movimiento.campo,
+      valor_anterior: movimiento.valor_anterior,
+      valor_nuevo: movimiento.valor_nuevo,
+      fecha_movimiento: movimiento.fecha_movimiento,
+      usuario: movimiento.usuario_id,
+      descripcion: movimiento.descripcion,
+      acciones: `
+      <button class="btn btn-info btn-sm btn-corregir" data-id="${movimiento.id}" data-nominaid="${movimiento.id_nomina}"><i class="bx bx-detail me-1"></i>Corregir</button>`,
+    }
+  })
+
+  // AÑADIR FILAS A TABLAS
+  movimientosTableRegCon.rows.add(data).draw()
 }
