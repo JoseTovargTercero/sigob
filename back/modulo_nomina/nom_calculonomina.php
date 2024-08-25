@@ -1733,10 +1733,11 @@ foreach ($conceptos_aplicados as &$concepto) {
 // Array asociativo para mantener un registro de empleados únicos
 $empleados_unicos = array();
 
-// Array para almacenar asignaciones y deducciones
+// Array para almacenar asignaciones, deducciones y aportes
 $asignaciones = array();
 $deducciones = array();
 $aportes = array();
+
 // Arrays para almacenar las sumas de cada asignación, deducción y aporte
 $suma_asignaciones = array();
 $suma_deducciones = array();
@@ -1811,6 +1812,9 @@ foreach ($conceptos_aplicados as &$concepto) {
                 $empleado['deducciones'] = array();
                 $empleado['aportes'] = array();
 
+                // **Agregar el salario_base a las asignaciones**
+                $empleado['asignaciones'][] = array('SALARIO BASE' => $empleado['salario_base']);
+
                 // Agregar el empleado al array de empleados únicos
                 $empleados_unicos[$id_empleado] = $empleado;
             }
@@ -1826,7 +1830,7 @@ foreach ($conceptos_aplicados as &$concepto) {
         if ($tipo_concepto === "A") {
             $empleados_unicos[$id_empleado]['asignaciones'][] = array($concepto['nom_concepto'] => $valor_concepto);
             // Sumar al salario integral si no es el salario base
-            if ($concepto['nom_concepto'] !== "salario_base") {
+            if ($concepto['nom_concepto'] !== "SALARIO BASE") {
                 $empleados_unicos[$id_empleado]['salario_integral'] += $valor_concepto;
             }
 
@@ -1861,6 +1865,7 @@ foreach ($conceptos_aplicados as &$concepto) {
 $id_empleados_detalles = array();
 $total_a_pagar_empleados = array();
 $informacion_empleados = array();
+
 // Calcular el total a pagar para cada empleado y guardar en el array de recibos de pago
 foreach ($empleados_unicos as &$empleado) {
     // Inicializar el total a pagar para este empleado con el salario base
@@ -1887,25 +1892,25 @@ foreach ($empleados_unicos as &$empleado) {
         }
     }
 
+    // Restar el salario base del total a pagar
+    $total_a_pagar_empleado -= $empleado['salario_base'];
+
     // Almacenar el total a pagar para este empleado en el array del empleado
     $empleado['total_a_pagar'] = $total_a_pagar_empleado;
 
-  // Agregar la información del empleado al array de recibos de pago
-$recibos_de_pago[] = array(
-    'id_empleado' => $empleado['id'],
-    'sueldo_base' => $empleado['salario_base'],
-    'sueldo_integral' => $empleado['salario_integral'],
-    'asignaciones' => $empleado['asignaciones'],
-    'deducciones' => $empleado['deducciones'],
-    'aportes' => $empleado['aportes'],
-    'total_a_pagar' => $empleado['total_a_pagar']
-);
+    // Agregar la información del empleado al array de recibos de pago
+    $recibos_de_pago[] = array(
+        'id_empleado' => $empleado['id'],
+        'sueldo_base' => $empleado['salario_base'],
+        'sueldo_integral' => $empleado['salario_integral'],
+        'asignaciones' => $empleado['asignaciones'],
+        'deducciones' => $empleado['deducciones'],
+        'aportes' => $empleado['aportes'],
+        'total_a_pagar' => $empleado['total_a_pagar']
+    );
 
-// Almacenar el ID del empleado y el total a pagar en los arrays correspondientes
- // Almacenar el total a pagar para este empleado en el array del empleado
-    $empleado['total_a_pagar'] = $total_a_pagar_empleado;
-    $informacion_empleados[] = $empleado;
     // Almacenar el ID del empleado y el total a pagar en los arrays correspondientes
+    $informacion_empleados[] = $empleado;
     $id_empleados_detalles[] = $empleado['id'];
     $total_a_pagar_empleados[] = $total_a_pagar_empleado;
 }
@@ -1916,7 +1921,6 @@ $conexion->close();
 
 $nombre_nomina = $data['nombre'];
 
-
 // Preparar la respuesta con los resultados
 $response = array(
     'informacion_empleados' => $informacion_empleados,
@@ -1925,15 +1929,10 @@ $response = array(
     'nombre_nomina' => $nombre_nomina,
     'suma_asignaciones' => $suma_asignaciones,
     'suma_deducciones' => $suma_deducciones,
-    'suma_aportes' => $suma_aportes,
-    'identificador' => $identificador,
-    'recibos_pagos' => $recibos_de_pago,
+    'suma_aportes' => $suma_aportes
 );
-
-// Devolver la respuesta como JSON
-echo json_encode($response);
-
 }
+echo json_encode($response);
 
 
 ?>
