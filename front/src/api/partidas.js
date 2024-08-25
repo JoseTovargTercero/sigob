@@ -33,6 +33,28 @@ const getPartidas = async (id) => {
     }
   } catch (e) {
     console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener partidas',
+    })
+  }
+}
+
+const consultarPartida = async ({ informacion }) => {
+  try {
+    let res = await fetch(partidasUrl, {
+      method: 'POST',
+      body: JSON.stringify({ accion: 'consultar', informacion }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+    const json = await res.json()
+    console.log(json)
+
+    return json
+  } catch (e) {
+    console.log(e)
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
       message: 'Error al obtener categorias',
@@ -40,4 +62,4 @@ const getPartidas = async (id) => {
   }
 }
 
-export { getPartidas }
+export { getPartidas, consultarPartida }

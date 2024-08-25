@@ -1,4 +1,4 @@
-import { deleteDependencyData, getDependencyData } from '../api/empleados.js'
+import { deleteDependencia, getDependencias } from '../api/dependencias.js'
 import { confirmNotification } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 
@@ -54,7 +54,7 @@ let dependenciaTable = new DataTable('#dependencias-table', {
 export async function loadDependenciaTable() {
   console.log('hola')
 
-  let dependencias = await getDependencyData()
+  let dependencias = await getDependencias()
 
   console.log(dependencias)
   let datosOrdenados = [...dependencias.fullInfo].sort((a, b) => a.id - b.id)
@@ -89,10 +89,13 @@ export function confirmDeleteDependencia({ id, row, table }) {
         return node === row
       })
 
-      let res = await deleteDependencyData(id)
-      if (res.error) return
+      let res = await deleteDependencia({ informacion: { id: id } })
+      console.log(res)
+      if (res) {
+        if (res.error) return
+        filteredRows.remove().draw()
+      }
       // ELIMINAR FILA DE LA TABLA CON LA API DE DATATABLES
-      filteredRows.remove().draw()
     },
     message: '¿Deseas eliminar esta dependencia?',
   })

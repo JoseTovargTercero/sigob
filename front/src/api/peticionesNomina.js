@@ -5,11 +5,8 @@ import {
   toastNotification,
 } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
-import {
-  getDependencyData,
-  getJobData,
-  getProfessionData,
-} from './empleados.js'
+import { getDependencias } from './dependencias.js'
+import { getJobData, getProfessionData } from './empleados.js'
 
 const obtenerNominasUrl =
   '../../../../../sigob/back/modulo_nomina/nom_empleados_pagar_back.php'
@@ -533,7 +530,7 @@ function mapComparationRequest(obj) {
 async function mapData(data) {
   let cargos = await getJobData()
 
-  let dependencias = await getDependencyData()
+  let dependencias = await getDependencias()
   let profesiones = await getProfessionData()
   return data.map((empleado) => {
     let {

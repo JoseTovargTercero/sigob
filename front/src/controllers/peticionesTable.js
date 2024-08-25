@@ -30,13 +30,17 @@ const tableLanguage = {
 }
 
 let requestTableConfirmado = new DataTable('#request-nom-table-confirmado', {
+  columnsDef: [
+    { "width": "20%", "targets": 0 },  // Establece el ancho de la primera columna al 20%
+    { "width": "30%", "targets": 1 }   // Establece el ancho de la segunda columna al 30%
+  ],
   columns: [
     { data: 'correlativo' },
     { data: 'nombre' },
-    { data: 'status' },
     { data: 'identificador' },
     { data: 'fecha' },
     { data: 'acciones' },
+    { data: 'status' },
   ],
   responsive: true,
   scrollY: 350,
@@ -59,9 +63,9 @@ let requestTableRevision = new DataTable('#request-nom-table-revision', {
   columns: [
     { data: 'correlativo' },
     { data: 'nombre' },
-    { data: 'status' },
     { data: 'identificador' },
     { data: 'fecha' },
+    { data: 'status' },
     { data: 'acciones' },
   ],
   responsive: true,

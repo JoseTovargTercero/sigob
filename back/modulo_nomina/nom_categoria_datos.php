@@ -140,7 +140,8 @@ function procesarPeticion($data)
         if ($accion === "actualizar") {
             return actualizarCategoria($data["informacion"]);
         }
-        return "hola";
+        
+        return json_encode(['error' => "Acción no aceptada"]);
     } else {
 
         return obtenerCategorias();
