@@ -1,3 +1,4 @@
+<?php require_once '../sistema_global/conexion.php'; ?>
 <!DOCTYPE html>
 <html>
 
@@ -131,7 +132,38 @@
 <body>
   <?php $correlativo = $_GET['correlativo']; ?>
 
+<?php
+    // Consulta a la base de datos para obtener el nombre de la nómina y la fecha de creación
+    $sql4 = "SELECT nombre_nomina, creacion FROM peticiones WHERE correlativo='$correlativo'";
+    $result4 = mysqli_query($conexion, $sql4);
 
+    // Verificación y obtención del nombre de la nómina y la fecha de creación
+    if ($result4 && mysqli_num_rows($result4) > 0) {
+        $mostrar4 = mysqli_fetch_array($result4);
+        $nombre_nomina = $mostrar4['nombre_nomina'];
+        $creacion = $mostrar4['creacion'];
+
+        // Consulta para obtener el emp_cantidad para "Sueldo Base" usando JOIN
+        $sql5 = "SELECT c.emp_cantidad
+                 FROM conceptos_aplicados AS c
+                 JOIN peticiones AS p ON c.nombre_nomina = p.nombre_nomina
+                 WHERE c.nom_concepto = 'Sueldo Base' AND p.nombre_nomina = '$nombre_nomina'";
+        $result5 = mysqli_query($conexion, $sql5);
+
+        // Verificación y obtención del valor de emp_cantidad
+        if ($result5 && mysqli_num_rows($result5) > 0) {
+            $mostrar5 = mysqli_fetch_array($result5);
+            $emp_cantidad = $mostrar5['emp_cantidad'];
+        } else {
+            $emp_cantidad = 0; // Valor por defecto si no se encuentra el registro
+        }
+    } else {
+        // Manejar el caso en el que no se encuentra el registro en la tabla peticiones
+        $nombre_nomina = '';
+        $creacion = '';
+        $emp_cantidad = 0; // Valor por defecto si no se encuentra el registro
+    }
+?>
 
   <table>
     <tr>
@@ -139,7 +171,7 @@
         <img src="../../img/logo.jpg" width="100px">
       </td>
       <td class="text-right w-50">
-        Fecha: 00/00/0000 <br>
+        Fecha: <?php echo $creacion ?> <br>
         Correlativo Sigob: <?php echo htmlspecialchars($correlativo); ?>
       </td>
     </tr>
@@ -158,16 +190,30 @@
     <tr>
       <td class="w-50 fw-bold">
         <span class="text-crimsom">NOMINA:</span>
-        <span>003 - DIRECTORES (PERSONAL DE CONFIANZA)</span>
+        <span><?php echo $nombre_nomina ?></span>
       </td>
       <td class=" w-50 fw-bold">
-        <span class="text-crimsom">Periodos del: dd/mm/YY Al: dd/mm/YY</span>
+        <span class="text-crimsom">Periodos de: <?php echo $creacion ?></span>
       </td>
     </tr>
     <tr>
       <td class="w-50 fw-bold">
         <span class="text-crimsom">Nro trabajadores:</span>
-        <span>0000</span>
+
+        <span><?php
+    if ($emp_cantidad >= 0 && $emp_cantidad <= 9) {
+        echo str_pad($emp_cantidad, 4, '0', STR_PAD_LEFT);
+    } elseif ($emp_cantidad >= 10 && $emp_cantidad <= 99) {
+        echo str_pad($emp_cantidad, 4, '0', STR_PAD_LEFT);
+    } elseif ($emp_cantidad >= 100 && $emp_cantidad <= 999) {
+        echo str_pad($emp_cantidad, 4, '0', STR_PAD_LEFT);
+    } elseif ($emp_cantidad >= 1000 && $emp_cantidad <= 9999) {
+        echo $emp_cantidad;
+    }
+?>
+
+          
+        </span>
 
       </td>
       <td class=" w-50">
@@ -237,33 +283,28 @@
               }
 
 
-              // Buscar emp_cantidad igual a Sueldo_Base
-              $sql_sueldo_base = "SELECT emp_cantidad FROM conceptos_aplicados WHERE nom_concepto='Sueldo Base' AND nombre_nomina='$nombre_nomina'";
-              $result_sueldo_base = mysqli_query($conexion, $sql_sueldo_base);
-              $datos_sueldo_base = mysqli_fetch_assoc($result_sueldo_base);
-              $sueldo_base_cantidad = $datos_sueldo_base['emp_cantidad'] ?? 0;
-
-              echo "<tr>
-                      <td class='text-left'>$sueldo_base_cantidad</td>
-                      <td class='text-left'>001</td>
-                      <td class='text-left'>SUELDO BASE</td>
-                      <td class='text-center'></td>
-                      <td class='text-center'>" . round($total_total_pagar, 2) . "</td>
-                      <td class='text-center'></td>
-                      <td class='text-center'></td>
-                    </tr>";
+          
             }
 
             // Función para obtener datos de conceptos y conceptos_aplicados
             function obtener_datos_conceptos($conexion, $concepto, $nombre_nomina)
             {
+              if ($concepto == "SALARIO BASE") {
+                $concepto == "Sueldo base";
+              }
               $sql_conceptos = "SELECT nom_concepto, codigo_concepto, cod_partida FROM conceptos WHERE nom_concepto='$concepto'";
               $result_conceptos = mysqli_query($conexion, $sql_conceptos);
               $datos_conceptos = mysqli_fetch_assoc($result_conceptos);
-
-              $sql_conceptos_aplicados = "SELECT emp_cantidad FROM conceptos_aplicados WHERE nom_concepto='$concepto' AND nombre_nomina='$nombre_nomina'";
-              $result_conceptos_aplicados = mysqli_query($conexion, $sql_conceptos_aplicados);
-              $datos_conceptos_aplicados = mysqli_fetch_assoc($result_conceptos_aplicados);
+               if ($concepto == "SALARIO BASE") {
+                $sql_conceptos_aplicados = "SELECT emp_cantidad FROM conceptos_aplicados WHERE nom_concepto='Sueldo Base' AND nombre_nomina='$nombre_nomina'";
+                $result_conceptos_aplicados = mysqli_query($conexion, $sql_conceptos_aplicados);
+                $datos_conceptos_aplicados = mysqli_fetch_assoc($result_conceptos_aplicados);
+              }else{
+                $sql_conceptos_aplicados = "SELECT emp_cantidad FROM conceptos_aplicados WHERE nom_concepto='$concepto' AND nombre_nomina='$nombre_nomina'";
+                $result_conceptos_aplicados = mysqli_query($conexion, $sql_conceptos_aplicados);
+                $datos_conceptos_aplicados = mysqli_fetch_assoc($result_conceptos_aplicados);
+              }
+              
 
               // Comprobar si ambos resultados existen
               if ($datos_conceptos && $datos_conceptos_aplicados) {
@@ -286,7 +327,7 @@
                         <td class='text-left'>" . ($datos_conceptos['emp_cantidad'] ?? '') . "</td>
                         <td class='text-left'>" . ($datos_conceptos['codigo_concepto'] ?? '') . "</td>
                         <td class='text-left'>" . ($datos_conceptos['nom_concepto'] ?? $key) . "</td>
-                        <td class='text-center'>" . ($datos_conceptos['cod_partida'] ?? $key) . "</td>
+                        <td class='text-center'>" . ($datos_conceptos['cod_partida'] ?? '') . "</td>
                         <td class='text-center'>" . round($value, 2) . "</td>
                         <td class='text-center'></td>
                         <td class='text-center'></td>
@@ -333,13 +374,14 @@
         }
 
         // Mostrar total de asignaciones, deducciones y aportes
-        $total_total = $total_asignaciones + $total_total_pagar;
+        $total_total =  $total_total_pagar;
         echo "<tr>
-          <td class='text-left' colspan='4'>TOTAL DE ASIGNACIONES  DEDUCCIONES  Y APORTES:</td>
-          <td class='text-center'><b>" . round($total_total, 2) . "</b></td>
-          <td class='text-center'><b>" . round($total_deducciones, 2) . "</b></td>
-          <td class='text-center'><b>" . round($total_aportes, 2) . "</b></td>
-          </tr>";
+    <td class='text-left' colspan='4'>TOTAL DE ASIGNACIONES  DEDUCCIONES  Y APORTES:</td>
+    <td class='text-center'><b>" . (empty($total_asignaciones) || $total_asignaciones == 0 ? "0.00" : round($total_asignaciones, 2)) . "</b></td>
+    <td class='text-center'><b>" . (empty($total_deducciones) || $total_deducciones == 0 ? "0.00" : round($total_deducciones, 2)) . "</b></td>
+    <td class='text-center'><b>" . (empty($total_aportes) || $total_aportes == 0 ? "0.00" : round($total_aportes, 2)) . "</b></td>
+</tr>";
+
 
         // Cierre de la conexión
         mysqli_close($conexion);

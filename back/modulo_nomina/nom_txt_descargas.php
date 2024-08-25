@@ -84,8 +84,8 @@ for ($pagina = 1; $pagina <= $totalPaginas; $pagina++) {
     // Obtener el contenido HTML
     $html = file_get_contents($url);
 
-    // Generar el PDF con mPDF
-    $mpdf = new Mpdf();
+    // Generar el PDF con mPDF en orientación horizontal
+    $mpdf = new Mpdf(['mode' => 'utf-8', 'format' => 'A4-L']);
     $mpdf->WriteHTML($html);
 
     // Guardar el PDF generado temporalmente en el servidor
@@ -118,8 +118,8 @@ foreach ($pdf_files as $url => $pdf_filename) {
     // Obtener el contenido HTML
     $html = file_get_contents($url);
 
-    // Generar el PDF con mPDF
-    $mpdf = new Mpdf();
+    // Generar el PDF con mPDF en orientación horizontal
+    $mpdf = new Mpdf(['mode' => 'utf-8', 'format' => 'A4-L']);
     $mpdf->WriteHTML($html);
 
     // Guardar el PDF generado temporalmente en el servidor

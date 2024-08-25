@@ -1,3 +1,4 @@
+<?php require_once '../sistema_global/conexion.php'; ?>
 <!DOCTYPE html>
 <html>
 
@@ -129,25 +130,42 @@
 
 <body>
   <div style="font-size: 10px;">
-    <table>
-      <tr style="border: none !important; border-bottom: none !important">
-        <td class="w-50">
-          <img src="../../img/logo.jpg" width="100px">
-        </td>
-        <td class="text-right w-50">
-          Fecha: 00/00/0000 <br>
-        </td>
-      </tr>
-    </table>
-    <h2 class="mb-0" align="center"> RELACION DEPOSITO BANCO</h2>
-    <hr>
-    <table class="mb-0" style="margin-bottom: 10px !important;">
-      <tr style="border: none !important; border-bottom: none !important">
-        <td class="fw-bold">
-          Tipo de nómina: <span> NOMBRE DE LA NOMINA </span> - BANCO VENEZUELA
-        </td>
-      </tr>
-    </table>
+<?php
+$correlativo = $_GET['correlativo'];
+$identificador = $_GET['identificador'];
+
+
+// Consultar la tabla peticiones para obtener el nombre_nomina y creacion
+$sql = "SELECT nombre_nomina, creacion FROM peticiones WHERE correlativo = ?";
+$stmt = $conexion->prepare($sql);
+$stmt->bind_param("i", $correlativo);
+$stmt->execute();
+$stmt->bind_result($nombre_nomina, $creacion);
+$stmt->fetch();
+$stmt->close();
+$conexion->close();
+?>
+<div style="font-size: 10px;">
+  <table>
+    <tr style="border: none !important; border-bottom: none !important">
+      <td class="w-50">
+        <img src="../../img/logo.jpg" width="100px">
+      </td>
+      <td class="text-right w-50">
+        Fecha: <?php echo $creacion; ?> <br>
+      </td>
+    </tr>
+  </table>
+  <h2 class="mb-0" align="center"> RELACION DEPOSITO BANCO</h2>
+  <hr>
+  <table class="mb-0" style="margin-bottom: 10px !important;">
+    <tr style="border: none !important; border-bottom: none !important">
+      <td class="fw-bold">
+        Tipo de nómina: <span> <?php echo htmlspecialchars($nombre_nomina); ?> </span> - BANCO BICENTENARIO
+      </td>
+    </tr>
+  </table>
+</div>
     <table style="width: 100%;">
       <thead>
         <tr>
@@ -160,8 +178,7 @@
       <tbody>
 
         <?php
-        $correlativo = $_GET['correlativo'];
-        $identificador = $_GET['identificador'];
+ 
 
         // Conexión a la base de datos
         $conexion = mysqli_connect('localhost', 'root', '', 'sigob');
