@@ -548,7 +548,6 @@ const mapData = ({ obj, name, id }) => {
 // SEPARADOR DE MILES
 
 function separarMiles(numero) {
-  console.log(numero)
   if (isNaN(numero)) {
     return `!${numero}`
   }

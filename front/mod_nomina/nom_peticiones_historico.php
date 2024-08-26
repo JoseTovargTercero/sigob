@@ -55,14 +55,13 @@ require_once '../../back/sistema_global/session.php';
                                     <h5 class="mb-0">Peticion de nomina</h5>
                                     <small class="text-muted mt-0">Administre las peticiones de nomina</small>
                                 </div>
-                                <button class="btn btn-primary" id="btn-new-request">Nueva petición</button>
-
                             </div>
                         </div>
                         <div class="card-body request-table-container ">
 
                             <div class="mb-2 mx-auto slide-up-animation" id="request-table">
-                                <table id='request-table-historial' class='table table-striped mx-auto' style='width:100%'>
+                                <table id='request-table-historial' class='table table-striped mx-auto'
+                                    style='width:100%'>
                                     <thead>
                                         <th class="">CORRELATIVO</th>
                                         <th class="">NOMBRE</th>
@@ -181,12 +180,12 @@ require_once '../../back/sistema_global/session.php';
 
 
 
-                        <div class="loader-container card-footer py-4" id="employee-pay-loader">
+                        <!-- <div class="loader-container card-footer py-4" id="employee-pay-loader">
                             <div class="loader"></div>
-                        </div>
+                        </div> -->
                     </div>
 
-                    <div class="hide" id="request-form-information">
+                    <!-- <div class="hide" id="request-form-information">
                         <div class="card">
                             <div class="card-header d-flex align-items-center justify-content-between">
 
@@ -196,7 +195,7 @@ require_once '../../back/sistema_global/session.php';
                             </div>
                         </div>
                         <div id="request-form-information-body"></div>
-                    </div>
+                    </div> -->
                 </div>
                 <!-- [ worldLow section ] end -->
                 <!-- [ Recent Users ] end -->

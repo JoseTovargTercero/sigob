@@ -1,8 +1,10 @@
+import { getPeticionMovimientos } from '../api/movimientos.js'
 import {
   descargarNominaTxt,
   getPeticionesNomina,
   getPeticionNomina,
 } from '../api/peticionesNomina.js'
+import { nomCorregirCard } from '../components/nom_corregir_card.js'
 import { nomReportCard } from '../components/nom_report_card.js'
 import { validarIdentificador } from './peticionesNominaForm.js'
 
@@ -82,7 +84,7 @@ export async function loadRequestTableHistorico() {
         fecha: peticion.creacion,
         status: `<span class="btn btn-success btn-sm">Revisado</span>`,
         acciones: `
-      <button class="btn btn-primary btn-sm" data-correlativo="${
+      <button class="btn btn-primary btn-sm" data-id="${
         peticion.correlativo
       }" ${Number(peticion.status) === 0 ? 'disabled' : ''} data-show="${
           peticion.id
@@ -98,10 +100,12 @@ export async function loadRequestTableHistorico() {
 }
 
 d.addEventListener('click', async (e) => {
+  if (!d.getElementById('request-historial')) return
+  console.log('hola')
   if (e.target.dataset.show) {
     e.preventDefault()
     let peticion = await getPeticionNomina(e.target.dataset.show)
-    console.log(peticion)
+    // console.log(peticion)
 
     let reportCard = d.getElementById('modal-report')
     if (reportCard) reportCard.remove()
@@ -113,9 +117,18 @@ d.addEventListener('click', async (e) => {
     let reportCard = d.getElementById('modal-report')
     reportCard.remove()
   }
+  if (e.target.dataset.show) {
+    e.preventDefault()
+    let peticion = await getPeticionNomina(e.target.dataset.show)
+
+    console.log(peticion)
+    let reportCard = d.getElementById('modal-report')
+    if (reportCard) reportCard.remove()
+
+    nomReportCard({ data: peticion, elementToInsert: 'request-historial' })
+  }
 
   if (e.target.dataset.correlativotxt) {
-    console.log(e.target.dataset)
     descargarNominaTxt({
       identificador: e.target.dataset.identificador,
       correlativo: e.target.dataset.correlativotxt,

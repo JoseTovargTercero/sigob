@@ -57,6 +57,7 @@ const getNominas = async (grupo) => {
     })
 
     let json = await res.json()
+
     return json
   } catch (e) {
     console.log(e)
@@ -283,7 +284,7 @@ const calculoNomina = async ({
   concepto_valor_max,
 }) => {
   showLoader()
-  console.log(nombre, identificador)
+  console.log(nombre, frecuencia, identificador, tipo, concepto_valor_max)
   try {
     let res = await fetch(calculoNominaUrl, {
       method: 'POST',
