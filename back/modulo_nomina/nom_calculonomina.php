@@ -1933,8 +1933,9 @@ $response = array(
     'identificador' => $identificador,
     'recibos_pagos' => $recibos_de_pago,
 );
-}
 echo json_encode($response);
+}
+
 
 
 ?>
