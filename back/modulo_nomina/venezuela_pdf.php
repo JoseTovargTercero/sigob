@@ -167,7 +167,7 @@ $conexion->close();
     </tr>
   </table>
 </div>
-    <table style="width: 100%;">
+   <table style="width: 100%;">
       <thead>
         <tr>
           <th class="text-center">Cedula</th>
@@ -179,7 +179,14 @@ $conexion->close();
       <tbody>
 
         <?php
-        
+ 
+
+        // Conexión a la base de datos
+        $conexion = mysqli_connect('localhost', 'root', '', 'sigob');
+
+        if (!$conexion) {
+          die("Error de conexión: " . mysqli_connect_error());
+        }
 
         // Consulta para obtener los registros de informacion_pdf
         $sql4 = "SELECT * FROM informacion_pdf WHERE correlativo='$correlativo' AND identificador='$identificador' AND banco='0102'";
@@ -244,7 +251,7 @@ $conexion->close();
             <td class="text-center"><strong><?php echo $total_deposito; ?></strong></td>
           </tr>
           <tr>
-            <td colspan="3" align="right"><strong>Cantidad de Empleados:</strong></td>
+            <td colspan=" 3" align="right"><strong>Cantidad de Empleados:</strong></td>
             <td class="text-center"><strong><?php echo $cantidad_empleados; ?></strong></td>
           </tr>
         <?php
