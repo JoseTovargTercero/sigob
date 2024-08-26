@@ -118,7 +118,7 @@ require_once '../../back/sistema_global/session.php';
           tabla: true
         },
         cache: false,
-        success: function (response) {
+        success: function(response) {
           $('#table tbody').html('');
           if (response) {
 
@@ -131,8 +131,9 @@ require_once '../../back/sistema_global/session.php';
               var grupo_existe = data[i].grupo_existe;
               var frecuenciaPago = data[i].frecuenciaPago;
               let edit = true
+              console.log(nombre + ': ' + grupo_existe + ' - ' + frecuenciaPago)
 
-              if (grupo_existe == '0' || frecuenciaPago == null) {
+              if (grupo_existe == '0' || frecuenciaPago == 0) {
                 edit = false
               }
 
@@ -143,7 +144,7 @@ require_once '../../back/sistema_global/session.php';
 
               <td><a class="pointer btn-wicon badge me-2 bg-brand-color-3 text-white f-12" href="nom_modificar?i=` + id + `"> <i class="bx bx-cog me-1"></i> Modificar</a></td>
               <td>
-              `+ (edit? `<a href="nom_formulacion?i=` + id + `" class="pointer btn-wicon badge me-2 bg-brand-color-1 text-white f-12"> <i class="bx bx-add-to-queue me-1"></i> Agregar</a>` : `<span title="No hay empleados agregados al grupo o  no se ha establecido una frecuencia de pago" onclick="noticiaEdit('${grupo_existe}', ${frecuenciaPago})" class="btn-wicon badge me-2 bg-light-dark  f-12 text-muted"> <i class="bx bx-add-to-queue me-1"></i> Agregar</span>`) +`
+              ` + (edit ? `<a href="nom_formulacion?i=` + id + `" class="pointer btn-wicon badge me-2 bg-brand-color-1 text-white f-12"> <i class="bx bx-add-to-queue me-1"></i> Agregar</a>` : `<span title="No hay empleados agregados al grupo o  no se ha establecido una frecuencia de pago" onclick="noticiaEdit('${grupo_existe}', ${frecuenciaPago})" class="btn-wicon badge me-2 bg-light-dark  f-12 text-muted"> <i class="bx bx-add-to-queue me-1"></i> Agregar</span>`) + `
               </td>
 
               <td><a class="pointer btn-wicon badge me-2 bg-brand-color-2 text-white f-12" onclick="eliminar(` + id + `)"><i class="bx bx-trash me-1"></i> Eliminar</a></td>
@@ -171,7 +172,7 @@ require_once '../../back/sistema_global/session.php';
 
     // ready function
     cargarTabla()
-//
+    //
 
     /**
      * Deletes a record with the specified ID.
@@ -197,7 +198,7 @@ require_once '../../back/sistema_global/session.php';
               eliminar: true,
               id: id,
             },
-            success: function (response) {
+            success: function(response) {
               if (response.trim() == "ok") {
                 cargarTabla();
 
@@ -211,7 +212,7 @@ require_once '../../back/sistema_global/session.php';
       });
     }
 
- 
+
     // enviar data al back
     function guardar() {
       let codigo = document.getElementsByName('codigo')[0].value;
@@ -230,7 +231,7 @@ require_once '../../back/sistema_global/session.php';
             nombre: nombre,
             registro: true
           },
-          success: function (text) {
+          success: function(text) {
             console.log(text)
 
             if (text == 'ok') {
@@ -251,7 +252,7 @@ require_once '../../back/sistema_global/session.php';
     }
 
     // cuando el boton btn-guardar sea pulsado, se ejecuta la funcion anterior
-    $(document).ready(function () {
+    $(document).ready(function() {
       document.getElementById('btn-guardar').addEventListener('click', guardar);
     });
   </script>

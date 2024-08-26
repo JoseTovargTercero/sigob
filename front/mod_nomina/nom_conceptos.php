@@ -528,13 +528,8 @@ if ($nomina) {
       });
     }
 
-    /**
-     * This code iterates over the 'clasificador' object and appends options to the 'partidas' element.
-     * Each option is created with the key and value from the 'clasificador' object.
-     */
-    for (var key in clasificador) {
-      $('#partidas').append('<option value="' + key + '">' + key + ' - ' + clasificador[key] + '</option>');
-    }
+
+
 
     /**
      * Creates a new concepto.

@@ -202,7 +202,7 @@ require_once '../../back/sistema_global/session.php';
       // fecht
       $.ajax({
         type: "POST",
-        url: "../../back/modulo_registro_control/regcon_pagar_reintegro.php",
+        url: "../../back/modulo_registro_control/regcon_informacion_reintegro.php",
         data: {
           cedula_empleado: cedula_empleado,
           desde_cuando_pagas: desde_cuando_pagas,

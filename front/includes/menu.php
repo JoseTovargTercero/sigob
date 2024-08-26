@@ -95,19 +95,37 @@
 
 
           <li class="pc-item">
-            <a href="<?php echo constant('URL') ?>front/mod_registro_control/index" class="pc-link">
-            <span class="pc-micon">
+            <a href="<?php echo constant('URL') ?>front/mod_registro_control/index" class="pc-link d-flex">
+              <span class="pc-micon">
                 <i class='bx bx-file'></i>
               </span>
-            <span class="pc-mtext">Pagos de Nómina</span></a>
+
+
+              <div class="w-100 d-flex justify-content-between">
+                <span class="pc-mtext">Pagos de Nómina</span>
+
+                <section id="section-badge-nominas-pendientes">
+
+
+                </section>
+              </div>
+
+            </a>
           </li>
 
+
           <li class="pc-item">
-            <a href="<?php echo constant('URL') ?>front/mod_registro_control/regcom_reintegros" class="pc-link">
-            <span class="pc-micon">
-               <i class='bx bx-refresh'></i>
+            <a href="<?php echo constant('URL') ?>front/mod_registro_control/regcom_reintegros" class="pc-link d-flex">
+              <span class="pc-micon">
+                <i class='bx bx-refresh'></i>
               </span>
-            <span class="pc-mtext">Reintegros</span></a>
+
+
+              <div class="pc-mtext">Reintegros</div>
+
+
+            </a>
+
           </li>
 
 

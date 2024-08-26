@@ -110,12 +110,8 @@ function procesarPeticion($data)
 
         return obtenerPartidas();
     }
-
-
 }
 
 $response = procesarPeticion($data);
 
 echo $response;
-
-?>

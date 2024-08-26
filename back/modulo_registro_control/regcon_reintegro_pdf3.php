@@ -1,8 +1,9 @@
 <?php
 require_once '../sistema_global/conexion.php';
- ?>
+?>
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>REINTEGRO</title>
     <meta charset="UTF-8">
@@ -15,114 +16,128 @@ require_once '../sistema_global/conexion.php';
             border-collapse: collapse;
             margin-bottom: 20px;
         }
-        table, th, td {
+
+        table,
+        th,
+        td {
             border: 1px solid black;
             padding: 8px;
             text-align: left;
         }
+
         th {
             background-color: #f2f2f2;
         }
+
+        .text-center {
+            text-align: center !important;
+        }
+
+        .w-100 {
+            width: 100% !important;
+        }
     </style>
 </head>
+
 <body>
     <div style="font-size: 10px;">
-        <img src="../../img/logo.jpg" style="height: 110px; width: 250px;">
 
-<?php
-$id_empleado = $_GET['id_empleado'];
-$fecha = $_GET['fecha'];
 
-$sql = "SELECT e.nombres AS nombre, e.cedula, e.fecha_ingreso, cg.cargo AS nombre_cargo
+
+        <?php
+        $id_empleado = $_GET['id_empleado'];
+        $fecha = $_GET['fecha'];
+
+        $sql = "SELECT e.nombres AS nombre, e.cedula, e.fecha_ingreso, cg.cargo AS nombre_cargo
         FROM empleados e
         LEFT JOIN cargos_grados cg ON e.cod_cargo = cg.cod_cargo
         WHERE e.id = '$id_empleado'";
 
-$result = mysqli_query($conexion, $sql);
+        $result = mysqli_query($conexion, $sql);
 
-// Verificación y llenado de los datos obtenidos
-if ($result && mysqli_num_rows($result) > 0) {
-    $row = mysqli_fetch_assoc($result);
+        // Verificación y llenado de los datos obtenidos
+        if ($result && mysqli_num_rows($result) > 0) {
+            $row = mysqli_fetch_assoc($result);
 
-    // Obtener los datos del empleado
-    $nombre = $row['nombre'];
-    $cedula = $row['cedula'];
-    $cargo = $row['nombre_cargo'];
-    $fecha_ingreso = $row['fecha_ingreso'];
+            // Obtener los datos del empleado
+            $nombre = $row['nombre'];
+            $cedula = $row['cedula'];
+            $cargo = $row['nombre_cargo'];
+            $fecha_ingreso = $row['fecha_ingreso'];
 
-    echo "
-    <center>
-    <p>PAGO DE DIFERENCIA DE AGUINALDOS (pasivos)</p>
-    <p>{$nombre} {$cedula} ({$cargo}) </p>
-    <p>Fecha de Ingreso: {$fecha_ingreso}</p>
-    </center>
-    ";
-}
- ?>
+            echo "
+                <div class='text-center w-100'>
+                <p>PAGO DE DIFERENCIA DE AGUINALDOS (pasivos)</p>
+                <p>{$nombre} {$cedula} ({$cargo}) </p>
+                <p>Fecha de Ingreso: {$fecha_ingreso}</p>
+                </div>
+                ";
+        }
+        ?>
 
-<?php
-// Variable para guardar nombre_nomina
-$nombre_nomina = '';
-// Consulta a la base de datos para obtener el último registro con 'regional' en nombre_nomina
-// Consulta a la base de datos para obtener el último registro con 'regional' en nombre_nomina
-$sql5 = "SELECT * FROM historico_reintegros WHERE id_empleado='$id_empleado'  AND h.time = '$fecha' AND LOWER(nombre_nomina) LIKE '%regional%' ORDER BY fecha DESC LIMIT 1";
-$result5 = mysqli_query($conexion, $sql5);
+        <?php
+        // Variable para guardar nombre_nomina
+        $nombre_nomina = '';
+        // Consulta a la base de datos para obtener el último registro con 'regional' en nombre_nomina
+        // Consulta a la base de datos para obtener el último registro con 'regional' en nombre_nomina
+        $sql5 = "SELECT * FROM historico_reintegros WHERE id_empleado='$id_empleado'  AND historico_reintegros.time = '$fecha' AND LOWER(nombre_nomina) LIKE '%regional%' ORDER BY fecha DESC LIMIT 1";
+        $result5 = mysqli_query($conexion, $sql5);
 
-// Variable para almacenar los datos del último registro
-$ultimo_registro = null;
+        // Variable para almacenar los datos del último registro
+        $ultimo_registro = null;
 
-// Verificación y llenado de los datos obtenidos
-if ($result5 && mysqli_num_rows($result5) > 0) {
-    $mostrar5 = mysqli_fetch_assoc($result5);
-    // Decodificación de los arrays JSON
-    $asignaciones2 = json_decode($mostrar5['asignaciones'], true);
-    $deducciones2 = json_decode($mostrar5['deducciones'], true);
-    $aportes2 = json_decode($mostrar5['aportes'], true);
-    $total_pagar2 = $mostrar5['total_pagar'];
-    $nombre_nomina2 = strtolower($mostrar5['nombre_nomina']);
-    $fecha2 = $mostrar5['fecha'];
-    $sueldo_base_quincenal = $mostrar5['sueldo_base'] / 2; // Monto quincenal es la mitad
-    $sueldo_base_mensual = $mostrar5['sueldo_base']; // Monto mensual es el completo
+        // Verificación y llenado de los datos obtenidos
+        if ($result5 && mysqli_num_rows($result5) > 0) {
+            $mostrar5 = mysqli_fetch_assoc($result5);
+            // Decodificación de los arrays JSON
+            $asignaciones2 = json_decode($mostrar5['asignaciones'], true);
+            $deducciones2 = json_decode($mostrar5['deducciones'], true);
+            $aportes2 = json_decode($mostrar5['aportes'], true);
+            $total_pagar2 = $mostrar5['total_pagar'];
+            $nombre_nomina2 = strtolower($mostrar5['nombre_nomina']);
+            $fecha2 = $mostrar5['fecha'];
+            $sueldo_base_quincenal = $mostrar5['sueldo_base'] / 2; // Monto quincenal es la mitad
+            $sueldo_base_mensual = $mostrar5['sueldo_base']; // Monto mensual es el completo
 
-    // Convertir los arrays a texto formateado
-    $asignaciones_texto = '';
-    foreach ($asignaciones2 as $key => $value) {
-        $monto_quincena = $value / 2; // Monto quincenal es la mitad del completo
-        $monto_completo = $value; // Monto mensual es el completo
-        $asignaciones_texto .= "<tr><td>$key</td><td>{$monto_quincena}</td><td>{$monto_completo}</td></tr>";
-    }
+            // Convertir los arrays a texto formateado
+            $asignaciones_texto = '';
+            foreach ($asignaciones2 as $key => $value) {
+                $monto_quincena = $value / 2; // Monto quincenal es la mitad del completo
+                $monto_completo = $value; // Monto mensual es el completo
+                $asignaciones_texto .= "<tr><td>$key</td><td>{$monto_quincena}</td><td>{$monto_completo}</td></tr>";
+            }
 
-    // Calcular el total integral
-    $total_integral_quincenal = $sueldo_base_quincenal;
-    $total_integral_mensual = $sueldo_base_mensual;
+            // Calcular el total integral
+            $total_integral_quincenal = $sueldo_base_quincenal;
+            $total_integral_mensual = $sueldo_base_mensual;
 
-    foreach ($asignaciones2 as $value) {
-        $total_integral_quincenal += $value / 2; // Suma los montos quincenales (mitad)
-        $total_integral_mensual += $value; // Suma los montos mensuales (completos)
-    }
+            foreach ($asignaciones2 as $value) {
+                $total_integral_quincenal += $value / 2; // Suma los montos quincenales (mitad)
+                $total_integral_mensual += $value; // Suma los montos mensuales (completos)
+            }
 
-    // Almacenar los datos en el array
-    $ultimo_registro = [
-        'asignaciones' => $asignaciones_texto,
-        'total_pagar' => $total_pagar2,
-        'nombre_nomina' => $nombre_nomina2,
-        'fecha' => $fecha2,
-        'sueldo_base' => [
-            'quincenal' => $sueldo_base_quincenal,
-            'mensual' => $sueldo_base_mensual
-        ],
-        'total_integral' => [
-            'quincenal' => $total_integral_quincenal,
-            'mensual' => $total_integral_mensual
-        ]
-    ];
-} else {
-    echo "<p>No se encontraron Reintegros</p>";
-}
+            // Almacenar los datos en el array
+            $ultimo_registro = [
+                'asignaciones' => $asignaciones_texto,
+                'total_pagar' => $total_pagar2,
+                'nombre_nomina' => $nombre_nomina2,
+                'fecha' => $fecha2,
+                'sueldo_base' => [
+                    'quincenal' => $sueldo_base_quincenal,
+                    'mensual' => $sueldo_base_mensual
+                ],
+                'total_integral' => [
+                    'quincenal' => $total_integral_quincenal,
+                    'mensual' => $total_integral_mensual
+                ]
+            ];
+        } else {
+            echo "<p>No se encontraron Reintegros</p>";
+        }
 
-// Mostrar los datos del último registro
-if ($ultimo_registro) {
-    echo "
+        // Mostrar los datos del último registro
+        if ($ultimo_registro) {
+            echo "
     <table border='1'>
         <thead>
             <tr>
@@ -148,18 +163,18 @@ if ($ultimo_registro) {
             </tr>
         </tbody>
     </table>";
-     $sueldo_diario = round($ultimo_registro['total_integral']['mensual']/30,2);
-     $alicuota_vacacional = round(($sueldo_diario*179)/12,2);
-     $aguinaldo_regional = round($sueldo_diario*153,2);
-     $aguinaldo_nacional = round($sueldo_diario*30,2);
-     $porcentaje_ince = 0.5 / 100;
-     $descuento_ince = round($aguinaldo_regional * $porcentaje_ince,2);
-     $aguinaldo_regional_total = round($aguinaldo_regional - $descuento_ince,2);
-     $diferencia_aguinaldos = $aguinaldo_regional_total - $aguinaldo_nacional;
-     $diferencia_dividida = round($diferencia_aguinaldos/4,2);
-     $diferencia_25 = round($diferencia_dividida*0.25,2);
+            $sueldo_diario = round($ultimo_registro['total_integral']['mensual'] / 30, 2);
+            $alicuota_vacacional = round(($sueldo_diario * 179) / 12, 2);
+            $aguinaldo_regional = round($sueldo_diario * 153, 2);
+            $aguinaldo_nacional = round($sueldo_diario * 30, 2);
+            $porcentaje_ince = 0.5 / 100;
+            $descuento_ince = round($aguinaldo_regional * $porcentaje_ince, 2);
+            $aguinaldo_regional_total = round($aguinaldo_regional - $descuento_ince, 2);
+            $diferencia_aguinaldos = $aguinaldo_regional_total - $aguinaldo_nacional;
+            $diferencia_dividida = round($diferencia_aguinaldos / 4, 2);
+            $diferencia_25 = round($diferencia_dividida * 0.25, 2);
 
-    echo "
+            echo "
     <table border='1'>
         <thead>
             <tr>
@@ -184,7 +199,7 @@ if ($ultimo_registro) {
     </table>";
 
 
-    echo "
+            echo "
     <table border='1'>
         <thead>
             <tr>
@@ -258,9 +273,7 @@ if ($ultimo_registro) {
     </table>
 
     ";
-
-
-}
+        }
 
 
 
@@ -271,243 +284,254 @@ if ($ultimo_registro) {
 
 
 
-?>
+        ?>
 
 
 
 
 
 
-<?php
+        <?php
 
-function obtener_mes_en_letras($fecha) {
-    $meses = [
-        1 => 'Enero', 2 => 'Febrero', 3 => 'Marzo', 4 => 'Abril', 
-        5 => 'Mayo', 6 => 'Junio', 7 => 'Julio', 8 => 'Agosto', 
-        9 => 'Septiembre', 10 => 'Octubre', 11 => 'Noviembre', 12 => 'Diciembre'
-    ];
-    $fecha_parts = explode('-', $fecha);
-    if (count($fecha_parts) == 2) {
-        $mes_numero = (int)$fecha_parts[0];
-        $año = $fecha_parts[1];
-        return $meses[$mes_numero] . ' ' . $año;
-    }
-    return "Fecha inválida";
-}
-?>
-<h1 align="center">Resumen de Reintegro de <?php echo $nombre ?></h1>
-<?php
-
-// Consulta a la base de datos
-$sql4 = "SELECT * FROM historico_reintegros WHERE id_empleado='$id_empleado'";
-$result4 = mysqli_query($conexion, $sql4);
-
-// Arrays para almacenar los datos por fecha
-$datos_por_fecha = [];
-
-// Verificación y llenado de los datos obtenidos
-if ($result4 && mysqli_num_rows($result4) > 0) {
-    while ($mostrar4 = mysqli_fetch_assoc($result4)) {
-        // Decodificación de los arrays JSON
-        $asignaciones = json_decode($mostrar4['asignaciones'], true);
-        $deducciones = json_decode($mostrar4['deducciones'], true);
-        $aportes = json_decode($mostrar4['aportes'], true);
-        $total_pagar = $mostrar4['total_pagar'];
-        $nombre_nomina = strtolower($mostrar4['nombre_nomina']);
-        $fecha = $mostrar4['fecha'];
-
-        // Almacenar los datos en el array según la fecha y el tipo de nómina
-        if (!isset($datos_por_fecha[$fecha])) {
-            $datos_por_fecha[$fecha] = [
-                'nacional' => null,
-                'regional' => null
+        function obtener_mes_en_letras($fecha)
+        {
+            $meses = [
+                1 => 'Enero',
+                2 => 'Febrero',
+                3 => 'Marzo',
+                4 => 'Abril',
+                5 => 'Mayo',
+                6 => 'Junio',
+                7 => 'Julio',
+                8 => 'Agosto',
+                9 => 'Septiembre',
+                10 => 'Octubre',
+                11 => 'Noviembre',
+                12 => 'Diciembre'
             ];
+            $fecha_parts = explode('-', $fecha);
+            if (count($fecha_parts) == 2) {
+                $mes_numero = (int)$fecha_parts[0];
+                $año = $fecha_parts[1];
+                return $meses[$mes_numero] . ' ' . $año;
+            }
+            return "Fecha inválida";
+        }
+        ?>
+        <h1 align="center">Resumen de Reintegro de <?php echo $nombre ?></h1>
+        <?php
+
+        // Consulta a la base de datos
+        $sql4 = "SELECT * FROM historico_reintegros WHERE id_empleado='$id_empleado'";
+        $result4 = mysqli_query($conexion, $sql4);
+
+        // Arrays para almacenar los datos por fecha
+        $datos_por_fecha = [];
+
+        // Verificación y llenado de los datos obtenidos
+        if ($result4 && mysqli_num_rows($result4) > 0) {
+            while ($mostrar4 = mysqli_fetch_assoc($result4)) {
+                // Decodificación de los arrays JSON
+                $asignaciones = json_decode($mostrar4['asignaciones'], true);
+                $deducciones = json_decode($mostrar4['deducciones'], true);
+                $aportes = json_decode($mostrar4['aportes'], true);
+                $total_pagar = $mostrar4['total_pagar'];
+                $nombre_nomina = strtolower($mostrar4['nombre_nomina']);
+                $fecha = $mostrar4['fecha'];
+
+                // Almacenar los datos en el array según la fecha y el tipo de nómina
+                if (!isset($datos_por_fecha[$fecha])) {
+                    $datos_por_fecha[$fecha] = [
+                        'nacional' => null,
+                        'regional' => null
+                    ];
+                }
+
+                if (strpos($nombre_nomina, 'nacional') !== false) {
+                    $datos_por_fecha[$fecha]['nacional'] = [
+                        'asignaciones' => $asignaciones,
+                        'deducciones' => $deducciones,
+                        'aportes' => $aportes,
+                        'total_pagar' => $total_pagar
+                    ];
+                } elseif (strpos($nombre_nomina, 'regional') !== false) {
+                    $datos_por_fecha[$fecha]['regional'] = [
+                        'asignaciones' => $asignaciones,
+                        'deducciones' => $deducciones,
+                        'aportes' => $aportes,
+                        'total_pagar' => $total_pagar
+                    ];
+                }
+            }
+        } else {
+            echo "<p>No se encontraron Reintegros</p>";
         }
 
-        if (strpos($nombre_nomina, 'nacional') !== false) {
-            $datos_por_fecha[$fecha]['nacional'] = [
-                'asignaciones' => $asignaciones,
-                'deducciones' => $deducciones,
-                'aportes' => $aportes,
-                'total_pagar' => $total_pagar
-            ];
-        } elseif (strpos($nombre_nomina, 'regional') !== false) {
-            $datos_por_fecha[$fecha]['regional'] = [
-                'asignaciones' => $asignaciones,
-                'deducciones' => $deducciones,
-                'aportes' => $aportes,
-                'total_pagar' => $total_pagar
-            ];
-        }
-    }
-} else {
-    echo "<p>No se encontraron Reintegros</p>";
-}
+        // Mostrar los datos en tablas
+        foreach ($datos_por_fecha as $fecha => $datos) {
+            if ($datos['nacional'] && $datos['regional']) {
+                $nacional = $datos['nacional'];
+                $regional = $datos['regional'];
 
-// Mostrar los datos en tablas
-foreach ($datos_por_fecha as $fecha => $datos) {
-    if ($datos['nacional'] && $datos['regional']) {
-        $nacional = $datos['nacional'];
-        $regional = $datos['regional'];
+                // Reiniciar las diferencias para cada fecha
+                $diferencias = [
+                    'asignaciones' => [],
+                    'deducciones' => [],
+                    'aportes' => []
+                ];
 
-        // Reiniciar las diferencias para cada fecha
-        $diferencias = [
-            'asignaciones' => [],
-            'deducciones' => [],
-            'aportes' => []
-        ];
-
-        // Calcular diferencias de asignaciones
-        foreach ($nacional['asignaciones'] as $key => $value) {
-            $regional_value = $regional['asignaciones'][$key] ?? null;
-            if ($regional_value === null) {
-                $diferencias['asignaciones'][$key] = $value;
-            } else {
-                $diferencias['asignaciones'][$key] = abs($value - $regional_value);
-            }
-        }
-        foreach ($regional['asignaciones'] as $key => $value) {
-            if (!isset($nacional['asignaciones'][$key])) {
-                $diferencias['asignaciones'][$key] = $value;
-            }
-        }
-
-        // Calcular diferencias de deducciones
-        foreach ($nacional['deducciones'] as $key => $value) {
-            $regional_value = $regional['deducciones'][$key] ?? null;
-            if ($regional_value === null) {
-                $diferencias['deducciones'][$key] = $value;
-            } else {
-                $diferencias['deducciones'][$key] = abs($value - $regional_value);
-            }
-        }
-        foreach ($regional['deducciones'] as $key => $value) {
-            if (!isset($nacional['deducciones'][$key])) {
-                $diferencias['deducciones'][$key] = $value;
-            }
-        }
-
-        // Calcular diferencias de aportes
-        foreach ($nacional['aportes'] as $key => $value) {
-            $regional_value = $regional['aportes'][$key] ?? null;
-            if ($regional_value === null) {
-                $diferencias['aportes'][$key] = $value;
-            } else {
-                $diferencias['aportes'][$key] = abs($value - $regional_value);
-            }
-        }
-        foreach ($regional['aportes'] as $key => $value) {
-            if (!isset($nacional['aportes'][$key])) {
-                $diferencias['aportes'][$key] = $value;
-            }
-        }
-?>
-<h1 align="center"><?php echo obtener_mes_en_letras($fecha); ?></h1>
-<table>
-    <thead>
-        <tr>
-            <th colspan="1">Nacional</th>
-            <th colspan="1">Regional</th>
-            <th rowspan="2">Diferencia</th>
-            <th colspan="2" style="text-align: center;">Total a Pagar</th>
-            <th rowspan="2">Fecha</th>
-        </tr>
-        <tr>
-            <th>Conceptos</th>
-            <th>Conceptos</th>
-            <th colspan="2" style="text-align: center;">Quincena / Mensual</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <!-- Columna Nacional -->
-            <td>
-                <strong>Asignaciones:</strong><br>
-                <?php
+                // Calcular diferencias de asignaciones
                 foreach ($nacional['asignaciones'] as $key => $value) {
-                    echo "$key: $value<br>";
+                    $regional_value = $regional['asignaciones'][$key] ?? null;
+                    if ($regional_value === null) {
+                        $diferencias['asignaciones'][$key] = $value;
+                    } else {
+                        $diferencias['asignaciones'][$key] = abs($value - $regional_value);
+                    }
                 }
-                ?>
-                <br><strong>Deducciones:</strong><br>
-                <?php
-                foreach ($nacional['deducciones'] as $key => $value) {
-                    echo "$key: $value<br>";
-                }
-                ?>
-                <br><strong>Aportes:</strong><br>
-                <?php
-                foreach ($nacional['aportes'] as $key => $value) {
-                    echo "$key: $value<br>";
-                }
-                ?>
-            </td>
-
-            <!-- Columna Regional -->
-            <td>
-                <strong>Asignaciones:</strong><br>
-                <?php
                 foreach ($regional['asignaciones'] as $key => $value) {
-                    echo "$key: $value<br>";
+                    if (!isset($nacional['asignaciones'][$key])) {
+                        $diferencias['asignaciones'][$key] = $value;
+                    }
                 }
-                ?>
-                <br><strong>Deducciones:</strong><br>
-                <?php
+
+                // Calcular diferencias de deducciones
+                foreach ($nacional['deducciones'] as $key => $value) {
+                    $regional_value = $regional['deducciones'][$key] ?? null;
+                    if ($regional_value === null) {
+                        $diferencias['deducciones'][$key] = $value;
+                    } else {
+                        $diferencias['deducciones'][$key] = abs($value - $regional_value);
+                    }
+                }
                 foreach ($regional['deducciones'] as $key => $value) {
-                    echo "$key: $value<br>";
+                    if (!isset($nacional['deducciones'][$key])) {
+                        $diferencias['deducciones'][$key] = $value;
+                    }
                 }
-                ?>
-                <br><strong>Aportes:</strong><br>
-                <?php
+
+                // Calcular diferencias de aportes
+                foreach ($nacional['aportes'] as $key => $value) {
+                    $regional_value = $regional['aportes'][$key] ?? null;
+                    if ($regional_value === null) {
+                        $diferencias['aportes'][$key] = $value;
+                    } else {
+                        $diferencias['aportes'][$key] = abs($value - $regional_value);
+                    }
+                }
                 foreach ($regional['aportes'] as $key => $value) {
-                    echo "$key: $value<br>";
+                    if (!isset($nacional['aportes'][$key])) {
+                        $diferencias['aportes'][$key] = $value;
+                    }
                 }
-                ?>
-            </td>
+        ?>
+                <h1 align="center"><?php echo obtener_mes_en_letras($fecha); ?></h1>
+                <table>
+                    <thead>
+                        <tr>
+                            <th colspan="1">Nacional</th>
+                            <th colspan="1">Regional</th>
+                            <th rowspan="2">Diferencia</th>
+                            <th colspan="2" style="text-align: center;">Total a Pagar</th>
+                            <th rowspan="2">Fecha</th>
+                        </tr>
+                        <tr>
+                            <th>Conceptos</th>
+                            <th>Conceptos</th>
+                            <th colspan="2" style="text-align: center;">Quincena / Mensual</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <!-- Columna Nacional -->
+                            <td>
+                                <strong>Asignaciones:</strong><br>
+                                <?php
+                                foreach ($nacional['asignaciones'] as $key => $value) {
+                                    echo "$key: $value<br>";
+                                }
+                                ?>
+                                <br><strong>Deducciones:</strong><br>
+                                <?php
+                                foreach ($nacional['deducciones'] as $key => $value) {
+                                    echo "$key: $value<br>";
+                                }
+                                ?>
+                                <br><strong>Aportes:</strong><br>
+                                <?php
+                                foreach ($nacional['aportes'] as $key => $value) {
+                                    echo "$key: $value<br>";
+                                }
+                                ?>
+                            </td>
 
-            <!-- Columna Diferencia -->
-            <td>
-                <strong>Asignaciones:</strong><br>
-                <?php
-                foreach ($diferencias['asignaciones'] as $key => $value) {
-                    echo "$key: $value<br>";
-                }
-                ?>
-                <br><strong>Deducciones:</strong><br>
-                <?php
-                foreach ($diferencias['deducciones'] as $key => $value) {
-                    echo "$key: $value<br>";
-                }
-                ?>
-                <br><strong>Aportes:</strong><br>
-                <?php
-                foreach ($diferencias['aportes'] as $key => $value) {
-                    echo "$key: $value<br>";
-                }
-                ?>
-            </td>
+                            <!-- Columna Regional -->
+                            <td>
+                                <strong>Asignaciones:</strong><br>
+                                <?php
+                                foreach ($regional['asignaciones'] as $key => $value) {
+                                    echo "$key: $value<br>";
+                                }
+                                ?>
+                                <br><strong>Deducciones:</strong><br>
+                                <?php
+                                foreach ($regional['deducciones'] as $key => $value) {
+                                    echo "$key: $value<br>";
+                                }
+                                ?>
+                                <br><strong>Aportes:</strong><br>
+                                <?php
+                                foreach ($regional['aportes'] as $key => $value) {
+                                    echo "$key: $value<br>";
+                                }
+                                ?>
+                            </td>
 
-            <!-- Columna Total a Pagar -->
-            <td>
-                <strong>Total a Pagar Nacional:</strong> <?php echo $nacional['total_pagar'] / 2; ?><br>
-                <strong>Total a Pagar Regional:</strong> <?php echo $regional['total_pagar'] / 2; ?>
-            </td>
-            <td>
-                <strong>Total a Pagar Nacional:</strong> <?php echo $nacional['total_pagar']; ?><br>
-                <strong>Total a Pagar Regional:</strong> <?php echo $regional['total_pagar']; ?>
-            </td>
+                            <!-- Columna Diferencia -->
+                            <td>
+                                <strong>Asignaciones:</strong><br>
+                                <?php
+                                foreach ($diferencias['asignaciones'] as $key => $value) {
+                                    echo "$key: $value<br>";
+                                }
+                                ?>
+                                <br><strong>Deducciones:</strong><br>
+                                <?php
+                                foreach ($diferencias['deducciones'] as $key => $value) {
+                                    echo "$key: $value<br>";
+                                }
+                                ?>
+                                <br><strong>Aportes:</strong><br>
+                                <?php
+                                foreach ($diferencias['aportes'] as $key => $value) {
+                                    echo "$key: $value<br>";
+                                }
+                                ?>
+                            </td>
 
-            <!-- Columna Fecha -->
-            <td><?php echo $fecha; ?></td>
-        </tr>
-    </tbody>
-</table>
-<?php
-    }
-}
+                            <!-- Columna Total a Pagar -->
+                            <td>
+                                <strong>Total a Pagar Nacional:</strong> <?php echo $nacional['total_pagar'] / 2; ?><br>
+                                <strong>Total a Pagar Regional:</strong> <?php echo $regional['total_pagar'] / 2; ?>
+                            </td>
+                            <td>
+                                <strong>Total a Pagar Nacional:</strong> <?php echo $nacional['total_pagar']; ?><br>
+                                <strong>Total a Pagar Regional:</strong> <?php echo $regional['total_pagar']; ?>
+                            </td>
 
-// Cierre de la conexión
-mysqli_close($conexion);
-?>
+                            <!-- Columna Fecha -->
+                            <td><?php echo $fecha; ?></td>
+                        </tr>
+                    </tbody>
+                </table>
+        <?php
+            }
+        }
+
+        // Cierre de la conexión
+        mysqli_close($conexion);
+        ?>
     </div>
 </body>
+
 </html>
