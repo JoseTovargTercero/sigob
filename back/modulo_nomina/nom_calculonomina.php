@@ -1128,7 +1128,7 @@ foreach ($empleados_unicos as &$empleado) {
             if ($frecuencia == "5" AND $tipo == "2") {
                 $total_a_pagar_empleado += $valor/$concepto_valor_max;
                 }else{
-                    $total_a_pagar_empleado -= $valor;
+                    $total_a_pagar_empleado += $valor;
                 }
             
         }
