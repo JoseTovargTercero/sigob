@@ -1,7 +1,11 @@
 <?php
 require_once '../sistema_global/conexion.php';
 
-$precio_dolar = 36;
+$api_key = "4bfc66a740d312008475dded";
+$url2 = "https://v6.exchangerate-api.com/v6/{$api_key}/pair/USD/VES";
+$response2 = file_get_contents($url2);
+$data2 = json_decode($response2, true);
+$precio_dolar = $data2['conversion_rate'];
 
 
 header('Content-Type: application/json');

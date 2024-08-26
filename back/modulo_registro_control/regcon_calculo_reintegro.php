@@ -6,7 +6,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nombre = $_POST['nombre'];
     $meses = $_POST['meses'];
     $conceptos_aplicados = $_POST['conceptos_aplicados'];
-    $info_reintegro = $_POST['info_reintegro'];
     $conceptos_ids = $_POST['conceptos_ids'];
     $precio_dolar = $_POST['precio_dolar'];
     $identificador = "Unico";
@@ -127,10 +126,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             return $monto;
         } else {
-            return "No disponible";
+            return "0";
         }
     } else {
-        return "No disponible";
+        return "0";
     }
 }
 
@@ -153,7 +152,7 @@ function obtenerMonto($conexion, $grado, $paso, $tabulador, $identificador) {
 
     if ($result === false) {
         echo "Error en la consulta: " . $conexion->error . "\n";
-        return "No disponible";
+        return "0";
     }
 
     if ($result->num_rows > 0) {
@@ -162,13 +161,13 @@ function obtenerMonto($conexion, $grado, $paso, $tabulador, $identificador) {
         
         return $monto;
     } else {
-        return "No disponible";
+        return "0";
     }
 }
 
 // Función para obtener el valor de un concepto según su tipo de cálculo
 function obtenerValorConcepto($conexion, $nom_concepto, $salarioBase, $precio_dolar, $salarioIntegral, $ids_empleados, $identificador, $meses) {
- $sql = "SELECT c.id, c.tipo_calculo, c.valor
+ $sql = "SELECT c.id, c.tipo_calculo, c.valor, ca.otra_nomina
         FROM conceptos c
         JOIN conceptos_aplicados ca ON c.nom_concepto = ca.nom_concepto
         WHERE c.nom_concepto = ?";
@@ -183,6 +182,7 @@ if ($result->num_rows > 0) {
     $id_concepto1 = $row["id"];
     $tipo_calculo = $row["tipo_calculo"];
     $valor = $row["valor"];
+    $otra_nomina = $row["otra_nomina"];
 
     // Nueva consulta para buscar en historico_conceptos
     $sql_historico = "SELECT valor 
@@ -205,6 +205,132 @@ if ($result->num_rows > 0) {
                 return $valor;
             case 2:
                 return round($precio_dolar * $valor, 2);
+             case 8:
+    // Suponiendo que ya tienes una conexión a la base de datos $conexion
+    $id = $otra_nomina; // Id de la otra nómina que quieres comparar
+    
+    // Consulta a la tabla nomina para obtener el nombre
+    $consulta_nomina = $conexion->prepare("SELECT nombre, frecuencia FROM nominas WHERE id = ?");
+    
+    // Verificar si la consulta se preparó correctamente
+    if (!$consulta_nomina) {
+        die("Error en la consulta a nomina: " . $conexion->error);
+    }
+    
+    $consulta_nomina->bind_param("i", $id);
+    $consulta_nomina->execute();
+    $resultado_nomina = $consulta_nomina->get_result();
+
+    if ($resultado_nomina->num_rows > 0) {
+        $fila_nomina = $resultado_nomina->fetch_assoc();
+        $nombre_nomina2 = $fila_nomina['nombre']; // Cambié el nombre de la variable a $nombre_nomina2
+        $frecuencia = 3;
+    } else {
+        $nombre_nomina2 = null; // Si no se encuentra, se asigna null
+    }
+
+    if ($nombre_nomina2) {
+        // Ahora, consultamos la tabla recibo_pago para obtener el sueldo_integral
+        $consulta_recibo = $conexion->prepare("SELECT sueldo_integral FROM recibo_pago WHERE id_empleado = ? AND nombre_nomina = ? ORDER BY id DESC LIMIT 1");
+        
+        // Verificar si la consulta se preparó correctamente
+        if (!$consulta_recibo) {
+            die("Error en la consulta a recibo_pago: " . $conexion->error);
+        }
+        
+        $consulta_recibo->bind_param("is", $ids_empleados, $nombre_nomina2);
+        $consulta_recibo->execute();
+        $resultado_recibo = $consulta_recibo->get_result();
+
+        if ($resultado_recibo->num_rows > 0) {
+            $fila_recibo = $resultado_recibo->fetch_assoc();
+            if ($frecuencia == 1) {
+                $sueldo_integral = (($fila_recibo['sueldo_integral'] * 52)/12)/30; // Esto multiplica el sueldo_integral por 2, manteniéndolo en caso de que sea necesario
+                $valor2 = round(($sueldo_integral * ($valor / 100))*$valor,2);
+                return $valor2;
+            }elseif($frecuencia == 2){
+                $sueldo_integral = ($fila_recibo['sueldo_integral'] * 2)/30; // Esto multiplica el sueldo_integral por 2, manteniéndolo en caso de que sea necesario
+                // Aplicar el porcentaje del valor al sueldo_integral
+                $valor2 = round(($sueldo_integral * ($valor / 100))*$valor,2);
+                return $valor2;
+            }else{
+                $sueldo_integral = ($fila_recibo['sueldo_integral'])/30; // Esto multiplica el sueldo_integral por 2, manteniéndolo en caso de que sea necesario
+                 // Aplicar el porcentaje del valor al sueldo_integral
+                $valor2 = round(($sueldo_integral * ($valor / 100))*$valor,2);
+                return $valor2;
+        }
+
+
+        } else {
+            $sueldo_integral = "No encontrado";
+        }
+    } else {
+        $sueldo_integral = "Nombre de nómina no encontrado";
+    }
+
+            case 9:
+    $id = $otra_nomina; // Id de la otra nómina que quieres comparar
+    
+    // Consulta a la tabla nomina para obtener el nombre
+    $consulta_nomina = $conexion->prepare("SELECT nombre, frecuencia FROM nominas WHERE id = ?");
+    
+    // Verificar si la consulta se preparó correctamente
+    if (!$consulta_nomina) {
+        die("Error en la consulta a nomina: " . $conexion->error);
+    }
+    
+    $consulta_nomina->bind_param("i", $id);
+    $consulta_nomina->execute();
+    $resultado_nomina = $consulta_nomina->get_result();
+
+    if ($resultado_nomina->num_rows > 0) {
+        $fila_nomina = $resultado_nomina->fetch_assoc();
+        $nombre_nomina2 = $fila_nomina['nombre']; // Cambié el nombre de la variable a $nombre_nomina2
+        $frecuencia = $fila_nomina['frecuencia'];
+    } else {
+        $nombre_nomina2 = null; // Si no se encuentra, se asigna null
+    }
+
+    if ($nombre_nomina2) {
+    // Consultar la tabla recibo_pago para obtener el último sueldo_integral que cumpla la condición
+    $consulta_recibo = $conexion->prepare("SELECT sueldo_integral FROM recibo_pago WHERE id_empleado = ? AND nombre_nomina = ? ORDER BY id DESC LIMIT 1");
+
+    // Verificar si la consulta se preparó correctamente
+    if (!$consulta_recibo) {
+        die("Error en la consulta a recibo_pago: " . $conexion->error);
+    }
+
+    $consulta_recibo->bind_param("is", $ids_empleados, $nombre_nomina2);
+    $consulta_recibo->execute();
+    $resultado_recibo = $consulta_recibo->get_result();
+
+    if ($resultado_recibo->num_rows > 0) {
+        $fila_recibo = $resultado_recibo->fetch_assoc();
+        if ($frecuencia == 1) {
+                $sueldo_integral = (($fila_recibo['sueldo_integral'] * 52)/12)/30; // Esto multiplica el sueldo_integral por 2, manteniéndolo en caso de que sea necesario
+                // Calcular la fracción del valor sobre el sueldo_integral
+        $valor2 = round($sueldo_integral * ($valor), 2); // Aquí se calcula la fracción multiplicando directamente
+        return $valor2;
+        }elseif($frecuencia == 2){
+                $sueldo_integral = ($fila_recibo['sueldo_integral'] * 2)/30; // Esto multiplica el sueldo_integral por 2, manteniéndolo en caso de que sea necesario
+                // Calcular la fracción del valor sobre el sueldo_integral
+        $valor2 = round($sueldo_integral * ($valor), 2); // Aquí se calcula la fracción multiplicando directamente
+        return $valor2;
+        }else{
+            $sueldo_integral = ($fila_recibo['sueldo_integral'])/30; // Esto multiplica el sueldo_integral por 2, manteniéndolo en caso de que sea necesario
+                // Calcular la fracción del valor sobre el sueldo_integral
+        $valor2 = round($sueldo_integral * ($valor), 2); // Aquí se calcula la fracción multiplicando directamente
+        return $valor2;
+
+        }
+        
+    } else {
+        $sueldo_integral = "No encontrado";
+    }
+} else {
+    $sueldo_integral = "Nombre de nómina no encontrado";
+}
+
             case 3:
                 if ($valor < 100) {
                     return round($salarioBase * ($valor / 100), 2);
@@ -297,6 +423,7 @@ if ($result->num_rows > 0) {
                                         return $valor;
                                     case 2:
                                         return round($precio_dolar * $valor, 2);
+
                                     case 3:
                                         if ($valor < 100) {
                                             return round($salarioBase * ($valor / 100), 2);
@@ -349,6 +476,7 @@ if ($result->num_rows > 0) {
                                             echo "No se encontraron conceptos adicionales.";
                                             return 0;
                                         }
+                                       
                                     default:
                                         echo "Tipo de cálculo no reconocido.";
                                         return 0;
