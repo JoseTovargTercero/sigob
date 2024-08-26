@@ -163,6 +163,8 @@ export async function validateRequestForm({
 
       nominas = await getNominas(e.target.value)
 
+      console.log(nominas)
+
       selectNomina.innerHTML = ''
 
       if (nominas.length > 0)
@@ -187,14 +189,13 @@ export async function validateRequestForm({
       let nominaFind = nominas.find(
         (nomina) => nomina.nombre === e.target.value
       )
+
       fieldList.nomina = e.target.value
 
-      console.log(nominas)
+      // console.log(nominas)
       fieldList.frecuencia = nominaFind.frecuencia
       fieldList.tipo = nominaFind.tipo
       fieldList.concepto_valor_max = nominaFind.concepto_valor_max
-
-      console.log(fieldList)
 
       selectFrecuencia.innerHTML = ''
 
@@ -242,6 +243,7 @@ export async function validateRequestForm({
         default:
           break
       }
+      console.log(fieldList.frecuencia)
 
       selectFrecuencia.insertAdjacentHTML('beforeend', identificadorOpciones)
     }
@@ -540,7 +542,7 @@ export async function validateRequestForm({
       scroll(0, 0)
 
       if (formFocus === 1) {
-        if (Object.values(fieldList).some((el) => !el)) {
+        if (!fieldList.grupo && !fieldList.nomina && !fieldList.frecuencia) {
           toast_s(
             'error',
             'Advertencia: Seleccione todos los campos para realizar el cálculo'

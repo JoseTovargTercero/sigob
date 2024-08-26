@@ -31,7 +31,7 @@ export const nomReportCard = ({ data, elementToInsert }) => {
     data.total_a_pagar.reduce((value, acc) => value + acc, 0).toFixed(2)
   )
 
-  console.log(data)
+  // console.log(data)
 
   let frecuencia = data.frecuencia
   let card2 = ` <div class='modal-window' id='modal-report'>
