@@ -266,11 +266,11 @@ export const nomCorregirCard = ({
                       <option value="0">NO POSEE</option>
                     </select>`
 
-    if (type === 'id_ependencia') {
-      let cod_cargo = await getDependencias()
-      let options = insertOptions(cod_cargo)
+    if (type === 'id_dependencia') {
+      let dependencias = await getDependencias()
+      let options = insertOptions(dependencias.mappedInfo)
 
-      return `<select class="form-select" name="cod_cargo">${options}</select>`
+      return `<select class="form-select" name="id_dependencia">${options}</select>`
     }
   }
 

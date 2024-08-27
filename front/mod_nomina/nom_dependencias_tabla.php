@@ -91,9 +91,10 @@ require_once '../../back/sistema_global/session.php';
 
                             <div class="">
                                 <table id="dependencias-table" class="table table-xs table-striped" style="width:100%">
-                                    <thead class="w-100">
+                                    <thead class="">
                                         <th>CÓDIGO</th>
                                         <th>NOMBRE</th>
+                                        <th>CATEGORIA</th>
                                         <th>ACCIONES</th>
                                     </thead>
                                     <tbody>

@@ -1,3 +1,4 @@
+import { getCategorias } from '../api/categorias.js'
 import { deleteDependencia, getDependencias } from '../api/dependencias.js'
 import { confirmNotification } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
@@ -33,10 +34,11 @@ let dependenciaTable = new DataTable('#dependencias-table', {
   columns: [
     { data: 'cod_dependencia' },
     { data: 'dependencia' },
+    { data: 'id_categoria' },
     { data: 'acciones' },
   ],
   responsive: true,
-  scrollY: 300,
+  scrollY: 350,
   language: tableLanguage,
   layout: {
     topEnd: function () {
@@ -52,17 +54,23 @@ let dependenciaTable = new DataTable('#dependencias-table', {
 })
 
 export async function loadDependenciaTable() {
-  console.log('hola')
+  if (!d.getElementById('dependencia-table')) return
 
   let dependencias = await getDependencias()
+  let categorias = await getCategorias()
+  let categoria
 
   console.log(dependencias)
   let datosOrdenados = [...dependencias.fullInfo].sort((a, b) => a.id - b.id)
 
   let data = datosOrdenados.map((dependencia) => {
+    let categoria = categorias.fullInfo.find(
+      (categoria) => categoria.id === dependencia.id_categoria
+    )
     return {
       cod_dependencia: dependencia.cod_dependencia,
       dependencia: dependencia.dependencia,
+      id_categoria: categoria ? categoria.categoria_nombre : 'Sin categoria',
       acciones: `
       <button class="btn btn-warning btn-sm" id="btn-edit" data-id="${dependencia.id_dependencia}">Editar</button>
       <button class="btn btn-danger btn-sm" id="btn-delete" data-id="${dependencia.id_dependencia}">Eliminar</button>

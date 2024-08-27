@@ -33,8 +33,8 @@ let fieldListErrors = {
   },
   id_categoria: {
     value: true,
-    message: 'Categoria inválido',
-    type: 'categoria',
+    message: 'Elija una categoria válida',
+    type: 'number',
   },
 }
 
@@ -108,17 +108,14 @@ export function validateDependenciaForm() {
       let { cod_dependencia, dependencia, id_categoria } =
         dependenciaData.fullInfo[0]
 
-      let categoria = categorias.mappedData.some(
+      let categoria = categorias.mappedData.find(
         (categoria) => categoria.id == id_categoria
       )
-        ? categorias.mappedData.find(
-            (categoria) => categoria.id == id_categoria
-          )
-        : ''
 
+      console.log(categoria, categoria.name)
       formElement.dependencia.value = dependencia
       formElement.cod_dependencia.value = cod_dependencia
-      formElement.id_categoria.value = categoria
+      formElement.id_categoria.value = categoria ? categoria.id : ''
     }
 
     // GUARDAR DEPENDENCIA
@@ -137,7 +134,7 @@ export function validateDependenciaForm() {
         type: fieldListErrors[formElement.cod_dependencia.name],
       })
       fieldList = validateInput({
-        target: formElement.cod_dependencia,
+        target: formElement.id_categoria,
         fieldList,
         fieldListErrors,
         type: fieldListErrors[formElement.id_categoria.name],
@@ -181,6 +178,7 @@ export function validateDependenciaForm() {
               informacion: {
                 dependencia: formElement.dependencia.value,
                 cod_dependencia: formElement.cod_dependencia.value,
+                id_categoria: fieldList.id_categoria,
               },
             })
 

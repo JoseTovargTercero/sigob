@@ -60,8 +60,12 @@ function crearDependencia($informacion)
         if (!isset($informacion["dependencia"]) || !isset($informacion["cod_dependencia"])) {
             throw new Exception('El campo código o nombre están vacíos');
         }
+        if (!isset($informacion["dependencia"]) || !isset($informacion["id_categoria"])) {
+            throw new Exception('La unidad debe estar asociada a una categoria');
+        }
         $dependencia = $informacion["dependencia"];
         $cod_dependencia = $informacion["cod_dependencia"];
+        $id_categoria = $informacion["id_categoria"];
 
         $stmt_dep = $conexion->prepare("SELECT * FROM `dependencias` WHERE cod_dependencia = ?");
         $stmt_dep->bind_param('s', $cod_dependencia);
@@ -72,10 +76,10 @@ function crearDependencia($informacion)
         }
 
 
-        $sql = "INSERT INTO dependencias (dependencia, cod_dependencia) VALUES (?, ?)";
+        $sql = "INSERT INTO dependencias (dependencia, cod_dependencia, id_categoria) VALUES (?, ?, ?)";
 
         $stmt = $conexion->prepare($sql);
-        $stmt->bind_param("ss", $dependencia, $cod_dependencia);
+        $stmt->bind_param("sss", $dependencia, $cod_dependencia, $id_categoria);
         $stmt->execute();
 
         if ($stmt->affected_rows > 0) {
@@ -107,21 +111,26 @@ function actualizarDependencia($informacion)
         if (!isset($informacion["dependencia"]) || !isset($informacion["cod_dependencia"])) {
             throw new Exception('El campo código o nombre están vacíos');
         }
+        if (!isset($informacion["dependencia"]) || !isset($informacion["id_categoria"])) {
+            throw new Exception('La unidad debe estar asociada a una categoria');
+        }
         $id = $informacion["id"];
         $dependencia = $informacion["dependencia"];
         $cod_dependencia = $informacion["cod_dependencia"];
+        $id_categoria = $informacion["id_categoria"];
 
-        $stmt_dep = $conexion->prepare("SELECT * FROM `dependencias` WHERE cod_dependencia = ?");
-        $stmt_dep->bind_param('s', $cod_dependencia);
-        $stmt_dep->execute();
-        $result = $stmt_dep->get_result();
-        if ($result->num_rows > 0) {
+        // Verificar si el código ya está en uso por otra dependencia
+        $stmt_check = $conexion->prepare("SELECT * FROM `dependencias` WHERE cod_dependencia = ? AND id_dependencia != ?");
+        $stmt_check->bind_param('ss', $cod_dependencia, $id);
+        $stmt_check->execute();
+        $result_check = $stmt_check->get_result();
+        if ($result_check->num_rows > 0) {
             throw new Exception("Ya existe una unidad con el mismo código.");
         }
 
-        $sql = "UPDATE dependencias SET dependencia = ?, cod_dependencia = ? WHERE id_dependencia = ?";
+        $sql = "UPDATE dependencias SET dependencia = ?, cod_dependencia = ?, id_categoria = ? WHERE id_dependencia = ?";
         $stmt = $conexion->prepare($sql);
-        $stmt->bind_param("ssi", $dependencia, $cod_dependencia, $id);
+        $stmt->bind_param("sssi", $dependencia, $cod_dependencia, $id_categoria, $id);
         $stmt->execute();
 
         if ($stmt->affected_rows > 0) {
