@@ -151,6 +151,9 @@ const sendEmployeeData = async ({ data }) => {
       body: JSON.stringify(data),
     })
     console.log(res)
+    let clone = res.clone()
+    let text = await clone.text()
+    console.log(text)
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
 
     const json = await res.json()

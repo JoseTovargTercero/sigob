@@ -127,15 +127,15 @@ function generateCellContent({ row, col, matrixInputsClass }) {
 function fillCellContent({ matrixValues, matrixInputsClass }) {
   const matrixInputsElement = d.querySelectorAll(`.${matrixInputsClass}`)
   const matrixInputsElementCopy = [...matrixInputsElement]
-  console.log(matrixInputsElementCopy)
+  // console.log(matrixInputsElementCopy)
 
   matrixInputsElementCopy.forEach((input, i) => {
-    console.log('e2')
+    // console.log('e2')
     if (
       input.dataset.grado === matrixValues[i][0].charAt(1) &&
       input.dataset.paso === matrixValues[i][1].charAt(1)
     ) {
-      console.log('e')
+      // console.log('e')
       input.value = matrixValues[i][2]
     }
   })

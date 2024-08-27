@@ -180,6 +180,7 @@ function validateEmployeeForm({
   selectSearch,
 }) {
   const formElement = d.getElementById('employee-form')
+  if (!formElement) return
   const btnElement = d.getElementById(btnId)
   const btnAddElement = d.getElementById(btnAddId)
   const btnDependencySave = d.getElementById('dependency-save-btn')
@@ -224,10 +225,12 @@ function validateEmployeeForm({
     if (id) {
       // Obtener datos de empleado dada su ID
       let employeeData = await getEmployeeData(id)
-
-      let partidaSelect = partidas.fullInfo.find(
-        (partida) => partida.id === Number(employeeData.id_partida)
-      ).partida
+      console.log(employeeData)
+      let partidaSelect = employeeData.id_partida
+        ? partidas.fullInfo.find(
+            (partida) => partida.id == employeeData.id_partida
+          ).partida
+        : ''
 
       // SI EL EMPLEADO TIENE EL VERIFICADO EN 2, COLOCAR CORRECIÓN EN FORMULARCIÓN DE EDICIÓN
 
@@ -436,6 +439,27 @@ function validateEmployeeForm({
   // })
 
   d.addEventListener('click', (e) => {
+    if (e.target.classList.contains('btn-delete')) {
+      let fila = e.target.closest('tr')
+
+      confirmDelete({
+        id: e.target.dataset.id,
+        row: fila,
+        table: e.target.dataset.table,
+      })
+    }
+
+    if (e.target.classList.contains('btn-view')) {
+      employeeCard({
+        id: e.target.dataset.id,
+        elementToInsert: 'employee-table-view',
+      })
+    }
+
+    if (e.target.id === 'btn-close-employee-card') {
+      d.getElementById('modal-employee').remove()
+    }
+
     if (e.target.classList.contains('btn-edit')) {
       loadEmployeeData(e.target.dataset.id)
       openModal({ modalId: 'modal-employee-form' })

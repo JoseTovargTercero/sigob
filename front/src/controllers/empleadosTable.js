@@ -91,39 +91,17 @@ export const validateEmployeeTable = async () => {
 
   // AÑADIR FILAS A TABLAS
   employeeTable.rows.add(data).draw()
+
+  d.addEventListener('click', (e) => {
+    // if (e.target.dataset.tableid) {
+    //   mostrarTabla(e.target.dataset.tableid)
+    //   d.querySelectorAll('.nav-link').forEach((el) => {
+    //     el.classList.remove('active')
+    //   })
+    //   e.target.classList.add('active')
+    // }
+  })
 }
-
-d.addEventListener('click', (e) => {
-  if (e.target.classList.contains('btn-delete')) {
-    let fila = e.target.closest('tr')
-
-    confirmDelete({
-      id: e.target.dataset.id,
-      row: fila,
-      table: e.target.dataset.table,
-    })
-  }
-
-  if (e.target.classList.contains('btn-view')) {
-    employeeCard({
-      id: e.target.dataset.id,
-      elementToInsert: 'employee-table-view',
-    })
-  }
-
-  if (e.target.id === 'btn-close-employee-card') {
-    d.getElementById('modal-employee').remove()
-  }
-
-  // if (e.target.dataset.tableid) {
-  //   mostrarTabla(e.target.dataset.tableid)
-  //   d.querySelectorAll('.nav-link').forEach((el) => {
-  //     el.classList.remove('active')
-  //   })
-
-  //   e.target.classList.add('active')
-  // }
-})
 
 async function confirmDelete({ id, row, table }) {
   confirmNotification({
