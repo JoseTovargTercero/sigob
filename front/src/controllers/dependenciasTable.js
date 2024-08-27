@@ -58,7 +58,6 @@ export async function loadDependenciaTable() {
 
   let dependencias = await getDependencias()
   let categorias = await getCategorias()
-  let categoria
 
   console.log(dependencias)
   let datosOrdenados = [...dependencias.fullInfo].sort((a, b) => a.id - b.id)
