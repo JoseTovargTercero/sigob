@@ -54,27 +54,36 @@ require_once '../../back/sistema_global/session.php';
                                 <small class="text-muted mt-0 mb-4">Administre las dependencias</small>
                             </div> -->
                             <form id="dependencia-form">
-                                <div class="row mx-auto">
-                                    <div class="col-sm-6">
+                                <div class="row mx-0">
+                                    <div class="col-sm">
                                         <div class="form-group">
                                             <label for="dependencia" class="form-label">NOMBRE</label>
                                             <input type="text" name="dependencia" class="form-control"
                                                 placeholder="Nombre dependencia...">
                                         </div>
                                     </div>
-                                    <div class="col-sm-5">
-                                        <div class="row">
+                                    <div class="col-sm">
+                                        <div class="form-group">
                                             <label class="form-label" for="id_dependencia">CODIGO</label>
-                                            <div class="col-sm-8 mb-2">
-                                                <input type="text" name="cod_dependencia" class="form-control"
-                                                    placeholder="Código dependencia...">
-                                            </div>
-                                            <div class="col-sm-2">
-                                                <button type="button" id="dependencia-guardar"
-                                                    class="btn btn-primary">Guardar</button>
-                                            </div>
+                                            <input type="text" name="cod_dependencia" class="form-control"
+                                                placeholder="Código dependencia...">
                                         </div>
                                     </div>
+                                    <div class="col-sm">
+                                        <div class="col-sm">
+                                            <label class="form-label" for="id_categoria">CATEGORIA</label>
+                                            <select class="form-select employee-select" name="id_categoria"
+                                                id="search-select-categorias">
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mx-auto">
+                                    <div class="col-sm-3">
+                                        <button type="button" id="dependencia-guardar"
+                                            class="btn btn-primary">Guardar</button>
+                                    </div>
+
                                 </div>
                             </form>
                         </div>

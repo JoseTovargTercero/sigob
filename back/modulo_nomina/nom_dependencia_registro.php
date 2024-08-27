@@ -22,13 +22,13 @@ if (!isset($data["dependencia"]) || !isset($data["cod_dependencia"])) {
     $stmt_dep->close();
 
     // Construir la consulta SQL para insertar datos
-    $sql = "INSERT INTO dependencias (dependencia, cod_dependencia) VALUES (?, ?)";
+    $sql = "INSERT INTO dependencias (dependencia, cod_dependencia, id_categoria) VALUES (?, ?, ?)";
 
     // Preparar la declaración SQL
     $stmt = $conexion->prepare($sql);
 
     // Vincular parámetros y ejecutar la consulta
-    $stmt->bind_param("ss", $data["dependencia"], $data["cod_dependencia"]);
+    $stmt->bind_param("sss", $data["dependencia"], $data["cod_dependencia"], $data["id_categoria"]);
 
     // Ejecutar la consulta preparada
     if ($stmt->execute()) {

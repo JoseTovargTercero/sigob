@@ -1,3 +1,4 @@
+import { getCategorias } from '../api/categorias.js'
 import {
   getDependencias,
   sendDependencia,
@@ -16,6 +17,7 @@ let id
 let fieldList = {
   dependencia: '',
   cod_dependencia: '',
+  id_categoria: '',
 }
 
 let fieldListErrors = {
@@ -28,6 +30,11 @@ let fieldListErrors = {
     value: true,
     message: 'Campo inválido',
     type: 'number',
+  },
+  id_categoria: {
+    value: true,
+    message: 'Categoria inválido',
+    type: 'categoria',
   },
 }
 
@@ -70,6 +77,8 @@ export function validateDependenciaForm() {
         id = ''
       } else {
         btnNewElement.textContent = 'Cancelar'
+        let categorias = await getCategorias()
+        insertOptions({ input: 'categorias', data: categorias.mappedData })
       }
     }
 
@@ -87,15 +96,29 @@ export function validateDependenciaForm() {
       e.target.textContent = 'Editando'
       e.target.setAttribute('disabled', true)
 
+      let categorias = await getCategorias()
+      insertOptions({ input: 'categorias', data: categorias.mappedData })
+
       if (formContainerElement.classList.contains('hide')) {
         formContainerElement.classList.remove('hide')
         btnNewElement.textContent = 'Cancelar'
       }
       let dependenciaData = await getDependencias(id)
 
-      let { cod_dependencia, dependencia } = dependenciaData.fullInfo[0]
+      let { cod_dependencia, dependencia, id_categoria } =
+        dependenciaData.fullInfo[0]
+
+      let categoria = categorias.mappedData.some(
+        (categoria) => categoria.id == id_categoria
+      )
+        ? categorias.mappedData.find(
+            (categoria) => categoria.id == id_categoria
+          )
+        : ''
+
       formElement.dependencia.value = dependencia
       formElement.cod_dependencia.value = cod_dependencia
+      formElement.id_categoria.value = categoria
     }
 
     // GUARDAR DEPENDENCIA
@@ -112,6 +135,12 @@ export function validateDependenciaForm() {
         fieldList,
         fieldListErrors,
         type: fieldListErrors[formElement.cod_dependencia.name],
+      })
+      fieldList = validateInput({
+        target: formElement.cod_dependencia,
+        fieldList,
+        fieldListErrors,
+        type: fieldListErrors[formElement.id_categoria.name],
       })
       if (Object.values(fieldListErrors).some((el) => el.value)) {
         return confirmNotification({
@@ -130,6 +159,7 @@ export function validateDependenciaForm() {
                 id: id,
                 dependencia: fieldList.dependencia,
                 cod_dependencia: fieldList.cod_dependencia,
+                id_categoria: fieldList.id_categoria,
               },
             })
 
@@ -168,6 +198,20 @@ export function validateDependenciaForm() {
       }
     }
   })
+
+  function insertOptions({ input, data }) {
+    const selectElement = d.getElementById(`search-select-${input}`)
+    selectElement.innerHTML = `<option value="">Elegir...</option>`
+    const fragment = d.createDocumentFragment()
+    data.forEach((el) => {
+      const option = d.createElement('option')
+      option.setAttribute('value', el.id)
+      option.textContent = el.name
+      fragment.appendChild(option)
+    })
+
+    selectElement.appendChild(fragment)
+  }
 
   function validateEditButtons() {
     let editButtons = d.querySelectorAll('[data-id][disabled]')
