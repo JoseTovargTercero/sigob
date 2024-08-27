@@ -131,10 +131,111 @@
 
 <body>
   <?php $correlativo = $_GET['correlativo']; ?>
-
 <?php
+// Función para calcular la fecha de pago
+function calcularFechaPagar($row, $conexion) {
+    $identificador = $row['identificador'];
+    $fecha_pagar = $row['fecha_pagar']; // Formato esperado: m-Y
+    $nombre_nomina = $row['nombre_nomina'];
+
+    $fechaInicio = null;
+    $fechaFin = null;
+    
+    // Consulta para obtener las fechas de aplicar
+    $stmt_conceptos = mysqli_prepare($conexion, "SELECT fecha_aplicar FROM `conceptos_aplicados` WHERE nombre_nomina = ?");
+    $stmt_conceptos->bind_param('s', $nombre_nomina);
+    $stmt_conceptos->execute();
+    $result_conceptos = $stmt_conceptos->get_result();
+
+    $concepto_valor_max = 0; // Valor máximo para dividir el mes
+
+    if ($result_conceptos->num_rows > 0) {
+        while ($row_conceptos = $result_conceptos->fetch_assoc()) {
+            // Decodificar el array de fecha_aplicar
+            $fechas = json_decode($row_conceptos['fecha_aplicar'], true);
+
+            if ($fechas && is_array($fechas)) {
+                // Tomar el valor más alto de las fechas, sin la 'p'
+                foreach ($fechas as $fecha) {
+                    $valor = intval(str_replace('p', '', $fecha));
+                    if ($valor > $concepto_valor_max) {
+                        $concepto_valor_max = $valor;
+                    }
+                }
+            }
+        }
+    }
+    $stmt_conceptos->close();
+
+    if (preg_match('/^s(\d+)$/', $identificador, $matches)) {
+        // Identificador semanal (s1, s2, s3, ...)
+        $semanaNumero = (int) $matches[1];
+
+        // Crear la fecha inicial del mes dado
+        $primerDiaMes = DateTime::createFromFormat('m-Y', $fecha_pagar);
+        $primerDiaMes->setDate($primerDiaMes->format('Y'), $primerDiaMes->format('m'), 1);
+
+        // Calcular el primer día de la semana (Lunes) y último día (Domingo)
+        $fechaInicio = clone $primerDiaMes;
+        $fechaInicio->modify('+' . ($semanaNumero - 1) . ' weeks')->modify('Monday this week');
+        $fechaFin = clone $fechaInicio;
+        $fechaFin->modify('Sunday this week');
+    } elseif (preg_match('/^q(\d+)$/', $identificador, $matches)) {
+        // Identificador quincenal (q1, q2)
+        $quincenaNumero = (int) $matches[1];
+
+        // Crear la fecha inicial del mes dado
+        $primerDiaMes = DateTime::createFromFormat('m-Y', $fecha_pagar);
+        $primerDiaMes->setDate($primerDiaMes->format('Y'), $primerDiaMes->format('m'), 1);
+
+        if ($quincenaNumero === 1) {
+            $fechaInicio = clone $primerDiaMes;
+            $fechaFin = clone $fechaInicio;
+            $fechaFin->modify('+14 days');
+        } elseif ($quincenaNumero === 2) {
+            $fechaInicio = clone $primerDiaMes;
+            $fechaInicio->modify('+15 days');
+            $fechaFin = (clone $fechaInicio)->modify('last day of this month');
+        }
+    } elseif ($identificador === 'fecha_unica') {
+        // Fecha única (todo el mes)
+        $fechaInicio = DateTime::createFromFormat('m-Y', $fecha_pagar);
+        $fechaInicio->setDate($fechaInicio->format('Y'), $fechaInicio->format('m'), 1);
+        $fechaFin = (clone $fechaInicio)->modify('last day of this month');
+    } elseif (preg_match('/^p(\d+)$/', $identificador, $matches)) {
+        // Identificador personalizado (p1, p2, p3, ...)
+        $periodoNumero = (int) $matches[1];
+
+        // Crear la fecha inicial del mes dado
+        $primerDiaMes = DateTime::createFromFormat('m-Y', $fecha_pagar);
+        $primerDiaMes->setDate($primerDiaMes->format('Y'), $primerDiaMes->format('m'), 1);
+        $ultimoDiaMes = (clone $primerDiaMes)->modify('last day of this month');
+
+        if ($concepto_valor_max > 0) {
+            // Dividir el mes en partes según el valor máximo de fechas de aplicación
+            $intervaloDias = (int) ceil($ultimoDiaMes->diff($primerDiaMes)->days / $concepto_valor_max);
+
+            $fechaInicio = clone $primerDiaMes;
+            $fechaFin = clone $fechaInicio;
+            $fechaFin->modify('+' . ($periodoNumero * $intervaloDias - 1) . ' days');
+
+            if ($fechaFin > $ultimoDiaMes) {
+                $fechaFin = $ultimoDiaMes;
+            }
+        }
+    }
+
+    // Formatear fechas para mostrar el rango
+    if ($fechaInicio && $fechaFin) {
+        return $fechaInicio->format('d-m-Y') . ' hasta ' . $fechaFin->format('d-m-Y');
+    } else {
+        return null; // Correlativo no reconocido
+    }
+}
+
+
     // Consulta a la base de datos para obtener el nombre de la nómina y la fecha de creación
-    $sql4 = "SELECT nombre_nomina, creacion FROM peticiones WHERE correlativo='$correlativo'";
+    $sql4 = "SELECT nombre_nomina, creacion, identificador FROM peticiones WHERE correlativo='$correlativo'";
     $result4 = mysqli_query($conexion, $sql4);
 
     // Verificación y obtención del nombre de la nómina y la fecha de creación
@@ -142,6 +243,7 @@
         $mostrar4 = mysqli_fetch_array($result4);
         $nombre_nomina = $mostrar4['nombre_nomina'];
         $creacion = $mostrar4['creacion'];
+        $identificador = $mostrar4['identificador'];
 
         // Consulta para obtener el emp_cantidad para "Sueldo Base" usando JOIN
         $sql5 = "SELECT c.emp_cantidad
@@ -163,7 +265,16 @@
         $creacion = '';
         $emp_cantidad = 0; // Valor por defecto si no se encuentra el registro
     }
+
+
+    $row3 = [
+        'identificador' => $identificador, // Puede ser 's1', 'q1', 'fecha_unica', etc.
+        'fecha_pagar' => $creacion, // Formato m-Y
+        'nombre_nomina' => $nombre_nomina // Formato m-Y
+    ];
+    $fechaPagar2 = calcularFechaPagar($row3,$conexion);
 ?>
+
 
   <table>
     <tr>
@@ -193,7 +304,7 @@
         <span><?php echo $nombre_nomina ?></span>
       </td>
       <td class=" w-50 fw-bold">
-        <span class="text-crimsom">Periodos de: <?php echo $creacion ?></span>
+        <span class="text-crimsom">Periodos de: <?php echo $fechaPagar2 ?></span>
       </td>
     </tr>
     <tr>
@@ -251,13 +362,7 @@
         $total_aportes = 0;
         $total_total_pagar = 0;
 
-        // Conexión a la base de datos
-        $conexion = mysqli_connect('localhost', 'root', '', 'sigob');
 
-        // Verificación de la conexión
-        if (!$conexion) {
-          die("Error de conexión: " . mysqli_connect_error());
-        }
 
         // Consulta a la base de datos
         $sql4 = "SELECT * FROM peticiones WHERE correlativo='$correlativo'";

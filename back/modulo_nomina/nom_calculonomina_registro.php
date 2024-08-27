@@ -76,13 +76,16 @@ for ($i = 0; $i < count($data['empleados']); $i++) {
                 registrarPago($conexion, $id_empleado, round($pago_individual, 2), $data['nombre_nomina'], $identificador, $mes_anio_actual, $correlativo_formateado);
             break;
         case 3:
+        // Mantener el total a pagar sin cambios
+            registrarPago($conexion, $id_empleado, round($total_a_pagar, 2), $data['nombre_nomina'], "fecha_unica", $mes_anio_actual, $correlativo_formateado);
+            break;
         case 4:
             // Mantener el total a pagar sin cambios
             registrarPago($conexion, $id_empleado, round($total_a_pagar, 2), $data['nombre_nomina'], "fecha_unica", $mes_anio_actual, $correlativo_formateado);
             break;
         case 5:
             // Mantener el total a pagar sin cambios
-            registrarPago($conexion, $id_empleado, round($total_a_pagar, 2), $data['nombre_nomina'], "fecha_unica", $mes_anio_actual, $correlativo_formateado);
+            registrarPago($conexion, $id_empleado, round($total_a_pagar, 2), $data['nombre_nomina'], $identificador, $mes_anio_actual, $correlativo_formateado);
             break;
         default:
             echo json_encode(array('error' => 'Frecuencia de pago no válida.'));
