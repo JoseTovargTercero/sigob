@@ -18,6 +18,7 @@ function textNotification($type)
     '6' => ['Rechazo la modificación de un empleado', ''],
     '7' => ['Aprobó la modificación de un empleado', 'front/mod_nomina/nom_empleados_tabla'],
     '8' => ['Rechazó la petición de nomina', 'front/mod_nomina/nom_peticiones_tabla'],
+    '9' => ['Aprobo el pago de nomina', 'front/mod_nomina/nom_peticiones_tabla'],
 
     // mas opciones
   );

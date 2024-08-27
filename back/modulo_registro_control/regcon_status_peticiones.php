@@ -1,6 +1,7 @@
 <?php
 require_once '../sistema_global/conexion.php';
 require_once '../sistema_global/session.php';
+require_once '../sistema_global/notificaciones.php';
 
 if (isset($_POST['correlativo'])) {
     $correlativo = $_POST['correlativo'];
@@ -10,6 +11,7 @@ if (isset($_POST['correlativo'])) {
     $stmt->bind_param("s", $correlativo);
 
     if ($stmt->execute()) {
+        notificar(['nomina'], 9);
         echo "Registro actualizado correctamente";
     } else {
         echo "Error al actualizar el registro: " . $conexion->error;
