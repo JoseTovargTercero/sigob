@@ -88,7 +88,7 @@ export function employeePayTableHTML({ nominaData, columns, elementToInsert }) {
       </div>
     </div>`
 
-  d.getElementById(elementToInsert).insertAdjacentHTML('beforebegin', table)
+  d.getElementById(elementToInsert).insertAdjacentHTML('afterend', table)
 
   createTable({ nominaData, columns })
 }
