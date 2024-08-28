@@ -402,7 +402,7 @@ require_once '../../back/sistema_global/session.php';
               const cant_empleados = data[columna]['total_empleados'];
 
 
-              $('#table tbody').append(`<tr >
+              $('#table tbody').append(`<tr data-dependencia="${id_dependencia}">
                   <td>${cont++}</td>
                   <td><p class="mb-0"><b>${dependencia}</b></p><small class="text-muted">Categoría: ${(categoria == null ? '<a href="nom_dependencias_tabla">Primero debe asignar una categoría</a>':categoria)}</small></td>
                   <td>${cod_dependencia} </td>
