@@ -86,7 +86,7 @@ function calculoSalarioBase($conexion, $empleado, $nombre, $identificador) {
 
 
 // Función para obtener el valor de un concepto según su tipo de cálculo
-function obtenerValorConcepto($conexion, $nom_concepto, $salarioBase, $precio_dolar, $salarioIntegral, $ids_empleados, $identificador) {
+function obtenerValorConcepto($conexion, $nom_concepto, $salarioBase, $precio_dolar, $salarioIntegral, $ids_empleados, $identificador, $frecuencia) {
     $sql = "SELECT c.tipo_calculo, c.valor
             FROM conceptos c
             JOIN conceptos_aplicados ca ON c.nom_concepto = ca.nom_concepto
@@ -103,13 +103,28 @@ function obtenerValorConcepto($conexion, $nom_concepto, $salarioBase, $precio_do
         $tipo_calculo = $row["tipo_calculo"];
         $valor2 = $row["valor"];
         
-        if ($identificador == "s1" || $identificador == "s2" || $identificador == "s3" || $identificador == "s4") {
-            $valor = round($valor2 * 0.25, 2);
-        } elseif ($identificador == "q1" || $identificador == "q2") {
+        if ($frecuencia == 1) {
+        // Obtener el número de la semana del año del identificador
+$semana_ano = intval(substr($identificador, 1));
+
+// Calcular la semana del mes
+$semana_mes = ceil($semana_ano / 4);
+
+// Ajustar la semana del mes si el mes tiene más de 4 semanas
+if ($semana_mes > 5) {
+    $semana_mes = 5; // Considerar solo hasta la quinta semana
+}
+     if ($semana_mes >= 1 && $semana_mes <= 5) {
+        $valor = round(($valor2 * 0.25), 2);
+    }
+}elseif ($frecuencia == 2) {
+    if ($identificador == "q1" || $identificador == "q2") {
             $valor = round($valor2 * 0.50, 2);
-        } else {
-            $valor = $row["valor"];
         }
+}else{
+    $valor = $row["valor"];
+
+}
 
         // Calcular valor según el tipo de cálculo
         switch ($tipo_calculo) {
@@ -153,7 +168,7 @@ function obtenerValorConcepto($conexion, $nom_concepto, $salarioBase, $precio_do
 
                         if ($result_concepto->num_rows > 0) {
                             $row_concepto = $result_concepto->fetch_assoc();
-                            $valor_concepto = obtenerValorConcepto($conexion, $row_concepto['nom_concepto'], $salarioBase, $precio_dolar, $salarioIntegral, $ids_empleados, $identificador);
+                            $valor_concepto = obtenerValorConcepto($conexion, $row_concepto['nom_concepto'], $salarioBase, $precio_dolar, $salarioIntegral, $ids_empleados, $identificador, $frecuencia);
                             $total_valor += $valor_concepto;
                         }
                     }
@@ -245,7 +260,7 @@ function obtenerValorConcepto($conexion, $nom_concepto, $salarioBase, $precio_do
 
                                                 if ($result_concepto->num_rows > 0) {
                                                     $row_concepto = $result_concepto->fetch_assoc();
-                                                    $valor_concepto = obtenerValorConcepto($conexion, $row_concepto['nom_concepto'], $salarioBase, $precio_dolar, $salarioIntegral, $ids_empleados, $identificador);
+                                                    $valor_concepto = obtenerValorConcepto($conexion, $row_concepto['nom_concepto'], $salarioBase, $precio_dolar, $salarioIntegral, $ids_empleados, $identificador, $frecuencia);
                                                     $total_valor += $valor_concepto;
                                                 }
                                             }
@@ -368,6 +383,7 @@ function obtenerEmpleadoPorID($conexion, $id_empleado) {
 
 // Array para almacenar la información de los empleados
 $recibos_de_pago = array();
+$suma_asignaciones['SALARIO BASE'] = 0;
 
 // Iterar sobre cada registro de conceptos_aplicados
 foreach ($conceptos_aplicados as &$concepto) {
@@ -392,15 +408,27 @@ foreach ($conceptos_aplicados as &$concepto) {
 
             if ($empleado) {
                 // Calcular el salario base del empleado
-                $empleado['salario_base'] = calculoSalarioBase($conexion, $empleado, $nombre, $identificador);
+                $empleado['salario_base'] = calculoSalarioBase($conexion, $empleado, $nombre, $identificador, $frecuencia);
+
+                // Redondear el salario base a dos decimales
+                $empleado['salario_base'] = round($empleado['salario_base'], 2);
 
                 // Inicializar el salario integral con el salario base
                 $empleado['salario_integral'] = $empleado['salario_base'];
+
+                // Sumar el salario base redondeado al array de sumas de asignaciones
+                $suma_asignaciones['SALARIO BASE'] += $empleado['salario_base'];
+
+                // Redondear nuevamente para evitar decimales inesperados en la suma
+                $suma_asignaciones['SALARIO BASE'] = round($suma_asignaciones['SALARIO BASE'], 2);
 
                 // Inicializar arrays para asignaciones, deducciones y aportes
                 $empleado['asignaciones'] = array();
                 $empleado['deducciones'] = array();
                 $empleado['aportes'] = array();
+
+                // **Agregar el salario_base a las asignaciones**
+                $empleado['asignaciones'][] = array('SALARIO BASE' => $empleado['salario_base']);
 
                 // Agregar el empleado al array de empleados únicos
                 $empleados_unicos[$id_empleado] = $empleado;
@@ -411,13 +439,13 @@ foreach ($conceptos_aplicados as &$concepto) {
         $tipo_concepto = $concepto['tipo_concepto'];
 
         // Calcular el valor del concepto para este empleado
-        $valor_concepto = obtenerValorConcepto($conexion, $concepto['nom_concepto'], $empleados_unicos[$id_empleado]['salario_base'], $precio_dolar, $empleados_unicos[$id_empleado]['salario_integral'], array($id_empleado), $identificador);
+        $valor_concepto = obtenerValorConcepto($conexion, $concepto['nom_concepto'], $empleados_unicos[$id_empleado]['salario_base'], $precio_dolar, $empleados_unicos[$id_empleado]['salario_integral'], array($id_empleado), $identificador, $frecuencia);
 
         // Agregar el valor del concepto al array correspondiente del empleado
         if ($tipo_concepto === "A") {
             $empleados_unicos[$id_empleado]['asignaciones'][] = array($concepto['nom_concepto'] => $valor_concepto);
             // Sumar al salario integral si no es el salario base
-            if ($concepto['nom_concepto'] !== "salario_base") {
+            if ($concepto['nom_concepto'] !== "SALARIO BASE") {
                 $empleados_unicos[$id_empleado]['salario_integral'] += $valor_concepto;
             }
 
@@ -448,9 +476,11 @@ foreach ($conceptos_aplicados as &$concepto) {
         }
     }
 }
+
 $id_empleados_detalles = array();
 $total_a_pagar_empleados = array();
 $informacion_empleados = array();
+
 // Calcular el total a pagar para cada empleado y guardar en el array de recibos de pago
 foreach ($empleados_unicos as &$empleado) {
     // Inicializar el total a pagar para este empleado con el salario base
@@ -476,6 +506,9 @@ foreach ($empleados_unicos as &$empleado) {
             $total_a_pagar_empleado -= $valor;
         }
     }
+
+    // Restar el salario base del total a pagar
+    $total_a_pagar_empleado -= $empleado['salario_base'];
 
     // Almacenar el total a pagar para este empleado en el array del empleado
     $empleado['total_a_pagar'] = $total_a_pagar_empleado;
