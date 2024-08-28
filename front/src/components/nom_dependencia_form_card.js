@@ -1,14 +1,9 @@
 import { getCategorias } from '../api/categorias.js'
-import {
-  getDependencias,
-  sendDependencia,
-  updateDependencia,
-} from '../api/dependencias.js'
+import { sendDependencia } from '../api/dependencias.js'
 import { confirmNotification, validateInput } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 
 const d = document
-
 let fieldList = {
   dependencia: '',
   cod_dependencia: '',
@@ -33,132 +28,104 @@ let fieldListErrors = {
   },
 }
 
-const nom_dependencia_form_card = async ({ elementToInsert, id }) => {
-  if (document.getElementById('dependencia-form'))
-    document.getElementById('dependencia-form').remove()
+export const nom_dependencia_form_card = async ({
+  elementToInsert,
+  reloadSelect,
+}) => {
+  let cardElement = d.getElementById('modal-dependency')
+  if (cardElement) cardElement.remove()
 
-  let dependenciaFormCard = `    <form class='p-4' id='dependencia-form'>
-  <h6 class='mb-2'>Gestión de dependencias</h6>
-  <div class='row mx-0'>
-    <div class='col-sm'>
-      <div class='form-group'>
-        <label for='dependencia' class='form-label'>
-          NOMBRE
-        </label>
-        <input
-          type='text'
-          name='dependencia'
-          class='form-control'
-          placeholder='Nombre dependencia...'
-        />
+  let card = `   <div id='modal-dependency' class='modal-window hide'>
+      <div class='modal-box short slide-up-animation'>
+        <header class='modal-box-header'>
+          <h4>AÑADIR NUEVA UNIDAD</h4>
+          <button
+            id='btn-close-modal-dependency'
+            type='button'
+            class='btn btn-danger'
+            aria-label='Close'
+          >
+            &times;
+          </button>
+        </header>
+        <div class='modal-box-content'>
+          <form id='employee-dependencia-form'>
+            <div class='row mx-0'>
+              <div class='col-sm'>
+                <input
+                  class='form-control'
+                  type='text'
+                  name='dependencia'
+                  placeholder='Nombre unidad...'
+                  id='dependencia'
+                />
+              </div>
+              <div class='col-sm'>
+                <input
+                  type='number'
+                  class=' form-control'
+                  name='cod_dependencia'
+                  id='cod_dependencia-input'
+                  placeholder='Codigo de unidad'
+                />
+              </div>
+              <div class='col-sm'>
+                <select
+                  class='form-select'
+                  name='id_categoria'
+                  id='search-select-categorias-dependencia'
+                ></select>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class='modal-box-footer'>
+          <button class='btn btn-primary' id='dependency-save-btn'>
+            GUARDAR UNIDAD
+          </button>
+        </div>
       </div>
-    </div>
-    <div class='col-sm'>
-      <div class='form-group'>
-        <label class='form-label' for='id_dependencia'>
-          CODIGO
-        </label>
-        <input
-          type='text'
-          name='cod_dependencia'
-          class='form-control'
-          placeholder='Código dependencia...'
-        />
-      </div>
-    </div>
-    <div class='col-sm'>
-      <div class='col-sm'>
-        <label class='form-label' for='id_categoria'>
-          CATEGORIA
-        </label>
-        <select
-          class='form-select employee-select'
-          name='id_categoria'
-          id='search-select-categorias'
-        ></select>
-      </div>
-    </div>
-  </div>
-  <div class='row mx-auto'>
-    <div class='col-sm-3'>
-      <button
-        type='button'
-        id='dependencia-guardar'
-        class='btn btn-primary'
-      >
-        Guardar
-      </button>
-       <button
-        type='button'
-        id='dependencia-cancelar'
-        class='btn btn-danger'
-      >
-        Cancelar
-      </button>
-    </div>
-  </div>
-</form>`
+    </div>`
 
-  document
-    .getElementById(elementToInsert)
-    .insertAdjacentHTML('afterend', dependenciaFormCard)
+  d.getElementById(elementToInsert).insertAdjacentHTML('beforeend', card)
 
-  const dependenciaForm = document.getElementById('dependencia-form')
+  console.log(d.getElementById('search-select-categorias'))
+  getCategorias().then((res) => {
+    console.log(res)
+    insertOptions({ input: 'categorias-dependencia', data: res.mappedData })
+  })
 
-  dependenciaForm.addEventListener('submit', (e) => e.preventDefault())
+  let formElement = d.getElementById('employee-dependencia-form')
 
-  let dependenciaData = await getDependencias(id)
-  let categorias = await getCategorias()
-  insertOptions({ input: 'categorias', data: categorias.mappedData })
+  const closeModalCard = () => {
+    let cardElement = d.getElementById('modal-dependency')
+    console.log(cardElement)
+    cardElement.remove()
+    d.removeEventListener('click', validateClick)
+    formElement.removeEventListener('input', validateInputFunction)
 
-  let { cod_dependencia, dependencia, id_categoria } =
-    dependenciaData.fullInfo[0]
-
-  let categoria = categorias.mappedData.find(
-    (categoria) => categoria.id == id_categoria
-  )
-  dependenciaForm.dependencia.value = dependencia
-  dependenciaForm.cod_dependencia.value = cod_dependencia
-  dependenciaForm.id_categoria.value = categoria ? categoria.id : ''
-
-  function insertOptions({ input, data }) {
-    const selectElement = d.getElementById(`search-select-${input}`)
-    selectElement.innerHTML = `<option value="">Elegir...</option>`
-    const fragment = d.createDocumentFragment()
-    data.forEach((el) => {
-      const option = d.createElement('option')
-      option.setAttribute('value', el.id)
-      option.textContent = el.name
-      fragment.appendChild(option)
-    })
-
-    selectElement.appendChild(fragment)
+    return false
   }
 
   function validateClick(e) {
-    if (e.target.id === 'dependencia-cancelar') {
-      d.getElementById('dependencia-form').remove()
-      d.removeEventListener('click', validateClick)
-      dependenciaForm.removeEventListener('input', validateInputFunction)
-    }
-    if (e.target.id === 'dependencia-guardar') {
+    if (e.target.id === 'dependency-save-btn') {
       fieldList = validateInput({
-        target: dependenciaForm.dependencia,
+        target: formElement.dependencia,
         fieldList,
         fieldListErrors,
-        type: fieldListErrors[dependenciaForm.dependencia.name],
+        type: fieldListErrors[formElement.dependencia.name].type,
       })
       fieldList = validateInput({
-        target: dependenciaForm.cod_dependencia,
+        target: formElement.cod_dependencia,
         fieldList,
         fieldListErrors,
-        type: fieldListErrors[dependenciaForm.cod_dependencia.name],
+        type: fieldListErrors[formElement.cod_dependencia.name].type,
       })
       fieldList = validateInput({
-        target: dependenciaForm.id_categoria,
+        target: formElement.id_categoria,
         fieldList,
         fieldListErrors,
-        type: fieldListErrors[dependenciaForm.id_categoria.name],
+        type: fieldListErrors[formElement.id_categoria.name],
       })
       if (Object.values(fieldListErrors).some((el) => el.value)) {
         return confirmNotification({
@@ -166,24 +133,28 @@ const nom_dependencia_form_card = async ({ elementToInsert, id }) => {
           message: 'Necesita llenar todos los campos',
         })
       }
+
       confirmNotification({
         type: NOTIFICATIONS_TYPES.send,
-        message: '¿Desea actualizar esta unidad?',
+        message: '¿Seguro de registrar esta dependencia?',
         successFunction: async function () {
-          let res = await updateDependencia({
+          sendDependencia({
             informacion: {
-              id: id,
-              dependencia: dependenciaForm.dependencia.value,
-              cod_dependencia: dependenciaForm.cod_dependencia.value,
-              id_categoria: dependenciaForm.id_categoria.value,
+              dependencia: formElement.dependencia.value,
+              cod_dependencia: formElement.cod_dependencia.value,
+              id_categoria: formElement.id_categoria.value,
             },
+          }).then((res) => {
+            closeModalCard()
+            reloadSelect()
           })
-          d.getElementById('dependencia-form').remove()
-          d.removeEventListener('click', validateClick)
-          dependenciaForm.removeEventListener('input', validateInputFunction)
-          cargarTabla()
         },
       })
+    }
+
+    if (e.target.id === 'btn-close-modal-dependency') {
+      console.log('hola')
+      closeModalCard()
     }
   }
 
@@ -196,63 +167,21 @@ const nom_dependencia_form_card = async ({ elementToInsert, id }) => {
     })
   }
 
+  formElement.addEventListener('input', validateInputFunction)
+
   d.addEventListener('click', validateClick)
-  dependenciaForm.addEventListener('input', validateInputFunction)
 }
-
-document.addEventListener('click', (e) => {
-  if (e.target.dataset.dependencia) {
-    console.log(e.target.dataset)
-
-    nom_dependencia_form_card({
-      elementToInsert: 'dependencia-card-header',
-      id: e.target.dataset.dependencia,
-    })
-  }
-})
-
-function cargarTabla() {
-  $.ajax({
-    url: url_back,
-    type: 'POST',
-    data: {
-      tabla: true,
-    },
-    cache: false,
-    success: function (response) {
-      cont = 1
-      $('#table tbody').html('')
-      if (response) {
-        var data = JSON.parse(response)
-        for (columna in data) {
-          const dependencia = data[columna]['dependencia']
-          const id_dependencia = data[columna]['id_dependencia']
-          const cod_dependencia = data[columna]['cod_dependencia']
-          const id_categoria = data[columna]['id_categoria']
-          const categoria = data[columna]['categoria_nombre']
-          const cant_empleados = data[columna]['total_empleados']
-
-          $('#table tbody').append(`<tr>
-              <td>${cont++}</td>
-              <td><p class="mb-0"><b>${dependencia}</b></p><small class="text-muted">Categoría: ${
-            categoria == null
-              ? `<a data-dependencia="${id_dependencia}" href="#">Primero debe asignar una categoría</a>`
-              : categoria
-          }</small></td>
-              <td>${cod_dependencia} </td>
-              <td>${cant_empleados} </td>
-              <td  class="text-center">
-              ${
-                categoria == null
-                  ? ''
-                  : `<button onclick="editar('${id_dependencia}', '${dependencia}')" class="btn btn-primary btn-sm"><i class="bx bx-user-plus"></i></button>`
-              }
-
-
-               </td>
-            </tr>`)
-        }
-      }
-    },
+function insertOptions({ input, data }) {
+  const selectElement = d.getElementById(`search-select-${input}`)
+  console.log(selectElement)
+  selectElement.innerHTML = `<option value="">Elegir...</option>`
+  const fragment = d.createDocumentFragment()
+  data.forEach((el) => {
+    const option = d.createElement('option')
+    option.setAttribute('value', el.id)
+    option.textContent = el.name
+    fragment.appendChild(option)
   })
+
+  selectElement.appendChild(fragment)
 }

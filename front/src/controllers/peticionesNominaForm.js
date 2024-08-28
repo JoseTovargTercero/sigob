@@ -453,10 +453,6 @@ export async function validateRequestForm({
               toast_s('success', 'Tabla con nuevos status añadida')
             }
 
-            requestFormInformationBody.insertAdjacentHTML(
-              'afterbegin',
-              empleadosModificados(employeeNewStatus)
-            )
             closeModal({ modalId: 'modal-employee-list' })
           } else {
             toast_s(
@@ -503,6 +499,10 @@ export async function validateRequestForm({
             columns,
             elementToInsert: 'request-form-information-body',
           })
+          requestFormInformationBody.insertAdjacentHTML(
+            'afterbegin',
+            empleadosModificados(employeeNewStatus)
+          )
 
           toast_s('success', 'Se ha realizado el cálculo')
         },

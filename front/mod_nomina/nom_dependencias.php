@@ -252,7 +252,7 @@ require_once '../../back/sistema_global/session.php';
   <script src="../../src/assets/js/main.js"></script>
   <script src="../../src/assets/js/ajax_class.js"></script>
   <script src="../../src/assets/js/lista-empleados.js"></script>
-  <script type="module" src="../src/components/nom_dependencia_form_card.js">
+  <script type="module" src="../src/components/nom_dependencia_form.js">
   </script>
 
 

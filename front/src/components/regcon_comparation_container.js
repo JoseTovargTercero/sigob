@@ -21,7 +21,7 @@ export function createComparationContainer({ data, elementToInsert }) {
   
 `
 
-  d.getElementById(elementToInsert).insertAdjacentHTML('beforebegin', card)
+  d.getElementById(elementToInsert).insertAdjacentHTML('afterbegin', card)
 }
 
 const createCard = ({ actual, anterior, confirmBtn }) => {
@@ -193,9 +193,7 @@ const createObjectList = (anterior, actual, title) => {
         <td>${key.toLocaleLowerCase()}</td>
          ${
            anterior
-             ? `<td class="table-secondary">${separarMiles(
-                 anterior[key].toFixed(2)
-               )}</td>`
+             ? `<td class="table-secondary">${separarMiles(anterior[key])}</td>`
              : ''
          }
         <td class="table-secondary">${separarMiles(actual[key].toFixed(2))}</td>

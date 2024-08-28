@@ -70,12 +70,10 @@ require_once '../../back/sistema_global/session.php';
                                         </div>
                                     </div>
                                     <div class="col-sm">
-                                        <div class="col-sm">
-                                            <label class="form-label" for="id_categoria">CATEGORIA</label>
-                                            <select class="form-select employee-select" name="id_categoria"
-                                                id="search-select-categorias">
-                                            </select>
-                                        </div>
+                                        <label class="form-label" for="id_categoria">CATEGORIA</label>
+                                        <select class="form-select employee-select" name="id_categoria"
+                                            id="search-select-categorias">
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="row mx-auto">
