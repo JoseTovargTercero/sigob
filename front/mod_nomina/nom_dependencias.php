@@ -48,12 +48,14 @@ require_once '../../back/sistema_global/session.php';
         <!-- [ worldLow section ] start -->
         <div class="col-lg-12 mb-3">
           <div class="card">
-            <div class="card-header">
+            <div class="card-header" id="dependencia-card-header">
               <div class="d-flex align-items-start justify-content-between">
                 <h5 class="mb-0">Gestión de dependencias</h5>
+
                 <button class="btn btn-primary" onclick="mostrarInicio()">Volver al inicio</button>
               </div>
             </div>
+
             <div class="card-body">
               <section class="hide" id="modificar_valores">
 
@@ -65,7 +67,8 @@ require_once '../../back/sistema_global/session.php';
                       <div class="mb-3">
                         <label class="form-label" for="filtro_empleados">¿Como quieres seleccionar a tus
                           empleados?</label>
-                        <select class="form-select" id="filtro_empleados" onchange="seleccion_empleados(this.value, 'empleados-list')">
+                        <select class="form-select" id="filtro_empleados"
+                          onchange="seleccion_empleados(this.value, 'empleados-list')">
                           <option>Seleccione</option>
                           <option value="1">Enlistar todos</option>
                           <option value="2">Por sus características (Formulación)</option>
@@ -81,7 +84,8 @@ require_once '../../back/sistema_global/session.php';
                           <div class="mb-3"><label class="form-label">Formulación</label>
                             <div class="input-group mb-3">
                               <textarea class="form-control condicion" rows="1" id="t_area-1"></textarea>
-                              <button class="btn btn-primary" onclick="validarFormula('t_area-1', 'empleados-list')" type="button">Obtener</button>
+                              <button class="btn btn-primary" onclick="validarFormula('t_area-1', 'empleados-list')"
+                                type="button">Obtener</button>
                             </div>
                           </div>
                         </div>
@@ -89,7 +93,8 @@ require_once '../../back/sistema_global/session.php';
 
                           <div class="mb-3">
                             <label class="form-label" for="campo_condiciona">Condicionantes</label>
-                            <select name="campo_condiciona" onchange="setCondicionante(this.value, 'result')" id="campo_condiciona" class="form-control">
+                            <select name="campo_condiciona" onchange="setCondicionante(this.value, 'result')"
+                              id="campo_condiciona" class="form-control">
                               <option value="">Seleccione</option>
                               <option value="cod_cargo">Código de cargo</option>
                               <option value="discapacidades">Discapacidades</option>
@@ -113,7 +118,7 @@ require_once '../../back/sistema_global/session.php';
                         <label class="form-label" for="otra_nominas">Nominas registradas</label>
                         <select class="form-select" id="otra_nominas">
                           <option>Seleccione</option>
-                          <?php foreach ($nominas as $n) : ?>
+                          <?php foreach ($nominas as $n): ?>
                             <option value="<?php echo $n->nombre; ?>">&nbsp;<?php echo $n->nombre; ?></option>
                           <?php endforeach; ?>
                         </select>
@@ -127,7 +132,8 @@ require_once '../../back/sistema_global/session.php';
                           <tr>
                             <th class="w-40">Cedula</th>
                             <th class="w-40">Nombre</th>
-                            <th class="w-auto text-center"><input type="checkbox" id="selectAll" onchange="checkAll(this.checked, '')" class="form-check-input" /></th>
+                            <th class="w-auto text-center"><input type="checkbox" id="selectAll"
+                                onchange="checkAll(this.checked, '')" class="form-check-input" /></th>
                           </tr>
                         </thead>
                         <tbody id="empleados-list">
@@ -246,6 +252,9 @@ require_once '../../back/sistema_global/session.php';
   <script src="../../src/assets/js/main.js"></script>
   <script src="../../src/assets/js/ajax_class.js"></script>
   <script src="../../src/assets/js/lista-empleados.js"></script>
+  <script type="module" src="../src/components/nom_dependencia_form_card.js">
+  </script>
+
 
   <script>
     const url_back = '../../back/modulo_nomina/nom_unidades_back.php';
@@ -265,7 +274,7 @@ require_once '../../back/sistema_global/session.php';
       // define una variable con la cantidad valores de empleados
       let cantidad = empleados.length
 
-      $(`.itemCheckbox`).each(function() {
+      $(`.itemCheckbox`).each(function () {
         if (this.checked) {
           empleados.push(this.value)
         }
@@ -290,7 +299,7 @@ require_once '../../back/sistema_global/session.php';
     function guardarListaEmpleados() {
       let seleccionados = 0
 
-      $(`.itemCheckbox`).each(function() {
+      $(`.itemCheckbox`).each(function () {
         if (this.checked) {
           seleccionados++
         }
@@ -354,7 +363,7 @@ require_once '../../back/sistema_global/session.php';
           updates: true
         },
         cache: false,
-        success: function(response) {
+        success: function (response) {
 
           text = JSON.parse(response)
 
@@ -387,7 +396,7 @@ require_once '../../back/sistema_global/session.php';
           tabla: true
         },
         cache: false,
-        success: function(response) {
+        success: function (response) {
           cont = 1;
           $('#table tbody').html('');
           if (response) {
@@ -402,13 +411,13 @@ require_once '../../back/sistema_global/session.php';
               const cant_empleados = data[columna]['total_empleados'];
 
 
-              $('#table tbody').append(`<tr data-dependencia="${id_dependencia}">
+              $('#table tbody').append(`<tr>
                   <td>${cont++}</td>
-                  <td><p class="mb-0"><b>${dependencia}</b></p><small class="text-muted">Categoría: ${(categoria == null ? '<a href="nom_dependencias_tabla">Primero debe asignar una categoría</a>':categoria)}</small></td>
+                  <td><p class="mb-0"><b>${dependencia}</b></p><small class="text-muted">Categoría: ${(categoria == null ? `<a data-dependencia="${id_dependencia}" href="#">Primero debe asignar una categoría</a>` : categoria)}</small></td>
                   <td>${cod_dependencia} </td>
                   <td>${cant_empleados} </td>
                   <td  class="text-center">
-                  ${(categoria == null ? '': `<button onclick="editar('${id_dependencia}', '${dependencia}')" class="btn btn-primary btn-sm"><i class="bx bx-user-plus"></i></button>`)}
+                  ${(categoria == null ? '' : `<button onclick="editar('${id_dependencia}', '${dependencia}')" class="btn btn-primary btn-sm"><i class="bx bx-user-plus"></i></button>`)}
 
 
                    </td>
@@ -434,7 +443,7 @@ require_once '../../back/sistema_global/session.php';
           id_dependencia: id_dependencia
         },
         cache: false,
-        success: function(response) {
+        success: function (response) {
           let data = JSON.parse(response)
 
           for (empleado in data) {
@@ -496,7 +505,7 @@ require_once '../../back/sistema_global/session.php';
               eliminar: true,
               id: id,
             },
-            success: function(response) {
+            success: function (response) {
               text = JSON.parse(response)
               if (text == "ok") {
                 cargarTabla();
@@ -536,7 +545,7 @@ require_once '../../back/sistema_global/session.php';
             nombre: nombre,
             registro: true
           },
-          success: function(text) {
+          success: function (text) {
             text = JSON.parse(text)
             $('#cargando').hide()
             if (text.status == 'success') {
@@ -558,6 +567,10 @@ require_once '../../back/sistema_global/session.php';
         toast_s('error', 'El nombre del campo no cumple con los requisitos mínimos')
       }
     }
+
+
+
+
   </script>
 
 </body>

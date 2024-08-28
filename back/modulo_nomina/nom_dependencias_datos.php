@@ -134,7 +134,7 @@ function actualizarDependencia($informacion)
         $stmt->execute();
 
         if ($stmt->affected_rows > 0) {
-            $response = json_encode(["success" => "Unidad actualizada creada con éxito"]);
+            $response = json_encode(["success" => "Unidad actualizada con éxito"]);
         } else {
             throw new Exception("No se ha cambiado ningún valor");
         }

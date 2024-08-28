@@ -74,6 +74,7 @@ const sendDependencia = async ({ informacion }) => {
 }
 
 const updateDependencia = async ({ informacion }) => {
+  console.log(informacion)
   try {
     let res = await fetch(dependenciasUrl, {
       method: 'POST',
