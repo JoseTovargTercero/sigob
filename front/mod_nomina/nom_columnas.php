@@ -55,9 +55,9 @@ require_once '../../back/sistema_global/session.php';
                   <small class="text-muded">Gestione la información que se guarda de sus empleados</small>
                 </div>
                 <div class="d-flex">
-                  
+
                   <button class="btn btn-secondary me-2" id="btn-show-sistema" onclick="mostrar_sistema()"> Campos del sistema</button>
-                  <button class="btn btn-light" id="btn-svr" onclick="setVistaRegistro()">  Nuevo campo</button>
+                  <button class="btn btn-light" id="btn-svr" onclick="setVistaRegistro()"> Nuevo campo</button>
                 </div>
               </div>
             </div>
@@ -68,8 +68,8 @@ require_once '../../back/sistema_global/session.php';
                   <thead>
                     <tr>
                       <th class="w-5">#</th>
-                      <th class="w-20">Usuario</th>
-                      <th class="w-40">Nombre</th>
+                      <th class="w-10">Usuario</th>
+                      <th class="w-50">Nombre</th>
                       <th class="w-10">Tipo</th>
                       <th class="w-10"></th>
                     </tr>
@@ -86,9 +86,9 @@ require_once '../../back/sistema_global/session.php';
                           <option value="int">Número</option>
                           <option value="date">Fecha</option>
                         </select>
-                        </th>
-                      
-                        <th><button type="submit" class="btn btn-primary rounded" id="btn-guardar">Guardar</button></th>
+                      </th>
+
+                      <th><button type="submit" class="btn btn-primary rounded" id="btn-guardar">Guardar</button></th>
                   </thead>
                   <tbody>
                   </tbody>
@@ -128,12 +128,14 @@ require_once '../../back/sistema_global/session.php';
           tabla: true
         },
         cache: false,
-        success: function (response) {
+        success: function(response) {
 
           $('#table tbody').html('');
           if (response) {
 
             var data = JSON.parse(response);
+            // BORRA LOS REPETIDOS DE data
+            data = data.filter((item, index) => data.indexOf(item) === index);
             cont = 1;
 
             for (var i = 0; i < data.length; i++) {
@@ -142,7 +144,7 @@ require_once '../../back/sistema_global/session.php';
               const maxlenght = data[i].CHARACTER_MAXIMUM_LENGTH;
               let columnas_s = es_columnas_sistema(columna.trim());
 
-              $('#table tbody').append(`<tr class="` + (columnas_s? '_especial hide':'') + `">
+              $('#table tbody').append(`<tr class="` + (columnas_s ? '_especial hide' : '') + `">
                 <td>${cont++}</td>
                 <td>${(columnas_s? 'Sistema':'Usuario')}</td>
                 <td>${columna}</td>
@@ -151,7 +153,6 @@ require_once '../../back/sistema_global/session.php';
               </tr>`);
             }
           }
-  //              <td class="text-center">${(columnas_s? '':'<a class="pointer btn-wicon badge me-2 bg-brand-color-2 text-white f-12" onclick="eliminar()"><i class="bx bx-trash"></i> Eliminar</a>')}</td>
         }
 
       });
@@ -161,12 +162,12 @@ require_once '../../back/sistema_global/session.php';
 
 
 
-    function copy(contenido){
+    function copy(contenido) {
       navigator.clipboard.writeText(contenido)
       toast_s('success', 'Copiado al portapapeles')
     }
 
- 
+
 
 
 
@@ -194,7 +195,7 @@ require_once '../../back/sistema_global/session.php';
               eliminar: true,
               id: id,
             },
-            success: function (response) {
+            success: function(response) {
               console.log(response)
               text = JSON.parse(response)
 
@@ -212,22 +213,25 @@ require_once '../../back/sistema_global/session.php';
       });
     }
 
-    function mostrar_sistema(){
+
+
+
+    function mostrar_sistema() {
       // verifica si ._especial tiene display none, de ser positivo se lo quitas, de ser negativo se lo agregas
       if ($("._especial").hasClass("hide")) {
         $('._especial').removeClass('hide')
         $('#btn-show-sistema').removeClass('btn-secondary')
         $('#btn-show-sistema').addClass('btn-primary')
-      }else{
+      } else {
         $('#btn-show-sistema').addClass('btn-secondary')
         $('#btn-show-sistema').removeClass('btn-primary')
         $('._especial').addClass('hide')
       }
     }
 
-    const palabras_ban = ['DROP','INSERT','DELETE','UPDATE','SELECT','CREATE','ALTER','TRUNCATE','RENAME','REVOKE','GRANT','COMMIT','ROLLBACK','SAVEPOINT','MERGE','REPLACE','SET','SHOW','USE','DESCRIBE','DESC','EXPLAIN','LOCK','UNLOCK','KILL','FLUSH','ANALYZE','OPTIMIZE','REPAIR','CHECK','ANALYSE','BACKUP','RESTORE','RELOAD','PURGE','RESET','SHUTDOWN','START','STOP','RESTART','STATUS','STATS','VERSION','VARIABLES','WARNINGS','ERRORS','LOGS','BINARY','MASTER','SLAVE', "'", '!','"','#','$','%','&','/','(',')','=','?','¡','¿','´','+','*','¨','^','`','}','{',']','[',';',':',',','.','-','|','@','~','°','¬','·','ç','€','£','§','Ñ','ñ', ' ']
+    const palabras_ban = ['DROP', 'INSERT', 'DELETE', 'UPDATE', 'SELECT', 'CREATE', 'ALTER', 'TRUNCATE', 'RENAME', 'REVOKE', 'GRANT', 'COMMIT', 'ROLLBACK', 'SAVEPOINT', 'MERGE', 'REPLACE', 'SET', 'SHOW', 'USE', 'DESCRIBE', 'DESC', 'EXPLAIN', 'LOCK', 'UNLOCK', 'KILL', 'FLUSH', 'ANALYZE', 'OPTIMIZE', 'REPAIR', 'CHECK', 'ANALYSE', 'BACKUP', 'RESTORE', 'RELOAD', 'PURGE', 'RESET', 'SHUTDOWN', 'START', 'STOP', 'RESTART', 'STATUS', 'STATS', 'VERSION', 'VARIABLES', 'WARNINGS', 'ERRORS', 'LOGS', 'BINARY', 'MASTER', 'SLAVE', "'", '!', '"', '#', '$', '%', '&', '/', '(', ')', '=', '?', '¡', '¿', '´', '+', '*', '¨', '^', '`', '}', '{', ']', '[', ';', ':', ',', '.', '-', '|', '@', '~', '°', '¬', '·', 'ç', '€', '£', '§', 'Ñ', 'ñ', ' ']
 
-    function validarSql(nombre){
+    function validarSql(nombre) {
       // verificar nombre no contenga nada de palabras_ban
       for (let i = 0; i < palabras_ban.length; i++) {
         if (nombre.includes(palabras_ban[i])) {
@@ -244,7 +248,7 @@ require_once '../../back/sistema_global/session.php';
       if (nombre == '') {
         toast_s('error', 'Por favor, indique el nombre del campo')
         return;
-      } 
+      }
 
       if (tipo == '') {
         toast_s('error', 'Por favor, indique el tipo del campo')
@@ -261,7 +265,7 @@ require_once '../../back/sistema_global/session.php';
             nombre: nombre,
             registro: true
           },
-          success: function (text) {
+          success: function(text) {
             text = JSON.parse(text)
             $('#cargando').hide()
             if (text.status == 'success') {
@@ -279,13 +283,13 @@ require_once '../../back/sistema_global/session.php';
           }
         });
 
-      }else{
+      } else {
         toast_s('error', 'El nombre del campo no cumple con los requisitos mínimos')
       }
     }
 
     // cuando el boton btn-guardar sea pulsado, se ejecuta la funcion anterior
-    $(document).ready(function () {
+    $(document).ready(function() {
       document.getElementById('btn-guardar').addEventListener('click', guardar);
     });
   </script>

@@ -120,129 +120,131 @@
 </head>
 
 <body>
-<?php
-// Función para calcular la fecha de pago
-function calcularFechaPagar($row, $conexion) {
-    $identificador = $row['identificador'];
-    $fecha_pagar = $row['fecha_pagar']; // Formato esperado: m-Y
-    $nombre_nomina = $row['nombre_nomina'];
+    <?php
+    // Función para calcular la fecha de pago
+    function calcularFechaPagar($row, $conexion)
+    {
+        $identificador = $row['identificador'];
+        $fecha_pagar = $row['fecha_pagar']; // Formato esperado: m-Y
+        $nombre_nomina = $row['nombre_nomina'];
 
-    $fechaInicio = null;
-    $fechaFin = null;
-    
-    // Consulta para obtener las fechas de aplicar
-    $stmt_conceptos = mysqli_prepare($conexion, "SELECT fecha_aplicar FROM `conceptos_aplicados` WHERE nombre_nomina = ?");
-    $stmt_conceptos->bind_param('s', $nombre_nomina);
-    $stmt_conceptos->execute();
-    $result_conceptos = $stmt_conceptos->get_result();
+        $fechaInicio = null;
+        $fechaFin = null;
 
-    $concepto_valor_max = 0; // Valor máximo para dividir el mes
+        // Consulta para obtener las fechas de aplicar
+        $stmt_conceptos = mysqli_prepare($conexion, "SELECT fecha_aplicar FROM `conceptos_aplicados` WHERE nombre_nomina = ?");
+        $stmt_conceptos->bind_param('s', $nombre_nomina);
+        $stmt_conceptos->execute();
+        $result_conceptos = $stmt_conceptos->get_result();
 
-    if ($result_conceptos->num_rows > 0) {
-        while ($row_conceptos = $result_conceptos->fetch_assoc()) {
-            // Decodificar el array de fecha_aplicar
-            $fechas = json_decode($row_conceptos['fecha_aplicar'], true);
+        $concepto_valor_max = 0; // Valor máximo para dividir el mes
 
-            if ($fechas && is_array($fechas)) {
-                // Tomar el valor más alto de las fechas, sin la 'p'
-                foreach ($fechas as $fecha) {
-                    $valor = intval(str_replace('p', '', $fecha));
-                    if ($valor > $concepto_valor_max) {
-                        $concepto_valor_max = $valor;
+        if ($result_conceptos->num_rows > 0) {
+            while ($row_conceptos = $result_conceptos->fetch_assoc()) {
+                // Decodificar el array de fecha_aplicar
+                $fechas = json_decode($row_conceptos['fecha_aplicar'], true);
+
+                if ($fechas && is_array($fechas)) {
+                    // Tomar el valor más alto de las fechas, sin la 'p'
+                    foreach ($fechas as $fecha) {
+                        $valor = intval(str_replace('p', '', $fecha));
+                        if ($valor > $concepto_valor_max) {
+                            $concepto_valor_max = $valor;
+                        }
                     }
                 }
             }
         }
-    }
-    $stmt_conceptos->close();
+        $stmt_conceptos->close();
 
-    if (preg_match('/^s(\d+)$/', $identificador, $matches)) {
-        // Identificador semanal (s1, s2, s3, ...)
-        $semanaNumero = (int) $matches[1];
+        if (preg_match('/^s(\d+)$/', $identificador, $matches)) {
+            // Identificador semanal (s1, s2, s3, ...)
+            $semanaNumero = (int) $matches[1];
 
-        // Crear la fecha inicial del mes dado
-        $primerDiaMes = DateTime::createFromFormat('m-Y', $fecha_pagar);
-        $primerDiaMes->setDate($primerDiaMes->format('Y'), $primerDiaMes->format('m'), 1);
+            // Crear la fecha inicial del mes dado
+            $primerDiaMes = DateTime::createFromFormat('m-Y', $fecha_pagar);
+            $primerDiaMes->setDate($primerDiaMes->format('Y'), $primerDiaMes->format('m'), 1);
 
-        // Calcular el primer día de la semana (Lunes) y último día (Domingo)
-        $fechaInicio = clone $primerDiaMes;
-        $fechaInicio->modify('+' . ($semanaNumero - 1) . ' weeks')->modify('Monday this week');
-        $fechaFin = clone $fechaInicio;
-        $fechaFin->modify('Sunday this week');
-    } elseif (preg_match('/^q(\d+)$/', $identificador, $matches)) {
-        // Identificador quincenal (q1, q2)
-        $quincenaNumero = (int) $matches[1];
-
-        // Crear la fecha inicial del mes dado
-        $primerDiaMes = DateTime::createFromFormat('m-Y', $fecha_pagar);
-        $primerDiaMes->setDate($primerDiaMes->format('Y'), $primerDiaMes->format('m'), 1);
-
-        if ($quincenaNumero === 1) {
+            // Calcular el primer día de la semana (Lunes) y último día (Domingo)
             $fechaInicio = clone $primerDiaMes;
+            $fechaInicio->modify('+' . ($semanaNumero - 1) . ' weeks')->modify('Monday this week');
             $fechaFin = clone $fechaInicio;
-            $fechaFin->modify('+14 days');
-        } elseif ($quincenaNumero === 2) {
-            $fechaInicio = clone $primerDiaMes;
-            $fechaInicio->modify('+15 days');
+            $fechaFin->modify('Sunday this week');
+        } elseif (preg_match('/^q(\d+)$/', $identificador, $matches)) {
+            // Identificador quincenal (q1, q2)
+            $quincenaNumero = (int) $matches[1];
+
+            // Crear la fecha inicial del mes dado
+            $primerDiaMes = DateTime::createFromFormat('m-Y', $fecha_pagar);
+            $primerDiaMes->setDate($primerDiaMes->format('Y'), $primerDiaMes->format('m'), 1);
+
+            if ($quincenaNumero === 1) {
+                $fechaInicio = clone $primerDiaMes;
+                $fechaFin = clone $fechaInicio;
+                $fechaFin->modify('+14 days');
+            } elseif ($quincenaNumero === 2) {
+                $fechaInicio = clone $primerDiaMes;
+                $fechaInicio->modify('+15 days');
+                $fechaFin = (clone $fechaInicio)->modify('last day of this month');
+            }
+        } elseif ($identificador === 'fecha_unica') {
+            // Fecha única (todo el mes)
+            $fechaInicio = DateTime::createFromFormat('m-Y', $fecha_pagar);
+            $fechaInicio->setDate($fechaInicio->format('Y'), $fechaInicio->format('m'), 1);
             $fechaFin = (clone $fechaInicio)->modify('last day of this month');
-        }
-    } elseif ($identificador === 'fecha_unica') {
-        // Fecha única (todo el mes)
-        $fechaInicio = DateTime::createFromFormat('m-Y', $fecha_pagar);
-        $fechaInicio->setDate($fechaInicio->format('Y'), $fechaInicio->format('m'), 1);
-        $fechaFin = (clone $fechaInicio)->modify('last day of this month');
-    } elseif (preg_match('/^p(\d+)$/', $identificador, $matches)) {
-        // Identificador personalizado (p1, p2, p3, ...)
-        $periodoNumero = (int) $matches[1];
+        } elseif (preg_match('/^p(\d+)$/', $identificador, $matches)) {
+            // Identificador personalizado (p1, p2, p3, ...)
+            $periodoNumero = (int) $matches[1];
 
-        // Crear la fecha inicial del mes dado
-        $primerDiaMes = DateTime::createFromFormat('m-Y', $fecha_pagar);
-        $primerDiaMes->setDate($primerDiaMes->format('Y'), $primerDiaMes->format('m'), 1);
-        $ultimoDiaMes = (clone $primerDiaMes)->modify('last day of this month');
+            // Crear la fecha inicial del mes dado
+            $primerDiaMes = DateTime::createFromFormat('m-Y', $fecha_pagar);
+            $primerDiaMes->setDate($primerDiaMes->format('Y'), $primerDiaMes->format('m'), 1);
+            $ultimoDiaMes = (clone $primerDiaMes)->modify('last day of this month');
 
-        if ($concepto_valor_max > 0) {
-            // Dividir el mes en partes según el valor máximo de fechas de aplicación
-            $intervaloDias = (int) ceil($ultimoDiaMes->diff($primerDiaMes)->days / $concepto_valor_max);
+            if ($concepto_valor_max > 0) {
+                // Dividir el mes en partes según el valor máximo de fechas de aplicación
+                $intervaloDias = (int) ceil($ultimoDiaMes->diff($primerDiaMes)->days / $concepto_valor_max);
 
-            $fechaInicio = clone $primerDiaMes;
-            $fechaFin = clone $fechaInicio;
-            $fechaFin->modify('+' . ($periodoNumero * $intervaloDias - 1) . ' days');
+                $fechaInicio = clone $primerDiaMes;
+                $fechaFin = clone $fechaInicio;
+                $fechaFin->modify('+' . ($periodoNumero * $intervaloDias - 1) . ' days');
 
-            if ($fechaFin > $ultimoDiaMes) {
-                $fechaFin = $ultimoDiaMes;
+                if ($fechaFin > $ultimoDiaMes) {
+                    $fechaFin = $ultimoDiaMes;
+                }
             }
         }
+
+        // Formatear fechas para mostrar el rango
+        if ($fechaInicio && $fechaFin) {
+            return $fechaInicio->format('d-m-Y') . ' hasta ' . $fechaFin->format('d-m-Y');
+        } else {
+            return null; // Correlativo no reconocido
+        }
     }
 
-    // Formatear fechas para mostrar el rango
-    if ($fechaInicio && $fechaFin) {
-        return $fechaInicio->format('d-m-Y') . ' hasta ' . $fechaFin->format('d-m-Y');
-    } else {
-        return null; // Correlativo no reconocido
+
+
+    // Definir la función obtenerCodPartida antes de usarla
+    function obtenerCodPartida($concepto, $stmt)
+    {
+        $stmt->execute(['nom_concepto' => $concepto]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result ? $result['codigo_concepto'] : '';
     }
-}
 
+    // Conexión a la base de datos
+    $conn = new PDO('mysql:host=localhost;dbname=sigob', 'root', '');
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
+    // Parámetro para paginación
+    $pagina = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
+    $registrosPorPagina = 175; // Cambiado a 175 registros por página
+    $offset = ($pagina - 1) * $registrosPorPagina;
 
-// Definir la función obtenerCodPartida antes de usarla
-function obtenerCodPartida($concepto, $stmt) {
-    $stmt->execute(['nom_concepto' => $concepto]);
-    $result = $stmt->fetch(PDO::FETCH_ASSOC);
-    return $result ? $result['codigo_concepto'] : '';
-}
+    $correlativo = $_GET['correlativo'];
 
-// Conexión a la base de datos
-$conn = new PDO('mysql:host=localhost;dbname=sigob', 'root', '');
-$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-// Parámetro para paginación
-$pagina = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
-$registrosPorPagina = 175; // Cambiado a 175 registros por página
-$offset = ($pagina - 1) * $registrosPorPagina;
-
-$correlativo = $_GET['correlativo'];
-
-$query = "
+    $query = "
     SELECT
         e.cedula AS Cédula,
         e.nombres AS Nombres,
@@ -279,58 +281,58 @@ $query = "
     LIMIT :offset, :limit
 ";
 
-$stmt = $conn->prepare($query);
-$stmt->bindValue(':correlativo', $correlativo, PDO::PARAM_STR);
-$stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
-$stmt->bindValue(':limit', $registrosPorPagina, PDO::PARAM_INT);
-$stmt->execute();
+    $stmt = $conn->prepare($query);
+    $stmt->bindValue(':correlativo', $correlativo, PDO::PARAM_STR);
+    $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+    $stmt->bindValue(':limit', $registrosPorPagina, PDO::PARAM_INT);
+    $stmt->execute();
 
-$results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Verifica si hay resultados
-if (count($results) > 0) {
-    $row2 = $results[0];  // Obtener el primer resultado
+    // Verifica si hay resultados
+    if (count($results) > 0) {
+        $row2 = $results[0];  // Obtener el primer resultado
 
-    $row3 = [
-        'identificador' => $row2['identificador'], // Puede ser 's1', 'q1', 'fecha_unica', etc.
-        'fecha_pagar' => $row2['fecha_pagar'], // Formato m-Y
-        'nombre_nomina' => $row2['nombre_nomina'],
-    ];
+        $row3 = [
+            'identificador' => $row2['identificador'], // Puede ser 's1', 'q1', 'fecha_unica', etc.
+            'fecha_pagar' => $row2['fecha_pagar'], // Formato m-Y
+            'nombre_nomina' => $row2['nombre_nomina'],
+        ];
 
-    // Calcular el periodo de pago
-    $fechaPagar2 = calcularFechaPagar($row3,$conexion);
+        // Calcular el periodo de pago
+        $fechaPagar2 = calcularFechaPagar($row3, $conexion);
 
-    // Agrupar empleados por unidad organizacional y categoría
-    $groupedEmployees = [];
-    $uniqueEmployees = []; // Para almacenar empleados únicos
+        // Agrupar empleados por unidad organizacional y categoría
+        $groupedEmployees = [];
+        $uniqueEmployees = []; // Para almacenar empleados únicos
 
-    foreach ($results as $row) {
-        $employeeKey = $row['Cédula']; // Usar la cédula como identificador único
+        foreach ($results as $row) {
+            $employeeKey = $row['Cédula']; // Usar la cédula como identificador único
 
-        // Verificar si el empleado ya ha sido agregado
-        if (!isset($uniqueEmployees[$employeeKey])) {
-            $headerKey = $row['id_dependencia'] . '|' . $row['dependencia'] . '|' . $row['cod_dependencia'] . '|' . $row['categoria'] . '|' . $row['categoria_nombre'] . '|' . $fechaPagar2 . '|' . $row['nombre_nomina'];
+            // Verificar si el empleado ya ha sido agregado
+            if (!isset($uniqueEmployees[$employeeKey])) {
+                $headerKey = $row['id_dependencia'] . '|' . $row['dependencia'] . '|' . $row['cod_dependencia'] . '|' . $row['categoria'] . '|' . $row['categoria_nombre'] . '|' . $fechaPagar2 . '|' . $row['nombre_nomina'];
 
-            if (!isset($groupedEmployees[$headerKey])) {
-                $groupedEmployees[$headerKey] = [
-                    'categoria_nombre' => $row['categoria_nombre'],
-                    'employees' => []
-                ];
+                if (!isset($groupedEmployees[$headerKey])) {
+                    $groupedEmployees[$headerKey] = [
+                        'categoria_nombre' => $row['categoria_nombre'],
+                        'employees' => []
+                    ];
+                }
+                $groupedEmployees[$headerKey]['employees'][] = $row;
+                $uniqueEmployees[$employeeKey] = true; // Marcar el empleado como agregado
             }
-            $groupedEmployees[$headerKey]['employees'][] = $row;
-            $uniqueEmployees[$employeeKey] = true; // Marcar el empleado como agregado
         }
-    }
 
-    // Preparamos la consulta para obtener el código de partida
-    $codPartidaStmt = $conn->prepare("SELECT codigo_concepto FROM conceptos WHERE nom_concepto = :nom_concepto");
+        // Preparamos la consulta para obtener el código de partida
+        $codPartidaStmt = $conn->prepare("SELECT codigo_concepto FROM conceptos WHERE nom_concepto = :nom_concepto");
 
-    foreach ($groupedEmployees as $headerKey => $data) {
-        list($id_dependencia, $dependencia, $cod_dependencia, $categoria, $categoria_nombre, $fechaPagar2, $nombre_nomina) = explode('|', $headerKey);
-        $employees = $data['employees'];
+        foreach ($groupedEmployees as $headerKey => $data) {
+            list($id_dependencia, $dependencia, $cod_dependencia, $categoria, $categoria_nombre, $fechaPagar2, $nombre_nomina) = explode('|', $headerKey);
+            $employees = $data['employees'];
 
-        // Imprimir el encabezado
-        echo "
+            // Imprimir el encabezado
+            echo "
         <div style='font-size: 10px;'>
             <table>
                 <tr>
@@ -370,20 +372,20 @@ if (count($results) > 0) {
             </table>
         ";
 
-        // Imprimir la tabla de empleados
-        $pageCounter = 0;
-        foreach ($employees as $index => $row) {
-            if ($index > 0 && $index % $registrosPorPagina == 0) {
-                echo "<div class='page-break'></div>";
-                $pageCounter++;
-            }
-            
-            if ($pageCounter % 4 == 0 && $pageCounter > 0) {
-                echo '<div class="page-break"></div>';
-            }
+            // Imprimir la tabla de empleados
+            $pageCounter = 0;
+            foreach ($employees as $index => $row) {
+                if ($index > 0 && $index % $registrosPorPagina == 0) {
+                    echo "<div class='page-break'></div>";
+                    $pageCounter++;
+                }
 
-            echo "<table cellspacing='10'>";
-            echo "<thead>
+                if ($pageCounter % 4 == 0 && $pageCounter > 0) {
+                    echo '<div class="page-break"></div>';
+                }
+
+                echo "<table cellspacing='10'>";
+                echo "<thead>
                 <tr>
                     <th></th>
                     <th></th>
@@ -396,17 +398,17 @@ if (count($results) > 0) {
             </thead>
             <tbody>";
 
-            // Datos principales del empleado
-            echo "<tr class='my-1'>
+                // Datos principales del empleado
+                echo "<tr class='my-1'>
                 <td COLSPAN=3 class='fw-bold bg-gray'>{$row['Cédula']} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{$row['Nombres']}</td>
                 <td COLSPAN=2><b>Cargo: </b>&nbsp;&nbsp;&nbsp; {$row['Cargo']}</td>";
 
-            $sueldo = $row['Total_Pagar'];
-            $asignaciones = json_decode($row['Asignacion'], true);
-            $deducciones = json_decode($row['Deduccion'], true);
-            $aportes = json_decode($row['Aporte'], true);
+                $sueldo = $row['Total_Pagar'];
+                $asignaciones = json_decode($row['Asignacion'], true);
+                $deducciones = json_decode($row['Deduccion'], true);
+                $aportes = json_decode($row['Aporte'], true);
 
-            echo " <td></td>
+                echo " <td></td>
             <td></td>
             </tr>
             <tr>
@@ -422,7 +424,7 @@ if (count($results) > 0) {
                 <td></td>
             </tr>";
 
-            echo "<tr >
+                echo "<tr >
                 <th class='bt bb w-10 text-left'>Codigo</th>
                 <th class='bt bb text-left'>Nombre de Concepto</th>
                 <th class='bt bb text-center'>Cantidad</th>
@@ -432,13 +434,13 @@ if (count($results) > 0) {
                 <th class='bt bb text-center'>Saldo</th>
                 </tr>";
 
-            $neto = 0;
-            $saldo = 0;
+                $neto = 0;
+                $saldo = 0;
 
-            $totalAsignaciones = 0;
-            foreach ($asignaciones as $concepto => $valor) {
-                $codigo_concepto = obtenerCodPartida($concepto, $codPartidaStmt);
-                echo "<tr>
+                $totalAsignaciones = 0;
+                foreach ($asignaciones as $concepto => $valor) {
+                    $codigo_concepto = obtenerCodPartida($concepto, $codPartidaStmt);
+                    echo "<tr>
                         <td>{$codigo_concepto}</td>
                         <td>{$concepto}</td>
                         <td class='text-center'></td>
@@ -447,15 +449,15 @@ if (count($results) > 0) {
                         <td class='text-center'>" . number_format(0, 2, '.', ',') . "</td>
                         <td class='text-center'>" . number_format($valor, 2, '.', ',') . "</td>
                     </tr>";
-                $totalAsignaciones += $valor;
-                $saldo += $valor;
-                $neto += $valor;
-            }
+                    $totalAsignaciones += $valor;
+                    $saldo += $valor;
+                    $neto += $valor;
+                }
 
-            $totalDeducciones = 0;
-            foreach ($deducciones as $concepto => $valor) {
-                $codigo_concepto = obtenerCodPartida($concepto, $codPartidaStmt);
-                echo "<tr>
+                $totalDeducciones = 0;
+                foreach ($deducciones as $concepto => $valor) {
+                    $codigo_concepto = obtenerCodPartida($concepto, $codPartidaStmt);
+                    echo "<tr>
                         <td>{$codigo_concepto}</td>
                         <td>{$concepto}</td>
                         <td class='text-center'></td>
@@ -464,15 +466,15 @@ if (count($results) > 0) {
                         <td class='text-center'>" . number_format(0, 2, '.', ',') . "</td>
                         <td class='text-center'>" . number_format(-$valor, 2, '.', ',') . "</td>
                     </tr>";
-                $totalDeducciones += $valor;
-                $saldo -= $valor;
-                $neto -= $valor;
-            }
+                    $totalDeducciones += $valor;
+                    $saldo -= $valor;
+                    $neto -= $valor;
+                }
 
-            $totalAportes = 0;
-            foreach ($aportes as $concepto => $valor) {
-                $codigo_concepto = obtenerCodPartida($concepto, $codPartidaStmt);
-                echo "<tr>
+                $totalAportes = 0;
+                foreach ($aportes as $concepto => $valor) {
+                    $codigo_concepto = obtenerCodPartida($concepto, $codPartidaStmt);
+                    echo "<tr>
                         <td>{$codigo_concepto}</td>
                         <td>{$concepto}</td>
                         <td class='text-center'></td>
@@ -481,12 +483,12 @@ if (count($results) > 0) {
                         <td class='text-center'>" . number_format($valor, 2, '.', ',') . "</td>
                         <td class='text-center'>" . number_format($valor, 2, '.', ',') . "</td>
                     </tr>";
-                $totalAportes += $valor;
-                $saldo += $valor;
-                $neto += $valor;
-            }
+                    $totalAportes += $valor;
+                    $saldo += $valor;
+                    $neto += $valor;
+                }
 
-            echo "<tr >
+                echo "<tr >
                 <th class='bt bb w-10 text-left'>Total</th>
                 <th class='bt bb text-left'></th>
                 <th class='bt bb text-center'></th>
@@ -497,12 +499,12 @@ if (count($results) > 0) {
                 </tr>
             </tbody>
         </table>";
+            }
         }
+    } else {
+        echo "No se encontraron resultados para el correlativo dado.";
     }
-} else {
-    echo "No se encontraron resultados para el correlativo dado.";
-}
-?>
+    ?>
 </body>
-</html>
 
+</html>

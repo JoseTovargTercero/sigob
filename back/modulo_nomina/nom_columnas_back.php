@@ -11,27 +11,122 @@ if (isset($_POST["tabla"])) {
             $columnas[] = $row;
         }
     }
+    // borrar repetidos de $columnas
+    $columnas = array_map("unserialize", array_unique(array_map("serialize", $columnas)));
+
     echo json_encode($columnas);
-    
-}elseif (isset($_POST["registro"])) {
+} elseif (isset($_POST["registro"])) {
 
     $nombre = $_POST["nombre"];
     $tipo = $_POST["tipo"];
     $longitud = '';
-    
+
     if ($tipo == 'varchar') {
         $longitud = '255';
     } elseif ($tipo == 'int') {
         $longitud = '11';
     }
-    
+
     // Añadir los tipos de datos que no requieren longitud
     $tipos_sin_longitud = ['date', 'datetime', 'timestamp', 'time', 'year'];
-    
-    $palabras_ban = ['DROP', 'INSERT', 'DELETE', 'UPDATE', 'SELECT', 'CREATE', 'ALTER', 'TRUNCATE', 'RENAME', 'REVOKE', 'GRANT', 'COMMIT', 'ROLLBACK', 'SAVEPOINT', 'MERGE', 'REPLACE', 'SET', 'SHOW', 'USE', 'DESCRIBE', 'DESC', 'EXPLAIN', 'LOCK', 'UNLOCK', 'KILL', 'FLUSH', 'ANALYZE', 'OPTIMIZE', 'REPAIR', 'CHECK', 'ANALYSE', 'BACKUP', 'RESTORE', 'RELOAD', 'PURGE', 'RESET', 'SHUTDOWN', 'START', 'STOP', 'RESTART', 'STATUS', 'STATS', 'VERSION', 'VARIABLES', 'WARNINGS', 'ERRORS', 'LOGS', 'BINARY', 'MASTER', 'SLAVE', "'", '!', '"', '#', '$', '%', '&', '/', '(', ')', '=', '?', '¡', '¿', '´', '+', '*', '¨',  '^', '`', '}', '{', ']', '[', ';', ':', ',', '.', '-', '|', '@', '~', '°', '¬', '·', 'ç', '€', '£', '§', 'Ñ', 'ñ', ' '
+
+    $palabras_ban = [
+        'DROP',
+        'INSERT',
+        'DELETE',
+        'UPDATE',
+        'SELECT',
+        'CREATE',
+        'ALTER',
+        'TRUNCATE',
+        'RENAME',
+        'REVOKE',
+        'GRANT',
+        'COMMIT',
+        'ROLLBACK',
+        'SAVEPOINT',
+        'MERGE',
+        'REPLACE',
+        'SET',
+        'SHOW',
+        'USE',
+        'DESCRIBE',
+        'DESC',
+        'EXPLAIN',
+        'LOCK',
+        'UNLOCK',
+        'KILL',
+        'FLUSH',
+        'ANALYZE',
+        'OPTIMIZE',
+        'REPAIR',
+        'CHECK',
+        'ANALYSE',
+        'BACKUP',
+        'RESTORE',
+        'RELOAD',
+        'PURGE',
+        'RESET',
+        'SHUTDOWN',
+        'START',
+        'STOP',
+        'RESTART',
+        'STATUS',
+        'STATS',
+        'VERSION',
+        'VARIABLES',
+        'WARNINGS',
+        'ERRORS',
+        'LOGS',
+        'BINARY',
+        'MASTER',
+        'SLAVE',
+        "'",
+        '!',
+        '"',
+        '#',
+        '$',
+        '%',
+        '&',
+        '/',
+        '(',
+        ')',
+        '=',
+        '?',
+        '¡',
+        '¿',
+        '´',
+        '+',
+        '*',
+        '¨',
+        '^',
+        '`',
+        '}',
+        '{',
+        ']',
+        '[',
+        ';',
+        ':',
+        ',',
+        '.',
+        '-',
+        '|',
+        '@',
+        '~',
+        '°',
+        '¬',
+        '·',
+        'ç',
+        '€',
+        '£',
+        '§',
+        'Ñ',
+        'ñ',
+        ' '
     ];
-    
-    function validarSql($nombre) {
+
+    function validarSql($nombre)
+    {
         global $palabras_ban;
         // Verificar nombre no contenga nada de palabras_ban
         foreach ($palabras_ban as $palabra) {
@@ -41,7 +136,7 @@ if (isset($_POST["tabla"])) {
         }
         return true;
     }
-    
+
     if (validarSql($nombre)) {
         // verifica si en la tabla empleados existe una columna con el mismo $nombre
         $sql = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'empleados' AND COLUMN_NAME = ?";
@@ -49,7 +144,7 @@ if (isset($_POST["tabla"])) {
         $stmt->bind_param('s', $nombre);
         $stmt->execute();
         $result = $stmt->get_result();
-    
+
         if ($result->num_rows == 0) {
             // Crear la consulta SQL para agregar la columna
             if (in_array($tipo, $tipos_sin_longitud)) {
@@ -57,7 +152,7 @@ if (isset($_POST["tabla"])) {
             } else {
                 $sql = "ALTER TABLE empleados ADD $nombre $tipo($longitud)";
             }
-            
+
             if ($conexion->query($sql) === TRUE) {
                 echo json_encode(['status' => 'success', 'mensaje' => 'Campo agregado correctamente']);
             } else {
@@ -66,12 +161,9 @@ if (isset($_POST["tabla"])) {
         } else {
             echo json_encode(['status' => 'error', 'mensaje' => 'Ya existe un campo con ese nombre']);
         }
-        
     } else {
         echo json_encode(['status' => 'error', 'mensaje' => 'El nombre del campo no cumple con los requisitos mínimos']);
     }
-    
 }
 
 $conexion->close();
-?>

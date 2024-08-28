@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 $stmt = mysqli_prepare($conexion, "SELECT * FROM `go_planes` WHERE ano = ?");
 $stmt->bind_param('s', $var);
@@ -6,8 +6,7 @@ $stmt->execute();
 $result = $stmt->get_result();
 if ($result->num_rows > 0) {
   while ($row = $result->fetch_assoc()) {
-
-}
+  }
 }
 $stmt->close();
 
@@ -20,7 +19,7 @@ $stmt->close();
 $stmt2 = $conexion->prepare("UPDATE `sheet_r` SET `estatus`='CERRADO' WHERE id=?");
 $stmt2->bind_param("s", $caso);
 $stmt2->execute();
-$stmt2 -> close();
+$stmt2->close();
 
 
 
@@ -55,7 +54,7 @@ $stmt_o->execute();
 
 if ($stmt_o) {
   $id_r = $conexion->insert_id;
-}else {
+} else {
   echo "error";
 }
 $stmt_o->close();
@@ -81,5 +80,3 @@ function contar($condicion)
 
 
 contar("SELECT count(*) FROM go_planes WHERE tipo='2' AND cerrado='1' AND ano='$ano' AND trimestre='1'")
-
-?>
