@@ -1,5 +1,7 @@
 <?php
 require_once '../sistema_global/conexion.php';
+require_once '../sistema_global/session.php';
+require_once '../sistema_global/notificaciones.php';
 
 $api_key = "4bfc66a740d312008475dded";
 $url2 = "https://v6.exchangerate-api.com/v6/{$api_key}/pair/USD/VES";
@@ -20,7 +22,7 @@ $pagar_desde = $_POST['pagar_desde'];
 $cedula_empleado = $conexion->real_escape_string($cedula_empleado);
 
 // Realizar la consulta a la tabla empleados
-$query = "SELECT id FROM empleados WHERE cedula = '$cedula_empleado' LIMIT 1";
+$query = "SELECT id FROM empleados WHERE cedula = '$cedula_empleado' AND status = 'S' LIMIT 1";
 $resultado = $conexion->query($query);
 
 // Obtener el id del empleado
@@ -30,6 +32,8 @@ if ($resultado && $resultado->num_rows > 0) {
 } else {
     // Manejar el caso donde no se encuentre un registro
     $empleado_id = null; // o cualquier valor que consideres apropiado
+    echo json_encode(["status" => "error", "mensaje" => "No se encontro al empleado seleccionado o no tiene status de Suspendido"]);
+    exit;
 }
 
 
@@ -157,7 +161,9 @@ if ($resultado && $resultado->num_rows > 0) {
     }
 }
 if ($status_response == "1") {
+                        notificar(['nomina'], 10);
                         echo $response;
+
                     }
                 
                 

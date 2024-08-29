@@ -19,6 +19,7 @@ function textNotification($type)
     '7' => ['Aprobó la modificación de un empleado', 'front/mod_nomina/nom_empleados_tabla'],
     '8' => ['Rechazó la petición de nomina', 'front/mod_nomina/nom_peticiones_tabla'],
     '9' => ['Aprobo el pago de nomina', 'front/mod_nomina/nom_peticiones_tabla'],
+    '10' => ['Se ha realizado un reintegro a un empleado, se debe cambiar el status a Activo', 'front/mod_nomina/nom_peticiones_tabla'],
 
     // mas opciones
   );
