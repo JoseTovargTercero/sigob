@@ -103,16 +103,14 @@ export const validateEmployeeTable = async () => {
   })
 }
 
-async function confirmDelete({ id, row, table }) {
+export async function confirmDeleteEmployee({ id, row, table }) {
+  console.log(row)
   confirmNotification({
     type: NOTIFICATIONS_TYPES.delete,
     successFunction: async function () {
       await deleteEmployee(id)
 
-      let filteredRows = employeeTable.rows(function (idx, data, node) {
-        return node === row
-      })
-      filteredRows.remove().draw()
+      employeeTable.row(row).remove().draw()
     },
   })
 }

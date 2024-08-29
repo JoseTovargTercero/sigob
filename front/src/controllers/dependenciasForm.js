@@ -108,9 +108,12 @@ export function validateDependenciaForm() {
       let { cod_dependencia, dependencia, id_categoria } =
         dependenciaData.fullInfo[0]
 
-      let categoria = categorias.mappedData.find(
-        (categoria) => categoria.id == id_categoria
-      )
+      let categoria = id_categoria
+        ? categorias.mappedData.find(
+            (categoria) => categoria.id == id_categoria
+          )
+        : ''
+      console.log(categoria)
 
       console.log(categoria, categoria.name)
       formElement.dependencia.value = dependencia

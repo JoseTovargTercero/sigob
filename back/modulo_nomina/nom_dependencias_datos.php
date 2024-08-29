@@ -157,7 +157,7 @@ function eliminarDependencia($informacion)
 
     try {
         if (!isset($informacion["id"])) {
-            throw new Exception('No se ha indicado el ID de unidad a eño,omar');
+            throw new Exception('No se ha indicado el ID de la unidad a eliminar');
         }
         $id = $informacion["id"];
 
@@ -166,7 +166,7 @@ function eliminarDependencia($informacion)
         $stmt_emp->execute();
         $result = $stmt_emp->get_result();
         if ($result->num_rows > 0) {
-            throw new Exception("Ya existe un empleado registrado con esta dependencia");
+            throw new Exception("Ya existe un empleado registrado con esta unidad");
         }
 
 
@@ -177,7 +177,7 @@ function eliminarDependencia($informacion)
         if ($stmt_dep->execute()) {
             $response = json_encode(["success" => "Unidad eliminada correctamente."]);
         } else {
-            throw new Exception("Error al eliminar la dependencia: " . $conexion->error);
+            throw new Exception("Error al eliminar la unidad: " . $conexion->error);
         }
 
         $stmt_dep->close();

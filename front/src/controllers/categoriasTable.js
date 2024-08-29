@@ -1,4 +1,4 @@
-import { getCategorias } from '../api/categorias.js'
+import { deleteCategoria, getCategorias } from '../api/categorias.js'
 import { confirmNotification } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 
@@ -83,13 +83,11 @@ export function confirmDeleteCategoria({ id, row, table }) {
   confirmNotification({
     type: NOTIFICATIONS_TYPES.delete,
     successFunction: async function () {
-      let filteredRows = categoriasTable.rows(function (idx, data, node) {
-        return node === row
-      })
+      let res = await deleteCategoria({ informacion: { id: id } })
 
       if (res) {
         if (res.error) return
-        filteredRows.remove().draw()
+        categoriasTable.row(row).remove().draw()
       }
       // let res = await deleteDependencyData(id)
       // if (res.error) return

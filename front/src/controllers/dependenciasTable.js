@@ -92,19 +92,15 @@ export function confirmDeleteDependencia({ id, row, table }) {
   confirmNotification({
     type: NOTIFICATIONS_TYPES.delete,
     successFunction: async function () {
-      let filteredRows = dependenciaTable.rows(function (idx, data, node) {
-        return node === row
-      })
-
       let res = await deleteDependencia({ informacion: { id: id } })
       console.log(res)
       if (res) {
         if (res.error) return
-        filteredRows.remove().draw()
+        dependenciaTable.row(row).remove().draw()
       }
       // ELIMINAR FILA DE LA TABLA CON LA API DE DATATABLES
     },
-    message: '¿Deseas eliminar esta dependencia?',
+    message: '¿Deseas eliminar esta unidad?',
   })
 }
 

@@ -23,7 +23,10 @@ import {
   validateModal,
 } from '../helpers/helpers.js'
 import { ALERT_TYPES, NOTIFICATIONS_TYPES } from '../helpers/types.js'
-import { validateEmployeeTable } from './empleadosTable.js'
+import {
+  confirmDeleteEmployee,
+  validateEmployeeTable,
+} from './empleadosTable.js'
 
 let fieldList = {
   nombres: '',
@@ -441,11 +444,10 @@ function validateEmployeeForm({
   d.addEventListener('click', (e) => {
     if (e.target.classList.contains('btn-delete')) {
       let fila = e.target.closest('tr')
-
-      confirmDelete({
+      console.log(fila)
+      confirmDeleteEmployee({
         id: e.target.dataset.id,
         row: fila,
-        table: e.target.dataset.table,
       })
     }
 

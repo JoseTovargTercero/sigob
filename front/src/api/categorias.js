@@ -91,9 +91,43 @@ const updateCategoria = async ({ informacion }) => {
     console.log(e)
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
-      message: 'Error al regactistrar categoria',
+      message: 'Error al actualizar categoria',
     })
   }
 }
 
-export { getCategorias, sendCategoria, updateCategoria }
+const deleteCategoria = async ({ informacion }) => {
+  try {
+    let res = await fetch(categoriasUrl, {
+      method: 'POST',
+      body: JSON.stringify({ informacion, accion: 'eliminar' }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    let clone = res.clone()
+    let text = await clone.text()
+    console.log(text)
+    const json = await res.json()
+
+    if (json.success) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.done,
+        message: json.success,
+      })
+    }
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
+
+    return json
+  } catch (e) {
+    console.log(e)
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al eliminar categoria',
+    })
+  }
+}
+
+export { getCategorias, sendCategoria, updateCategoria, deleteCategoria }

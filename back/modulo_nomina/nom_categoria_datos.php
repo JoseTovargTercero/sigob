@@ -38,7 +38,7 @@ function obtenerCategorias()
             }
             $response = json_encode(["success" => $datos]);
         } else {
-            $response = json_encode(["error" => "No se encontraron categorías registradas"]);
+            $response = json_encode(["error" => "No se encontraron categorias registradas"]);
         }
 
         $stmt->close();
@@ -58,7 +58,7 @@ function crearCategoria($informacion)
 
     try {
         if (!isset($informacion["categoria"]) || !isset($informacion["categoria_nombre"])) {
-            throw new Exception('El campo categoría o nombre están vacíos');
+            throw new Exception('El campo categoria o nombre están vacíos');
         }
         $categoria = $informacion["categoria"];
         $categoria_nombre = $informacion["categoria_nombre"];
@@ -69,9 +69,9 @@ function crearCategoria($informacion)
         $stmt->execute();
 
         if ($stmt->affected_rows > 0) {
-            $response = json_encode(["success" => "Categoría creada con éxito"]);
+            $response = json_encode(["success" => "Categoria creada con éxito"]);
         } else {
-            throw new Exception("Error al insertar la categoría: $conexion->error");
+            throw new Exception("Error al insertar la categoria: $conexion->error");
         }
 
         $stmt->close();
@@ -91,10 +91,10 @@ function actualizarCategoria($informacion)
 
     try {
         if (!isset($informacion["id"])) {
-            throw new Exception('No se ha indicado el ID de categoría a actualizar');
+            throw new Exception('No se ha indicado el ID de categoria a actualizar');
         }
         if (!isset($informacion["categoria"]) || !isset($informacion["categoria_nombre"])) {
-            throw new Exception('El campo categoría o nombre están vacíos');
+            throw new Exception('El campo categoria o nombre están vacíos');
         }
         $id = $informacion["id"];
         $categoria = $informacion["categoria"];
@@ -122,6 +122,57 @@ function actualizarCategoria($informacion)
     }
 }
 
+function eliminarCategoria($informacion)
+{
+
+    global $conexion;
+
+    try {
+        if (!isset($informacion["id"])) {
+            throw new Exception('No se ha indicado el ID de la categoria a eliminar');
+        }
+        $id = $informacion["id"];
+
+        $stmt_emp = $conexion->prepare("SELECT * FROM `empleados` WHERE id_categoria = ?");
+        $stmt_emp->bind_param('s', $id);
+        $stmt_emp->execute();
+        $result = $stmt_emp->get_result();
+        if ($result->num_rows > 0) {
+            throw new Exception("Ya existe un empleado registrado con esta categoria");
+        }
+
+        $stmt_dep = $conexion->prepare("SELECT * FROM `dependencias` WHERE id_categoria = ?");
+        $stmt_dep->bind_param('s', $id);
+        $stmt_dep->execute();
+        $result = $stmt_dep->get_result();
+        if ($result->num_rows > 0) {
+            throw new Exception("Ya existe una unidad registrada con esta categoria");
+        }
+
+
+
+        $stmt_cat = $conexion->prepare("DELETE FROM `categorias` WHERE id = ?");
+        $stmt_cat->bind_param('s', $id);
+
+
+        if ($stmt_cat->execute()) {
+            $response = json_encode(["success" => "Categoria eliminada correctamente."]);
+        } else {
+            throw new Exception("Error al eliminar la categoria: " . $conexion->error);
+        }
+
+        $stmt_cat->close();
+        $conexion->close();
+
+        return $response;
+    } catch (Exception $e) {
+        // Registrar el error en un archivo de registro
+        // error_log('Error: ' . $e->getMessage(), 3, '/ruta/al/archivo_de_error.log');
+        return json_encode(['error' => $e->getMessage()]);
+    }
+}
+
+
 
 
 
@@ -140,7 +191,11 @@ function procesarPeticion($data)
         if ($accion === "actualizar") {
             return actualizarCategoria($data["informacion"]);
         }
-        
+
+        if ($accion === "eliminar") {
+            return eliminarCategoria($data["informacion"]);
+        }
+
         return json_encode(['error' => "Acción no aceptada"]);
     } else {
 
