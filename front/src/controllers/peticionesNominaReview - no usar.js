@@ -4,7 +4,6 @@ import {
   confirmarPeticionNomina,
   generarNominaTxt,
   getComparacionNomina,
-  getComparacionNomina2,
   getPeticionesNomina,
   getRegConPeticionesNomina,
 } from '../api/peticionesNomina.js'
@@ -18,82 +17,104 @@ import {
   loadMovimientosTable,
   reloadTableMovimientos,
 } from './movimientosTable.js'
-import { loadRegconRequestTable } from './regcon_peticionesTable.js'
 
 const d = document
 const w = window
 
-let fieldList = {}
+let fieldList = {
+  'select-nomina': '',
+}
+
+let fieldListErrors = {
+  'select-nomina': {
+    value: true,
+    message: 'Seleccione una nómina a consultar',
+    type: 'text',
+  },
+}
 
 let nominas = {}
 
 let correcciones = []
 let movimientosId = []
 
-export async function validateRequestNomForm() {
+export async function validateRequestNomForm({
+  selectId,
+  consultBtnId,
+  formId,
+}) {
   let requestInfo = await getRegConPeticionesNomina()
 
-  let requestComparationForm = d.getElementById('request-nom-form')
+  console.log(requestInfo)
+
+  // let selectNom = d.getElementById(selectId)
+  // let consultNom = d.getElementById(consultBtnId)
+  let requestComparationForm = d.getElementById(formId)
 
   let requestInformation = d.getElementById('request-information')
 
+  let selectValues = requestInfo
+    .map((el) => {
+      if (el.status == 0) {
+        nominas.correlativo = el.correlativo
+        nominas.nombre_nomina = el.nombre_nomina
+        return `<option value="${el.correlativo}">${el.correlativo} - ${el.nombre_nomina}</option>`
+      }
+    })
+    .join('')
+
+  selectNom.insertAdjacentHTML('beforeend', selectValues)
+
+  selectNom.addEventListener('change', (e) => {
+    fieldList = validateInput({
+      target: e.target,
+      fieldList,
+      fieldListErrors,
+      type: fieldListErrors[e.target.name].type,
+    })
+    // console.log(fieldList)
+  })
+
   d.addEventListener('click', async (e) => {
-    if (e.target.dataset.peticionId) {
-      requestInformation.classList.remove('hide')
-      let peticion = await getRegConPeticionesNomina(
-        e.target.dataset.peticionId
+    if (fieldList['select-nomina'] === '') return
+
+    if (e.target === 'consul') {
+      movimientosId = []
+      correcciones = []
+      let result = requestInfo.find(
+        (el) => el.correlativo === fieldList['select-nomina']
       )
+      fieldList.frecuencia = result.frecuencia
+      fieldList.identificador = result.identificador
+      fieldList.id = result.id
+      fieldList.correlativo = result.correlativo
 
-      // Para uso en otros scopes
-      fieldList.frecuencia = peticion.frecuencia
-      fieldList.identificador = peticion.identificador
-      fieldList.nombre_nomina = peticion.nombre_nomina
-      fieldList.id = peticion.id
-      fieldList.correlativo = peticion.correlativo
+      console.log(fieldList)
 
-      let comparacionNomina = await getComparacionNomina({
-        correlativo: peticion.correlativo,
-        nombre_nomina: peticion.nombre_nomina,
-      })
+      let peticiones = await getComparacionNomina(result)
+      peticiones.confirmBtn = true
+
+      console.log(peticiones)
+
+      requestInformation.classList.remove('hide')
 
       let tablaMovimietnos = await loadMovimientosTable({
-        id_nomina: comparacionNomina.registro_actual.nomina_id,
+        id_nomina: peticiones.registro_actual.nomina_id,
         elementToInsert: 'request-information',
       })
 
       let tablaDiferencia = await nom_comparation_employee({
-        anterior: comparacionNomina.registro_anterior.empleados,
-        actual: comparacionNomina.registro_actual.empleados,
+        anterior: peticiones.registro_anterior.empleados,
+        actual: peticiones.registro_actual.empleados,
         elementToInsert: 'request-information',
         obtenerEmpleado: getRegConEmployeeData,
       })
 
       createComparationContainer({
-        data: comparacionNomina,
+        data: peticiones,
         elementToInsert: 'request-information',
       })
-
-      scroll(0, 500)
     }
-
-    // if (e.target === 'asd') {
-    //   movimientosId = []
-    //   correcciones = []
-    //   let result = requestInfo.find(
-    //     (el) => el.correlativo === fieldList['select-nomina']
-    //   )
-    //   fieldList.frecuencia = result.frecuencia
-    //   fieldList.identificador = result.identificador
-    //   fieldList.id = result.id
-    //   fieldList.correlativo = result.correlativo
-
-    //   console.log(fieldList)
-
-    //   let peticiones = await getComparacionNomina(result)
-    //   peticiones.confirmBtn = true
-
-    //   console.log(peticiones)
-    // }
 
     if (e.target.id === 'confirm-request') {
       confirmNotification({
@@ -111,20 +132,17 @@ export async function validateRequestNomForm() {
     if (e.target.id === 'reset-request') {
       movimientosId = []
       correcciones = []
-      // let result = requestInfo.find(
-      //   (el) => el.correlativo === fieldList['select-nomina']
-      // )
-      // fieldList.frecuencia = result.frecuencia
-      // fieldList.identificador = result.identificador
-      // fieldList.id = result.id
-      // fieldList.correlativo = result.correlativo
+      let result = requestInfo.find(
+        (el) => el.correlativo === fieldList['select-nomina']
+      )
+      fieldList.frecuencia = result.frecuencia
+      fieldList.identificador = result.identificador
+      fieldList.id = result.id
+      fieldList.correlativo = result.correlativo
 
-      // console.log(fieldList)
+      console.log(fieldList)
 
-      let peticiones = await getComparacionNomina({
-        correlativo: fieldList.correlativo,
-        nombre_nomina: fieldList.nombre_nomina,
-      })
+      let peticiones = await getComparacionNomina(result)
       peticiones.confirmBtn = true
 
       console.log(peticiones)
@@ -160,12 +178,29 @@ export async function validateRequestNomForm() {
   async function resetInput() {
     requestInformation.classList.add('hide')
 
-    loadRegconRequestTable()
+    selectNom.value = ''
+    selectNom.innerHTML = ''
+    let requestInfo = await getRegConPeticionesNomina()
+    let selectValues = requestInfo
+      .map((el) => {
+        if (el.status == 0) {
+          nominas.correlativo = el.correlativo
+          nominas.nombre_nomina = el.nombre_nomina
+          return `<option value="${el.correlativo}">${el.correlativo} - ${el.nombre_nomina}</option>`
+        }
+      })
+      .join('')
+
+    selectNom.insertAdjacentHTML(
+      'beforeend',
+      `<option value="">Seleccionar petición de nómina</option>`
+    )
+    selectNom.insertAdjacentHTML('beforeend', selectValues)
   }
 
   async function validateRequestFrecuency() {
     let res = await generarNominaTxt({
-      correlativo: fieldList.correlativo,
+      correlativo: fieldList['select-nomina'],
       identificador: fieldList.identificador,
     })
 

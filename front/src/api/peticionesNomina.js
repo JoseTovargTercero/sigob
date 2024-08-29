@@ -178,14 +178,19 @@ const eliminarPeticionNomina = async ({ id_peticion, correlativo }) => {
   }
 }
 
-const getRegConPeticionesNomina = async () => {
+const getRegConPeticionesNomina = async (id) => {
   showLoader()
 
   try {
-    let res = await fetch(regConObtenerPeticionesNominaUrl)
+    let res
+    if (id) res = await fetch(`${regConObtenerPeticionesNominaUrl}?id=${id}`)
+    else res = await fetch(regConObtenerPeticionesNominaUrl)
 
-    let data = await res.json()
-    data.forEach((el) => {
+    let clone = res.clone()
+    let text = await clone.text()
+    // console.log(text)
+    let json = await res.json()
+    json.success.forEach((el) => {
       el.empleados = JSON.parse(el.empleados)
       el.asignaciones = JSON.parse(el.asignaciones)
       el.deducciones = JSON.parse(el.deducciones)
@@ -195,8 +200,8 @@ const getRegConPeticionesNomina = async () => {
     })
 
     // data.informacion_empleados = JSON.parse(data.informacion_empleados)
-
-    return data
+    if (id) return json.success[0]
+    return json.success
   } catch (e) {
     console.log(e)
     return confirmNotification({
@@ -208,10 +213,7 @@ const getRegConPeticionesNomina = async () => {
   }
 }
 
-const getComparacionNomina = async (obj) => {
-  if (!obj) return
-  let { correlativo, nombre_nomina } = obj
-
+const getComparacionNomina = async ({ correlativo, nombre_nomina }) => {
   showLoader()
   try {
     let res = await fetch(comparacionNominaUrl, {
@@ -219,9 +221,12 @@ const getComparacionNomina = async (obj) => {
       body: JSON.stringify({ correlativo, nombre_nomina }),
     })
 
-    let data = await res.json()
+    let clone = res.clone()
+    let text = await clone.text()
 
-    console.log(data)
+    console.log(text)
+
+    let data = await res.json()
 
     let { registro_actual, registro_anterior } = data
 

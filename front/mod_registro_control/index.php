@@ -44,12 +44,27 @@ require_once '../../back/sistema_global/session.php';
                 <small class="mt-0 text-muted">Revisar las peticiones de nómina</small>
               </div>
             </div>
-            <div class="card-body col-lg-8 mx-auto">
+            <div class="card-body d-block" id="employee-table-container">
+              <table id="regcon-request-table" class="table table-sm table-striped" style="width:100%">
+                <thead class="w-100">
+                  <th class="">CORRELATIVO</th>
+                  <th class="">NOMBRE</th>
+                  <th class="">IDENTIFICADOR</th>
+                  <th class="">FECHA DE SOLICITUD</th>
+                  <th class="">ACCIONES</th>
+                </thead>
+                <tbody>
+
+                </tbody>
+              </table>
+            </div>
+            <!-- <div class="card-body col-lg-8 mx-auto">
+              <div></div>
               <div class="forum-group">
                 <div class="row mx-auto align-items-end">
                   <div class="col-lg-8">
                     <label for="nomina" class="form-label">Seleccionar nómina</label>
-                    <!-- <small class="text-muted mt-0 d-block mb-2">Seleccione la nómina a registrar</small> -->
+                    <small class="text-muted mt-0 d-block mb-2">Seleccione la nómina a registrar</small>
                     <select id="select-nomina" name="select-nomina" class="form-control">
                       <option value="">Seleccionar petición de nómina</option>
                     </select>
@@ -60,7 +75,7 @@ require_once '../../back/sistema_global/session.php';
                 </div>
               </div>
 
-            </div>
+            </div> -->
           </div>
           <div class="request-informacion hide slide-up-animation" id="request-information">
 

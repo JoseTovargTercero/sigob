@@ -6,7 +6,7 @@ const w = window
 
 export function createComparationContainer({ data, elementToInsert }) {
   if (!data) return
-  let { registro_actual, registro_anterior, confirmBtn } = data
+  let { registro_actual, registro_anterior } = data
 
   let cardElement = d.getElementById('request-comparation-container')
   if (cardElement) cardElement.remove()
@@ -15,7 +15,6 @@ export function createComparationContainer({ data, elementToInsert }) {
   ${createCard({
     actual: registro_actual,
     anterior: registro_anterior,
-    confirmBtn,
   })}
 </div>
   
@@ -24,7 +23,7 @@ export function createComparationContainer({ data, elementToInsert }) {
   d.getElementById(elementToInsert).insertAdjacentHTML('afterbegin', card)
 }
 
-const createCard = ({ actual, anterior, confirmBtn }) => {
+const createCard = ({ actual, anterior }) => {
   let correlativoActual = actual.correlativo || 'Sin correlativo'
   let nombreNominaActual = actual.nombre_nomina
   let estadoActual = actual.status

@@ -10,6 +10,7 @@ import { validateRequestForm } from './src/controllers/peticionesNominaForm.js'
 // import { validateEmployeePayForm } from './src/controllers/peticionesNominaForm.js'
 // import { validateRequestForm } from './src/controllers/peticionesNominaForm2.js'
 import { validateRequestNomForm } from './src/controllers/peticionesNominaReview.js'
+import { loadRegconRequestTable } from './src/controllers/regcon_peticionesTable.js'
 import { validateTabulatorForm } from './src/controllers/tabuladorForm.js'
 import { validateModal } from './src/helpers/helpers.js'
 const d = document
@@ -127,11 +128,8 @@ d.addEventListener('DOMContentLoaded', (e) => {
   }
 
   if (requestNomForm) {
-    validateRequestNomForm({
-      selectId: 'select-nomina',
-      consultBtnId: 'consultar-nomina',
-      formId: 'request-nom-form',
-    })
+    loadRegconRequestTable()
+    validateRequestNomForm()
   }
 
   // if (payNomForm) {

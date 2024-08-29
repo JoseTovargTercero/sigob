@@ -569,6 +569,17 @@ function separarMiles(numero) {
     .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 }
 
+export function validarIdentificador(identificador) {
+  if (identificador.startsWith('s'))
+    return `Semana ${identificador.slice(1, identificador.length)}`
+  if (identificador.startsWith('q'))
+    return `Quincena ${identificador.charAt(1)}`
+  if (identificador.startsWith('p')) return `Periodo ${identificador.charAt(1)}`
+  if (identificador === 'fecha_unica') return `Mensual`
+
+  return identificador
+}
+
 export {
   validateInput,
   validateModal,
