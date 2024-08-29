@@ -8,13 +8,13 @@ $data2 = json_decode($response2, true);
 $precio_dolar = $data2['conversion_rate'];
 
 
-header('Content-Type: application/json');
-$data = json_decode(file_get_contents('php://input'), true);
 
     $identificador = "fecha_unica";
-    $cedula_empleado = $data['cedula_empleado'];
-    $desde_cuando_pagas = $data['desde_cuando_pagas'];
-    $pagar_desde = $data['pagar_desde'];
+
+$cedula_empleado = $_POST['cedula_empleado'];
+$desde_cuando_pagas = $_POST['desde_cuando_pagas'];
+$pagar_desde = $_POST['pagar_desde'];
+
 
 // Escapar la variable para evitar inyecciones SQL
 $cedula_empleado = $conexion->real_escape_string($cedula_empleado);
@@ -56,7 +56,7 @@ if ($resultado && $resultado->num_rows > 0) {
 
  
 } else {
-    $fecha = $data['pagar_desde'];
+    $fecha = $pagar_desde;
 }
 
 
@@ -152,13 +152,13 @@ if ($resultado && $resultado->num_rows > 0) {
                                 
                             }
 
-                    if ($status_response == "1") {
-                        echo $response;
-                    }
+                    
 
     }
 }
-
+if ($status_response == "1") {
+                        echo $response;
+                    }
                 
                 
             
