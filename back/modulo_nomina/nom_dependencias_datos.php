@@ -83,7 +83,7 @@ function crearDependencia($informacion)
         $stmt->execute();
 
         if ($stmt->affected_rows > 0) {
-            $response = json_encode(["success" => "Dependencia creada con éxito"]);
+            $response = json_encode(["success" => "Unidad creada con éxito"]);
         } else {
             throw new Exception("Error al insertar la categoría: $conexion->error");
         }
@@ -175,7 +175,7 @@ function eliminarDependencia($informacion)
 
 
         if ($stmt_dep->execute()) {
-            $response = json_encode(["success" => "Dependencia eliminada correctamente."]);
+            $response = json_encode(["success" => "Unidad eliminada correctamente."]);
         } else {
             throw new Exception("Error al eliminar la dependencia: " . $conexion->error);
         }
