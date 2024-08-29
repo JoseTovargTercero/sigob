@@ -5,6 +5,7 @@ require_once 'pdf_files_config.php'; // Incluir el archivo de configuración
 require_once 'lib/TCPDF/tcpdf.php';
 require 'lib/FPDI-2.6.0/src/autoload.php';
 require_once 'lib/libmergepdf-master/src/Merger.php';
+require_once '../sistema_global/conexion.php'; // Archivo de conexión con $conexion
 
 use Mpdf\Mpdf;
 
@@ -35,17 +36,13 @@ $identificador = $_POST['identificador'];
 $registrosPorPagina = 350;
 
 // Obtener el número total de registros para la paginación
-$conn = new PDO('mysql:host=localhost;dbname=sigob', 'root', '');
-$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-$stmt = $conn->prepare("
-    SELECT COUNT(*) AS total
-    FROM recibo_pago
-    WHERE correlativo = :correlativo
-");
-$stmt->bindValue(':correlativo', $correlativo, PDO::PARAM_STR);
+$sql = "SELECT COUNT(*) AS total FROM recibo_pago WHERE correlativo = ?";
+$stmt = $conexion->prepare($sql);
+$stmt->bind_param('s', $correlativo);
 $stmt->execute();
-$totalRegistros = $stmt->fetchColumn();
+$result = $stmt->get_result();
+$row = $result->fetch_assoc();
+$totalRegistros = $row['total'];
 
 $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
 
@@ -130,24 +127,20 @@ foreach ($pdf_files as $url => $pdf_filename) {
 }
 
 // Construir la consulta SQL para actualizar datos
-$sql2 = "UPDATE peticiones SET status_archivos = :status_archivos WHERE correlativo = :correlativo";
+$sql2 = "UPDATE peticiones SET status_archivos = ? WHERE correlativo = ?";
+$stmt2 = $conexion->prepare($sql2);
 
-// Preparar la declaración SQL
-$stm3 = $conn->prepare($sql2);
-
-if ($stm3 === false) {
+if ($stmt2 === false) {
     die("Error al preparar la consulta.");
 }
 
 // Vincular los parámetros
 $status_archivos = 1;
-$stm3->bindParam(':status_archivos', $status_archivos, PDO::PARAM_INT);
-$stm3->bindParam(':correlativo', $correlativo, PDO::PARAM_INT);
+$stmt2->bind_param('ii', $status_archivos, $correlativo);
 
 // Ejecutar la consulta
-if ($stm3->execute() === false) {
-    $errorInfo = $stm3->errorInfo();
-    die("Error al ejecutar la consulta: " . $errorInfo[2]);
+if ($stmt2->execute() === false) {
+    die("Error al ejecutar la consulta: " . $conexion->error);
 }
 
 // Cerrar el archivo ZIP

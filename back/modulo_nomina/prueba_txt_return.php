@@ -2,11 +2,14 @@
 
 
 // URL del servidor
-$url = 'http://localhost/sigob/back/modulo_nomina/nom_txt_return.php/';
+$url = 'http://localhost/sigob/back/modulo_nomina/nom_txt_descargas2.php/';
 
 // Datos a enviar (el objeto JSON)
 $data = array(
-    "correlativo" => "00003",
+    "id_empleado" => "5",
+    "fecha_inicio" => "26-08-2024",
+    "fecha_fin" => "01-09-2024",
+    "nombre_nomina" => "004 Empleados Empleados Nacional",
 );
 
 // Convertir el array a formato JSON

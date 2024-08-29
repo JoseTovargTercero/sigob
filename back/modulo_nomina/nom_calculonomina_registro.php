@@ -20,6 +20,124 @@ if (!isset($data['nombre_nomina']) || !isset($data['empleados']) || !isset($data
 $recibos_de_pago = $data['recibos_pagos'];
 $nombre_nomina = $data['nombre_nomina'];
 $identificador = $data['identificador'];
+// Función para calcular la fecha de pago
+function calcularFechaPagar($row, $conexion) {
+    $identificador = $row['identificador'];
+    $fecha_pagar = $row['fecha_pagar']; // Formato esperado: m-Y
+    $nombre_nomina = $row['nombre_nomina'];
+
+    $fechaInicio = null;
+    $fechaFin = null;
+    
+    // Consulta para obtener las fechas de aplicar
+    $stmt_conceptos = mysqli_prepare($conexion, "SELECT fecha_aplicar FROM `conceptos_aplicados` WHERE nombre_nomina = ?");
+    $stmt_conceptos->bind_param('s', $nombre_nomina);
+    $stmt_conceptos->execute();
+    $result_conceptos = $stmt_conceptos->get_result();
+
+    $concepto_valor_max = 0; // Valor máximo para dividir el mes
+
+    if ($result_conceptos->num_rows > 0) {
+        while ($row_conceptos = $result_conceptos->fetch_assoc()) {
+            // Decodificar el array de fecha_aplicar
+            $fechas = json_decode($row_conceptos['fecha_aplicar'], true);
+
+            if ($fechas && is_array($fechas)) {
+                // Tomar el valor más alto de las fechas, sin la 'p'
+                foreach ($fechas as $fecha) {
+                    $valor = intval(str_replace('p', '', $fecha));
+                    if ($valor > $concepto_valor_max) {
+                        $concepto_valor_max = $valor;
+                    }
+                }
+            }
+        }
+    }
+    $stmt_conceptos->close();
+
+    if (preg_match('/^s(\d+)$/', $identificador, $matches)) {
+        // Identificador semanal (s1, s2, s3, ...)
+        $semanaNumero = (int) $matches[1];
+
+        // Calcular la fecha de inicio de la semana del año
+        $primerDiaAno = new DateTime("first day of January " . date('Y'));
+        $primerDiaAno->modify('+' . ($semanaNumero - 1) . ' weeks');
+
+        // Calcular el primer día de la semana (Lunes) y último día (Domingo)
+        $fechaInicio = clone $primerDiaAno;
+        $fechaInicio->modify('Monday this week');
+        $fechaFin = clone $fechaInicio;
+        $fechaFin->modify('Sunday this week');
+    } elseif (preg_match('/^q(\d+)$/', $identificador, $matches)) {
+        // Identificador quincenal (q1, q2)
+        $quincenaNumero = (int) $matches[1];
+
+        // Crear la fecha inicial del mes dado
+        $primerDiaMes = DateTime::createFromFormat('m-Y', $fecha_pagar);
+        $primerDiaMes->setDate($primerDiaMes->format('Y'), $primerDiaMes->format('m'), 1);
+
+        if ($quincenaNumero === 1) {
+            $fechaInicio = clone $primerDiaMes;
+            $fechaFin = clone $fechaInicio;
+            $fechaFin->modify('+14 days');
+        } elseif ($quincenaNumero === 2) {
+            $fechaInicio = clone $primerDiaMes;
+            $fechaInicio->modify('+15 days');
+            $fechaFin = (clone $fechaInicio)->modify('last day of this month');
+        }
+    } elseif ($identificador === 'fecha_unica') {
+        // Fecha única (todo el mes)
+        $fechaInicio = DateTime::createFromFormat('m-Y', $fecha_pagar);
+        $fechaInicio->setDate($fechaInicio->format('Y'), $fechaInicio->format('m'), 1);
+        $fechaFin = (clone $fechaInicio)->modify('last day of this month');
+    } elseif (preg_match('/^p(\d+)$/', $identificador, $matches)) {
+        // Identificador personalizado (p1, p2, p3, ...)
+        $periodoNumero = (int) $matches[1];
+
+        // Crear la fecha inicial del mes dado
+        $primerDiaMes = DateTime::createFromFormat('m-Y', $fecha_pagar);
+        $primerDiaMes->setDate($primerDiaMes->format('Y'), $primerDiaMes->format('m'), 1);
+        $ultimoDiaMes = (clone $primerDiaMes)->modify('last day of this month');
+
+        if ($concepto_valor_max > 0) {
+            // Dividir el mes en partes según el valor máximo de fechas de aplicación
+            $intervaloDias = (int) ceil($ultimoDiaMes->diff($primerDiaMes)->days / $concepto_valor_max);
+
+            $fechaInicio = clone $primerDiaMes;
+            $fechaFin = clone $fechaInicio;
+            $fechaFin->modify('+' . ($periodoNumero * $intervaloDias - 1) . ' days');
+
+            if ($fechaFin > $ultimoDiaMes) {
+                $fechaFin = $ultimoDiaMes;
+            }
+        }
+    }
+
+    // Retornar las fechas de inicio y fin
+    return [
+        'fechaInicio' => $fechaInicio ? $fechaInicio->format('d-m-Y') : null,
+        'fechaFin' => $fechaFin ? $fechaFin->format('d-m-Y') : null,
+    ];
+}
+$mes_anio_actual = date('m-Y');
+        $row = [
+            'identificador' => $identificador, // Puede ser 's1', 'q1', 'fecha_unica', etc.
+            'fecha_pagar' => $mes_anio_actual, // Formato m-Y
+            'nombre_nomina' => $nombre_nomina,
+        ];
+$resultadoFechas = calcularFechaPagar($row, $conexion);
+
+$fecha_inicio = $resultadoFechas['fechaInicio'];
+$fecha_fin = $resultadoFechas['fechaFin'];
+
+
+
+
+
+
+
+
+
 $query_frecuencia = "SELECT frecuencia FROM nominas WHERE nombre = ?";
 $stmt_frecuencia = $conexion->prepare($query_frecuencia);
 
@@ -42,7 +160,7 @@ $row_frecuencia = $result_frecuencia->fetch_assoc();
 $frecuencia = $row_frecuencia['frecuencia'];
 
 // Obtener el mes y el año actual
-$mes_anio_actual = date('m-Y');
+
 
 // Obtener el último valor del correlativo desde la tabla 'txt'
 $query_correlativo = "SELECT MAX(CAST(correlativo AS UNSIGNED)) AS ultimo_valor_correlativo FROM txt";
@@ -149,7 +267,7 @@ $aportes_final = json_encode($resultado_aportes, JSON_UNESCAPED_UNICODE);
     $total_pagar = $recibo['total_a_pagar'];
     
     // Preparar la consulta SQL
-    $sql_recibo_pago = "INSERT INTO recibo_pago (id_empleado, sueldo_base, sueldo_integral, asignaciones, deducciones, aportes, total_pagar, identificador, fecha_pagar, correlativo, nombre_nomina) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    $sql_recibo_pago = "INSERT INTO recibo_pago (id_empleado, sueldo_base, sueldo_integral, asignaciones, deducciones, aportes, total_pagar, identificador, fecha_pagar, correlativo, nombre_nomina, fecha_inicio, fecha_fin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt_recibo_pago = $conexion->prepare($sql_recibo_pago);
 
     if (!$stmt_recibo_pago) {
@@ -158,7 +276,7 @@ $aportes_final = json_encode($resultado_aportes, JSON_UNESCAPED_UNICODE);
     }
 
     // Vincular parámetros y ejecutar la consulta
-    $stmt_recibo_pago->bind_param("issssssssss", $id_empleado, $sueldo_base, $sueldo_integral, $asignaciones_final, $deducciones_final, $aportes_final, $total_pagar, $identificador, $mes_anio_actual, $correlativo_formateado, $nombre_nomina);
+    $stmt_recibo_pago->bind_param("issssssssssss", $id_empleado, $sueldo_base, $sueldo_integral, $asignaciones_final, $deducciones_final, $aportes_final, $total_pagar, $identificador, $mes_anio_actual, $correlativo_formateado, $nombre_nomina, $fecha_inicio, $fecha_fin);
     $stmt_recibo_pago->execute();
 
     if ($stmt_recibo_pago->affected_rows === 0) {
