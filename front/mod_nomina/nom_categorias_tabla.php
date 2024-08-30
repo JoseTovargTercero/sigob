@@ -7,7 +7,7 @@ require_once '../../back/sistema_global/session.php';
 <head>
     <link rel="stylesheet" href="../src/styles/style.css">
 
-    <title>Categorias</title>
+    <title>Categorías</title>
 </head>
 
 <body>
@@ -27,7 +27,7 @@ require_once '../../back/sistema_global/session.php';
                     <div class="row align-items-center">
                         <div class="col-md-12">
                             <div class="page-header-title">
-                                <h5 class="mb-0">Categorias</h5>
+                                <h5 class="mb-0">Categorías</h5>
                             </div>
                         </div>
                     </div>
@@ -41,10 +41,10 @@ require_once '../../back/sistema_global/session.php';
                         <div class="card-header">
                             <div class="d-flex align-items-center justify-content-between">
                                 <div>
-                                    <h5 class="mb-0">Categorias</h5>
-                                    <small class="text-muted mt-0">Administre las categorias</small>
+                                    <h5 class="mb-0">Categorías</h5>
+                                    <small class="text-muted mt-0">Administre las categorías</small>
                                 </div>
-                                <button class="btn btn-primary" id="categoria-nueva">Nueva categoria</button>
+                                <button class="btn btn-primary" id="categoria-nueva">Nueva categoría</button>
 
                             </div>
                         </div>
@@ -64,7 +64,7 @@ require_once '../../back/sistema_global/session.php';
                                     </div>
                                     <div class="col-sm-5">
                                         <div class="row">
-                                            <label class="form-label" for="categoria">Categoria</label>
+                                            <label class="form-label" for="categoria">categoría</label>
                                             <div class="col-sm-8 mb-2">
                                                 <input type="text" name="categoria" class="form-control"
                                                     placeholder="Categoria...">
@@ -84,7 +84,7 @@ require_once '../../back/sistema_global/session.php';
                                 <table id="categorias-table" class="table table-xs table-striped" style="width:100%">
                                     <thead class="w-100">
                                         <th>NOMBRE</th>
-                                        <th>CATEGORIA</th>
+                                        <th>CATEGORÍA</th>
                                         <th>ACCIONES</th>
                                     </thead>
                                     <tbody>

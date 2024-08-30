@@ -7,7 +7,7 @@ require_once '../../back/sistema_global/session.php';
 <head>
     <link rel="stylesheet" href="../src/styles/style.css">
 
-    <title>Dependencias</title>
+    <title>Unidades</title>
 </head>
 
 <body>
@@ -27,7 +27,7 @@ require_once '../../back/sistema_global/session.php';
                     <div class="row align-items-center">
                         <div class="col-md-12">
                             <div class="page-header-title">
-                                <h5 class="mb-0">Dependencias</h5>
+                                <h5 class="mb-0">Unidades</h5>
                             </div>
                         </div>
                     </div>
@@ -41,18 +41,15 @@ require_once '../../back/sistema_global/session.php';
                         <div class="card-header">
                             <div class="d-flex align-items-center justify-content-between">
                                 <div>
-                                    <h5 class="mb-0">Dependencias</h5>
-                                    <small class="text-muted mt-0">Administre las dependencias</small>
+                                    <h5 class="mb-0">Unidades</h5>
+                                    <small class="text-muted mt-0">Administre las unidades</small>
                                 </div>
-                                <button class="btn btn-primary" id="dependencia-nueva">Nueva dependencia</button>
+                                <button class="btn btn-primary" id="dependencia-nueva">Nueva unidad</button>
 
                             </div>
                         </div>
                         <div class="mt-4 mx-auto hide slide-up-animation" id="dependencia-form-container">
-                            <!-- <div>
-                                <h5 class="mb-0">Registra </h5>
-                                <small class="text-muted mt-0 mb-4">Administre las dependencias</small>
-                            </div> -->
+
                             <form id="dependencia-form">
                                 <div class="row mx-0">
                                     <div class="col-sm">
@@ -92,7 +89,7 @@ require_once '../../back/sistema_global/session.php';
                                     <thead class="">
                                         <th>CÓDIGO</th>
                                         <th>NOMBRE</th>
-                                        <th>CATEGORIA</th>
+                                        <th>CATEGORÍA</th>
                                         <th>ACCIONES</th>
                                     </thead>
                                     <tbody>

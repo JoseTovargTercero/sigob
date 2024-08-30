@@ -54,7 +54,7 @@ require_once '../../back/sistema_global/session.php';
           <div class="card">
             <div class="card-header" id="dependencia-card-header">
               <div class="d-flex align-items-start justify-content-between">
-                <h5 class="mb-0">Gestión de dependencias</h5>
+                <h5 class="mb-0">Gestión de unidades</h5>
 
                 <button class="btn btn-primary" onclick="mostrarInicio()">Volver al inicio</button>
               </div>

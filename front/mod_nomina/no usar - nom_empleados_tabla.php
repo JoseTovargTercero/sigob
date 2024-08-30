@@ -246,8 +246,7 @@ require_once '../../back/sistema_global/session.php';
                 <div class="row mx-auto">
 
                   <div class="col-sm-4">
-                    <label class="form-label" for="id_dependencia">DEPENDENCIAS
-                      LABORALES</label>
+                    <label class="form-label" for="id_dependencia">UNIDAD</label>
                     <select class="form-select employee-select" name="id_dependencia" id="search-select-dependencias">
                     </select>
                   </div>
