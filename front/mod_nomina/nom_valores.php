@@ -50,8 +50,8 @@ require_once '../../back/sistema_global/session.php';
           <div class="card">
             <div class="card-header">
               <div class="d-flex align-items-start justify-content-between">
-                  <h5 class="mb-0">Asigne valores a los campos creados</h5>
-                  <button class="btn btn-primary" onclick="mostrarInicio()">Volver al inicio</button>
+                <h5 class="mb-0">Asigne valores a los campos creados</h5>
+                <button class="btn btn-primary" onclick="mostrarInicio()">Volver al inicio</button>
               </div>
             </div>
             <div class="card-body">
@@ -185,18 +185,18 @@ require_once '../../back/sistema_global/session.php';
 
 
                   <div class="table-responsive mh-50">
-                  <table class="table table-hover">
-                    <thead>
-                      <tr>
-                        <th class="w-5">#</th>
-                        <th class="w-40">Nombre</th>
-                        <th class="w-10">Cedula</th>
-                        <th class="w-5 text-center"></th>
-                      </tr>
-                    </thead>
-                    <tbody id="table-resumen">
-                    </tbody>
-                  </table>
+                    <table class="table table-hover">
+                      <thead>
+                        <tr>
+                          <th class="w-5">#</th>
+                          <th class="w-40">Nombre</th>
+                          <th class="w-10">Cedula</th>
+                          <th class="w-5 text-center"></th>
+                        </tr>
+                      </thead>
+                      <tbody id="table-resumen">
+                      </tbody>
+                    </table>
                   </div>
 
                   <div class="mt-3 text-end">
@@ -231,7 +231,7 @@ require_once '../../back/sistema_global/session.php';
               </div>
             </div>
             <div class="card-body">
-           
+
               <div class="table-responsive p-1">
                 <table id="tabla_filtrada" class="table table-hover">
                   <thead>
@@ -267,16 +267,37 @@ require_once '../../back/sistema_global/session.php';
   <script src="../../src/assets/js/lista-empleados.js"></script>
 
   <script>
+    const ToastRT = Swal.mixin({
+      toast: true,
+      position: "top-end",
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.onmouseenter = Swal.stopTimer;
+        toast.onmouseleave = Swal.resumeTimer;
+      }
+    });
+
+    function toast_rt(type, text) {
+      ToastRT.fire({
+        icon: type,
+        title: text,
+      })
+    }
+
+
+
+
+
     const url_back = '../../back/modulo_nomina/nom_valores_back.php';
     let textarea = 't_area-1';
 
 
-    function mostrarInicio(){
+    function mostrarInicio() {
       $('#tabla').removeClass('hide')
       $('#modificar_valores').addClass('hide')
     }
-
-
 
     let empleados = []
 
@@ -292,12 +313,12 @@ require_once '../../back/sistema_global/session.php';
 
       empleados = [...new Set(empleados)]
 
-        let nuevaCantidad = empleados.length - cantidad
-        if (nuevaCantidad > 0) {
-          toast_s('success', 'Se han agregado ' + nuevaCantidad + ' empleados nuevos')
-        } else {
-          toast_s('info', 'No se han agregado empleados nuevos')
-        }
+      let nuevaCantidad = empleados.length - cantidad
+      if (nuevaCantidad > 0) {
+        toast_rt('success', 'Se han agregado ' + nuevaCantidad + ' empleados nuevos')
+      } else {
+        toast_rt('info', 'No se han agregado empleados nuevos')
+      }
 
       // deselecciona los checkboxs
       $(`.itemCheckbox`).prop('checked', false)
@@ -313,24 +334,24 @@ require_once '../../back/sistema_global/session.php';
       })
 
 
-      if (seleccionados!=0) {
+      if (seleccionados != 0) {
         Swal.fire({
-            title: "Atención",
-            text: "Tiene cambios sin reservar, reserve los cambios o deseleccione los empleados para poder continuar",
-            icon: "warning",
-            confirmButtonColor: "#04a9f5",
-            confirmButtonText: "Ok",
+          title: "Atención",
+          text: "Tiene cambios sin reservar, reserve los cambios o deseleccione los empleados para poder continuar",
+          icon: "warning",
+          confirmButtonColor: "#04a9f5",
+          confirmButtonText: "Ok",
         })
         return
       }
 
       if (empleados.length == 0) {
-        toast_s('error', 'Debe seleccionar al menos un empleado')
+        toast_rt('error', 'Debe seleccionar al menos un empleado')
         return
       }
       dataResumen()
       $('#resumen').html('Se establecerá el valor del campo <b>' + columnaEditar + '</b> en <b>' + valorEditar + '</b> para <b>' + empleados.length + '</b> empleados')
-      
+
 
       $('#resumen_antes_guardar').removeClass('hide')
       $('#seleccion_empleados').addClass('hide')
@@ -370,7 +391,7 @@ require_once '../../back/sistema_global/session.php';
 
     function nuevoValor(valor) {
       if (valor === '') {
-        toast_s('error', 'Por favor, indique el nuevo valor')
+        toast_rt('error', 'Por favor, indique el nuevo valor')
         return;
       } else {
         valorEditar = valor;
@@ -404,11 +425,11 @@ require_once '../../back/sistema_global/session.php';
             $('#resumen_antes_guardar').addClass('hide')
             $('#valores-section').removeClass('hide')
             //here
-            toast_s("success", "Valores actualizados con exito");
-      $('#cargando').hide()
+            toast_rt("success", "Valores actualizados con exito");
+            $('#cargando').hide()
 
           } else {
-            toast_s("error", text.mensaje);
+            toast_rt("error", text.mensaje);
           }
 
         }
@@ -443,7 +464,7 @@ require_once '../../back/sistema_global/session.php';
 
               var valores = '';
               data[columna]['valores'].forEach(element => {
-                valores += (element == null ? '' : '<a class="link pointer" onclick="mostrarEmpleados(`'+nombre_columna+'`, `'+element+'`)">'+element+'</a>') + ', ';
+                valores += (element == null ? '' : '<a class="link pointer" onclick="mostrarEmpleados(`' + nombre_columna + '`, `' + element + '`)">' + element + '</a>') + ', ';
               });
 
               if (valores != '') {
@@ -466,9 +487,9 @@ require_once '../../back/sistema_global/session.php';
     // ready function
     cargarTabla()
 
-    function mostrarEmpleados(columna, valor){
+    function mostrarEmpleados(columna, valor) {
       $('#section_tabla-filtrada').removeClass('hide')
-      $('#titulo_').html('Empleados con la condición seleccionada ('+columna+' = '+valor+')')
+      $('#titulo_').html('Empleados con la condición seleccionada (' + columna + ' = ' + valor + ')')
 
       $.ajax({
         url: url_back,
@@ -484,16 +505,16 @@ require_once '../../back/sistema_global/session.php';
 
           for (empleado in data) {
 
-              const nombre_empleado = data[empleado]['nombres'];
-              const cedula = data[empleado]['cedula'];
+            const nombre_empleado = data[empleado]['nombres'];
+            const cedula = data[empleado]['cedula'];
 
 
-              $('#tabla_filtrada').append(`<tr >
+            $('#tabla_filtrada').append(`<tr >
                   <td>${cont++}</td>
                   <td>${nombre_empleado}</td>
                   <td>${cedula} </td>
                 </tr>`);
-              }
+          }
 
 
         }
@@ -504,6 +525,7 @@ require_once '../../back/sistema_global/session.php';
 
 
     var columnaEditar = null;
+
     function editar(columna) {
       $('#tabla').addClass('hide')
       $('#section_tabla-filtrada').addClass('hide')
@@ -574,11 +596,11 @@ require_once '../../back/sistema_global/session.php';
 
               if (text == "ok") {
                 cargarTabla();
-                toast_s("success", "Eliminado con éxito");
+                toast_rt("success", "Eliminado con éxito");
               } else if (text == 'negado') {
-                toast_s("error", "No se puede eliminar el banco, existen empleados asociados.");
+                toast_rt("error", "No se puede eliminar el banco, existen empleados asociados.");
               } else {
-                toast_s("error", response);
+                toast_rt("error", response);
               }
             },
           });
@@ -599,12 +621,12 @@ require_once '../../back/sistema_global/session.php';
       const tipo = $('#tipo').val()
 
       if (nombre == '') {
-        toast_s('error', 'Por favor, indique el nombre del campo')
+        toast_rt('error', 'Por favor, indique el nombre del campo')
         return;
       }
 
       if (tipo == '') {
-        toast_s('error', 'Por favor, indique el tipo del campo')
+        toast_rt('error', 'Por favor, indique el tipo del campo')
         return;
       }
       if (validarSql(nombre)) {
@@ -631,13 +653,13 @@ require_once '../../back/sistema_global/session.php';
               $('#btn-show-sistema').addClass('btn-secondary')
               $('#btn-show-sistema').removeClass('btn-primary')
             } else if (text.status == 'error') {
-              toast_s('error', text.mensaje)
+              toast_rt('error', text.mensaje)
             }
           }
         });
 
       } else {
-        toast_s('error', 'El nombre del campo no cumple con los requisitos mínimos')
+        toast_rt('error', 'El nombre del campo no cumple con los requisitos mínimos')
       }
     }
   </script>
