@@ -427,6 +427,8 @@ require_once '../../back/sistema_global/session.php';
             //here
             toast_rt("success", "Valores actualizados con exito");
             $('#cargando').hide()
+            $('#resumen_epleados_seleccionados').html('')
+
 
           } else {
             toast_rt("error", text.mensaje);

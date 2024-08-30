@@ -10,7 +10,11 @@ require_once '../../back/sistema_global/session.php';
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-
+  <style>
+    td {
+      white-space: normal !important;
+    }
+  </style>
 </head>
 <?php require_once '../includes/header.php' ?>
 
@@ -257,6 +261,27 @@ require_once '../../back/sistema_global/session.php';
 
 
   <script>
+    const ToastRT = Swal.mixin({
+      toast: true,
+      position: "top-end",
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.onmouseenter = Swal.stopTimer;
+        toast.onmouseleave = Swal.resumeTimer;
+      }
+    });
+
+    function toast_rt(type, text) {
+      ToastRT.fire({
+        icon: type,
+        title: text,
+      })
+    }
+
+
+
     const url_back = '../../back/modulo_nomina/nom_unidades_back.php';
     let textarea = 't_area-1';
 
@@ -274,7 +299,7 @@ require_once '../../back/sistema_global/session.php';
       // define una variable con la cantidad valores de empleados
       let cantidad = empleados.length
 
-      $(`.itemCheckbox`).each(function () {
+      $(`.itemCheckbox`).each(function() {
         if (this.checked) {
           empleados.push(this.value)
         }
@@ -284,9 +309,9 @@ require_once '../../back/sistema_global/session.php';
 
       let nuevaCantidad = empleados.length - cantidad
       if (nuevaCantidad > 0) {
-        toast_s('success', 'Se han agregado ' + nuevaCantidad + ' empleados nuevos')
+        toast_rt('success', 'Se han agregado ' + nuevaCantidad + ' empleados nuevos')
       } else {
-        toast_s('info', 'No se han agregado empleados nuevos')
+        toast_rt('info', 'No se han agregado empleados nuevos')
       }
 
       // deselecciona los checkboxs
@@ -299,7 +324,7 @@ require_once '../../back/sistema_global/session.php';
     function guardarListaEmpleados() {
       let seleccionados = 0
 
-      $(`.itemCheckbox`).each(function () {
+      $(`.itemCheckbox`).each(function() {
         if (this.checked) {
           seleccionados++
         }
@@ -318,7 +343,7 @@ require_once '../../back/sistema_global/session.php';
       }
 
       if (empleados.length == 0) {
-        toast_s('error', 'Debe seleccionar al menos un empleado')
+        toast_rt('error', 'Debe seleccionar al menos un empleado')
         return
       }
       dataResumen()
@@ -363,7 +388,7 @@ require_once '../../back/sistema_global/session.php';
           updates: true
         },
         cache: false,
-        success: function (response) {
+        success: function(response) {
 
           text = JSON.parse(response)
 
@@ -374,10 +399,14 @@ require_once '../../back/sistema_global/session.php';
             $('#resumen_antes_guardar').addClass('hide')
             $('#tabla').removeClass('hide')
 
-            toast_s("success", "Datos actualizados con exito");
+            toast_rt("success", "Datos actualizados con exito");
             $('#cargando').hide()
+
+            $('#cantidadEmpleados').html('')
+
+
           } else {
-            toast_s("error", text.mensaje);
+            toast_rt("error", text.mensaje);
           }
 
         }
@@ -396,7 +425,7 @@ require_once '../../back/sistema_global/session.php';
           tabla: true
         },
         cache: false,
-        success: function (response) {
+        success: function(response) {
           cont = 1;
           $('#table tbody').html('');
           if (response) {
@@ -443,7 +472,7 @@ require_once '../../back/sistema_global/session.php';
           id_dependencia: id_dependencia
         },
         cache: false,
-        success: function (response) {
+        success: function(response) {
           let data = JSON.parse(response)
 
           for (empleado in data) {
@@ -505,15 +534,15 @@ require_once '../../back/sistema_global/session.php';
               eliminar: true,
               id: id,
             },
-            success: function (response) {
+            success: function(response) {
               text = JSON.parse(response)
               if (text == "ok") {
                 cargarTabla();
-                toast_s("success", "Eliminado con éxito");
+                toast_rt("success", "Eliminado con éxito");
               } else if (text == 'negado') {
-                toast_s("error", "No se puede eliminar el banco, existen empleados asociados.");
+                toast_rt("error", "No se puede eliminar el banco, existen empleados asociados.");
               } else {
-                toast_s("error", response);
+                toast_rt("error", response);
               }
             },
           });
@@ -526,12 +555,12 @@ require_once '../../back/sistema_global/session.php';
       const tipo = $('#tipo').val()
 
       if (nombre == '') {
-        toast_s('error', 'Por favor, indique el nombre del campo')
+        toast_rt('error', 'Por favor, indique el nombre del campo')
         return;
       }
 
       if (tipo == '') {
-        toast_s('error', 'Por favor, indique el tipo del campo')
+        toast_rt('error', 'Por favor, indique el tipo del campo')
         return;
       }
       if (validarSql(nombre)) {
@@ -545,7 +574,7 @@ require_once '../../back/sistema_global/session.php';
             nombre: nombre,
             registro: true
           },
-          success: function (text) {
+          success: function(text) {
             text = JSON.parse(text)
             $('#cargando').hide()
             if (text.status == 'success') {
@@ -558,19 +587,15 @@ require_once '../../back/sistema_global/session.php';
               $('#btn-show-sistema').addClass('btn-secondary')
               $('#btn-show-sistema').removeClass('btn-primary')
             } else if (text.status == 'error') {
-              toast_s('error', text.mensaje)
+              toast_rt('error', text.mensaje)
             }
           }
         });
 
       } else {
-        toast_s('error', 'El nombre del campo no cumple con los requisitos mínimos')
+        toast_rt('error', 'El nombre del campo no cumple con los requisitos mínimos')
       }
     }
-
-
-
-
   </script>
 
 </body>
