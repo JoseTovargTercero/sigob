@@ -24,6 +24,8 @@
             <ul class="pc-submenu">
               <li class="pc-item"><a class="pc-link" href="<?php echo constant('URL') ?>front/mod_nomina/index">Inicio</a>
               </li>
+              <li class="pc-item"><a class="pc-link" href="<?php echo constant('URL') ?>front/mod_nomina/nom_reportes">Reportes</a>
+              </li>
               <li class="pc-item"><a class="pc-link"
                   href="<?php echo constant('URL') ?>front/mod_nomina/nom_errores">Estatus</a></li>
 
