@@ -70,6 +70,8 @@ export const validateEmployeeTable = async () => {
 
   let empleados = await getEmployeesData()
 
+  if (!Array.isArray(empleados)) return
+
   let empleadosOrdenados = [...empleados].sort(
     (a, b) => b.id_empleado - a.id_empleado
   )

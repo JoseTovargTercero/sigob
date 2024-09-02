@@ -62,6 +62,8 @@ const loadTabulatorTable = async () => {
   tabulatorTable.clear().draw()
 
   let tabuladores = await getTabulatorsData()
+  if (!Array.isArray(tabuladores)) return
+
   let tabuladoresOrdenados = [...tabuladores].sort((a, b) => b.id - a.id)
 
   let data = tabuladoresOrdenados.map((tabulador) => {

@@ -1,4 +1,4 @@
-import { confirmNotification } from '../helpers/helpers.js'
+import { confirmNotification, toastNotification } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 
 const sendTabulatorUrl =
@@ -53,9 +53,9 @@ const getTabulatorsData = async () => {
     const json = await res.json()
     return json
   } catch (e) {
-    return confirmNotification({
+    return toastNotification({
       type: NOTIFICATIONS_TYPES.fail,
-      message: 'Error al obtener tabuladores',
+      message: 'No se han encontrado tabuladores',
     })
   }
 }

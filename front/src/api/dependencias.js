@@ -33,9 +33,9 @@ const getDependencias = async (id) => {
     }
   } catch (e) {
     console.log(e)
-    return confirmNotification({
+    return toastNotification({
       type: NOTIFICATIONS_TYPES.fail,
-      message: 'Error al obtener unidades',
+      message: 'No se encontraron unidades',
     })
   }
 }

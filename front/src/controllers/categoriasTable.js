@@ -54,7 +54,8 @@ let categoriasTable = new DataTable('#categorias-table', {
 export async function loadCategoriasTable() {
   let categorias = await getCategorias()
 
-  console.log(categorias)
+  if (!Array.isArray(categorias.fullInfo)) return
+
   let datosOrdenados = [...categorias.fullInfo].sort((a, b) => a.id - b.id)
 
   let data = datosOrdenados.map((categoria) => {

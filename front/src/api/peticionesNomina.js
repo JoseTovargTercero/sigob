@@ -198,6 +198,11 @@ const getRegConPeticionesNomina = async (id) => {
     let text = await clone.text()
     // console.log(text)
     let json = await res.json()
+
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+      return json.error
+    }
     json.success.forEach((el) => {
       el.empleados = JSON.parse(el.empleados)
       el.asignaciones = JSON.parse(el.asignaciones)
@@ -212,9 +217,9 @@ const getRegConPeticionesNomina = async (id) => {
     return json.success
   } catch (e) {
     console.log(e)
-    return confirmNotification({
+    return toastNotification({
       type: NOTIFICATIONS_TYPES.fail,
-      message: 'Error al obtener nominas',
+      message: 'No se encontraron peticiones de nomina',
     })
   } finally {
     hideLoader()

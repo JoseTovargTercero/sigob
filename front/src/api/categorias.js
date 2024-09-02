@@ -33,9 +33,9 @@ const getCategorias = async (id) => {
     }
   } catch (e) {
     console.log(e)
-    return confirmNotification({
+    return toastNotification({
       type: NOTIFICATIONS_TYPES.fail,
-      message: 'Error al obtener categorias',
+      message: 'No se encontraron categorias',
     })
   }
 }

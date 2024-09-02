@@ -59,6 +59,9 @@ let regconRequestTable = new DataTable('#regcon-request-table', {
 
 export async function loadRegconRequestTable() {
   let peticiones = await getRegConPeticionesNomina()
+
+  if (!Array.isArray(peticiones)) return
+
   let datosOrdenados = [...peticiones].sort(
     (a, b) => a.correlativo - b.correlativo
   )

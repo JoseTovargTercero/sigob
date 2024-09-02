@@ -57,6 +57,9 @@ export async function loadDependenciaTable() {
   if (!d.getElementById('dependencia-table')) return
 
   let dependencias = await getDependencias()
+
+  if (!Array.isArray(dependencias.fullInfo)) return
+
   let categorias = await getCategorias()
 
   console.log(dependencias)
