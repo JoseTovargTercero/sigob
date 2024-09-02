@@ -66,6 +66,7 @@ let requestTable = new DataTable('#request-table-historial', {
 
 export async function loadRequestTableHistorico() {
   let peticiones = await getPeticionesNomina()
+  if (!peticiones || peticiones.error) return
   let datosOrdenados = [...peticiones].sort(
     (a, b) => a.correlativo - b.correlativo
   )
@@ -101,7 +102,7 @@ export async function loadRequestTableHistorico() {
 
 d.addEventListener('click', async (e) => {
   if (!d.getElementById('request-historial')) return
-  console.log('hola')
+
   if (e.target.dataset.show) {
     e.preventDefault()
     let peticion = await getPeticionNomina(e.target.dataset.show)

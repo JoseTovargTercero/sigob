@@ -76,6 +76,14 @@ const getPeticionesNomina = async () => {
 
     let data = await res.json()
 
+    if (data.error) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.fail,
+        message: data.error,
+      })
+      return data.error
+    }
+
     console.log(data)
     data.success.forEach((el) => {
       el.empleados = JSON.parse(el.empleados)

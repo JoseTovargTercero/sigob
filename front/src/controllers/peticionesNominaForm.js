@@ -365,7 +365,6 @@ export async function validateRequestForm({
     }
 
     if (e.target.dataset.revisar) {
-      console.log('hola')
       let movimientosPeticion = await getPeticionMovimientos({
         id_peticion: Number(e.target.dataset.revisar),
       })

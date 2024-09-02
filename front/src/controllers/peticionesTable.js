@@ -87,6 +87,8 @@ let requestTableRevision = new DataTable('#request-nom-table-revision', {
 
 export async function loadRequestTable() {
   let peticiones = await getPeticionesNomina()
+  if (!peticiones || peticiones.error) return
+
   let datosOrdenados = [...peticiones].sort(
     (a, b) => a.correlativo - b.correlativo
   )

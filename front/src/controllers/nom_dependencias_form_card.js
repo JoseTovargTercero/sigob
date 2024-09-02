@@ -1,7 +1,6 @@
 import { getDependencias } from '../api/dependencias'
 
 const d = document
-console.log('hola')
 
 const nom_dependencias_form_card = ({ elementToInsert, id }) => {
   if (document.getElementById('dependencia-form'))
