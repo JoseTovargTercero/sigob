@@ -9,7 +9,7 @@ $data = json_decode($input, true);
 if (isset($data['0102']) && isset($data['0163']) && isset($data['0175']) && isset($data['0128'])) {
     
     // Función para procesar el array del banco Venezuela y generar un archivo TXT
-    function txt_Venezuela($data) {
+    function txt_Venezuela($data, $conexion) {
         $empleados = $data['empleados'];
         $total_a_pagar = $data['total_a_pagar'];
         $correlativo = $data['correlativo'];
@@ -287,7 +287,7 @@ $totalescobrar_json = json_encode($totalescobrar);
     }
     }
     // Función para procesar el array del banco Tesoro
-    function txt_Tesoro($data) {
+    function txt_Tesoro($data, $conexion) {
         $empleados = $data['empleados'];
         $total_a_pagar = $data['total_a_pagar'];
         $correlativo = $data['correlativo'];
@@ -381,7 +381,7 @@ header('Content-Length: ' . filesize($file_path));
     }
 
     // Función para procesar el array del banco Bicentenario
-    function txt_Bicentenario($data) {
+    function txt_Bicentenario($data, $conexion) {
          $empleados = $data['empleados'];
         $total_a_pagar = $data['total_a_pagar'];
         $correlativo = $data['correlativo'];
@@ -650,7 +650,7 @@ $totalescobrar_json = json_encode($totalescobrar);
     }
 
     // Función para procesar el array del banco Caroni
-    function txt_Caroni($data) {
+    function txt_Caroni($data, $conexion) {
 
         $empleados = $data['empleados'];
         $total_a_pagar = $data['total_a_pagar'];
@@ -818,10 +818,10 @@ $totalescobrar_json = json_encode($totalescobrar);
     }
 
     // Llamar a las funciones con los datos correspondientes
-    $result_venezuela = txt_Venezuela($data['0102']);
-    $result_tesoro = txt_Tesoro($data['0163']);
-    $result_caroni = txt_Caroni($data['0128']);
-    $result_bicentenario = txt_Bicentenario($data['0175']);
+    $result_venezuela = txt_Venezuela($data['0102'], $conexion);
+    $result_tesoro = txt_Tesoro($data['0163'], $conexion);
+    $result_caroni = txt_Caroni($data['0128'], $conexion);
+    $result_bicentenario = txt_Bicentenario($data['0175'], $conexion);
 
     // Devolver los resultados en formato JSON (excepto Venezuela)
     
