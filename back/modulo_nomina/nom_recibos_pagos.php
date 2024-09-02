@@ -227,17 +227,34 @@ function calcularFechaPagar($row, $conexion) {
 
 
 
-    // Definir la función obtenerCodPartida antes de usarla
-    function obtenerCodPartida($concepto, $stmt)
-    {
-        $stmt->execute(['nom_concepto' => $concepto]);
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        // Definir la función obtenerCodPartida antes de usarla
+function obtenerCodPartida($concepto, $conexion)
+{
+    // Preparar la consulta para obtener el código de partida
+    $query = "SELECT codigo_concepto FROM conceptos WHERE nom_concepto = ?";
+    
+    // Preparar la consulta
+    if ($stmt = $conexion->prepare($query)) {
+        // Vincular el parámetro
+        $stmt->bind_param("s", $concepto);
+        
+        // Ejecutar la consulta
+        $stmt->execute();
+        
+        // Obtener el resultado
+        $result = $stmt->get_result()->fetch_assoc();
+        
+        // Cerrar el statement
+        $stmt->close();
+        
+        // Retornar el resultado
         return $result ? $result['codigo_concepto'] : '';
+    } else {
+        // Manejar el error si la preparación falla
+        return '';
     }
+}
 
-    // Conexión a la base de datos
-    $conn = new PDO('mysql:host=localhost;dbname=sigob', 'root', '');
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     // Parámetro para paginación
     $pagina = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
@@ -246,7 +263,7 @@ function calcularFechaPagar($row, $conexion) {
 
     $correlativo = $_GET['correlativo'];
 
-    $query = "
+  $query = "
     SELECT
         e.cedula AS Cédula,
         e.nombres AS Nombres,
@@ -279,17 +296,29 @@ function calcularFechaPagar($row, $conexion) {
     JOIN
         dependencias d ON e.id_dependencia = d.id_dependencia
     WHERE
-        rp.correlativo = :correlativo
-    LIMIT :offset, :limit
+        rp.correlativo = ?
+    LIMIT ?, ?
 ";
 
-    $stmt = $conn->prepare($query);
-    $stmt->bindValue(':correlativo', $correlativo, PDO::PARAM_STR);
-    $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
-    $stmt->bindValue(':limit', $registrosPorPagina, PDO::PARAM_INT);
-    $stmt->execute();
+// Preparar la consulta
+$stmt = $conexion->prepare($query);
 
-    $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+if ($stmt === false) {
+    // Error en la preparación de la consulta
+    die('Error en la consulta SQL: ' . $conexion->error);
+}
+
+// Asignar los valores a los parámetros
+$stmt->bind_param('sii', $correlativo, $offset, $registrosPorPagina);
+
+// Ejecutar la consulta
+$stmt->execute();
+
+// Obtener los resultados
+$results = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+
+
 
     // Verifica si hay resultados
     if (count($results) > 0) {
@@ -326,8 +355,7 @@ function calcularFechaPagar($row, $conexion) {
             }
         }
 
-        // Preparamos la consulta para obtener el código de partida
-        $codPartidaStmt = $conn->prepare("SELECT codigo_concepto FROM conceptos WHERE nom_concepto = :nom_concepto");
+
 
         foreach ($groupedEmployees as $headerKey => $data) {
             list($id_dependencia, $dependencia, $cod_dependencia, $categoria, $categoria_nombre, $fechaPagar2, $nombre_nomina) = explode('|', $headerKey);
@@ -441,7 +469,7 @@ function calcularFechaPagar($row, $conexion) {
 
                 $totalAsignaciones = 0;
                 foreach ($asignaciones as $concepto => $valor) {
-                    $codigo_concepto = obtenerCodPartida($concepto, $codPartidaStmt);
+                    $codigo_concepto = obtenerCodPartida($concepto, $conexion);
                     echo "<tr>
                         <td>{$codigo_concepto}</td>
                         <td>{$concepto}</td>
@@ -458,7 +486,7 @@ function calcularFechaPagar($row, $conexion) {
 
                 $totalDeducciones = 0;
                 foreach ($deducciones as $concepto => $valor) {
-                    $codigo_concepto = obtenerCodPartida($concepto, $codPartidaStmt);
+                    $codigo_concepto = obtenerCodPartida($concepto, $conexion);
                     echo "<tr>
                         <td>{$codigo_concepto}</td>
                         <td>{$concepto}</td>
@@ -475,7 +503,7 @@ function calcularFechaPagar($row, $conexion) {
 
                 $totalAportes = 0;
                 foreach ($aportes as $concepto => $valor) {
-                    $codigo_concepto = obtenerCodPartida($concepto, $codPartidaStmt);
+                    $codigo_concepto = obtenerCodPartida($concepto, $conexion);
                     echo "<tr>
                         <td>{$codigo_concepto}</td>
                         <td>{$concepto}</td>

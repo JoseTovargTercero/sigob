@@ -1,6 +1,7 @@
 <?php
 // Obtener el contenido del cuerpo de la solicitud
 $input = file_get_contents('php://input');
+require_once '../sistema_global/conexion.php';
 
 // Decodificar el JSON recibido
 $data = json_decode($input, true);
@@ -9,7 +10,6 @@ if (isset($data['0102']) && isset($data['0163']) && isset($data['0175']) && isse
     
     // Función para procesar el array del banco Venezuela y generar un archivo TXT
     function txt_Venezuela($data) {
-      $conexion=mysqli_connect('localhost','root','','sigob');
         $empleados = $data['empleados'];
         $total_a_pagar = $data['total_a_pagar'];
         $correlativo = $data['correlativo'];
@@ -283,12 +283,11 @@ $totalescobrar_json = json_encode($totalescobrar);
 
     // Cerrar la declaración y la conexión
     $stmt->close();
-    $conexion->close();
+
     }
     }
     // Función para procesar el array del banco Tesoro
     function txt_Tesoro($data) {
-      $conexion=mysqli_connect('localhost','root','','sigob');
         $empleados = $data['empleados'];
         $total_a_pagar = $data['total_a_pagar'];
         $correlativo = $data['correlativo'];
@@ -374,7 +373,7 @@ header('Content-Length: ' . filesize($file_path));
 
     // Cerrar la declaración y la conexión
     $stmt->close();
-    $conexion->close();
+
     }
 
     
@@ -383,7 +382,6 @@ header('Content-Length: ' . filesize($file_path));
 
     // Función para procesar el array del banco Bicentenario
     function txt_Bicentenario($data) {
-      $conexion=mysqli_connect('localhost','root','','sigob');
          $empleados = $data['empleados'];
         $total_a_pagar = $data['total_a_pagar'];
         $correlativo = $data['correlativo'];
@@ -648,13 +646,12 @@ $totalescobrar_json = json_encode($totalescobrar);
 
     // Cerrar la declaración y la conexión
     $stmt->close();
-    $conexion->close();
     }
     }
 
     // Función para procesar el array del banco Caroni
     function txt_Caroni($data) {
-      $conexion=mysqli_connect('localhost','root','','sigob');
+
         $empleados = $data['empleados'];
         $total_a_pagar = $data['total_a_pagar'];
         $correlativo = $data['correlativo'];
@@ -815,7 +812,6 @@ $totalescobrar_json = json_encode($totalescobrar);
 
     // Cerrar la declaración y la conexión
     $stmt->close();
-    $conexion->close();
     }else{
 
     }

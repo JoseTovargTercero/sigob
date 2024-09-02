@@ -1,5 +1,7 @@
 <?php
-function generarNetoInformacion($id_empleado, $conn)
+require_once '../sistema_global/conexion.php';
+
+function generarNetoInformacion($id_empleado, $conexion)
 {
     $query = "SELECT
                 e.cedula AS cedula, 
@@ -28,13 +30,14 @@ function generarNetoInformacion($id_empleado, $conn)
             LEFT JOIN 
                 nominas n ON rp.nombre_nomina = n.nombre 
             WHERE 
-                rp.id_empleado = :id_empleado";
+                rp.id_empleado = ?";
 
-    $stmt = $conn->prepare($query);
-    $stmt->bindValue(':id_empleado', $id_empleado, PDO::PARAM_INT);
+    $stmt = $conexion->prepare($query);
+    $stmt->bind_param("i", $id_empleado);
     $stmt->execute();
+    $result = $stmt->get_result();
 
-    $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $results = $result->fetch_all(MYSQLI_ASSOC);
 
     $datosPorAnoMes = [];
     $datosPorTrimestre = [];
@@ -80,12 +83,10 @@ function generarNetoInformacion($id_empleado, $conn)
         $anoMes = $mesTexto;  // Solo el nombre del mes
         $trimestre = 'Q' . ceil((int)$fecha->format('m') / 3);
 
-        // Agrupar por año
         if (!isset($datosPorAnoMes[$año])) {
             $datosPorAnoMes[$año] = [];
         }
 
-        // Datos por Año/Mes
         if (!isset($datosPorAnoMes[$año][$anoMes])) {
             $datosPorAnoMes[$año][$anoMes] = [
                 'asignaciones' => [],
@@ -137,7 +138,6 @@ function generarNetoInformacion($id_empleado, $conn)
 
         $datosPorAnoMes[$año][$anoMes]['sueldo_total'] += $total_pagar;
 
-        // Datos por Trimestre
         if (!isset($datosPorTrimestre[$año])) {
             $datosPorTrimestre[$año] = [
                 'Q1' => ['asignaciones' => [], 'deducciones' => [], 'aportes' => [], 'sueldo_total' => 0, 'ultimo_mes' => ''],
@@ -149,7 +149,6 @@ function generarNetoInformacion($id_empleado, $conn)
 
         $trimestreDatos = &$datosPorTrimestre[$año][$trimestre];
 
-        // Reemplazar los datos del trimestre con los del último mes
         $trimestreDatos['asignaciones'] = $asignaciones;
         $trimestreDatos['deducciones'] = $deducciones;
         $trimestreDatos['aportes'] = $aportes;
@@ -157,7 +156,6 @@ function generarNetoInformacion($id_empleado, $conn)
         $trimestreDatos['ultimo_mes'] = $anoMes;
     }
 
-    // Ajustar los valores de asignaciones, deducciones y aportes por trimestre
     foreach ($datosPorTrimestre as $anio => &$trimestres) {
         foreach ($trimestres as $trimestre => &$datos) {
             if ($datos['ultimo_mes'] !== '') {
@@ -188,27 +186,25 @@ $data = json_decode($json, true);
 
 if (isset($data['cedula'])) {
     $cedula = $data['cedula'];
-
-    $conn = new PDO('mysql:host=localhost;dbname=sigob', 'root', '');
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-    $stmt = $conn->prepare("SELECT id FROM empleados WHERE cedula = :cedula");
-    $stmt->bindValue(':cedula', $cedula, PDO::PARAM_STR);
+    $query_id = "SELECT id FROM empleados WHERE cedula = ?";
+    $stmt = $conexion->prepare($query_id);
+    $stmt->bind_param("s", $cedula);
     $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
 
-    $result = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if ($result) {
-        $id_empleado = $result['id'];
-        $netoDatos = generarNetoInformacion($id_empleado, $conn);
-
+    if ($row) {
+        $id_empleado = $row['id'];
+        $datosNeto = generarNetoInformacion($id_empleado, $conexion);
         header('Content-Type: application/json');
-        echo json_encode($netoDatos);
+        echo json_encode($datosNeto);
     } else {
+        header('Content-Type: application/json');
         echo json_encode(['error' => 'Empleado no encontrado']);
     }
-}else {
+} else {
     header('Content-Type: application/json');
-    echo json_encode(['error' => "Parametro 'cedula' es requerido."]);
+    echo json_encode(['error' => 'Cédula no proporcionada']);
 }
+
 ?>
