@@ -12,6 +12,7 @@ import { validateRequestForm } from './src/controllers/peticionesNominaForm.js'
 import { validateRequestNomForm } from './src/controllers/peticionesNominaReview.js'
 import { loadRegconRequestTable } from './src/controllers/regcon_peticionesTable.js'
 import { validateTabulatorForm } from './src/controllers/tabuladorForm.js'
+import { validateTasaActual } from './src/controllers/tasaView.js'
 import { validateModal } from './src/helpers/helpers.js'
 const d = document
 
@@ -28,6 +29,7 @@ d.addEventListener('DOMContentLoaded', (e) => {
   const requestHistorial = d.getElementById('request-historial')
   const dependenciaTable = d.getElementById('dependencia-table')
   const categoriaTable = d.getElementById('categoria-table')
+  const tasaView = d.getElementById('tasa-view')
 
   if (tabulatorForm) {
     validateTabulatorForm({
@@ -130,6 +132,10 @@ d.addEventListener('DOMContentLoaded', (e) => {
   if (requestNomForm) {
     loadRegconRequestTable()
     validateRequestNomForm()
+  }
+
+  if (tasaView) {
+    validateTasaActual()
   }
 
   // if (payNomForm) {

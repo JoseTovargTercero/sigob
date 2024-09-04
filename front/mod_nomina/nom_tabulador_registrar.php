@@ -31,6 +31,7 @@ require_once '../../back/sistema_global/session.php';
 
       </div>
 
+
       <button class="btn-form btn btn-primary" id="tabulator-save-btn">ENVIAR TABULADOR</button>
 
     </div>
@@ -106,7 +107,8 @@ require_once '../../back/sistema_global/session.php';
                       id="aniosPasos" placeholder="AÑOS POR PASO" />
                   </div>
                 </div>
-                <div class="text-end">
+                <div class="text-center">
+                  <button class="btn-form btn btn-danger" id="tabulator-cancel-btn">CANCELAR</button>
                   <button class="btn btn-primary" id="tabulator-btn">SIGUIENTE</button>
                 </div>
               </form>

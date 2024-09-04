@@ -147,6 +147,10 @@ async function validateTabulatorForm({
         successFunctionParams: { fieldList, matrixInputsClass },
       })
     }
+
+    if (e.target.id === 'tabulator-cancel-btn') {
+      location.assign('/sigob/front/mod_nomina/nom_tabulador_tabla')
+    }
   })
 
   // Funciones

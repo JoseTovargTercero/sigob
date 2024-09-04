@@ -12,14 +12,14 @@ function textNotification($type)
   $msgTextNotification = array(
     '1' => ['Inicio el pago de una nomina', 'front/mod_registro_control/regcon_nomina_comparar'],
     '2' => ['Solicito modificar los datos de un empleado', 'front/mod_registro_control/regcon_modificacion_empleados'],
-    '3' => ['Envió a corrección los datos de un empleado', 'front/mod_nomina/nom_empleados_tabla'],
+    '3' => ['Envió a corrección los datos de un empleado', 'front/mod_nomina/nom_empleados_form'],
     '4' => ['Rechazo la creación de un empleado', ''],
     '5' => ['Aprobó la creación de un empleado', 'front/mod_nomina/nom_empleados_tabla'],
     '6' => ['Rechazo la modificación de un empleado', ''],
     '7' => ['Aprobó la modificación de un empleado', 'front/mod_nomina/nom_empleados_tabla'],
-    '8' => ['Rechazó la petición de nomina', 'front/mod_nomina/nom_peticiones_tabla'],
-    '9' => ['Aprobo el pago de nomina', 'front/mod_nomina/nom_peticiones_tabla'],
-    '10' => ['Se ha realizado un reintegro a un empleado, se debe cambiar el status a Activo', 'front/mod_nomina/nom_peticiones_tabla'],
+    '8' => ['Rechazó la petición de nomina', 'front/mod_nomina/nom_peticiones_form'],
+    '9' => ['Aprobo el pago de nomina', 'front/mod_nomina/nom_peticiones_form'],
+    '10' => ['Se ha realizado un reintegro a un empleado, se debe cambiar el status a Activo', 'front/mod_nomina/nom_peticiones_form'],
 
     // mas opciones
   );
