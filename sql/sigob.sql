@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 29-08-2024 a las 05:41:45
+-- Tiempo de generación: 04-09-2024 a las 17:17:32
 -- Versión del servidor: 10.4.27-MariaDB
 -- Versión de PHP: 7.4.33
 
@@ -9634,6 +9634,33 @@ INSERT INTO `tabuladores_estr` (`id`, `paso`, `grado`, `monto`, `tabulador_id`) 
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `tasa`
+--
+
+CREATE TABLE `tasa` (
+  `id` int(255) NOT NULL,
+  `descripcion` varchar(255) NOT NULL,
+  `simbolo` varchar(255) NOT NULL,
+  `valor` varchar(2000) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `tasa_historico`
+--
+
+CREATE TABLE `tasa_historico` (
+  `id` int(255) NOT NULL,
+  `u_nombre` varchar(255) NOT NULL,
+  `precio` varchar(255) NOT NULL,
+  `descripcion` varchar(2000) NOT NULL,
+  `fecha` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `txt`
 --
 
@@ -14075,6 +14102,18 @@ ALTER TABLE `tabuladores_estr`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indices de la tabla `tasa`
+--
+ALTER TABLE `tasa`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `tasa_historico`
+--
+ALTER TABLE `tasa_historico`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indices de la tabla `txt`
 --
 ALTER TABLE `txt`
@@ -14275,6 +14314,18 @@ ALTER TABLE `tabuladores`
 --
 ALTER TABLE `tabuladores_estr`
   MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=670;
+
+--
+-- AUTO_INCREMENT de la tabla `tasa`
+--
+ALTER TABLE `tasa`
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `tasa_historico`
+--
+ALTER TABLE `tasa_historico`
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `txt`
