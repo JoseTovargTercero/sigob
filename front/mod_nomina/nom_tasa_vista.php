@@ -44,32 +44,31 @@ require_once '../../back/sistema_global/session.php';
                                 <small class="mt-0 text-muted">Actualice según sea requerido</small>
                             </div>
                         </div>
-                        <div class="card-body" id="tasa-card-body">
+                        <div class="card-body" id="tasa-card-body"></div>
 
-                            <!-- <div class="table-responsive p-1">
-                                <table id="tabulator-table" class="table table-striped" style="width:100%">
-                                    <thead class="w-100">
-                                        <th>NOMBRES</th>
-                                        <th>PASOS</th>
-                                        <th>GRADOS</th>
-                                        <th>AÑOSxPASO</th>
-                                        <th>ACCIONES</th>
-                                    </thead>
-                                    <tbody>
-
-                                    </tbody>
-                                </table>
-                            </div> -->
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <div class="">
+                            <h5 class="mb-0">Registros de cambio de la tasa BCV</h5>
+                            <small class="mt-0 text-muted">Visualice los registros realizados de tasas
+                                anteriores</small>
                         </div>
-                        <div class="card-footer">
-                            <h5 class="mb text-center">¿Es incorrecto? Actualice:</h5>
-                            <div class="d-flex justify-content-center gap-2">
-                                <button class="btn btn-secondary" id="tasa-actualizar-manual">Manual</button>
-                                <button class="btn btn-primary" id="tasa-actualizar-automatico">Automatico</button>
-                            </div>
+                    </div>
+                    <div class="card-body">
+                        <table id="tasa-table" class="table table-striped" style="width:100%">
+                            <thead class="w-100">
+                                <th>USUARIO</th>
+                                <th>VALOR TASA</th>
+                                <th>FECHA</th>
+                                <th>DESCRIPCIÓN</th>
 
+                            </thead>
+                            <tbody>
 
-                        </div>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
                 <!-- [ worldLow section ] end -->

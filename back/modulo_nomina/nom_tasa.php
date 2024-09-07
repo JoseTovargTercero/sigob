@@ -50,6 +50,42 @@ function obtenerTasa()
     }
 }
 
+function obtenerHistorialTasa()
+{
+    global $conexion;
+
+    try {
+        $sql = "SELECT * FROM tasa_historico ORDER BY id DESC";
+        $stmt = $conexion->prepare($sql);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result === false) {
+            throw new Exception("Error en la consulta: $conexion->error");
+        }
+
+
+
+
+        if ($result->num_rows > 0) {
+
+            while ($row = $result->fetch_assoc()) {
+                $datos[] = $row;
+            }
+            $response = json_encode(["success" => $datos]);
+        } else {
+            $response = json_encode(["error" => "No se encontraron registros de tasa"]);
+        }
+
+        $stmt->close();
+        $conexion->close();
+
+        return $response;
+    } catch (Exception $e) {
+        return json_encode(['error' => $e->getMessage()]);
+    }
+}
+
 function crearTasa()
 {
     global $conexion;
@@ -79,13 +115,14 @@ function crearTasa()
 
         if ($stmt->affected_rows > 0) {
             registrarHistorial("creación de tasa por el usuario", $precioactual);
-            $response = json_encode(["success" => "Tasa creada con éxito"]);
+            $response = obtenerTasa();
+            // $response = json_encode(["success" => "Tasa creada con éxito"]);
         } else {
             throw new Exception("Error al insertar la tasa: $conexion->error");
         }
 
         $stmt->close();
-        $conexion->close();
+        // $conexion->close();
 
         return $response;
     } catch (Exception $e) {
@@ -165,6 +202,9 @@ function procesarPeticion($data)
         }
         if ($accion === "actualizar") {
             return actualizarTasa();
+        }
+        if ($accion === 'historial') {
+            return obtenerHistorialTasa();
         }
         if ($accion === "eliminar") {
             if (!isset($data["informacion"]))
