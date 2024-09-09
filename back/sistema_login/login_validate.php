@@ -1,14 +1,16 @@
 <?php
 ob_start();
-include('../sistema_global/conexion.php');
+include '../sistema_global/conexion.php';
+require_once '../sistema_global/tasa_funciones.php';
+
 $values = json_decode(file_get_contents('php://input'), true);
 
 $email = clear($values['email']);
 $contrasena = clear($values['password']);
 
 
-$email = mysqli_real_escape_string($conexion,  $email);
-$contrasena = mysqli_real_escape_string($conexion,  $contrasena);
+$email = mysqli_real_escape_string($conexion, $email);
+$contrasena = mysqli_real_escape_string($conexion, $contrasena);
 
 
 $stmt = mysqli_prepare($conexion, "SELECT * FROM `system_users` WHERE u_email = ? AND u_contrasena!='' AND u_status='1' LIMIT 1");
@@ -27,6 +29,17 @@ if ($result->num_rows > 0) {
 			$_SESSION['u_oficina'] = $row['u_oficina'];
 			$_SESSION['u_nivel'] = $row['u_nivel'];
 			$_SESSION['verificar_upload'] = false;
+
+
+			if (tasaIsEmpty($conexion)) {
+				$tasa = obtenerTasaDeApi(); // Función para obtener la tasa de la API o 0 en caso de error
+				guardarTasa($conexion, $tasa);
+			} else {
+				if (verificarUltimaActualizacionTasa($conexion)) {
+					cambiarTasa($conexion);
+				}
+				// Si la tasa no está vacía, actualizar
+			}
 
 			// regresa una respuesta al fetch
 			$folder = '';
@@ -60,3 +73,6 @@ $stmt->close();
 
 
 ob_end_flush();
+
+
+

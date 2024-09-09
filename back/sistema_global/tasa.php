@@ -1,24 +1,24 @@
 <?php
-
-session_start();  // Inicia la sesión
+session_start();
 $u_nombre = $_SESSION['u_nombre'];  // Asigna el nombre del usuario a la variable de sesión
 
 require_once '../sistema_global/conexion.php';
+include '../sistema_global/tasa_funciones.php';
 header('Content-Type: application/json');
 
-function registrarHistorial($descripcion, $precioactual)
-{
-    global $conexion;
 
-    $u_nombre = $_SESSION['u_nombre'];
-    $fecha_actual = date("d-m-Y");
+// function registrarHistorial($descripcion, $precioactual)
+// {
+//     global $conexion;
 
-    $sql = "INSERT INTO tasa_historico (u_nombre, precio, descripcion, fecha) VALUES (?, ?, ?, ?)";
-    $stmt = $conexion->prepare($sql);
-    $stmt->bind_param("sdss", $u_nombre, $precioactual, $descripcion, $fecha_actual);
-    $stmt->execute();
-    $stmt->close();
-}
+//     $fecha_actual = date("d-m-Y");
+
+//     $sql = "INSERT INTO tasa_historico (u_nombre, precio, descripcion, fecha) VALUES (?, ?, ?, ?)";
+//     $stmt = $conexion->prepare($sql);
+//     $stmt->bind_param("sdss", $u_nombre, $precioactual, $descripcion, $fecha_actual);
+//     $stmt->execute();
+//     $stmt->close();
+// }
 
 function obtenerTasa()
 {
@@ -42,7 +42,7 @@ function obtenerTasa()
         }
 
         $stmt->close();
-        $conexion->close();
+        // $conexion->close();
 
         return $response;
     } catch (Exception $e) {
@@ -78,7 +78,7 @@ function obtenerHistorialTasa()
         }
 
         $stmt->close();
-        $conexion->close();
+        // $conexion->close();
 
         return $response;
     } catch (Exception $e) {
@@ -91,37 +91,37 @@ function crearTasa()
     global $conexion;
 
     try {
-        $api_key = "afa5859e067e3a9f96886ebc";
-        $url = "https://v6.exchangerate-api.com/v6/{$api_key}/pair/USD/VES";
-        $response = file_get_contents($url);
-        $data = json_decode($response, true);
 
-        $precioactual = $data['conversion_rate'];
-
-        // Verificar si ya existe un registro
-        $stmt_check = $conexion->prepare("SELECT * FROM tasa");
-        $stmt_check->execute();
-        $result_check = $stmt_check->get_result();
-        if ($result_check->num_rows > 0) {
+        if (!tasaIsEmpty($conexion)) {
             throw new Exception("Ya existe un registro de tasa.");
         }
 
-        $sql = "INSERT INTO tasa (descripcion, simbolo, valor) VALUES (?, ?, ?)";
-        $stmt = $conexion->prepare($sql);
-        $descripcion = "Precio del Dólar Actual";
-        $simbolo = "$";
-        $stmt->bind_param("ssd", $descripcion, $simbolo, $precioactual);
-        $stmt->execute();
+        // Verificar si ya existe un registro
+        // $stmt_check = $conexion->prepare("SELECT * FROM tasa");
+        // $stmt_check->execute();
+        // $result_check = $stmt_check->get_result();
+        // if ($result_check->num_rows > 0) {
+        //     throw new Exception("Ya existe un registro de tasa.");
+        // }
 
-        if ($stmt->affected_rows > 0) {
-            registrarHistorial("creación de tasa por el usuario", $precioactual);
+        // $sql = "INSERT INTO tasa (descripcion, simbolo, valor) VALUES (?, ?, ?)";
+        // $stmt = $conexion->prepare($sql);
+        // $descripcion = "Precio del Dólar Actual";
+        // $simbolo = "$";
+        // $stmt->bind_param("ssd", $descripcion, $simbolo, $precioactual);
+        // $stmt->execute();
+
+        $tasa = obtenerTasaDeApi();
+        if (guardarTasa($conexion, $tasa)) {
+            $u_nombre = $_SESSION["u_nombre"];
+
+            registrarHistorial("creación de tasa por el usuario", $tasa, $u_nombre, $conexion);
             $response = obtenerTasa();
-            // $response = json_encode(["success" => "Tasa creada con éxito"]);
         } else {
             throw new Exception("Error al insertar la tasa: $conexion->error");
         }
 
-        $stmt->close();
+        // $stmt->close();
         // $conexion->close();
 
         return $response;
@@ -135,16 +135,10 @@ function actualizarTasa($data)
     global $conexion;
 
     try {
-        $api_key = "afa5859e067e3a9f96886ebc";
-        $url = "https://v6.exchangerate-api.com/v6/{$api_key}/pair/USD/VES";
-        $response = file_get_contents($url);
-        $dataApi = json_decode($response, true);
 
-        if (isset($data['informacion']['valor'])) {
-            $precioactual = $data['informacion']['valor'];
-        } else {
-            $precioactual = $dataApi['conversion_rate'];
-        }
+        $tasa = obtenerTasaDeApi();
+
+        $precioactual = !$tasa ? $data['informacion']['valor'] : $tasa;
 
         // Actualizar solo el precio actual
         $sql = "UPDATE tasa SET valor = ? ORDER BY id DESC LIMIT 1";
@@ -153,14 +147,15 @@ function actualizarTasa($data)
         $stmt->execute();
 
         if ($stmt->affected_rows > 0) {
-            registrarHistorial("actualización de tasa por el usuario", $precioactual);
+            $u_nombre = $_SESSION["u_nombre"];
+            registrarHistorial("actualización de tasa por el usuario", $precioactual, $u_nombre, $conexion);
             $response = json_encode(["success" => "Tasa actualizada con éxito"]);
         } else {
-            throw new Exception("No se ha cambiado ningún valor");
+            $response = json_encode(["success" => "No se ha cambiado ningun valor"]);
         }
 
         $stmt->close();
-        $conexion->close();
+        // $conexion->close();
 
         return $response;
     } catch (Exception $e) {
@@ -189,7 +184,7 @@ function eliminarTasa($informacion)
         }
 
         $stmt->close();
-        $conexion->close();
+        // $conexion->close();
 
         return $response;
     } catch (Exception $e) {
@@ -223,6 +218,7 @@ function procesarPeticion($data)
         return obtenerTasa();
     }
 }
+
 
 $response = procesarPeticion($data);
 

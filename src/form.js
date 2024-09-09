@@ -20,7 +20,7 @@ document.getElementById('formLogin').addEventListener('submit', function (e) {
       // manda un alert con el texto imprimido desde login_validate.php
       res.text().then((text) => {
         // convierte el texto de la respuesta a un json
-
+        console.log(text)
         text = JSON.parse(text)
         console.log(text)
 

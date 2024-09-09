@@ -6,7 +6,7 @@ import {
 } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 
-const tasaUrl = '../../../../sigob/back/modulo_nomina/nom_tasa.php'
+const tasaUrl = '../../../../sigob/back/sistema_global/tasa.php'
 
 const obtenerTasa = async () => {
   try {
@@ -75,7 +75,7 @@ const obtenerHistorialTasa = async () => {
       return json.success
     }
     if (json.error) {
-      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+      // toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
     }
   } catch (e) {
     console.log(e)
