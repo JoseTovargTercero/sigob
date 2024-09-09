@@ -28,9 +28,20 @@ export async function validateTasaActual() {
 
   d.addEventListener('click', async (e) => {
     if (e.target.id === 'tasa-actualizar-manual') {
+      let actualizar = await actualizarTasa({ informacion: { valor: 1000 } })
+      if (!actualizar || actualizar.error) return
+
+      let tasaActualizada = await obtenerTasa()
+
+      loadTasaTable()
+
+      nomTasaCard({
+        elementToInsert: 'tasa-card-body',
+        tasaDelDia: tasaActualizada,
+      })
     }
     if (e.target.id === 'tasa-actualizar-automatico') {
-      let actualizar = await actualizarTasa()
+      let actualizar = await actualizarTasa({ informacion: false })
       if (!actualizar || actualizar.error) return
 
       let tasaActualizada = await obtenerTasa()

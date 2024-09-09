@@ -86,13 +86,26 @@ const obtenerHistorialTasa = async () => {
   }
 }
 
-const actualizarTasa = async () => {
+const actualizarTasa = async ({ informacion }) => {
   showLoader()
   try {
-    let res = await fetch(tasaUrl, {
-      method: 'POST',
-      body: JSON.stringify({ accion: 'actualizar' }),
-    })
+    let res
+
+    if (informacion) {
+      console.log(informacion)
+      res = await fetch(tasaUrl, {
+        method: 'POST',
+        body: JSON.stringify({
+          accion: 'actualizar',
+          informacion: informacion,
+        }),
+      })
+    } else {
+      res = await fetch(tasaUrl, {
+        method: 'POST',
+        body: JSON.stringify({ accion: 'actualizar' }),
+      })
+    }
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
     let clone = res.clone()

@@ -44,8 +44,20 @@ require_once '../../back/sistema_global/session.php';
                                 <small class="mt-0 text-muted">Actualice según sea requerido</small>
                             </div>
                         </div>
-                        <div class="card-body" id="tasa-card-body"></div>
 
+                        <div class="card-body" id="tasa-card-body"></div>
+                        <!-- <div class="mx-auto slide-up-animation" id="dependencia-form-container">
+
+                            <form id="dependencia-form">
+                                <div class="mb-3">
+                                    <div class="input-group">
+                                        <span class="input-group-text">Nueva tasa del $</span>
+                                        <input type="text" class="form-control" placeholder="Left Button">
+                                        <button class="btn btn-outline-secondary" type="button">Guardar</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div> -->
                     </div>
                 </div>
                 <div class="card">

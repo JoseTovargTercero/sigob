@@ -130,7 +130,7 @@ function crearTasa()
     }
 }
 
-function actualizarTasa()
+function actualizarTasa($data)
 {
     global $conexion;
 
@@ -138,9 +138,13 @@ function actualizarTasa()
         $api_key = "afa5859e067e3a9f96886ebc";
         $url = "https://v6.exchangerate-api.com/v6/{$api_key}/pair/USD/VES";
         $response = file_get_contents($url);
-        $data = json_decode($response, true);
+        $dataApi = json_decode($response, true);
 
-        $precioactual = $data['conversion_rate'];
+        if (isset($data['informacion']['valor'])) {
+            $precioactual = $data['informacion']['valor'];
+        } else {
+            $precioactual = $dataApi['conversion_rate'];
+        }
 
         // Actualizar solo el precio actual
         $sql = "UPDATE tasa SET valor = ? ORDER BY id DESC LIMIT 1";
@@ -163,6 +167,7 @@ function actualizarTasa()
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 function eliminarTasa($informacion)
 {
@@ -201,7 +206,7 @@ function procesarPeticion($data)
             return crearTasa();
         }
         if ($accion === "actualizar") {
-            return actualizarTasa();
+            return actualizarTasa($data);
         }
         if ($accion === 'historial') {
             return obtenerHistorialTasa();

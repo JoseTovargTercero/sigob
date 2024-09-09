@@ -17,10 +17,11 @@ export const nomTasaCard = ({ elementToInsert, tasaDelDia }) => {
         ${fechaDeHoy}</p>
 
         <div class="card-footer">
-  <h5 class="mb text-center">¿Es incorrecto? Actualice por favor:</h5>
-  <div class="d-flex justify-content-center gap-2">
-      <button class="btn btn-secondary" id="tasa-actualizar-manual">Manual</button>
-      <button class="btn btn-primary" id="tasa-actualizar-automatico">Automatico</button>
+        <div class="d-flex justify-content-center gap-2">
+        <h5 class="my-auto text-center">¿Es incorrecto? Actualice por favor:</h5>
+
+      <button class="btn btn-primary btn-sm" id="tasa-actualizar-manual">Manual</button>
+      <button class="btn btn-primary btn-sm" id="tasa-actualizar-automatico">Actualizar</button>
   </div>
 
 
