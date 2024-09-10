@@ -1,11 +1,17 @@
 <?php
 require_once '../sistema_global/conexion.php';
 
-$api_key = "4bfc66a740d312008475dded";
-$url2 = "https://v6.exchangerate-api.com/v6/{$api_key}/pair/USD/VES";
-$response2 = file_get_contents($url2);
-$data2 = json_decode($response2, true);
-$precio_dolar = $data2['conversion_rate'];
+$query = "SELECT valor FROM tasa ORDER BY id DESC LIMIT 1"; // Selecciona el último valor registrado
+$result = mysqli_query($conexion, $query);
+
+if ($result && mysqli_num_rows($result) > 0) {
+    $row = mysqli_fetch_assoc($result);
+    $precio_dolar = $row['valor']; // Asigna el valor del campo 'valor'
+} else {
+    // Manejo de error en caso de que no se encuentre ningún registro en la tabla 'tasa'
+    echo json_encode(array('error' => 'Error al preparar la consulta del Precio del dolar: ' . $conexion->error));
+    exit();
+}
 
 
 header('Content-Type: application/json');
