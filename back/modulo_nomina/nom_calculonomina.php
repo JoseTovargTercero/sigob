@@ -7,7 +7,6 @@ $result = mysqli_query($conexion, $query);
 if ($result && mysqli_num_rows($result) > 0) {
     $row = mysqli_fetch_assoc($result);
     $precio_dolar = $row['valor']; // Asigna el valor del campo 'valor'
-    echo $precio_dolar;
 } else {
     // Manejo de error en caso de que no se encuentre ningún registro en la tabla 'tasa'
     echo json_encode(array('error' => 'Error al preparar la consulta del Precio del dolar: ' . $conexion->error));
