@@ -67,7 +67,7 @@ const obtenerHistorialTasa = async () => {
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
     let clone = res.clone()
     let text = await clone.text()
-    console.log(text)
+    // console.log(text)
 
     const json = await res.json()
     console.log(json)
@@ -86,26 +86,13 @@ const obtenerHistorialTasa = async () => {
   }
 }
 
-const actualizarTasa = async ({ informacion }) => {
+const actualizarTasa = async () => {
   showLoader()
   try {
-    let res
-
-    if (informacion) {
-      console.log(informacion)
-      res = await fetch(tasaUrl, {
-        method: 'POST',
-        body: JSON.stringify({
-          accion: 'actualizar',
-          informacion: informacion,
-        }),
-      })
-    } else {
-      res = await fetch(tasaUrl, {
-        method: 'POST',
-        body: JSON.stringify({ accion: 'actualizar' }),
-      })
-    }
+    let res = await fetch(tasaUrl, {
+      method: 'POST',
+      body: JSON.stringify({ accion: 'actualizar' }),
+    })
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
     let clone = res.clone()
@@ -138,4 +125,52 @@ const actualizarTasa = async ({ informacion }) => {
   }
 }
 
-export { obtenerTasa, crearTasa, actualizarTasa, obtenerHistorialTasa }
+const actualizarTasaManual = async ({ informacion }) => {
+  showLoader()
+  try {
+    let res = await fetch(tasaUrl, {
+      method: 'POST',
+      body: JSON.stringify({
+        accion: 'actualizar',
+        informacion: informacion,
+      }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+    let clone = res.clone()
+    let text = await clone.text()
+    console.log(text)
+
+    const json = await res.json()
+    console.log(json)
+    if (json.success) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.done,
+        message: json.success,
+      })
+
+      return json.success
+    }
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
+
+    return json
+  } catch (e) {
+    console.log(e)
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al actualizar tasa manualmente',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
+export {
+  obtenerTasa,
+  crearTasa,
+  actualizarTasa,
+  obtenerHistorialTasa,
+  actualizarTasaManual,
+}

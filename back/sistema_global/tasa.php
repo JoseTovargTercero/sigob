@@ -135,10 +135,13 @@ function actualizarTasa($data)
     global $conexion;
 
     try {
+        if (!isset($data['informacion'])) {
+            $precioactual = obtenerTasaDeApi();
+        } else {
+            $precioactual = $data['informacion']['valor'];
+        }
 
-        $tasa = obtenerTasaDeApi();
 
-        $precioactual = !$tasa ? $data['informacion']['valor'] : $tasa;
 
         // Actualizar solo el precio actual
         $sql = "UPDATE tasa SET valor = ? ORDER BY id DESC LIMIT 1";

@@ -46,18 +46,26 @@ require_once '../../back/sistema_global/session.php';
                         </div>
 
                         <div class="card-body" id="tasa-card-body"></div>
-                        <!-- <div class="mx-auto slide-up-animation" id="dependencia-form-container">
+                        <div class="mx-auto slide-up-animation hide" id="tasa-form-container">
 
-                            <form id="dependencia-form">
+                            <form id="tasa-form">
+                                <small class="mb-2 text-muted">*Nota: Asegúrese de que coincide con la tasa del Banco
+                                    Central
+                                    de Venezuela (BCV)</small>
+
                                 <div class="mb-3">
                                     <div class="input-group">
-                                        <span class="input-group-text">Nueva tasa del $</span>
-                                        <input type="text" class="form-control" placeholder="Left Button">
-                                        <button class="btn btn-outline-secondary" type="button">Guardar</button>
+                                        <span class="input-group-text mb-auto">Nueva tasa del $</span>
+                                        <div>
+                                            <input type="text" class="form-control" name="tasa-input"
+                                                placeholder="00.0000 Bs">
+                                        </div>
+                                        <button class="btn btn-outline-secondary mb-auto" id="tasa-guardar"
+                                            type="button">Guardar</button>
                                     </div>
                                 </div>
                             </form>
-                        </div> -->
+                        </div>
                     </div>
                 </div>
                 <div class="card">

@@ -20,7 +20,7 @@ export const nomTasaCard = ({ elementToInsert, tasaDelDia }) => {
         <div class="d-flex justify-content-center gap-2">
         <h5 class="my-auto text-center">¿Es incorrecto? Actualice por favor:</h5>
 
-      <button class="btn btn-primary btn-sm" id="tasa-actualizar-manual">Manual</button>
+      <button class="btn btn-secondary btn-sm" id="tasa-actualizar-manual">Editar</button>
       <button class="btn btn-primary btn-sm" id="tasa-actualizar-automatico">Actualizar</button>
   </div>
 

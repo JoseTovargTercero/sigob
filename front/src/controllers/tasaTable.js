@@ -1,6 +1,16 @@
 import { deleteCategoria, getCategorias } from '../api/categorias.js'
-import { obtenerHistorialTasa } from '../api/tasa..js'
-import { confirmNotification } from '../helpers/helpers.js'
+import {
+  actualizarTasa,
+  actualizarTasaManual,
+  obtenerHistorialTasa,
+  obtenerTasa,
+} from '../api/tasa..js'
+import { nomTasaCard } from '../components/nom_tasa_card.js'
+import {
+  confirmNotification,
+  toastNotification,
+  validateInput,
+} from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 
 const d = document
@@ -39,6 +49,7 @@ export async function inicializarTasaTable() {
       { data: 'fecha' },
       { data: 'descripcion' },
     ],
+    ordering: false,
     responsive: true,
     scrollY: 300,
     language: tableLanguage,
@@ -79,28 +90,28 @@ export async function loadTasaTable() {
   tasaTable.rows.add(data).draw()
 }
 
-export const addCategoriaFila = ({ row }) => {
-  console.log('añadiendooo', row)
-  categoriasTable.row.add(row).draw()
-}
+// export const addCategoriaFila = ({ row }) => {
+//   console.log('añadiendooo', row)
+//   categoriasTable.row.add(row).draw()
+// }
 
-export function confirmDeleteCategoria({ id, row, table }) {
-  confirmNotification({
-    type: NOTIFICATIONS_TYPES.delete,
-    successFunction: async function () {
-      let res = await deleteCategoria({ informacion: { id: id } })
+// export function confirmDeleteCategoria({ id, row, table }) {
+//   confirmNotification({
+//     type: NOTIFICATIONS_TYPES.delete,
+//     successFunction: async function () {
+//       let res = await deleteCategoria({ informacion: { id: id } })
 
-      if (res) {
-        if (res.error) return
-        categoriasTable.row(row).remove().draw()
-      }
-      // let res = await deleteDependencyData(id)
-      // if (res.error) return
-      // ELIMINAR FILA DE LA TABLA CON LA API DE DATATABLES
-    },
-    message: '¿Deseas eliminar esta categoria?',
-  })
-}
+//       if (res) {
+//         if (res.error) return
+//         categoriasTable.row(row).remove().draw()
+//       }
+//       // let res = await deleteDependencyData(id)
+//       // if (res.error) return
+//       // ELIMINAR FILA DE LA TABLA CON LA API DE DATATABLES
+//     },
+//     message: '¿Deseas eliminar esta categoria?',
+//   })
+// }
 
 // `
 // <button class="btn btn-primary btn-sm" data-correlativo="${
