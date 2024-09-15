@@ -13,7 +13,13 @@
           </a>
         </li>
         <li class=" pc-h-item">
-          <a class="pc-link btn btn-light" href="<?php echo constant('URL') ?>front/mod_nomina/nom_tasa_vista">
+          <a class="pc-link btn btn-light" href="<?php
+          if ($_SESSION["u_oficina"] == 'nomina') {
+            echo constant('URL') . "front/mod_nomina/nom_tasa_vista";
+          } else {
+            echo '#';
+          }
+          ?> ">
             Tasa del día (BCV) $: &nbsp;
             <span id="tasa-valor">
               <?php
