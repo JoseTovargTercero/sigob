@@ -1,5 +1,6 @@
 <?php
 require_once '../sistema_global/conexion.php';
+require_once '../sistema_global/session.php';
 require_once '../../vendor/autoload.php'; // Ajusta la ruta según la ubicación de mpdf y SimpleXLSXGen
 require_once 'pdf_files_config.php'; // Incluir el archivo de configuración
 
@@ -28,7 +29,7 @@ foreach ($palabras_prohibidas as $palabra) {
 }
 
 // Preparación de datos para almacenar
-$id_usuario = 1; // Asegúrate de que la sesión contiene el id del usuario
+$id_usuario = $_SESSION["u_id"]; // Asegúrate de que la sesión contiene el id del usuario
 $columnas_serializadas = json_encode($columnas);
 $creacion = date('Y-m-d H:i:s');
 
@@ -41,7 +42,8 @@ if ($zip->open($zipFilename, ZipArchive::CREATE) !== TRUE) {
 }
 
 // Función para agregar archivos al ZIP
-function addToZip($zip, $filename, $content) {
+function addToZip($zip, $filename, $content)
+{
     if (!$zip->addFromString($filename, $content)) {
         echo json_encode(['error' => 'No se pudo agregar el archivo al ZIP']);
         exit;
@@ -53,7 +55,7 @@ $nominas_json = json_encode($nominas);
 $query = "";  // Inicializamos $query para evitar el error de variable no definida
 
 if ($tipoFiltro === "Ninguno") {
-    $query = "SELECT " . implode(", ", array_map(function($col) use ($conexion) {
+    $query = "SELECT " . implode(", ", array_map(function ($col) use ($conexion) {
         return mysqli_real_escape_string($conexion, $col);
     }, $columnas)) . " FROM empleados WHERE $condicion";
 } elseif ($tipoFiltro === "nominas") {
@@ -82,13 +84,13 @@ if ($tipoFiltro === "Ninguno") {
         $empleados_string = implode(", ", array_map('intval', $empleados));
 
         if ($condicion == "") {
-            $query = "SELECT " . implode(", ", array_map(function($col) use ($conexion) {
-            return mysqli_real_escape_string($conexion, $col);
-        }, $columnas)) . " FROM empleados WHERE id IN ($empleados_string)";
+            $query = "SELECT " . implode(", ", array_map(function ($col) use ($conexion) {
+                return mysqli_real_escape_string($conexion, $col);
+            }, $columnas)) . " FROM empleados WHERE id IN ($empleados_string)";
         } else {
-            $query = "SELECT " . implode(", ", array_map(function($col) use ($conexion) {
-            return mysqli_real_escape_string($conexion, $col);
-        }, $columnas)) . " FROM empleados WHERE $condicion AND id IN ($empleados_string)";
+            $query = "SELECT " . implode(", ", array_map(function ($col) use ($conexion) {
+                return mysqli_real_escape_string($conexion, $col);
+            }, $columnas)) . " FROM empleados WHERE $condicion AND id IN ($empleados_string)";
         }
     } else {
         echo json_encode(['error' => 'No se encontraron empleados para las nóminas seleccionadas']);
@@ -106,13 +108,13 @@ if ($tipoFiltro === "Ninguno") {
         }
         $empleados_string = implode(", ", array_map('intval', $empleados));
         if ($condicion == "") {
-            $query = "SELECT " . implode(", ", array_map(function($col) use ($conexion) {
-            return mysqli_real_escape_string($conexion, $col);
-        }, $columnas)) . " FROM empleados WHERE id IN ($empleados_string)";
+            $query = "SELECT " . implode(", ", array_map(function ($col) use ($conexion) {
+                return mysqli_real_escape_string($conexion, $col);
+            }, $columnas)) . " FROM empleados WHERE id IN ($empleados_string)";
         } else {
-            $query = "SELECT " . implode(", ", array_map(function($col) use ($conexion) {
-            return mysqli_real_escape_string($conexion, $col);
-        }, $columnas)) . " FROM empleados WHERE $condicion AND id IN ($empleados_string)";
+            $query = "SELECT " . implode(", ", array_map(function ($col) use ($conexion) {
+                return mysqli_real_escape_string($conexion, $col);
+            }, $columnas)) . " FROM empleados WHERE $condicion AND id IN ($empleados_string)";
         }
     } else {
         echo json_encode(['error' => 'No se encontraron empleados para los grupos seleccionados']);
@@ -231,4 +233,3 @@ if ($formato == "pdf" || $formato == "xlsx") {
 }
 
 $conexion->close();
-?>

@@ -131,7 +131,6 @@ require_once '../../back/sistema_global/session.php';
               var grupo_existe = data[i].grupo_existe;
               var frecuenciaPago = data[i].frecuenciaPago;
               let edit = true
-              console.log(nombre + ': ' + grupo_existe + ' - ' + frecuenciaPago)
 
               if (grupo_existe == '0' || frecuenciaPago == 0) {
                 edit = false
@@ -159,11 +158,11 @@ require_once '../../back/sistema_global/session.php';
 
     function noticiaEdit(empleados, frecuenciaPago) {
       let texto = '';
-      if (empleados === 0) {
+      if (empleados == 0) {
         texto = 'No hay empleados asociados al grupo de nómina, cree un nuevo listado para continuar. ';
       }
       if (!frecuenciaPago) {
-        texto += (empleados === 0 ? 'Adicionalmente, ' : '') + 'no hay una frecuencia de pago establecida para el grupo.';
+        texto += (empleados == 0 ? 'Adicionalmente, ' : '') + 'no hay una frecuencia de pago establecida para el grupo.';
       }
       if (texto) {
         swal('error', texto);

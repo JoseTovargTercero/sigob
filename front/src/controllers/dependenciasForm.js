@@ -1,124 +1,124 @@
-import { getCategorias } from '../api/categorias.js'
+import { getCategorias } from "../api/categorias.js";
 import {
   getDependencias,
   sendDependencia,
   updateDependencia,
-} from '../api/dependencias.js'
-import { confirmNotification, validateInput } from '../helpers/helpers.js'
-import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
+} from "../api/dependencias.js";
+import { confirmNotification, validateInput } from "../helpers/helpers.js";
+import { NOTIFICATIONS_TYPES } from "../helpers/types.js";
 import {
   confirmDeleteDependencia,
   loadDependenciaTable,
-} from './dependenciasTable.js'
+} from "./dependenciasTable.js";
 
-const d = document
-let id
+const d = document;
+let id;
 
 let fieldList = {
-  dependencia: '',
-  cod_dependencia: '',
-  id_categoria: '',
-}
+  dependencia: "",
+  cod_dependencia: "",
+  id_categoria: "",
+};
 
 let fieldListErrors = {
   dependencia: {
     value: true,
-    message: 'Campo inválido',
-    type: 'text',
+    message: "Campo inválido",
+    type: "text",
   },
   cod_dependencia: {
     value: true,
-    message: 'Campo inválido',
-    type: 'number',
+    message: "Campo inválido",
+    type: "number",
   },
   id_categoria: {
     value: true,
-    message: 'Elija una categoria válida',
-    type: 'number',
+    message: "Elija una categoria válida",
+    type: "number",
   },
-}
+};
 
 export function validateDependenciaForm() {
-  let formId = 'dependencia-form',
-    formContainerId = 'dependencia-form-container',
-    btnNewId = 'dependencia-nueva',
-    btnSaveId = 'dependencia-guardar'
+  let formId = "dependencia-form",
+    formContainerId = "dependencia-form-container",
+    btnNewId = "dependencia-nueva",
+    btnSaveId = "dependencia-guardar";
 
-  const formElement = d.getElementById(formId)
-  const formContainerElement = d.getElementById(formContainerId)
-  const btnNewElement = d.getElementById(btnNewId)
+  const formElement = d.getElementById(formId);
+  const formContainerElement = d.getElementById(formContainerId);
+  const btnNewElement = d.getElementById(btnNewId);
 
-  formElement.addEventListener('input', (e) => {
+  formElement.addEventListener("input", (e) => {
     fieldList = validateInput({
       target: e.target,
       fieldList: fieldList,
       fieldListErrors: fieldListErrors,
       type: fieldListErrors[e.target.name].type,
-    })
-  })
+    });
+  });
 
-  formElement.addEventListener('change', (e) => {
+  formElement.addEventListener("change", (e) => {
     fieldList = validateInput({
       target: e.target,
       fieldList: fieldList,
       fieldListErrors: fieldListErrors,
       type: fieldListErrors[e.target.name].type,
-    })
-  })
+    });
+  });
 
-  d.addEventListener('click', async (e) => {
+  d.addEventListener("click", async (e) => {
     if (e.target.id === btnNewId) {
-      formContainerElement.classList.toggle('hide')
-      if (formContainerElement.classList.contains('hide')) {
-        validateEditButtons()
-        btnNewElement.textContent = 'Nueva dependencia'
-        formElement.reset()
+      formContainerElement.classList.toggle("hide");
+      if (formContainerElement.classList.contains("hide")) {
+        validateEditButtons();
+        btnNewElement.textContent = "Nueva unidad";
+        formElement.reset();
         // Resetear ID
-        id = ''
+        id = "";
       } else {
-        btnNewElement.textContent = 'Cancelar'
-        let categorias = await getCategorias()
-        insertOptions({ input: 'categorias', data: categorias.mappedData })
+        btnNewElement.textContent = "Cancelar";
+        let categorias = await getCategorias();
+        insertOptions({ input: "categorias", data: categorias.mappedData });
       }
     }
 
-    if (e.target.id === 'btn-delete') {
-      let fila = e.target.closest('tr')
+    if (e.target.id === "btn-delete") {
+      let fila = e.target.closest("tr");
 
-      confirmDeleteDependencia({ id: e.target.dataset.id, row: fila })
+      confirmDeleteDependencia({ id: e.target.dataset.id, row: fila });
     }
-    if (e.target.id === 'btn-edit') {
+    if (e.target.id === "btn-edit") {
       // EDITAR DEPENDENCIA
-      id = e.target.dataset.id
+      id = e.target.dataset.id;
 
-      validateEditButtons()
+      validateEditButtons();
 
-      e.target.textContent = 'Editando'
-      e.target.setAttribute('disabled', true)
+      e.target.textContent = "Editando";
+      e.target.setAttribute("disabled", true);
 
-      let categorias = await getCategorias()
-      insertOptions({ input: 'categorias', data: categorias.mappedData })
+      let categorias = await getCategorias();
+      insertOptions({ input: "categorias", data: categorias.mappedData });
 
-      if (formContainerElement.classList.contains('hide')) {
-        formContainerElement.classList.remove('hide')
-        btnNewElement.textContent = 'Cancelar'
+      if (formContainerElement.classList.contains("hide")) {
+        formContainerElement.classList.remove("hide");
+        btnNewElement.textContent = "Cancelar";
       }
-      let dependenciaData = await getDependencias(id)
+      let dependenciaData = await getDependencias(id);
 
       let { cod_dependencia, dependencia, id_categoria } =
-        dependenciaData.fullInfo[0]
+        dependenciaData.fullInfo[0];
 
       let categoria = id_categoria
         ? categorias.mappedData.find(
             (categoria) => categoria.id == id_categoria
           )
-        : ''
-      console.log(categoria)
+        : "";
+      console.log(categoria);
 
-      console.log(categoria, categoria.name)
-      formElement.dependencia.value = dependencia
-      formElement.cod_dependencia.value = cod_dependencia
-      formElement.id_categoria.value = categoria ? categoria.id : ''
+      console.log(categoria, categoria.name);
+      formElement.dependencia.value = dependencia;
+      formElement.cod_dependencia.value = cod_dependencia;
+      formElement.id_categoria.value = categoria ? categoria.id : "";
     }
 
     // GUARDAR DEPENDENCIA
@@ -129,24 +129,24 @@ export function validateDependenciaForm() {
         fieldList,
         fieldListErrors,
         type: fieldListErrors[formElement.dependencia.name],
-      })
+      });
       fieldList = validateInput({
         target: formElement.cod_dependencia,
         fieldList,
         fieldListErrors,
         type: fieldListErrors[formElement.cod_dependencia.name],
-      })
+      });
       fieldList = validateInput({
         target: formElement.id_categoria,
         fieldList,
         fieldListErrors,
         type: fieldListErrors[formElement.id_categoria.name],
-      })
+      });
       if (Object.values(fieldListErrors).some((el) => el.value)) {
         return confirmNotification({
           type: NOTIFICATIONS_TYPES.fail,
-          message: 'Necesita llenar todos los campos',
-        })
+          message: "Necesita llenar todos los campos",
+        });
       }
 
       if (id) {
@@ -161,17 +161,17 @@ export function validateDependenciaForm() {
                 cod_dependencia: fieldList.cod_dependencia,
                 id_categoria: fieldList.id_categoria,
               },
-            })
+            });
 
             // RESETEAR FORMULARIO
-            formContainerElement.classList.add('hide')
-            btnNewElement.textContent = 'Nueva dependencia'
-            formElement.reset()
-            id = ''
+            formContainerElement.classList.add("hide");
+            btnNewElement.textContent = "Nueva unidad";
+            formElement.reset();
+            id = "";
             // Recargar tabla
-            loadDependenciaTable()
+            loadDependenciaTable();
           },
-        })
+        });
       } else {
         confirmNotification({
           type: NOTIFICATIONS_TYPES.send,
@@ -183,47 +183,47 @@ export function validateDependenciaForm() {
                 cod_dependencia: formElement.cod_dependencia.value,
                 id_categoria: fieldList.id_categoria,
               },
-            })
+            });
 
             // RESETEAR FORMULARIO
-            formContainerElement.classList.add('hide')
-            btnNewElement.textContent = 'Nueva dependencia'
-            formElement.reset()
+            formContainerElement.classList.add("hide");
+            btnNewElement.textContent = "Nueva unidad";
+            formElement.reset();
 
             // Recargar tabla
-            loadDependenciaTable()
+            loadDependenciaTable();
           },
           message: `Deseas guardar la dependencia "${formElement.dependencia.value} - ${formElement.cod_dependencia.value}
           "`,
-        })
+        });
       }
     }
-  })
+  });
 
   function insertOptions({ input, data }) {
-    const selectElement = d.getElementById(`search-select-${input}`)
-    selectElement.innerHTML = `<option value="">Elegir...</option>`
-    const fragment = d.createDocumentFragment()
+    const selectElement = d.getElementById(`search-select-${input}`);
+    selectElement.innerHTML = `<option value="">Elegir...</option>`;
+    const fragment = d.createDocumentFragment();
     data.forEach((el) => {
-      const option = d.createElement('option')
-      option.setAttribute('value', el.id)
-      option.textContent = el.name
-      fragment.appendChild(option)
-    })
+      const option = d.createElement("option");
+      option.setAttribute("value", el.id);
+      option.textContent = el.name;
+      fragment.appendChild(option);
+    });
 
-    selectElement.appendChild(fragment)
+    selectElement.appendChild(fragment);
   }
 
   function validateEditButtons() {
-    let editButtons = d.querySelectorAll('[data-id][disabled]')
+    let editButtons = d.querySelectorAll("[data-id][disabled]");
 
     editButtons.forEach((btn) => {
-      if (btn.hasAttribute('disabled')) {
-        btn.removeAttribute('disabled')
-        btn.textContent = 'Editar'
+      if (btn.hasAttribute("disabled")) {
+        btn.removeAttribute("disabled");
+        btn.textContent = "Editar";
       }
-    })
+    });
   }
 
-  return
+  return;
 }

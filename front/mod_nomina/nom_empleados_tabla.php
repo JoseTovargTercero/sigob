@@ -173,7 +173,7 @@ require_once '../../back/sistema_global/session.php';
                       placeholder="CANTIDAD DE HIJOS...">
                   </div>
                   <div class="col-sm">
-                    <label class="form-label" for="">Becas cursadas</label>
+                    <label class="form-label" for="">Becas</label>
                     <input class="employee-input form-control " type="number" name="beca"
                       placeholder="CANTIDAD DE BECAS...">
                   </div>

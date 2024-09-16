@@ -504,6 +504,7 @@ require_once '../../back/sistema_global/session.php';
         cache: false,
         success: function(response) {
           let data = JSON.parse(response)
+          let contador = 1
 
           for (empleado in data) {
 
@@ -512,7 +513,7 @@ require_once '../../back/sistema_global/session.php';
 
 
             $('#tabla_filtrada').append(`<tr >
-                  <td>${cont++}</td>
+                  <td>${contador++}</td>
                   <td>${nombre_empleado}</td>
                   <td>${cedula} </td>
                 </tr>`);

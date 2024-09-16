@@ -193,36 +193,46 @@ require_once '../../back/sistema_global/session.php';
   <script>
     var id_revision, reintegros_por_empleados
 
- function pagarReintegro() {
-  var cedula_empleado = document.getElementById('cedula_empleado').value;
-  var desde_cuando_pagas = document.getElementById('desde_cuando_pagas').value;
-  var pagar_desde = document.getElementById('pagar_desde').value;
+    function pagarReintegro() {
+      var cedula_empleado = document.getElementById('cedula_empleado').value;
+      var desde_cuando_pagas = document.getElementById('desde_cuando_pagas').value;
+      var pagar_desde = document.getElementById('pagar_desde').value;
 
-  console.log({ cedula_empleado, desde_cuando_pagas, pagar_desde }); // Verifica los valores antes de hacer la petición
+      console.log({
+        cedula_empleado,
+        desde_cuando_pagas,
+        pagar_desde
+      }); // Verifica los valores antes de hacer la petición
 
-$.ajax({
-    type: "POST",
-    url: "../../back/modulo_registro_control/regcon_informacion_reintegro.php",
-    data: {
-        cedula_empleado: cedula_empleado,
-        desde_cuando_pagas: desde_cuando_pagas,
-        pagar_desde: pagar_desde
-    },
-    success: function(response) {
-        let data = JSON.parse(response);
-        console.log(data);
-        if (data.status === 'success') {
+      $.ajax({
+        type: "POST",
+        url: "../../back/modulo_registro_control/regcon_informacion_reintegro.php",
+        data: {
+          cedula_empleado: cedula_empleado,
+          desde_cuando_pagas: desde_cuando_pagas,
+          pagar_desde: pagar_desde
+        },
+        success: function(response) {
+          let data = JSON.parse(response);
+          console.log(data);
+          if (data.status === 'success') {
             toast_s('success', data.mensaje);
-            location.reload();
-        } else {
+
+            // set interval para llamar a location.reload();
+            setTimeout(function() {
+              location.reload();
+            }, 1000);
+
+
+          } else {
             toast_s('error', data.mensaje);
+          }
+        },
+        error: function(xhr, status, error) {
+          console.log(xhr.responseText);
         }
-    },
-    error: function(xhr, status, error) {
-        console.log(xhr.responseText);
+      });
     }
-});
-}
 
     function section_registro() {
       $('#section_registro').toggleClass('hide')
@@ -323,7 +333,6 @@ $.ajax({
               const reintegros_keys = Object.keys(reintegros)
 
               let total_pagado = 0;
-
               reintegros_keys.forEach(element => {
                 for (let index in reintegros[element]) {
                   total_pagado += parseInt(reintegros[element][index]['total_pagar'])
