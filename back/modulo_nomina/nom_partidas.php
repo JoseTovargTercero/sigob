@@ -3,6 +3,22 @@
 require_once '../sistema_global/conexion.php';
 header('Content-Type: application/json');
 
+// Función para registrar errores en la tabla error_log
+function registrarError($descripcion) {
+    global $conexion;
+
+    try {
+        $fechaHora = date('Y-m-d H:i:s');
+        $sql = "INSERT INTO error_log (descripcion, fecha_hora) VALUES (?, ?)";
+        $stmt = $conexion->prepare($sql);
+        $stmt->bind_param("ss", $descripcion, $fechaHora);
+        $stmt->execute();
+        $stmt->close();
+    } catch (Exception $e) {
+        // Manejar el caso donde no se pueda registrar el error
+    }
+}
+
 // Función para validar el formato del código
 function validarCodigo($codigo) {
     return preg_match('/^\d{3}\.\d{2}\.\d{2}\.\d{2}\.\d{4}$/', $codigo);
@@ -36,16 +52,12 @@ function registrarPartida($codigo, $nombre, $descripcion) {
         $stmt->execute();
 
         if ($stmt->affected_rows > 0) {
-            $response = json_encode(["success" => "Partida presupuestaria registrada correctamente"]);
+            return json_encode(["success" => "Partida presupuestaria registrada correctamente"]);
         } else {
-            $response = json_encode(['error' => "No se pudo registrar la partida presupuestaria"]);
+            throw new Exception("No se pudo registrar la partida presupuestaria");
         }
-
-        $stmt->close();
-        $conexion->close();
-        return $response;
-
     } catch (Exception $e) {
+        registrarError($e->getMessage());
         return json_encode(['error' => $e->getMessage()]);
     }
 }
@@ -72,16 +84,12 @@ function actualizarPartida($id, $codigo, $nombre, $descripcion) {
         $stmt->execute();
 
         if ($stmt->affected_rows > 0) {
-            $response = json_encode(["success" => "Partida presupuestaria actualizada correctamente"]);
+            return json_encode(["success" => "Partida presupuestaria actualizada correctamente"]);
         } else {
-            $response = json_encode(['error' => "No se pudo actualizar la partida presupuestaria"]);
+            throw new Exception("No se pudo actualizar la partida presupuestaria");
         }
-
-        $stmt->close();
-        $conexion->close();
-        return $response;
-
     } catch (Exception $e) {
+        registrarError($e->getMessage());
         return json_encode(['error' => $e->getMessage()]);
     }
 }
@@ -102,16 +110,12 @@ function eliminarPartida($id) {
         $stmt->execute();
 
         if ($stmt->affected_rows > 0) {
-            $response = json_encode(["success" => "Partida presupuestaria eliminada correctamente"]);
+            return json_encode(["success" => "Partida presupuestaria eliminada correctamente"]);
         } else {
-            $response = json_encode(['error' => "No se pudo eliminar la partida presupuestaria"]);
+            throw new Exception("No se pudo eliminar la partida presupuestaria");
         }
-
-        $stmt->close();
-        $conexion->close();
-        return $response;
-
     } catch (Exception $e) {
+        registrarError($e->getMessage());
         return json_encode(['error' => $e->getMessage()]);
     }
 }

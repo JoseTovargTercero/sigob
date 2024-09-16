@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 16-09-2024 a las 15:40:00
+-- Tiempo de generación: 16-09-2024 a las 17:24:23
 -- Versión del servidor: 10.4.27-MariaDB
 -- Versión de PHP: 7.4.33
 
@@ -965,6 +965,19 @@ INSERT INTO `dependencias` (`id_dependencia`, `dependencia`, `cod_dependencia`, 
 (84, 'CONTRATADOS GOBERNACION', '14.01.54', 0),
 (85, 'PERSONAL DIRECTIVO DE ALTO NIVEL Y JEFATURAS', '14.01.55', 0),
 (86, 'ENTES DESCENTRALIZADOS', '15.01.51', 0);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `ejercicio_fiscal`
+--
+
+CREATE TABLE `ejercicio_fiscal` (
+  `id` int(255) NOT NULL,
+  `ano` varchar(255) NOT NULL,
+  `situado` varchar(255) NOT NULL,
+  `divisor` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -3796,6 +3809,18 @@ INSERT INTO `empleados_por_grupo` (`id`, `id_empleado`, `id_grupo`, `status`) VA
 (1383, 1359, 3, 1),
 (1384, 1360, 3, 1),
 (1385, 1361, 3, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `error_log`
+--
+
+CREATE TABLE `error_log` (
+  `id` int(255) NOT NULL,
+  `descripcion` longtext NOT NULL,
+  `fecha` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -13964,6 +13989,12 @@ ALTER TABLE `dependencias`
   ADD PRIMARY KEY (`id_dependencia`);
 
 --
+-- Indices de la tabla `ejercicio_fiscal`
+--
+ALTER TABLE `ejercicio_fiscal`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indices de la tabla `empleados`
 --
 ALTER TABLE `empleados`
@@ -13979,6 +14010,12 @@ ALTER TABLE `empleados_pasados`
 -- Indices de la tabla `empleados_por_grupo`
 --
 ALTER TABLE `empleados_por_grupo`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `error_log`
+--
+ALTER TABLE `error_log`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -14179,6 +14216,12 @@ ALTER TABLE `dependencias`
   MODIFY `id_dependencia` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=87;
 
 --
+-- AUTO_INCREMENT de la tabla `ejercicio_fiscal`
+--
+ALTER TABLE `ejercicio_fiscal`
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT de la tabla `empleados`
 --
 ALTER TABLE `empleados`
@@ -14195,6 +14238,12 @@ ALTER TABLE `empleados_pasados`
 --
 ALTER TABLE `empleados_por_grupo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1386;
+
+--
+-- AUTO_INCREMENT de la tabla `error_log`
+--
+ALTER TABLE `error_log`
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `frecuencias_por_grupo`
