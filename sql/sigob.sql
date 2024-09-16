@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 16-09-2024 a las 17:24:23
+-- Tiempo de generación: 17-09-2024 a las 00:59:14
 -- Versión del servidor: 10.4.27-MariaDB
 -- Versión de PHP: 7.4.33
 
@@ -965,6 +965,19 @@ INSERT INTO `dependencias` (`id_dependencia`, `dependencia`, `cod_dependencia`, 
 (84, 'CONTRATADOS GOBERNACION', '14.01.54', 0),
 (85, 'PERSONAL DIRECTIVO DE ALTO NIVEL Y JEFATURAS', '14.01.55', 0),
 (86, 'ENTES DESCENTRALIZADOS', '15.01.51', 0);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `distribucion_presupuestaria`
+--
+
+CREATE TABLE `distribucion_presupuestaria` (
+  `id` int(255) NOT NULL,
+  `id_partida` int(255) NOT NULL,
+  `monto` varchar(255) NOT NULL,
+  `id_ejercicio` int(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -13989,6 +14002,12 @@ ALTER TABLE `dependencias`
   ADD PRIMARY KEY (`id_dependencia`);
 
 --
+-- Indices de la tabla `distribucion_presupuestaria`
+--
+ALTER TABLE `distribucion_presupuestaria`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indices de la tabla `ejercicio_fiscal`
 --
 ALTER TABLE `ejercicio_fiscal`
@@ -14214,6 +14233,12 @@ ALTER TABLE `correcciones`
 --
 ALTER TABLE `dependencias`
   MODIFY `id_dependencia` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=87;
+
+--
+-- AUTO_INCREMENT de la tabla `distribucion_presupuestaria`
+--
+ALTER TABLE `distribucion_presupuestaria`
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `ejercicio_fiscal`
