@@ -21,7 +21,8 @@ function registrarError($descripcion) {
 
 // Función para validar el formato del código
 function validarCodigo($codigo) {
-    return preg_match('/^\d{3}\.\d{2}\.\d{2}\.\d{2}\.\d{4}$/', $codigo);
+    // Valida el formato xx.xx.si.xxx.xx.xx.xxxx
+    return preg_match('/^\d{2}\.\d{2}\.si\.\d{3}\.\d{2}\.\d{2}\.\d{4}$/', $codigo);
 }
 
 // Función para insertar una nueva partida
