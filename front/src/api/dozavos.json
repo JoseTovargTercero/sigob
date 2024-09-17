@@ -1,0 +1,145 @@
+[
+  {
+    "id": 1,
+    "numero_orden": 1,
+    "numero_compromiso": "C1001",
+    "descripcion": "Compra de material de oficina",
+    "tipo": "A",
+    "monto": 500.0,
+    "fecha": "2024-01-15",
+    "partidas": [
+      { "id": 3, "monto": 166.67 },
+      { "id": 14, "monto": 166.67 },
+      { "id": 25, "monto": 166.66 }
+    ],
+    "ente": "Ministerio de Suministros",
+    "tipo_ente": "J"
+  },
+  {
+    "id": 2,
+    "numero_orden": 2,
+    "numero_compromiso": "C1002",
+    "descripcion": "Pago a proveedor",
+    "tipo": "A",
+    "monto": 1200.0,
+    "fecha": "2024-02-23",
+    "partidas": [{ "id": 8, "monto": 1200.0 }],
+    "ente": "Dirección de Finanzas",
+    "tipo_ente": "D"
+  },
+  {
+    "id": 3,
+    "numero_orden": 3,
+    "numero_compromiso": "C1003",
+    "descripcion": "Renovación de licencias de software",
+    "tipo": "A",
+    "monto": 800.0,
+    "fecha": "2024-03-08",
+    "partidas": [
+      { "id": 18, "monto": 400.0 },
+      { "id": 47, "monto": 400.0 }
+    ],
+    "ente": "Departamento de Tecnología",
+    "tipo_ente": "J"
+  },
+  {
+    "id": 4,
+    "numero_orden": 4,
+    "numero_compromiso": "C1004",
+    "descripcion": "Gastos de envío",
+    "tipo": "A",
+    "monto": 300.0,
+    "fecha": "2024-04-19",
+    "partidas": [{ "id": 37, "monto": 300.0 }],
+    "ente": "Logística y Almacén",
+    "tipo_ente": "D"
+  },
+  {
+    "id": 5,
+    "numero_orden": 5,
+    "numero_compromiso": "C1005",
+    "descripcion": "Publicidad en redes sociales",
+    "tipo": "A",
+    "monto": 700.0,
+    "fecha": "2024-05-27",
+    "partidas": [
+      { "id": 42, "monto": 233.33 },
+      { "id": 65, "monto": 233.33 },
+      { "id": 69, "monto": 233.34 }
+    ],
+    "ente": "Departamento de Marketing",
+    "tipo_ente": "J"
+  },
+  {
+    "id": 6,
+    "numero_orden": 6,
+    "numero_compromiso": "C1006",
+    "descripcion": "Capacitación del personal",
+    "tipo": "D",
+    "monto": 1000.0,
+    "fecha": "2024-06-14",
+    "partidas": [{ "id": 80, "monto": 333.33 }],
+    "ente": "Recursos Humanos",
+    "tipo_ente": "D"
+  },
+  {
+    "id": 7,
+    "numero_orden": 7,
+    "numero_compromiso": "C1007",
+    "descripcion": "Mantenimiento de equipamiento",
+    "tipo": "D",
+    "monto": 600.0,
+    "fecha": "2024-07-03",
+    "partidas": [
+      { "id": 90, "monto": 300.0 },
+      { "id": 103, "monto": 300.0 }
+    ],
+    "ente": "Departamento de Mantenimiento",
+    "tipo_ente": "J"
+  },
+  {
+    "id": 8,
+    "numero_orden": 8,
+    "numero_compromiso": "C1008",
+    "descripcion": "Compra de material de limpieza",
+    "tipo": "D",
+    "monto": 400.0,
+    "fecha": "2024-08-11",
+    "partidas": [
+      { "id": 104, "monto": 200.0 },
+      { "id": 110, "monto": 200.0 }
+    ],
+    "ente": "Gestión de Instalaciones",
+    "tipo_ente": "J"
+  },
+  {
+    "id": 9,
+    "numero_orden": 9,
+    "numero_compromiso": "C1009",
+    "descripcion": "Consultoría externa",
+    "tipo": "D",
+    "monto": 1500.0,
+    "fecha": "2024-09-25",
+    "partidas": { "id": 5, "monto": 1500.0 },
+    "ente": "Departamento de Consultoría",
+    "tipo_ente": "D"
+  },
+  {
+    "id": 10,
+    "numero_orden": 10,
+    "numero_compromiso": "C1010",
+    "descripcion": "Actualización de equipo informático",
+    "tipo": "D",
+    "monto": 2000.0,
+    "fecha": "2024-10-30",
+    "partidas": [
+      { "id": 5, "monto": 500.0 },
+      { "id": 12, "monto": 500.0 },
+      { "id": 26, "monto": 500.0 },
+      { "id": 78, "monto": 500.0 }
+    ],
+
+    "ente": "Departamento de Tecnología",
+    "tipo_ente": "J"
+  }
+]

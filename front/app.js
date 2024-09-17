@@ -10,6 +10,8 @@ import { validateRequestForm } from './src/controllers/peticionesNominaForm.js'
 // import { validateEmployeePayForm } from './src/controllers/peticionesNominaForm.js'
 // import { validateRequestForm } from './src/controllers/peticionesNominaForm2.js'
 import { validateRequestNomForm } from './src/controllers/peticionesNominaReview.js'
+import { validateSolicitudesDozavosTable } from './src/controllers/pre_solicitudesDozavosTable.js'
+import { validateSolicitudesDozavos } from './src/controllers/pre_solicitudesDozavosView.js'
 import { loadRegconRequestTable } from './src/controllers/regcon_peticionesTable.js'
 import { validateTabulatorForm } from './src/controllers/tabuladorForm.js'
 import { validateTasaActual } from './src/controllers/tasaView.js'
@@ -30,6 +32,7 @@ d.addEventListener('DOMContentLoaded', (e) => {
   const dependenciaTable = d.getElementById('dependencia-table')
   const categoriaTable = d.getElementById('categoria-table')
   const tasaView = d.getElementById('tasa-view')
+  const solicitudesDozavosView = d.getElementById('solicitudes-dozavos-view')
 
   if (tabulatorForm) {
     validateTabulatorForm({
@@ -136,6 +139,10 @@ d.addEventListener('DOMContentLoaded', (e) => {
 
   if (tasaView) {
     validateTasaActual()
+  }
+
+  if (solicitudesDozavosView) {
+    validateSolicitudesDozavos()
   }
 
   // if (payNomForm) {
