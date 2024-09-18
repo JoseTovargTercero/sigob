@@ -3,21 +3,7 @@
 require_once '../sistema_global/conexion.php';
 header('Content-Type: application/json');
 
-// Función para registrar errores en la tabla error_log
-function registrarError($descripcion) {
-    global $conexion;
-
-    try {
-        $fechaHora = date('Y-m-d H:i:s');
-        $sql = "INSERT INTO error_log (descripcion, fecha_hora) VALUES (?, ?)";
-        $stmt = $conexion->prepare($sql);
-        $stmt->bind_param("ss", $descripcion, $fechaHora);
-        $stmt->execute();
-        $stmt->close();
-    } catch (Exception $e) {
-        // En caso de que el registro de error falle, se podría manejar de otra manera
-    }
-}
+require_once 'form_errores.php';
 
 // Función para guardar en la tabla ejercicio_fiscal
 function guardarEjercicioFiscal($ano, $situado, $divisor) {
