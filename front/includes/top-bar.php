@@ -14,39 +14,43 @@
         </li>
         <li class=" pc-h-item">
           <a class="pc-link btn btn-light" href="<?php
-          if ($_SESSION["u_oficina"] == 'nomina') {
-            echo constant('URL') . "front/mod_nomina/nom_tasa_vista";
-          } else {
-            echo '#';
-          }
-          ?> ">
-            Tasa del día (BCV) $: &nbsp;
+                                                  if ($_SESSION["u_oficina"] == 'nomina') {
+                                                    echo constant('URL') . "front/mod_nomina/nom_tasa_vista";
+                                                  } else {
+                                                    echo '#';
+                                                  }
+                                                  ?> ">
+
             <span id="tasa-valor">
               <?php
-              require_once '../../back/sistema_global/conexion.php';
+              if ($_SESSION["u_oficina"] == 'nomina') {
+
+                echo '    Tasa del día (BCV) $: &nbsp;';
+                require_once '../../back/sistema_global/conexion.php';
 
 
 
-              $sql = "SELECT * FROM tasa ORDER BY id DESC LIMIT 1";
+                $sql = "SELECT * FROM tasa ORDER BY id DESC LIMIT 1";
 
-              $stmt = $conexion->prepare($sql);
-              $stmt->execute();
-              $result = $stmt->get_result();
+                $stmt = $conexion->prepare($sql);
+                $stmt->execute();
+                $result = $stmt->get_result();
 
-              if ($result === false) {
-                throw new Exception("Error en la consulta: $conexion->error");
+                if ($result === false) {
+                  throw new Exception("Error en la consulta: $conexion->error");
+                }
+
+                if ($result->num_rows > 0) {
+                  $datos = $result->fetch_assoc();
+                  $response = "$datos[valor] Bs.";
+                } else {
+                  $response = "No se ha registrado una tasa";
+                }
+
+                echo $response;
+
+                $stmt->close();
               }
-
-              if ($result->num_rows > 0) {
-                $datos = $result->fetch_assoc();
-                $response = "$datos[valor] Bs.";
-              } else {
-                $response = "No se ha registrado una tasa";
-              }
-
-              echo $response;
-
-              $stmt->close();
 
 
 

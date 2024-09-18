@@ -56,7 +56,7 @@
               </li>
 
               <li class="pc-item"><a class="pc-link"
-                  href="<?php echo constant('URL') ?>front/mod_nomina/nom_categorias_tabla">Categorias</a></li>
+                  href="<?php echo constant('URL') ?>front/mod_nomina/nom_categorias_tabla">Categorías</a></li>
               <!-- <li class="pc-item"><a class="pc-link"
                   href="<?php echo constant('URL') ?>front/mod_nomina/nom_empleados_registrar">Registrar Personal</a>
               </li> -->
@@ -138,38 +138,47 @@
               <span class="pc-mtext">Netos de pago</span>
             </a>
           </li>
+        <?php } else if ($_SESSION["u_oficina_id"] == 4) { ?>
+
+          <li class="pc-item pc-caption">
+            <label>Formulación</label>
+            <i data-feather="sidebar"></i>
+          </li>
+          <li class="pc-item">
+            <a href="<?php echo constant('URL') ?>front/mod_pl_formulacion/index" class="pc-link">
+              <span class="pc-micon"><i class='bx bx-book-content'></i></i></span>
+              <span class="pc-mtext">Ejercicio fiscal</span>
+            </a>
+          </li>
 
 
-        <?php } elseif ($_SESSION["u_oficina_id"] == 4) { //_atencion_trabajador 
-        ?>
 
-        <?php } else if($_SESSION["u_oficina_id"] == 5) {?>
+        <?php } else if ($_SESSION["u_oficina_id"] == 5) { ?>
 
-        <li class="pc-item pc-caption">
-          <label>Ejecución Presupuestaria</label>
-          <i data-feather="sidebar"></i>
-        </li>
+          <li class="pc-item pc-caption">
+            <label>Ejecución Presupuestaria</label>
+            <i data-feather="sidebar"></i>
+          </li>
 
-        <li class="pc-item pc-hasmenu">
-          <a href="#!" class="pc-link">
-            <span class="pc-micon">
-              <i class='bx bx-cog'></i>
-            </span>
-            <span class="pc-mtext">Ejecución presupuestaria</span><span class="pc-arrow"><i class="ti ti-chevron-right"></i></span>
-          </a>
-          <ul class="pc-submenu">
-            <li class="pc-item"><a class="pc-link" href="<?php echo constant('URL') ?>front/mod_ejecucion_presupuestaria/pre_solicitudes_tabla">Solicitudes de dozavos</a>
-            </li>
-            <li class="pc-item"><a class="pc-link" href="<?php echo constant('URL') ?>front/mod_ejecucion_presupuestaria/pre_gastos_form">Gastos de Funcionamiento</a>
-            </li>
+          <li class="pc-item pc-hasmenu">
+            <a href="#!" class="pc-link">
+              <span class="pc-micon">
+                <i class='bx bx-cog'></i>
+              </span>
+              <span class="pc-mtext">Ejecución presupuestaria</span><span class="pc-arrow"><i class="ti ti-chevron-right"></i></span>
+            </a>
+            <ul class="pc-submenu">
+              <li class="pc-item"><a class="pc-link" href="<?php echo constant('URL') ?>front/mod_ejecucion_presupuestaria/pre_solicitudes_tabla">Solicitudes de dozavos</a>
+              </li>
+              <li class="pc-item"><a class="pc-link" href="<?php echo constant('URL') ?>front/mod_ejecucion_presupuestaria/pre_gastos_form">Gastos de Funcionamiento</a>
+              </li>
 
-          
-          </ul>
-        </li>
+            </ul>
+          </li>
 
         <?php } ?>
 
-        
+
 
 
 

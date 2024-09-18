@@ -18,8 +18,8 @@ if (!@$_SESSION["u_oficina"]) {
 		1 => '_nomina/',
 		2 => '_registro_control/',
 		3 => '_relaciones_laborales/',
-		4 => '_atencion_trabajador/',
-		5 => '_ejecucion_presupuestaria/'
+		4 => '_pl_formulacion/',
+		5 =>  '_ejecucion_presupuestaria/',
 	);
 
 	// Verificar si la URL contiene 'mod_global' para permitir el acceso a todos los usuarios
@@ -43,12 +43,5 @@ if (!@$_SESSION["u_oficina"]) {
 			header("Location: " . constant('URL'));
 			exit;
 		}
-
 	}
-
-
-
 }
-
-
-?>
