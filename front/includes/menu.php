@@ -160,8 +160,9 @@
           <ul class="pc-submenu">
             <li class="pc-item"><a class="pc-link" href="<?php echo constant('URL') ?>front/mod_ejecucion_presupuestaria/pre_solicitudes_tabla">Solicitudes de dozavos</a>
             </li>
-            <li class="pc-item"><a class="pc-link" href="<?php echo constant('URL') ?>front/mod_ejecucion_presupuestaria/pre_solicitudes_tabla">Gastos de Funcionamiento</a>
+            <li class="pc-item"><a class="pc-link" href="<?php echo constant('URL') ?>front/mod_ejecucion_presupuestaria/pre_gastos_form">Gastos de Funcionamiento</a>
             </li>
+
           
           </ul>
         </li>

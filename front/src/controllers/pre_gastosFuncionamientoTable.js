@@ -1,14 +1,9 @@
-import { deleteCategoria, getCategorias } from '../api/categorias.js'
+import { getGastos } from '../api/pre_gastos.js'
 import { getSolicitudesDozavos } from '../api/pre_solicitudesDozavos.js'
-import {
-  actualizarTasa,
-  actualizarTasaManual,
-  obtenerHistorialTasa,
-  obtenerTasa,
-} from '../api/tasa..js'
-import { nomTasaCard } from '../components/nom_tasa_card.js'
+
 import {
   confirmNotification,
+  separarMiles,
   toastNotification,
   validateInput,
 } from '../helpers/helpers.js'
@@ -41,17 +36,16 @@ const tableLanguage = {
     orderableReverse: 'Orden inverso de esta columna',
   },
 }
-let solicitudesDozavosTable
-export async function validateSolicitudesDozavosTable() {
-  solicitudesDozavosTable = new DataTable('#solicitudes-dozavos-table', {
+let gastosTable
+export async function validateGastosTable() {
+  gastosTable = new DataTable('#gastos-table', {
     columns: [
-      { data: 'numero_orden' },
-      { data: 'entes' },
       { data: 'numero_compromiso' },
       { data: 'descripcion' },
       { data: 'tipo' },
       { data: 'monto' },
       { data: 'fecha' },
+      { data: 'estado' },
       { data: 'acciones' },
     ],
     responsive: true,
@@ -70,38 +64,44 @@ export async function validateSolicitudesDozavosTable() {
     },
   })
 
-  loadSolicitudesDozavosTable()
+  loadGastosTable()
 }
 
-export async function loadSolicitudesDozavosTable() {
-  let solicitudes = await getSolicitudesDozavos()
-  console.log(solicitudes)
+export async function loadGastosTable() {
+  let gastos = await getGastos()
+  console.log(gastos)
 
-  if (!Array.isArray(solicitudes)) return
+  if (!Array.isArray(gastos)) return
 
-  if (!solicitudes || solicitudes.error) return
+  if (!gastos || gastos.error) return
 
-  let datosOrdenados = [...solicitudes].sort((a, b) => a.id - b.id)
+  let datosOrdenados = [...gastos].sort((a, b) => a.id - b.id)
 
-  let data = datosOrdenados.map((solicitud) => {
+  let data = datosOrdenados.map((gastos) => {
     return {
-      numero_orden: solicitud.numero_orden,
-      entes: solicitud.ente,
-      numero_compromiso: solicitud.numero_compromiso,
-      descripcion: solicitud.descripcion,
-      tipo: solicitud.tipo,
-      monto: solicitud.monto,
-      fecha: solicitud.fecha,
-      acciones: ` <button class="btn btn-info btn-sm btn-view" data-detalleid="${solicitud.id}"><i class="bx bx-detail me-1"></i>Detalles</button>`,
+      numero_compromiso: gastos.numero_compromiso,
+      descripcion: gastos.descripcion,
+      tipo: gastos.tipo,
+      monto: `${separarMiles(gastos.monto)} Bs`,
+      fecha: gastos.fecha,
+      estado:
+        gastos.estado === 0
+          ? ` <span class='btn btn-sm btn-warning'>Pendiente</span>`
+          : `<span class='btn btn-sm btn-success'>Procesado</span>`,
+      acciones:
+        gastos.estado === 0
+          ? `<button class="btn btn-danger btn-sm" data-detalleid="${gastos.id}">Rechazar</button>
+      <button class="btn btn-info btn-sm" data-detalleid="${gastos.id}">Aceptar</button>`
+          : ``,
     }
   })
 
-  solicitudesDozavosTable.clear().draw()
+  gastosTable.clear().draw()
 
   // console.log(datosOrdenados)
-  solicitudesDozavosTable.rows.add(data).draw()
+  gastosTable.rows.add(data).draw()
 }
 
 export async function deleteSolicitudDozeavo({ id, row }) {
-  solicitudesDozavosTable.row(row).remove().draw()
+  gastosTable.row(row).remove().draw()
 }

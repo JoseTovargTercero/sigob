@@ -1,0 +1,92 @@
+[
+  {
+    "id": 1,
+    "numero_compromiso": 12345,
+    "descripcion": "Compra de suministros de oficina",
+    "tipo": "Material de oficina",
+    "monto": 500,
+    "fecha": "2024-09-18",
+    "estado": 0
+  },
+  {
+    "id": 2,
+    "numero_compromiso": 54321,
+    "descripcion": "Pago de servicios públicos",
+    "tipo": "Gastos generales",
+    "monto": 300,
+    "fecha": "2024-09-15",
+    "estado": 1
+  },
+  {
+    "id": 3,
+    "numero_compromiso": 98765,
+    "descripcion": "Contratación de servicio de limpieza",
+    "tipo": "Servicios externos",
+    "monto": 700,
+    "fecha": "2024-09-10",
+    "estado": 0
+  },
+  {
+    "id": 4,
+    "numero_compromiso": 24680,
+    "descripcion": "Reparación de mobiliario de oficina",
+    "tipo": "Mantenimiento",
+    "monto": 1000,
+    "fecha": "2024-09-05",
+    "estado": 1
+  },
+  {
+    "id": 5,
+    "numero_compromiso": 13579,
+    "descripcion": "Compra de equipos de oficina",
+    "tipo": "Equipamiento",
+    "monto": 1500,
+    "fecha": "2024-09-01",
+    "estado": 1
+  },
+  {
+    "id": 6,
+    "numero_compromiso": 11223,
+    "descripcion": "Pago de nómina de empleados",
+    "tipo": "Recursos humanos",
+    "monto": 5000,
+    "fecha": "2024-09-25",
+    "estado": 0
+  },
+  {
+    "id": 7,
+    "numero_compromiso": 998877,
+    "descripcion": "Compra de software de gestión",
+    "tipo": "Tecnología",
+    "monto": 2000,
+    "fecha": "2024-09-12",
+    "estado": 1
+  },
+  {
+    "id": 8,
+    "numero_compromiso": 665544,
+    "descripcion": "Reparación de sistemas de aire acondicionado",
+    "tipo": "Mantenimiento",
+    "monto": 1200,
+    "fecha": "2024-09-08",
+    "estado": 1
+  },
+  {
+    "id": 9,
+    "numero_compromiso": 556677,
+    "descripcion": "Pago de servicios de internet y telefonía",
+    "tipo": "Gastos generales",
+    "monto": 400,
+    "fecha": "2024-09-03",
+    "estado": 1
+  },
+  {
+    "id": 10,
+    "numero_compromiso": 334455,
+    "descripcion": "Renovación de licencias de software",
+    "tipo": "Tecnología",
+    "monto": 800,
+    "fecha": "2024-09-20",
+    "estado": 0
+  }
+]

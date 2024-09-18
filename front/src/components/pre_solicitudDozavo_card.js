@@ -102,7 +102,7 @@ export const pre_solicitudDozavo_card = async ({ elementToInsert, data }) => {
               <p>${monto}</p>
             </div>
             <div class='col'>
-              <b>descripcion: </b>
+              <b>Descripción: </b>
               <p>${descripcion}</p>
             </div>
           </div>
@@ -164,13 +164,14 @@ export const pre_solicitudDozavo_card = async ({ elementToInsert, data }) => {
     scrollY: 120,
     language: tableLanguage,
     layout: {
-      topEnd: function () {
+      topStart: function () {
         let toolbar = document.createElement('div')
         toolbar.innerHTML = `
+        <h5 class="text-center">Lista de partidas</h5>
                   `
         return toolbar
       },
-      topStart: { search: { placeholder: 'Buscar...' } },
+      topEnd: { search: { placeholder: 'Buscar...' } },
       bottomStart: 'info',
       bottomEnd: 'paging',
     },

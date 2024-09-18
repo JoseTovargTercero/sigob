@@ -10,6 +10,8 @@ import { validateRequestForm } from './src/controllers/peticionesNominaForm.js'
 // import { validateEmployeePayForm } from './src/controllers/peticionesNominaForm.js'
 // import { validateRequestForm } from './src/controllers/peticionesNominaForm2.js'
 import { validateRequestNomForm } from './src/controllers/peticionesNominaReview.js'
+import { validateGastosTable } from './src/controllers/pre_gastosFuncionamientoTable.js'
+import { validateGastosView } from './src/controllers/pre_gastosFuncionamientoView.js'
 import { validateSolicitudesDozavosTable } from './src/controllers/pre_solicitudesDozavosTable.js'
 import { validateSolicitudesDozavos } from './src/controllers/pre_solicitudesDozavosView.js'
 import { loadRegconRequestTable } from './src/controllers/regcon_peticionesTable.js'
@@ -32,7 +34,9 @@ d.addEventListener('DOMContentLoaded', (e) => {
   const dependenciaTable = d.getElementById('dependencia-table')
   const categoriaTable = d.getElementById('categoria-table')
   const tasaView = d.getElementById('tasa-view')
+  // EJECUCIÓN PRESUPUESTARIA
   const solicitudesDozavosView = d.getElementById('solicitudes-dozavos-view')
+  const gastosView = d.getElementById('gastos-view')
 
   if (tabulatorForm) {
     validateTabulatorForm({
@@ -143,6 +147,10 @@ d.addEventListener('DOMContentLoaded', (e) => {
 
   if (solicitudesDozavosView) {
     validateSolicitudesDozavos()
+  }
+
+  if (gastosView) {
+    validateGastosView()
   }
 
   // if (payNomForm) {
