@@ -55,7 +55,7 @@ if ($result->num_rows > 0) {
 					$folder = 'mod_relaciones_laborales';
 					break;
 				case '4':
-					$folder = 'mod_atencion_trabajador';
+					$folder = 'mod_pl_formulacion';
 					break;
 			}
 			echo json_encode(array('of' => $folder, 'val' => true));
@@ -73,6 +73,3 @@ $stmt->close();
 
 
 ob_end_flush();
-
-
-

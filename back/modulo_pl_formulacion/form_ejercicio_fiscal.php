@@ -6,7 +6,8 @@ header('Content-Type: application/json');
 require_once 'form_errores.php';
 
 // Función para guardar en la tabla ejercicio_fiscal
-function guardarEjercicioFiscal($ano, $situado, $divisor) {
+function guardarEjercicioFiscal($ano, $situado, $divisor)
+{
     global $conexion;
 
     try {
@@ -26,7 +27,6 @@ function guardarEjercicioFiscal($ano, $situado, $divisor) {
         } else {
             throw new Exception("No se pudo guardar los datos de ejercicio fiscal");
         }
-
     } catch (Exception $e) {
         // Registrar el error en la tabla error_log
         registrarError($e->getMessage());
@@ -35,7 +35,8 @@ function guardarEjercicioFiscal($ano, $situado, $divisor) {
 }
 
 // Función para actualizar los datos en la tabla ejercicio_fiscal
-function actualizarEjercicioFiscal($id, $ano, $situado, $divisor) {
+function actualizarEjercicioFiscal($id, $ano, $situado, $divisor)
+{
     global $conexion;
 
     try {
@@ -55,7 +56,6 @@ function actualizarEjercicioFiscal($id, $ano, $situado, $divisor) {
         } else {
             throw new Exception("No se pudo actualizar los datos de ejercicio fiscal");
         }
-
     } catch (Exception $e) {
         // Registrar el error en la tabla error_log
         registrarError($e->getMessage());
@@ -64,7 +64,8 @@ function actualizarEjercicioFiscal($id, $ano, $situado, $divisor) {
 }
 
 // Función para eliminar un registro en la tabla ejercicio_fiscal
-function eliminarEjercicioFiscal($id) {
+function eliminarEjercicioFiscal($id)
+{
     global $conexion;
 
     try {
@@ -84,7 +85,6 @@ function eliminarEjercicioFiscal($id) {
         } else {
             throw new Exception("No se pudo eliminar el registro de ejercicio fiscal");
         }
-
     } catch (Exception $e) {
         // Registrar el error en la tabla error_log
         registrarError($e->getMessage());
@@ -122,4 +122,3 @@ if (isset($data["accion"])) {
 } else {
     echo json_encode(['error' => "No se especificó ninguna acción"]);
 }
-

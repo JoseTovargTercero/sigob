@@ -481,52 +481,48 @@ while ($r = $query->fetch_object()) {
                   $result = $stmt->get_result();
                   if ($result->num_rows > 0) {
                     while ($row = $result->fetch_assoc()) {
-                        echo '<input type="text" class="form-control text-center" disabled value="'.($row['tipo'] == 'Q'?'Quincenal':'Semanal').'">';
+                      echo '<input type="text" class="form-control text-center" disabled value="' . ($row['tipo'] == 'Q' ? 'Quincenal' : 'Semanal') . '">';
                     }
                   } else {
                   ?>
 
-                  <form id="myForm" action="../../back/modulo_nomina/nom_frecuencia_pago.php" method="POST">
-                    <input type="hidden" name="id_grupo" value="<?php echo $i; ?>">
+                    <form id="myForm" action="../../back/modulo_nomina/nom_frecuencia_pago.php" method="POST">
+                      <input type="hidden" name="id_grupo" value="<?php echo $i; ?>">
 
-                    <div class="mb-3">
-                      <label class="form-label" for="frecuencia_pago">Frecuencia de pago normal</label>
-                      <select class="form-select" name="frecuencia_pago" id="frecuencia_pago">
-                        <option value="">Seleccione</option>
-                        <option value="Q">Quincenal</option>
-                        <option value="S">Semanal</option>
-                      </select>
-                    </div>
+                      <div class="mb-3">
+                        <label class="form-label" for="frecuencia_pago">Frecuencia de pago normal</label>
+                        <select class="form-select" name="frecuencia_pago" id="frecuencia_pago">
+                          <option value="">Seleccione</option>
+                          <option value="Q">Quincenal</option>
+                          <option value="S">Semanal</option>
+                        </select>
+                      </div>
 
-                    <div class="text-end">
-                      <button class="btn btn-primary" type="submit">Establecer</button>
-                    </div>
-                  </form>
+                      <div class="text-end">
+                        <button class="btn btn-primary" type="submit">Establecer</button>
+                      </div>
+                    </form>
 
-                  <script>
-                    
-
+                    <script>
                       document.getElementById('myForm').addEventListener('submit', function(event) {
-                          event.preventDefault(); // Evita que el formulario se envíe inmediatamente
+                        event.preventDefault(); // Evita que el formulario se envíe inmediatamente
 
-                          Swal.fire({
-                            title: '¿Estás seguro?',
-                            text: "Esta acción establecerá la frecuencia de pago y no podrá ser cambiado.",
-                            icon: 'warning',
-                            showCancelButton: true,
-                            confirmButtonColor: '#3085d6',
-                            cancelButtonColor: '#d33',
-                            confirmButtonText: 'Sí, continuar',
-                            cancelButtonText: 'Cancelar'
-                          }).then((result) => {
-                            if (result.isConfirmed) {
-                              this.submit(); // Envía el formulario si se confirma
-                            }
-                          });
+                        Swal.fire({
+                          title: '¿Estás seguro?',
+                          text: "Esta acción establecerá la frecuencia de pago y no podrá ser cambiado.",
+                          icon: 'warning',
+                          showCancelButton: true,
+                          confirmButtonColor: '#3085d6',
+                          cancelButtonColor: '#d33',
+                          confirmButtonText: 'Sí, continuar',
+                          cancelButtonText: 'Cancelar'
+                        }).then((result) => {
+                          if (result.isConfirmed) {
+                            this.submit(); // Envía el formulario si se confirma
+                          }
                         });
-
-
-                  </script>
+                      });
+                    </script>
 
 
                   <?php
@@ -536,7 +532,7 @@ while ($r = $query->fetch_object()) {
                   ?>
 
 
-             
+
 
 
 
@@ -565,9 +561,6 @@ while ($r = $query->fetch_object()) {
   } ?>
 
   <script>
-
-
-
     const url_back = '../../back/modulo_nomina/nom_modificar.php';
     let textarea = 't_area-1';
 
