@@ -5,6 +5,10 @@ header('Content-Type: application/json');
 
 require_once 'form_errores.php';
 
+// Definir divisor como una variable
+$divisor = 12;
+
+
 // Función para guardar en la tabla ejercicio_fiscal
 function guardarEjercicioFiscal($ano, $situado, $divisor)
 {
@@ -12,8 +16,8 @@ function guardarEjercicioFiscal($ano, $situado, $divisor)
 
     try {
         // Validar que todos los campos no estén vacíos
-        if (empty($ano) || empty($situado) || empty($divisor)) {
-            throw new Exception("Faltaron uno o más valores (ano, situado, divisor)");
+        if (empty($ano) || empty($situado)) {
+            throw new Exception("Faltaron uno o más valores (ano, situado)");
         }
 
         // Insertar los datos en la tabla
@@ -41,8 +45,8 @@ function actualizarEjercicioFiscal($id, $ano, $situado, $divisor)
 
     try {
         // Validar que todos los campos no estén vacíos
-        if (empty($id) || empty($ano) || empty($situado) || empty($divisor)) {
-            throw new Exception("Faltaron uno o más valores (id, ano, situado, divisor)");
+        if (empty($id) || empty($ano) || empty($situado)) {
+            throw new Exception("Faltaron uno o más valores (id, ano, situado)");
         }
 
         // Actualizar los datos en la tabla
@@ -99,16 +103,16 @@ if (isset($data["accion"])) {
     $accion = $data["accion"];
 
     if ($accion === "insert") {
-        if (empty($data["ano"]) || empty($data["situado"]) || empty($data["divisor"])) {
-            echo json_encode(['error' => "Faltaron uno o más valores (ano, situado, divisor)"]);
+        if (empty($data["ano"]) || empty($data["situado"])) {
+            echo json_encode(['error' => "Faltaron uno o más valores (ano, situado)"]);
         } else {
-            echo guardarEjercicioFiscal($data["ano"], $data["situado"], $data["divisor"]);
+            echo guardarEjercicioFiscal($data["ano"], $data["situado"], $divisor);
         }
     } elseif ($accion === "update") {
-        if (empty($data["id"]) || empty($data["ano"]) || empty($data["situado"]) || empty($data["divisor"])) {
-            echo json_encode(['error' => "Faltaron uno o más valores (id, ano, situado, divisor)"]);
+        if (empty($data["id"]) || empty($data["ano"]) || empty($data["situado"])) {
+            echo json_encode(['error' => "Faltaron uno o más valores (id, ano, situado)"]);
         } else {
-            echo actualizarEjercicioFiscal($data["id"], $data["ano"], $data["situado"], $data["divisor"]);
+            echo actualizarEjercicioFiscal($data["id"], $data["ano"], $data["situado"], $divisor);
         }
     } elseif ($accion === "delete") {
         if (empty($data["id"])) {
