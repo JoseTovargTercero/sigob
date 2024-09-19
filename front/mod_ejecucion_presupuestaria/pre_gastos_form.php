@@ -37,7 +37,7 @@ require_once '../../back/sistema_global/session.php';
             <div class="row mb3">
 
                 <div class="col-lg-12 mb-3" id="gastos-view">
-                    <div class="card">
+                    <div class="card" id="gastos-registrar-container">
                         <div class="card-header">
                             <div class="">
                                 <h5 class="mb-0">Lista de solicitudes de dozavos por entes</h5>
@@ -48,43 +48,9 @@ require_once '../../back/sistema_global/session.php';
                             <div class="d-flex justify-content-center align-items-center gap-2">
                                 <h5 class="text-center m-0">Presupuesto total: <span id="presupuesto">10.000 Bs</span>
                                 </h5>
-                                <button class="btn btn-success btn-sm">REGISTRAR GASTO</button>
+                                <button class="btn btn-success btn-sm" id="gastos-registrar">REGISTRAR GASTO</button>
                             </div>
-                            <div class=mt-4">
-                                <form>
-                                    <div class="row">
 
-
-                                        <div class="col">
-                                            <div class="form-group">
-                                                <label class="form-label">TIPO DE GASTO</label>
-                                                <select class="form-select" name="tipo_gasto">
-                                                    <option value="viaticos">Viáticos</option>
-                                                    <option value="suministros">Suministros</option>
-                                                    <option value="alquiler">Alquiler</option>
-                                                    <option value="servicios_publicos">Servicios Públicos</option>
-                                                    <option value="capacitacion">Capacitación</option>
-                                                    <option value="publicidad">Publicidad</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col">
-                                            <div class="form-group">
-                                                <label class="form-label">Monto</label>
-                                                <input class="form-control" type="number" name="" id=""
-                                                    placeholder="00.00Bs">
-                                            </div>
-                                        </div>
-                                        <div class="col">
-                                            <div class="form-group">
-                                                <label class="form-label">DESCRIPCIóN</label>
-                                                <textarea class="form-control" name="" id=""></textarea>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </form>
-                            </div>
                         </div>
                     </div>
 
