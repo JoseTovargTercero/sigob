@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 18-09-2024 a las 16:27:33
+-- Tiempo de generación: 19-09-2024 a las 16:41:41
 -- Versión del servidor: 10.4.27-MariaDB
 -- Versión de PHP: 7.4.33
 
@@ -4962,6 +4962,19 @@ INSERT INTO `peticiones` (`id`, `empleados`, `asignaciones`, `deducciones`, `apo
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `plan_inversion`
+--
+
+CREATE TABLE `plan_inversion` (
+  `id` int(255) NOT NULL,
+  `id_ejercicio` int(255) NOT NULL,
+  `monto_total` varchar(255) NOT NULL,
+  `fecha` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `poa_actividades`
 --
 
@@ -5041,6 +5054,21 @@ INSERT INTO `profesiones` (`id_profesion`, `profesion`, `porcentaje`) VALUES
 (3, 'MAESTRIA', '35'),
 (4, 'DOCTOR', '40'),
 (5, 'Sin Profesionalizacion', '0');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `proyecto_inversion`
+--
+
+CREATE TABLE `proyecto_inversion` (
+  `id` int(255) NOT NULL,
+  `id_plan` int(255) NOT NULL,
+  `proyecto` longtext NOT NULL,
+  `monto_proyecto` varchar(255) NOT NULL,
+  `id_partida` varchar(255) NOT NULL,
+  `status` int(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -14155,6 +14183,12 @@ ALTER TABLE `peticiones`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indices de la tabla `plan_inversion`
+--
+ALTER TABLE `plan_inversion`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indices de la tabla `poa_actividades`
 --
 ALTER TABLE `poa_actividades`
@@ -14171,6 +14205,12 @@ ALTER TABLE `primantiguedad`
 --
 ALTER TABLE `profesiones`
   ADD PRIMARY KEY (`id_profesion`);
+
+--
+-- Indices de la tabla `proyecto_inversion`
+--
+ALTER TABLE `proyecto_inversion`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indices de la tabla `recibo_pago`
@@ -14400,6 +14440,12 @@ ALTER TABLE `peticiones`
   MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=107;
 
 --
+-- AUTO_INCREMENT de la tabla `plan_inversion`
+--
+ALTER TABLE `plan_inversion`
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT de la tabla `poa_actividades`
 --
 ALTER TABLE `poa_actividades`
@@ -14416,6 +14462,12 @@ ALTER TABLE `primantiguedad`
 --
 ALTER TABLE `profesiones`
   MODIFY `id_profesion` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT de la tabla `proyecto_inversion`
+--
+ALTER TABLE `proyecto_inversion`
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `recibo_pago`
