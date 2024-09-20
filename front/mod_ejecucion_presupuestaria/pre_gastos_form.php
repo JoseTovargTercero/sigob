@@ -37,7 +37,7 @@ require_once '../../back/sistema_global/session.php';
             <div class="row mb3">
 
                 <div class="col-lg-12 mb-3" id="gastos-view">
-                    <div class="card" id="gastos-registrar-container">
+                    <div class="card slide-up-animation" id="gastos-registrar-container">
                         <div class="card-header">
                             <div class="">
                                 <h5 class="mb-0">Lista de solicitudes de dozavos por entes</h5>

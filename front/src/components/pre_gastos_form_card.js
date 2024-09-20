@@ -1,5 +1,6 @@
 import { confirmNotification, toastNotification } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
+import { pre_gastosTipo_form_card } from './pre_gastoTipo_form_card.js'
 
 const d = document
 
@@ -7,7 +8,7 @@ export const pre_gastos_form_card = async ({ elementToInsert, data }) => {
   const cardElement = d.getElementById('gastos-form-card')
   if (cardElement) cardElement.remove()
 
-  let card = ` <div class='card' id='gastos-form-card'>
+  let card = ` <div class='card slide-up-animation' id='gastos-form-card'>
       <div class='card-header d-flex justify-content-between'>
         <div class=''>
           <h5 class='mb-0'>Registro de nuevo gasto presupuestario</h5>
@@ -16,7 +17,7 @@ export const pre_gastos_form_card = async ({ elementToInsert, data }) => {
           </small>
         </div>
         <button
-          data-close='btn-close-report'
+          data-close='btn-close'
           type='button'
           class='btn btn-danger'
           aria-label='Close'
@@ -25,19 +26,38 @@ export const pre_gastos_form_card = async ({ elementToInsert, data }) => {
         </button>
       </div>
       <div class='card-body'>
-        <form id="gastos-form-card">
+        <form id='gastos-form'>
           <div class='row'>
             <div class='col-sm'>
               <div class='form-group'>
                 <label class='form-label'>TIPO DE GASTO</label>
-                <select class='form-select' name='tipo_gasto'>
-                  <option value='viaticos'>Viáticos</option>
-                  <option value='suministros'>Suministros</option>
-                  <option value='alquiler'>Alquiler</option>
-                  <option value='servicios_publicos'>Servicios Públicos</option>
-                  <option value='capacitacion'>Capacitación</option>
-                  <option value='publicidad'>Publicidad</option>
-                </select>
+                <div class='input-group'>
+                  <div class='w-80'>
+                    <select
+                      class='form-select'
+                      name='tipo_gasto'
+                      id='search-select-gastos'
+                    >
+                      <option value='viaticos'>Viáticos</option>
+                      <option value='suministros'>Suministros</option>
+                      <option value='alquiler'>Alquiler</option>
+                      <option value='servicios_publicos'>
+                        Servicios Públicos
+                      </option>
+                      <option value='capacitacion'>Capacitación</option>
+                      <option value='publicidad'>Publicidad</option>
+                    </select>
+                  </div>
+                  <div class='input-group-prepend'>
+                    <button
+                      type='button'
+                      id='add-tipo-gasto'
+                      class='input-group-text btn btn-primary'
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
             <div class='col-sm'>
@@ -84,12 +104,16 @@ export const pre_gastos_form_card = async ({ elementToInsert, data }) => {
       </div>
     </div>`
 
-  d.getElementById(elementToInsert).insertAdjacentHTML('beforebegin', card)
+  d.getElementById(elementToInsert).insertAdjacentHTML('afterbegin', card)
 
   const formElement = d.getElementById('gastos-form')
 
   const closeCard = () => {
-    let cardElement = d.getElementById('gastos-card-form')
+    let cardElement = d.getElementById('gastos-form-card')
+    let gastosRegistrarCointaner = d.getElementById(
+      'gastos-registrar-container'
+    )
+    gastosRegistrarCointaner.classList.remove('hide')
 
     cardElement.remove()
     d.removeEventListener('click', validateClick)
@@ -99,27 +123,13 @@ export const pre_gastos_form_card = async ({ elementToInsert, data }) => {
   }
 
   function validateClick(e) {
-    if (e.target.dataset.rechazarid) {
-      let id = e.target.dataset.rechazarid
-      confirmNotification({
-        type: NOTIFICATIONS_TYPES.send,
-        message: '¿Seguro de rechazar esta solicitud de dozavo?',
-        successFunction: async function () {
-          let row = d.querySelector(`[data-detalleid="${id}"]`).closest('tr')
-
-          toastNotification({
-            type: NOTIFICATIONS_TYPES.done,
-            message: 'Solicitud rechazada',
-          })
-
-          deleteSolicitudDozeavo({ row, id })
-          closeCard()
-        },
-      })
-    }
-
     if (e.target.dataset.close) {
       closeCard()
+    }
+    if (e.target.id === 'add-tipo-gasto') {
+      console.log('hola')
+      closeCard()
+      pre_gastosTipo_form_card({ elementToInsert })
     }
   }
 

@@ -1,0 +1,10 @@
+[
+  { "id": 1, "nombre": "Suministros de oficina" },
+  { "id": 2, "nombre": "Servicios de limpieza" },
+  { "id": 3, "nombre": "Gastos de viaje" },
+  { "id": 4, "nombre": "Alquiler de equipo" },
+  { "id": 5, "nombre": "Publicidad y marketing" },
+  { "id": 6, "nombre": "Pago de nómina" },
+  { "id": 7, "nombre": "Mantenimiento de instalaciones" },
+  { "id": 8, "nombre": "Consultoría externa" }
+]
