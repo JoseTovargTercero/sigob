@@ -20,6 +20,7 @@ function textNotification($type)
     '8' => ['Rechazó la petición de nomina', 'front/mod_nomina/nom_peticiones_form'],
     '9' => ['Aprobo el pago de nomina', 'front/mod_nomina/nom_peticiones_form'],
     '10' => ['Se ha realizado un reintegro a un empleado, se debe cambiar el status a Activo', 'front/mod_nomina/nom_peticiones_form'],
+    '11' => ['Solicitud de dozavo rechazada, fue eliminada', ''],
 
     // mas opciones
   );
