@@ -5,7 +5,8 @@ header('Content-Type: application/json');
 
 require_once '../sistema_global/errores.php';
 // Función para consultar los registros de solicitud_dozavos y añadir información de partidas_presupuestarias
-function obtenerSolicitudDozavos() {
+function obtenerSolicitudDozavos()
+{
     global $conexion;
 
     try {
@@ -47,7 +48,7 @@ function obtenerSolicitudDozavos() {
             }
 
             // Devolver los datos en formato JSON de éxito
-            return json_encode(["success" => "Consulta realizada correctamente", "solicitudes" => $solicitudes]);
+            return json_encode(["success" => $solicitudes]);
 
         } else {
             // Si no se encuentran registros, lanzar un mensaje de éxito pero indicando que no hay datos
