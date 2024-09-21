@@ -30,7 +30,7 @@ export const pre_gastos_form_card = async ({ elementToInsert, data }) => {
           <div class='row'>
             <div class='col-sm'>
               <div class='form-group'>
-                <label class='form-label'>TIPO DE GASTO</label>
+                <label class='form-label'>Tipo de gasto</label>
                 <div class='input-group'>
                   <div class='w-80'>
                     <select
@@ -74,7 +74,7 @@ export const pre_gastos_form_card = async ({ elementToInsert, data }) => {
             </div>
             <div class='col-sm'>
               <div class='form-group'>
-                <label class='form-label'>Monto</label>
+                <label class='form-label'>Fecha del gasto</label>
                 <input
                   class='form-control'
                   type='date'
@@ -91,17 +91,19 @@ export const pre_gastos_form_card = async ({ elementToInsert, data }) => {
                   name=''
                   id=''
                   placeholder='Se registra un gasto de...'
+                  rows="1"
                 ></textarea>
               </div>
             </div>
           </div>
         </form>
-        <div clas='card-footer'>
-          <button class='btn btn-primary' id='gastos-guardar'>
-            Guardar
-          </button>
-        </div>
+       
       </div>
+      <div class='card-footer'>
+      <button class='btn btn-primary' id='gastos-guardar'>
+        Guardar
+      </button>
+    </div>
     </div>`
 
   d.getElementById(elementToInsert).insertAdjacentHTML('afterbegin', card)
@@ -110,10 +112,6 @@ export const pre_gastos_form_card = async ({ elementToInsert, data }) => {
 
   const closeCard = () => {
     let cardElement = d.getElementById('gastos-form-card')
-    let gastosRegistrarCointaner = d.getElementById(
-      'gastos-registrar-container'
-    )
-    gastosRegistrarCointaner.classList.remove('hide')
 
     cardElement.remove()
     d.removeEventListener('click', validateClick)
@@ -125,11 +123,15 @@ export const pre_gastos_form_card = async ({ elementToInsert, data }) => {
   function validateClick(e) {
     if (e.target.dataset.close) {
       closeCard()
+      let gastosRegistrarCointaner = d.getElementById(
+        'gastos-registrar-container'
+      )
+      gastosRegistrarCointaner.classList.remove('hide')
     }
     if (e.target.id === 'add-tipo-gasto') {
-      console.log('hola')
       closeCard()
-      pre_gastosTipo_form_card({ elementToInsert })
+
+      pre_gastosTipo_form_card({ elementToInsert: 'gastos-view' })
     }
   }
 

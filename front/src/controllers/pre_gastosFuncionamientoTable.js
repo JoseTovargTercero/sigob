@@ -1,4 +1,5 @@
-import { getGastos } from '../api/pre_gastos.js'
+import { getPartidas } from '../api/partidas.js'
+import { getGastos, getTiposGastos } from '../api/pre_gastos.js'
 import { getSolicitudesDozavos } from '../api/pre_solicitudesDozavos.js'
 
 import {
@@ -36,7 +37,7 @@ const tableLanguage = {
     orderableReverse: 'Orden inverso de esta columna',
   },
 }
-let gastosTable
+let gastosTable, tipoGastosTable
 export async function validateGastosTable() {
   gastosTable = new DataTable('#gastos-table', {
     columns: [
@@ -67,6 +68,34 @@ export async function validateGastosTable() {
   loadGastosTable()
 }
 
+export async function validateTiposGastosTable() {
+  console.log(d.getElementById('tipos-gastos-table'))
+  tipoGastosTable = new DataTable('#tipos-gastos-table', {
+    columns: [
+      { data: 'nombre' },
+      { data: 'partida' },
+      { data: 'acciones' },
+      // { data: 'partida_descripcion' },
+    ],
+    responsive: true,
+    scrollY: 300,
+    language: tableLanguage,
+    layout: {
+      topEnd: function () {
+        let toolbar = document.createElement('div')
+        toolbar.innerHTML = `
+                  `
+        return toolbar
+      },
+      topStart: { search: { placeholder: 'Buscar...' } },
+      bottomStart: 'info',
+      bottomEnd: 'paging',
+    },
+  })
+
+  loadTipoGastosTable()
+}
+
 export async function loadGastosTable() {
   let gastos = await getGastos()
   console.log(gastos)
@@ -90,8 +119,8 @@ export async function loadGastosTable() {
           : `<span class='btn btn-sm btn-success'>Procesado</span>`,
       acciones:
         gastos.estado === 0
-          ? `<button class="btn btn-danger btn-sm" data-detalleid="${gastos.id}">Rechazar</button>
-      <button class="btn btn-info btn-sm" data-detalleid="${gastos.id}">Aceptar</button>`
+          ? `<button class="btn btn-danger btn-sm" data-rechazarid="${gastos.id}">Rechazar</button>
+      <button class="btn btn-info btn-sm" data-aceptarid="${gastos.id}">Aceptar</button>`
           : ``,
     }
   })
@@ -102,6 +131,38 @@ export async function loadGastosTable() {
   gastosTable.rows.add(data).draw()
 }
 
-export async function deleteSolicitudDozeavo({ id, row }) {
+export async function loadTipoGastosTable() {
+  let tipoGastos = await getTiposGastos()
+  let partidas = await getPartidas()
+
+  if (!Array.isArray(tipoGastos)) return
+
+  if (!tipoGastos || tipoGastos.error) return
+
+  let datosOrdenados = [...tipoGastos].sort((a, b) => a.id - b.id)
+
+  let data = datosOrdenados.map((gastos) => {
+    let partidaEncontrada = partidas.fullInfo.find(
+      (p) => p.id === gastos.id_partida
+    )
+    return {
+      nombre: gastos.nombre,
+      partida: partidaEncontrada.partida,
+      acciones: `<button class="btn btn-danger btn-sm" data-eliminarid="${gastos.id}">Eliminar</button>`,
+      // partida_descripcion: partidaEncontrada.descripcion,
+    }
+  })
+
+  tipoGastosTable.clear().draw()
+
+  // console.log(datosOrdenados)
+  tipoGastosTable.rows.add(data).draw()
+}
+
+export async function deleteGasto({ id, row }) {
   gastosTable.row(row).remove().draw()
+}
+
+export async function deleteTipoGasto({ id, row }) {
+  tipoGastosTable.row(row).remove().draw()
 }

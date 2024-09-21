@@ -1,3 +1,4 @@
+import { getPartidas } from '../api/partidas.js'
 import { confirmNotification, toastNotification } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 
@@ -7,12 +8,12 @@ export const pre_gastosTipo_form_card = async ({ elementToInsert, data }) => {
   const cardElement = d.getElementById('gastos-tipo-form-card')
   if (cardElement) cardElement.remove()
 
-  let card = `<div class='card slide-up-animation' id='gastos-tipo-form-card'>
+  let card = `  <div class='card slide-up-animation' id='gastos-tipo-form-card'>
       <div class='card-header d-flex justify-content-between'>
         <div class=''>
-          <h5 class='mb-0'>Registro de nuevo gasto presupuestario</h5>
+          <h5 class='mb-0'>Registro de nuevo tipo de gasto presupuestario</h5>
           <small class='mt-0 text-muted'>
-            Introduzca el tipo de gasto y montó para ser procesado
+          Introduzca el nombre para el nuevo tipo de gasto y la partida asociada
           </small>
         </div>
         <button
@@ -26,39 +27,66 @@ export const pre_gastosTipo_form_card = async ({ elementToInsert, data }) => {
       </div>
       <div class='card-body'>
         <form id='gastos-tipo-form'>
-          <div class='form-group'>
-            <label class='form-label'>Nombre para nuevo tipo de gasto</label>
-            <div class='input-group'>
-              <div class='w-80'>
-                
+          <div class='row'>
+            <div class='col-sm'>
+              <div class='form-group'>
+                <label for="nombre" class='form-label'>
+                  Nombre para nuevo tipo de gasto
+                </label>
+                <div class='input-group'>
                 <input
                   class='form-control'
                   type='text'
                   name='nombre'
                   id='nombre'
                 />
+                </div>
               </div>
-              <div class='input-group-prepend'>
-                <button
-                  type='button'
-                  id='add-gasto'
-                  class='input-group-text btn btn-primary'
-                >
-                  +
-                </button>
+            </div>
+            <div class='col-sm'>
+              <div class='form-group'>
+                <label for="id_partida" class='form-label'>
+                 Partida asociada
+                </label>
+                <input
+                  class='form-control'
+                  type='text'
+                  name='id_partida'
+                  placeholder='Partida...'
+                  id='id_partida'
+                  list='partidas-list'
+                />
+                <datalist id='partidas-list'></datalist>
               </div>
             </div>
           </div>
         </form>
-        <div clas='card-footer'>
-          <button class='btn btn-primary' id='gastos-tipo-guardar'>
-            Guardar
-          </button>
-        </div>
+       
       </div>
+      <div class='card-footer'>
+      <button class='btn btn-primary' id='gastos-tipo-guardar'>
+        Guardar
+      </button>
+    </div>
     </div>`
 
+  console.log(d.getElementById(elementToInsert))
+
   d.getElementById(elementToInsert).insertAdjacentHTML('afterbegin', card)
+
+  getPartidas().then((res) => {
+    let partidasList = d.getElementById('partidas-list')
+    console.log(res)
+    partidasList.innerHTML = ''
+    let options = res.fullInfo
+      .map((option) => {
+        return `<option value="${option.partida}">${option.descripcion}</option>`
+      })
+      .join('')
+
+    partidasList.innerHTML = options
+    return
+  })
 
   const formElement = d.getElementById('gastos-tipo-form')
 

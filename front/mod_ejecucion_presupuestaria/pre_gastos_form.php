@@ -61,18 +61,37 @@ require_once '../../back/sistema_global/session.php';
                                 <small class="mt-0 text-muted">Visualice el historial de gastos de
                                     funcionamiento</small>
                             </div>
+                            <nav class="nav nav-pills nav-justified" id="request-table-options">
+                                <button class="nav-link active" data-tableid="gastos-table">Gastos realizados</button>
+                                <button class="nav-link" data-tableid="tipos-gastos-table">Tipos de gastos</button>
+
+                            </nav>
                         </div>
                         <div class="card-body">
-                            <table id="gastos-table" class="table table-striped" style="width:100%">
-                                <thead class="w-100">
-                                    <th>N° COMPROMISO</th>
-                                    <th>DESCRIPCION</th>
-                                    <th>TIPO</th>
-                                    <th>MONTO</th>
-                                    <th>FECHA</th>
-                                    <th>ESTADO</th>
-                                    <th>ACCIONES</th>
-                                </thead>
+                            <div class="d-block mb-2 mx-auto slide-up-animation" id="gastos-table-container">
+                                <table id="gastos-table" class="table table-striped" style="width:100%">
+                                    <thead>
+                                        <th>N° COMPROMISO</th>
+                                        <th>DESCRIPCION</th>
+                                        <th>TIPO</th>
+                                        <th>MONTO</th>
+                                        <th>FECHA</th>
+                                        <th>ESTADO</th>
+                                        <th>ACCIONES</th>
+                                    </thead>
+                                </table>
+                            </div>
+                            <div class="d-none mb-2 mx-auto slide-up-animation" id="tipos-gastos-table-container">
+                                <table id="tipos-gastos-table" class="table table-striped" style="width:90%">
+                                    <thead>
+                                        <th>NOMBRE</th>
+                                        <th>PARTIDA</th>
+                                        <!-- <th>PARTIDA DESCRIPCION</th> -->
+                                        <th>ACCIONES</th>
+
+                                    </thead>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>

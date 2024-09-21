@@ -172,3 +172,23 @@ export async function validateRequestNomForm() {
     console.log(res)
   }
 }
+
+function mostrarTabla(tablaId) {
+  let confirmadoId = 'request-table-confirmado'
+  let revisionId = 'request-table-revision'
+
+  let confirmadoTable = d.getElementById(`${confirmadoId}-container`)
+  let revisionTable = d.getElementById(`${revisionId}-container`)
+
+  if (tablaId === confirmadoId) {
+    confirmadoTable.classList.add('d-block')
+    confirmadoTable.classList.remove('d-none')
+    revisionTable.classList.add('d-none')
+    revisionTable.classList.remove('d-block')
+  } else if (tablaId === revisionId) {
+    confirmadoTable.classList.add('d-none')
+    confirmadoTable.classList.remove('d-block')
+    revisionTable.classList.add('d-block')
+    revisionTable.classList.remove('d-none')
+  }
+}

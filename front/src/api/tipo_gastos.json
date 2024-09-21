@@ -1,10 +1,10 @@
 [
-  { "id": 1, "nombre": "Suministros de oficina" },
-  { "id": 2, "nombre": "Servicios de limpieza" },
-  { "id": 3, "nombre": "Gastos de viaje" },
-  { "id": 4, "nombre": "Alquiler de equipo" },
-  { "id": 5, "nombre": "Publicidad y marketing" },
-  { "id": 6, "nombre": "Pago de nómina" },
-  { "id": 7, "nombre": "Mantenimiento de instalaciones" },
-  { "id": 8, "nombre": "Consultoría externa" }
+  { "id": 1, "nombre": "Suministros de oficina", "id_partida": 23 },
+  { "id": 2, "nombre": "Servicios de limpieza", "id_partida": 56 },
+  { "id": 3, "nombre": "Gastos de viaje", "id_partida": 78 },
+  { "id": 4, "nombre": "Alquiler de equipo", "id_partida": 12 },
+  { "id": 5, "nombre": "Publicidad y marketing", "id_partida": 34 },
+  { "id": 6, "nombre": "Pago de nómina", "id_partida": 87 },
+  { "id": 7, "nombre": "Mantenimiento de instalaciones", "id_partida": 45 },
+  { "id": 8, "nombre": "Consultoría externa", "id_partida": 91 }
 ]
