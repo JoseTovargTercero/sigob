@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 19-09-2024 a las 16:58:15
+-- Tiempo de generación: 21-09-2024 a las 23:27:53
 -- Versión del servidor: 10.4.27-MariaDB
 -- Versión de PHP: 7.4.33
 
@@ -1007,6 +1007,13 @@ CREATE TABLE `ejercicio_fiscal` (
   `situado` varchar(255) NOT NULL,
   `divisor` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `ejercicio_fiscal`
+--
+
+INSERT INTO `ejercicio_fiscal` (`id`, `ano`, `situado`, `divisor`) VALUES
+(1, '2024', '10000', '12');
 
 -- --------------------------------------------------------
 
@@ -9276,6 +9283,40 @@ INSERT INTO `reportes` (`id`, `furmulacion`, `nominas`, `columnas`, `formato`, `
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `solicitud_dozavos`
+--
+
+CREATE TABLE `solicitud_dozavos` (
+  `id` int(255) NOT NULL,
+  `numero_orden` varchar(255) NOT NULL,
+  `numero_compromiso` varchar(255) NOT NULL,
+  `descripcion` longtext NOT NULL,
+  `tipo` varchar(255) NOT NULL,
+  `monto` varchar(255) NOT NULL,
+  `fecha` varchar(255) NOT NULL,
+  `partidas` varchar(255) NOT NULL,
+  `id_ente` int(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `solicitud_dozavos`
+--
+
+INSERT INTO `solicitud_dozavos` (`id`, `numero_orden`, `numero_compromiso`, `descripcion`, `tipo`, `monto`, `fecha`, `partidas`, `id_ente`) VALUES
+(1, '1', 'C1001', 'Compra de material de oficina', 'A', '500.0', '2024-01-15', '[{ \"id\": 3, \"monto\": 166.67 }, { \"id\": 14, \"monto\": 166.67 }, { \"id\": 25, \"monto\": 166.66 }]', 1),
+(2, '2', 'C1002', 'Pago a proveedor', 'A', '1200.0', '2024-02-23', '[{ \"id\": 8, \"monto\": 1200.0 }]', 1),
+(3, '3', 'C1003', 'Renovación de licencias de software', 'A', '800.0', '2024-03-08', '[{ \"id\": 18, \"monto\": 400.0 }, { \"id\": 47, \"monto\": 400.0 }]', 1),
+(4, '4', 'C1004', 'Gastos de envío', 'A', '300.0', '2024-04-19', '[{ \"id\": 37, \"monto\": 300.0 }]', 1),
+(5, '5', 'C1005', 'Publicidad en redes sociales', 'A', '700.0', '2024-05-27', '[{ \"id\": 42, \"monto\": 233.33 }, { \"id\": 65, \"monto\": 233.33 }, { \"id\": 69, \"monto\": 233.34 }]', 1),
+(6, '6', 'C1006', 'Capacitación del personal', 'D', '1000.0', '2024-06-14', '[{ \"id\": 80, \"monto\": 333.33 }]', 1),
+(7, '7', 'C1007', 'Mantenimiento de equipamiento', 'D', '600.0', '2024-07-03', '[{ \"id\": 90, \"monto\": 300.0 }, { \"id\": 103, \"monto\": 300.0 }]', 1),
+(8, '8', 'C1008', 'Compra de material de limpieza', 'D', '400.0', '2024-08-11', '[{ \"id\": 104, \"monto\": 200.0 }, { \"id\": 110, \"monto\": 200.0 }]', 1),
+(9, '9', 'C1009', 'Consultoría externa', 'D', '1500.0', '2024-09-25', '[{ \"id\": 5, \"monto\": 1500.0 }]', 1),
+(10, '10', 'C1010', 'Actualización de equipo informático', 'D', '2000.0', '2024-10-30', '[{ \"id\": 5, \"monto\": 500.0 }, { \"id\": 12, \"monto\": 500.0 }, { \"id\": 26, \"monto\": 500.0 }, { \"id\": 78, \"monto\": 500.0 }]', 1);
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `system_users`
 --
 
@@ -9296,7 +9337,7 @@ CREATE TABLE `system_users` (
 --
 
 INSERT INTO `system_users` (`u_id`, `u_nombre`, `u_oficina_id`, `u_oficina`, `u_email`, `u_contrasena`, `creado`, `u_nivel`, `u_status`) VALUES
-(31, 'user Nombre', 1, 'nomina', 'corro@correo.com', '$2y$10$EyP1MOY39kuw4uREdk7ao.UUzQ10YNIZ95IZLM70MUPo5J6YzEBVG', '2024-03-07 11:18:19', 1, 1),
+(31, 'user Nombre', 4, 'nomina', 'corro@correo.com', '$2y$10$EyP1MOY39kuw4uREdk7ao.UUzQ10YNIZ95IZLM70MUPo5J6YzEBVG', '2024-03-07 11:18:19', 1, 1),
 (33, 'otro user', 2, 'registro_control', 'correo2@correo.com', '$2y$10$EyP1MOY39kuw4uREdk7ao.UUzQ10YNIZ95IZLM70MUPo5J6YzEBVG', '2024-05-29 16:32:32', 2, 1),
 (34, 'relaciones_laborales_user\r\n', 3, 'relaciones_laborales', 'corro3@correo.com', '$2y$10$EyP1MOY39kuw4uREdk7ao.UUzQ10YNIZ95IZLM70MUPo5J6YzEBVG', '2024-08-06 18:31:06', 1, 1);
 
@@ -9745,6 +9786,13 @@ CREATE TABLE `tasa` (
   `valor` varchar(2000) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `tasa`
+--
+
+INSERT INTO `tasa` (`id`, `descripcion`, `simbolo`, `valor`) VALUES
+(1, 'Precio del Dólar Actual', '$', '36.823');
+
 -- --------------------------------------------------------
 
 --
@@ -9758,6 +9806,13 @@ CREATE TABLE `tasa_historico` (
   `descripcion` varchar(2000) NOT NULL,
   `fecha` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `tasa_historico`
+--
+
+INSERT INTO `tasa_historico` (`id`, `u_nombre`, `precio`, `descripcion`, `fecha`) VALUES
+(1, 'sigob', '36.823', 'Creacion automática', '21-09-2024');
 
 -- --------------------------------------------------------
 
@@ -14226,6 +14281,12 @@ ALTER TABLE `reportes`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indices de la tabla `solicitud_dozavos`
+--
+ALTER TABLE `solicitud_dozavos`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indices de la tabla `system_users`
 --
 ALTER TABLE `system_users`
@@ -14336,7 +14397,7 @@ ALTER TABLE `distribucion_presupuestaria`
 -- AUTO_INCREMENT de la tabla `ejercicio_fiscal`
 --
 ALTER TABLE `ejercicio_fiscal`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `empleados`
@@ -14483,6 +14544,12 @@ ALTER TABLE `reportes`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
+-- AUTO_INCREMENT de la tabla `solicitud_dozavos`
+--
+ALTER TABLE `solicitud_dozavos`
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+--
 -- AUTO_INCREMENT de la tabla `system_users`
 --
 ALTER TABLE `system_users`
@@ -14504,13 +14571,13 @@ ALTER TABLE `tabuladores_estr`
 -- AUTO_INCREMENT de la tabla `tasa`
 --
 ALTER TABLE `tasa`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `tasa_historico`
 --
 ALTER TABLE `tasa_historico`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `txt`
