@@ -3,6 +3,8 @@
 require_once '../sistema_global/conexion.php';
 header('Content-Type: application/json');
 
+require_once '../sistema_global/errores.php';
+
 // Función para consultar los registros de solicitud_dozavos y añadir información de partidas_presupuestarias
 function obtenerSolicitudDozavos() {
     global $conexion;

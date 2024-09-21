@@ -3,7 +3,7 @@
 require_once '../sistema_global/conexion.php';
 header('Content-Type: application/json');
 
-require_once 'form_errores.php';
+require_once '../sistema_global/errores.php';
 
 // Función para dividir el total en 4 partes y generar el valor de distribución
 function calcularDistribucion($total) {

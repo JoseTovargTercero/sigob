@@ -3,7 +3,7 @@
 require_once '../sistema_global/conexion.php';
 header('Content-Type: application/json');
 
-require_once 'form_errores.php';
+require_once '../sistema_global/errores.php';
 
 // Función para insertar datos en plan_inversion y proyecto_inversion
 function guardarPlanInversion($id_ejercicio, $monto_total, $proyectosArray) {
