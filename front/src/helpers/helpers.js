@@ -566,6 +566,24 @@ const mapData = ({ obj, name, id }) => {
   })
 }
 
+// INSERTAR DATOS EN SELECT DE FORMA DINÁMICA
+// SE NECESITA PASAR UN OBJETO CON LAS PROPIEDADES ID Y NAME
+// EL SELECT TIENE QUE TENER EL ID 'search-select-(nombre)' para funcionar
+
+function insertOptions({ input, data }) {
+  const selectElement = d.getElementById(`search-select-${input}`)
+
+  selectElement.innerHTML = `<option value="">Elegir...</option>`
+  const fragment = d.createDocumentFragment()
+  data.forEach((el) => {
+    const option = d.createElement('option')
+    option.setAttribute('value', el.id)
+    option.textContent = el.name
+    fragment.appendChild(option)
+  })
+  selectElement.appendChild(fragment)
+}
+
 // SEPARADOR DE MILES
 
 function separarMiles(numero) {
@@ -615,4 +633,5 @@ export {
   empleadosDiferencia,
   mapData,
   separarMiles,
+  insertOptions,
 }

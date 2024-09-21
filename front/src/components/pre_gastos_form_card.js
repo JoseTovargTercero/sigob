@@ -1,4 +1,10 @@
-import { confirmNotification, toastNotification } from '../helpers/helpers.js'
+import { getTiposGastos } from '../api/pre_gastos.js'
+
+import {
+  confirmNotification,
+  insertOptions,
+  toastNotification,
+} from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 import { pre_gastosTipo_form_card } from './pre_gastoTipo_form_card.js'
 
@@ -38,14 +44,7 @@ export const pre_gastos_form_card = async ({ elementToInsert, data }) => {
                       name='tipo_gasto'
                       id='search-select-gastos'
                     >
-                      <option value='viaticos'>Viáticos</option>
-                      <option value='suministros'>Suministros</option>
-                      <option value='alquiler'>Alquiler</option>
-                      <option value='servicios_publicos'>
-                        Servicios Públicos
-                      </option>
-                      <option value='capacitacion'>Capacitación</option>
-                      <option value='publicidad'>Publicidad</option>
+                    
                     </select>
                   </div>
                   <div class='input-group-prepend'>
@@ -107,6 +106,11 @@ export const pre_gastos_form_card = async ({ elementToInsert, data }) => {
     </div>`
 
   d.getElementById(elementToInsert).insertAdjacentHTML('afterbegin', card)
+
+  getTiposGastos().then((res) => {
+    console.log(res.mappedData)
+    insertOptions({ input: 'gastos', data: res.mappedData })
+  })
 
   const formElement = d.getElementById('gastos-form')
 

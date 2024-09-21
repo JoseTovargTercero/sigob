@@ -1,3 +1,4 @@
+import { getGastos, getTiposGastos } from '../api/pre_gastos.js'
 import { pre_gastos_form_card } from '../components/pre_gastos_form_card.js'
 import { confirmNotification, toastNotification } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
@@ -17,7 +18,7 @@ export const validateGastosView = () => {
   let gastosForm = d.getElementById('gastos-form')
   let gastosRegistrarCointaner = d.getElementById('gastos-registrar-container')
 
-  d.addEventListener('click', (e) => {
+  d.addEventListener('click', async (e) => {
     if (e.target.id === 'gastos-registrar') {
       gastosRegistrarCointaner.classList.add('hide')
       pre_gastos_form_card({ elementToInsert: 'gastos-view' })
@@ -80,18 +81,6 @@ export const validateGastosView = () => {
     }
   })
   return
-}
-
-function insertOptions({ input, data }) {
-  const selectElement = d.getElementById(`search-select-${input}`)
-  selectElement.innerHTML = `<option value="">Elegir...</option>`
-  const fragment = d.createDocumentFragment()
-  data.forEach((el) => {
-    const option = d.createElement('option')
-    option.setAttribute('value', el.id)
-    option.textContent = el.name
-    fragment.appendChild(option)
-  })
 }
 
 function mostrarTabla(tablaId) {

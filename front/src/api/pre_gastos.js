@@ -1,6 +1,7 @@
 import {
   confirmNotification,
   hideLoader,
+  mapData,
   showLoader,
   toastNotification,
 } from '../helpers/helpers.js'
@@ -52,7 +53,7 @@ const getTiposGastos = async (id) => {
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
     const json = await res.json()
 
-    console.log(json)
+    // console.log(json)
 
     if (id) {
       let data = json.find((objeto) => objeto.id == id)
@@ -66,7 +67,13 @@ const getTiposGastos = async (id) => {
     if (json.error) {
       toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
     }
-    return json
+    let mappedData = mapData({
+      obj: json,
+      name: 'nombre',
+      id: 'id',
+    })
+
+    return { mappedData, fullInfo: json }
   } catch (e) {
     console.log(e)
 

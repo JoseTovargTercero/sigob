@@ -39,6 +39,7 @@ export const pre_gastosTipo_form_card = async ({ elementToInsert, data }) => {
                   type='text'
                   name='nombre'
                   id='nombre'
+                  placeholder='Nombre...'
                 />
                 </div>
               </div>

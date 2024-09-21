@@ -69,7 +69,6 @@ export async function validateGastosTable() {
 }
 
 export async function validateTiposGastosTable() {
-  console.log(d.getElementById('tipos-gastos-table'))
   tipoGastosTable = new DataTable('#tipos-gastos-table', {
     columns: [
       { data: 'nombre' },
@@ -98,7 +97,8 @@ export async function validateTiposGastosTable() {
 
 export async function loadGastosTable() {
   let gastos = await getGastos()
-  console.log(gastos)
+
+  let tiposGastos = await getTiposGastos()
 
   if (!Array.isArray(gastos)) return
 
@@ -107,10 +107,13 @@ export async function loadGastosTable() {
   let datosOrdenados = [...gastos].sort((a, b) => a.id - b.id)
 
   let data = datosOrdenados.map((gastos) => {
+    let tipoGasto = tiposGastos.fullInfo.find(
+      (tipo) => tipo.id === gastos.id_tipo
+    )
     return {
       numero_compromiso: gastos.numero_compromiso,
       descripcion: gastos.descripcion,
-      tipo: gastos.tipo,
+      tipo: tipoGasto.nombre,
       monto: `${separarMiles(gastos.monto)} Bs`,
       fecha: gastos.fecha,
       estado:
@@ -135,11 +138,13 @@ export async function loadTipoGastosTable() {
   let tipoGastos = await getTiposGastos()
   let partidas = await getPartidas()
 
-  if (!Array.isArray(tipoGastos)) return
+  if (!Array.isArray(tipoGastos.fullInfo)) return
 
   if (!tipoGastos || tipoGastos.error) return
 
-  let datosOrdenados = [...tipoGastos].sort((a, b) => a.id - b.id)
+  console.log(tipoGastos)
+
+  let datosOrdenados = [...tipoGastos.fullInfo].sort((a, b) => a.id - b.id)
 
   let data = datosOrdenados.map((gastos) => {
     let partidaEncontrada = partidas.fullInfo.find(
