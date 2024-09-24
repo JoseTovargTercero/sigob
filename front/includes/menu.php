@@ -146,8 +146,14 @@
           </li>
           <li class="pc-item">
             <a href="<?php echo constant('URL') ?>front/mod_pl_formulacion/index" class="pc-link">
-              <span class="pc-micon"><i class='bx bx-book-content'></i></i></span>
+              <span class="pc-micon"><i class='bx bx-book-content'></i></span>
               <span class="pc-mtext">Ejercicio fiscal</span>
+            </a>
+          </li>
+           <li class="pc-item">
+            <a href="<?php echo constant('URL') ?>front/mod_pl_formulacion/form_partidas_tabla" class="pc-link">
+              <span class="pc-micon"><i class='bx bx-spreadsheet' ></i></span>
+              <span class="pc-mtext">Partidas presupuestarias</span>
             </a>
           </li>
 

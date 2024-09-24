@@ -10,6 +10,9 @@ import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 const partidasUrl =
   '../../../../sigob/back/modulo_nomina/nom_partidas_datos.php'
 
+const partidasFormUrl =
+  '../../../../sigob/back/modulo_pl_formulacion/form_partidas.php'
+
 const getPartidas = async (id) => {
   try {
     let res
@@ -62,4 +65,35 @@ const consultarPartida = async ({ informacion }) => {
   }
 }
 
-export { getPartidas, consultarPartida }
+const getFormPartidas = async (id) => {
+  try {
+    let res
+    if (id) res = await fetch(`${partidasFormUrl}?id=${id}`)
+    else res = await fetch(partidasFormUrl)
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+    const json = await res.json()
+
+    if (json.success) {
+      let mappedData = mapData({
+        obj: json.success,
+        name: 'descripcion',
+        id: 'id',
+      })
+
+      return { mappedData, fullInfo: json.success }
+    }
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener partidas',
+    })
+  }
+}
+
+export { getPartidas, consultarPartida, getFormPartidas }

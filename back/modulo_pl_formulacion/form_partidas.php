@@ -6,13 +6,15 @@ header('Content-Type: application/json');
 require_once '../sistema_global/errores.php';
 
 // Función para validar el formato del código
-function validarCodigo($codigo) {
+function validarCodigo($codigo)
+{
     // Valida el formato xx.xx.si.xxx.xx.xx.xxxx
     return preg_match('/^\d{2}\.\d{2}\.si\.\d{3}\.\d{2}\.\d{2}\.\d{4}$/', $codigo);
 }
 
 // Función para insertar una nueva partida
-function registrarPartida($codigo, $nombre, $descripcion) {
+function registrarPartida($codigo, $nombre, $descripcion)
+{
     global $conexion;
 
     try {
@@ -50,7 +52,8 @@ function registrarPartida($codigo, $nombre, $descripcion) {
 }
 
 // Función para actualizar una partida
-function actualizarPartida($id, $codigo, $nombre, $descripcion) {
+function actualizarPartida($id, $codigo, $nombre, $descripcion)
+{
     global $conexion;
 
     try {
@@ -82,7 +85,8 @@ function actualizarPartida($id, $codigo, $nombre, $descripcion) {
 }
 
 // Función para eliminar una partida
-function eliminarPartida($id) {
+function eliminarPartida($id)
+{
     global $conexion;
 
     try {
