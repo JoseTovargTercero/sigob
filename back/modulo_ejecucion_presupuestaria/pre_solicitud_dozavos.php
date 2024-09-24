@@ -108,8 +108,8 @@ function gestionarSolicitudDozavos($data)
             $stmt->execute();
 
             if ($stmt->affected_rows > 0) {
-                return json_encode(["success" => "La solicitud no es valida, por lo que sera eliminada."]);
                 notificar(['nomina'], 11);
+                return json_encode(["success" => "La solicitud no es valida, por lo que sera eliminada."]);
             } else {
                 return json_encode(["error" => "No se pudo eliminar el registro o el ID no existe."]);
             }

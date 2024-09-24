@@ -23,6 +23,8 @@ export const validateGastosView = () => {
       gastosRegistrarCointaner.classList.add('hide')
       pre_gastos_form_card({ elementToInsert: 'gastos-view' })
     }
+    if (e.target.id === 'gastos-tipos-guardar') {
+    }
 
     if (e.target.dataset.tableid) {
       console.log(e.target.dataset)

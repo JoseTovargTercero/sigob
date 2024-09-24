@@ -1,5 +1,6 @@
 import { getPartidas } from '../api/partidas.js'
-import { deleteSolicitudDozeavo } from '../controllers/pre_solicitudesDozavosTable.js'
+import { deleteSolicitudDozavo } from '../api/pre_solicitudesDozavos.js'
+import { deleteSolicitudDozeavoRow } from '../controllers/pre_solicitudesDozavosTable.js'
 import { confirmNotification, toastNotification } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 
@@ -33,10 +34,6 @@ export const pre_solicitudDozavo_card = async ({ elementToInsert, data }) => {
   const modalElemet = d.getElementById('card-solicitud-dozavo')
   if (modalElemet) modalElemet.remove()
 
-  let listaPartidas = await getPartidas()
-
-  console.log(listaPartidas.fullInfo)
-
   let {
     id,
     numero_orden,
@@ -53,20 +50,15 @@ export const pre_solicitudDozavo_card = async ({ elementToInsert, data }) => {
   let partidasLi = partidas
     ? partidas
         .map((partida) => {
-          let partidaEncontrada = listaPartidas.fullInfo.find(
-            (par) => par.id === partida.id
-          )
-          let informacion = { ...partida, ...partidaEncontrada }
-
           return ` <tr class=''>
               <td class=''>
-                ${informacion.partida}
+                ${partida.partida}
               </td>
                <td class=''>
-                ${informacion.monto}
+                ${partida.monto}
               </td>
               <td class=''>
-                ${informacion.descripcion}
+                ${partida.descripcion}
               </td>
              
             </tr>`
@@ -193,14 +185,10 @@ export const pre_solicitudDozavo_card = async ({ elementToInsert, data }) => {
         type: NOTIFICATIONS_TYPES.send,
         message: '¿Seguro de rechazar esta solicitud de dozavo?',
         successFunction: async function () {
+          let response = await deleteSolicitudDozavo(id)
+          if (response.error) return
           let row = d.querySelector(`[data-detalleid="${id}"]`).closest('tr')
-
-          toastNotification({
-            type: NOTIFICATIONS_TYPES.done,
-            message: 'Solicitud rechazada',
-          })
-
-          deleteSolicitudDozeavo({ row, id })
+          deleteSolicitudDozeavoRow({ row, id })
           closeModalCard()
         },
       })

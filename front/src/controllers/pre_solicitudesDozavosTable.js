@@ -86,7 +86,7 @@ export async function loadSolicitudesDozavosTable() {
   let data = datosOrdenados.map((solicitud) => {
     return {
       numero_orden: solicitud.numero_orden,
-      entes: solicitud.ente,
+      entes: solicitud.ente || 'Ente',
       numero_compromiso: solicitud.numero_compromiso,
       descripcion: solicitud.descripcion,
       tipo: solicitud.tipo,
@@ -102,6 +102,6 @@ export async function loadSolicitudesDozavosTable() {
   solicitudesDozavosTable.rows.add(data).draw()
 }
 
-export async function deleteSolicitudDozeavo({ id, row }) {
+export async function deleteSolicitudDozeavoRow({ id, row }) {
   solicitudesDozavosTable.row(row).remove().draw()
 }

@@ -2,7 +2,7 @@
   { "id": 1, "nombre": "viaticos", "id_partida": 23 },
   { "id": 2, "nombre": "suministros", "id_partida": 56 },
   { "id": 3, "nombre": "alquiler", "id_partida": 78 },
-  { "id": 4, "nombre": "servicios_publicos", "id_partida": 12 },
+  { "id": 4, "nombre": "servicios publicos", "id_partida": 12 },
   { "id": 5, "nombre": "capacitacion", "id_partida": 34 },
   { "id": 6, "nombre": "publicidad", "id_partida": 87 },
   { "id": 7, "nombre": "Mantenimiento de instalaciones", "id_partida": 45 },
