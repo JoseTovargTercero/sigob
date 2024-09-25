@@ -6,25 +6,25 @@ header('Content-Type: application/json');
 require_once '../sistema_global/errores.php';
 
 // Función para validar el formato del código
-function validarCodigo($codigo)
+function validarCodigo($partida)
 {
     // Valida el formato xx.xx.si.xxx.xx.xx.xxxx
-    return preg_match('/^\d{2}\.\d{2}\.si\.\d{3}\.\d{2}\.\d{2}\.\d{4}$/', $codigo);
+    return preg_match('/^\d{2}\.\d{2}\.si\.\d{3}\.\d{2}\.\d{2}\.\d{4}$/', $partida);
 }
 
 // Función para insertar una nueva partida
-function registrarPartida($codigo, $nombre, $descripcion)
+function registrarPartida($partida, $nombre, $descripcion)
 {
     global $conexion;
-    if (empty($codigo) || empty($nombre) || empty($descripcion)) {
+    if (empty($partida) || empty($nombre) || empty($descripcion)) {
         return json_encode(['error' => "No puede registrar con campos vacíos"]);
     }
 
     try {
         // Verificar si el código ya existe y si status es 0
-        $sql = "SELECT * FROM partidas_presupuestarias WHERE codigo = ? AND status = 0";
+        $sql = "SELECT * FROM partidas_presupuestarias WHERE partida = ? AND status = 0";
         $stmt = $conexion->prepare($sql);
-        $stmt->bind_param("s", $codigo);
+        $stmt->bind_param("s", $partida);
         $stmt->execute();
         $result = $stmt->get_result();
 
@@ -33,14 +33,14 @@ function registrarPartida($codigo, $nombre, $descripcion)
         }
 
         // Validar el formato del código
-        if (!validarCodigo($codigo)) {
+        if (!validarCodigo($partida)) {
             return json_encode(['error' => "El formato del código no es válido"]);
         }
 
         // Registrar la nueva partida
-        $sql = "INSERT INTO partidas_presupuestarias (codigo, nombre, descripcion, status) VALUES (?, ?, ?, 0)";
+        $sql = "INSERT INTO partidas_presupuestarias (partida, nombre, descripcion, status) VALUES (?, ?, ?, 0)";
         $stmt = $conexion->prepare($sql);
-        $stmt->bind_param("sss", $codigo, $nombre, $descripcion);
+        $stmt->bind_param("sss", $partida, $nombre, $descripcion);
         $stmt->execute();
 
         if ($stmt->affected_rows > 0) {
@@ -55,25 +55,25 @@ function registrarPartida($codigo, $nombre, $descripcion)
 }
 
 // Función para actualizar una partida
-function actualizarPartida($id, $codigo, $nombre, $descripcion)
+function actualizarPartida($id, $partida, $nombre, $descripcion)
 {
     global $conexion;
 
     try {
         // Verificar que no falte ningún campo
-        if (empty($id) || empty($codigo) || empty($nombre) || empty($descripcion)) {
+        if (empty($id) || empty($partida) || empty($nombre) || empty($descripcion)) {
             return json_encode(['error' => "Debe rellenar todos los datos para actualizar"]);
         }
 
         // Validar el formato del código
-        if (!validarCodigo($codigo)) {
+        if (!validarCodigo($partida)) {
             return json_encode(['error' => "El formato del código no es válido"]);
         }
 
         // Actualizar la partida
-        $sql = "UPDATE partidas_presupuestarias SET codigo = ?, nombre = ?, descripcion = ? WHERE id = ?";
+        $sql = "UPDATE partidas_presupuestarias SET partida = ?, nombre = ?, descripcion = ? WHERE id = ?";
         $stmt = $conexion->prepare($sql);
-        $stmt->bind_param("sssi", $codigo, $nombre, $descripcion, $id);
+        $stmt->bind_param("sssi", $partida, $nombre, $descripcion, $id);
         $stmt->execute();
 
         if ($stmt->affected_rows > 0) {
@@ -119,15 +119,15 @@ $data = json_decode(file_get_contents("php://input"), true);
 
 if (isset($data["accion"])) {
     $accion = $data["accion"];
-    $codigo = $data["codigo"] ?? '';
+    $partida = $data["partida"] ?? '';
     $nombre = $data["nombre"] ?? '';
     $descripcion = $data["descripcion"] ?? '';
     $id = $data["id"] ?? '';
 
     if ($accion === "insert") {
-        $response = registrarPartida($codigo, $nombre, $descripcion);
+        $response = registrarPartida($partida, $nombre, $descripcion);
     } elseif ($accion === "update") {
-        $response = actualizarPartida($id, $codigo, $nombre, $descripcion);
+        $response = actualizarPartida($id, $partida, $nombre, $descripcion);
     } elseif ($accion === "delete") {
         $response = eliminarPartida($id);
     } else {
