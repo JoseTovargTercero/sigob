@@ -16,6 +16,9 @@ function validarCodigo($codigo)
 function registrarPartida($codigo, $nombre, $descripcion)
 {
     global $conexion;
+    if (empty($codigo) || empty($nombre) || empty($descripcion)) {
+        return json_encode(['error' => "No puede registrar con campos vacíos"]);
+    }
 
     try {
         // Verificar si el código ya existe y si status es 0

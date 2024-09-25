@@ -96,4 +96,43 @@ const getFormPartidas = async (id) => {
   }
 }
 
-export { getPartidas, consultarPartida, getFormPartidas }
+const guardarPartida = async ({ codigo, nombre, descripcion }) => {
+  console.log({ codigo, nombre, descripcion })
+  try {
+    let res = await fetch(partidasFormUrl, {
+      method: 'POST',
+      body: JSON.stringify({ codigo, nombre, descripcion, accion: 'insert' }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    const clone = res.clone()
+
+    let text = await clone.text()
+
+    console.log(text)
+
+    const json = await res.json()
+
+    console.log(json)
+
+    if (json.success) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.fail,
+        message: json.success,
+      })
+    }
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener partidas',
+    })
+  }
+}
+
+export { getPartidas, consultarPartida, getFormPartidas, guardarPartida }

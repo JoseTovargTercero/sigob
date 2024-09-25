@@ -228,6 +228,27 @@ function validateInput({ target, fieldList = {}, fieldListErrors = {}, type }) {
       }
     }
 
+    if (type === 'partida') {
+      let isPartida = regularExpressions.PARTIDA.test(value)
+      if (!isPartida) {
+        target.classList.add('input-error')
+        fieldListErrors[target.name].value = true
+        errorMessage(target, message)
+        fieldList = {
+          ...fieldList,
+          [target.name]: target.value,
+        }
+      } else {
+        fieldListErrors[target.name].value = false
+        target.classList.remove('input-error')
+        errorMessage(target, message)
+        fieldList = {
+          ...fieldList,
+          [target.name]: target.value,
+        }
+      }
+    }
+
     if (type === 'email') {
       let isText = regularExpressions.EMAIL.test(value)
       if (!isText) {
