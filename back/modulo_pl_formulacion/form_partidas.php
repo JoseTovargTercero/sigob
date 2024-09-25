@@ -54,6 +54,57 @@ function registrarPartida($partida, $nombre, $descripcion)
     }
 }
 
+// Función para consultar todas las partidas presupuestarias
+function consultarPartidas()
+{
+    global $conexion;
+
+    try {
+        // Consultar todas las partidas presupuestarias
+        $sql = "SELECT * FROM partidas_presupuestarias";
+        $result = $conexion->query($sql);
+
+        if ($result->num_rows > 0) {
+            $partidas = $result->fetch_all(MYSQLI_ASSOC); // Devuelve todos los resultados en un array asociativo
+            return json_encode($partidas);
+        } else {
+            return json_encode(['error' => "No se encontraron partidas presupuestarias"]);
+        }
+    } catch (Exception $e) {
+        registrarError($e->getMessage());
+        return json_encode(['error' => $e->getMessage()]);
+    }
+}
+// Función para consultar una partida presupuestaria por ID
+function consultarPartidaPorId($id)
+{
+    global $conexion;
+
+    try {
+        if (empty($id)) {
+            return json_encode(['error' => "Debe proporcionar un ID para consultar"]);
+        }
+
+        // Consultar la partida por ID
+        $sql = "SELECT * FROM partidas_presupuestarias WHERE id = ?";
+        $stmt = $conexion->prepare($sql);
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            $partida = $result->fetch_assoc(); // Devuelve el resultado como un array asociativo
+            return json_encode($partida);
+        } else {
+            return json_encode(['error' => "No se encontró la partida presupuestaria con el ID proporcionado"]);
+        }
+    } catch (Exception $e) {
+        registrarError($e->getMessage());
+        return json_encode(['error' => $e->getMessage()]);
+    }
+}
+
+
 // Función para actualizar una partida
 function actualizarPartida($id, $partida, $nombre, $descripcion)
 {
@@ -130,6 +181,10 @@ if (isset($data["accion"])) {
         $response = actualizarPartida($id, $partida, $nombre, $descripcion);
     } elseif ($accion === "delete") {
         $response = eliminarPartida($id);
+    } elseif ($accion === "consultar_todos") {
+        $response = consultarPartidas();
+    } elseif ($accion === "consultar_id") {
+        $response = consultarPartidaPorId($id);
     } else {
         $response = json_encode(['error' => "Acción no aceptada"]);
     }
@@ -138,3 +193,4 @@ if (isset($data["accion"])) {
 }
 
 echo $response;
+
