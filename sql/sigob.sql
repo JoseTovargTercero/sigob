@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 21-09-2024 a las 23:27:53
+-- Tiempo de generación: 26-09-2024 a las 01:43:50
 -- Versión del servidor: 10.4.27-MariaDB
 -- Versión de PHP: 7.4.33
 
@@ -723,6 +723,19 @@ INSERT INTO `categorias` (`id`, `categoria`, `categoria_nombre`) VALUES
 (84, '14-01-00-54', 'EMPLEADOS CONTRATADOS'),
 (85, '14-01-00-54', 'CONTRATADOS GOBERNACIÓN'),
 (86, '14-01-00-55', 'PERSONAL DE ALTO NIVEL Y JEFATURAS');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `compromisos`
+--
+
+CREATE TABLE `compromisos` (
+  `id` int(255) NOT NULL,
+  `correlativo` varchar(255) NOT NULL,
+  `tipo` varchar(255) NOT NULL,
+  `id_registro` int(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -9295,24 +9308,25 @@ CREATE TABLE `solicitud_dozavos` (
   `monto` varchar(255) NOT NULL,
   `fecha` varchar(255) NOT NULL,
   `partidas` varchar(255) NOT NULL,
-  `id_ente` int(255) NOT NULL
+  `id_ente` int(255) NOT NULL,
+  `status` int(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `solicitud_dozavos`
 --
 
-INSERT INTO `solicitud_dozavos` (`id`, `numero_orden`, `numero_compromiso`, `descripcion`, `tipo`, `monto`, `fecha`, `partidas`, `id_ente`) VALUES
-(1, '1', 'C1001', 'Compra de material de oficina', 'A', '500.0', '2024-01-15', '[{ \"id\": 3, \"monto\": 166.67 }, { \"id\": 14, \"monto\": 166.67 }, { \"id\": 25, \"monto\": 166.66 }]', 1),
-(2, '2', 'C1002', 'Pago a proveedor', 'A', '1200.0', '2024-02-23', '[{ \"id\": 8, \"monto\": 1200.0 }]', 1),
-(3, '3', 'C1003', 'Renovación de licencias de software', 'A', '800.0', '2024-03-08', '[{ \"id\": 18, \"monto\": 400.0 }, { \"id\": 47, \"monto\": 400.0 }]', 1),
-(4, '4', 'C1004', 'Gastos de envío', 'A', '300.0', '2024-04-19', '[{ \"id\": 37, \"monto\": 300.0 }]', 1),
-(5, '5', 'C1005', 'Publicidad en redes sociales', 'A', '700.0', '2024-05-27', '[{ \"id\": 42, \"monto\": 233.33 }, { \"id\": 65, \"monto\": 233.33 }, { \"id\": 69, \"monto\": 233.34 }]', 1),
-(6, '6', 'C1006', 'Capacitación del personal', 'D', '1000.0', '2024-06-14', '[{ \"id\": 80, \"monto\": 333.33 }]', 1),
-(7, '7', 'C1007', 'Mantenimiento de equipamiento', 'D', '600.0', '2024-07-03', '[{ \"id\": 90, \"monto\": 300.0 }, { \"id\": 103, \"monto\": 300.0 }]', 1),
-(8, '8', 'C1008', 'Compra de material de limpieza', 'D', '400.0', '2024-08-11', '[{ \"id\": 104, \"monto\": 200.0 }, { \"id\": 110, \"monto\": 200.0 }]', 1),
-(9, '9', 'C1009', 'Consultoría externa', 'D', '1500.0', '2024-09-25', '[{ \"id\": 5, \"monto\": 1500.0 }]', 1),
-(10, '10', 'C1010', 'Actualización de equipo informático', 'D', '2000.0', '2024-10-30', '[{ \"id\": 5, \"monto\": 500.0 }, { \"id\": 12, \"monto\": 500.0 }, { \"id\": 26, \"monto\": 500.0 }, { \"id\": 78, \"monto\": 500.0 }]', 1);
+INSERT INTO `solicitud_dozavos` (`id`, `numero_orden`, `numero_compromiso`, `descripcion`, `tipo`, `monto`, `fecha`, `partidas`, `id_ente`, `status`) VALUES
+(1, '1', 'C1001', 'Compra de material de oficina', 'A', '500.0', '2024-01-15', '[{ \"id\": 3, \"monto\": 166.67 }, { \"id\": 14, \"monto\": 166.67 }, { \"id\": 25, \"monto\": 166.66 }]', 1, 0),
+(2, '2', 'C1002', 'Pago a proveedor', 'A', '1200.0', '2024-02-23', '[{ \"id\": 8, \"monto\": 1200.0 }]', 1, 0),
+(3, '3', 'C1003', 'Renovación de licencias de software', 'A', '800.0', '2024-03-08', '[{ \"id\": 18, \"monto\": 400.0 }, { \"id\": 47, \"monto\": 400.0 }]', 1, 0),
+(4, '4', 'C1004', 'Gastos de envío', 'A', '300.0', '2024-04-19', '[{ \"id\": 37, \"monto\": 300.0 }]', 1, 0),
+(5, '5', 'C1005', 'Publicidad en redes sociales', 'A', '700.0', '2024-05-27', '[{ \"id\": 42, \"monto\": 233.33 }, { \"id\": 65, \"monto\": 233.33 }, { \"id\": 69, \"monto\": 233.34 }]', 1, 0),
+(6, '6', 'C1006', 'Capacitación del personal', 'D', '1000.0', '2024-06-14', '[{ \"id\": 80, \"monto\": 333.33 }]', 1, 0),
+(7, '7', 'C1007', 'Mantenimiento de equipamiento', 'D', '600.0', '2024-07-03', '[{ \"id\": 90, \"monto\": 300.0 }, { \"id\": 103, \"monto\": 300.0 }]', 1, 0),
+(8, '8', 'C1008', 'Compra de material de limpieza', 'D', '400.0', '2024-08-11', '[{ \"id\": 104, \"monto\": 200.0 }, { \"id\": 110, \"monto\": 200.0 }]', 1, 0),
+(9, '9', 'C1009', 'Consultoría externa', 'D', '1500.0', '2024-09-25', '[{ \"id\": 5, \"monto\": 1500.0 }]', 1, 0),
+(10, '10', 'C1010', 'Actualización de equipo informático', 'D', '2000.0', '2024-10-30', '[{ \"id\": 5, \"monto\": 500.0 }, { \"id\": 12, \"monto\": 500.0 }, { \"id\": 26, \"monto\": 500.0 }, { \"id\": 78, \"monto\": 500.0 }]', 1, 0);
 
 -- --------------------------------------------------------
 
@@ -9791,7 +9805,7 @@ CREATE TABLE `tasa` (
 --
 
 INSERT INTO `tasa` (`id`, `descripcion`, `simbolo`, `valor`) VALUES
-(1, 'Precio del Dólar Actual', '$', '36.823');
+(1, 'Precio del Dólar Actual', '$', '36.8105');
 
 -- --------------------------------------------------------
 
@@ -9812,7 +9826,20 @@ CREATE TABLE `tasa_historico` (
 --
 
 INSERT INTO `tasa_historico` (`id`, `u_nombre`, `precio`, `descripcion`, `fecha`) VALUES
-(1, 'sigob', '36.823', 'Creacion automática', '21-09-2024');
+(1, 'sigob', '36.823', 'Creacion automática', '21-09-2024'),
+(2, 'sigob', '36.8105', 'actualizacion automática', '25-09-2024');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `tipo_gastos`
+--
+
+CREATE TABLE `tipo_gastos` (
+  `id` int(255) NOT NULL,
+  `nombre` longtext NOT NULL,
+  `id_partida` int(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -14089,6 +14116,12 @@ ALTER TABLE `categorias`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indices de la tabla `compromisos`
+--
+ALTER TABLE `compromisos`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indices de la tabla `conceptos`
 --
 ALTER TABLE `conceptos`
@@ -14352,6 +14385,12 @@ ALTER TABLE `categorias`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=87;
 
 --
+-- AUTO_INCREMENT de la tabla `compromisos`
+--
+ALTER TABLE `compromisos`
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT de la tabla `conceptos`
 --
 ALTER TABLE `conceptos`
@@ -14487,7 +14526,7 @@ ALTER TABLE `notificaciones`
 -- AUTO_INCREMENT de la tabla `partidas_presupuestarias`
 --
 ALTER TABLE `partidas_presupuestarias`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=111;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=112;
 
 --
 -- AUTO_INCREMENT de la tabla `password_resets`
@@ -14577,7 +14616,7 @@ ALTER TABLE `tasa`
 -- AUTO_INCREMENT de la tabla `tasa_historico`
 --
 ALTER TABLE `tasa_historico`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `txt`
