@@ -230,7 +230,6 @@ function validateInput({ target, fieldList = {}, fieldListErrors = {}, type }) {
 
     if (type === 'partida') {
       let isPartida = regularExpressions.PARTIDA.test(value)
-      console.log(value)
 
       if (!isPartida) {
         target.classList.add('input-error')

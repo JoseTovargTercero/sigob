@@ -156,4 +156,103 @@ const guardarPartida = async ({ partida, nombre, descripcion }) => {
   }
 }
 
-export { getPartidas, consultarPartida, getFormPartidas, guardarPartida }
+const actualizarPartida = async ({ partida, nombre, descripcion, id }) => {
+  console.log({ partida, nombre, descripcion, id })
+  showLoader()
+  try {
+    let res = await fetch(partidasFormUrl, {
+      method: 'POST',
+      body: JSON.stringify({
+        id,
+        partida,
+        nombre,
+        descripcion,
+        accion: 'update',
+      }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    const clone = res.clone()
+
+    let text = await clone.text()
+
+    console.log(text)
+
+    const json = await res.json()
+
+    console.log(json)
+
+    if (json.success) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.done,
+        message: json.success,
+      })
+    }
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al actualizar partidas',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
+const eliminarPartida = async (id) => {
+  showLoader()
+  try {
+    let res = await fetch(partidasFormUrl, {
+      method: 'POST',
+      body: JSON.stringify({
+        id,
+        accion: 'delete',
+      }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    const clone = res.clone()
+
+    let text = await clone.text()
+
+    console.log(text)
+
+    const json = await res.json()
+
+    console.log(json)
+
+    if (json.success) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.done,
+        message: json.success,
+      })
+    }
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al actualizar partidas',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
+export {
+  getPartidas,
+  consultarPartida,
+  getFormPartidas,
+  guardarPartida,
+  actualizarPartida,
+  eliminarPartida,
+}

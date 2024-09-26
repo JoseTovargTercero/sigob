@@ -51,6 +51,7 @@ require_once '../../back/sistema_global/session.php';
                                     <thead class="w-100">
                                         <th>CÓDIGO</th>
                                         <th>NOMBRE</th>
+                                        <th>ACCIONES</th>
                                         <th>DESCRIPCIÓN</th>
                                     </thead>
 

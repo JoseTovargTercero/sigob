@@ -31,8 +31,8 @@ export const validatePartidasTable = async () => {
     columns: [
       { data: 'partida' },
       { data: 'nombre' },
-      { data: 'descripcion' },
       { data: 'acciones' },
+      { data: 'descripcion' },
     ],
     responsive: true,
     scrollY: 400,
@@ -78,4 +78,8 @@ export const loadPartidasTable = async () => {
 
   // console.log(datosOrdenados)
   partidasTable.rows.add(data).draw()
+}
+
+export async function deletePartidaRow({ id, row }) {
+  partidasTable.row(row).remove().draw()
 }

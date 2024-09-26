@@ -1,4 +1,8 @@
-import { getFormPartidas, guardarPartida } from '../api/partidas.js'
+import {
+  actualizarPartida,
+  getFormPartidas,
+  guardarPartida,
+} from '../api/partidas.js'
 import { loadPartidasTable } from '../controllers/form_partidasTable.js'
 import {
   confirmNotification,
@@ -34,8 +38,6 @@ let fieldListErrors = {
   },
 }
 export const form_partida_form_card = async ({ elementToInsert, id }) => {
-  console.log(id)
-
   const cardElement = d.getElementById('partida-form-card')
   if (cardElement) cardElement.remove()
 
@@ -111,10 +113,7 @@ export const form_partida_form_card = async ({ elementToInsert, id }) => {
   if (id) {
     let partida = await getFormPartidas(id)
 
-    console.log(partida)
-
     let inputs = formElement.querySelectorAll('input')
-    console.log(inputs)
 
     inputs.forEach((input) => {
       // SI EL VALOR NO ES UNDEFINED COLOCAR VALOR EN SELECT
@@ -131,7 +130,7 @@ export const form_partida_form_card = async ({ elementToInsert, id }) => {
 
   const closeCard = () => {
     let cardElement = d.getElementById('partida-form-card')
-
+    validateEditButtons()
     cardElement.remove()
     d.removeEventListener('click', validateClick)
     formElement.removeEventListener('input', validateInputFunction)
@@ -145,12 +144,45 @@ export const form_partida_form_card = async ({ elementToInsert, id }) => {
     }
 
     if (e.target.id === 'partida-guardar') {
-      console.log(d.querySelector(`[data-editarid="${id}"]`))
+      let inputs = formElement.querySelectorAll('input')
 
+      inputs.forEach((input) => {
+        fieldList = validateInput({
+          target: input,
+          fieldList,
+          fieldListErrors,
+          type: fieldListErrors[input.name].type,
+        })
+      })
+      console.log(fieldListErrors)
+      if (Object.values(fieldListErrors).some((el) => el.value)) {
+        return toastNotification({
+          type: NOTIFICATIONS_TYPES.fail,
+          message: 'Valide nuevamente los campos',
+        })
+      }
+
+      if (id) {
+        return confirmNotification({
+          type: NOTIFICATIONS_TYPES.send,
+          message: '¿Desea actualizar esta partida?',
+          successFunction: async function () {
+            let resultado = await actualizarPartida({
+              partida: formElement.partida.value,
+              nombre: formElement.nombre.value,
+              descripcion: formElement.descripcion.value,
+              id,
+            })
+
+            loadPartidasTable()
+            closeCard()
+          },
+        })
+      }
       confirmNotification({
         type: NOTIFICATIONS_TYPES.send,
+        message: '¿Desea guardar esta nueva partida?',
         successFunction: async function () {
-          console.log(formElement.nombre)
           let resultado = await guardarPartida({
             partida: formElement.partida.value,
             nombre: formElement.nombre.value,
@@ -159,14 +191,6 @@ export const form_partida_form_card = async ({ elementToInsert, id }) => {
 
           loadPartidasTable()
           closeCard()
-
-          if (id) {
-            d.querySelector(`[data-editarid="${id}"]`).textContent = 'Editar'
-            d.querySelector(`[data-editarid="${id}"]`).removeAttribute(
-              'disabled'
-            )
-            d.getElementById('partida-registrar').removeAttribute('disabled')
-          }
         },
       })
     }
@@ -183,4 +207,19 @@ export const form_partida_form_card = async ({ elementToInsert, id }) => {
 
   formElement.addEventListener('input', validateInputFunction)
   d.addEventListener('click', validateClick)
+}
+
+function validateEditButtons() {
+  d.getElementById('partida-registrar').removeAttribute('disabled')
+
+  let editButtons = d.querySelectorAll('[data-editarid][disabled]')
+
+  if (editButtons.length < 1) return
+
+  editButtons.forEach((btn) => {
+    if (btn.hasAttribute('disabled')) {
+      btn.removeAttribute('disabled')
+      btn.textContent = 'Editar'
+    }
+  })
 }

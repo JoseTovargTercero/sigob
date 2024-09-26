@@ -1,5 +1,11 @@
+import { eliminarPartida } from '../api/partidas.js'
 import { form_partida_form_card } from '../components/form_partidas_form_card.js'
-import { validatePartidasTable } from './form_partidasTable.js'
+import { confirmNotification } from '../helpers/helpers.js'
+import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
+import {
+  deletePartidaRow,
+  validatePartidasTable,
+} from './form_partidasTable.js'
 
 const d = document
 
@@ -10,12 +16,27 @@ export const validatePartidasView = () => {
 
   d.addEventListener('click', async (e) => {
     if (e.target.id === 'partida-registrar') {
-      form_partida_form_card({ elementToInsert: 'partidas-view', id: 1 })
+      btnNewElement.setAttribute('disabled', true)
+      form_partida_form_card({ elementToInsert: 'partidas-view' })
     }
-    if (e.target.dataset.close) {
-      validateEditButtons()
+
+    if (e.target.dataset.eliminarid) {
+      confirmNotification({
+        type: NOTIFICATIONS_TYPES.send,
+        message: '¿Desea eliminar esta partida?',
+        successFunction: async function () {
+          let row = e.target.closest('tr')
+          eliminarPartida(e.target.dataset.eliminarid)
+          deletePartidaRow({ row })
+          if (d.getElementById('partida-form-card')) {
+            location.reload()
+          }
+        },
+      })
     }
+
     if (e.target.dataset.editarid) {
+      scroll(0, 0)
       //   gastosRegistrarCointaner.classList.add('hide')
       e.target.textContent = 'Editando'
       e.target.setAttribute('disabled', true)
@@ -30,8 +51,11 @@ export const validatePartidasView = () => {
 }
 
 function validateEditButtons() {
+  d.getElementById('partida-registrar').removeAttribute('disabled')
+
   let editButtons = d.querySelectorAll('[data-editarid][disabled]')
-  console.log(editButtons)
+
+  if (editButtons.length < 1) return
 
   editButtons.forEach((btn) => {
     if (btn.hasAttribute('disabled')) {
