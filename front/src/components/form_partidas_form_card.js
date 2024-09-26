@@ -1,4 +1,5 @@
-import { guardarPartida } from '../api/partidas.js'
+import { getFormPartidas, guardarPartida } from '../api/partidas.js'
+import { loadPartidasTable } from '../controllers/form_partidasTable.js'
 import {
   confirmNotification,
   insertOptions,
@@ -10,13 +11,13 @@ import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 const d = document
 
 let fieldList = {
-  codigo: '',
+  partida: '',
   nombre: '',
   descripcion: '',
 }
 
 let fieldListErrors = {
-  codigo: {
+  partida: {
     value: true,
     type: 'partida',
     message: 'Formato no coincide',
@@ -32,7 +33,9 @@ let fieldListErrors = {
     message: 'Descripción inválida',
   },
 }
-export const form_partida_form_card = async ({ elementToInsert, data }) => {
+export const form_partida_form_card = async ({ elementToInsert, id }) => {
+  console.log(id)
+
   const cardElement = d.getElementById('partida-form-card')
   if (cardElement) cardElement.remove()
 
@@ -62,8 +65,8 @@ export const form_partida_form_card = async ({ elementToInsert, data }) => {
                 <input
                   class='form-control'
                   type='text'
-                  name='codigo'
-                  id='codigo'
+                  name='partida'
+                  id='partida'
                   placeholder='xx.xx.si.xxx.xx.xx.xxxx'
                 />
               </div>
@@ -103,8 +106,28 @@ export const form_partida_form_card = async ({ elementToInsert, data }) => {
     </div>`
 
   d.getElementById(elementToInsert).insertAdjacentHTML('afterbegin', card)
-
   const formElement = d.getElementById('partida-form')
+
+  if (id) {
+    let partida = await getFormPartidas(id)
+
+    console.log(partida)
+
+    let inputs = formElement.querySelectorAll('input')
+    console.log(inputs)
+
+    inputs.forEach((input) => {
+      // SI EL VALOR NO ES UNDEFINED COLOCAR VALOR EN SELECT
+      if (partida[input.name] !== undefined) input.value = partida[input.name]
+
+      validateInput({
+        target: input,
+        fieldList,
+        fieldListErrors,
+        type: fieldListErrors[input.name].type,
+      })
+    })
+  }
 
   const closeCard = () => {
     let cardElement = d.getElementById('partida-form-card')
@@ -120,22 +143,30 @@ export const form_partida_form_card = async ({ elementToInsert, data }) => {
     if (e.target.dataset.close) {
       closeCard()
     }
-    if (e.target.id === 'add-tipo-gasto') {
-      closeCard()
-
-      pre_gastosTipo_form_card({ elementToInsert: 'gastos-view' })
-    }
 
     if (e.target.id === 'partida-guardar') {
+      console.log(d.querySelector(`[data-editarid="${id}"]`))
+
       confirmNotification({
         type: NOTIFICATIONS_TYPES.send,
         successFunction: async function () {
           console.log(formElement.nombre)
-          guardarPartida({
-            codigo: formElement.codigo.value,
+          let resultado = await guardarPartida({
+            partida: formElement.partida.value,
             nombre: formElement.nombre.value,
             descripcion: formElement.descripcion.value,
           })
+
+          loadPartidasTable()
+          closeCard()
+
+          if (id) {
+            d.querySelector(`[data-editarid="${id}"]`).textContent = 'Editar'
+            d.querySelector(`[data-editarid="${id}"]`).removeAttribute(
+              'disabled'
+            )
+            d.getElementById('partida-registrar').removeAttribute('disabled')
+          }
         },
       })
     }

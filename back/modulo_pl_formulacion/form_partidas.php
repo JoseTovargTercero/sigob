@@ -66,7 +66,7 @@ function consultarPartidas()
 
         if ($result->num_rows > 0) {
             $partidas = $result->fetch_all(MYSQLI_ASSOC); // Devuelve todos los resultados en un array asociativo
-            return json_encode($partidas);
+            return json_encode(['success' => $partidas]);
         } else {
             return json_encode(['error' => "No se encontraron partidas presupuestarias"]);
         }
@@ -94,7 +94,7 @@ function consultarPartidaPorId($id)
 
         if ($result->num_rows > 0) {
             $partida = $result->fetch_assoc(); // Devuelve el resultado como un array asociativo
-            return json_encode($partida);
+            return json_encode(['success' => $partida]);
         } else {
             return json_encode(['error' => "No se encontró la partida presupuestaria con el ID proporcionado"]);
         }
@@ -181,7 +181,7 @@ if (isset($data["accion"])) {
         $response = actualizarPartida($id, $partida, $nombre, $descripcion);
     } elseif ($accion === "delete") {
         $response = eliminarPartida($id);
-    } elseif ($accion === "consultar_todos") {
+    } elseif ($accion === "consultar") {
         $response = consultarPartidas();
     } elseif ($accion === "consultar_id") {
         $response = consultarPartidaPorId($id);

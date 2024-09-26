@@ -1,3 +1,5 @@
+import { getFormPartidas } from '../api/partidas.js'
+
 const tableLanguage = {
   decimal: '',
   emptyTable: 'No hay datos disponibles en la tabla',
@@ -23,9 +25,15 @@ const tableLanguage = {
   },
 }
 
-let listDataTable
+let partidasTable
 export const validatePartidasTable = async () => {
-  listDataTable = new DataTable('#partidas-table', {
+  partidasTable = new DataTable('#partidas-table', {
+    columns: [
+      { data: 'partida' },
+      { data: 'nombre' },
+      { data: 'descripcion' },
+      { data: 'acciones' },
+    ],
     responsive: true,
     scrollY: 400,
     language: tableLanguage,
@@ -42,15 +50,32 @@ export const validatePartidasTable = async () => {
       bottomEnd: 'paging',
     },
   })
+
+  loadPartidasTable()
 }
 
 export const loadPartidasTable = async () => {
-  let partidas
-  console.log(partidas)
+  let partidas = await getFormPartidas()
 
-  if (!Array.isArray(partidas)) return
+  if (!Array.isArray(partidas.fullInfo)) return
 
   if (!partidas || partidas.error) return
 
-  let datosOrdenados = [...partidas].sort((a, b) => a.id - b.id)
+  let datosOrdenados = [...partidas.fullInfo].sort((a, b) => a.id - b.id)
+  let data = datosOrdenados.map((el) => {
+    return {
+      partida: el.partida,
+      nombre: el.nombre,
+      descripcion: el.descripcion,
+      acciones: `
+      <button class="btn btn-info btn-sm" data-editarid="${el.id}">Editar</button>
+      <button class="btn btn-danger btn-sm" data-eliminarid="${el.id}">Eliminar</button>
+      `,
+    }
+  })
+
+  partidasTable.clear().draw()
+
+  // console.log(datosOrdenados)
+  partidasTable.rows.add(data).draw()
 }

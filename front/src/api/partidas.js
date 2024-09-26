@@ -68,13 +68,31 @@ const consultarPartida = async ({ informacion }) => {
 const getFormPartidas = async (id) => {
   try {
     let res
-    if (id) res = await fetch(`${partidasFormUrl}?id=${id}`)
-    else res = await fetch(partidasFormUrl)
+    if (id)
+      res = await fetch(partidasFormUrl, {
+        method: 'POST',
+        body: JSON.stringify({ accion: 'consultar_id', id }),
+      })
+    else
+      res = await fetch(partidasFormUrl, {
+        method: 'POST',
+        body: JSON.stringify({ accion: 'consultar' }),
+      })
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    let clone = res.clone()
+    let text = await clone.text()
+    // console.log(text)
+
     const json = await res.json()
 
+    console.log(json)
+
     if (json.success) {
+      if (id) {
+        return json.success
+      }
       let mappedData = mapData({
         obj: json.success,
         name: 'descripcion',
@@ -96,12 +114,13 @@ const getFormPartidas = async (id) => {
   }
 }
 
-const guardarPartida = async ({ codigo, nombre, descripcion }) => {
-  console.log({ codigo, nombre, descripcion })
+const guardarPartida = async ({ partida, nombre, descripcion }) => {
+  console.log({ partida, nombre, descripcion })
+  showLoader()
   try {
     let res = await fetch(partidasFormUrl, {
       method: 'POST',
-      body: JSON.stringify({ codigo, nombre, descripcion, accion: 'insert' }),
+      body: JSON.stringify({ partida, nombre, descripcion, accion: 'insert' }),
     })
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
@@ -118,7 +137,7 @@ const guardarPartida = async ({ codigo, nombre, descripcion }) => {
 
     if (json.success) {
       toastNotification({
-        type: NOTIFICATIONS_TYPES.fail,
+        type: NOTIFICATIONS_TYPES.done,
         message: json.success,
       })
     }
@@ -132,6 +151,8 @@ const guardarPartida = async ({ codigo, nombre, descripcion }) => {
       type: NOTIFICATIONS_TYPES.fail,
       message: 'Error al obtener partidas',
     })
+  } finally {
+    hideLoader()
   }
 }
 
