@@ -38,8 +38,8 @@ let fieldListErrors = {
   },
 }
 export const form_partida_form_card = async ({ elementToInsert, id }) => {
-  const cardElement = d.getElementById('partida-form-card')
-  if (cardElement) cardElement.remove()
+  const oldCardElement = d.getElementById('partida-form-card')
+  if (oldCardElement) oldCardElement.remove()
 
   let card = `    <div class='card slide-up-animation' id='partida-form-card'>
       <div class='card-header d-flex justify-content-between'>
@@ -108,7 +108,9 @@ export const form_partida_form_card = async ({ elementToInsert, id }) => {
     </div>`
 
   d.getElementById(elementToInsert).insertAdjacentHTML('afterbegin', card)
+
   const formElement = d.getElementById('partida-form')
+  const cardElement = d.getElementById('partida-form-card')
 
   if (id) {
     let partida = await getFormPartidas(id)
@@ -129,11 +131,10 @@ export const form_partida_form_card = async ({ elementToInsert, id }) => {
   }
 
   const closeCard = () => {
-    let cardElement = d.getElementById('partida-form-card')
     validateEditButtons()
     cardElement.remove()
-    d.removeEventListener('click', validateClick)
-    formElement.removeEventListener('input', validateInputFunction)
+    cardElement.removeEventListener('click', validateClick)
+    cardElement.removeEventListener('input', validateInputFunction)
 
     return false
   }
@@ -203,10 +204,12 @@ export const form_partida_form_card = async ({ elementToInsert, id }) => {
       fieldListErrors,
       type: fieldListErrors[e.target.name].type,
     })
+
+    console.log(fieldList)
   }
 
-  formElement.addEventListener('input', validateInputFunction)
-  d.addEventListener('click', validateClick)
+  cardElement.addEventListener('input', validateInputFunction)
+  cardElement.addEventListener('click', validateClick)
 }
 
 function validateEditButtons() {
