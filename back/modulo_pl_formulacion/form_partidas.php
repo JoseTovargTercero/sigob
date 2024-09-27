@@ -148,7 +148,21 @@ function eliminarPartida($id)
             return json_encode(['error' => "Debe proporcionar un ID para eliminar la partida"]);
         }
 
-        // Eliminar la partida
+        // Verificar el estado de la partida
+        $sql = "SELECT status FROM partidas_presupuestarias WHERE id = ?";
+        $stmt = $conexion->prepare($sql);
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $stmt->bind_result($status);
+        $stmt->fetch();
+        $stmt->close();
+
+        // Si el status es 1, no permitir la eliminación
+        if ($status == 1) {
+            return json_encode(['error' => "No se puede eliminar una partida, si ya esta siendo utilizada."]);
+        }
+
+        // Si el status no es 1, proceder con la eliminación
         $sql = "DELETE FROM partidas_presupuestarias WHERE id = ?";
         $stmt = $conexion->prepare($sql);
         $stmt->bind_param("i", $id);
@@ -164,6 +178,7 @@ function eliminarPartida($id)
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 // Procesar la petición
 $data = json_decode(file_get_contents("php://input"), true);
