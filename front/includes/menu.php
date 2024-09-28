@@ -150,12 +150,19 @@
               <span class="pc-mtext">Ejercicio fiscal</span>
             </a>
           </li>
+          <li class="pc-item">
+            <a href="<?php echo constant('URL') ?>front/mod_pl_formulacion/form_distribucion_presupuestaria_vista" class="pc-link">
+              <span class="pc-micon"><i class='bx bx-border-all'></i></span>
+              <span class="pc-mtext">Distribución presupuestaria</span>
+            </a>
+          </li>
            <li class="pc-item">
             <a href="<?php echo constant('URL') ?>front/mod_pl_formulacion/form_partidas_tabla" class="pc-link">
               <span class="pc-micon"><i class='bx bx-spreadsheet' ></i></span>
               <span class="pc-mtext">Partidas presupuestarias</span>
             </a>
           </li>
+          
 
 
 

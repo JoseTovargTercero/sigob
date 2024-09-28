@@ -4,6 +4,7 @@ import { validateDependenciaForm } from './src/controllers/dependenciasForm.js'
 import { loadDependenciaTable } from './src/controllers/dependenciasTable.js'
 import { validateEmployeeForm } from './src/controllers/empleadosForm.js'
 import { validateEmployeeTable } from './src/controllers/empleadosTable.js'
+import { validateDistribucionView } from './src/controllers/form_distribucionView.js'
 import { validatePartidasView } from './src/controllers/form_partidasView.js'
 import { loadRequestTableHistorico } from './src/controllers/peticionesHistoricoTable.js'
 import { validateRequestForm } from './src/controllers/peticionesNominaForm.js'
@@ -39,6 +40,7 @@ d.addEventListener('DOMContentLoaded', (e) => {
   const solicitudesDozavosView = d.getElementById('solicitudes-dozavos-view')
   const gastosView = d.getElementById('gastos-view')
   const partidasView = d.getElementById('partidas-view')
+  const distribucionView = d.getElementById('distribucion-view')
 
   if (tabulatorForm) {
     validateTabulatorForm({
@@ -154,8 +156,13 @@ d.addEventListener('DOMContentLoaded', (e) => {
   if (gastosView) {
     validateGastosView()
   }
+
   if (partidasView) {
     validatePartidasView()
+  }
+
+  if (distribucionView) {
+    validateDistribucionView()
   }
 
   // if (payNomForm) {
