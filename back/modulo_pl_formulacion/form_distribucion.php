@@ -3,7 +3,7 @@
 require_once '../sistema_global/conexion.php';
 header('Content-Type: application/json');
 
-require_once 'form_errores.php';
+require_once '../sistema_global/errores.php';
 
 // Función para insertar datos en la tabla distribucion_presupuestaria
 function guardarDistribucionPresupuestaria($dataArray) {
@@ -24,18 +24,21 @@ function guardarDistribucionPresupuestaria($dataArray) {
 
             // Descomponer los valores del array
             $id_partida = $registro[0];
-            $monto = $registro[1];
+            $monto_inicial = $registro[1];
             $id_ejercicio = $registro[2];
 
+            // Inicializar monto_actual con el mismo valor que monto_inicial
+            $monto_actual = $monto_inicial;
+
             // Validar que los campos no estén vacíos
-            if (empty($id_partida) || empty($monto) || empty($id_ejercicio)) {
-                throw new Exception("Faltan datos en uno de los registros (id_partida, monto, id_ejercicio)");
+            if (empty($id_partida) || empty($monto_inicial) || empty($id_ejercicio)) {
+                throw new Exception("Faltan datos en uno de los registros (id_partida, monto_inicial, id_ejercicio)");
             }
 
             // Insertar los datos en la tabla
-            $sql = "INSERT INTO distribucion_presupuestaria (id_partida, monto, id_ejercicio) VALUES (?, ?, ?)";
+            $sql = "INSERT INTO distribucion_presupuestaria (id_partida, monto_inicial, id_ejercicio, monto_actual) VALUES (?, ?, ?, ?)";
             $stmt = $conexion->prepare($sql);
-            $stmt->bind_param("isi", $id_partida, $monto, $id_ejercicio);
+            $stmt->bind_param("isis", $id_partida, $monto_inicial, $id_ejercicio, $monto_actual);
             $stmt->execute();
 
             if ($stmt->affected_rows <= 0) {
