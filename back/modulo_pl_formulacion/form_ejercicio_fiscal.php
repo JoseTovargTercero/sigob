@@ -96,6 +96,58 @@ function eliminarEjercicioFiscal($id)
     }
 }
 
+// Función para obtener todos los registros de la tabla ejercicio_fiscal (solo campos ano y situado)
+function obtenerTodosEjerciciosFiscales()
+{
+    global $conexion;
+
+    try {
+        $sql = "SELECT ano, situado FROM ejercicio_fiscal";
+        $result = $conexion->query($sql);
+
+        if ($result->num_rows > 0) {
+            $ejercicios = [];
+            while ($row = $result->fetch_assoc()) {
+                $ejercicios[] = $row;
+            }
+            return json_encode(["success" => $ejercicios]);
+        } else {
+            return json_encode(["success" => "No se encontraron registros en ejercicio_fiscal."]);
+        }
+    } catch (Exception $e) {
+        registrarError($e->getMessage());
+        return json_encode(['error' => $e->getMessage()]);
+    }
+}
+
+// Función para obtener un registro por ID (solo campos ano y situado)
+function obtenerEjercicioFiscalPorId($id)
+{
+    global $conexion;
+
+    try {
+        if (empty($id)) {
+            return json_encode(['error' => "Debe proporcionar un ID para la consulta"]);
+        }
+
+        $sql = "SELECT ano, situado FROM ejercicio_fiscal WHERE id = ?";
+        $stmt = $conexion->prepare($sql);
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            $ejercicio = $result->fetch_assoc();
+            return json_encode(["success" => $ejercicio]);
+        } else {
+            return json_encode(["error" => "No se encontró un registro con el ID proporcionado."]);
+        }
+    } catch (Exception $e) {
+        registrarError($e->getMessage());
+        return json_encode(['error' => $e->getMessage()]);
+    }
+}
+
 // Procesar la solicitud
 $data = json_decode(file_get_contents("php://input"), true);
 
@@ -119,6 +171,14 @@ if (isset($data["accion"])) {
             echo json_encode(['error' => "Debe proporcionar un ID para eliminar"]);
         } else {
             echo eliminarEjercicioFiscal($data["id"]);
+        }
+    } elseif ($accion === "obtener_todos") {
+        echo obtenerTodosEjerciciosFiscales();
+    } elseif ($accion === "obtener_por_id") {
+        if (empty($data["id"])) {
+            echo json_encode(['error' => "Debe proporcionar un ID para la consulta"]);
+        } else {
+            echo obtenerEjercicioFiscalPorId($data["id"]);
         }
     } else {
         echo json_encode(['error' => "Acción no aceptada"]);
