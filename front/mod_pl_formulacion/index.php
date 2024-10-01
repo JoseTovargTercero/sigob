@@ -89,6 +89,12 @@ $stmt->close();
   <?php require_once '../includes/top-bar.php' ?>
   <!-- [ top bar ] -->
 
+  <style>
+    #table td,
+    #table th {
+      text-align: center;
+    }
+  </style>
 
 
   <!-- [ Main Content ] start -->
@@ -237,16 +243,12 @@ $stmt->close();
             <div class="card-body">
               <div class="d-flex flex-column">
                 <div class="card-title mb-auto d-flex justify-content-between">
-
                   <h5 class="mb-0">
                     <button id="btn-vista-graf_table" class="btn btn-icon btn-primary avtar-s mb-0 me-1" style="border-radius: 5px;">
                       <i class='bx bx-bar-chart-alt-2'></i>
                     </button>
-
                     Disponibilidad presupuestaria
                   </h5>
-
-
 
                   <div style="width: 30%;">
                     <select class="form-control form-control-sm" id="select_tipo">
@@ -257,27 +259,29 @@ $stmt->close();
                     </select>
                   </div>
                 </div>
-
-
                 <section id="vista-grafico">
                   <div id="grafico_2" style="width: 100%; height: 50vh;"></div>
                 </section>
-
                 <section id="vista-tabla" class="hide mt-2">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusamus veniam temporibus molestiae laboriosam eos, odit assumenda quia! Architecto, earum esse! A facere nostrum exercitationem sequi quidem sunt alias assumenda suscipit?
+
+                  <table class="table" id="table">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Indicador</th>
+                        <th>Total</th>
+                        <th colspan="2">Disponibilidad presupuestaria</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                  </table>
                 </section>
-
-
-
               </div>
             </div>
           </div>
         </div>
-
-
-
-
-
         <div class="col-lg-4">
           <div class="card" style="min-height: 165px;">
             <div class="card-body">
@@ -293,33 +297,21 @@ $stmt->close();
             </div>
           </div>
         </div>
-
-
       </div>
-
-
-
-
       <div class="dialogs">
         <div class="dialogs-content " style="width: 35%;">
           <span class="close-button">×</span>
           <h5 class="mb-1">Nuevo ejercicio fiscal</h5>
           <hr>
-
           <div class="card-body">
-
             <form id="dataEjercicio">
-
               <div class="mb-3">
                 <label for="situado" class="form-label">Situado constitucional</label>
                 <input type="number" id="situado" name="situado" class="form-control" placeholder="Presupuesto asignado para el ejercicio fiscal <?php echo $annio ?>">
               </div>
-
               <div class="mb-2 text-end">
                 <button type="submit" class="btn btn-primary">Registrar</button>
               </div>
-
-
             </form>
           </div>
         </div>
@@ -332,8 +324,6 @@ $stmt->close();
       <script src="../../src/assets/js/notificaciones.js"></script>
       <script src="../../src/assets/js/main.js"></script>
       <script src="../../src/assets/js/ajax_class.js"></script>
-
-
 
       <script src="../../src/assets/js/amcharts5/index.js"></script>
       <script src="../../src/assets/js/amcharts5/percent.js"></script>
@@ -431,20 +421,6 @@ $stmt->close();
           }
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         // * GRAFICO 1
         // * GRAFICO 1
 
@@ -512,10 +488,6 @@ $stmt->close();
 
         // * GRAFICO 1
         // * GRAFICO 1
-
-
-
-
 
 
 
@@ -660,7 +632,8 @@ $stmt->close();
                 console.log('Respuesta recibida:', resultado);
 
                 var data = [];
-
+                $('#table tbody').html('')
+                let contandor = 1
                 // Procesar el resultado
                 resultado.forEach(element => {
                   let value = element.value;
@@ -672,6 +645,20 @@ $stmt->close();
                     "incial": total_inicial,
                     "restante": restante
                   });
+
+                  let porcentaje_restante = restante * 100 / total_inicial
+                  let porcentaje_restante_redondeado = Math.round(porcentaje_restante * 100) / 100
+
+                  $('#table tbody').append(`
+                    <tr>
+                      <td>${contandor++}</td>
+                      <td>${value}</td>
+                      <td>${total_inicial} <small>Bs</small></td>
+                      <td>${restante} <small>Bs</small></td>
+                      <td>${porcentaje_restante_redondeado}%</td>
+                    </tr>
+                  `)
+
                 });
 
                 // Ordenar los datos
