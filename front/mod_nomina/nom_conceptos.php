@@ -320,7 +320,7 @@ if ($nomina) {
           tabla: true,
           g_nomina: nomina_g
         },
-        success: function (response) {
+        success: function(response) {
           $('#table tbody').html('');
 
           if (response) {
@@ -370,7 +370,7 @@ if ($nomina) {
             columnDefs: [{
               targets: [0, 1],
               className: "text-start",
-            },],
+            }, ],
           });
         }
       });
@@ -398,7 +398,7 @@ if ($nomina) {
           editar_getData: true,
           id: id
         },
-        success: function (response) {
+        success: function(response) {
           if (response) {
             var data = JSON.parse(response);
             conceptoEditar = data;
@@ -494,7 +494,7 @@ if ($nomina) {
             id: conceptoEditar.id,
             valor: valores
           },
-          success: function (response) {
+          success: function(response) {
 
             let result = JSON.parse(response)
             if (result.status == 'ok') {
@@ -547,7 +547,7 @@ if ($nomina) {
               eliminar: true,
               id: id,
             },
-            success: function (response) {
+            success: function(response) {
               if (response.trim() == "ok") {
                 cargarTabla();
 
@@ -598,7 +598,7 @@ if ($nomina) {
             codigo_concepto: codigo_concepto,
             consulta_nombre: true
           },
-          success: function (response) {
+          success: function(response) {
             $('#cargando').hide();
             if (response.trim() == 'ok') {
               $("#section-registro").removeClass('hide');
@@ -716,7 +716,7 @@ if ($nomina) {
           nomina_g: nomina_g,
           registro: true
         },
-        success: function (text) {
+        success: function(text) {
 
           console.log(nombre + ' - ' + tipo + ' - ' + partida + ' - ' + tipo_calculo + ' - ' + valor + ' - ' + tipo_calculo_aplicado)
           $('#cargando').hide();
@@ -750,7 +750,7 @@ if ($nomina) {
       });
     }
 
-    $(document).ready(function () {
+    $(document).ready(function() {
       document.getElementById('btn-continuar').addEventListener('click', nuevoConcepto);
       document.getElementById('btn-registrar').addEventListener('click', finalizarRegistroConcepto);
     });
@@ -772,19 +772,19 @@ if ($nomina) {
      */
 
     let textarea = 't_area-1';
-    $(document).on('click', 'textarea', function () {
+    $(document).on('click', 'textarea', function() {
       textarea = $(this).attr('id');
     });
 
 
-    $(document).on('click', '.invalidate', function () {
+    $(document).on('click', '.invalidate', function() {
       $(this).removeClass('invalidate')
     });
 
 
     const palabrasProhibidas = ['UPDATE', 'DELETE', 'DROP', 'TRUNCATE', 'INSERT', 'ALTER', 'GRANT', 'REVOKE'];
 
-    $(document).on('change', 'textarea', function () {
+    $(document).on('change', 'textarea', function() {
       if ($(this).val() != '') {
 
         var condicion = $(this).val();
@@ -824,7 +824,7 @@ if ($nomina) {
           validarConceptoFormulado: true,
           condicion: condicion
         },
-        success: function (response) {
+        success: function(response) {
           const trimmedResponse = response.trim();
           const textAreaElement = $('#' + textArea);
 
@@ -967,7 +967,7 @@ if ($nomina) {
           valorMultiplicado: true,
           campo: campo
         },
-        success: function (response) {
+        success: function(response) {
           let tabla = document.getElementById('result')
           tabla.innerHTML = `<p>Ejemplo de posibles aplicaciones: </p>`
 
@@ -1045,14 +1045,14 @@ if ($nomina) {
 
 
       fetch('../../back/modulo_nomina/nom_columnas_return.php', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          columna: condicionante
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            columna: condicionante
+          })
         })
-      })
         .then(response => response.json())
         .then(data => {
           if (data.error) {

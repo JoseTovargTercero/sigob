@@ -22,8 +22,29 @@ if ($result->num_rows > 0) {
   }
 } else {
   $ejercicio_fiscal = 'No';
+  $situado = 0; // formato: dd-mm-YY
 }
 $stmt->close();
+
+
+$stmt = mysqli_prepare($conexion, "SELECT SUM(monto_inicial) AS total FROM distribucion_presupuestaria WHERE id_ejercicio=?");
+$stmt->bind_param('i', $ejercicio_fiscal);
+$stmt->execute();
+$result = $stmt->get_result();
+if ($result->num_rows > 0) {
+  while ($row = $result->fetch_assoc()) {
+    $distribuido = $row['total'];
+  }
+} else {
+  $distribuido = 0;
+}
+$stmt->close();
+
+
+
+
+
+
 
 
 
@@ -149,8 +170,6 @@ $stmt->close();
             </div>
           </div>
         </div>
-
-
         <div class="col-lg-4">
 
 
@@ -211,6 +230,71 @@ $stmt->close();
         </div>
 
 
+
+
+        <div class="col-lg-8">
+          <div class="card" style="min-height: 165px;">
+            <div class="card-body">
+              <div class="d-flex flex-column">
+                <div class="card-title mb-auto d-flex justify-content-between">
+
+                  <h5 class="mb-0">
+                    <button id="btn-vista-graf_table" class="btn btn-icon btn-primary avtar-s mb-0 me-1" style="border-radius: 5px;">
+                      <i class='bx bx-bar-chart-alt-2'></i>
+                    </button>
+
+                    Disponibilidad presupuestaria
+                  </h5>
+
+
+
+                  <div style="width: 30%;">
+                    <select class="form-control form-control-sm" id="select_tipo">
+                      <option value="sector">Sector</option>
+                      <option value="programa">Programa</option>
+                      <option value="actividad">Actividad</option>
+                      <option value="proyecto">Proyecto</option>
+                    </select>
+                  </div>
+                </div>
+
+
+                <section id="vista-grafico">
+                  <div id="grafico_2" style="width: 100%; height: 50vh;"></div>
+                </section>
+
+                <section id="vista-tabla" class="hide mt-2">
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusamus veniam temporibus molestiae laboriosam eos, odit assumenda quia! Architecto, earum esse! A facere nostrum exercitationem sequi quidem sunt alias assumenda suscipit?
+                </section>
+
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
+
+
+        <div class="col-lg-4">
+          <div class="card" style="min-height: 165px;">
+            <div class="card-body">
+              <div class="d-flex flex-column">
+                <div class="card-title mb-auto">
+                  <h5 class="mb-0">Porcentaje de distribución</h5>
+                  <small>del situado (por partida)</small> -
+                  <b><?php echo number_format($distribuido, 0, '.', '.') ?>Bs / <?php echo number_format($situado, 0, '.', '.') ?>Bs</b>
+                </div>
+
+                <div id="grafico_1" style="width: 100%; height: 20vh;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
       </div>
 
 
@@ -248,6 +332,13 @@ $stmt->close();
       <script src="../../src/assets/js/notificaciones.js"></script>
       <script src="../../src/assets/js/main.js"></script>
       <script src="../../src/assets/js/ajax_class.js"></script>
+
+
+
+      <script src="../../src/assets/js/amcharts5/index.js"></script>
+      <script src="../../src/assets/js/amcharts5/percent.js"></script>
+      <script src="../../src/assets/js/amcharts5/themes/Animated.js"></script>
+      <script src="../../src/assets/js/amcharts5/xy.js"></script>
 
       <script>
         // detecta el onsubmit de dataEjercicio y valida los datos para enviarlos por ajax
@@ -307,48 +398,324 @@ $stmt->close();
             .catch(error => {
               // Manejar el error
               console.error('Error en la solicitud: ', error);
-              alert('Error: No se iniciar');
+              alert('Error: No se pudo iniciar');
             });
 
 
-
-
-          /*
-                    const data = {
-                      ano: '<?php //echo $annio 
-                            ?>',
-                      situado: situado,
-                      divisor: '12',
-                      accion: 'insert'
-                    };
-                    const ajaxRequest = new AjaxRequest('application/json', data, '../.../back/modulo_pl_formulacion/form_ejercicio_fiscal.php');
-
-                    /**
-                     * Callback function to handle the successful response.
-                     * @param {Object} response - The response object.
-                     */
-          /*  const onSuccess = (response) => {
-            if (response.success) {
-              document.getElementById('tabla_empleados').classList.add('hide');
-              document.getElementById('seleccion_empleados').classList.remove('hide');
-            } else {
-              console.log(response)
-            }
-          };
-*/
-          /**
-           * Callback function to handle the error response.
-           * @param {Object} response - The response object.
-           */
-          /*   const onError = (response) => {
-               console.log(response)
-               toast_s('error', 'Error: No se puede modificar el listado');
-               document.getElementById('btn-add-list').classList.add('hide');
-
-             };
-
-             ajaxRequest.send(onSuccess, onError);*/
         })
+
+
+
+
+
+
+        document.getElementById('btn-vista-graf_table').addEventListener('click', setVistaGT)
+
+        function setVistaGT() {
+          // Obtener los elementos de la vista del gráfico y de la tabla
+          const vistaGrafico = document.getElementById('vista-grafico');
+          const vistaTabla = document.getElementById('vista-tabla');
+          const botonIcono = document.querySelector('#btn-vista-graf_table i');
+
+          // Alternar la clase 'hide' entre la vista de gráfico y tabla
+          if (vistaGrafico.classList.contains('hide')) {
+            vistaGrafico.classList.remove('hide');
+            vistaTabla.classList.add('hide');
+            // Cambiar el icono a gráfico
+            botonIcono.className = 'bx bx-bar-chart-alt-2';
+          } else {
+            vistaGrafico.classList.add('hide');
+            vistaTabla.classList.remove('hide');
+            // Cambiar el icono a tabla
+            botonIcono.className = 'bx bx-table';
+          }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // * GRAFICO 1
+        // * GRAFICO 1
+
+
+        function grafico_1() {
+          am5.ready(function() {
+
+            // Create root element
+            // https://www.amcharts.com/docs/v5/getting-started/#Root_element
+            var root = am5.Root.new("grafico_1");
+
+
+            // Set themes
+            // https://www.amcharts.com/docs/v5/concepts/themes/
+            root.setThemes([
+              am5themes_Animated.new(root)
+            ]);
+
+
+            // Create chart
+            // https://www.amcharts.com/docs/v5/chargts/percent-charts/pie-chart/
+            var chart = root.container.children.push(am5percent.PieChart.new(root, {
+              layout: root.verticalLayout,
+              innerRadius: am5.percent(50)
+            }));
+
+
+            // Create series
+            // https://www.amcharts.com/docs/v5/charts/percent-charts/pie-chart/#Series
+            var series = chart.series.push(am5percent.PieSeries.new(root, {
+              valueField: "value",
+              categoryField: "category",
+              alignLabels: false
+            }));
+
+            series.labels.template.setAll({
+              textType: "circular",
+              forceHidden: true,
+              centerX: 0,
+              centerY: 0
+            });
+
+
+            // Set data
+            // https://www.amcharts.com/docs/v5/charts/percent-charts/pie-chart/#Setting_data
+            series.data.setAll([{
+                value: <?php echo $situado - $distribuido + 500 ?>,
+                category: "Distribuido",
+              },
+              {
+                value: <?php echo $situado ?>,
+                category: "Faltante"
+              }
+            ]);
+
+            series.appear(1000, 100);
+
+          }); // end am5.ready()
+        }
+        if (<?php echo $situado ?> != 0) {
+          grafico_1()
+        } else {
+          document.getElementById("grafico_1").innerHTML = "<div class='text-opacity' style='display: grid;place-items: center;height: inherit;'>No hay datos para mostrar</div>";
+        }
+
+        // * GRAFICO 1
+        // * GRAFICO 1
+
+
+
+
+
+
+
+        // * GRAFICO 2
+        // * GRAFICO 2
+
+        // Create root element
+        // https://www.amcharts.com/docs/v5/getting-started/#Root_element
+        var root = am5.Root.new("grafico_2");
+
+        // Set themes
+        // https://www.amcharts.com/docs/v5/concepts/themes/
+        root.setThemes([
+          am5themes_Animated.new(root)
+        ]);
+
+        // Create chart
+        // https://www.amcharts.com/docs/v5/charts/xy-chart/
+        var chart = root.container.children.push(am5xy.XYChart.new(root, {
+          panX: true,
+          panY: false,
+          wheelX: "panX",
+          wheelY: "zoomX",
+          paddingLeft: 0,
+          layout: root.verticalLayout
+        }));
+
+        // Add scrollbar
+        // https://www.amcharts.com/docs/v5/charts/xy-chart/scrollbars/
+        chart.set("scrollbarX", am5.Scrollbar.new(root, {
+          orientation: "horizontal"
+        }));
+
+        var data = [];
+
+        // Create axes
+        // https://www.amcharts.com/docs/v5/charts/xy-chart/axes/
+        var xRenderer = am5xy.AxisRendererX.new(root, {
+          minGridDistance: 70,
+          minorGridEnabled: true
+        });
+
+        var xAxis = chart.xAxes.push(am5xy.CategoryAxis.new(root, {
+          categoryField: "country",
+          renderer: xRenderer,
+          tooltip: am5.Tooltip.new(root, {
+            themeTags: ["axis"],
+            animationDuration: 200
+          })
+        }));
+
+        xRenderer.grid.template.setAll({
+          location: 1
+        })
+
+        xAxis.data.setAll(data);
+
+        var yAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
+          min: 0,
+          renderer: am5xy.AxisRendererY.new(root, {
+            strokeOpacity: 0.1
+          })
+        }));
+
+        // Add series
+        // https://www.amcharts.com/docs/v5/charts/xy-chart/series/
+
+        var series0 = chart.series.push(am5xy.ColumnSeries.new(root, {
+          name: "Income",
+          xAxis: xAxis,
+          yAxis: yAxis,
+          valueYField: "incial",
+          categoryXField: "country",
+          clustered: false,
+          tooltip: am5.Tooltip.new(root, {
+            labelText: "Total: {valueY}"
+          })
+        }));
+
+        series0.columns.template.setAll({
+          width: am5.percent(50),
+          tooltipY: 0,
+          strokeOpacity: 0
+        });
+
+
+        var series1 = chart.series.push(am5xy.ColumnSeries.new(root, {
+          name: "Income",
+          xAxis: xAxis,
+          yAxis: yAxis,
+          valueYField: "restante",
+          categoryXField: "country",
+          clustered: false,
+          tooltip: am5.Tooltip.new(root, {
+            labelText: "Restante: {valueY}"
+          })
+        }));
+
+        series1.columns.template.setAll({
+          width: am5.percent(50),
+          tooltipY: 0,
+          strokeOpacity: 0
+        });
+
+
+        var cursor = chart.set("cursor", am5xy.XYCursor.new(root, {}));
+
+
+        // Make stuff animate on load
+        // https://www.amcharts.com/docs/v5/concepts/animations/
+        chart.appear(1000, 100);
+
+
+        let ejercicio = "<?php echo $ejercicio_fiscal ?>"
+
+        function setBarras() {
+
+          let tipo
+          if (this.value) {
+            tipo = this.value
+          } else {
+            tipo = 'sector'
+          }
+
+          console.log(tipo)
+
+
+          $.ajax({
+              // url: '../../back/modulo_pl_formulacion/form_ejercicio_tipos.php',
+              url: '../../back/modulo_pl_formulacion/prueba.php',
+              type: 'POST',
+              dataType: 'json', // Cambiado a 'json'
+              contentType: 'application/json',
+              data: JSON.stringify({
+                ejercicio: ejercicio,
+                tipo: tipo
+              }),
+            })
+            .done(function(resultado) {
+              console.log(resultado)
+              try {
+                console.log('Respuesta recibida:', resultado);
+
+                var data = [];
+
+                // Procesar el resultado
+                resultado.forEach(element => {
+                  let value = element.value;
+                  let restante = element.total_restante;
+                  let total_inicial = element.total_inicial;
+
+                  data.push({
+                    "country": value,
+                    "incial": total_inicial,
+                    "restante": restante
+                  });
+                });
+
+                // Ordenar los datos
+                data.sort((a, b) => b.value - a.value);
+
+                // Actualizar el gráfico o visualización
+
+
+                xAxis.data.setAll([]);
+                xAxis.data.setAll(data);
+
+                series0.data.setAll([]);
+                series0.data.setAll(data);
+                series1.data.setAll(data);
+                series1.data.setAll(data);
+
+                series0.appear();
+                series1.appear();
+
+
+
+              } catch (error) {
+                console.error('Error procesando los datos:', error);
+              }
+            })
+            .fail(function(jqXHR, textStatus, errorThrown) {
+              console.error('Error en la solicitud:', textStatus, errorThrown);
+              //  alert('Hubo un problema al obtener los datos. Por favor, inténtalo de nuevo.');
+            })
+            .always(function(res) {
+              console.log(res)
+              console.log('Solicitud AJAX finalizada.');
+            });
+        }
+
+        setBarras()
+
+        document.getElementById('select_tipo').addEventListener('change', setBarras)
+
+
+
+
+        // * GRAFICO 2
+        // * GRAFICO 2
       </script>
 
 </body>
