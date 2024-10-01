@@ -6,13 +6,13 @@ header('Content-Type: application/json');
 require_once '../sistema_global/errores.php';
 
 // Función para obtener sumatoria según el tipo
-function obtenerSumatoriaPorTipo($ejercicio, $tipoArray) {
+function obtenerSumatoriaPorTipo($ejercicio, $tipo) {
     global $conexion;
 
     try {
-        // Validar que ejercicio no esté vacío
-        if (empty($ejercicio) || empty($tipoArray)) {
-            throw new Exception("Debe proporcionar un ejercicio y al menos un tipo");
+        // Validar que ejercicio y tipo no estén vacíos
+        if (empty($ejercicio) || empty($tipo)) {
+            throw new Exception("Debe proporcionar un ejercicio y un tipo válido");
         }
 
         // Crear un array para almacenar los resultados finales
@@ -31,8 +31,8 @@ function obtenerSumatoriaPorTipo($ejercicio, $tipoArray) {
         // Iterar sobre los registros obtenidos de distribucion_presupuestaria
         while ($filaDistribucion = $resultadoDistribucion->fetch_assoc()) {
             $idPartida = $filaDistribucion['id_partida'];
-            $montoInicial = $filaDistribucion['monto_inicial'];
-            $montoActual = $filaDistribucion['monto_actual'];
+            $montoInicial = isset($filaDistribucion['monto_inicial']) ? (float)$filaDistribucion['monto_inicial'] : 0; // Asegurar que sea numérico
+            $montoActual = isset($filaDistribucion['monto_actual']) ? (float)$filaDistribucion['monto_actual'] : 0;   // Asegurar que sea numérico
 
             // Consultar en la tabla partidas_presupuestarias para obtener el valor de "partida" según el id_partida
             $sqlPartida = "SELECT partida FROM partidas_presupuestarias WHERE id = ?";
@@ -48,26 +48,23 @@ function obtenerSumatoriaPorTipo($ejercicio, $tipoArray) {
                 // Dividir la partida en sus partes según los puntos (.)
                 $partidaPartes = explode('.', $partida);
 
-                // Procesar según los tipos proporcionados (sector, programa, etc.)
-                foreach ($tipoArray as $tipo) {
-                    // Dependiendo del tipo, tomamos la parte correcta de la partida
-                    $indice = obtenerIndiceTipo($tipo);
+                // Dependiendo del tipo, tomamos la parte correcta de la partida
+                $indice = obtenerIndiceTipo($tipo);
 
-                    if ($indice !== null && isset($partidaPartes[$indice])) {
-                        $valor = $partidaPartes[$indice];
+                if ($indice !== null && isset($partidaPartes[$indice])) {
+                    $valor = $partidaPartes[$indice];
 
-                        // Si el valor ya existe en el array, sumamos los montos
-                        if (isset($partidasDatos[$valor])) {
-                            $partidasDatos[$valor]['total_inicial'] += $montoInicial;
-                            $partidasDatos[$valor]['total_restante'] += $montoActual;
-                        } else {
-                            // Si no existe, lo agregamos
-                            $partidasDatos[$valor] = [
-                                'value' => $valor,
-                                'total_inicial' => $montoInicial,
-                                'total_restante' => $montoActual
-                            ];
-                        }
+                    // Si el valor ya existe en el array, sumamos los montos
+                    if (isset($partidasDatos[$valor])) {
+                        $partidasDatos[$valor]['total_inicial'] += $montoInicial;
+                        $partidasDatos[$valor]['total_restante'] += $montoActual;
+                    } else {
+                        // Si no existe, lo agregamos
+                        $partidasDatos[$valor] = [
+                            'value' => $valor,
+                            'total_inicial' => $montoInicial,
+                            'total_restante' => $montoActual
+                        ];
                     }
                 }
             }
@@ -112,10 +109,10 @@ $data = json_decode(file_get_contents("php://input"), true);
 
 if (isset($data["ejercicio"]) && isset($data["tipo"])) {
     $ejercicio = $data["ejercicio"];
-    $tipoArray = explode('/', $data["tipo"]); // Convertir el string de tipos en un array
+    $tipo = $data["tipo"]; // Recibimos solo un valor de tipo
 
     // Llamar a la función para obtener las sumatorias por tipo
-    echo obtenerSumatoriaPorTipo($ejercicio, $tipoArray);
+    echo obtenerSumatoriaPorTipo($ejercicio, $tipo);
 } else {
     echo json_encode(['error' => "No se proporcionaron los datos necesarios (ejercicio y tipo)"]);
 }
