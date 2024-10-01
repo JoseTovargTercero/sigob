@@ -69,7 +69,7 @@ export const form_partida_form_card = async ({ elementToInsert, id }) => {
                   type='text'
                   name='partida'
                   id='partida'
-                  placeholder='xx.xx.si.xxx.xx.xx.xxxx'
+                  placeholder='xx.xx.xx.xxx.xx.xx.xxxx'
                 />
               </div>
             </div>

@@ -20,21 +20,21 @@ import {
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 const d = document
 export const form_distribucion_form_card = ({ elementToInset }) => {
-  let montos = { total: 0 }
+  let montos = { total: 0, restante: 0 }
   let partidas
 
-  let fieldList = { id_ejercicio: '', descripcion: '' }
+  let fieldList = { id_ejercicio: '' }
   let fieldListErrors = {
     id_ejercicio: {
       value: true,
       message: 'Eleccione un ejercicio fiscal',
       type: 'number',
     },
-    descripcion: {
-      value: true,
-      message: 'Añada una descripción al plan operativo',
-      type: 'text',
-    },
+    // descripcion: {
+    //   value: true,
+    //   message: 'Añada una descripción al plan operativo',
+    //   type: 'text',
+    // },
   }
 
   // ESTOS ESTADOS SE ACTUALIZARAN DE FORMA AUTOMÁTICA SEGÚN SE VAYAN GENERANDO LAS PARTIDAS
@@ -89,21 +89,8 @@ export const form_distribucion_form_card = ({ elementToInset }) => {
               <option>Elegir...</option>
             </select>
           </div>
-          <div class='form-group'>
-            <label for='monto' class='form-label'>
-              Descripción del plan operativo
-            </label>
-            <textarea
-              class='form-control distribucion-input'
-              name='descripcion'
-              id='descripcion'
-              cols='10'
-              rows='2'
-              placeholder='Escriba la descripción del plan operativo dado por el ente...'
-            ></textarea>
-          </div>
 
-          <h5 class="mb-0">Distribución de partidas presupuestarias</h5>
+          <h5 class="mb-0">Distribución de presupuesto por partida</h5>
           <small class='text-muted'>
           Añada las partidas para realizar la distribución presupuestaria.
           </small>
@@ -188,7 +175,16 @@ export const form_distribucion_form_card = ({ elementToInset }) => {
         return
       }
 
-      enviarInformacion(partidasValidadas)
+      if (montos.restante < 0) {
+        toastNotification({
+          type: NOTIFICATIONS_TYPES.fail,
+          message:
+            'Se ha consumido más allá del situado presupuestario. Valide las asignaciones nuevamente',
+        })
+        return
+      }
+
+      enviarInformacion(partidasValidadas, closeCard)
     }
 
     // ELIMINAR FILA
@@ -211,7 +207,7 @@ export const form_distribucion_form_card = ({ elementToInset }) => {
 
           if (row) numsRows--
           row.remove()
-          actualizarMontoRestante(montos.total)
+          montos.restante = actualizarMontoRestante(montos.total)
         },
       })
     }
@@ -239,11 +235,11 @@ export const form_distribucion_form_card = ({ elementToInset }) => {
 
       montos.total = ejercicio.situado
       montoTotalElement.textContent = montos.total
-      actualizarMontoRestante(montos.total)
+      montos.restante = actualizarMontoRestante(montos.total)
       cargarPartidas()
     }
     if (e.target.classList.contains('partida-monto')) {
-      actualizarMontoRestante(montos.total)
+      montos.restante = actualizarMontoRestante(montos.total)
     }
     // if(e.target.)
     // fieldListPartidas = validateInput({
@@ -327,8 +323,6 @@ export const form_distribucion_form_card = ({ elementToInset }) => {
       let partidaInput = el.querySelector(`#partida-${el.dataset.row}`)
       let montoInput = el.querySelector(`#partida-monto-${el.dataset.row}`)
 
-      montoRestante = montoRestante + Number(montoInput.value)
-
       validateInput({
         target: partidaInput,
         type: fieldListErrorsPartidas[partidaInput.name].type,
@@ -343,8 +337,6 @@ export const form_distribucion_form_card = ({ elementToInset }) => {
         fieldListErrors: fieldListErrorsPartidas,
       })
     })
-
-    console.log(montoRestante)
 
     if (Object.values(fieldListErrorsPartidas).some((el) => el.value)) {
       return toastNotification({
@@ -385,21 +377,21 @@ export const form_distribucion_form_card = ({ elementToInset }) => {
     return mappedPartidas
   }
 
+  function enviarInformacion(data) {
+    confirmNotification({
+      type: NOTIFICATIONS_TYPES.send,
+      message: '¿Desea registrar esta distribución presupuestaria?',
+      successFunction: function () {
+        enviarDistribucionPresupuestaria({ arrayDatos: data })
+        closeCard()
+      },
+    })
+  }
+
   formElement.addEventListener('submit', (e) => e.preventDefault())
 
   cardElement.addEventListener('input', validateInputFunction)
   cardElement.addEventListener('click', validateClick)
-}
-
-function enviarInformacion(data) {
-  confirmNotification({
-    type: NOTIFICATIONS_TYPES.send,
-    message: '¿Desea registrar esta distribución presupuestaria?',
-    successFunction: function () {
-      enviarDistribucionPresupuestaria({ arrayDatos: data })
-      closeCard()
-    },
-  })
 }
 
 async function cargarSelectEjercicios() {
@@ -414,17 +406,22 @@ function actualizarMontoRestante(monto) {
   let montoRestanteElement = d.getElementById('monto-restante')
 
   let inputsPartidasMontos = d.querySelectorAll('.partida-monto')
+
   inputsPartidasMontos.forEach((input) => {
     montoTotal -= input.value
   })
 
   if (montoTotal < 0) {
-    return (montoRestanteElement.innerHTML = `<span class="text-danger">${montoTotal}</span>`)
-  } else if (montoTotal > 0) {
-    return (montoRestanteElement.innerHTML = `<span class="text-success">${montoTotal}</span>`)
-  } else {
-    return (montoRestanteElement.innerHTML = `<span class="text-secondary">${montoTotal}</span>`)
+    montoRestanteElement.innerHTML = `<span class="text-danger">${montoTotal}</span>`
+    return montoTotal
   }
+  if (montoTotal > 0) {
+    montoRestanteElement.innerHTML = `<span class="text-success">${montoTotal}</span>`
+    return montoTotal
+  }
+
+  montoRestanteElement.innerHTML = `<span class="text-secondary">${montoTotal}</span>`
+  return montoTotal
 }
 
 function partidaRow(partidaNum) {
