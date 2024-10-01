@@ -102,7 +102,7 @@ function obtenerTodosEjerciciosFiscales()
     global $conexion;
 
     try {
-        $sql = "SELECT ano, situado FROM ejercicio_fiscal";
+        $sql = "SELECT id, ano, situado FROM ejercicio_fiscal";
         $result = $conexion->query($sql);
 
         if ($result->num_rows > 0) {

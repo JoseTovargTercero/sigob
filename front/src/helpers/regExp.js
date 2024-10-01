@@ -6,7 +6,7 @@ const regularExpressions = {
   PASSWORD: /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).+/,
   CATEGORY: /^\d{1,2}-\d{1,2}-\d{1,2}-\d{1,2}$/,
   TASA: /^(?=.*[^0]\d*)(0\.(0*[1-9]\d*)?|[1-9]\d*(\.\d+)?)$/,
-  PARTIDA: /^\d{2}\.\d{2}\.si\.\d{3}\.\d{2}\.\d{2}\.\d{4}$/,
+  PARTIDA: /^\d{2}\.\d{2}\.51\.\d{3}\.\d{2}\.\d{2}\.\d{4}$/,
 }
 
 export { regularExpressions }
