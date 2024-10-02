@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 01-10-2024 a las 01:02:17
+-- Tiempo de generación: 02-10-2024 a las 18:57:23
 -- Versión del servidor: 10.4.27-MariaDB
 -- Versión de PHP: 7.4.33
 
@@ -1004,9 +1004,8 @@ CREATE TABLE `distribucion_entes` (
 CREATE TABLE `distribucion_presupuestaria` (
   `id` int(255) NOT NULL,
   `id_partida` int(255) NOT NULL,
-  `monto_inicial` varchar(255) NOT NULL,
-  `id_ejercicio` int(255) NOT NULL,
-  `monto_actual` varchar(255) NOT NULL
+  `monto` varchar(255) NOT NULL,
+  `id_ejercicio` int(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -3892,6 +3891,21 @@ INSERT INTO `frecuencias_por_grupo` (`id`, `id_grupo`, `tipo`) VALUES
 (1, 2, 'Q'),
 (2, 3, 'Q'),
 (3, 4, 'S');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `gastos`
+--
+
+CREATE TABLE `gastos` (
+  `id` int(255) NOT NULL,
+  `id_tipo` int(255) NOT NULL,
+  `descripcion` longtext NOT NULL,
+  `monto` varchar(255) NOT NULL,
+  `status` int(255) NOT NULL,
+  `id_ejercicio` int(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -14201,6 +14215,12 @@ ALTER TABLE `frecuencias_por_grupo`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indices de la tabla `gastos`
+--
+ALTER TABLE `gastos`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indices de la tabla `historico_conceptos`
 --
 ALTER TABLE `historico_conceptos`
@@ -14468,6 +14488,12 @@ ALTER TABLE `error_log`
 --
 ALTER TABLE `frecuencias_por_grupo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT de la tabla `gastos`
+--
+ALTER TABLE `gastos`
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `historico_conceptos`
