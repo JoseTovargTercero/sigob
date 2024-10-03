@@ -147,8 +147,21 @@ function gestionarGasto($idGasto, $accion) {
                 // Paso 4: Registrar el compromiso
                 $resultadoCompromiso = registrarCompromiso($idGasto, 'creacion_de_gasto', $descripcion);
 
-                // Retornar el éxito de la operación
-                return json_encode(["success" => "El gasto ha sido aceptado y se ha registrado el compromiso", "compromiso" => $resultadoCompromiso]);
+                // Paso 5: Actualizar el monto_actual en distribucion_presupuestaria
+                $nuevoMontoActual = $monto_actual - $monto;
+                $sqlUpdateDistribucion = "UPDATE distribucion_presupuestaria SET monto_actual = ? WHERE id_partida = ? AND id_ejercicio = ?";
+                $stmtUpdateDistribucion = $conexion->prepare($sqlUpdateDistribucion);
+                $stmtUpdateDistribucion->bind_param("dii", $nuevoMontoActual, $id_partida, $id_ejercicio);
+                $stmtUpdateDistribucion->execute();
+
+                if ($stmtUpdateDistribucion->affected_rows > 0) {
+                    return json_encode([
+                        "success" => "El gasto ha sido aceptado, el compromiso se ha registrado y el presupuesto actualizado",
+                        "compromiso" => $resultadoCompromiso
+                    ]);
+                } else {
+                    throw new Exception("No se pudo actualizar el monto actual de la distribución presupuestaria");
+                }
             } else {
                 throw new Exception("No se pudo actualizar el gasto a aceptado");
             }
@@ -176,7 +189,6 @@ function gestionarGasto($idGasto, $accion) {
         return json_encode(['error' => $e->getMessage()]);
     }
 }
-
 
 // Función para obtener todos los gastos
 function obtenerGastos() {
