@@ -103,7 +103,7 @@ const enviarDistribucionPresupuestaria = async ({ arrayDatos }) => {
   try {
     let res = await fetch(distribucionPresupuestariUrl, {
       method: 'POST',
-      body: JSON.stringify({ arrayDatos }),
+      body: JSON.stringify({ arrayDatos, accion: 'crear' }),
     })
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
