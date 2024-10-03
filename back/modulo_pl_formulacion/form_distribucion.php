@@ -35,7 +35,7 @@ function guardarDistribucionPresupuestaria($dataArray) {
             }
 
             // Verificar que el ejercicio fiscal esté abierto (status = 1)
-            $sqlEjercicio = "SELECT status FROM ejercicio_fiscales WHERE id = ?";
+            $sqlEjercicio = "SELECT status FROM ejercicio_fiscal WHERE id = ?";
             $stmtEjercicio = $conexion->prepare($sqlEjercicio);
             $stmtEjercicio->bind_param("i", $id_ejercicio);
             $stmtEjercicio->execute();
@@ -133,7 +133,7 @@ function actualizarDistribucion($id, $id_partida, $monto_inicial, $id_ejercicio)
         }
 
         // Verificar que el ejercicio fiscal esté abierto (status = 1)
-        $sqlEjercicio = "SELECT status FROM ejercicio_fiscales WHERE id = ?";
+        $sqlEjercicio = "SELECT status FROM ejercicio_fiscal WHERE id = ?";
         $stmtEjercicio = $conexion->prepare($sqlEjercicio);
         $stmtEjercicio->bind_param("i", $id_ejercicio);
         $stmtEjercicio->execute();
