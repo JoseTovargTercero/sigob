@@ -213,7 +213,7 @@ if (isset($data["accion"])) {
             echo obtenerDistribuciones();
             break;
 
-        case 'obtenerPorId':
+        case 'obtener_id':
             echo obtenerDistribucionPorId($data["id"]);
             break;
 

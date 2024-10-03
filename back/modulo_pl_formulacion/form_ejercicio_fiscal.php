@@ -152,6 +152,7 @@ function obtenerEjercicioFiscalPorId($id)
             return json_encode(['error' => "Debe proporcionar un ID para la consulta"]);
         }
 
+        // Consulta el ejercicio fiscal por ID
         $sql = "SELECT id, ano, situado, divisor, status FROM ejercicio_fiscal WHERE id = ?";
         $stmt = $conexion->prepare($sql);
         $stmt->bind_param("i", $id);
@@ -160,6 +161,29 @@ function obtenerEjercicioFiscalPorId($id)
 
         if ($result->num_rows > 0) {
             $ejercicio = $result->fetch_assoc();
+
+            // Consulta para obtener los registros de distribucion_presupuestaria
+            $sqlDistribucion = "SELECT SUM(monto_inicial) as total_monto_inicial 
+                                FROM distribucion_presupuestaria 
+                                WHERE id_ejercicio = ?";
+            $stmtDistribucion = $conexion->prepare($sqlDistribucion);
+            $stmtDistribucion->bind_param("i", $id);
+            $stmtDistribucion->execute();
+            $resultDistribucion = $stmtDistribucion->get_result();
+
+            $totalMontoInicial = 0;
+
+            if ($resultDistribucion->num_rows > 0) {
+                $rowDistribucion = $resultDistribucion->fetch_assoc();
+                $totalMontoInicial = $rowDistribucion['total_monto_inicial'] ?? 0;
+            }
+
+            // Calcular el restante
+            $restante = $ejercicio['situado'] - $totalMontoInicial;
+
+            // Añadir el restante al array de respuesta
+            $ejercicio['restante'] = $restante;
+
             return json_encode(["success" => $ejercicio]);
         } else {
             return json_encode(["error" => "No se encontró un registro con el ID proporcionado."]);
