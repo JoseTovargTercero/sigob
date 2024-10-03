@@ -129,8 +129,31 @@ function obtenerTodosEjerciciosFiscales()
 
         if ($result->num_rows > 0) {
             $ejercicios = [];
+
+            // Recorrer todos los ejercicios fiscales
             while ($row = $result->fetch_assoc()) {
+                $id_ejercicio = $row['id'];
+                $situado = $row['situado'];
+
+                // Calcular la sumatoria de los montos iniciales en distribucion_presupuestaria para este id_ejercicio
+                $sqlSum = "SELECT SUM(monto_inicial) AS total_monto_inicial FROM distribucion_presupuestaria WHERE id_ejercicio = ?";
+                $stmtSum = $conexion->prepare($sqlSum);
+                $stmtSum->bind_param("i", $id_ejercicio);
+                $stmtSum->execute();
+                $resultSum = $stmtSum->get_result();
+                $sumRow = $resultSum->fetch_assoc();
+                $totalMontoInicial = $sumRow['total_monto_inicial'] ?? 0;
+
+                // Calcular el restante
+                $restante = $situado - $totalMontoInicial;
+
+                // Agregar el restante al array del ejercicio
+                $row['restante'] = $restante;
+
+                // Añadir al array final de ejercicios
                 $ejercicios[] = $row;
+
+                $stmtSum->close();
             }
             return json_encode(["success" => $ejercicios]);
         } else {
