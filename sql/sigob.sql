@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 03-10-2024 a las 05:17:07
+-- Tiempo de generación: 03-10-2024 a las 17:53:47
 -- Versión del servidor: 10.4.27-MariaDB
 -- Versión de PHP: 7.4.33
 
@@ -1006,7 +1006,8 @@ CREATE TABLE `distribucion_presupuestaria` (
   `id_partida` int(255) NOT NULL,
   `monto_inicial` varchar(255) NOT NULL,
   `id_ejercicio` int(255) NOT NULL,
-  `monto_actual` varchar(255) NOT NULL
+  `monto_actual` varchar(255) NOT NULL,
+  `status` int(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -1019,15 +1020,16 @@ CREATE TABLE `ejercicio_fiscal` (
   `id` int(255) NOT NULL,
   `ano` varchar(255) NOT NULL,
   `situado` varchar(255) NOT NULL,
-  `divisor` varchar(255) NOT NULL
+  `divisor` varchar(255) NOT NULL,
+  `status` int(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `ejercicio_fiscal`
 --
 
-INSERT INTO `ejercicio_fiscal` (`id`, `ano`, `situado`, `divisor`) VALUES
-(1, '2024', '10000', '12');
+INSERT INTO `ejercicio_fiscal` (`id`, `ano`, `situado`, `divisor`, `status`) VALUES
+(1, '2024', '10000', '12', 1);
 
 -- --------------------------------------------------------
 
