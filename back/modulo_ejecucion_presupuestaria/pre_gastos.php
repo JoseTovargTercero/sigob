@@ -14,31 +14,169 @@ function crearGasto($id_tipo, $descripcion, $monto, $id_ejercicio) {
     global $conexion;
 
     try {
-        // Validar que los campos obligatorios no estén vacíos
+        // Validar que todos los campos no estén vacíos
         if (empty($id_tipo) || empty($descripcion) || empty($monto) || empty($id_ejercicio)) {
-            throw new Exception("Todos los campos son obligatorios.");
+            throw new Exception("Faltaron uno o más valores (id_tipo, descripción, monto, id_ejercicio)");
         }
 
-        // El status siempre será 0 (Pendiente) al registrar
-        $status = 0;
+        // Paso 1: Buscar id_partida en la tabla tipo_gastos usando id_tipo
+        $sqlTipoGasto = "SELECT id_partida FROM tipo_gastos WHERE id = ?";
+        $stmtTipoGasto = $conexion->prepare($sqlTipoGasto);
+        $stmtTipoGasto->bind_param("i", $id_tipo);
+        $stmtTipoGasto->execute();
+        $resultadoTipoGasto = $stmtTipoGasto->get_result();
 
-        // Insertar el nuevo registro en la tabla 'gastos'
-        $sql = "INSERT INTO gastos (id_tipo, descripcion, monto, status, id_ejercicio) VALUES (?, ?, ?, ?, ?)";
-        $stmt = $conexion->prepare($sql);
-        $stmt->bind_param("isdis", $id_tipo, $descripcion, $monto, $status, $id_ejercicio);
+        if ($resultadoTipoGasto->num_rows === 0) {
+            throw new Exception("El tipo de gasto con el ID proporcionado no existe");
+        }
 
-        if ($stmt->execute()) {
-            return json_encode(['success' => 'Gasto creado exitosamente']);
+        $filaTipoGasto = $resultadoTipoGasto->fetch_assoc();
+        $id_partida = $filaTipoGasto['id_partida'];
+
+        // Paso 2: Consultar la tabla distribucion_presupuestaria para validar el monto actual
+        $sqlDistribucion = "SELECT monto_actual FROM distribucion_presupuestaria WHERE id_partida = ? AND id_ejercicio = ?";
+        $stmtDistribucion = $conexion->prepare($sqlDistribucion);
+        $stmtDistribucion->bind_param("ii", $id_partida, $id_ejercicio);
+        $stmtDistribucion->execute();
+        $resultadoDistribucion = $stmtDistribucion->get_result();
+
+        if ($resultadoDistribucion->num_rows === 0) {
+            throw new Exception("No se encontró una distribución presupuestaria con el id_partida y id_ejercicio proporcionados");
+        }
+
+        $filaDistribucion = $resultadoDistribucion->fetch_assoc();
+        $monto_actual = $filaDistribucion['monto_actual'];
+
+        // Paso 3: Verificar que el monto_actual sea mayor o igual que el monto del gasto
+        if ($monto_actual < $monto) {
+            throw new Exception("El presupuesto actual es inferior al monto del gasto. No se puede registrar el gasto.");
+        }
+
+        // Paso 4: Insertar el gasto si el presupuesto es suficiente
+        $sqlInsertGasto = "INSERT INTO gastos (id_tipo, descripcion, monto, status, id_ejercicio) VALUES (?, ?, ?, 0, ?)";
+        $stmtInsertGasto = $conexion->prepare($sqlInsertGasto);
+        $stmtInsertGasto->bind_param("isdi", $id_tipo, $descripcion, $monto, $id_ejercicio);
+        $stmtInsertGasto->execute();
+
+        if ($stmtInsertGasto->affected_rows > 0) {
+            return json_encode(["success" => "Gasto registrado correctamente"]);
         } else {
-            throw new Exception("Error al crear el gasto.");
+            throw new Exception("No se pudo registrar el gasto");
         }
 
     } catch (Exception $e) {
-        // Registrar el error
+        // Registrar el error en la tabla error_log
         registrarError($e->getMessage());
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+// Función para aceptar o rechazar un gasto
+function gestionarGasto($idGasto, $accion) {
+    global $conexion;
+
+    try {
+        // Validar que se proporcionen los parámetros necesarios
+        if (empty($idGasto) || empty($accion)) {
+            throw new Exception("Faltan uno o más valores necesarios (idGasto, accion)");
+        }
+
+        // Obtener el registro de la tabla gastos con el id proporcionado
+        $sqlGasto = "SELECT id_tipo, descripcion, monto, id_ejercicio, status FROM gastos WHERE id = ?";
+        $stmtGasto = $conexion->prepare($sqlGasto);
+        $stmtGasto->bind_param("i", $idGasto);
+        $stmtGasto->execute();
+        $resultadoGasto = $stmtGasto->get_result();
+
+        if ($resultadoGasto->num_rows === 0) {
+            throw new Exception("No se encontró un gasto con el ID proporcionado");
+        }
+
+        $filaGasto = $resultadoGasto->fetch_assoc();
+        $id_tipo = $filaGasto['id_tipo'];
+        $descripcion = $filaGasto['descripcion'];
+        $monto = $filaGasto['monto'];
+        $id_ejercicio = $filaGasto['id_ejercicio'];
+        $status = $filaGasto['status'];
+
+        // Verificar si el gasto ya ha sido procesado
+        if ($status !== 0) {
+            throw new Exception("El gasto ya ha sido procesado anteriormente");
+        }
+
+        if ($accion === "aceptar") {
+            // Paso 1: Obtener el id_partida de la tabla tipo_gastos usando id_tipo
+            $sqlTipoGasto = "SELECT id_partida FROM tipo_gastos WHERE id = ?";
+            $stmtTipoGasto = $conexion->prepare($sqlTipoGasto);
+            $stmtTipoGasto->bind_param("i", $id_tipo);
+            $stmtTipoGasto->execute();
+            $resultadoTipoGasto = $stmtTipoGasto->get_result();
+
+            if ($resultadoTipoGasto->num_rows === 0) {
+                throw new Exception("No se encontró el tipo de gasto correspondiente al ID proporcionado");
+            }
+
+            $filaTipoGasto = $resultadoTipoGasto->fetch_assoc();
+            $id_partida = $filaTipoGasto['id_partida'];
+
+            // Paso 2: Verificar la disponibilidad en la tabla distribucion_presupuestaria
+            $sqlDistribucion = "SELECT monto_actual FROM distribucion_presupuestaria WHERE id_partida = ? AND id_ejercicio = ?";
+            $stmtDistribucion = $conexion->prepare($sqlDistribucion);
+            $stmtDistribucion->bind_param("ii", $id_partida, $id_ejercicio);
+            $stmtDistribucion->execute();
+            $resultadoDistribucion = $stmtDistribucion->get_result();
+
+            if ($resultadoDistribucion->num_rows === 0) {
+                throw new Exception("No se encontró una distribución presupuestaria válida para el id_partida y id_ejercicio proporcionados");
+            }
+
+            $filaDistribucion = $resultadoDistribucion->fetch_assoc();
+            $monto_actual = $filaDistribucion['monto_actual'];
+
+            // Verificar que el monto actual sea igual o superior al monto del gasto
+            if ($monto_actual < $monto) {
+                throw new Exception("El presupuesto actual es inferior al monto del gasto. No se puede aceptar el gasto.");
+            }
+
+            // Paso 3: Actualizar el status del gasto a 1 (aceptado)
+            $sqlUpdateGasto = "UPDATE gastos SET status = 1 WHERE id = ?";
+            $stmtUpdateGasto = $conexion->prepare($sqlUpdateGasto);
+            $stmtUpdateGasto->bind_param("i", $idGasto);
+            $stmtUpdateGasto->execute();
+
+            if ($stmtUpdateGasto->affected_rows > 0) {
+                // Paso 4: Registrar el compromiso
+                $resultadoCompromiso = registrarCompromiso($idGasto, 'creacion_de_gasto', $descripcion);
+
+                // Retornar el éxito de la operación
+                return json_encode(["success" => "El gasto ha sido aceptado y se ha registrado el compromiso", "compromiso" => $resultadoCompromiso]);
+            } else {
+                throw new Exception("No se pudo actualizar el gasto a aceptado");
+            }
+
+        } elseif ($accion === "rechazar") {
+            // Si se selecciona "rechazar", solo se actualiza el status del gasto a 2 (rechazado)
+            $sqlUpdateGasto = "UPDATE gastos SET status = 2 WHERE id = ?";
+            $stmtUpdateGasto = $conexion->prepare($sqlUpdateGasto);
+            $stmtUpdateGasto->bind_param("i", $idGasto);
+            $stmtUpdateGasto->execute();
+
+            if ($stmtUpdateGasto->affected_rows > 0) {
+                return json_encode(["success" => "El gasto ha sido rechazado"]);
+            } else {
+                throw new Exception("No se pudo rechazar el gasto");
+            }
+
+        } else {
+            throw new Exception("Acción no válida. Debe ser 'aceptar' o 'rechazar'.");
+        }
+
+    } catch (Exception $e) {
+        // Registrar el error en la tabla error_log
+        registrarError($e->getMessage());
+        return json_encode(['error' => $e->getMessage()]);
+    }
+}
+
 
 // Función para obtener todos los gastos
 function obtenerGastos() {
@@ -206,6 +344,10 @@ if (isset($data["accion"])) {
 
         case 'eliminar':
             echo eliminarGasto($data["id"]);
+            break;
+
+        case 'gestionar':  // Nueva opción para aceptar o rechazar
+            echo gestionarGasto($data["id"], $data["accion_gestion"]);
             break;
 
         default:

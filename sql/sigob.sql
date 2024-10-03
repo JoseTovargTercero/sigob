@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 02-10-2024 a las 19:13:30
+-- Tiempo de generación: 03-10-2024 a las 05:17:07
 -- Versión del servidor: 10.4.27-MariaDB
 -- Versión de PHP: 7.4.33
 
@@ -1005,7 +1005,6 @@ CREATE TABLE `distribucion_presupuestaria` (
   `id` int(255) NOT NULL,
   `id_partida` int(255) NOT NULL,
   `monto_inicial` varchar(255) NOT NULL,
-  `monto` varchar(255) NOT NULL,
   `id_ejercicio` int(255) NOT NULL,
   `monto_actual` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
