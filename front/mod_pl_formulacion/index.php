@@ -19,6 +19,7 @@ if ($result->num_rows > 0) {
   while ($row = $result->fetch_assoc()) {
     $ejercicio_fiscal = $row['id']; // formato: dd-mm-YY
     $situado = $row['situado']; // formato: dd-mm-YY
+    $status_ejercicio = $row['status_ejercicio']; // formato: dd-mm-YY
   }
 } else {
   $ejercicio_fiscal = 'No';
@@ -39,20 +40,6 @@ if ($result->num_rows > 0) {
   $distribuido = 0;
 }
 $stmt->close();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 ?>
 <!DOCTYPE html>
@@ -207,12 +194,33 @@ $stmt->close();
             <div class="card mb-3" style="min-height: 165px;">
               <div class="card-body">
                 <h5 class="d-flex justify-content-between align-items-center mb-3">Ejercicio fiscal <?php echo $annio ?>
+
+                  <div id="status_ejercicio">
+                    <?php
+                    if ($status_ejercicio == 1) {
+                      echo '<div class="badge bg-light-success">Abierto</div>';
+                    } else {
+                      echo '<div class="badge bg-light-dark">Cerrado</div>';
+                    }
+                    ?>
+                  </div>
+
                 </h5>
+
+
                 <?php
                 echo '<p class="mb-1 d-flex flex-column flex-sm-row justify-content-between text-center gap-3">Situado constitucional: <b>' . number_format($situado, 0, ',', '.') . ' Bs</b></p>';
-                echo '<p class="mb-1 d-flex flex-column flex-sm-row justify-content-between text-center gap-3">Planes operativos: <b>' . number_format($situado, 0, ',', '.') . ' Bs</b></p>';
-
                 ?>
+                <hr>
+
+
+                <?php
+                if ($status_ejercicio == 1) {
+                  echo '<div class="text-center"><button class="btn btn-sm btn-danger" id="btn-cerrar">Cerrar ejercicio</button></div>';
+                }
+                ?>
+
+
               </div>
             </div>
 
@@ -240,7 +248,7 @@ $stmt->close();
 
         <div class="col-lg-8">
           <div class="card" style="min-height: 165px;">
-            <div class="card-body">
+            <div class="card-body" style="height: 60vh;">
               <div class="d-flex flex-column">
                 <div class="card-title mb-auto d-flex justify-content-between">
                   <h5 class="mb-0">
@@ -270,10 +278,12 @@ $stmt->close();
                         <th>#</th>
                         <th>Indicador</th>
                         <th>Total</th>
-                        <th colspan="2">Disponibilidad presupuestaria</th>
+                        <th>Disponibilidad</th>
+                        <th></th>
                       </tr>
                     </thead>
                     <tbody>
+
 
                     </tbody>
                   </table>
@@ -288,7 +298,7 @@ $stmt->close();
               <div class="d-flex flex-column">
                 <div class="card-title mb-auto">
                   <h5 class="mb-0">Porcentaje de distribución</h5>
-                  <small>del situado (por partida)</small> -
+                  <small>del situado (por partidas)</small> -
                   <b><?php echo number_format($distribuido, 0, '.', '.') ?>Bs / <?php echo number_format($situado, 0, '.', '.') ?>Bs</b>
                 </div>
 
@@ -297,6 +307,70 @@ $stmt->close();
             </div>
           </div>
         </div>
+
+
+        <div class="col-lg-12">
+          <div class="card" style="min-height: 165px;">
+            <div class="card-header">
+              <div class="card-title mb-auto d-flex justify-content-between">
+                <h5 class="mb-0">
+                  Disponibilidad presupuestaria por partidas
+                </h5>
+              </div>
+            </div>
+            <div class=" card-body">
+
+
+              <table class="table" id="table-2">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Partida</th>
+                    <th>Asignación inicial</th>
+                    <th>Disponibilidad</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+
+                  <?php
+
+
+                  $stmt = mysqli_prepare($conexion, "SELECT * FROM `distribucion_presupuestaria` AS dp
+                  LEFT JOIN partidas_presupuestarias AS pp ON pp.id = dp.id_partida
+                  WHERE id_ejercicio = ?");
+                  $stmt->bind_param('s', $ejercicio_fiscal);
+                  $stmt->execute();
+                  $result = $stmt->get_result();
+                  if ($result->num_rows > 0) {
+                    while ($row = $result->fetch_assoc()) {
+                      echo '
+                      <tr>
+                      <td>' . $row['id'] . '</td>
+                      <td>' . $row['partida'] . '<br>
+                      <small class="text-muted">' . substr($row['descripcion'], 0, 35) . '</small>...
+                      </td>
+                      <td class="text-center">' . number_format($row['monto_inicial'], 0, '.', '.') . ' Bs</td>
+                      <td class="text-center">' . number_format($row['monto_actual'], 0, '.', '.') . ' Bs</td>
+                      <td><button type="button" class="btn btn-sm btn-primary" data-toggle="
+                      tooltip" title="Ver detalles">
+                      <i class="bx bx-detail"></i>
+                      </button></td>
+                      </tr>';
+                    }
+                  }
+                  $stmt->close();
+
+
+                  ?>
+                </tbody>
+              </table>
+
+            </div>
+          </div>
+        </div>
+
+
       </div>
       <div class="dialogs">
         <div class="dialogs-content " style="width: 35%;">
@@ -331,6 +405,79 @@ $stmt->close();
       <script src="../../src/assets/js/amcharts5/xy.js"></script>
 
       <script>
+        <?php
+        if ($status_ejercicio == 1) {
+        ?>
+
+          function cerrarEjercicio() {
+            Swal.fire({
+              title: "¿Estás seguro?",
+              text: "Se cerrará el ejercicio fiscal. La acción no se podrá revertir!",
+              icon: "warning",
+              showCancelButton: true,
+              confirmButtonColor: "#04a9f5",
+              cancelButtonColor: "#d33",
+              confirmButtonText: "Sí, cerrar!",
+              cancelButtonText: "Cancelar",
+            }).then((result) => {
+              if (result.isConfirmed) {
+                $.ajax({
+                  url: '../../back/modulo_pl_formulacion/form_cerrar_ejercicio.php',
+                  type: "POST",
+                  data: {
+                    id: '<?php echo $annio ?>'
+                  },
+                  success: function(response) {
+                    const respuesta = JSON.parse(response)
+
+                    if (respuesta.status == 'ok') {
+                      toast_s('success', 'El ejercicio fiscal fue cerrado')
+                      $('#status_ejercicio').html('<div class="badge bg-light-dark">Cerrado</div>')
+                      $('#btn-cerrar').remove()
+
+                    } else {
+                      toast_s('error', 'Error al cerrar el ejercicio fiscal')
+                    }
+
+                  },
+                });
+              }
+            });
+          }
+          document.getElementById('btn-cerrar').addEventListener('click', cerrarEjercicio)
+        <?php
+        }
+        ?>
+
+        const lenguaje_datat = {
+          decimal: "",
+          emptyTable: "No hay información",
+          info: "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
+          infoEmpty: "Mostrando 0 to 0 of 0 Entradas",
+          infoFiltered: "(Filtrado de _MAX_ total entradas)",
+          infoPostFix: "",
+          thousands: ",",
+          lengthMenu: "Mostrar _MENU_ Entradas",
+          loadingRecords: "Cargando...",
+          processing: "Procesando...",
+          search: "Buscar:",
+          zeroRecords: "Sin resultados encontrados",
+          paginate: {
+            first: "Primero",
+            last: "Ultimo",
+            next: "Siguiente",
+            previous: "Anterior",
+          },
+        }
+
+        var DataTable = $("#table").DataTable({
+          language: lenguaje_datat
+        });
+
+        var DataTable_2 = $("#table-2").DataTable({
+          language: lenguaje_datat
+        });
+
         // detecta el onsubmit de dataEjercicio y valida los datos para enviarlos por ajax
         document.getElementById('dataEjercicio').addEventListener('submit', function(event) {
           event.preventDefault();
@@ -616,8 +763,7 @@ $stmt->close();
 
 
           $.ajax({
-              // url: '../../back/modulo_pl_formulacion/form_ejercicio_tipos.php',
-              url: '../../back/modulo_pl_formulacion/prueba.php',
+              url: '../../back/modulo_pl_formulacion/form_ejercicio_tipos.php',
               type: 'POST',
               dataType: 'json', // Cambiado a 'json'
               contentType: 'application/json',
@@ -632,7 +778,8 @@ $stmt->close();
                 console.log('Respuesta recibida:', resultado);
 
                 var data = [];
-                $('#table tbody').html('')
+                var data_tabla = [];
+                DataTable.clear()
                 let contandor = 1
                 // Procesar el resultado
                 resultado.forEach(element => {
@@ -649,17 +796,10 @@ $stmt->close();
                   let porcentaje_restante = restante * 100 / total_inicial
                   let porcentaje_restante_redondeado = Math.round(porcentaje_restante * 100) / 100
 
-                  $('#table tbody').append(`
-                    <tr>
-                      <td>${contandor++}</td>
-                      <td>${value}</td>
-                      <td>${total_inicial} <small>Bs</small></td>
-                      <td>${restante} <small>Bs</small></td>
-                      <td>${porcentaje_restante_redondeado}%</td>
-                    </tr>
-                  `)
-
+                  data_tabla.push([contandor++, value, total_inicial + '<small>Bs</small>', restante + '<small>Bs</small>', porcentaje_restante_redondeado + '<small>%</small>'])
                 });
+
+                DataTable.rows.add(data_tabla).draw()
 
                 // Ordenar los datos
                 data.sort((a, b) => b.value - a.value);
