@@ -127,6 +127,8 @@ const enviarDistribucionPresupuestaria = async ({ arrayDatos }) => {
     if (json.error) {
       toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
     }
+
+    return json
   } catch (e) {
     console.log(e)
 

@@ -20,7 +20,7 @@ import {
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 const d = document
 export const form_distribucion_form_card = ({ elementToInset }) => {
-  let montos = { total: 0, restante: 0 }
+  let montos = { total: 0, restante: 0, acumulado: 0 }
   let partidas
 
   let fieldList = { id_ejercicio: '' }
@@ -175,7 +175,16 @@ export const form_distribucion_form_card = ({ elementToInset }) => {
         return
       }
 
-      if (montos.restante < 0) {
+      if (validarInputIguales()) {
+        toastNotification({
+          type: NOTIFICATIONS_TYPES.fail,
+          message:
+            'Está realizando una asignación a una partida 2 o más veces. Valide nuevamente por favor',
+        })
+        return
+      }
+
+      if (montos.restante - montos.acumulado < 0) {
         toastNotification({
           type: NOTIFICATIONS_TYPES.fail,
           message:
@@ -207,7 +216,7 @@ export const form_distribucion_form_card = ({ elementToInset }) => {
 
           if (row) numsRows--
           row.remove()
-          montos.restante = actualizarMontoRestante(montos.total)
+          actualizarMontoRestante(montos.total)
         },
       })
     }
@@ -227,6 +236,10 @@ export const form_distribucion_form_card = ({ elementToInset }) => {
             type: NOTIFICATIONS_TYPES.done,
             message: 'Se eliminarán las filas de partidas añadidas',
           })
+
+        fieldListPartidas = {}
+        fieldListErrorsPartidas = {}
+        numsRows = 0
         partidasListContainer.innerHTML = ''
         return
       }
@@ -234,20 +247,14 @@ export const form_distribucion_form_card = ({ elementToInset }) => {
       let ejercicio = await getEjecicio(e.target.value)
 
       montos.total = ejercicio.situado
+      montos.restante = ejercicio.restante
       montoTotalElement.textContent = montos.total
-      montos.restante = actualizarMontoRestante(montos.total)
+      actualizarMontoRestante(montos.restante)
       cargarPartidas()
     }
     if (e.target.classList.contains('partida-monto')) {
-      montos.restante = actualizarMontoRestante(montos.total)
+      actualizarMontoRestante(montos.restante)
     }
-    // if(e.target.)
-    // fieldListPartidas = validateInput({
-    //   target: e.target,
-    //   fieldListPartidas,
-    //   fieldListErrorsPartidas,
-    //   type: fieldListErrorsPartidas[e.target.name].type,
-    // })
 
     if (e.target.classList.contains('partida-input')) {
       fieldListPartidas = validateInput({
@@ -263,7 +270,7 @@ export const form_distribucion_form_card = ({ elementToInset }) => {
         fieldListErrors,
         type: fieldListErrors[e.target.name].type,
       })
-      console.log(e.target.value)
+      // console.log(e.target.value)
     }
 
     // console.log(fieldListPartidas, fieldListErrorsPartidas)
@@ -284,6 +291,7 @@ export const form_distribucion_form_card = ({ elementToInset }) => {
     partidalist.insertAdjacentHTML('beforeend', partidaRow(newNumRow))
 
     // AÑADIR ESTADO Y ERRORES A INPUTS
+
     fieldListPartidas[`partida-${newNumRow}`] = ''
     fieldListErrorsPartidas[`partida-${newNumRow}`] = {
       value: true,
@@ -297,8 +305,6 @@ export const form_distribucion_form_card = ({ elementToInset }) => {
       type: 'number',
     }
 
-    console.log(fieldListPartidas, fieldListErrorsPartidas)
-
     let partidasList = d.getElementById(`partidas-list-${newNumRow}`)
     partidasList.innerHTML = ''
     let options = partidas.fullInfo
@@ -310,6 +316,33 @@ export const form_distribucion_form_card = ({ elementToInset }) => {
     partidasList.innerHTML = options
 
     return
+  }
+
+  function actualizarMontoRestante() {
+    let montoRestanteElement = d.getElementById('monto-restante')
+
+    let inputsPartidasMontos = d.querySelectorAll('.partida-monto')
+
+    // REINICIAR MONTO ACUMULADO
+    montos.acumulado = 0
+
+    inputsPartidasMontos.forEach((input) => {
+      montos.acumulado += Number(input.value)
+    })
+
+    let montoRestante = montos.restante - montos.acumulado
+
+    if (montoRestante < 0) {
+      montoRestanteElement.innerHTML = `<span class="text-danger">${montoRestante}</span>`
+      return montoRestante
+    }
+    if (montoRestante > 0) {
+      montoRestanteElement.innerHTML = `<span class="text-success">${montoRestante}</span>`
+      return montoRestante
+    }
+
+    montoRestanteElement.innerHTML = `<span class="text-secondary">${montoRestante}</span>`
+    return montoRestante
   }
 
   function validarPartidas() {
@@ -346,6 +379,15 @@ export const form_distribucion_form_card = ({ elementToInset }) => {
       })
     }
 
+    // VERIFICAR SI SE HAN SELECCIONADO PARTIDAS
+    if (rowsArray.length < 1) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.fail,
+        message: 'No se han añadido partidas',
+      })
+      return false
+    }
+
     let mappedPartidas = rowsArray.map((el) => {
       let partidaInput = el.querySelector(`#partida-${el.dataset.row}`)
       let montoInput = el.querySelector(`#partida-monto-${el.dataset.row}`)
@@ -377,13 +419,33 @@ export const form_distribucion_form_card = ({ elementToInset }) => {
     return mappedPartidas
   }
 
+  function validarInputIguales() {
+    let inputs = Array.from(d.querySelectorAll('[data-row] .partida-partida'))
+
+    const valores = inputs.map((input) => input.value)
+    const conteoValores = valores.reduce((conteo, valor) => {
+      conteo[valor] = (conteo[valor] || 0) + 1
+      return conteo
+    }, {})
+
+    for (let valor in conteoValores) {
+      if (conteoValores[valor] >= 2) {
+        return true
+      }
+    }
+    return false
+  }
+
   function enviarInformacion(data) {
     confirmNotification({
       type: NOTIFICATIONS_TYPES.send,
       message: '¿Desea registrar esta distribución presupuestaria?',
-      successFunction: function () {
-        enviarDistribucionPresupuestaria({ arrayDatos: data })
-        closeCard()
+      successFunction: async function () {
+        let res = await enviarDistribucionPresupuestaria({ arrayDatos: data })
+        console.log(res)
+        if (res.success) {
+          closeCard()
+        }
       },
     })
   }
@@ -401,29 +463,6 @@ async function cargarSelectEjercicios() {
   insertOptions({ input: 'ejercicio', data: ejercicios.mappedData })
 }
 
-function actualizarMontoRestante(monto) {
-  let montoTotal = Number(monto)
-  let montoRestanteElement = d.getElementById('monto-restante')
-
-  let inputsPartidasMontos = d.querySelectorAll('.partida-monto')
-
-  inputsPartidasMontos.forEach((input) => {
-    montoTotal -= input.value
-  })
-
-  if (montoTotal < 0) {
-    montoRestanteElement.innerHTML = `<span class="text-danger">${montoTotal}</span>`
-    return montoTotal
-  }
-  if (montoTotal > 0) {
-    montoRestanteElement.innerHTML = `<span class="text-success">${montoTotal}</span>`
-    return montoTotal
-  }
-
-  montoRestanteElement.innerHTML = `<span class="text-secondary">${montoTotal}</span>`
-  return montoTotal
-}
-
 function partidaRow(partidaNum) {
   let row = ` <div class='row slide-up-animation' data-row='${partidaNum}'>
       <div class='col'>
@@ -432,7 +471,7 @@ function partidaRow(partidaNum) {
             Partida
           </label>
           <input
-            class='form-control partida-input'
+            class='form-control partida-input partida-partida'
             type='text'
             placeholder='Partida...'
             list='partidas-list-${partidaNum}'

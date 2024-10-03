@@ -15,38 +15,38 @@ export const validateDistribucionView = () => {
     if (e.target.id === 'distribucion-registrar') {
       form_distribucion_form_card({ elementToInset: 'distribucion-view' })
     }
-    if (e.target.id === 'partida-registrar') {
-      btnNewElement.setAttribute('disabled', true)
-      form_partida_form_card({ elementToInsert: 'partidas-view' })
-    }
+    // if (e.target.id === 'partida-registrar') {
+    //   btnNewElement.setAttribute('disabled', true)
+    //   form_partida_form_card({ elementToInsert: 'partidas-view' })
+    // }
 
-    if (e.target.dataset.eliminarid) {
-      confirmNotification({
-        type: NOTIFICATIONS_TYPES.send,
-        message: '¿Desea eliminar esta partida?',
-        successFunction: async function () {
-          let row = e.target.closest('tr')
-          eliminarPartida(e.target.dataset.eliminarid)
-          deletePartidaRow({ row })
-          if (d.getElementById('partida-form-card')) {
-            location.reload()
-          }
-        },
-      })
-    }
+    // if (e.target.dataset.eliminarid) {
+    //   confirmNotification({
+    //     type: NOTIFICATIONS_TYPES.send,
+    //     message: '¿Desea eliminar esta partida?',
+    //     successFunction: async function () {
+    //       let row = e.target.closest('tr')
+    //       eliminarPartida(e.target.dataset.eliminarid)
+    //       deletePartidaRow({ row })
+    //       if (d.getElementById('partida-form-card')) {
+    //         location.reload()
+    //       }
+    //     },
+    //   })
+    // }
 
-    if (e.target.dataset.editarid) {
-      scroll(0, 0)
-      //   gastosRegistrarCointaner.classList.add('hide')
-      e.target.textContent = 'Editando'
-      e.target.setAttribute('disabled', true)
-      btnNewElement.setAttribute('disabled', true)
+    // if (e.target.dataset.editarid) {
+    //   scroll(0, 0)
+    //   //   gastosRegistrarCointaner.classList.add('hide')
+    //   e.target.textContent = 'Editando'
+    //   e.target.setAttribute('disabled', true)
+    //   btnNewElement.setAttribute('disabled', true)
 
-      form_partida_form_card({
-        elementToInsert: 'partidas-view',
-        id: e.target.dataset.editarid,
-      })
-    }
+    //   form_partida_form_card({
+    //     elementToInsert: 'partidas-view',
+    //     id: e.target.dataset.editarid,
+    //   })
+    // }
   })
 }
 

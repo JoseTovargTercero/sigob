@@ -5,7 +5,8 @@ header('Content-Type: application/json');
 require_once '../sistema_global/errores.php';
 
 // Función para insertar datos en la tabla distribucion_presupuestaria
-function guardarDistribucionPresupuestaria($dataArray) {
+function guardarDistribucionPresupuestaria($dataArray)
+{
     global $conexion;
 
     try {
@@ -31,7 +32,7 @@ function guardarDistribucionPresupuestaria($dataArray) {
             $resultadoVerificar = $stmtVerificar->get_result();
 
             if ($resultadoVerificar->num_rows > 0) {
-                throw new Exception("Ya existe un registro con el mismo id_partida y id_ejercicio.");
+                throw new Exception("Una partida ya está registrada en este ejercicio fiscal");
             }
 
             // Verificar que el ejercicio fiscal esté abierto (status = 1)
@@ -77,7 +78,8 @@ function guardarDistribucionPresupuestaria($dataArray) {
 }
 
 // Función para obtener todos los registros de la tabla distribucion_presupuestaria
-function obtenerDistribuciones() {
+function obtenerDistribuciones()
+{
     global $conexion;
 
     $sql = "SELECT * FROM distribucion_presupuestaria";
@@ -93,7 +95,8 @@ function obtenerDistribuciones() {
 }
 
 // Función para obtener un solo registro por ID
-function obtenerDistribucionPorId($id) {
+function obtenerDistribucionPorId($id)
+{
     global $conexion;
 
     $sql = "SELECT * FROM distribucion_presupuestaria WHERE id = ?";
@@ -111,7 +114,8 @@ function obtenerDistribucionPorId($id) {
 }
 
 // Función para actualizar un registro
-function actualizarDistribucion($id, $id_partida, $monto_inicial, $id_ejercicio) {
+function actualizarDistribucion($id, $id_partida, $monto_inicial, $id_ejercicio)
+{
     global $conexion;
 
     try {
@@ -162,7 +166,8 @@ function actualizarDistribucion($id, $id_partida, $monto_inicial, $id_ejercicio)
 }
 
 // Función para eliminar un registro
-function eliminarDistribucion($id) {
+function eliminarDistribucion($id)
+{
     global $conexion;
 
     try {
