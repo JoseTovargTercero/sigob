@@ -156,6 +156,12 @@
               <span class="pc-mtext">Distribución presupuestaria</span>
             </a>
           </li>
+          <li class="pc-item">
+            <a href="<?php echo constant('URL') ?>front/mod_pl_formulacion/form_asignacion_entes_vista" class="pc-link">
+              <span class="pc-micon"><i class='bx bx-border-all'></i></span>
+              <span class="pc-mtext">Asignación de presupuesto a entes</span>
+            </a>
+          </li>
            <li class="pc-item">
             <a href="<?php echo constant('URL') ?>front/mod_pl_formulacion/form_partidas_tabla" class="pc-link">
               <span class="pc-micon"><i class='bx bx-spreadsheet' ></i></span>

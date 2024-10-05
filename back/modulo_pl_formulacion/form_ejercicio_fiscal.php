@@ -115,7 +115,6 @@ function eliminarEjercicioFiscal($id)
     }
 }
 
-// Función para obtener todos los registros de la tabla ejercicio_fiscal
 function obtenerTodosEjerciciosFiscales()
 {
     global $conexion;
@@ -133,19 +132,49 @@ function obtenerTodosEjerciciosFiscales()
                 $situado = $row['situado'];
 
                 // Calcular la sumatoria de los montos iniciales en distribucion_presupuestaria para este id_ejercicio
-                $sqlSum = "SELECT SUM(monto_inicial) AS total_monto_inicial FROM distribucion_presupuestaria WHERE id_ejercicio = ?";
+                $sqlSum = "SELECT id_partida, monto_inicial, monto_actual FROM distribucion_presupuestaria WHERE id_ejercicio = ?";
                 $stmtSum = $conexion->prepare($sqlSum);
                 $stmtSum->bind_param("i", $id_ejercicio);
                 $stmtSum->execute();
                 $resultSum = $stmtSum->get_result();
-                $sumRow = $resultSum->fetch_assoc();
-                $totalMontoInicial = $sumRow['total_monto_inicial'] ?? 0;
+
+                $totalMontoInicial = 0;
+                $partidasArray = [];
+
+                if ($resultSum->num_rows > 0) {
+                    // Recorrer los registros de distribucion_presupuestaria
+                    while ($sumRow = $resultSum->fetch_assoc()) {
+                        $totalMontoInicial += $sumRow['monto_inicial'];
+
+                        // Consultar la tabla partidas_presupuestarias para obtener la partida asociada
+                        $sqlPartida = "SELECT partida FROM partidas_presupuestarias WHERE id = ?";
+                        $stmtPartida = $conexion->prepare($sqlPartida);
+                        $stmtPartida->bind_param("i", $sumRow['id_partida']);
+                        $stmtPartida->execute();
+                        $resultPartida = $stmtPartida->get_result();
+
+                        if ($resultPartida->num_rows > 0) {
+                            $partidaRow = $resultPartida->fetch_assoc();
+                            $partidaNombre = $partidaRow['partida'];
+
+                            // Crear array con las 3 propiedades: partida, monto_inicial, monto_actual
+                            $partidasArray[] = [
+                                'partida' => $partidaNombre,
+                                'monto_inicial' => $sumRow['monto_inicial'],
+                                'monto_actual' => $sumRow['monto_actual']
+                            ];
+                        }
+
+                        $stmtPartida->close();
+                    }
+                }
 
                 // Calcular el restante
                 $restante = $situado - $totalMontoInicial;
 
-                // Agregar el restante al array del ejercicio
+                // Añadir el restante y las partidas al array del ejercicio
                 $row['restante'] = $restante;
+                $row['partidas'] = $partidasArray;
 
                 // Añadir al array final de ejercicios
                 $ejercicios[] = $row;
@@ -162,7 +191,7 @@ function obtenerTodosEjerciciosFiscales()
     }
 }
 
-// Función para obtener un registro por ID
+
 function obtenerEjercicioFiscalPorId($id)
 {
     global $conexion;
@@ -182,8 +211,8 @@ function obtenerEjercicioFiscalPorId($id)
         if ($result->num_rows > 0) {
             $ejercicio = $result->fetch_assoc();
 
-            // Consulta para obtener los registros de distribucion_presupuestaria
-            $sqlDistribucion = "SELECT SUM(monto_inicial) as total_monto_inicial 
+            // Consulta para obtener los registros de distribucion_presupuestaria y sumar los montos iniciales
+            $sqlDistribucion = "SELECT id_partida, monto_inicial, monto_actual 
                                 FROM distribucion_presupuestaria 
                                 WHERE id_ejercicio = ?";
             $stmtDistribucion = $conexion->prepare($sqlDistribucion);
@@ -192,17 +221,41 @@ function obtenerEjercicioFiscalPorId($id)
             $resultDistribucion = $stmtDistribucion->get_result();
 
             $totalMontoInicial = 0;
+            $partidasArray = [];
 
             if ($resultDistribucion->num_rows > 0) {
-                $rowDistribucion = $resultDistribucion->fetch_assoc();
-                $totalMontoInicial = $rowDistribucion['total_monto_inicial'] ?? 0;
+                while ($rowDistribucion = $resultDistribucion->fetch_assoc()) {
+                    $totalMontoInicial += $rowDistribucion['monto_inicial'];
+
+                    // Obtener el valor de partida de la tabla partidas_presupuestarias
+                    $sqlPartida = "SELECT partida FROM partidas_presupuestarias WHERE id = ?";
+                    $stmtPartida = $conexion->prepare($sqlPartida);
+                    $stmtPartida->bind_param("i", $rowDistribucion['id_partida']);
+                    $stmtPartida->execute();
+                    $resultPartida = $stmtPartida->get_result();
+
+                    if ($resultPartida->num_rows > 0) {
+                        $partidaRow = $resultPartida->fetch_assoc();
+                        $partidaNombre = $partidaRow['partida'];
+
+                        // Crear array con las 3 propiedades: partida, monto_inicial, monto_actual
+                        $partidasArray[] = [
+                            'partida' => $partidaNombre,
+                            'monto_inicial' => $rowDistribucion['monto_inicial'],
+                            'monto_actual' => $rowDistribucion['monto_actual']
+                        ];
+                    }
+
+                    $stmtPartida->close();
+                }
             }
 
             // Calcular el restante
             $restante = $ejercicio['situado'] - $totalMontoInicial;
 
-            // Añadir el restante al array de respuesta
+            // Añadir el restante y las partidas al array de respuesta
             $ejercicio['restante'] = $restante;
+            $ejercicio['partidas'] = $partidasArray;
 
             return json_encode(["success" => $ejercicio]);
         } else {

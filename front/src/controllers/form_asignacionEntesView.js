@@ -1,19 +1,27 @@
-import { eliminarPartida } from '../api/partidas.js'
-import { form_distribucion_form_card } from '../components/form_distribucion_form_card.js'
-import { form_partida_form_card } from '../components/form_partidas_form_card.js'
+import { getEntesPlan } from '../api/form_entes.js'
+import { form_asignacion_entes_form_card } from '../components/form_asignacion_entes_form_card.js'
 import { confirmNotification } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
+import { validateAsignacionEntesTable } from './form_asignacionEntesTable.js'
 import { validateDistribucionTable } from './form_distribucionTable.js'
 const d = document
 
-export const validateDistribucionView = () => {
-  validateDistribucionTable()
-
-  let btnNewElement = d.getElementById('partida-registrar')
+export const validateAsignacionEntesView = () => {
+  validateAsignacionEntesTable()
 
   d.addEventListener('click', async (e) => {
-    if (e.target.id === 'distribucion-registrar') {
-      form_distribucion_form_card({ elementToInset: 'distribucion-view' })
+    if (e.target.dataset.validarid) {
+      let plan = await getEntesPlan(Number(e.target.dataset.validarid))
+
+      form_asignacion_entes_form_card({
+        elementToInset: 'asignacion-entes-view',
+        plan: plan,
+      })
+    }
+    if (e.target.id === 'asignacion-registrar') {
+      // form_distribucion_entes_form_card({
+      //   elementToInset: 'asignacion-entes-view',
+      // })
     }
     // if (e.target.id === 'partida-registrar') {
     //   btnNewElement.setAttribute('disabled', true)
