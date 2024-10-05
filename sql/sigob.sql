@@ -1023,7 +1023,7 @@ CREATE TABLE `ejercicio_fiscal` (
   `divisor` varchar(255) NOT NULL,
   `status` int(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
+ALTER TABLE `ejercicio_fiscal` CHANGE `status_ejercicio` `status_ejercicio` INT(1) NOT NULL DEFAULT '1';
 --
 -- Volcado de datos para la tabla `ejercicio_fiscal`
 --

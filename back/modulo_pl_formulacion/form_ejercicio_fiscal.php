@@ -19,13 +19,10 @@ function guardarEjercicioFiscal($ano, $situado, $divisor)
             throw new Exception("Faltaron uno o más valores (ano, situado)");
         }
 
-        // Al guardar, el status siempre debe ser 1
-        $status = 1;
-
         // Insertar los datos en la tabla
-        $sql = "INSERT INTO ejercicio_fiscal (ano, situado, divisor, status) VALUES (?, ?, ?, ?)";
+        $sql = "INSERT INTO ejercicio_fiscal (ano, situado, divisor) VALUES (?, ?, ?)";
         $stmt = $conexion->prepare($sql);
-        $stmt->bind_param("sssi", $ano, $situado, $divisor, $status);
+        $stmt->bind_param("sss", $ano, $situado, $divisor);
         $stmt->execute();
 
         if ($stmt->affected_rows > 0) {

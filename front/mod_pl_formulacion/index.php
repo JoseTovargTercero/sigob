@@ -2,6 +2,17 @@
 require_once '../../back/sistema_global/conexion.php';
 require_once '../../back/sistema_global/session.php';
 
+function contar($table, $condicion)
+{
+  global $conexion;
+
+  $stmt = $conexion->prepare("SELECT count(*) FROM $table WHERE $condicion");
+  $stmt->execute();
+  $row = $stmt->get_result()->fetch_row();
+  $galTotal = $row[0];
+
+  return $galTotal;
+}
 
 
 if (isset($_GET["ejercicio"])) {
@@ -41,6 +52,29 @@ if ($result->num_rows > 0) {
 }
 $stmt->close();
 
+
+
+$stmt = mysqli_prepare($conexion, "SELECT * FROM plan_inversion WHERE id_ejercicio=?");
+$stmt->bind_param('i', $ejercicio_fiscal);
+$stmt->execute();
+$result = $stmt->get_result();
+if ($result->num_rows > 0) {
+  while ($row = $result->fetch_assoc()) {
+    $plan_inversion = $row['monto_total'];
+    $proyectos = contar("proyecto_inversion", 'id_plan=' . $plan_inversion);
+  }
+} else {
+  $plan_inversion = 'no';
+  $proyectos = 0;
+}
+$stmt->close();
+
+
+
+
+
+
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -57,6 +91,36 @@ $stmt->close();
   <style>
     td {
       padding: 7px !important;
+    }
+
+    .h-15 {
+      min-height: 15vh !important;
+    }
+
+    .img-ng {
+      height: 54vh;
+      width: min-content;
+      margin: auto;
+      opacity: 0.2;
+    }
+
+    .top-col>.card {
+      height: 192px;
+    }
+
+    #situado_h2 {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-size: 3em;
+      /* Tamaño inicial */
+    }
+
+    h5 {
+      font-size: 1rem !important;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
     }
   </style>
 
@@ -113,64 +177,94 @@ $stmt->close();
       </div>
 
 
+
       <!-- CONTENIDO -->
+      <div class="row">
+        <div class="top-col col-lg-4">
 
+          <div class="card bg-brand-color-3 bitcoin-wallet h-15">
+            <div class="card-body ">
+              <h5 class="text-white mb-2">Situado</h5>
+              <h3 class="text-white mb-2 f-w-300" id="situado_h2">
+                <?php echo number_format($situado, 0, '.', ',') ?> Bs</h3>
 
-      <div class="row ">
+              <?php if ($ejercicio_fiscal != 'No') { ?>
+                <span class="text-white d-block">
 
-
-
-
-        <div class="col-lg-4">
-          <div class="card" style="min-height: 165px;">
-            <div class="card-body">
-              <div class="d-flex justify-content-between" style="position: relative;">
-                <div class="d-flex flex-column">
-                  <div class="card-title mb-auto">
-                    <h5 class="mb-0">Entes jurídicos</h5>
-                    <small>Con asignación presupuestaria</small>
-                  </div>
-                  <div class="chart2-statistics">
-                    <h3 class="card-title ">
-                      <span id="cant_planes_cont">12</span>
-                      <small class="text-muted">Entes</small>
-                    </h3>
-                  </div>
-                </div>
-
-              </div>
+                  <?php echo number_format($distribuido, 0, '.', '.') ?> Bs
+                  (<?php echo   number_format($distribuido * 100 / $situado, 2, '.', '.') . '%'; ?> por partidas)
+                </span> <i class="fab fa-btc f-70 text-white"></i>
+              <?php } else {
+                echo '<span class="text-white d-block">El ejercicio fiscal no fue creado</span>';
+              } ?>
             </div>
           </div>
+
         </div>
-        <div class="col-lg-4">
-          <div class="card" style="min-height: 165px;">
-            <div class="card-body">
-              <div class="d-flex justify-content-between" style="position: relative;">
-                <div class="d-flex flex-column">
-                  <div class="card-title mb-auto">
-                    <h5 class="mb-0">Descentralizados</h5>
-                    <small>Con asignación presupuestaria</small>
-                  </div>
-                  <div class="chart2-statistics">
-                    <h3 class="card-title ">
-                      <span id="cant_planes_cont">12</span>
-                      <small class="text-muted">Entes</small>
-                    </h3>
+
+
+        <div class="top-col col-lg-4">
+          <?php if ($ejercicio_fiscal == 'No') { ?>
+            <div class="card h-15">
+              <div class="card-body d-flex justify-content-between ">
+                <div class="mb-0 d-flex flex-column justify-content-between text-center text-sm-start me-3">
+                  <div class="card-title">
+                    <h4 class="mb-2">Plan de inversión </h4>
+                    <p class="text-body app-academy-sm-60 app-academy-xl-100">
+                      Inicie un nuevo ejercicio fiscal para poder acceder a sus proyectos.
+                    </p>
                   </div>
                 </div>
-
               </div>
             </div>
-          </div>
+          <?php } else { ?>
+            <div class="card mb-3  h-15">
+              <div class="card-body">
+                <h5 class="d-flex justify-content-between align-items-center mb-3">Plan de inversión</h5>
+                <p class="mb-1 d-flex flex-column flex-sm-row justify-content-between text-center gap-3">Monto asignado: <b>
+
+                    <?php
+                    $badge_0 = '<label class="badge me-2  bg-light-dark f-12 f-w-400">0</label>';
+
+                    echo ($plan_inversion == 'no' ? $badge_0 : number_format($plan_inversion, 0, ',', '.') . 'Bs');
+
+                    ?>
+
+                  </b>
+                </p>
+                <p class="mb-1 d-flex flex-column flex-sm-row justify-content-between text-center gap-3">Proyectos:
+
+                  <?php echo ($proyectos == 0 ? $badge_0 : '<b>13</b>');
+                  ?>
+                </p>
+                <hr>
+                <div class="text-end">
+                  <?php
+                  if ($plan_inversion == 'no') {
+                    echo '<a class="text-danger pointer" onclick="toggleDialogs()">Iniciar Plan de Inversión...</a>';
+                  } else {
+                    echo '<a class="text-info pointer" href="form_proyectos">Gestionar proyectos...</a>';
+                  }
+                  ?>
+
+                </div>
+              </div>
+            </div>
+          <?php } ?>
+
+
+
+
         </div>
-        <div class="col-lg-4">
+
+        <div class="top-col col-lg-4">
 
 
 
           <?php
 
           if ($ejercicio_fiscal == 'No') {
-            echo ' <div class="card bg-label-danger" style="min-height: 165px;">
+            echo ' <div class="card bg-label-danger  h-15">
                 <div class="card-body d-flex justify-content-between ">
 
 
@@ -180,7 +274,7 @@ $stmt->close();
                       <p class="text-body app-academy-sm-60 app-academy-xl-100">
                         No hay ningún plan registrado este año.
                       </p>
-                      <div class="mb-0"><button class="btn btn-danger" onclick="n_plan()">Iniciar Plan</button></div>
+                      <div class="mb-0"><button class="btn btn-danger" onclick="toggleDialogs()">Iniciar Plan</button></div>
                     </div>
                   </div>
 
@@ -191,7 +285,7 @@ $stmt->close();
           } else {
           ?>
 
-            <div class="card mb-3" style="min-height: 165px;">
+            <div class="card mb-3 h-15">
               <div class="card-body">
                 <h5 class="d-flex justify-content-between align-items-center mb-3">Ejercicio fiscal <?php echo $annio ?>
 
@@ -234,21 +328,17 @@ $stmt->close();
 
 
 
-          <script>
-            function n_plan() {
-              toggleDialogs();
-            }
-          </script>
-
 
         </div>
 
+      </div>
 
 
+      <div class="row ">
 
         <div class="col-lg-8">
-          <div class="card" style="min-height: 165px;">
-            <div class="card-body" style="height: 60vh;">
+          <div class="card" style="height: 62vh;">
+            <div class="card-body">
               <div class="d-flex flex-column">
                 <div class="card-title mb-auto d-flex justify-content-between">
                   <h5 class="mb-0">
@@ -267,45 +357,93 @@ $stmt->close();
                     </select>
                   </div>
                 </div>
-                <section id="vista-grafico">
-                  <div id="grafico_2" style="width: 100%; height: 50vh;"></div>
-                </section>
-                <section id="vista-tabla" class="hide mt-2">
 
-                  <table class="table" id="table">
-                    <thead>
-                      <tr>
-                        <th>#</th>
-                        <th>Indicador</th>
-                        <th>Total</th>
-                        <th>Disponibilidad</th>
-                        <th></th>
-                      </tr>
-                    </thead>
-                    <tbody>
+                <?php
+                if ($ejercicio_fiscal == 'No') {
+                ?>
+
+                  <img src="../../src/assets/images/icons-png/no_grafico.jpg" class="img-ng" alt="Sin grafico">
 
 
-                    </tbody>
-                  </table>
-                </section>
+
+                <?php
+                } else {
+
+                ?>
+
+
+                  <section id="vista-grafico">
+                    <div id="grafico_2" style="width: 100%; height: 50vh;"></div>
+                  </section>
+                  <section id="vista-tabla" class="hide mt-2 card-body">
+
+                    <table class="table" id="table">
+                      <thead>
+                        <tr>
+                          <th>#</th>
+                          <th>Indicador</th>
+                          <th>Total</th>
+                          <th>Disponibilidad</th>
+                          <th></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      </tbody>
+                    </table>
+                  </section>
+
+                <?php
+                }
+                ?>
+
+
               </div>
             </div>
           </div>
         </div>
         <div class="col-lg-4">
-          <div class="card" style="min-height: 165px;">
+
+
+
+          <div class="card mb-3" style="height: 35vh;">
             <div class="card-body">
               <div class="d-flex flex-column">
                 <div class="card-title mb-auto">
                   <h5 class="mb-0">Porcentaje de distribución</h5>
-                  <small>del situado (por partidas)</small> -
-                  <b><?php echo number_format($distribuido, 0, '.', '.') ?>Bs / <?php echo number_format($situado, 0, '.', '.') ?>Bs</b>
+                  <small>Del situado constitucional (Por partidas)</small>
+
                 </div>
 
-                <div id="grafico_1" style="width: 100%; height: 20vh;"></div>
+                <div id="grafico_1" style="width: 100%; height: 25vh;"></div>
               </div>
             </div>
           </div>
+
+
+
+
+
+          <div class="card " style="height: 25vh;">
+            <div class="card-body text-center">
+              <h5 class="mb-3">Presupuesto restante</h5><i class="fas fa-user-friends f-30 text-success"></i>
+              <h2 class="f-w-300 mt-3">1,285</h2><span class="text-muted">(Situado restante)</span>
+              <div class="progress mt-4 m-b-40">
+                <div class="progress-bar bg-brand-color-1" role="progressbar" style="width: 75%; height: 7px" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+              <div class="text-center">
+                <h4>52%</h4><span class="text-muted">
+
+                </span>
+              </div>
+            </div>
+          </div>
+
+
+
+
+
+
+
         </div>
 
 
@@ -324,7 +462,6 @@ $stmt->close();
               <table class="table" id="table-2">
                 <thead>
                   <tr>
-                    <th>#</th>
                     <th>Partida</th>
                     <th>Asignación inicial</th>
                     <th>Disponibilidad</th>
@@ -346,7 +483,6 @@ $stmt->close();
                     while ($row = $result->fetch_assoc()) {
                       echo '
                       <tr>
-                      <td>' . $row['id'] . '</td>
                       <td>' . $row['partida'] . '<br>
                       <small class="text-muted">' . substr($row['descripcion'], 0, 35) . '</small>...
                       </td>
@@ -372,24 +508,53 @@ $stmt->close();
 
 
       </div>
-      <div class="dialogs">
-        <div class="dialogs-content " style="width: 35%;">
-          <span class="close-button">×</span>
-          <h5 class="mb-1">Nuevo ejercicio fiscal</h5>
-          <hr>
-          <div class="card-body">
-            <form id="dataEjercicio">
-              <div class="mb-3">
-                <label for="situado" class="form-label">Situado constitucional</label>
-                <input type="number" id="situado" name="situado" class="form-control" placeholder="Presupuesto asignado para el ejercicio fiscal <?php echo $annio ?>">
-              </div>
-              <div class="mb-2 text-end">
-                <button type="submit" class="btn btn-primary">Registrar</button>
-              </div>
-            </form>
+      <?php
+      if ($ejercicio_fiscal == 'No') {
+      ?>
+
+        <div class="dialogs">
+          <div class="dialogs-content " style="width: 35%;">
+            <span class="close-button">×</span>
+            <h5 class="mb-1">Nuevo ejercicio fiscal</h5>
+            <hr>
+            <div class="card-body">
+              <form id="dataEjercicio">
+                <div class="mb-3">
+                  <label for="situado" class="form-label">Situado constitucional</label>
+                  <input type="number" id="situado" name="situado" class="form-control" placeholder="Presupuesto asignado para el ejercicio fiscal <?php echo $annio ?>">
+                </div>
+                <div class="mb-2 text-end">
+                  <button type="submit" class="btn btn-primary">Registrar</button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
-      </div>
+      <?php
+      } else {
+      ?>
+        <div class="dialogs">
+          <div class="dialogs-content " style="width: 35%;">
+            <span class="close-button">×</span>
+            <h5 class="mb-1">Nuevo plan de inversión</h5>
+            <hr>
+            <div class="card-body">
+              <form id="dataEjercicio_2">
+                <div class="mb-3">
+                  <label for="monto" class="form-label">Monto del plan de inversión</label>
+                  <input type="number" id="monto" name="monto" class="form-control" placeholder="Presupuesto asignado para el plan de inversión">
+                </div>
+                <div class="mb-2 text-end">
+                  <button type="submit" class="btn btn-primary">Registrar</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+      <?php
+      }
+      ?>
       <!-- [ Main Content ] end -->
       <script src="../../src/assets/js/plugins/simplebar.min.js"></script>
       <script src="../../src/assets/js/plugins/bootstrap.min.js"></script>
@@ -405,8 +570,130 @@ $stmt->close();
       <script src="../../src/assets/js/amcharts5/xy.js"></script>
 
       <script>
+        // Enviar los datos al back
+        function sendData(data, url) {
+          fetch(url, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(data)
+            })
+            .then(response => response.text()) // Recupera la respuesta como texto
+            .then(responseText => {
+              console.log('Respuesta del servidor (raw):', responseText); // Imprimir la respuesta original
+
+              // Intentar convertir la respuesta a JSON
+              try {
+                const jsonResponse = JSON.parse(responseText);
+
+                if (jsonResponse.success) {
+
+                  toast_s('success', jsonResponse.success);
+                  // actualizar despues de un segundo
+                  toggleDialogs()
+                  setTimeout(function() {
+                    window.location.reload();
+                  }, 1500);
+                } else {
+                  console.error('Error en la respuesta JSON: ', jsonResponse);
+                }
+              } catch (error) {
+                console.error('Error al parsear JSON: ', error);
+                console.error('Respuesta del servidor (no es JSON):', responseText);
+              }
+            })
+            .catch(error => {
+              console.error('Error en la solicitud: ', error);
+              alert('Error: No se pudo iniciar');
+            });
+        }
+
+
+        function verificarMonto(monto) {
+          // verifica que situado sea un numero
+          if (isNaN(monto)) {
+            toast_s('error', 'El campo debe ser un número.');
+            return false;
+          }
+          // verifica que situado sea mayor a 0
+          if (monto <= 0) {
+            toast_s('error', 'El campo debe ser mayor a 0.');
+            return false;
+          }
+          // verifica que situado sea un número entero
+          if (monto % 1 !== 0) {
+            toast_s('error', 'El campo debe ser un número entero.');
+            return false;
+          }
+
+          return true
+        }
+
+
+
+
+
+        <?php if ($ejercicio_fiscal == 'No') { // En caso de que no exista el ejercicio fiscal 
+        ?>
+          document.getElementById('dataEjercicio').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var situado = document.getElementById('situado').value;
+
+            if (verificarMonto(situado)) {
+              // si todos los campos son validos, envia los datos por ajax
+              const data = {
+                ano: '<?php echo $annio ?>',
+                situado: situado,
+                divisor: '12',
+                accion: 'insert'
+              };
+
+              sendData(data, '../../back/modulo_pl_formulacion/form_ejercicio_fiscal.php')
+            }
+          })
+        <?php } else {
+        ?>
+
+          document.getElementById('dataEjercicio_2').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var monto = document.getElementById('monto').value;
+
+            if (verificarMonto(monto)) {
+              // si todos los campos son validos, envia los datos por ajax
+              const data = {
+                id: '<?php echo $ejercicio_fiscal ?>',
+                monto: monto,
+                accion: 'insert'
+              };
+
+              sendData(data, '../../back/modulo_pl_formulacion/form_plan_inversion_nuevo.php')
+            }
+          })
+
         <?php
-        if ($status_ejercicio == 1) {
+        } // End: En caso de que no exista el ejercicio fiscal  
+        ?>
+
+
+        // Ajustar el tamaño del texto con la cantidad del situado para el card con el bg-info
+        function adjustFontSize() {
+          const situado = document.getElementById('situado_h2');
+          let fontSize = parseFloat(window.getComputedStyle(situado, null).getPropertyValue('font-size'));
+
+          // Mientras el h2 se desborde, reduce el tamaño de fuente
+          while (situado.scrollWidth > situado.offsetWidth && fontSize > 10) { // Evitar reducir mucho el tamaño
+            fontSize -= 1; // Ajusta el decremento según lo necesites
+            situado.style.fontSize = fontSize + 'px';
+          }
+        }
+        document.addEventListener('DOMContentLoaded', adjustFontSize);
+        // Si el contenido cambia, volver a ajustar
+        window.onresize = adjustFontSize;
+        // End: Ajustar el tamaño del texto con la cantidad del situado para el card con el bg-info
+
+
+        <?php if (@$status_ejercicio == 1) { // En caso de que el ejercicio exista    
         ?>
 
           function cerrarEjercicio() {
@@ -445,109 +732,26 @@ $stmt->close();
             });
           }
           document.getElementById('btn-cerrar').addEventListener('click', cerrarEjercicio)
-        <?php
-        }
-        ?>
+        <?php } ?>
 
-        const lenguaje_datat = {
-          decimal: "",
-          emptyTable: "No hay información",
-          info: "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
-          infoEmpty: "Mostrando 0 to 0 of 0 Entradas",
-          infoFiltered: "(Filtrado de _MAX_ total entradas)",
-          infoPostFix: "",
-          thousands: ",",
-          lengthMenu: "Mostrar _MENU_ Entradas",
-          loadingRecords: "Cargando...",
-          processing: "Procesando...",
-          search: "Buscar:",
-          zeroRecords: "Sin resultados encontrados",
-          paginate: {
-            first: "Primero",
-            last: "Ultimo",
-            next: "Siguiente",
-            previous: "Anterior",
-          },
-        }
 
+
+
+        // DATA TABLE
         var DataTable = $("#table").DataTable({
           language: lenguaje_datat
         });
-
         var DataTable_2 = $("#table-2").DataTable({
           language: lenguaje_datat
         });
-
-        // detecta el onsubmit de dataEjercicio y valida los datos para enviarlos por ajax
-        document.getElementById('dataEjercicio').addEventListener('submit', function(event) {
-          event.preventDefault();
-          var situado = document.getElementById('situado').value;
-
-
-          // verifica que situado sea un numero
-          if (isNaN(situado)) {
-            toast_s('error', 'El campo situado debe ser un número.');
-            return false;
-          }
-          // verifica que situado sea mayor a 0
-          if (situado <= 0) {
-            toast_s('error', 'El campo situado debe ser mayor a 0.');
-            return false;
-          }
-          // verifica que situado sea un número entero
-          if (situado % 1 !== 0) {
-            toast_s('error', 'El campo situado debe ser un número entero.');
-            return false;
-          }
-          // si todos los campos son validos, envia los datos por ajax
-
-
-
-          // Datos a enviar
-          const data = {
-            ano: '<?php echo $annio ?>',
-            situado: situado,
-            divisor: '12',
-            accion: 'insert'
-          };
-
-          // Crear la solicitud AJAX usando fetch
-          fetch('../../back/modulo_pl_formulacion/form_ejercicio_fiscal.php', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(response => {
-              // Manejar la respuesta exitosa
-
-              if (response.success) {
-                toast_s('success', response.success)
-
-                // recargar la pagina
-                window.location.reload();
-              } else {
-                console.error('Error en la respuesta: ', response);
-              }
-            })
-            .catch(error => {
-              // Manejar el error
-              console.error('Error en la solicitud: ', error);
-              alert('Error: No se pudo iniciar');
-            });
-
-
-        })
+        // DATA TABLE
 
 
 
 
 
 
-        document.getElementById('btn-vista-graf_table').addEventListener('click', setVistaGT)
-
+        // MOSTAR OCULTAR tabla y grafico principal
         function setVistaGT() {
           // Obtener los elementos de la vista del gráfico y de la tabla
           const vistaGrafico = document.getElementById('vista-grafico');
@@ -567,36 +771,31 @@ $stmt->close();
             botonIcono.className = 'bx bx-table';
           }
         }
+        // End: MOSTAR OCULTAR tabla y grafico principal
+        document.getElementById('btn-vista-graf_table').addEventListener('click', setVistaGT)
 
-        // * GRAFICO 1
-        // * GRAFICO 1
 
 
+
+        //  GRAFICO 1 - Principal
         function grafico_1() {
           am5.ready(function() {
 
             // Create root element
-            // https://www.amcharts.com/docs/v5/getting-started/#Root_element
             var root = am5.Root.new("grafico_1");
 
-
             // Set themes
-            // https://www.amcharts.com/docs/v5/concepts/themes/
             root.setThemes([
               am5themes_Animated.new(root)
             ]);
 
-
             // Create chart
-            // https://www.amcharts.com/docs/v5/chargts/percent-charts/pie-chart/
             var chart = root.container.children.push(am5percent.PieChart.new(root, {
               layout: root.verticalLayout,
               innerRadius: am5.percent(50)
             }));
 
-
             // Create series
-            // https://www.amcharts.com/docs/v5/charts/percent-charts/pie-chart/#Series
             var series = chart.series.push(am5percent.PieSeries.new(root, {
               valueField: "value",
               categoryField: "category",
@@ -610,239 +809,221 @@ $stmt->close();
               centerY: 0
             });
 
-
             // Set data
-            // https://www.amcharts.com/docs/v5/charts/percent-charts/pie-chart/#Setting_data
             series.data.setAll([{
-                value: <?php echo $situado - $distribuido + 500 ?>,
-                category: "Distribuido",
-              },
-              {
-                value: <?php echo $situado ?>,
-                category: "Faltante"
-              }
-            ]);
+              value: <?php echo ($distribuido ? $distribuido : '0') ?>,
+              category: "Distribuido",
+            }, {
+              value: <?php echo $situado - $distribuido ?>,
+              category: "Faltante"
+            }]);
+
+            // Create legend
+            // https://www.amcharts.com/docs/v5/charts/percent-charts/legend-percent-series/
+            var legend = chart.children.push(am5.Legend.new(root, {
+              centerX: am5.percent(50),
+              x: am5.percent(50),
+              marginTop: 15,
+              marginBottom: 15,
+            }));
+
+            legend.data.setAll(series.dataItems);
 
             series.appear(1000, 100);
 
           }); // end am5.ready()
         }
-        if (<?php echo $situado ?> != 0) {
+
+
+        if ("<?php echo $ejercicio_fiscal ?>" != 'No') {
           grafico_1()
         } else {
           document.getElementById("grafico_1").innerHTML = "<div class='text-opacity' style='display: grid;place-items: center;height: inherit;'>No hay datos para mostrar</div>";
+
         }
 
-        // * GRAFICO 1
-        // * GRAFICO 1
+        //  GRAFICO 1
 
 
+        // GRAFICO 2
 
-        // * GRAFICO 2
-        // * GRAFICO 2
+        <?php if ($ejercicio_fiscal != 'No') { ?>
+          var root = am5.Root.new("grafico_2");
 
-        // Create root element
-        // https://www.amcharts.com/docs/v5/getting-started/#Root_element
-        var root = am5.Root.new("grafico_2");
+          root.setThemes([
+            am5themes_Animated.new(root)
+          ]);
 
-        // Set themes
-        // https://www.amcharts.com/docs/v5/concepts/themes/
-        root.setThemes([
-          am5themes_Animated.new(root)
-        ]);
+          var chart = root.container.children.push(am5xy.XYChart.new(root, {
+            panX: true,
+            panY: false,
+            wheelX: "panX",
+            wheelY: "zoomX",
+            paddingLeft: 0,
+            layout: root.verticalLayout
+          }));
 
-        // Create chart
-        // https://www.amcharts.com/docs/v5/charts/xy-chart/
-        var chart = root.container.children.push(am5xy.XYChart.new(root, {
-          panX: true,
-          panY: false,
-          wheelX: "panX",
-          wheelY: "zoomX",
-          paddingLeft: 0,
-          layout: root.verticalLayout
-        }));
+          chart.set("scrollbarX", am5.Scrollbar.new(root, {
+            orientation: "horizontal"
+          }));
 
-        // Add scrollbar
-        // https://www.amcharts.com/docs/v5/charts/xy-chart/scrollbars/
-        chart.set("scrollbarX", am5.Scrollbar.new(root, {
-          orientation: "horizontal"
-        }));
+          var data = [];
 
-        var data = [];
+          var xRenderer = am5xy.AxisRendererX.new(root, {
+            minGridDistance: 70,
+            minorGridEnabled: true
+          });
 
-        // Create axes
-        // https://www.amcharts.com/docs/v5/charts/xy-chart/axes/
-        var xRenderer = am5xy.AxisRendererX.new(root, {
-          minGridDistance: 70,
-          minorGridEnabled: true
-        });
-
-        var xAxis = chart.xAxes.push(am5xy.CategoryAxis.new(root, {
-          categoryField: "country",
-          renderer: xRenderer,
-          tooltip: am5.Tooltip.new(root, {
-            themeTags: ["axis"],
-            animationDuration: 200
-          })
-        }));
-
-        xRenderer.grid.template.setAll({
-          location: 1
-        })
-
-        xAxis.data.setAll(data);
-
-        var yAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
-          min: 0,
-          renderer: am5xy.AxisRendererY.new(root, {
-            strokeOpacity: 0.1
-          })
-        }));
-
-        // Add series
-        // https://www.amcharts.com/docs/v5/charts/xy-chart/series/
-
-        var series0 = chart.series.push(am5xy.ColumnSeries.new(root, {
-          name: "Income",
-          xAxis: xAxis,
-          yAxis: yAxis,
-          valueYField: "incial",
-          categoryXField: "country",
-          clustered: false,
-          tooltip: am5.Tooltip.new(root, {
-            labelText: "Total: {valueY}"
-          })
-        }));
-
-        series0.columns.template.setAll({
-          width: am5.percent(50),
-          tooltipY: 0,
-          strokeOpacity: 0
-        });
-
-
-        var series1 = chart.series.push(am5xy.ColumnSeries.new(root, {
-          name: "Income",
-          xAxis: xAxis,
-          yAxis: yAxis,
-          valueYField: "restante",
-          categoryXField: "country",
-          clustered: false,
-          tooltip: am5.Tooltip.new(root, {
-            labelText: "Restante: {valueY}"
-          })
-        }));
-
-        series1.columns.template.setAll({
-          width: am5.percent(50),
-          tooltipY: 0,
-          strokeOpacity: 0
-        });
-
-
-        var cursor = chart.set("cursor", am5xy.XYCursor.new(root, {}));
-
-
-        // Make stuff animate on load
-        // https://www.amcharts.com/docs/v5/concepts/animations/
-        chart.appear(1000, 100);
-
-
-        let ejercicio = "<?php echo $ejercicio_fiscal ?>"
-
-        function setBarras() {
-
-          let tipo
-          if (this.value) {
-            tipo = this.value
-          } else {
-            tipo = 'sector'
-          }
-
-          console.log(tipo)
-
-
-          $.ajax({
-              url: '../../back/modulo_pl_formulacion/form_ejercicio_tipos.php',
-              type: 'POST',
-              dataType: 'json', // Cambiado a 'json'
-              contentType: 'application/json',
-              data: JSON.stringify({
-                ejercicio: ejercicio,
-                tipo: tipo
-              }),
+          var xAxis = chart.xAxes.push(am5xy.CategoryAxis.new(root, {
+            categoryField: "country",
+            renderer: xRenderer,
+            tooltip: am5.Tooltip.new(root, {
+              themeTags: ["axis"],
+              animationDuration: 200
             })
-            .done(function(resultado) {
-              console.log(resultado)
-              try {
-                console.log('Respuesta recibida:', resultado);
+          }));
 
-                var data = [];
-                var data_tabla = [];
-                DataTable.clear()
-                let contandor = 1
-                // Procesar el resultado
-                resultado.forEach(element => {
-                  let value = element.value;
-                  let restante = element.total_restante;
-                  let total_inicial = element.total_inicial;
+          xRenderer.grid.template.setAll({
+            location: 1
+          })
 
-                  data.push({
-                    "country": value,
-                    "incial": total_inicial,
-                    "restante": restante
+          xAxis.data.setAll(data);
+
+          var yAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
+            min: 0,
+            renderer: am5xy.AxisRendererY.new(root, {
+              strokeOpacity: 0.1
+            })
+          }));
+
+          var series0 = chart.series.push(am5xy.ColumnSeries.new(root, {
+            name: "Income",
+            xAxis: xAxis,
+            yAxis: yAxis,
+            valueYField: "incial",
+            categoryXField: "country",
+            clustered: false,
+            tooltip: am5.Tooltip.new(root, {
+              labelText: "Total: {valueY}"
+            })
+          }));
+
+          series0.columns.template.setAll({
+            width: am5.percent(50),
+            tooltipY: 0,
+            strokeOpacity: 0
+          });
+
+
+          var series1 = chart.series.push(am5xy.ColumnSeries.new(root, {
+            name: "Income",
+            xAxis: xAxis,
+            yAxis: yAxis,
+            valueYField: "restante",
+            categoryXField: "country",
+            clustered: false,
+            tooltip: am5.Tooltip.new(root, {
+              labelText: "Restante: {valueY}"
+            })
+          }));
+
+          series1.columns.template.setAll({
+            width: am5.percent(50),
+            tooltipY: 0,
+            strokeOpacity: 0
+          });
+
+
+          var cursor = chart.set("cursor", am5xy.XYCursor.new(root, {}));
+
+          chart.appear(1000, 100);
+
+          let ejercicio = "<?php echo $ejercicio_fiscal ?>"
+
+          function setBarras() {
+
+            let tipo
+            if (this.value) {
+              tipo = this.value
+            } else {
+              tipo = 'sector'
+            }
+
+            $.ajax({
+                url: '../../back/modulo_pl_formulacion/form_ejercicio_tipos.php',
+                type: 'POST',
+                dataType: 'json', // Cambiado a 'json'
+                contentType: 'application/json',
+                data: JSON.stringify({
+                  ejercicio: ejercicio,
+                  tipo: tipo
+                }),
+              })
+              .done(function(resultado) {
+                try {
+
+                  var data = [];
+                  var data_tabla = [];
+                  DataTable.clear()
+                  let contandor = 1
+                  // Procesar el resultado
+                  resultado.forEach(element => {
+                    let value = element.value;
+                    let restante = element.total_restante;
+                    let total_inicial = element.total_inicial;
+
+                    data.push({
+                      "country": value,
+                      "incial": total_inicial,
+                      "restante": restante
+                    });
+
+                    let porcentaje_restante = restante * 100 / total_inicial
+                    let porcentaje_restante_redondeado = Math.round(porcentaje_restante * 100) / 100
+
+                    data_tabla.push([contandor++, value, total_inicial + '<small>Bs</small>', restante + '<small>Bs</small>', porcentaje_restante_redondeado + '<small>%</small>'])
                   });
 
-                  let porcentaje_restante = restante * 100 / total_inicial
-                  let porcentaje_restante_redondeado = Math.round(porcentaje_restante * 100) / 100
+                  DataTable.rows.add(data_tabla).draw()
 
-                  data_tabla.push([contandor++, value, total_inicial + '<small>Bs</small>', restante + '<small>Bs</small>', porcentaje_restante_redondeado + '<small>%</small>'])
-                });
+                  // Ordenar los datos
+                  data.sort((a, b) => b.value - a.value);
 
-                DataTable.rows.add(data_tabla).draw()
+                  // Actualizar el gráfico o visualización
 
-                // Ordenar los datos
-                data.sort((a, b) => b.value - a.value);
+                  xAxis.data.setAll([]);
+                  xAxis.data.setAll(data);
 
-                // Actualizar el gráfico o visualización
+                  series0.data.setAll([]);
+                  series0.data.setAll(data);
+                  series1.data.setAll(data);
+                  series1.data.setAll(data);
 
-
-                xAxis.data.setAll([]);
-                xAxis.data.setAll(data);
-
-                series0.data.setAll([]);
-                series0.data.setAll(data);
-                series1.data.setAll(data);
-                series1.data.setAll(data);
-
-                series0.appear();
-                series1.appear();
+                  series0.appear();
+                  series1.appear();
 
 
 
-              } catch (error) {
-                console.error('Error procesando los datos:', error);
-              }
-            })
-            .fail(function(jqXHR, textStatus, errorThrown) {
-              console.error('Error en la solicitud:', textStatus, errorThrown);
-              //  alert('Hubo un problema al obtener los datos. Por favor, inténtalo de nuevo.');
-            })
-            .always(function(res) {
-              console.log(res)
-              console.log('Solicitud AJAX finalizada.');
-            });
+                } catch (error) {
+                  console.error('Error procesando los datos:', error);
+                }
+              })
+              .fail(function(jqXHR, textStatus, errorThrown) {
+                console.error('Error en la solicitud:', textStatus, errorThrown);
+                //  alert('Hubo un problema al obtener los datos. Por favor, inténtalo de nuevo.');
+              })
+              .always(function(res) {});
+          }
+
+          setBarras()
+
+          document.getElementById('select_tipo').addEventListener('change', setBarras)
+
+        <?php
         }
 
-        setBarras()
-
-        document.getElementById('select_tipo').addEventListener('change', setBarras)
-
-
-
-
-        // * GRAFICO 2
-        // * GRAFICO 2
+        ?>
+        // GRAFICO 2
       </script>
 
 </body>
