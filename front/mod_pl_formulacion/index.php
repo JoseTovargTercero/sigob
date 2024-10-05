@@ -30,7 +30,7 @@ if ($result->num_rows > 0) {
   while ($row = $result->fetch_assoc()) {
     $ejercicio_fiscal = $row['id']; // formato: dd-mm-YY
     $situado = $row['situado']; // formato: dd-mm-YY
-    $status_ejercicio = $row['status_ejercicio']; // formato: dd-mm-YY
+    $status = $row['status']; // formato: dd-mm-YY
   }
 } else {
   $ejercicio_fiscal = 'No';
@@ -169,9 +169,13 @@ $stmt->close();
         <div class="d-flex gap-1">
           <p> <a href="">Años anteriores</a>... </p>
 
-          <p><a class="pointer <?php echo ($annio == $y_d1 ? 'text-decoration-underline text-primary' : 'text-dark') ?>" href="?ejercicio=<?php echo $y_d1 ?>"><?php echo $y_d1 ?></a></p>
-          <p><a class="pointer <?php echo ($annio == $y_d ? 'text-decoration-underline text-primary' : 'text-dark') ?> " href="?ejercicio=<?php echo $y_d ?>"><?php echo $y_d ?></a></p>
-          <p><a href="?ejercicio=<?php echo $y_d2 ?>" class="pointer <?php echo ($annio == $y_d2 ? 'text-decoration-underline text-primary' : 'text-dark') ?>"><?php echo $y_d2 ?></a></p>
+          <p><a class="pointer <?php echo ($annio == $y_d1 ? 'text-decoration-underline text-primary' : 'text-dark') ?>"
+              href="?ejercicio=<?php echo $y_d1 ?>"><?php echo $y_d1 ?></a></p>
+          <p><a class="pointer <?php echo ($annio == $y_d ? 'text-decoration-underline text-primary' : 'text-dark') ?> "
+              href="?ejercicio=<?php echo $y_d ?>"><?php echo $y_d ?></a></p>
+          <p><a href="?ejercicio=<?php echo $y_d2 ?>"
+              class="pointer <?php echo ($annio == $y_d2 ? 'text-decoration-underline text-primary' : 'text-dark') ?>"><?php echo $y_d2 ?></a>
+          </p>
 
         </div>
       </div>
@@ -186,13 +190,14 @@ $stmt->close();
             <div class="card-body ">
               <h5 class="text-white mb-2">Situado</h5>
               <h3 class="text-white mb-2 f-w-300" id="situado_h2">
-                <?php echo number_format($situado, 0, '.', ',') ?> Bs</h3>
+                <?php echo number_format($situado, 0, '.', ',') ?> Bs
+              </h3>
 
               <?php if ($ejercicio_fiscal != 'No') { ?>
                 <span class="text-white d-block">
 
                   <?php echo number_format($distribuido, 0, '.', '.') ?> Bs
-                  (<?php echo   number_format($distribuido * 100 / $situado, 2, '.', '.') . '%'; ?> por partidas)
+                  (<?php echo number_format($distribuido * 100 / $situado, 2, '.', '.') . '%'; ?> por partidas)
                 </span> <i class="fab fa-btc f-70 text-white"></i>
               <?php } else {
                 echo '<span class="text-white d-block">El ejercicio fiscal no fue creado</span>';
@@ -221,7 +226,8 @@ $stmt->close();
             <div class="card mb-3  h-15">
               <div class="card-body">
                 <h5 class="d-flex justify-content-between align-items-center mb-3">Plan de inversión</h5>
-                <p class="mb-1 d-flex flex-column flex-sm-row justify-content-between text-center gap-3">Monto asignado: <b>
+                <p class="mb-1 d-flex flex-column flex-sm-row justify-content-between text-center gap-3">Monto asignado:
+                  <b>
 
                     <?php
                     $badge_0 = '<label class="badge me-2  bg-light-dark f-12 f-w-400">0</label>';
@@ -283,15 +289,15 @@ $stmt->close();
                 </div>
                 </div>';
           } else {
-          ?>
+            ?>
 
             <div class="card mb-3 h-15">
               <div class="card-body">
                 <h5 class="d-flex justify-content-between align-items-center mb-3">Ejercicio fiscal <?php echo $annio ?>
 
-                  <div id="status_ejercicio">
+                  <div id="status">
                     <?php
-                    if ($status_ejercicio == 1) {
+                    if ($status == 1) {
                       echo '<div class="badge bg-light-success">Abierto</div>';
                     } else {
                       echo '<div class="badge bg-light-dark">Cerrado</div>';
@@ -309,7 +315,7 @@ $stmt->close();
 
 
                 <?php
-                if ($status_ejercicio == 1) {
+                if ($status == 1) {
                   echo '<div class="text-center"><button class="btn btn-sm btn-danger" id="btn-cerrar">Cerrar ejercicio</button></div>';
                 }
                 ?>
@@ -320,7 +326,7 @@ $stmt->close();
 
 
 
-          <?php
+            <?php
           }
           ?>
 
@@ -342,7 +348,8 @@ $stmt->close();
               <div class="d-flex flex-column">
                 <div class="card-title mb-auto d-flex justify-content-between">
                   <h5 class="mb-0">
-                    <button id="btn-vista-graf_table" class="btn btn-icon btn-primary avtar-s mb-0 me-1" style="border-radius: 5px;">
+                    <button id="btn-vista-graf_table" class="btn btn-icon btn-primary avtar-s mb-0 me-1"
+                      style="border-radius: 5px;">
                       <i class='bx bx-bar-chart-alt-2'></i>
                     </button>
                     Disponibilidad presupuestaria
@@ -360,16 +367,16 @@ $stmt->close();
 
                 <?php
                 if ($ejercicio_fiscal == 'No') {
-                ?>
+                  ?>
 
                   <img src="../../src/assets/images/icons-png/no_grafico.jpg" class="img-ng" alt="Sin grafico">
 
 
 
-                <?php
+                  <?php
                 } else {
 
-                ?>
+                  ?>
 
 
                   <section id="vista-grafico">
@@ -392,7 +399,7 @@ $stmt->close();
                     </table>
                   </section>
 
-                <?php
+                  <?php
                 }
                 ?>
 
@@ -428,7 +435,8 @@ $stmt->close();
               <h5 class="mb-3">Presupuesto restante</h5><i class="fas fa-user-friends f-30 text-success"></i>
               <h2 class="f-w-300 mt-3">1,285</h2><span class="text-muted">(Situado restante)</span>
               <div class="progress mt-4 m-b-40">
-                <div class="progress-bar bg-brand-color-1" role="progressbar" style="width: 75%; height: 7px" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+                <div class="progress-bar bg-brand-color-1" role="progressbar" style="width: 75%; height: 7px"
+                  aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
               </div>
               <div class="text-center">
                 <h4>52%</h4><span class="text-muted">
@@ -510,7 +518,7 @@ $stmt->close();
       </div>
       <?php
       if ($ejercicio_fiscal == 'No') {
-      ?>
+        ?>
 
         <div class="dialogs">
           <div class="dialogs-content " style="width: 35%;">
@@ -521,7 +529,8 @@ $stmt->close();
               <form id="dataEjercicio">
                 <div class="mb-3">
                   <label for="situado" class="form-label">Situado constitucional</label>
-                  <input type="number" id="situado" name="situado" class="form-control" placeholder="Presupuesto asignado para el ejercicio fiscal <?php echo $annio ?>">
+                  <input type="number" id="situado" name="situado" class="form-control"
+                    placeholder="Presupuesto asignado para el ejercicio fiscal <?php echo $annio ?>">
                 </div>
                 <div class="mb-2 text-end">
                   <button type="submit" class="btn btn-primary">Registrar</button>
@@ -530,9 +539,9 @@ $stmt->close();
             </div>
           </div>
         </div>
-      <?php
+        <?php
       } else {
-      ?>
+        ?>
         <div class="dialogs">
           <div class="dialogs-content " style="width: 35%;">
             <span class="close-button">×</span>
@@ -542,7 +551,8 @@ $stmt->close();
               <form id="dataEjercicio_2">
                 <div class="mb-3">
                   <label for="monto" class="form-label">Monto del plan de inversión</label>
-                  <input type="number" id="monto" name="monto" class="form-control" placeholder="Presupuesto asignado para el plan de inversión">
+                  <input type="number" id="monto" name="monto" class="form-control"
+                    placeholder="Presupuesto asignado para el plan de inversión">
                 </div>
                 <div class="mb-2 text-end">
                   <button type="submit" class="btn btn-primary">Registrar</button>
@@ -552,7 +562,7 @@ $stmt->close();
           </div>
         </div>
 
-      <?php
+        <?php
       }
       ?>
       <!-- [ Main Content ] end -->
@@ -573,12 +583,12 @@ $stmt->close();
         // Enviar los datos al back
         function sendData(data, url) {
           fetch(url, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify(data)
-            })
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+          })
             .then(response => response.text()) // Recupera la respuesta como texto
             .then(responseText => {
               console.log('Respuesta del servidor (raw):', responseText); // Imprimir la respuesta original
@@ -592,7 +602,7 @@ $stmt->close();
                   toast_s('success', jsonResponse.success);
                   // actualizar despues de un segundo
                   toggleDialogs()
-                  setTimeout(function() {
+                  setTimeout(function () {
                     window.location.reload();
                   }, 1500);
                 } else {
@@ -635,8 +645,8 @@ $stmt->close();
 
 
         <?php if ($ejercicio_fiscal == 'No') { // En caso de que no exista el ejercicio fiscal 
-        ?>
-          document.getElementById('dataEjercicio').addEventListener('submit', function(event) {
+            ?>
+          document.getElementById('dataEjercicio').addEventListener('submit', function (event) {
             event.preventDefault();
             var situado = document.getElementById('situado').value;
 
@@ -653,9 +663,9 @@ $stmt->close();
             }
           })
         <?php } else {
-        ?>
+            ?>
 
-          document.getElementById('dataEjercicio_2').addEventListener('submit', function(event) {
+          document.getElementById('dataEjercicio_2').addEventListener('submit', function (event) {
             event.preventDefault();
             var monto = document.getElementById('monto').value;
 
@@ -671,9 +681,9 @@ $stmt->close();
             }
           })
 
-        <?php
-        } // End: En caso de que no exista el ejercicio fiscal  
-        ?>
+          <?php
+          } // End: En caso de que no exista el ejercicio fiscal  
+          ?>
 
 
         // Ajustar el tamaño del texto con la cantidad del situado para el card con el bg-info
@@ -693,8 +703,8 @@ $stmt->close();
         // End: Ajustar el tamaño del texto con la cantidad del situado para el card con el bg-info
 
 
-        <?php if (@$status_ejercicio == 1) { // En caso de que el ejercicio exista    
-        ?>
+        <?php if (@$status == 1) { // En caso de que el ejercicio exista    
+            ?>
 
           function cerrarEjercicio() {
             Swal.fire({
@@ -714,12 +724,12 @@ $stmt->close();
                   data: {
                     id: '<?php echo $annio ?>'
                   },
-                  success: function(response) {
+                  success: function (response) {
                     const respuesta = JSON.parse(response)
 
                     if (respuesta.status == 'ok') {
                       toast_s('success', 'El ejercicio fiscal fue cerrado')
-                      $('#status_ejercicio').html('<div class="badge bg-light-dark">Cerrado</div>')
+                      $('#status').html('<div class="badge bg-light-dark">Cerrado</div>')
                       $('#btn-cerrar').remove()
 
                     } else {
@@ -779,7 +789,7 @@ $stmt->close();
 
         //  GRAFICO 1 - Principal
         function grafico_1() {
-          am5.ready(function() {
+          am5.ready(function () {
 
             // Create root element
             var root = am5.Root.new("grafico_1");
@@ -950,16 +960,16 @@ $stmt->close();
             }
 
             $.ajax({
-                url: '../../back/modulo_pl_formulacion/form_ejercicio_tipos.php',
-                type: 'POST',
-                dataType: 'json', // Cambiado a 'json'
-                contentType: 'application/json',
-                data: JSON.stringify({
-                  ejercicio: ejercicio,
-                  tipo: tipo
-                }),
-              })
-              .done(function(resultado) {
+              url: '../../back/modulo_pl_formulacion/form_ejercicio_tipos.php',
+              type: 'POST',
+              dataType: 'json', // Cambiado a 'json'
+              contentType: 'application/json',
+              data: JSON.stringify({
+                ejercicio: ejercicio,
+                tipo: tipo
+              }),
+            })
+              .done(function (resultado) {
                 try {
 
                   var data = [];
@@ -1008,18 +1018,18 @@ $stmt->close();
                   console.error('Error procesando los datos:', error);
                 }
               })
-              .fail(function(jqXHR, textStatus, errorThrown) {
+              .fail(function (jqXHR, textStatus, errorThrown) {
                 console.error('Error en la solicitud:', textStatus, errorThrown);
                 //  alert('Hubo un problema al obtener los datos. Por favor, inténtalo de nuevo.');
               })
-              .always(function(res) {});
+              .always(function (res) { });
           }
 
           setBarras()
 
           document.getElementById('select_tipo').addEventListener('change', setBarras)
 
-        <?php
+          <?php
         }
 
         ?>

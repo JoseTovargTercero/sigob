@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.0
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 03-10-2024 a las 17:53:47
--- Versión del servidor: 10.4.27-MariaDB
--- Versión de PHP: 7.4.33
+-- Tiempo de generación: 05-10-2024 a las 20:11:58
+-- Versión del servidor: 10.4.32-MariaDB
+-- Versión de PHP: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -1021,9 +1021,9 @@ CREATE TABLE `ejercicio_fiscal` (
   `ano` varchar(255) NOT NULL,
   `situado` varchar(255) NOT NULL,
   `divisor` varchar(255) NOT NULL,
-  `status` int(255) NOT NULL
+  `status` int(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-ALTER TABLE `ejercicio_fiscal` CHANGE `status_ejercicio` `status_ejercicio` INT(1) NOT NULL DEFAULT '1';
+
 --
 -- Volcado de datos para la tabla `ejercicio_fiscal`
 --
@@ -9823,7 +9823,7 @@ CREATE TABLE `tasa` (
 --
 
 INSERT INTO `tasa` (`id`, `descripcion`, `simbolo`, `valor`) VALUES
-(1, 'Precio del Dólar Actual', '$', '36.8105');
+(1, 'Precio del Dólar Actual', '$', '37.0358');
 
 -- --------------------------------------------------------
 
@@ -9845,7 +9845,8 @@ CREATE TABLE `tasa_historico` (
 
 INSERT INTO `tasa_historico` (`id`, `u_nombre`, `precio`, `descripcion`, `fecha`) VALUES
 (1, 'sigob', '36.823', 'Creacion automática', '21-09-2024'),
-(2, 'sigob', '36.8105', 'actualizacion automática', '25-09-2024');
+(2, 'sigob', '36.8105', 'actualizacion automática', '25-09-2024'),
+(3, 'sigob', '37.0358', 'actualizacion automática', '05-10-2024');
 
 -- --------------------------------------------------------
 
@@ -14646,7 +14647,7 @@ ALTER TABLE `tasa`
 -- AUTO_INCREMENT de la tabla `tasa_historico`
 --
 ALTER TABLE `tasa_historico`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `txt`
