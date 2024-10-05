@@ -146,29 +146,54 @@
           </li>
           <li class="pc-item">
             <a href="<?php echo constant('URL') ?>front/mod_pl_formulacion/index" class="pc-link">
-              <span class="pc-micon"><i class='bx bx-book-content'></i></span>
+              <span class="pc-micon"><i class='bx bx-home'></i></span>
               <span class="pc-mtext">Ejercicio fiscal</span>
             </a>
           </li>
-          <li class="pc-item">
-            <a href="<?php echo constant('URL') ?>front/mod_pl_formulacion/form_distribucion_presupuestaria_vista" class="pc-link">
-              <span class="pc-micon"><i class='bx bx-border-all'></i></span>
-              <span class="pc-mtext">Distribución presupuestaria</span>
+
+
+
+
+
+
+
+
+
+
+
+
+
+          <li class="pc-item pc-hasmenu">
+            <a href="#!" class="pc-link">
+              <span class="pc-micon">
+                <i class='bx bx-spreadsheet'></i>
+              </span>
+              <span class="pc-mtext">Partidas</span><span class="pc-arrow"><i class="ti ti-chevron-right"></i></span>
             </a>
+            <ul class="pc-submenu">
+              <li class="pc-item"><a class="pc-link" href="<?php echo constant('URL') ?>front/mod_pl_formulacion/form_distribucion_presupuestaria_vista">Distribución</a></li>
+              <li class="pc-item"><a class="pc-link" href="<?php echo constant('URL') ?>front/mod_pl_formulacion/form_partidas_tabla">Registro</a></li>
+
+            </ul>
           </li>
+
           <li class="pc-item">
             <a href="<?php echo constant('URL') ?>front/mod_pl_formulacion/form_asignacion_entes_vista" class="pc-link">
-              <span class="pc-micon"><i class='bx bx-border-all'></i></span>
-              <span class="pc-mtext">Asignación de presupuesto a entes</span>
+              <span class="pc-micon"><i class='bx bx-sitemap'></i></span>
+              <span class="pc-mtext">Distribución por entes</span>
             </a>
           </li>
-           <li class="pc-item">
-            <a href="<?php echo constant('URL') ?>front/mod_pl_formulacion/form_partidas_tabla" class="pc-link">
-              <span class="pc-micon"><i class='bx bx-spreadsheet' ></i></span>
-              <span class="pc-mtext">Partidas presupuestarias</span>
+
+
+          <li class="pc-item">
+            <a href="<?php echo constant('URL') ?>front/mod_pl_formulacion/form_plan_inversión" class="pc-link">
+              <span class="pc-micon"><i class='bx bx-calendar-event'></i></span>
+              <span class="pc-mtext">Plan de inversión</span>
             </a>
           </li>
-          
+
+
+
 
 
 
