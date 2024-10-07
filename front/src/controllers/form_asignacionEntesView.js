@@ -12,7 +12,7 @@ export const validateAsignacionEntesView = () => {
   d.addEventListener('click', async (e) => {
     if (e.target.dataset.validarid) {
       let plan = await getEntesPlan(Number(e.target.dataset.validarid))
-
+      scroll(0, 0)
       form_asignacion_entes_form_card({
         elementToInset: 'asignacion-entes-view',
         plan: plan,
