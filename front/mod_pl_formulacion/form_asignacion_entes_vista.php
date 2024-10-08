@@ -26,9 +26,24 @@ require_once '../../back/sistema_global/session.php';
         <div class="page-block">
           <div class="row align-items-center">
             <div class="col-md-12">
-              <div class="page-header-title">
+              <!-- <div class="page-header-title">
                 <h5 class="mb-0">Asignación de presupuesto a entes</h5>
+              </div> -->
+
+              <div class=" d-flex justify-content-between">
+
+                <h4 class="fw-bold py-3 mb-4">
+                  <span class="text-muted fw-light">Formulación /</span> Asignación de presupuesto a entes
+                </h4>
+
+                <div class="d-flex gap-1">
+                  <h5 class="mb-0">Seleccionar ejercicio:</h5 class="mb-0">
+                  <div class="row" id="ejercicios-fiscales">
+
+                  </div>
+                </div>
               </div>
+
             </div>
           </div>
         </div>
@@ -43,7 +58,7 @@ require_once '../../back/sistema_global/session.php';
                 <h5 class="mb-0">Asignación de presupuesto a entes</h5>
                 <small class="mt-0 text-muted">Administre los planes operativos pendientes de los entes</small>
               </div>
-              <button class="btn btn-primary" id="asignacion-registrar">REGISTRAR</button>
+
             </div>
             <div class="card-body">
               <div class="table-responsive p-1">

@@ -45,6 +45,7 @@ const tableLanguage = {
 export const form_asignacion_entes_form_card = async ({
   elementToInset,
   plan,
+  ejercicioFiscal,
 }) => {
   let fieldList = { ejemplo: '' }
   let fieldListErrors = {
@@ -66,16 +67,17 @@ export const form_asignacion_entes_form_card = async ({
   let formFocus = 1
 
   // OBTENER DATOS PARA TRABAJAR EN EL FORMULARIO
-  let ejercicio = await getEjecicio(1),
-    partidas = await getPartidas()
 
-  console.log(ejercicio)
+  let partidas = await getPartidas()
+
+  console.log(ejercicioFiscal)
   console.log(partidas)
 
   let montos = { total: 0, restante: 0, acumulado: 0 }
 
-  montos.total = ejercicio.situado
-  montos.restante = ejercicio.restante
+  montos.total = ejercicioFiscal.situado
+  montos.restante = ejercicioFiscal.restante
+  montos.total_solicitado = plan.monto
 
   const oldCardElement = d.getElementById('asignacion-entes-form-card')
   if (oldCardElement) oldCardElement.remove()
@@ -84,12 +86,16 @@ export const form_asignacion_entes_form_card = async ({
       <h5 class=''>Información de la distribución presupuestaria anual</h5>
       <h5 class=''>
         <b>Año actual:</b>
-        <span>${ejercicio ? ejercicio.ano : 'No definido'}</span>
+        <span>${ejercicioFiscal ? ejercicioFiscal.ano : 'No definido'}</span>
       </h5>
       <h5 class=''>
         <b>Situado actual:</b>
         <span>
-          ${ejercicio ? separarMiles(ejercicio.situado) : 'No definido'}
+          ${
+            ejercicioFiscal
+              ? separarMiles(ejercicioFiscal.situado)
+              : 'No definido'
+          }
         </span>
       </h5>
       <ul class='list-group'></ul>
@@ -166,7 +172,7 @@ export const form_asignacion_entes_form_card = async ({
     //     </li>`
     // } else {
     // }
-    let liItems = ejercicio.partidas.map((partida) => {
+    let liItems = ejercicioFiscal.partidas.map((partida) => {
       let partidaEncontrada = partidas.fullInfo.find(
         (par) => par.id == partida.id
       )
@@ -189,28 +195,41 @@ export const form_asignacion_entes_form_card = async ({
     return liItems.join('')
   }
 
+  const formularioNuevaPartida = () => {
+    let options = partidas.fullInfo
+      .map((option) => {
+        return `<option value="${option.partida}">${option.descripcion}</option>`
+      })
+      .join('')
+    return `  <div class='row mt-4 d-none slide-up-animation' id="form-nueva-partida">  
+          <label for='partida-nueva'>Nueva partida a añadir</label>
+          <div class='input-group'>
+            <div class='w-80'>
+              <input
+                class='form-control'
+                type='text'
+                name='partida-nueva'
+                id='partida-nueva-input'
+                list='partidas-list'
+                placeholder='Seleccione partida a añadir'
+              />
+            </div>
+            <div class='input-group-prepend'>
+              <button class='btn btn-primary' id="btn-add-partida">Añadir partida</button>
+            </div>
+          </div>
+          <datalist id='partidas-list'>${options}</datalist>
+
+      </div>`
+    // addSeleccionPartidasrow()
+  }
+
   const seleccionPartidas = () => {
     return `<div id='card-body-part2' class="slide-up-animation">
     <h4 class="text-center text-info">Seleccione las partidas:</h4>
     <h5 class="text-center text-info">Partidas seleccionadas: <b id="partidas-seleccionadas">0</b></h5>
-        <div class='row'>
-          <div class='col'>
-            <table
-              id='asignacion-part2-table'
-              class='table table-striped table-sm'
-              style='width:100%'
-            >
-              <thead class='w-100'>
-                <th>ELEGIR</th>
-                <th>PARTIDA</th>
-                <th>NOMBRE</th>
-                <th>DESCRIPCION</th>
-                <th>MONTO</th>
-              </thead>
-              <tbody>${distribucionPartidasList()}</tbody>
-            </table>
-          </div>
-          <div class='col'>
+        
+          <div class=''>
             <table
               id='asignacion-part3-table'
               class='table table-striped table-sm'
@@ -221,20 +240,31 @@ export const form_asignacion_entes_form_card = async ({
                 <th>PARTIDA</th>
                 <th>NOMBRE</th>
                 <th>DESCRIPCION</th>
-                <th>MONTO</th>
+                <th>MONTO SOLICITADO</th>
               </thead>
               <tbody>${distribucionPartidasEnteList(true)}</tbody>
             </table>
           </div>
-        </div>
+        
+          ${formularioNuevaPartida()}
       </div>`
   }
 
   // PARTE 3: ASIGNAR MONTOS A PARTIDAS
 
   const partidasSeleccionadasList = () => {
+    let liItems2 = plan.partidas.map((partida) => {
+      let partidaEncontrada = partidas.fullInfo.find(
+        (par) => par.id == partida.id
+      )
+    })
+
     let liItems = partidasSeleccionadas.map((id) => {
       let partidaEncontrada = partidas.fullInfo.find((par) => par.id == id)
+
+      let partidaEncontrada2 = plan.partidas.find((partida) => partida.id == id)
+
+      console.log(partidaEncontrada2)
 
       fieldListPartidas[`partida-monto-${partidaEncontrada.id}`] = ''
       fieldListErrorsPartidas[`partida-monto-${partidaEncontrada.id}`] = {
@@ -246,6 +276,9 @@ export const form_asignacion_entes_form_card = async ({
       return `  <tr>
           <td>${partidaEncontrada.partida}</td>
           <td>${partidaEncontrada.nombre}</td>
+          <td>${
+            partidaEncontrada2 ? partidaEncontrada2.monto : 'Sin monto'
+          }</td>
           <td>
             <input
               class='form-control partida-input partida-monto'
@@ -266,6 +299,10 @@ export const form_asignacion_entes_form_card = async ({
     return ` <div id="card-body-part3" class="slide-up-animation">
           <h4 class="text-center text-info">Asigne el monto a partidas:</h4>
           <h5>Nombre: ${plan.ente_nombre}</h5>
+          <div class="d-flex gap-2 justify-content-between">
+          <h5>Monto total solicitado: ${plan.monto}</h5>
+          <h5>Monto total asignado: <b id="monto-total-asignado">0</b></h5>
+          </div>
 
         <table
           id='asignacion-part4-table'
@@ -275,6 +312,7 @@ export const form_asignacion_entes_form_card = async ({
           <thead class='w-100'>
             <th>PARTIDA</th>
             <th>NOMBRE</th>
+            <th>Monto inicial</th>
             <th>ASIGNACION</th>
           </thead>
           
@@ -311,6 +349,9 @@ export const form_asignacion_entes_form_card = async ({
         <button class='btn btn-primary' id='btn-next'>
           Siguiente
         </button>
+        <button class='btn btn-success d-none' id='btn-add'>
+          Añadir
+        </button>
       </div>
     </div>`
 
@@ -337,6 +378,28 @@ export const form_asignacion_entes_form_card = async ({
   function validateClick(e) {
     if (e.target.dataset.close) {
       closeCard()
+    }
+
+    if (e.target.id === 'btn-add') {
+      d.getElementById('form-nueva-partida').classList.remove('d-none')
+    }
+    if (e.target.id === 'btn-add-partida') {
+      d.getElementById('form-nueva-partida').classList.add('d-none')
+
+      let input = d.getElementById('partida-nueva-input')
+
+      let partidaEncontrada = partidas.fullInfo.find(
+        (partida) => partida.partida === input.value
+      )
+      let datos = [
+        `<input type='checkbox' value="${partidaEncontrada.id}" class="form-check-input input-check" name='partida-ejercicio-${partidaEncontrada.id}' id='partida-ejetcicio-${partidaEncontrada.id}' />`,
+        partidaEncontrada.partida,
+        partidaEncontrada.nombre,
+        partidaEncontrada.descripcion,
+        'Monto no especificado',
+      ]
+      addSeleccionPartidasrow(datos)
+      input.value = ''
     }
 
     // TENGO QUE ENVIAR LOS DATOS CON ESTA ESTRUCTURA: [[id_partida, monto, id_ente, id_poa, tipo]]
@@ -374,6 +437,7 @@ export const form_asignacion_entes_form_card = async ({
   function validateFormFocus(e) {
     let btnNext = d.getElementById('btn-next')
     let btnPrevius = d.getElementById('btn-previus')
+    let btnAdd = d.getElementById('btn-add')
     let cardBodyPart1 = d.getElementById('card-body-part1')
     let cardBodyPart2 = d.getElementById('card-body-part2')
     let cardBodyPart3 = d.getElementById('card-body-part3')
@@ -381,7 +445,6 @@ export const form_asignacion_entes_form_card = async ({
     if (e.target === btnNext) {
       scroll(0, 0)
       if (formFocus === 1) {
-        cardBodyPart1.classList.remove('d-block')
         cardBodyPart1.classList.add('d-none')
 
         cardBody.innerHTML += seleccionPartidas()
@@ -389,6 +452,8 @@ export const form_asignacion_entes_form_card = async ({
 
         formFocus++
         btnPrevius.classList.remove('d-none')
+        btnPrevius.removeAttribute('disabled')
+        btnAdd.classList.remove('d-none')
         return
       }
       if (formFocus === 2) {
@@ -408,6 +473,7 @@ export const form_asignacion_entes_form_card = async ({
 
         validarAsignacionPartidasTable()
         btnNext.textContent = 'Enviar'
+        btnAdd.classList.add('d-none')
         formFocus++
         return
       }
@@ -462,6 +528,7 @@ export const form_asignacion_entes_form_card = async ({
             cardBodyPart1.classList.remove('d-block')
             cardBodyPart1.classList.add('d-none')
             btnNext.textContent = 'Siguiente'
+            btnAdd.classList.remove('d-none')
 
             partidasSeleccionadas = []
             cardBody.innerHTML += seleccionPartidas()
@@ -474,11 +541,11 @@ export const form_asignacion_entes_form_card = async ({
       }
       if (formFocus === 2) {
         btnPrevius.setAttribute('disabled', true)
+        btnAdd.classList.add('d-none')
 
         cardBodyPart2.remove()
 
         cardBodyPart1.classList.remove('d-none')
-        cardBodyPart1.classList.add('d-block')
 
         formFocus--
         return
@@ -487,7 +554,7 @@ export const form_asignacion_entes_form_card = async ({
   }
 
   function actualizarMontoRestante() {
-    let montoRestanteElement = d.getElementById('monto-restante')
+    let montoElement = d.getElementById('monto-total-asignado')
 
     let inputsPartidasMontos = d.querySelectorAll('.partida-monto')
 
@@ -498,19 +565,20 @@ export const form_asignacion_entes_form_card = async ({
       montos.acumulado += Number(input.value)
     })
 
-    let montoRestante = montos.restante - montos.acumulado
+    let diferenciaSolicitado = montos.total_solicitado - montos.acumulado
 
-    if (montoRestante < 0) {
-      montoRestanteElement.innerHTML = `<span class="text-danger">${montoRestante}</span>`
-      return montoRestante
+    if (diferenciaSolicitado < 0) {
+      montoElement.innerHTML = `<span class="text-warning">${montos.acumulado}</span>`
+      return
     }
-    if (montoRestante > 0) {
-      montoRestanteElement.innerHTML = `<span class="text-success">${montoRestante}</span>`
-      return montoRestante
+    if (diferenciaSolicitado > 0) {
+      montoElement.innerHTML = `<span class="text-success">${montos.acumulado}</span>`
+      return
     }
-
-    montoRestanteElement.innerHTML = `<span class="text-secondary">${montoRestante}</span>`
-    return montoRestante
+    if (diferenciaSolicitado === 0) {
+      montoElement.innerHTML = `<span class="text-secondary">${montos.acumulado}</span>`
+      return
+    }
   }
 
   function obtenerValorCheckbox({ id_card, id_text }) {
@@ -582,27 +650,34 @@ function validarPartidasEntesTable() {
     },
   })
 }
-
+let seleccionPartidasTable
 function validarSeleccionPartidasTable() {
-  let planesTable2 = new DataTable('#asignacion-part2-table', {
-    scrollY: 120,
-    language: tableLanguage,
-    layout: {
-      topStart: function () {
-        let toolbar = document.createElement('div')
-        toolbar.innerHTML = `
-            <h5 class="text-center mb-0">Distribución presupuestaria:</h5>
-                      `
-        return toolbar
-      },
-      topEnd: { search: { placeholder: 'Buscar...' } },
-      bottomStart: 'info',
-      bottomEnd: 'paging',
-    },
-  })
+  // let planesTable2 = new DataTable('#asignacion-part2-table', {
+  //   scrollY: 120,
+  //   language: tableLanguage,
+  //   layout: {
+  //     topStart: function () {
+  //       let toolbar = document.createElement('div')
+  //       toolbar.innerHTML = `
+  //           <h5 class="text-center mb-0">Distribución presupuestaria:</h5>
+  //                     `
+  //       return toolbar
+  //     },
+  //     topEnd: { search: { placeholder: 'Buscar...' } },
+  //     bottomStart: 'info',
+  //     bottomEnd: 'paging',
+  //   },
+  // })
 
-  let planesTable3 = new DataTable('#asignacion-part3-table', {
+  seleccionPartidasTable = new DataTable('#asignacion-part3-table', {
     scrollY: 200,
+    colums: [
+      { data: 'elegir' },
+      { data: 'partida' },
+      { data: 'nombre' },
+      { data: 'descripcion' },
+      { data: 'monto_solicitado' },
+    ],
     language: tableLanguage,
     layout: {
       topStart: function () {
@@ -617,6 +692,10 @@ function validarSeleccionPartidasTable() {
       bottomEnd: 'paging',
     },
   })
+}
+
+function addSeleccionPartidasrow(datos) {
+  seleccionPartidasTable.row.add(datos).draw()
 }
 
 function validarAsignacionPartidasTable() {
