@@ -253,39 +253,41 @@ export const form_asignacion_entes_form_card = async ({
   // PARTE 3: ASIGNAR MONTOS A PARTIDAS
 
   const partidasSeleccionadasList = () => {
-    let liItems2 = plan.partidas.map((partida) => {
-      let partidaEncontrada = partidas.fullInfo.find(
-        (par) => par.id == partida.id
-      )
-    })
+    let partidasRelacionadas = relacionarPartidas()
 
-    let liItems = partidasSeleccionadas.map((id) => {
-      let partidaEncontrada = partidas.fullInfo.find((par) => par.id == id)
-
-      let partidaEncontrada2 = plan.partidas.find((partida) => partida.id == id)
-
-      console.log(partidaEncontrada2)
-
-      fieldListPartidas[`partida-monto-${partidaEncontrada.id}`] = ''
-      fieldListErrorsPartidas[`partida-monto-${partidaEncontrada.id}`] = {
+    let liItems = partidasRelacionadas.map((partida) => {
+      fieldListPartidas[`partida-monto-${partida.id}`] = ''
+      fieldListErrorsPartidas[`partida-monto-${partida.id}`] = {
         value: true,
         message: 'Monto inválido',
         type: 'number',
       }
 
       return `  <tr>
-          <td>${partidaEncontrada.partida}</td>
-          <td>${partidaEncontrada.nombre}</td>
-          <td>${
-            partidaEncontrada2 ? partidaEncontrada2.monto : 'Sin monto'
-          }</td>
+          <td>${partida.partida}</td>
+          <td>${partida.nombre}</td>
+          <td>${partida.monto_solicitado}</td>
+          <td>
+          <input
+          class='form-control partida-input partida-monto-disponible'
+          type='text'
+          data-valorinicial='${partida.monto_disponible}'
+          name='partida-monto-disponible-${partida.id}'
+          id='partida-monto-disponible-${partida.id}'
+          placeholder='Monto a asignar...'
+          value="${partida.monto_disponible}"
+
+          disabled
+        />
+</td>
+          
           <td>
             <input
               class='form-control partida-input partida-monto'
               type='number'
-              data-id='${partidaEncontrada.id}'
-              name='partida-monto-${partidaEncontrada.id}'
-              id='partida-monto-${partidaEncontrada.id}'
+              data-id='${partida.id}'
+              name='partida-monto-${partida.id}'
+              id='partida-monto-${partida.id}'
               placeholder='Monto a asignar...'
             />
           </td>
@@ -293,6 +295,65 @@ export const form_asignacion_entes_form_card = async ({
     })
 
     return liItems.join('')
+  }
+
+  function relacionarPartidas() {
+    let partidasRelacionadas = partidasSeleccionadas.map((id) => {
+      let partidaEncontrada = partidas.fullInfo.find((par) => par.id == id)
+
+      let partidaEncontrada2 = plan.partidas.find((partida) => partida.id == id)
+      let partidaEncontrada3 = ejercicioFiscal.partidas.find(
+        (partida) => partida.id == id
+      )
+
+      return {
+        id: id,
+        partida: partidaEncontrada.partida,
+        nombre: partidaEncontrada.nombre || 'No asignado',
+        descripcion: partidaEncontrada.descripcion,
+        monto_disponible: partidaEncontrada3
+          ? partidaEncontrada3.monto_inicial
+          : 0,
+        monto_solicitado: partidaEncontrada2
+          ? partidaEncontrada2.monto
+          : 'No solicitado ',
+      }
+    })
+
+    console.log(partidasRelacionadas)
+
+    return partidasRelacionadas
+  }
+
+  function partidaDisponibilidadPresupuestaria(id) {
+    let partidaEncontrada3 = ejercicioFiscal.partidas.find(
+      (partida) => partida.id == id
+    )
+
+    let partidasRelacionadas = partidasSeleccionadas.map((id) => {
+      let partidaEncontrada = partidas.fullInfo.find((par) => par.id == id)
+
+      let partidaEncontrada2 = plan.partidas.find((partida) => partida.id == id)
+      let partidaEncontrada3 = ejercicioFiscal.partidas.find(
+        (partida) => partida.id == id
+      )
+
+      return {
+        id: id,
+        partida: partidaEncontrada.partida,
+        descripcion: partidaEncontrada.descripcion,
+        monto_disponible: partidaEncontrada3
+          ? partidaEncontrada3.monto_inicial
+          : 'No asignado',
+        monto_solicitado: partidaEncontrada2
+          ? partidaEncontrada2.monto
+          : 'No solicitado',
+      }
+    })
+
+    console.log(partidasRelacionadas)
+
+    return partidasRelacionadas
   }
 
   const asignarMontoPartidas = () => {
@@ -312,7 +373,8 @@ export const form_asignacion_entes_form_card = async ({
           <thead class='w-100'>
             <th>PARTIDA</th>
             <th>NOMBRE</th>
-            <th>Monto inicial</th>
+            <th>Monto monto solicitado</th>
+            <th>Monto disponible</th>
             <th>ASIGNACION</th>
           </thead>
           
@@ -425,6 +487,14 @@ export const form_asignacion_entes_form_card = async ({
         fieldListErrors: fieldListErrorsPartidas,
         type: fieldListErrorsPartidas[e.target.name].type,
       })
+
+      let montoDisponibleInput = d.getElementById(
+        `partida-monto-disponible-${e.target.dataset.id}`
+      )
+      console.log(montoDisponibleInput)
+
+      montoDisponibleInput.value =
+        Number(montoDisponibleInput.dataset.valorinicial) - e.target.value
     }
   }
 
