@@ -10,7 +10,6 @@ function getPartidas() {
       } else {
         let data = response.success;
 
-        // Suponiendo que response es un array de objetos con las propiedades 'partida' y 'descripcion'
         data.forEach(function (item) {
           $("#partidas").append(
             '<option value="' +

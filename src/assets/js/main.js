@@ -458,3 +458,7 @@ const lenguaje_datat = {
     previous: "Anterior",
   },
 };
+
+function agregarSeparadorMiles(numero) {
+  return numero.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}

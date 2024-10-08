@@ -5,9 +5,23 @@ header('Content-Type: application/json');
 
 require_once '../sistema_global/errores.php';
 
+
+// validar que el monto no supere el presupuesto
+function validarPresupuesto($plan, $monto)
+{
+
+    return true;
+}
+
+
+
 // Función para insertar datos en plan_inversion y proyecto_inversion
-function guardarPlanInversion($id_ejercicio, $monto_total, $proyectosArray) {
+function guardarProyecto($proyectosArray)
+{
     global $conexion;
+
+
+
 
     try {
         // Verificar que el array de proyectos no esté vacío
@@ -15,48 +29,31 @@ function guardarPlanInversion($id_ejercicio, $monto_total, $proyectosArray) {
             throw new Exception("El array de proyectos está vacío");
         }
 
-        // Verificar que la suma de los montos de proyectos sea igual al monto_total
-        $sumaMontos = array_sum(array_column($proyectosArray, 1)); // Columna de montos
-        if ($sumaMontos != $monto_total) {
-            throw new Exception("La suma de los montos de los proyectos no es igual al monto total de la inversión.");
-        }
-
-        // Insertar en la tabla plan_inversion
-        $fecha = date('Y-m-d'); // Fecha actual
-        $sqlPlan = "INSERT INTO plan_inversion (id_ejercicio, monto_total, fecha) VALUES (?, ?, ?)";
-        $stmtPlan = $conexion->prepare($sqlPlan);
-        $stmtPlan->bind_param("ids", $id_ejercicio, $monto_total, $fecha);
-        $stmtPlan->execute();
-
-        if ($stmtPlan->affected_rows <= 0) {
-            throw new Exception("Error al insertar en la tabla plan_inversion.");
-        }
-
-        // Obtener el ID generado para plan_inversion
-        $id_plan = $stmtPlan->insert_id;
-        $stmtPlan->close();
-
         // Insertar los proyectos en la tabla proyecto_inversion
-        foreach ($proyectosArray as $proyecto) {
-            $nombre_proyecto = $proyecto[0];
-            $monto_proyecto = $proyecto[1];
-            $id_partida = $proyecto[2];
-            $status = 0; // Estado por defecto
 
-            $sqlProyecto = "INSERT INTO proyecto_inversion (id_plan, proyecto, monto_proyecto, id_partida, status) VALUES (?, ?, ?, ?, ?)";
-            $stmtProyecto = $conexion->prepare($sqlProyecto);
-            $stmtProyecto->bind_param("isdis", $id_plan, $nombre_proyecto, $monto_proyecto, $id_partida, $status);
-            $stmtProyecto->execute();
+        $nombre = $proyectosArray['nombre'];
+        $descripcion = $proyectosArray['descripcion'];
+        $monto = $proyectosArray['monto'];
+        $partida = $proyectosArray['partida'];
+        $id_plan = $proyectosArray['id_plan'];
 
-            if ($stmtProyecto->affected_rows <= 0) {
-                throw new Exception("Error al insertar en la tabla proyecto_inversion.");
-            }
+        $sqlProyecto = "INSERT INTO proyecto_inversion (
+            id_plan,
+            proyecto,
+            descripcion,
+            monto_proyecto,
+            id_partida) VALUES (?, ?, ?, ?, ?)";
+        $stmtProyecto = $conexion->prepare($sqlProyecto);
+        $stmtProyecto->bind_param("issss", $id_plan, $nombre, $descripcion, $monto, $partida);
+        $stmtProyecto->execute();
 
-            $stmtProyecto->close();
+        if ($stmtProyecto->affected_rows <= 0) {
+            throw new Exception("Error al insertar en la tabla proyecto_inversion.");
         }
+
+        $stmtProyecto->close();
 
         return json_encode(["success" => "Datos guardados correctamente."]);
-
     } catch (Exception $e) {
         registrarError($e->getMessage());
         return json_encode(['error' => $e->getMessage()]);
@@ -64,7 +61,8 @@ function guardarPlanInversion($id_ejercicio, $monto_total, $proyectosArray) {
 }
 
 // Función para actualizar datos en plan_inversion
-function actualizarPlanInversion($id_plan, $monto_total) {
+function actualizarPlanInversion($id_plan, $monto_total)
+{
     global $conexion;
 
     try {
@@ -80,7 +78,6 @@ function actualizarPlanInversion($id_plan, $monto_total) {
 
         $stmt->close();
         return json_encode(["success" => "Plan de inversión actualizado correctamente."]);
-
     } catch (Exception $e) {
         registrarError($e->getMessage());
         return json_encode(['error' => $e->getMessage()]);
@@ -88,10 +85,17 @@ function actualizarPlanInversion($id_plan, $monto_total) {
 }
 
 // Función para actualizar datos en proyecto_inversion
-function actualizarProyectoInversion($id_proyecto, $nombre_proyecto, $monto_proyecto, $id_partida) {
+function actualizarProyectoInversion($proyecto)
+{
     global $conexion;
 
     try {
+        $id_proyecto = $proyecto['id'];
+        $nombre_proyecto = $proyecto['nombre'];
+        $monto_proyecto = $proyecto['monto'];
+        $id_partida = $proyecto['partida'];
+        $descripcion = $proyecto['descripcion'];
+
         // Verificar si el proyecto ya ha sido ejecutado
         $sqlCheckStatus = "SELECT status FROM proyecto_inversion WHERE id = ?";
         $stmtCheckStatus = $conexion->prepare($sqlCheckStatus);
@@ -106,38 +110,16 @@ function actualizarProyectoInversion($id_proyecto, $nombre_proyecto, $monto_proy
         }
 
         // Actualizar los datos del proyecto
-        $sql = "UPDATE proyecto_inversion SET proyecto = ?, monto_proyecto = ?, id_partida = ? WHERE id = ?";
+        $sql = "UPDATE proyecto_inversion SET proyecto = ?, descripcion=?, monto_proyecto = ?, id_partida = ? WHERE id = ?";
         $stmt = $conexion->prepare($sql);
-        $stmt->bind_param("sdii", $nombre_proyecto, $monto_proyecto, $id_partida, $id_proyecto);
+        $stmt->bind_param("ssdsi", $nombre_proyecto, $descripcion, $monto_proyecto, $id_partida, $id_proyecto);
         $stmt->execute();
 
         if ($stmt->affected_rows <= 0) {
             throw new Exception("Error al actualizar el proyecto de inversión.");
         }
 
-        // Verificar que la suma de los montos de los proyectos con el mismo id_plan sea igual a monto_total en plan_inversion
-        $sqlSuma = "SELECT SUM(monto_proyecto) FROM proyecto_inversion WHERE id_plan = (SELECT id_plan FROM proyecto_inversion WHERE id = ?)";
-        $stmtSuma = $conexion->prepare($sqlSuma);
-        $stmtSuma->bind_param("i", $id_proyecto);
-        $stmtSuma->execute();
-        $stmtSuma->bind_result($suma_montos);
-        $stmtSuma->fetch();
-        $stmtSuma->close();
-
-        $sqlMontoTotal = "SELECT monto_total FROM plan_inversion WHERE id = (SELECT id_plan FROM proyecto_inversion WHERE id = ?)";
-        $stmtMontoTotal = $conexion->prepare($sqlMontoTotal);
-        $stmtMontoTotal->bind_param("i", $id_proyecto);
-        $stmtMontoTotal->execute();
-        $stmtMontoTotal->bind_result($monto_total);
-        $stmtMontoTotal->fetch();
-        $stmtMontoTotal->close();
-
-        if ($suma_montos != $monto_total) {
-            throw new Exception("La suma de los montos de los proyectos no coincide con el monto total del plan de inversión.");
-        }
-
         return json_encode(["success" => "Proyecto actualizado correctamente."]);
-
     } catch (Exception $e) {
         registrarError($e->getMessage());
         return json_encode(['error' => $e->getMessage()]);
@@ -145,13 +127,14 @@ function actualizarProyectoInversion($id_proyecto, $nombre_proyecto, $monto_proy
 }
 
 // Función para modificar el estado de un proyecto a 1 (ejecutado)
-function ejecutarProyecto($id_proyecto) {
+function ejecutarProyecto($comentario, $id_proyecto)
+{
     global $conexion;
 
     try {
-        $sql = "UPDATE proyecto_inversion SET status = 1 WHERE id = ?";
+        $sql = "UPDATE proyecto_inversion SET status = 1, comentario=? WHERE id = ?";
         $stmt = $conexion->prepare($sql);
-        $stmt->bind_param("i", $id_proyecto);
+        $stmt->bind_param("si", $comentario, $id_proyecto);
         $stmt->execute();
 
         if ($stmt->affected_rows <= 0) {
@@ -160,7 +143,6 @@ function ejecutarProyecto($id_proyecto) {
 
         $stmt->close();
         return json_encode(["success" => "Proyecto marcado como ejecutado."]);
-
     } catch (Exception $e) {
         registrarError($e->getMessage());
         return json_encode(['error' => $e->getMessage()]);
@@ -168,7 +150,8 @@ function ejecutarProyecto($id_proyecto) {
 }
 
 // Función para eliminar datos en plan_inversion
-function eliminarPlanInversion($id_plan) {
+function eliminarPlanInversion($id_plan)
+{
     global $conexion;
 
     try {
@@ -191,11 +174,63 @@ function eliminarPlanInversion($id_plan) {
 
         $stmt->close();
         return json_encode(["success" => "Plan de inversión y proyectos eliminados correctamente."]);
-
     } catch (Exception $e) {
         registrarError($e->getMessage());
         return json_encode(['error' => $e->getMessage()]);
     }
+}
+
+// Obtener lista de proyectos
+function getProyectos($id_plan)
+{
+    global $conexion;
+    $data = [];
+
+    $stmt = mysqli_prepare($conexion, "SELECT PI.descripcion, PI.id, PI.proyecto, PI.monto_proyecto, PI.id_partida, PI.status FROM `proyecto_inversion` AS PI WHERE id_plan = ?");
+    $stmt->bind_param('s', $id_plan);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            array_push($data, $row);
+        }
+    }
+    $stmt->close();
+
+    return json_encode(['success' => $data]);
+}
+
+function eliminarProyecto($id)
+{
+    global $conexion;
+
+    $stmt = mysqli_prepare($conexion, "SELECT status FROM `proyecto_inversion` WHERE id = ? ");
+    $stmt->bind_param('s', $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            if ($row['status'] == 1) {
+                echo json_encode(['error' => 'No se puedo eliminar un proyecto ejecutado']);
+                exit;
+            }
+        }
+    } else {
+        echo json_encode(['error' => 'El proyecto no existe']);
+        exit;
+    }
+    $stmt->close();
+
+
+    $stmt = $conexion->prepare("DELETE FROM `proyecto_inversion` WHERE id = ? AND status='0'");
+    $stmt->bind_param("i", $id);
+
+    if ($stmt->execute()) {
+        echo json_encode(['success' => 'No se pudo eliminar el proyecto']);
+    } else {
+        echo json_encode(['error' => 'No se pudo eliminar el proyecto']);
+    }
+    $stmt->close();
 }
 
 // Procesar la solicitud
@@ -204,31 +239,28 @@ $data = json_decode(file_get_contents("php://input"), true);
 if (isset($data["accion"])) {
     $accion = $data["accion"];
 
-    // Insertar datos
-    if ($accion === "insert" && isset($data["id_ejercicio"]) && isset($data["monto_total"]) && isset($data["proyectos"])) {
-        echo guardarPlanInversion($data["id_ejercicio"], $data["monto_total"], $data["proyectos"]);
-
-    // Actualizar plan de inversión
+    // Nuevos proyectos
+    if ($accion === "registrar_proyecto" && isset($data["proyecto"])) {
+        echo guardarProyecto($data["proyecto"]);
+        // Actualizar plan de inversión
     } elseif ($accion === "update_plan" && isset($data["id_plan"]) && isset($data["monto_total"])) {
         echo actualizarPlanInversion($data["id_plan"], $data["monto_total"]);
-
-    // Actualizar proyecto de inversión
-    } elseif ($accion === "update_proyecto" && isset($data["id_proyecto"]) && isset($data["proyecto"]) && isset($data["monto_proyecto"]) && isset($data["id_partida"])) {
-        echo actualizarProyectoInversion($data["id_proyecto"], $data["proyecto"], $data["monto_proyecto"], $data["id_partida"]);
-
-    // Marcar proyecto como ejecutado
+        // Actualizar proyecto de inversión
+    } elseif ($accion === "update_proyecto" && isset($data["proyecto"])) {
+        echo actualizarProyectoInversion($data["proyecto"]);
+        // Marcar proyecto como ejecutado
     } elseif ($accion === "ejecutar_proyecto" && isset($data["id_proyecto"])) {
-        echo ejecutarProyecto($data["id_proyecto"]);
-
-    // Eliminar plan de inversión
+        echo ejecutarProyecto($data["comentario"], $data["id_proyecto"]);
+        // Eliminar plan de inversión
     } elseif ($accion === "delete" && isset($data["id_plan"])) {
         echo eliminarPlanInversion($data["id_plan"]);
-
+    } elseif ($accion === 'eliminar_proyecto' && isset($data['id_proyecto'])) {
+        echo eliminarProyecto($data['id_proyecto']);
+    } elseif ($accion === "get_proyectos" && isset($data["id_plan"])) {
+        echo getProyectos($data["id_plan"]);
     } else {
         echo json_encode(["error" => "Acción inválida o datos faltantes."]);
     }
 } else {
     echo json_encode(["error" => "Acción no especificada."]);
 }
-
-?>

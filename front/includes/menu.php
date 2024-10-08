@@ -186,7 +186,7 @@
 
 
           <li class="pc-item">
-            <a href="<?php echo constant('URL') ?>front/mod_pl_formulacion/form_plan_inversión" class="pc-link">
+            <a href="<?php echo constant('URL') ?>front/mod_pl_formulacion/form_plan_inversion" class="pc-link">
               <span class="pc-micon"><i class='bx bx-calendar-event'></i></span>
               <span class="pc-mtext">Plan de inversión</span>
             </a>

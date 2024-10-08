@@ -5110,7 +5110,9 @@ CREATE TABLE `proyecto_inversion` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
-
+ALTER TABLE `proyecto_inversion` ADD `descripcion` LONGTEXT NOT NULL AFTER `proyecto`;
+ALTER TABLE `proyecto_inversion` CHANGE `status` `status` INT(255) NOT NULL DEFAULT '0';
+ALTER TABLE `proyecto_inversion` ADD `comentario` LONGTEXT NOT NULL AFTER `status`;
 --
 -- Estructura de tabla para la tabla `recibo_pago`
 --

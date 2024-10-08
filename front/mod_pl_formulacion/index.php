@@ -60,8 +60,9 @@ $stmt->execute();
 $result = $stmt->get_result();
 if ($result->num_rows > 0) {
   while ($row = $result->fetch_assoc()) {
+    $plan_inversion_id = $row['monto_total'];
     $plan_inversion = $row['monto_total'];
-    $proyectos = contar("proyecto_inversion", 'id_plan=' . $plan_inversion);
+    $proyectos = contar("proyecto_inversion", 'id_plan=' . $plan_inversion_id);
   }
 } else {
   $plan_inversion = 'no';
@@ -249,7 +250,7 @@ $stmt->close();
                   if ($plan_inversion == 'no') {
                     echo '<a class="text-danger pointer" onclick="toggleDialogs()">Iniciar Plan de Inversión...</a>';
                   } else {
-                    echo '<a class="text-info pointer" href="form_proyectos">Gestionar proyectos...</a>';
+                    echo '<a class="text-info pointer" href="form_plan_inversion">Gestionar proyectos...</a>';
                   }
                   ?>
 

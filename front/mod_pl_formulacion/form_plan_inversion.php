@@ -21,11 +21,6 @@ if (isset($_GET["ejercicio"])) {
   $annio = date('Y');
 }
 
-
-
-
-
-
 $stmt = mysqli_prepare($conexion, "SELECT * FROM `ejercicio_fiscal` WHERE ano = ?");
 $stmt->bind_param('s', $annio);
 $stmt->execute();
@@ -54,14 +49,12 @@ if ($result->num_rows > 0) {
     $id_plan_inversion = number_format($row['id'], 0, '.', ',');
 
     $proyectos = contar("proyecto_inversion", 'id_plan=' . $id_plan_inversion);
-    $proyectos_pendientes = contar("proyecto_inversion", 'id_plan=' . $id_plan_inversion . ' AND status=0');
     $proyectos_ejecutados = contar("proyecto_inversion", 'id_plan=' . $id_plan_inversion . ' AND status=1');
   }
 } else {
   $id_plan_inversion = 0;
   $plan_inversion = 'Sin asignación';
   $proyectos = 0;
-  $proyectos_pendientes = 0;
   $proyectos_ejecutados = 0;
 }
 $stmt->close();
@@ -83,8 +76,19 @@ $stmt->close();
 
 
   <style>
+    #table td,
+    #table th {
+      text-align: center;
+    }
+
     td {
       padding: 7px !important;
+    }
+
+    table tr td:nth-child(2),
+    table tr th:nth-child(2) {
+      text-align: left !important;
+      /* Alineación al centro, puedes cambiarla a 'left' o 'right' */
     }
 
     .h-15 {
@@ -142,12 +146,6 @@ $stmt->close();
   <?php require_once '../includes/top-bar.php' ?>
   <!-- [ top bar ] -->
 
-  <style>
-    #table td,
-    #table th {
-      text-align: center;
-    }
-  </style>
 
 
   <!-- [ Main Content ] start -->
@@ -210,20 +208,20 @@ $stmt->close();
 
                 <li class="mb-1 d-flex flex-column flex-sm-row justify-content-between text-center gap-3">
                   <span>Total de proyectos: </span>
-                  <b id="total_proyectos"><?php echo number_format($proyectos, '0', '.', '.') ?></b>
+                  <b id="total_proyectos"></b>
                 </li>
 
 
 
                 <li class="mb-1 d-flex flex-column flex-sm-row justify-content-between text-center gap-3">
                   <span>Proyectos ejecutados: </span>
-                  <b id="total_proyectos_ejecutados"><?php echo number_format($proyectos_pendientes, '0', '.', '.') ?></b>
+                  <b id="total_proyectos_ejecutados"></b>
                 </li>
 
 
                 <li class="mb-1 d-flex flex-column flex-sm-row justify-content-between text-center gap-3">
                   <span>Proyectos pendientes: </span>
-                  <b id="total_proyectos_pendientes"><?php echo number_format($proyectos_ejecutados, '0', '.', '.') ?></b>
+                  <b id="total_proyectos_pendientes"></b>
                 </li>
               </ul>
 
@@ -257,11 +255,11 @@ $stmt->close();
 
 
         <div class="col-lg-12 hide" id="vista_registro">
-          <div class="card" style="height: 62vh;">
+          <div class="card">
             <div class="card-body">
               <div class="d-flex flex-column">
                 <div class="card-title mb-auto d-flex justify-content-between">
-                  <h5 class="mb-0">Proyectos</h5>
+                  <h5 class="mb-0">Nuevo proyecto</h5>
 
                 </div>
 
@@ -283,7 +281,7 @@ $stmt->close();
 
                   <div class="mb-3">
                     <label for="partida" class="form-label">Asignación presupuestaria (Monto)</label>
-                    <input type="number" class="form-control" id="monto" placeholder="Indique el monto asignado para la ejecución del proyecto">
+                    <input type="text" class="form-control" id="monto" placeholder="Indique el monto asignado para la ejecución del proyecto">
                   </div>
 
 
@@ -296,12 +294,9 @@ $stmt->close();
 
 
                   <div class="mb-3 d-flex justify-content-between">
-                    <button class="btn btn-secondary" onclick="$('#vista_registro').addClass('hide')">Cancelar</button>
+                    <button class="btn btn-secondary" id="btn-cancelar-registro">Cancelar</button>
                     <button class="btn btn-primary" id="btn-registro">Guardar</button>
-
                   </div>
-
-
                 </div>
               </div>
             </div>
@@ -309,14 +304,13 @@ $stmt->close();
         </div>
 
 
-
-        <div class="col-lg-12">
+        <div class="col-lg-12" id="vista-tabla">
           <div class="card" style="height: 62vh;">
             <div class="card-body">
               <div class="d-flex flex-column">
                 <div class="card-title mb-auto d-flex justify-content-between">
                   <h5 class="mb-0">
-                    Proyectos
+                    Proyectos del plan de inversión
                   </h5>
                   <button class="btn btn-info btn-sm" onclick="nuevoProyecto()">
                     <i class="bx bx-plus"></i>
@@ -325,7 +319,7 @@ $stmt->close();
                 </div>
 
 
-                <section id="vista-tabla" class="mt-2 card-body">
+                <section class="mt-2 card-body">
 
                   <table class="table" id="table">
                     <thead>
@@ -389,6 +383,8 @@ $stmt->close();
       <script src="../../src/assets/js/amcharts5/index.js"></script>
       <script src="../../src/assets/js/amcharts5/themes/Animated.js"></script>
       <script src="../../src/assets/js/amcharts5/xy.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/autonumeric@4.6.0"></script>
+
 
       <script>
         const url_back = '../../back/modulo_pl_formulacion/form_plan_inversion.php'
@@ -397,6 +393,7 @@ $stmt->close();
                             'monto' => $plan_inversion_monto
                           ]); ?>;
         let monto_total_proyectos = 0;
+        let proyectos = []
 
 
         // Obtener la lista de partidas
@@ -470,11 +467,6 @@ $stmt->close();
                   if (response.success) {
                     get_tabla()
                     toast_s("success", "Actualizado correctamente");
-                    // restar uno a total_proyectos y total_proyectos_pendientes
-                    const total_proyectos_ejecutados = parseInt($('#total_proyectos_ejecutados').val())
-                    const total_proyectos_pendientes = parseInt($('#total_proyectos_pendientes').val())
-                    $('#total_proyectos_pendientes').val(total_proyectos_pendientes - 1)
-                    $('#total_proyectos_ejecutados').val(total_proyectos_ejecutados + 1)
 
                   } else {
                     toast_s("error", response.error);
@@ -488,18 +480,12 @@ $stmt->close();
 
 
 
-
-
-
-
-
-
         }
 
         document.getElementById('btn-ejecutar').addEventListener('click', ejecutarProyecto)
 
 
-
+        let accion
 
 
         // verificar si hay dinero antes de mostrar el formulario
@@ -507,10 +493,26 @@ $stmt->close();
           if (planData.monto == monto_total_proyectos) {
             toast_s("error", "No se puede crear un proyecto sin disponibilidad presupuestaria");
           } else {
+            accion = 'registrar_proyecto'
             $('#vista_registro').removeClass('hide')
+            $('#vista-tabla').addClass('hide')
           }
         }
 
+        function editarProyecto(id) {
+          accion = 'update_proyecto'
+          console.log(proyectos[id])
+
+          $('#nombre').val(proyectos[id]['1'])
+          $('#descripcion').val(proyectos[id]['2'])
+          $('#monto').val(proyectos[id]['3'])
+          $('#partida').val(proyectos[id]['4'])
+
+
+          $('#vista_registro').removeClass('hide')
+          $('#vista-tabla').addClass('hide')
+
+        }
 
         // DATA TABLE
         var DataTable = $("#table").DataTable({
@@ -518,82 +520,44 @@ $stmt->close();
         });
 
 
-
-        function get_tabla() {
-          $.ajax({
-            url: url_back,
-            type: "json",
-            contentType: 'application/json',
-            data: JSON.stringify({
-              accion: 'get_proyectos',
-              id_plan: planData.id
-            }),
-
-            success: function(response) {
-              let data_tabla = [] // Informacion de la tabla
-
-              if (response.success) {
-                let count = 1;
-                DataTable.clear()
-
-                monto_total_proyectos = 0;
-                monto_total_ejecutado = 0;
-
-                response.success.forEach(function(item) {
-                  data_tabla.push([
-                    count++,
-                    item.proyecto,
-                    item.monto_proyecto,
-                    item.status === 1 ?
-                    `<span class="badge bg-light-primary">Ejecutado</span>` : `<span class="badge bg-light-secondary">Pendiente</span>`,
-                    item.status === 0 ?
-                    `<button class="btn btn-edit btn-sm bg-brand-color-2 text-white" data-edit-id="${item.id}"><i class="bx bx-edit-alt"></i></button>` :
-                    '',
-                    item.status === 0 ?
-                    `<button class="btn btn-danger btn-sm btn-delete" data-delete-id="${item.id}"><i class="bx bx-trash"></i></button>` :
-                    ''
-                  ]);
-
-
-                  monto_total_proyectos += parseInt(item.monto_proyecto) // Para calcular el total asignado en caso de que se requiera registrar uno nuevo
-
-                  if (item.status == '1') {
-                    monto_total_ejecutado += parseInt(item.monto_proyecto)
-                  }
-                });
-
-                DataTable.rows.add(data_tabla).draw()
-                $('#monto_asigando_ap').html(monto_total_proyectos)
-                $('#monto_ejecutado').html(monto_total_ejecutado)
-              }
-            },
-            error: function(xhr, status, error) {
-              console.log(error);
-            },
-          });
+        function cancelarRegistro() {
+          $('#vista_registro').addClass('hide')
+          $('#vista-tabla').removeClass('hide')
+          $('.form-control').val('')
         }
-        get_tabla()
+        document.getElementById('btn-cancelar-registro').addEventListener('click', cancelarRegistro)
 
         // Registrrar nuevo proyecto
         function guardarProyecto() {
           const nombre = $("#nombre").val();
           const descripcion = $("#descripcion").val();
-          const monto = $("#monto").val();
+          const monto = $("#monto").val().replace(/\./g, "");
+          // quitar puntos de monto
           const partida = $("#partida").val();
 
+          console.log(partida)
           const proyecto = {
-            nombre: nombre,
-            descripcion: descripcion,
-            monto: monto,
-            partida: partida,
-            id_plan: planData.id
+            nombre: nombre.trim(),
+            descripcion: descripcion.trim(),
+            monto: monto.trim(),
+            partida: partida.trim(),
+            id_plan: planData.id,
+            id: ''
           }
+          console.log(proyecto)
           if (nombre == '' || descripcion == '' || monto == '' || partida == '') {
             toast_s('error', 'Todos los campos son obligatorios')
             return
           }
 
-          const nueva_dist = parseInt(monto_total_proyectos) + parseInt(monto);
+
+
+          if (accion == 'update_proyecto') {
+            nueva_dist = (parseInt(monto_total_proyectos) - parseInt(proyectos[edt][3])) + parseInt(monto);
+            proyecto.id = edt
+          } else {
+            nueva_dist = parseInt(monto_total_proyectos) + parseInt(monto);
+          }
 
 
           if (nueva_dist > parseInt(planData.monto)) {
@@ -607,24 +571,21 @@ $stmt->close();
           }
 
           if (verificarMonto(monto)) {
-
-
-
             $.ajax({
               url: url_back,
               type: "json",
               contentType: 'application/json',
               data: JSON.stringify({
                 proyecto: proyecto,
-                accion: 'registrar_proyecto'
+                accion: accion
               }),
               success: function(response) {
                 if (response.success) {
-                  toast_s('success', 'Proyecto registrado con éxito')
+                  toast_s('success', 'Proyecto ' + (accion == 'update_proyecto' ? 'actualizado' : 'registrado') + ' con éxito')
                   get_tabla()
-                  $('#vista_registro').addClass('hide')
+                  cancelarRegistro()
                 } else {
-                  toast_s('error', 'Error al registrar proyecto')
+                  toast_s('error', 'Error al ' + (accion == 'update_proyecto' ? 'actualizar' : 'registrar') + ' proyecto')
                 }
               },
               error: function(xhr, status, error) {
@@ -637,11 +598,6 @@ $stmt->close();
         // addevenlister btn-registro click
 
         document.getElementById('btn-registro').addEventListener('click', guardarProyecto);
-
-
-
-
-
 
 
 
@@ -674,12 +630,6 @@ $stmt->close();
                   if (response.success) {
                     get_tabla()
                     toast_s("success", "Eliminado con éxito");
-                    // restar uno a total_proyectos y total_proyectos_pendientes
-                    const total_proyectos = parseInt($('#total_proyectos').val())
-                    const total_proyectos_pendientes = parseInt($('#total_proyectos_pendientes').val())
-
-                    $('#total_proyectos').val(total_proyectos - 1)
-                    $('#total_proyectos_pendientes').val(total_proyectos_pendientes - 1)
                   } else {
                     toast_s("error", response.error);
                   }
@@ -721,134 +671,144 @@ $stmt->close();
             if (result.isConfirmed) {
               toggleDialogs()
             } else if (result.isDenied) {
-              alert('deny')
+              editarProyecto(id)
             }
           });
 
         }
 
 
-
-
-
-
-
         // GRAFICO 1 - BARRAS HORIZONTALES
+        // Create root element
+        var root = am5.Root.new("chartdiv");
 
-        am5.ready(function() {
+        root.setThemes([
+          am5themes_Animated.new(root)
+        ]);
 
-          // Create root element
-          var root = am5.Root.new("chartdiv");
+        var chart = root.container.children.push(am5xy.XYChart.new(root, {
+          panX: false,
+          panY: false,
+          paddingLeft: 0,
+          layout: root.verticalLayout
+        }));
 
-          root.setThemes([
-            am5themes_Animated.new(root)
-          ]);
+        var legend = chart.children.push(am5.Legend.new(root, {
+          centerX: am5.p50,
+          x: am5.p50
+        }))
 
-          var chart = root.container.children.push(am5xy.XYChart.new(root, {
-            panX: false,
-            panY: false,
-            paddingLeft: 0,
-            layout: root.verticalLayout
-          }));
+        var data = [{
+          year: "",
+          income: <?php echo $proyectos ?>,
+          expenses: <?php echo $proyectos_ejecutados ?>
+        }];
 
-          var legend = chart.children.push(am5.Legend.new(root, {
-            centerX: am5.p50,
-            x: am5.p50
-          }))
+        var yAxis = chart.yAxes.push(am5xy.CategoryAxis.new(root, {
+          categoryField: "year",
+          renderer: am5xy.AxisRendererY.new(root, {
+            inversed: true,
+            cellStartLocation: 0.1,
+            cellEndLocation: 0.9,
+            minorGridEnabled: true
+          })
+        }));
 
-          var data = [{
-            year: "",
-            income: <?php echo $proyectos ?>,
-            expenses: <?php echo $proyectos_ejecutados ?>
-          }];
+        yAxis.data.setAll(data);
 
-          var yAxis = chart.yAxes.push(am5xy.CategoryAxis.new(root, {
-            categoryField: "year",
-            renderer: am5xy.AxisRendererY.new(root, {
-              inversed: true,
-              cellStartLocation: 0.1,
-              cellEndLocation: 0.9,
-              minorGridEnabled: true
+        var xAxis = chart.xAxes.push(am5xy.ValueAxis.new(root, {
+          renderer: am5xy.AxisRendererX.new(root, {
+            strokeOpacity: 0.1,
+            minGridDistance: 50
+          }),
+          min: 0
+        }));
+
+        // Add series
+        function createSeries(field, name) {
+          var series = chart.series.push(am5xy.ColumnSeries.new(root, {
+            name: name,
+            xAxis: xAxis,
+            yAxis: yAxis,
+            valueXField: field,
+            categoryYField: "year",
+            sequencedInterpolation: true,
+            tooltip: am5.Tooltip.new(root, {
+              pointerOrientation: "horizontal",
+              labelText: "[bold]{name}[/] {valueX}"
             })
           }));
 
-          yAxis.data.setAll(data);
+          series.columns.template.setAll({
+            height: am5.p100,
+            strokeOpacity: 0
+          });
 
-          var xAxis = chart.xAxes.push(am5xy.ValueAxis.new(root, {
-            renderer: am5xy.AxisRendererX.new(root, {
-              strokeOpacity: 0.1,
-              minGridDistance: 50
-            }),
-            min: 0
-          }));
-
-          // Add series
-          function createSeries(field, name) {
-            var series = chart.series.push(am5xy.ColumnSeries.new(root, {
-              name: name,
-              xAxis: xAxis,
-              yAxis: yAxis,
-              valueXField: field,
-              categoryYField: "year",
-              sequencedInterpolation: true,
-              tooltip: am5.Tooltip.new(root, {
-                pointerOrientation: "horizontal",
-                labelText: "[bold]{name}[/] {valueX}"
+          series.bullets.push(function() {
+            return am5.Bullet.new(root, {
+              locationX: 1,
+              locationY: 0.5,
+              sprite: am5.Label.new(root, {
+                centerY: am5.p50,
+                text: "{valueX}",
+                populateText: true
               })
-            }));
-
-            series.columns.template.setAll({
-              height: am5.p100,
-              strokeOpacity: 0
             });
+          });
 
-            series.bullets.push(function() {
-              return am5.Bullet.new(root, {
-                locationX: 1,
-                locationY: 0.5,
-                sprite: am5.Label.new(root, {
-                  centerY: am5.p50,
-                  text: "{valueX}",
-                  populateText: true
-                })
-              });
+          series.bullets.push(function() {
+            return am5.Bullet.new(root, {
+              locationX: 1,
+              locationY: 0.5,
+              sprite: am5.Label.new(root, {
+                centerX: am5.p100,
+                centerY: am5.p50,
+                text: "{name}",
+                fill: am5.color(0xffffff),
+                populateText: true
+              })
             });
+          });
 
-            series.bullets.push(function() {
-              return am5.Bullet.new(root, {
-                locationX: 1,
-                locationY: 0.5,
-                sprite: am5.Label.new(root, {
-                  centerX: am5.p100,
-                  centerY: am5.p50,
-                  text: "{name}",
-                  fill: am5.color(0xffffff),
-                  populateText: true
-                })
-              });
-            });
+          series.data.setAll(data);
+          series.appear();
 
-            series.data.setAll(data);
-            series.appear();
+          return series;
+        }
 
-            return series;
-          }
+        createSeries("income", "Total");
+        createSeries("expenses", "EJecutados");
 
-          createSeries("income", "Total");
-          createSeries("expenses", "EJecutados");
+        // Add cursor
+        var cursor = chart.set("cursor", am5xy.XYCursor.new(root, {
+          behavior: "zoomY"
+        }));
+        cursor.lineY.set("forceHidden", true);
+        cursor.lineX.set("forceHidden", true);
 
-          // Add cursor
-          var cursor = chart.set("cursor", am5xy.XYCursor.new(root, {
-            behavior: "zoomY"
-          }));
-          cursor.lineY.set("forceHidden", true);
-          cursor.lineX.set("forceHidden", true);
+        // Make stuff animate on load
+        chart.appear(1000, 100);
 
-          // Make stuff animate on load
-          chart.appear(1000, 100);
-        }); // end am5.ready()
+        function actualizarGrafico(i, e) {
+          // Actualizar los datos con los nuevos valores
+          var nuevosDatos = [{
+            year: "",
+            income: i, // Nuevo valor de ingresos
+            expenses: e // Nuevo valor de gastos
+          }];
+
+          // Actualizar la data del eje y
+          yAxis.data.setAll(nuevosDatos);
+
+          // Actualizar la data de las series
+          chart.series.each(function(series) {
+            series.data.setAll(nuevosDatos);
+          });
+        }
+        // GRAFICO 1 - BARRAS HORIZONTALES
 
 
+        // verificar montos
         function verificarMonto(monto) {
           // verifica que situado sea un numero
           if (isNaN(monto)) {
@@ -884,6 +844,88 @@ $stmt->close();
         window.onresize = adjustFontSize;
 
         // End: Ajustar el tamaño del texto con la cantidad del situado para el card con el bg-info
+
+
+
+
+        function get_tabla() {
+          $.ajax({
+            url: url_back,
+            type: "json",
+            contentType: 'application/json',
+            data: JSON.stringify({
+              accion: 'get_proyectos',
+              id_plan: planData.id
+            }),
+
+            success: function(response) {
+              let data_tabla = [] // Informacion de la tabla
+
+              if (response.success) {
+                let count = 1;
+                DataTable.clear()
+
+                monto_total_proyectos = 0;
+                monto_total_ejecutado = 0;
+                let proyectos_ejecutados = 0
+                let proyectos_pendientes = 0
+
+                response.success.forEach(function(item) {
+
+
+                  proyectos[item.id] = [
+                    item.id,
+                    item.proyecto,
+                    item.descripcion,
+                    item.monto_proyecto,
+                    item.id_partida
+                  ]
+
+                  data_tabla.push([
+                    count++,
+                    item.proyecto,
+                    item.monto_proyecto,
+                    item.status === 1 ?
+                    `<span class="badge bg-light-primary">Ejecutado</span>` : `<span class="badge bg-light-secondary">Pendiente</span>`,
+                    item.status === 0 ?
+                    `<button class="btn btn-edit btn-sm bg-brand-color-2 text-white" data-edit-id="${item.id}"><i class="bx bx-edit-alt"></i></button>` :
+                    '-',
+                    item.status === 0 ?
+                    `<button class="btn btn-danger btn-sm btn-delete" data-delete-id="${item.id}"><i class="bx bx-trash"></i></button>` :
+                    '-'
+                  ]);
+
+
+                  monto_total_proyectos += parseInt(item.monto_proyecto) // Para calcular el total asignado en caso de que se requiera registrar uno nuevo
+
+                  if (item.status == '1') {
+                    monto_total_ejecutado += parseInt(item.monto_proyecto)
+                    proyectos_ejecutados += 1
+
+                  } else {
+                    proyectos_pendientes += 1
+
+                  }
+                });
+
+                $('#total_proyectos').html(data_tabla.length)
+                $('#total_proyectos_ejecutados').html(proyectos_ejecutados)
+                $('#total_proyectos_pendientes').html(proyectos_pendientes)
+
+
+                actualizarGrafico(data_tabla.length, proyectos_ejecutados)
+
+                DataTable.rows.add(data_tabla).draw()
+                $('#monto_asigando_ap').html(monto_total_proyectos)
+                $('#monto_ejecutado').html(monto_total_ejecutado)
+              }
+            },
+            error: function(xhr, status, error) {
+              console.log(error);
+            },
+          });
+        }
+        get_tabla()
       </script>
 
 </body>
