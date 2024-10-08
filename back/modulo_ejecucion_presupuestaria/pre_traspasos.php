@@ -53,12 +53,11 @@ function traspasarPartida($id_partida_t, $id_partida_r, $id_ejercicio, $monto) {
         $stmtSumaMontos->execute();
         $resultadoSumaMontos = $stmtSumaMontos->get_result();
 
-        if ($resultadoSumaMontos->num_rows === 0) {
-            throw new Exception("No se encontraron gastos asociados al tipo de gasto y ejercicio fiscal.");
+        $total_monto_gastos = 0;
+        if ($resultadoSumaMontos->num_rows > 0) {
+            $filaSumaMontos = $resultadoSumaMontos->fetch_assoc();
+            $total_monto_gastos = (float) $filaSumaMontos['total_monto'];
         }
-
-        $filaSumaMontos = $resultadoSumaMontos->fetch_assoc();
-        $total_monto_gastos = (float) $filaSumaMontos['total_monto'];
 
         // Paso 4: Obtener el monto inicial de la distribución presupuestaria de la partida transferente (id_partida_t)
         $sqlDistribucion = "SELECT monto_inicial FROM distribucion_presupuestaria WHERE id_partida = ? AND id_ejercicio = ?";
@@ -74,8 +73,8 @@ function traspasarPartida($id_partida_t, $id_partida_r, $id_ejercicio, $monto) {
         $filaDistribucion = $resultadoDistribucion->fetch_assoc();
         $monto_inicial = (float) $filaDistribucion['monto_inicial'];
 
-        // Calcular el monto total inicial luego del traspaso
-        $monto_total_inicial = $monto_inicial - $total_monto_gastos;
+        // Calcular el monto total inicial; si no hay gastos, se usa solo el monto_inicial
+        $monto_total_inicial = ($total_monto_gastos > 0) ? $monto_inicial - $total_monto_gastos : $monto_inicial;
 
         // Verificar que el monto recibido sea igual o menor al monto total inicial
         if ($monto > $monto_total_inicial) {
@@ -127,6 +126,7 @@ function traspasarPartida($id_partida_t, $id_partida_r, $id_ejercicio, $monto) {
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 
 // Procesar la solicitud
