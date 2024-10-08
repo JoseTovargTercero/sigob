@@ -174,8 +174,9 @@ function obtenerTodosEjerciciosFiscales()
                 // Calcular el restante
                 $restante = $situado - $totalMontoInicial;
 
-                // Añadir el restante y las partidas al array del ejercicio
+                // Añadir el restante, distribuido y las partidas al array del ejercicio
                 $row['restante'] = $restante;
+                $row['distribuido'] = $totalMontoInicial;
                 $row['partidas'] = $partidasArray;
 
                 // Añadir al array final de ejercicios
@@ -192,6 +193,7 @@ function obtenerTodosEjerciciosFiscales()
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 
 function obtenerEjercicioFiscalPorId($id)
@@ -257,8 +259,9 @@ function obtenerEjercicioFiscalPorId($id)
             // Calcular el restante
             $restante = $ejercicio['situado'] - $totalMontoInicial;
 
-            // Añadir el restante y las partidas al array de respuesta
+            // Añadir el restante, distribuido y las partidas al array de respuesta
             $ejercicio['restante'] = $restante;
+            $ejercicio['distribuido'] = $totalMontoInicial;
             $ejercicio['partidas'] = $partidasArray;
 
             return json_encode(["success" => $ejercicio]);
@@ -270,6 +273,7 @@ function obtenerEjercicioFiscalPorId($id)
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 // Procesar la solicitud
 $data = json_decode(file_get_contents("php://input"), true);

@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.1
+-- version 5.2.0
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 05-10-2024 a las 20:11:58
--- Versión del servidor: 10.4.32-MariaDB
--- Versión de PHP: 8.0.30
+-- Tiempo de generación: 08-10-2024 a las 05:17:33
+-- Versión del servidor: 10.4.27-MariaDB
+-- Versión de PHP: 7.4.33
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -9863,6 +9863,23 @@ CREATE TABLE `tipo_gastos` (
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `traspasos`
+--
+
+CREATE TABLE `traspasos` (
+  `id` int(255) NOT NULL,
+  `id_partida_t` int(255) NOT NULL,
+  `id_partida_r` int(255) NOT NULL,
+  `id_ejercicio` int(255) NOT NULL,
+  `monto` varchar(255) NOT NULL,
+  `fecha` varchar(255) NOT NULL,
+  `monto_anterior` varchar(255) NOT NULL,
+  `monto_actual` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `txt`
 --
 
@@ -14376,6 +14393,12 @@ ALTER TABLE `tasa_historico`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indices de la tabla `traspasos`
+--
+ALTER TABLE `traspasos`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indices de la tabla `txt`
 --
 ALTER TABLE `txt`
@@ -14648,6 +14671,12 @@ ALTER TABLE `tasa`
 --
 ALTER TABLE `tasa_historico`
   MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT de la tabla `traspasos`
+--
+ALTER TABLE `traspasos`
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `txt`

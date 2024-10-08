@@ -48,16 +48,20 @@ function registrarCompromiso($idRegistro, $nombreTabla, $descripcion)
 
         // Verificar si la inserción fue exitosa
         if ($stmtInsert->affected_rows > 0) {
-            // Actualizar el campo numero_compromiso en la tabla correspondiente (solicitud_dozavos u otra tabla)
-            $sqlUpdate = "UPDATE $nombreTabla SET numero_compromiso = ? WHERE id = ?";
-            $stmtUpdate = $conexion->prepare($sqlUpdate);
-            $stmtUpdate->bind_param("si", $nuevoCorrelativo, $idRegistro);
-            $stmtUpdate->execute();
+            // Actualizar el campo numero_compromiso solo si nombreTabla es solicitud_dozavos
+            if ($nombreTabla === 'solicitud_dozavos') {
+                $sqlUpdate = "UPDATE $nombreTabla SET numero_compromiso = ? WHERE id = ?";
+                $stmtUpdate = $conexion->prepare($sqlUpdate);
+                $stmtUpdate->bind_param("si", $nuevoCorrelativo, $idRegistro);
+                $stmtUpdate->execute();
 
-            if ($stmtUpdate->affected_rows > 0) {
-                return ["success" => true, "correlativo" => $nuevoCorrelativo];
+                if ($stmtUpdate->affected_rows > 0) {
+                    return ["success" => true, "correlativo" => $nuevoCorrelativo];
+                } else {
+                    return ["error" => "No se pudo actualizar el número de compromiso en la tabla $nombreTabla."];
+                }
             } else {
-                return ["error" => "No se pudo actualizar el número de compromiso en la tabla $nombreTabla."];
+                return ["success" => true, "correlativo" => $nuevoCorrelativo];
             }
         } else {
             return ["error" => "No se pudo registrar el compromiso."];
@@ -67,6 +71,7 @@ function registrarCompromiso($idRegistro, $nombreTabla, $descripcion)
         return ["error" => $e->getMessage()];
     }
 }
+
 
 // Función para actualizar el compromiso relacionado
 function actualizarCompromiso($idSolicitud, $descripcion)
@@ -87,32 +92,3 @@ function actualizarCompromiso($idSolicitud, $descripcion)
     }
 }
 
-// Función para eliminar una solicitud y su compromiso relacionado
-function eliminarSolicitudozavo($data)
-{
-    global $conexion;
-
-    if (!isset($data['id'])) {
-        return json_encode(["error" => "No se ha especificado ID para eliminar."]);
-    }
-
-    $idSolicitud = $data['id'];
-
-    // Eliminar el compromiso relacionado
-    $sqlCompromiso = "DELETE FROM compromisos WHERE id_registro = ?";
-    $stmtCompromiso = $conexion->prepare($sqlCompromiso);
-    $stmtCompromiso->bind_param("i", $idSolicitud);
-    $stmtCompromiso->execute();
-
-    // Eliminar la solicitud
-    $sqlSolicitud = "DELETE FROM solicitud_dozavos WHERE id = ?";
-    $stmtSolicitud = $conexion->prepare($sqlSolicitud);
-    $stmtSolicitud->bind_param("i", $idSolicitud);
-    $stmtSolicitud->execute();
-
-    if ($stmtSolicitud->affected_rows > 0) {
-        return json_encode(["success" => "Solicitud y compromiso eliminados con éxito."]);
-    } else {
-        return json_encode(["error" => "No se pudo eliminar la solicitud o el compromiso."]);
-    }
-}

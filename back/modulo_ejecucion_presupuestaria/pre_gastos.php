@@ -145,7 +145,7 @@ function gestionarGasto($idGasto, $accion) {
 
             if ($stmtUpdateGasto->affected_rows > 0) {
                 // Paso 4: Registrar el compromiso
-                $resultadoCompromiso = registrarCompromiso($idGasto, 'creacion_de_gasto', $descripcion);
+                $resultadoCompromiso = registrarCompromiso($idGasto, 'gastos', $descripcion);
 
                 // Paso 5: Actualizar el monto_actual en distribucion_presupuestaria
                 $nuevoMontoActual = $monto_actual - $monto;
