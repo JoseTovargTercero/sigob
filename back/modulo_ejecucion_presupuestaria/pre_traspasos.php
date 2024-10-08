@@ -60,8 +60,8 @@ function traspasarPartida($id_partida_t, $id_partida_r, $id_ejercicio, $monto) {
         $filaSumaMontos = $resultadoSumaMontos->fetch_assoc();
         $total_monto_gastos = (float) $filaSumaMontos['total_monto'];
 
-        // Paso 4: Obtener el monto actual de la distribución presupuestaria de la partida transferente (id_partida_t)
-        $sqlDistribucion = "SELECT monto_actual FROM distribucion_presupuestaria WHERE id_partida = ? AND id_ejercicio = ?";
+        // Paso 4: Obtener el monto inicial de la distribución presupuestaria de la partida transferente (id_partida_t)
+        $sqlDistribucion = "SELECT monto_inicial FROM distribucion_presupuestaria WHERE id_partida = ? AND id_ejercicio = ?";
         $stmtDistribucion = $conexion->prepare($sqlDistribucion);
         $stmtDistribucion->bind_param("ii", $id_partida_t, $id_ejercicio);
         $stmtDistribucion->execute();
@@ -72,20 +72,20 @@ function traspasarPartida($id_partida_t, $id_partida_r, $id_ejercicio, $monto) {
         }
 
         $filaDistribucion = $resultadoDistribucion->fetch_assoc();
-        $monto_actual = (float) $filaDistribucion['monto_actual'];
+        $monto_inicial = (float) $filaDistribucion['monto_inicial'];
 
-        // Calcular el monto total actual luego del traspaso
-        $monto_total_actual = $monto_actual - $total_monto_gastos;
+        // Calcular el monto total inicial luego del traspaso
+        $monto_total_inicial = $monto_inicial - $total_monto_gastos;
 
-        // Verificar que el monto recibido sea igual o menor al monto total actual
-        if ($monto > $monto_total_actual) {
-            throw new Exception("El monto recibido es superior al monto actual de la partida presupuestaria transferente.");
+        // Verificar que el monto recibido sea igual o menor al monto total inicial
+        if ($monto > $monto_total_inicial) {
+            throw new Exception("El monto recibido es superior al monto inicial de la partida presupuestaria transferente.");
         }
 
         // Paso 5: Realizar el registro en la tabla de traspasos
         $fecha_actual = date("Y-m-d");
-        $monto_anterior = $monto_total_actual;
-        $monto_actual_nuevo = $monto_total_actual + $monto;
+        $monto_anterior = $monto_total_inicial;
+        $monto_actual_nuevo = $monto_total_inicial + $monto;
 
         $sqlInsertTraspaso = "INSERT INTO traspasos (id_partida_t, id_partida_r, id_ejercicio, monto, fecha, monto_anterior, monto_actual) VALUES (?, ?, ?, ?, ?, ?, ?)";
         $stmtInsertTraspaso = $conexion->prepare($sqlInsertTraspaso);
@@ -99,17 +99,23 @@ function traspasarPartida($id_partida_t, $id_partida_r, $id_ejercicio, $monto) {
             // Llamada a registrarCompromiso con el id del traspaso
             $resultadoCompromiso = registrarCompromiso($id_traspaso, 'traspasos', 'Traspaso de partidas');
 
-            // Paso 6: Actualizar la distribución presupuestaria con el nuevo monto actualizado
-            $nuevoMontoActual = $monto_actual_nuevo;
-            $sqlUpdateDistribucion = "UPDATE distribucion_presupuestaria SET monto_actual = ? WHERE id_partida = ? AND id_ejercicio = ?";
+            // Actualizar el estado de la partida transferente en la tabla partidas_presupuestarias
+            $sqlUpdateStatus = "UPDATE partidas_presupuestarias SET status = 1 WHERE id = ?";
+            $stmtUpdateStatus = $conexion->prepare($sqlUpdateStatus);
+            $stmtUpdateStatus->bind_param("i", $id_partida_t);
+            $stmtUpdateStatus->execute();
+
+            // Paso 6: Actualizar la distribución presupuestaria con el nuevo monto inicial
+            $nuevoMontoInicial = $monto_actual_nuevo;
+            $sqlUpdateDistribucion = "UPDATE distribucion_presupuestaria SET monto_inicial = ? WHERE id_partida = ? AND id_ejercicio = ?";
             $stmtUpdateDistribucion = $conexion->prepare($sqlUpdateDistribucion);
-            $stmtUpdateDistribucion->bind_param("dii", $nuevoMontoActual, $id_partida_t, $id_ejercicio);
+            $stmtUpdateDistribucion->bind_param("dii", $nuevoMontoInicial, $id_partida_t, $id_ejercicio);
             $stmtUpdateDistribucion->execute();
 
             if ($stmtUpdateDistribucion->affected_rows > 0) {
                 return json_encode(["success" => "Traspaso de partidas realizado correctamente"]);
             } else {
-                throw new Exception("No se pudo actualizar el monto actual de la distribución presupuestaria.");
+                throw new Exception("No se pudo actualizar el monto inicial de la distribución presupuestaria.");
             }
         } else {
             throw new Exception("No se pudo realizar el traspaso de partidas.");
@@ -121,6 +127,7 @@ function traspasarPartida($id_partida_t, $id_partida_r, $id_ejercicio, $monto) {
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 // Procesar la solicitud
 $data = json_decode(file_get_contents("php://input"), true);
