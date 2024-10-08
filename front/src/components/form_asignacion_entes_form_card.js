@@ -77,6 +77,7 @@ export const form_asignacion_entes_form_card = async ({
 
   montos.total = ejercicioFiscal.situado
   montos.restante = ejercicioFiscal.restante
+  montos.distribuido = ejercicioFiscal.distribuido
   montos.total_solicitado = plan.monto
 
   const oldCardElement = d.getElementById('asignacion-entes-form-card')
@@ -361,7 +362,8 @@ export const form_asignacion_entes_form_card = async ({
           <h4 class="text-center text-info">Asigne el monto a partidas:</h4>
           <h5>Nombre: ${plan.ente_nombre}</h5>
           <div class="d-flex gap-2 justify-content-between">
-          <h5>Monto total solicitado: ${plan.monto}</h5>
+          <h5>Solicitado: ${separarMiles(plan.monto)}</h5>
+          <h5>Distribuido: ${separarMiles(montos.distribuido)}</h5>
           <h5>Monto total asignado: <b id="monto-total-asignado">0</b></h5>
           </div>
 
@@ -491,10 +493,30 @@ export const form_asignacion_entes_form_card = async ({
       let montoDisponibleInput = d.getElementById(
         `partida-monto-disponible-${e.target.dataset.id}`
       )
-      console.log(montoDisponibleInput)
+
+      console.log(e.target.value)
+
+      console.log(
+        montoDisponibleInput.dataset.valorinicial,
+        e.target.value,
+        montoDisponibleInput.dataset.valorinicial < e.target.value
+      )
+
+      if (
+        Number(montoDisponibleInput.dataset.valorinicial) <
+        Number(e.target.value)
+      ) {
+        toastNotification({
+          type: NOTIFICATIONS_TYPES.fail,
+          message: 'Esta partida superó ',
+        })
+
+        e.target.value = montoDisponibleInput.dataset.valorinicial
+      }
 
       montoDisponibleInput.value =
-        Number(montoDisponibleInput.dataset.valorinicial) - e.target.value
+        Number(montoDisponibleInput.dataset.valorinicial) -
+        Number(e.target.value)
     }
   }
 
@@ -568,6 +590,15 @@ export const form_asignacion_entes_form_card = async ({
           return
         }
 
+        if (montos.acumulado > montos.distribuido) {
+          toastNotification({
+            type: NOTIFICATIONS_TYPES.fail,
+            message:
+              'Se ha superado el límite de la distribución presupuestaria',
+          })
+          return
+        }
+
         let mappedInfo = Array.from(inputsPartidas).map((input) => {
           let id_partida = input.dataset.id
           console.log(id_partida)
@@ -636,6 +667,11 @@ export const form_asignacion_entes_form_card = async ({
     })
 
     let diferenciaSolicitado = montos.total_solicitado - montos.acumulado
+
+    if (montos.acumulado > montos.distribuido) {
+      montoElement.innerHTML = `<span class="text-danger">${montos.acumulado}</span>`
+      return
+    }
 
     if (diferenciaSolicitado < 0) {
       montoElement.innerHTML = `<span class="text-warning">${montos.acumulado}</span>`

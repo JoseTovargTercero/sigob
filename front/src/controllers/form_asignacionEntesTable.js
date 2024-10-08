@@ -158,7 +158,7 @@ export const validateAsignacionEntesTable = async () => {
       topStart: function () {
         let toolbar = document.createElement('div')
         toolbar.innerHTML = `
-            <h5 class="text-center">Planes operativos</h5>
+            <h5 class="text-center">Asignación presupuestaria a entes</h5>
                       `
         return toolbar
       },
