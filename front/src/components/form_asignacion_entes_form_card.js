@@ -482,7 +482,6 @@ export const form_asignacion_entes_form_card = async ({
       console.log(partidasSeleccionadas)
     }
     if (e.target.classList.contains('partida-monto')) {
-      actualizarMontoRestante()
       fieldListPartidas = validateInput({
         target: e.target,
         fieldList: fieldListPartidas,
@@ -508,7 +507,7 @@ export const form_asignacion_entes_form_card = async ({
       ) {
         toastNotification({
           type: NOTIFICATIONS_TYPES.fail,
-          message: 'Esta partida superó ',
+          message: 'Esta partida ya no posee disponibilidad presupuestaria',
         })
 
         e.target.value = montoDisponibleInput.dataset.valorinicial
@@ -518,6 +517,8 @@ export const form_asignacion_entes_form_card = async ({
         Number(montoDisponibleInput.dataset.valorinicial) -
         Number(e.target.value)
     }
+
+    actualizarMontoRestante()
   }
 
   // CARGAR LISTA DE PARTIDAS
@@ -585,7 +586,7 @@ export const form_asignacion_entes_form_card = async ({
         if (Object.values(fieldListErrorsPartidas).some((el) => el.value)) {
           toastNotification({
             type: NOTIFICATIONS_TYPES.fail,
-            message: 'Debe asignar un monto a cada input',
+            message: 'Debe asignar un monto a cada partida',
           })
           return
         }
