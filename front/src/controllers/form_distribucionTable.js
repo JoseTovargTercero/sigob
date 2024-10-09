@@ -1,4 +1,5 @@
 import { getFormPartidas } from '../api/partidas.js'
+import { separarMiles } from '../helpers/helpers.js'
 
 const tableLanguage = {
   decimal: '',
@@ -66,7 +67,7 @@ export const loadDistribucionTable = async (partidas) => {
     return {
       partida: el.partida,
       // descripcion: el.descripcion,
-      monto_inicial: el.monto_inicial,
+      monto_inicial: `${separarMiles(el.monto_inicial)} Bs`,
       acciones: `
       <button class="btn btn-info btn-sm" data-editarid="${el.id}">Modificar</button>
       `,
