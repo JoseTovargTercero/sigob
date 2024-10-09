@@ -35,6 +35,7 @@ export const validateAsignacionEntesView = async () => {
         ejercicioTarget: e.target,
       })
     }
+
     // if (e.target.id === 'partida-registrar') {
     //   btnNewElement.setAttribute('disabled', true)
     //   form_partida_form_card({ elementToInsert: 'partidas-view' })

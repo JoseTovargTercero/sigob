@@ -516,9 +516,9 @@ export const form_asignacion_entes_form_card = async ({
       montoDisponibleInput.value =
         Number(montoDisponibleInput.dataset.valorinicial) -
         Number(e.target.value)
-    }
 
-    actualizarMontoRestante()
+      actualizarMontoRestante()
+    }
   }
 
   // CARGAR LISTA DE PARTIDAS

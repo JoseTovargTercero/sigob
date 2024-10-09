@@ -1,4 +1,5 @@
 import { form_distribucion_form_card } from '../components/form_distribucion_form_card.js'
+import { form_distribucion_modificar_form_card } from '../components/form_distribucion_modificar_card.js'
 import {
   ejerciciosLista,
   validarEjercicioActual,
@@ -34,6 +35,11 @@ export const validateDistribucionView = async () => {
       })
 
       loadDistribucionTable(ejercicioFiscal.partidas)
+    }
+    if (e.target.dataset.editarid) {
+      form_distribucion_modificar_form_card({
+        elementToInset: 'distribucion-view',
+      })
     }
   })
 }
