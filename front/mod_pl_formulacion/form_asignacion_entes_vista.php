@@ -36,12 +36,9 @@ require_once '../../back/sistema_global/session.php';
                   <span class="text-muted fw-light">Formulación /</span> Asignación de presupuesto a entes
                 </h4>
 
-                <div class="d-flex gap-1">
-                  <h5 class="mb-0">Seleccionar ejercicio:</h5 class="mb-0">
-                  <div class="row" id="ejercicios-fiscales">
-
-                  </div>
+                <div class="row" id="ejercicios-fiscales">
                 </div>
+
               </div>
 
             </div>

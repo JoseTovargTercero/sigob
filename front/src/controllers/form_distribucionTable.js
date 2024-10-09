@@ -26,11 +26,13 @@ const tableLanguage = {
 }
 
 let partidasTable
-export const validateDistribucionTable = async () => {
+export const validateDistribucionTable = async ({ partidas }) => {
   partidasTable = new DataTable('#distribucion-table', {
     columns: [
-      { data: 'id' },
-      { data: 'nombre' },
+      { data: 'partida' },
+      // { data: 'descripcion' },
+      { data: 'monto_inicial' },
+      { data: 'acciones' },
     ],
     responsive: true,
     scrollY: 400,
@@ -39,7 +41,7 @@ export const validateDistribucionTable = async () => {
       topStart: function () {
         let toolbar = document.createElement('div')
         toolbar.innerHTML = `
-            <h5 class="text-center">Planes operativos</h5>
+            <h5 class="text-center">Lista de partidas</h5>
                       `
         return toolbar
       },
@@ -49,25 +51,24 @@ export const validateDistribucionTable = async () => {
     },
   })
 
-  // loadDistribucionTable()
+  loadDistribucionTable(partidas)
 }
 
-export const loadDistribucionTable = async () => {
-  let partidas = await getFormPartidas()
+export const loadDistribucionTable = async (partidas) => {
+  // let partidas = await getFormPartidas()
 
-  if (!Array.isArray(partidas.fullInfo)) return
+  if (!Array.isArray(partidas)) return
 
   if (!partidas || partidas.error) return
 
-  let datosOrdenados = [...partidas.fullInfo].sort((a, b) => a.id - b.id)
+  let datosOrdenados = [...partidas].sort((a, b) => a.id - b.id)
   let data = datosOrdenados.map((el) => {
     return {
       partida: el.partida,
-      nombre: el.nombre,
-      descripcion: el.descripcion,
+      // descripcion: el.descripcion,
+      monto_inicial: el.monto_inicial,
       acciones: `
-      <button class="btn btn-info btn-sm" data-editarid="${el.id}">Editar</button>
-      <button class="btn btn-danger btn-sm" data-eliminarid="${el.id}">Eliminar</button>
+      <button class="btn btn-info btn-sm" data-editarid="${el.id}">Modificar</button>
       `,
     }
   })

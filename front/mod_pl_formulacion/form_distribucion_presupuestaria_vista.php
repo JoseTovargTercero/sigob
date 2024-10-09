@@ -26,8 +26,17 @@ require_once '../../back/sistema_global/session.php';
         <div class="page-block">
           <div class="row align-items-center">
             <div class="col-md-12">
-              <div class="page-header-title">
-                <h5 class="mb-0">Distribución presupuestaria</h5>
+              <!-- <div class="page-header-title">
+                <h5 class="mb-0"></h5>
+              </div> -->
+
+              <div class=" d-flex justify-content-between">
+                <h4 class="fw-bold py-3 mb-4">
+                  <span class="text-muted fw-light">Formulación /</span> Distribución presupuestaria
+                </h4>
+                <div class="row" id="ejercicios-fiscales">
+                </div>
+
               </div>
             </div>
           </div>
@@ -49,8 +58,11 @@ require_once '../../back/sistema_global/session.php';
               <div class="table-responsive p-1">
                 <table id="distribucion-table" class="table table-striped" style="width:100%">
                   <thead class="w-100">
-                    <th>ID</th>
-                    <th>NOMBRE</th>
+
+                    <th>PARTIDA</th>
+                    <!-- <th>DESCRIPCION</th> -->
+                    <th>MONTO</th>
+                    <th>ACCIONES</th>
 
                   </thead>
 

@@ -1,76 +1,20 @@
 import { getEntesPlan } from '../api/form_entes.js'
 import { getEjecicio, getEjecicios } from '../api/pre_distribucion.js'
 import { form_asignacion_entes_form_card } from '../components/form_asignacion_entes_form_card.js'
-import { confirmNotification } from '../helpers/helpers.js'
-import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
+import {
+  ejerciciosLista,
+  validarEjercicioActual,
+} from '../components/form_ejerciciosLista.js'
 import { validateAsignacionEntesTable } from './form_asignacionEntesTable.js'
-import { validateDistribucionTable } from './form_distribucionTable.js'
+
 const d = document
 
 export const validateAsignacionEntesView = async () => {
   validateAsignacionEntesTable()
 
-  let ejercicioFiscal
-
-  let ejerciciosFiscalesContainer = d.getElementById('ejercicios-fiscales')
-
-  let ejerciciosFiscales = await getEjecicios()
-
-  let fechaActual = new Date().getFullYear()
-  console.log(fechaActual)
-
-  let ejerciciosLinks = validarEjerciciosFiscales()
-
-  function validarEjerciciosFiscales() {
-    if (!ejerciciosFiscales || ejerciciosFiscales.length === 0) {
-      return `<div class='col-sm'>
-              <p>
-                <a
-                
-                  class='pointer text-dark'
-                  previewlistener='true'
-                >
-                  No hay ejercicios registrados
-                </a>
-              </p>
-            </div>`
-    } else {
-      return ejerciciosFiscales.fullInfo
-        .map((ejercicio) => {
-          let ano = Number(ejercicio.ano)
-
-          if (ano === fechaActual) {
-            ejercicioFiscal = ejercicio
-            return `  <div class='col-sm-4'>
-              <p>
-                <a
-                  data-ejercicioid='${ejercicio.id}'
-                  class='pointer text-decoration-underline text-primary'
-                  previewlistener='true'
-                >
-                  ${ejercicio.ano}
-                </a>
-              </p>
-            </div>`
-          } else {
-            return `  <div class='col-sm-4'>
-              <p>
-                <a
-                  data-ejercicioid='${ejercicio.id}'
-                  class='pointer text-dark'
-                  previewlistener='true'
-                >
-                ${ejercicio.ano}
-                </a>
-              </p>
-            </div>`
-          }
-        })
-        .join('')
-    }
-  }
-
-  ejerciciosFiscalesContainer.innerHTML = ejerciciosLinks
+  let ejercicioFiscal = await ejerciciosLista({
+    elementToInsert: 'ejercicios-fiscales',
+  })
 
   d.addEventListener('click', async (e) => {
     if (e.target.dataset.validarid) {
@@ -83,24 +27,13 @@ export const validateAsignacionEntesView = async () => {
       })
     }
     if (e.target.dataset.ejercicioid) {
-      let links = d.querySelectorAll('[data-ejercicioid]')
+      // QUITAR CARD SI SE CAMBIA EL AÑO FISCAL
+      let formCard = d.getElementById('asignacion-entes-form-card')
+      if (formCard) formCard.remove()
 
-      links.forEach((link) => {
-        console.log(link)
-        link.classList.remove('text-decoration-underline')
-        link.classList.remove('text-primary')
-
-        link.classList.add('text-dark')
+      ejercicioFiscal = await validarEjercicioActual({
+        ejercicioTarget: e.target,
       })
-
-      e.target.classList.remove('text-dark')
-
-      e.target.classList.add('text-decoration-underline')
-      e.target.classList.add('text-primary')
-
-      ejercicioFiscal = await getEjecicio(e.target.dataset.ejercicioid)
-
-      console.log(ejercicioFiscal)
     }
     // if (e.target.id === 'partida-registrar') {
     //   btnNewElement.setAttribute('disabled', true)
