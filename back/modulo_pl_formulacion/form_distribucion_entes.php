@@ -6,7 +6,8 @@ header('Content-Type: application/json');
 require_once '../sistema_global/errores.php';
 
 // Función para insertar datos en la tabla distribucion_entes
-function guardarDistribucionEntes($dataArray, $tipo) {
+function guardarDistribucionEntes($dataArray, $tipo)
+{
     global $conexion;
 
     try {
@@ -42,7 +43,7 @@ function guardarDistribucionEntes($dataArray, $tipo) {
             $fecha = date('d-m-Y'); // Fecha actual
             $sql = "INSERT INTO distribucion_entes (id_partida, monto, id_ente, id_poa, fecha) VALUES (?, ?, ?, ?, ?)";
             $stmt = $conexion->prepare($sql);
-            $stmt->bind_param("isiiss", $id_partida, $monto, $id_ente, $id_poa, $fecha);
+            $stmt->bind_param("isiis", $id_partida, $monto, $id_ente, $id_poa, $fecha);
             $stmt->execute();
 
             if ($stmt->affected_rows <= 0) {
@@ -62,7 +63,8 @@ function guardarDistribucionEntes($dataArray, $tipo) {
 }
 
 // Función para actualizar datos en la tabla distribucion_entes
-function actualizarDistribucionEntes($id, $dataArray) {
+function actualizarDistribucionEntes($id, $dataArray)
+{
     global $conexion;
 
     try {
@@ -108,7 +110,8 @@ function actualizarDistribucionEntes($id, $dataArray) {
 }
 
 // Función para eliminar datos en la tabla distribucion_entes
-function eliminarDistribucionEntes($id) {
+function eliminarDistribucionEntes($id)
+{
     global $conexion;
 
     try {
@@ -143,14 +146,14 @@ if (isset($data["accion"])) {
         $arrayDatos = $data["arrayDatos"];
         $tipo = $data["tipo"];
         echo guardarDistribucionEntes($arrayDatos, $tipo);
-    
-    // Actualizar datos
+
+        // Actualizar datos
     } elseif ($accion === "update" && isset($data["id"]) && isset($data["arrayDatos"])) {
         $id = $data["id"];
         $arrayDatos = $data["arrayDatos"];
         echo actualizarDistribucionEntes($id, $arrayDatos);
 
-    // Eliminar datos
+        // Eliminar datos
     } elseif ($accion === "delete" && isset($data["id"])) {
         $id = $data["id"];
         echo eliminarDistribucionEntes($id);

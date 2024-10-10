@@ -10,8 +10,11 @@ import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 const ejercicioFiscalUrl =
   '../../../../sigob/back/modulo_pl_formulacion/form_ejercicio_fiscal.php'
 
-const distribucionPresupuestariUrl =
+const distribucionPresupuestariaUrl =
   '../../../../sigob/back/modulo_pl_formulacion/form_distribucion.php'
+
+const distribucionPresupuestariaEntesUrl =
+  '../../../../sigob/back/modulo_pl_formulacion/form_distribucion_entes.php'
 const getEjecicios = async (id) => {
   showLoader()
   try {
@@ -101,7 +104,7 @@ const getEjecicio = async (id) => {
 const enviarDistribucionPresupuestaria = async ({ arrayDatos }) => {
   showLoader()
   try {
-    let res = await fetch(distribucionPresupuestariUrl, {
+    let res = await fetch(distribucionPresupuestariaUrl, {
       method: 'POST',
       body: JSON.stringify({ arrayDatos, accion: 'crear' }),
     })
@@ -141,4 +144,52 @@ const enviarDistribucionPresupuestaria = async ({ arrayDatos }) => {
   }
 }
 
-export { getEjecicio, getEjecicios, enviarDistribucionPresupuestaria }
+const enviarDistribucionPresupuestariaEntes = async ({ arrayDatos, tipo }) => {
+  showLoader()
+  try {
+    let res = await fetch(distribucionPresupuestariaEntesUrl, {
+      method: 'POST',
+      body: JSON.stringify({ arrayDatos, tipo, accion: 'insert' }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    const clone = res.clone()
+
+    let text = await clone.text()
+
+    console.log(text)
+
+    const json = await res.json()
+
+    console.log(json)
+
+    if (json.success) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.done,
+        message: json.success,
+      })
+    }
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
+
+    return json
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al enviar datos',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
+export {
+  getEjecicio,
+  getEjecicios,
+  enviarDistribucionPresupuestaria,
+  enviarDistribucionPresupuestariaEntes,
+}

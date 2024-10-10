@@ -20,7 +20,7 @@ export const form_distribucion_modificar_form_card = ({ elementToInset }) => {
   const oldCardElement = d.getElementById('distribucion-modificar-card')
   if (oldCardElement) oldCardElement.remove()
 
-  let card = `    <div class='card slide-up-animation' id='distribucion-modificar-card'>
+  let card = `   <div class='card slide-up-animation' id='distribucion-modificar-card'>
       <div class='card-header d-flex justify-content-between'>
         <div class=''>
           <h5 class='mb-0'>Modificar valor entre partidas</h5>
@@ -40,23 +40,71 @@ export const form_distribucion_modificar_form_card = ({ elementToInset }) => {
       </div>
       <div class='card-body'>
         <form id='distribucion-modificar-form-card'>
+
+          <div class='row mb-4'>
+            <div class='col'>
+              <h6 class='mb-0'>
+                Monto total:{' '}
+                <b id='monto-total'>Ejercicio fiscal no seleccionado</b>
+              </h6>
+              <small class='text-muted'>Monto disponible en esta partida</small>
+            </div>
+            <div class='col'>
+              <h6 class='mb-0'>
+                Monto restante:{' '}
+                <b id='monto-restante'>Ejercicio fiscal no seleccionado</b>
+              </h6>
+              <small class='text-muted'>
+                Monto total asignado a nueva partida
+              </small>
+            </div>
+          </div>
+
           <div class='row'>
             <div class='col'>
               <div class='form-group'>
-                <label class='form-label'>PARTIDA 1</label>
-                <input name='partida-1' type='text' placeholder='MONTO...' />
+                <label class='form-label'>Partida a modificar</label>
+                <input
+                  class='form-control'
+                  name='partida-1'
+                  type='text'
+                  placeholder='MONTO...'
+                />
               </div>
             </div>
             <div class='col'>
               <div class='form-group'>
-                <label class='form-label'>PARTIDA 2</label>
-                <input name='partida-2' type='text' placeholder='MONTO...' />
+                <label class='form-label'>
+                  Partida a asignar (distribucion)
+                </label>
+                <input
+                  class='form-control'
+                  name='partida-2'
+                  type='text'
+                  placeholder='Partida (distribucion)'
+                />
+              </div>
+
+              <div class='form-group'>
+                <label class='form-label'>Partida a asignar (nueva)</label>
+                <input
+                  class='form-control'
+                  name='partida-2'
+                  type='text'
+                  placeholder='Partida (nueva)'
+                />
               </div>
             </div>
             <div class='col'>
               <div class='form-group'>
-                <label class='form-label'>PARTIDA 2</label>
-                <input name='partida-2' type='text' placeholder='MONTO...' />
+                <label class='form-label'>Monto a asignar</label>
+                <input
+                  class='form-control partida-input partida-monto'
+                  type='number'
+                  name='partida-monto'
+                  id='partida-monto'
+                  placeholder='Monto a asignar...'
+                />
               </div>
             </div>
           </div>

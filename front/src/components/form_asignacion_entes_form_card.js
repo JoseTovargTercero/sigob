@@ -5,7 +5,11 @@
 // AÑADIR UNA TABLA PARA SELECCIONAR PARTIDAS QUE SE QUIERAN ASIGNAR PARA POSTERIOR ASIGNARLES SU MONTO
 
 import { getPartidas } from '../api/partidas.js'
-import { getEjecicio, getEjecicios } from '../api/pre_distribucion.js'
+import {
+  enviarDistribucionPresupuestariaEntes,
+  getEjecicio,
+  getEjecicios,
+} from '../api/pre_distribucion.js'
 import {
   confirmNotification,
   hideLoader,
@@ -524,7 +528,19 @@ export const form_asignacion_entes_form_card = async ({
   // CARGAR LISTA DE PARTIDAS
 
   function enviarInformacion(data) {
-    console.log(data)
+    confirmNotification({
+      type: NOTIFICATIONS_TYPES.send,
+      message: '¿Desea registrar esta distribución presupuestaria?',
+      successFunction: async function () {
+        let res = await enviarDistribucionPresupuestariaEntes({
+          arrayDatos: data,
+          tipo: 0,
+        })
+        if (res.success) {
+          closeCard()
+        }
+      },
+    })
   }
 
   function validateFormFocus(e) {
