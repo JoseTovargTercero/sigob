@@ -10,6 +10,7 @@ import {
   getEjecicio,
   getEjecicios,
 } from '../api/pre_distribucion.js'
+import { loadDistribucionTable } from '../controllers/form_distribucionTable.js'
 import {
   confirmNotification,
   hideLoader,
@@ -22,6 +23,8 @@ const d = document
 export const form_distribucion_form_card = ({ elementToInset }) => {
   let montos = { total: 0, restante: 0, acumulado: 0 }
   let partidas
+
+  let ejercicio
 
   let fieldList = { id_ejercicio: '' }
   let fieldListErrors = {
@@ -244,7 +247,7 @@ export const form_distribucion_form_card = ({ elementToInset }) => {
         return
       }
 
-      let ejercicio = await getEjecicio(e.target.value)
+      ejercicio = await getEjecicio(e.target.value)
 
       montos.total = ejercicio.situado
       montos.restante = ejercicio.restante
@@ -442,8 +445,9 @@ export const form_distribucion_form_card = ({ elementToInset }) => {
       message: '¿Desea registrar esta distribución presupuestaria?',
       successFunction: async function () {
         let res = await enviarDistribucionPresupuestaria({ arrayDatos: data })
-        console.log(res)
+        let ejericioActualizado = await getEjecicio(ejercicio.id)
         if (res.success) {
+          loadDistribucionTable(ejericioActualizado.partidas)
           closeCard()
         }
       },

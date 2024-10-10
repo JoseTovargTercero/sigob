@@ -22,7 +22,10 @@ export const validateDistribucionView = async () => {
 
   d.addEventListener('click', async (e) => {
     if (e.target.id === 'distribucion-registrar') {
-      form_distribucion_form_card({ elementToInset: 'distribucion-view' })
+      form_distribucion_form_card({
+        elementToInset: 'distribucion-view',
+        ejercicioFiscal,
+      })
     }
 
     if (e.target.dataset.ejercicioid) {

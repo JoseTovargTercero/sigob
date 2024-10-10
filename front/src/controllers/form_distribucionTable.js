@@ -62,6 +62,8 @@ export const loadDistribucionTable = async (partidas) => {
 
   if (!partidas || partidas.error) return
 
+  console.log(partidas)
+
   let datosOrdenados = [...partidas].sort((a, b) => a.id - b.id)
   let data = datosOrdenados.map((el) => {
     return {
