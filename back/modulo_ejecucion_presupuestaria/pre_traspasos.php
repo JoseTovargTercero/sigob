@@ -9,11 +9,13 @@ header('Content-Type: application/json');
 
 require_once '../sistema_global/errores.php';
 
-// Función para realizar el traspaso de partidas presupuestarias
 function traspasarPartida($id_partida_t, $id_partida_r, $id_ejercicio, $monto) {
     global $conexion;
 
     try {
+        // Iniciar la transacción
+        $conexion->begin_transaction();
+
         // Paso 1: Verificar el estado de la partida receptora (id_partida_r)
         $sqlPartidaReceptora = "SELECT status FROM partidas_presupuestarias WHERE id = ?";
         $stmtPartidaReceptora = $conexion->prepare($sqlPartidaReceptora);
@@ -92,13 +94,12 @@ function traspasarPartida($id_partida_t, $id_partida_r, $id_ejercicio, $monto) {
         $stmtInsertTraspaso->execute();
 
         if ($stmtInsertTraspaso->affected_rows > 0) {
-            // Obtener el id del traspaso insertado
             $id_traspaso = $stmtInsertTraspaso->insert_id;
 
-            // Llamada a registrarCompromiso con el id del traspaso
+            // Llamada a registrarCompromiso
             $resultadoCompromiso = registrarCompromiso($id_traspaso, 'traspasos', 'Traspaso de partidas');
 
-            // Actualizar el estado de la partida transferente en la tabla partidas_presupuestarias
+            // Actualizar el estado de la partida transferente
             $sqlUpdateStatus = "UPDATE partidas_presupuestarias SET status = 1 WHERE id = ?";
             $stmtUpdateStatus = $conexion->prepare($sqlUpdateStatus);
             $stmtUpdateStatus->bind_param("i", $id_partida_t);
@@ -112,6 +113,8 @@ function traspasarPartida($id_partida_t, $id_partida_r, $id_ejercicio, $monto) {
             $stmtUpdateDistribucion->execute();
 
             if ($stmtUpdateDistribucion->affected_rows > 0) {
+                // Confirmar la transacción
+                $conexion->commit();
                 return json_encode(["success" => "Traspaso de partidas realizado correctamente"]);
             } else {
                 throw new Exception("No se pudo actualizar el monto inicial de la distribución presupuestaria.");
@@ -121,12 +124,13 @@ function traspasarPartida($id_partida_t, $id_partida_r, $id_ejercicio, $monto) {
         }
 
     } catch (Exception $e) {
-        // Registrar el error en la tabla error_log
+        if ($conexion->in_transaction) {
+            $conexion->rollback();
+        }
         registrarError($e->getMessage());
         return json_encode(['error' => $e->getMessage()]);
     }
 }
-
 
 
 // Procesar la solicitud
