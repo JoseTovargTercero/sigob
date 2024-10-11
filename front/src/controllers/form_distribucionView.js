@@ -1,3 +1,4 @@
+import { getFormPartidas } from '../api/partidas.js'
 import { form_distribucion_form_card } from '../components/form_distribucion_form_card.js'
 import { form_distribucion_modificar_form_card } from '../components/form_distribucion_modificar_card.js'
 import {
@@ -40,8 +41,13 @@ export const validateDistribucionView = async () => {
       loadDistribucionTable(ejercicioFiscal.partidas)
     }
     if (e.target.dataset.editarid) {
+      let partidas = await getFormPartidas()
+
+      console.log(partidas, ejercicioFiscal.partidas)
       form_distribucion_modificar_form_card({
         elementToInset: 'distribucion-view',
+        partidas: partidas.fullInfo,
+        distribucionPartidas: ejercicioFiscal.partidas,
       })
     }
   })
