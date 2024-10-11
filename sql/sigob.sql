@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 11-10-2024 a las 15:11:10
+-- Tiempo de generación: 12-10-2024 a las 01:57:15
 -- Versión del servidor: 10.4.27-MariaDB
 -- Versión de PHP: 7.4.33
 
@@ -20,6 +20,19 @@ SET time_zone = "+00:00";
 --
 -- Base de datos: `sigob`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `asignacion_ente`
+--
+
+CREATE TABLE `asignacion_ente` (
+  `id` int(255) NOT NULL,
+  `id_ente` int(255) NOT NULL,
+  `monto_total` varchar(255) NOT NULL,
+  `id_ejercicio` int(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -987,12 +1000,11 @@ INSERT INTO `dependencias` (`id_dependencia`, `dependencia`, `cod_dependencia`, 
 
 CREATE TABLE `distribucion_entes` (
   `id` int(255) NOT NULL,
-  `id_partida` int(255) NOT NULL,
-  `monto` varchar(255) NOT NULL,
   `id_ente` int(255) NOT NULL,
-  `id_poa` int(255) NOT NULL,
-  `tipo` varchar(255) NOT NULL,
-  `fecha` varchar(255) NOT NULL
+  `partidas` longtext NOT NULL,
+  `monto_total` varchar(255) NOT NULL,
+  `status` int(255) NOT NULL,
+  `id_ejercicio` int(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -3874,6 +3886,14 @@ CREATE TABLE `entes` (
   `tipo_ente` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `entes`
+--
+
+INSERT INTO `entes` (`id`, `ente_nombre`, `tipo_ente`) VALUES
+(1, 'Ente de Prueba', 'J'),
+(2, 'Ente de prueba 2', 'D');
+
 -- --------------------------------------------------------
 
 --
@@ -4827,19 +4847,6 @@ INSERT INTO `notificaciones` (`id`, `user_1`, `user_2`, `tipo`, `guia`, `date`, 
 (7, 33, '31', 9, 'http://localhost/sigob/front/mod_nomina/nom_peticiones_tabla', '2024-08-28 00:47:47', 0, 'Aprobo el pago de nomina'),
 (8, 33, '31', 9, 'http://localhost/sigob/front/mod_nomina/nom_peticiones_tabla', '2024-08-28 01:23:17', 0, 'Aprobo el pago de nomina'),
 (9, 33, '31', 9, 'http://localhost/sigob/front/mod_nomina/nom_peticiones_tabla', '2024-08-28 23:23:47', 0, 'Aprobo el pago de nomina');
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `partidas_entes`
---
-
-CREATE TABLE `partidas_entes` (
-  `id` int(255) NOT NULL,
-  `id_ente` int(255) NOT NULL,
-  `id_partida` int(255) NOT NULL,
-  `monto` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -9337,21 +9344,6 @@ INSERT INTO `reportes` (`id`, `furmulacion`, `nominas`, `columnas`, `formato`, `
 (14, 'discapacidades=\'0\' ', '', '[\"nombres\",\"cedula\"]', 'pdf', 'moises', 1, '2024-08-11 17:03:52', ''),
 (16, 'discapacidades=\'0\' ', '4', '[\"nombres\",\"cedula\"]', 'pdf', 'moises', 1, '2024-08-11 17:13:28', ''),
 (17, 'discapacidades=\'0\' ', '31', '[\"nombres\",\"cedula\"]', 'pdf', 'moises2', 1, '2024-08-11 17:19:53', '');
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `solicitudes_entes`
---
-
-CREATE TABLE `solicitudes_entes` (
-  `id` int(255) NOT NULL,
-  `id_ente` int(255) NOT NULL,
-  `id_poa` int(255) NOT NULL,
-  `partidas` longtext NOT NULL,
-  `monto_total` varchar(255) NOT NULL,
-  `status` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -14170,6 +14162,12 @@ INSERT INTO `txt` (`id`, `id_empleado`, `total_a_pagar`, `nombre_nomina`, `ident
 --
 
 --
+-- Indices de la tabla `asignacion_ente`
+--
+ALTER TABLE `asignacion_ente`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indices de la tabla `backups`
 --
 ALTER TABLE `backups`
@@ -14344,12 +14342,6 @@ ALTER TABLE `notificaciones`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indices de la tabla `partidas_entes`
---
-ALTER TABLE `partidas_entes`
-  ADD PRIMARY KEY (`id`);
-
---
 -- Indices de la tabla `partidas_presupuestarias`
 --
 ALTER TABLE `partidas_presupuestarias`
@@ -14410,12 +14402,6 @@ ALTER TABLE `reportes`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indices de la tabla `solicitudes_entes`
---
-ALTER TABLE `solicitudes_entes`
-  ADD PRIMARY KEY (`id`);
-
---
 -- Indices de la tabla `solicitud_dozavos`
 --
 ALTER TABLE `solicitud_dozavos`
@@ -14467,6 +14453,12 @@ ALTER TABLE `txt`
 --
 -- AUTO_INCREMENT de las tablas volcadas
 --
+
+--
+-- AUTO_INCREMENT de la tabla `asignacion_ente`
+--
+ALTER TABLE `asignacion_ente`
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `backups`
@@ -14568,7 +14560,7 @@ ALTER TABLE `empleados_por_grupo`
 -- AUTO_INCREMENT de la tabla `entes`
 --
 ALTER TABLE `entes`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `error_log`
@@ -14643,12 +14635,6 @@ ALTER TABLE `notificaciones`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
--- AUTO_INCREMENT de la tabla `partidas_entes`
---
-ALTER TABLE `partidas_entes`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT de la tabla `partidas_presupuestarias`
 --
 ALTER TABLE `partidas_presupuestarias`
@@ -14707,12 +14693,6 @@ ALTER TABLE `recibo_pago`
 --
 ALTER TABLE `reportes`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
-
---
--- AUTO_INCREMENT de la tabla `solicitudes_entes`
---
-ALTER TABLE `solicitudes_entes`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `solicitud_dozavos`
