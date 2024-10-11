@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 11-10-2024 a las 05:10:20
+-- Tiempo de generación: 11-10-2024 a las 15:11:10
 -- Versión del servidor: 10.4.27-MariaDB
 -- Versión de PHP: 7.4.33
 
@@ -4836,6 +4836,7 @@ INSERT INTO `notificaciones` (`id`, `user_1`, `user_2`, `tipo`, `guia`, `date`, 
 
 CREATE TABLE `partidas_entes` (
   `id` int(255) NOT NULL,
+  `id_ente` int(255) NOT NULL,
   `id_partida` int(255) NOT NULL,
   `monto` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

@@ -5,25 +5,29 @@ header('Content-Type: application/json');
 require_once '../sistema_global/session.php';
 require_once '../sistema_global/errores.php';
 
-// Función para guardar en solicitudes_entes
 function guardarSolicitudEnte($id_ente, $id_poa, $partidas, $monto_total)
 {
     global $conexion;
 
     try {
+        // Iniciar la transacción
+        $conexion->begin_transaction();
+
         // Array para almacenar los IDs de partidas_entes
         $idPartidasArray = [];
 
-        // Insertar en partidas_entes para cada partida y monto
+        // Insertar en partidas_entes para cada partida y monto, incluyendo id_ente
         foreach ($partidas as $partida) {
-            $sqlInsertPartida = "INSERT INTO partidas_entes (id_partida, monto) VALUES (?, ?)";
+            $sqlInsertPartida = "INSERT INTO partidas_entes (id_ente, id_partida, monto) VALUES (?, ?, ?)";
             $stmtInsertPartida = $conexion->prepare($sqlInsertPartida);
-            $stmtInsertPartida->bind_param("id", $partida["id_partida"], $partida["monto"]);
+            $stmtInsertPartida->bind_param("iid", $id_ente, $partida["id_partida"], $partida["monto"]);
             $stmtInsertPartida->execute();
             
             if ($stmtInsertPartida->affected_rows > 0) {
                 $idPartidasArray[] = $stmtInsertPartida->insert_id;
             } else {
+                // Si ocurre un error, deshacer la transacción
+                $conexion->rollback();
                 throw new Exception("Error al insertar en partidas_entes");
             }
         }
@@ -37,15 +41,24 @@ function guardarSolicitudEnte($id_ente, $id_poa, $partidas, $monto_total)
         $stmtInsertSolicitud->execute();
 
         if ($stmtInsertSolicitud->affected_rows > 0) {
+            // Confirmar la transacción
+            $conexion->commit();
             return json_encode(["success" => "Solicitud registrada correctamente."]);
         } else {
+            // Si ocurre un error, deshacer la transacción
+            $conexion->rollback();
             throw new Exception("Error al registrar la solicitud.");
         }
     } catch (Exception $e) {
+        // En caso de excepción, deshacer la transacción si aún no se ha revertido
+        if ($conexion->in_transaction) {
+            $conexion->rollback();
+        }
         registrarError($e->getMessage());
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 // Función para consultar una solicitud por ID
 function consultarSolicitudPorId($id)
@@ -203,13 +216,14 @@ function actualizarStatusSolicitud($id, $status)
         if ($stmtUpdateStatus->affected_rows > 0) {
             return json_encode(["success" => "El status de la solicitud ha sido actualizado correctamente."]);
         } else {
-            return json_encode(["error" => "No se encontró la solicitud con el ID especificado o el status ya es el indicado."]);
-        }
-    } catch (Exception $e) {
-        registrarError($e->getMessage());
-        return json_encode(['error' => $e->getMessage()]);
+        throw new Exception("Error al actualizar el status de la solicitud.");
+    }
+} catch (Exception $e) {
+    registrarError($e->getMessage());
+    return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 
 // Procesar la solicitud
