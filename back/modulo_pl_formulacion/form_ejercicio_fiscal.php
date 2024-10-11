@@ -2,7 +2,7 @@
 
 require_once '../sistema_global/conexion.php';
 header('Content-Type: application/json');
-
+require_once '../sistema_global/session.php';
 require_once '../sistema_global/errores.php';
 
 // Definir divisor como una variable

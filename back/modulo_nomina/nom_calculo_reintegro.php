@@ -1,4 +1,5 @@
 <?php
+require_once '../sistema_global/session.php';
 require_once '../sistema_global/conexion.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $empleado_id = $_POST['empleado_id'];

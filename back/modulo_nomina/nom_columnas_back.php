@@ -1,6 +1,6 @@
 <?php
 require_once '../sistema_global/conexion.php';
-
+require_once '../sistema_global/session.php';
 if (isset($_POST["tabla"])) {
     // necesito regresar el nombre de las columnas y el tipo (int, varchar, etc) y su longitud de la tabla empleados
     $sql = "SELECT COLUMN_NAME, DATA_TYPE, CHARACTER_MAXIMUM_LENGTH FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'empleados'";

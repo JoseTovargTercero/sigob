@@ -2,7 +2,7 @@
 
 require_once '../sistema_global/conexion.php';
 header('Content-Type: application/json');
-
+require_once '../sistema_global/session.php';
 require_once '../sistema_global/errores.php';
 
 // Función para guardar en la tabla ejercicio_fiscal

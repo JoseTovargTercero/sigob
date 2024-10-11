@@ -1,6 +1,6 @@
 <?php
 require_once '../sistema_global/conexion.php';
-
+require_once '../sistema_global/session.php';
 // Recibir el array enviado desde el primer archivo
 $data = json_decode(file_get_contents('php://input'), true);
 

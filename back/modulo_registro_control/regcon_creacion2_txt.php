@@ -2,6 +2,7 @@
 // Obtener el contenido del cuerpo de la solicitud
 $input = file_get_contents('php://input');
 require_once '../sistema_global/conexion.php';
+require_once '../sistema_global/session.php';
 
 // Decodificar el JSON recibido
 $data = json_decode($input, true);

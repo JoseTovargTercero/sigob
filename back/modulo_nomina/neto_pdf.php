@@ -2,7 +2,7 @@
 
 require_once '../../vendor/autoload.php'; // Ajusta la ruta según la ubicación de mpdf
 require_once 'pdf_files_config.php'; // Incluir el archivo de configuración
-
+require_once '../sistema_global/session.php';
 use Mpdf\Mpdf;
 
 $fecha_pagar = $_GET['fecha_pagar'];

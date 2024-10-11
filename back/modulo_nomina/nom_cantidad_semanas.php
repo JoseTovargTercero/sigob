@@ -1,4 +1,5 @@
 <?php
+require_once '../sistema_global/session.php';
 // Obtener el año actual
 $year = date("Y");
 

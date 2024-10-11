@@ -3,6 +3,7 @@
 require_once '../sistema_global/conexion.php';
 require_once '../sistema_global/errores.php';
 
+
 // Función para registrar un compromiso
 function registrarCompromiso($idRegistro, $nombreTabla, $descripcion)
 {

@@ -2,7 +2,7 @@
 
 require_once '../sistema_global/conexion.php';
 header('Content-Type: application/json');
-
+require_once '../sistema_global/session.php';
 require_once '../sistema_global/errores.php';
 
 // Función para obtener los datos de distribucion_presupuestaria según ejercicio y partida

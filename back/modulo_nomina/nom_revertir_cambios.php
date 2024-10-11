@@ -1,6 +1,6 @@
 <?php
 require_once '../sistema_global/conexion.php';
-
+require_once '../sistema_global/session.php';
 $response = '';
 
 function revertirAccion($data, $conexion)

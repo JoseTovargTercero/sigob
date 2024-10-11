@@ -3,7 +3,7 @@
 require_once '../sistema_global/conexion.php';
 header('Content-Type: application/json');
 require_once '../sistema_global/errores.php';
-
+require_once '../sistema_global/session.php';
 // Función para insertar datos en la tabla distribucion_presupuestaria
 function guardarDistribucionPresupuestaria($dataArray)
 {

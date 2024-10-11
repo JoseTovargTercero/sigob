@@ -1,6 +1,6 @@
 <?php
 require_once '../sistema_global/conexion.php';
-
+require_once '../sistema_global/session.php';
 // Obtener el contenido del cuerpo de la solicitud
 $input = file_get_contents('php://input');
 

@@ -1,6 +1,6 @@
 <?php
 require_once '../sistema_global/conexion.php';
-
+require_once '../sistema_global/session.php';
 if (isset($_POST["tabla"])) {
 
     $columnas_sistema = ["id", "nacionalidad", "cedula", "nombres", "otros_años", "status", "observacion", "cod_cargo", "banco", "cuenta_bancaria", "hijos", "instruccion_academica", "discapacidades", "tipo_nomina", "id_dependencia", "verificado", "correcion", "beca", "fecha_ingreso", "id_categoria", "id_partida"];

@@ -1,5 +1,5 @@
 <?php
-
+require_once '../sistema_global/session.php';
 require_once '../../vendor/autoload.php'; // Ajusta la ruta según la ubicación de mpdf
 require_once '../sistema_global/config.php'; // Ajusta la ruta según la ubicación de mpdf
 

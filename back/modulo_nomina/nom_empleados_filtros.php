@@ -1,6 +1,6 @@
 <?php
 require_once '../sistema_global/conexion.php';
-
+require_once '../sistema_global/session.php';
 // Obtener precio del dólar
 $api_key = "4bfc66a740d312008475dded";
 $url = "https://v6.exchangerate-api.com/v6/{$api_key}/pair/USD/VES";

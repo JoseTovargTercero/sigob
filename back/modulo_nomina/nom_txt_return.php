@@ -1,5 +1,6 @@
 <?php
 require_once '../sistema_global/conexion.php';
+require_once '../sistema_global/session.php';
 header('Content-Type: application/json');
 
 // Obtener el contenido JSON de la solicitud POST

@@ -1,5 +1,6 @@
 <?php
 require_once '../sistema_global/conexion.php';
+require_once '../sistema_global/session.php';
 header('Content-Type: application/json');
 
 

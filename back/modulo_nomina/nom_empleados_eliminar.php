@@ -1,7 +1,7 @@
 <?php
 
 require_once '../sistema_global/conexion.php';
-
+require_once '../sistema_global/session.php';
 // Verificar si el parámetro 'id' está presente en la URL
 $conexion->autocommit(false);
 $conexion->begin_transaction();

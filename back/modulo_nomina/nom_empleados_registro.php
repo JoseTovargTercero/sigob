@@ -1,5 +1,5 @@
 <?php
-
+require_once '../sistema_global/session.php';
 require_once '../sistema_global/conexion.php';
 
 // Recibir el array enviado desde el primer archivo

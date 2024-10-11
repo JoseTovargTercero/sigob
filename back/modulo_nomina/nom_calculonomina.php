@@ -1,5 +1,6 @@
 <?php
 require_once '../sistema_global/conexion.php';
+require_once '../sistema_global/session.php';
 // Consulta a la tabla 'tasa' para obtener el valor del dólar
 $query = "SELECT valor FROM tasa ORDER BY id DESC LIMIT 1"; // Selecciona el último valor registrado
 $result = mysqli_query($conexion, $query);
