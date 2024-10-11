@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 08-10-2024 a las 05:17:33
+-- Tiempo de generación: 11-10-2024 a las 05:10:20
 -- Versión del servidor: 10.4.27-MariaDB
 -- Versión de PHP: 7.4.33
 
@@ -3865,6 +3865,18 @@ INSERT INTO `empleados_por_grupo` (`id`, `id_empleado`, `id_grupo`, `status`) VA
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `entes`
+--
+
+CREATE TABLE `entes` (
+  `id` int(255) NOT NULL,
+  `ente_nombre` longtext NOT NULL,
+  `tipo_ente` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `error_log`
 --
 
@@ -4819,6 +4831,18 @@ INSERT INTO `notificaciones` (`id`, `user_1`, `user_2`, `tipo`, `guia`, `date`, 
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `partidas_entes`
+--
+
+CREATE TABLE `partidas_entes` (
+  `id` int(255) NOT NULL,
+  `id_partida` int(255) NOT NULL,
+  `monto` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `partidas_presupuestarias`
 --
 
@@ -5104,15 +5128,15 @@ CREATE TABLE `proyecto_inversion` (
   `id` int(255) NOT NULL,
   `id_plan` int(255) NOT NULL,
   `proyecto` longtext NOT NULL,
+  `descripcion` longtext NOT NULL,
   `monto_proyecto` varchar(255) NOT NULL,
   `id_partida` varchar(255) NOT NULL,
-  `status` int(255) NOT NULL
+  `status` int(255) NOT NULL DEFAULT 0,
+  `comentario` longtext NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
-ALTER TABLE `proyecto_inversion` ADD `descripcion` LONGTEXT NOT NULL AFTER `proyecto`;
-ALTER TABLE `proyecto_inversion` CHANGE `status` `status` INT(255) NOT NULL DEFAULT '0';
-ALTER TABLE `proyecto_inversion` ADD `comentario` LONGTEXT NOT NULL AFTER `status`;
+
 --
 -- Estructura de tabla para la tabla `recibo_pago`
 --
@@ -9312,6 +9336,21 @@ INSERT INTO `reportes` (`id`, `furmulacion`, `nominas`, `columnas`, `formato`, `
 (14, 'discapacidades=\'0\' ', '', '[\"nombres\",\"cedula\"]', 'pdf', 'moises', 1, '2024-08-11 17:03:52', ''),
 (16, 'discapacidades=\'0\' ', '4', '[\"nombres\",\"cedula\"]', 'pdf', 'moises', 1, '2024-08-11 17:13:28', ''),
 (17, 'discapacidades=\'0\' ', '31', '[\"nombres\",\"cedula\"]', 'pdf', 'moises2', 1, '2024-08-11 17:19:53', '');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `solicitudes_entes`
+--
+
+CREATE TABLE `solicitudes_entes` (
+  `id` int(255) NOT NULL,
+  `id_ente` int(255) NOT NULL,
+  `id_poa` int(255) NOT NULL,
+  `partidas` longtext NOT NULL,
+  `monto_total` varchar(255) NOT NULL,
+  `status` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -14226,6 +14265,12 @@ ALTER TABLE `empleados_por_grupo`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indices de la tabla `entes`
+--
+ALTER TABLE `entes`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indices de la tabla `error_log`
 --
 ALTER TABLE `error_log`
@@ -14298,6 +14343,12 @@ ALTER TABLE `notificaciones`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indices de la tabla `partidas_entes`
+--
+ALTER TABLE `partidas_entes`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indices de la tabla `partidas_presupuestarias`
 --
 ALTER TABLE `partidas_presupuestarias`
@@ -14355,6 +14406,12 @@ ALTER TABLE `recibo_pago`
 -- Indices de la tabla `reportes`
 --
 ALTER TABLE `reportes`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `solicitudes_entes`
+--
+ALTER TABLE `solicitudes_entes`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -14507,6 +14564,12 @@ ALTER TABLE `empleados_por_grupo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1386;
 
 --
+-- AUTO_INCREMENT de la tabla `entes`
+--
+ALTER TABLE `entes`
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT de la tabla `error_log`
 --
 ALTER TABLE `error_log`
@@ -14579,6 +14642,12 @@ ALTER TABLE `notificaciones`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
+-- AUTO_INCREMENT de la tabla `partidas_entes`
+--
+ALTER TABLE `partidas_entes`
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT de la tabla `partidas_presupuestarias`
 --
 ALTER TABLE `partidas_presupuestarias`
@@ -14637,6 +14706,12 @@ ALTER TABLE `recibo_pago`
 --
 ALTER TABLE `reportes`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+
+--
+-- AUTO_INCREMENT de la tabla `solicitudes_entes`
+--
+ALTER TABLE `solicitudes_entes`
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `solicitud_dozavos`
