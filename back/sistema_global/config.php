@@ -11,7 +11,7 @@ if ($_SERVER['SERVER_NAME'] == 'localhost') {
     define('PASSWORD', "JH6$.GnJA6eL");
     define('USER', 'sigob_user');
 } else {
-    $url = 'https://'. $_SERVER['SERVER_NAME'].'/sigob/';
+    $url = 'http://'. $_SERVER['SERVER_NAME'].'/sigob/';
     define('URL', $url);
     define('PASSWORD', "JH6$.GnJA6eL");
     define('USER', 'sigob_user');
