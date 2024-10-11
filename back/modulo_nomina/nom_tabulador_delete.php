@@ -1,6 +1,6 @@
 <?php
 require_once '../sistema_global/conexion.php';
-
+require_once '../sistema_global/session.php';
 // Verificar si el parámetro 'id' está presente en la URL
 if (isset($_GET['id'])) {
     $id = $_GET['id'];
