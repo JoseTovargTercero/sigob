@@ -45,11 +45,11 @@
               </div>
               <h4 class="text-center f-w-500 mt-4 mb-3">Inicio</h4>
               <div class="form-group mb-3">
-                <input value="corro@correo.com" type="email" name="email" class="form-control"
+                <input type="email" name="email" class="form-control"
                   placeholder="Correo Electrónico">
               </div>
               <div class="form-group mb-3">
-                <input value="123456" type="password" name="password" class="form-control" placeholder="Contraseña">
+                <input type="password" name="password" class="form-control" placeholder="Contraseña">
               </div>
               <div class="d-flex mt-1 justify-content-between align-items-center">
 

@@ -60,7 +60,7 @@ $stmt->execute();
 $result = $stmt->get_result();
 if ($result->num_rows > 0) {
   while ($row = $result->fetch_assoc()) {
-    $plan_inversion_id = $row['monto_total'];
+    $plan_inversion_id = $row['id'];
     $plan_inversion = $row['monto_total'];
     $proyectos = contar("proyecto_inversion", 'id_plan=' . $plan_inversion_id);
   }
@@ -233,6 +233,8 @@ $stmt->close();
                     <?php
                     $badge_0 = '<label class="badge me-2  bg-light-dark f-12 f-w-400">0</label>';
 
+
+
                     echo ($plan_inversion == 'no' ? $badge_0 : number_format($plan_inversion, 0, ',', '.') . 'Bs');
 
                     ?>
@@ -241,8 +243,7 @@ $stmt->close();
                 </p>
                 <p class="mb-1 d-flex flex-column flex-sm-row justify-content-between text-center gap-3">Proyectos:
 
-                  <?php echo ($proyectos == 0 ? $badge_0 : '<b>13</b>');
-                  ?>
+                  <?php echo ($proyectos == 0 ? $badge_0 : "<span>$proyectos</span>"); ?>
                 </p>
                 <hr>
                 <div class="text-end">
@@ -290,7 +291,7 @@ $stmt->close();
                 </div>
                 </div>';
           } else {
-            ?>
+          ?>
 
             <div class="card mb-3 h-15">
               <div class="card-body">
@@ -327,7 +328,7 @@ $stmt->close();
 
 
 
-            <?php
+          <?php
           }
           ?>
 
@@ -368,16 +369,16 @@ $stmt->close();
 
                 <?php
                 if ($ejercicio_fiscal == 'No') {
-                  ?>
+                ?>
 
                   <img src="../../src/assets/images/icons-png/no_grafico.jpg" class="img-ng" alt="Sin grafico">
 
 
 
-                  <?php
+                <?php
                 } else {
 
-                  ?>
+                ?>
 
 
                   <section id="vista-grafico">
@@ -400,7 +401,7 @@ $stmt->close();
                     </table>
                   </section>
 
-                  <?php
+                <?php
                 }
                 ?>
 
@@ -426,36 +427,19 @@ $stmt->close();
               </div>
             </div>
           </div>
-
-
-
-
-
           <div class="card " style="height: 25vh;">
             <div class="card-body text-center">
-              <h5 class="mb-3">Presupuesto restante</h5><i class="fas fa-user-friends f-30 text-success"></i>
-              <h2 class="f-w-300 mt-3">1,285</h2><span class="text-muted">(Situado restante)</span>
+              <h5 class="mb-3">Asignado a entes</h5><i class="fas fa-user-friends f-30 text-success"></i>
+              <h2 class="f-w-300 mt-3">1,285</h2><span class="text-muted">Situado distribuido</span>
               <div class="progress mt-4 m-b-40">
                 <div class="progress-bar bg-brand-color-1" role="progressbar" style="width: 75%; height: 7px"
                   aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
               </div>
               <div class="text-center">
-                <h4>52%</h4><span class="text-muted">
-
-                </span>
               </div>
             </div>
           </div>
-
-
-
-
-
-
-
         </div>
-
-
         <div class="col-lg-12">
           <div class="card" style="min-height: 165px;">
             <div class="card-header">
@@ -519,7 +503,7 @@ $stmt->close();
       </div>
       <?php
       if ($ejercicio_fiscal == 'No') {
-        ?>
+      ?>
 
         <div class="dialogs">
           <div class="dialogs-content " style="width: 35%;">
@@ -540,9 +524,9 @@ $stmt->close();
             </div>
           </div>
         </div>
-        <?php
+      <?php
       } else {
-        ?>
+      ?>
         <div class="dialogs">
           <div class="dialogs-content " style="width: 35%;">
             <span class="close-button">×</span>
@@ -563,7 +547,7 @@ $stmt->close();
           </div>
         </div>
 
-        <?php
+      <?php
       }
       ?>
       <!-- [ Main Content ] end -->
@@ -584,12 +568,12 @@ $stmt->close();
         // Enviar los datos al back
         function sendData(data, url) {
           fetch(url, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-          })
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(data)
+            })
             .then(response => response.text()) // Recupera la respuesta como texto
             .then(responseText => {
               console.log('Respuesta del servidor (raw):', responseText); // Imprimir la respuesta original
@@ -603,7 +587,7 @@ $stmt->close();
                   toast_s('success', jsonResponse.success);
                   // actualizar despues de un segundo
                   toggleDialogs()
-                  setTimeout(function () {
+                  setTimeout(function() {
                     window.location.reload();
                   }, 1500);
                 } else {
@@ -646,8 +630,8 @@ $stmt->close();
 
 
         <?php if ($ejercicio_fiscal == 'No') { // En caso de que no exista el ejercicio fiscal 
-            ?>
-          document.getElementById('dataEjercicio').addEventListener('submit', function (event) {
+        ?>
+          document.getElementById('dataEjercicio').addEventListener('submit', function(event) {
             event.preventDefault();
             var situado = document.getElementById('situado').value;
 
@@ -664,9 +648,9 @@ $stmt->close();
             }
           })
         <?php } else {
-            ?>
+        ?>
 
-          document.getElementById('dataEjercicio_2').addEventListener('submit', function (event) {
+          document.getElementById('dataEjercicio_2').addEventListener('submit', function(event) {
             event.preventDefault();
             var monto = document.getElementById('monto').value;
 
@@ -682,9 +666,9 @@ $stmt->close();
             }
           })
 
-          <?php
-          } // End: En caso de que no exista el ejercicio fiscal  
-          ?>
+        <?php
+        } // End: En caso de que no exista el ejercicio fiscal  
+        ?>
 
 
         // Ajustar el tamaño del texto con la cantidad del situado para el card con el bg-info
@@ -705,7 +689,7 @@ $stmt->close();
 
 
         <?php if (@$status == 1) { // En caso de que el ejercicio exista    
-            ?>
+        ?>
 
           function cerrarEjercicio() {
             Swal.fire({
@@ -725,7 +709,7 @@ $stmt->close();
                   data: {
                     id: '<?php echo $annio ?>'
                   },
-                  success: function (response) {
+                  success: function(response) {
                     const respuesta = JSON.parse(response)
 
                     if (respuesta.status == 'ok') {
@@ -790,7 +774,7 @@ $stmt->close();
 
         //  GRAFICO 1 - Principal
         function grafico_1() {
-          am5.ready(function () {
+          am5.ready(function() {
 
             // Create root element
             var root = am5.Root.new("grafico_1");
@@ -961,16 +945,16 @@ $stmt->close();
             }
 
             $.ajax({
-              url: '../../back/modulo_pl_formulacion/form_ejercicio_tipos.php',
-              type: 'POST',
-              dataType: 'json', // Cambiado a 'json'
-              contentType: 'application/json',
-              data: JSON.stringify({
-                ejercicio: ejercicio,
-                tipo: tipo
-              }),
-            })
-              .done(function (resultado) {
+                url: '../../back/modulo_pl_formulacion/form_ejercicio_tipos.php',
+                type: 'POST',
+                dataType: 'json', // Cambiado a 'json'
+                contentType: 'application/json',
+                data: JSON.stringify({
+                  ejercicio: ejercicio,
+                  tipo: tipo
+                }),
+              })
+              .done(function(resultado) {
                 try {
 
                   var data = [];
@@ -1019,18 +1003,18 @@ $stmt->close();
                   console.error('Error procesando los datos:', error);
                 }
               })
-              .fail(function (jqXHR, textStatus, errorThrown) {
+              .fail(function(jqXHR, textStatus, errorThrown) {
                 console.error('Error en la solicitud:', textStatus, errorThrown);
                 //  alert('Hubo un problema al obtener los datos. Por favor, inténtalo de nuevo.');
               })
-              .always(function (res) { });
+              .always(function(res) {});
           }
 
           setBarras()
 
           document.getElementById('select_tipo').addEventListener('change', setBarras)
 
-          <?php
+        <?php
         }
 
         ?>
