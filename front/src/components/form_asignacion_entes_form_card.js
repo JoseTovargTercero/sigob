@@ -4,7 +4,7 @@
 // COLOCAR EL MONTO RESTANTE EN UN HEADER EN LA CARD
 // AÑADIR UNA TABLA PARA SELECCIONAR PARTIDAS QUE SE QUIERAN ASIGNAR PARA POSTERIOR ASIGNARLES SU MONTO
 
-import { getPartidas } from '../api/partidas.js'
+import { getFormPartidas, getPartidas } from '../api/partidas.js'
 import {
   enviarDistribucionPresupuestariaEntes,
   getEjecicio,
@@ -72,7 +72,7 @@ export const form_asignacion_entes_form_card = async ({
 
   // OBTENER DATOS PARA TRABAJAR EN EL FORMULARIO
 
-  let partidas = await getPartidas()
+  let partidas = await getFormPartidas()
 
   console.log(ejercicioFiscal)
   console.log(partidas)
