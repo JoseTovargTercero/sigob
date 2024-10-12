@@ -93,8 +93,8 @@ try {
     // }
 
     // Construir la consulta SQL para insertar datos
-    $sql = "INSERT INTO empleados (nacionalidad, cedula, nombres, otros_años, status, observacion, cod_cargo, banco, cuenta_bancaria, hijos, instruccion_academica, discapacidades, tipo_nomina, id_dependencia, verificado, correcion, beca, fecha_ingreso, id_categoria, id_partida, foto)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)";
+    $sql = "INSERT INTO empleados (nacionalidad, cedula, nombres, otros_años, status, observacion, cod_cargo, banco, cuenta_bancaria, hijos, instruccion_academica, discapacidades, tipo_nomina, id_dependencia, verificado, correcion, beca, fecha_ingreso, id_categoria, id_partida)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     // Preparar la declaración SQL
     $stmt = $conexion->prepare($sql);
@@ -110,7 +110,7 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)";
     $correcion = NULL;
 
     // Vincular parámetros y ejecutar la consulta
-    $stmt->bind_param("sssssssssssssssssssss", $data["nacionalidad"], $data["cedula"], $data["nombres"], $data["otros_años"], $data["status"], $data["observacion"], $data["cod_cargo"], $data["banco"], $data["cuenta_bancaria"], $data["hijos"], $data["instruccion_academica"], $data["discapacidades"], $data["tipo_nomina"], $data["id_dependencia"], $verificado, $correcion, $data["beca"], $data["fecha_ingreso"], $data["id_categoria"], $data['id_partida'], $nombreArchivo);
+    $stmt->bind_param("sssssssssssssssssssss", $data["nacionalidad"], $data["cedula"], $data["nombres"], $data["otros_años"], $data["status"], $data["observacion"], $data["cod_cargo"], $data["banco"], $data["cuenta_bancaria"], $data["hijos"], $data["instruccion_academica"], $data["discapacidades"], $data["tipo_nomina"], $data["id_dependencia"], $verificado, $correcion, $data["beca"], $data["fecha_ingreso"], $data["id_categoria"], $data['id_partida']);
 
     if ($stmt->execute()) {
         // Obtener el ID del empleado insertado

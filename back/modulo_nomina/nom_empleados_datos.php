@@ -15,16 +15,25 @@ if (!$stmt) {
     die("Error en la preparación de la declaración: " . $conexion->error);
 }
 
-// Vincular el parámetro y ejecutar la consulta
+// Ejecutar la consulta
 $stmt->execute();
 $result = $stmt->get_result();
 
 // Crear un array para almacenar los datos
 $datos = array();
 
+// Definir la ruta de la carpeta de fotos
+$ruta_fotos = __DIR__ . DIRECTORY_SEPARATOR . "img" . DIRECTORY_SEPARATOR . "empleados" . DIRECTORY_SEPARATOR;
+
 if ($result->num_rows > 0) {
     // Llenar el array con los datos obtenidos de la consulta
     while ($row = $result->fetch_assoc()) {
+        // Construir la ruta completa de la foto con la cédula y formato .jpg
+        $ruta_foto = $ruta_fotos . $row["cedula"] . ".jpg";
+
+        // Verificar si el archivo existe
+        $foto_existe = file_exists($ruta_foto);
+
         $empleado = array(
             "id_empleado" => $row["id"],
             "cedula" => $row["cedula"],
@@ -33,7 +42,8 @@ if ($result->num_rows > 0) {
             "id_dependencia" => $row["id_dependencia"],
             "dependencia" => $row["dependencia"],
             "status" => $row['status'],
-            "verificado" => $row["verificado"]
+            "verificado" => $row["verificado"],
+            "foto" => $foto_existe // Añadir propiedad 'foto'
         );
         $datos[] = $empleado;
     }
