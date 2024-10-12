@@ -32,8 +32,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id'])) {
     $datos = array();
 
     if ($result->num_rows > 0) {
+        // Definir la ruta de la carpeta de fotos
+        $ruta_fotos = __DIR__ . DIRECTORY_SEPARATOR . "img" . DIRECTORY_SEPARATOR . "empleados" . DIRECTORY_SEPARATOR;
+
         // Llenar el array con los datos obtenidos de la consulta
         while ($row = $result->fetch_assoc()) {
+            // Construir la ruta completa de la foto con la cédula y formato .jpg
+            $ruta_foto = $ruta_fotos . $row["cedula"] . ".jpg";
+
+            // Verificar si el archivo existe
+            $foto_existe = file_exists($ruta_foto);
+
             $empleado = array(
                 "id_empleado" => $row["id"],
                 "cedula" => $row["cedula"],
@@ -56,7 +65,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id'])) {
                 "beca" => $row["beca"],
                 "verificado" => $row["verificado"],
                 "id_categoria" => $row["id_categoria"],
-                "id_partida" => $row["id_partida"]
+                "id_partida" => $row["id_partida"],
+                "foto" => $foto_existe // Añadir propiedad 'foto'
             );
             $datos[] = $empleado;
         }
