@@ -16,20 +16,34 @@ $cedula = ''; // Variable para guardar la cédula
 
 // Iterar sobre el array recibido e insertar cada conjunto de valores
 foreach ($data as $item) {
-    $empleado_id = $item[0];
-    $campo = $item[1];
-    $valor_nuevo = $item[2];
-    
-    // Verificar si el campo es 'cedula'
-    if ($campo === 'cedula') {
-        $cedula = $valor_nuevo; // Guardar la nueva cédula
+    $empleado_id = $item[0]; // Asumimos que el primer elemento es el ID del empleado
+    $campo = $item[1]; // El segundo elemento es el campo a actualizar
+    $valor_nuevo = $item[2]; // El tercer elemento es el nuevo valor
+
+    // Solo buscamos la cédula una vez al inicio
+    if (empty($cedula)) {
+        // Consulta para obtener la cédula del empleado
+        $stmtCedula = $conexion->prepare("SELECT cedula FROM empleados WHERE id = ?");
+        $stmtCedula->bind_param("i", $empleado_id);
+        $stmtCedula->execute();
+        $stmtCedula->bind_result($cedula);
+        $stmtCedula->fetch();
+        $stmtCedula->close();
+
+        // Verificar si se obtuvo la cédula
+        if (empty($cedula)) {
+            $error_message = "No se encontró la cédula para el empleado ID: $empleado_id.";
+            registrarError($error_message);
+            array_push($errores, $error_message);
+            continue; // Salir del ciclo en caso de error
+        }
     }
 
     // Verificar si el campo es 'foto'
     if ($campo === 'foto') {
         // Ruta de la imagen
         $target_dir = __DIR__ . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "img" . DIRECTORY_SEPARATOR . "empleados" . DIRECTORY_SEPARATOR;
-        $nombreArchivo = "$cedula.jpg";
+        $nombreArchivo = "$cedula.jpg"; // Usar la cédula para el nombre del archivo
         $target_file = $target_dir . $nombreArchivo;
 
         // Crear la carpeta si no existe
@@ -78,7 +92,6 @@ foreach ($data as $item) {
 
         // Liberar la memoria de la imagen
         imagedestroy($imagen);
-
     } else {
         // Actualizar el campo correspondiente en la base de datos si no es 'foto'
         $movimiento .= "$campo: $valor_nuevo. ";
@@ -95,7 +108,11 @@ foreach ($data as $item) {
     }
 }
 
+
+
 echo $response;
+
+
 
 
 
