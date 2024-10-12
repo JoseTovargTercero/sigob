@@ -5,30 +5,47 @@ require_once '../sistema_global/conexion.php';
 // Recibir el array enviado desde el primer archivo
 $data = json_decode(file_get_contents('php://input'), true);
 
-
 // Iniciar la transacción
 try {
-
     $conexion->autocommit(false);
     $conexion->begin_transaction();
 
-    $sql_validate = 'SELECT * FROM empleados where cedula = ?';
-
+    // Validar si el empleado ya existe
+    $sql_validate = 'SELECT * FROM empleados WHERE cedula = ?';
     $stmt_validate = $conexion->prepare($sql_validate);
     $stmt_validate->bind_param('s', $data['cedula']);
-
     $stmt_validate->execute();
-    // Verificar si ya existe un usuario con esa identificación
     $stmt_validate->store_result();
 
     if ($stmt_validate->num_rows > 0) {
-        // El usuario ya existe
-        throw new Exception("Esta identificacion ya fue ingresada con un empleado");
+        throw new Exception("Esta identificación ya fue ingresada con un empleado");
     }
 
+    // Procesar la imagen
+    if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
+        $cedula = $data['cedula'];
+        $target_dir = "img" . DIRECTORY_SEPARATOR . $cedula . DIRECTORY_SEPARATOR; // Ruta donde se guardará la imagen
+
+        // Crear carpeta si no existe
+        if (!is_dir($target_dir)) {
+            if (!mkdir($target_dir, 0777, true) && !is_dir($target_dir)) {
+                throw new Exception("Error al crear la carpeta: $target_dir");
+            }
+        }
+
+        $file_name = basename($_FILES['foto']['name']);
+        $target_file = $target_dir . $file_name;
+
+        // Mover el archivo subido a la carpeta
+        if (!move_uploaded_file($_FILES['foto']['tmp_name'], $target_file)) {
+            throw new Exception("Error al mover el archivo subido.");
+        }
+    } else {
+        throw new Exception("No se recibió ninguna imagen o hubo un error en la carga.");
+    }
 
     // Construir la consulta SQL para insertar datos
-    $sql = "INSERT INTO empleados (nacionalidad, cedula, nombres, otros_años, status, observacion, cod_cargo, banco, cuenta_bancaria, hijos, instruccion_academica, discapacidades, tipo_nomina, id_dependencia, verificado, correcion, beca, fecha_ingreso, id_categoria, id_partida)
+    $sql = "INSERT INTO empleados (nacionalidad, cedula, nombres, otros_años, status, observacion, cod_cargo, banco, cuenta_bancaria, hijos, instruccion_academica, discapacidades, tipo_nomina, id_dependencia, verificado, correcion, beca, fecha_ingreso, id_categoria, id_partida, foto)
 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     // Preparar la declaración SQL
@@ -43,14 +60,11 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $correcion = NULL;
 
     // Vincular parámetros y ejecutar la consulta
-    $stmt->bind_param("ssssssssssssssssssss", $data["nacionalidad"], $data["cedula"], $data["nombres"], $data["otros_años"], $data["status"], $data["observacion"], $data["cod_cargo"], $data["banco"], $data["cuenta_bancaria"], $data["hijos"], $data["instruccion_academica"], $data["discapacidades"], $data["tipo_nomina"], $data["id_dependencia"], $verificado, $correcion, $data["beca"], $data["fecha_ingreso"], $data["id_categoria"], $data['id_partida']);
-
+    $stmt->bind_param("sssssssssssssssssssss", $data["nacionalidad"], $data["cedula"], $data["nombres"], $data["otros_años"], $data["status"], $data["observacion"], $data["cod_cargo"], $data["banco"], $data["cuenta_bancaria"], $data["hijos"], $data["instruccion_academica"], $data["discapacidades"], $data["tipo_nomina"], $data["id_dependencia"], $verificado, $correcion, $data["beca"], $data["fecha_ingreso"], $data["id_categoria"], $data['id_partida'], $file_name);
 
     if ($stmt->execute()) {
-
         // Obtener el ID del empleado insertado
         $id_empleado = $conexion->insert_id;
-        // Ajustar valores del empleado
 
         // Insertar en la tabla movimientos
         $fecha_movimiento = date('Y-m-d H:i:s');
@@ -71,23 +85,18 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         ajustarValoresEmpleado($id_empleado);
     } else {
-        throw new Exception("Error error al insertar datos: $stmt->error");
-
+        throw new Exception("Error al insertar datos: $stmt->error");
     }
 
-    // Devolver una respuesta exitosa al cliente en formato JSON
     // Si todo se procesa exitosamente, confirmar la transacción
     $conexion->commit();
     $response = json_encode(["success" => "Datos insertados correctamente."]);
-
-
 } catch (\Exception $e) {
     // En caso de error, revertir la transacción
     $conexion->rollback();
 
     // Devolver una respuesta de error al cliente en formato JSON
     $response = json_encode(['error' => $e->getMessage()]);
-
 }
 
 echo $response;
