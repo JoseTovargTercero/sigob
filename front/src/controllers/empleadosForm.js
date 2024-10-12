@@ -307,6 +307,9 @@ function validateEmployeeForm({
   // dependenciaFormElement.addEventListener('submit', (e) => e.preventDefault())
 
   formElement.addEventListener('input', (e) => {
+    if (e.target.id === 'empleado-foto-input') {
+      previewImage(e)
+    }
     if (e.target.classList.contains(employeeInputClass)) {
       fieldList = validateInput({
         target: e.target,
@@ -519,7 +522,7 @@ function validateEmployeeForm({
           if (contador === numeroFinal) {
             clearInterval(intervalo)
             e.target.removeAttribute('disabled')
-            e.target.innerText = 'ACTUALIZAR OPCIONESS'
+            e.target.innerText = 'ACTUALIZAR OPCIONES'
           }
         }, 1000) // Intervalo de 1 segundo (1000 milisegundos)
       }
@@ -707,6 +710,27 @@ async function loadCategorias() {
     // dependenciasLaborales = res.fullInfo
     insertOptions({ input: 'categorias', data: res.mappedData })
   })
+}
+
+function previewImage(event) {
+  var input = event.target
+  var reader = new FileReader()
+  reader.onload = function () {
+    var dataURL = reader.result
+    var preview = document.getElementById('empleado-foto')
+    preview.style.display = 'none'
+
+    preview.src = dataURL
+    preview.style.display = 'block' // Mostrar la imagen una vez cargada
+  }
+  reader.readAsDataURL(input.files[0])
+}
+
+function clearImagePreview() {
+  var preview = document.getElementById('empleado-foto')
+  preview.src = '#' // Establecer la src como "#" limpiará la imagen
+  preview.style.display = 'none' // Ocultar la imagen
+  document.getElementById('empleado-foto-input').value = '' // Limpiar el valor del input file
 }
 
 function mostrarCodigoDependencia() {
