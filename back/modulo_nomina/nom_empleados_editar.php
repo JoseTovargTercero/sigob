@@ -97,20 +97,20 @@ foreach ($data as $item) {
         $movimiento .= "$campo: $valor_nuevo. ";
         $stmt2 = mysqli_prepare($conexion, "UPDATE empleados SET $campo = ? WHERE id = ?");
         $stmt2->bind_param('si', $valor_nuevo, $empleado_id);
-        
+
         if (!$stmt2->execute()) {
             $error_message = "Error al actualizar el campo $campo para el empleado ID: $empleado_id.";
             registrarError($error_message);
             array_push($errores, $campo);
         }
-        
+
         $stmt2->close();
     }
 }
 
 
 
-echo $response;
+// echo $response;
 
 
 

@@ -253,6 +253,10 @@ function validateEmployeeForm({
       delete employeeData.dependencia
 
       employeeData.id = employeeData.id_empleado
+      if (employeeData.foto) {
+        let preview = document.getElementById('empleado-foto')
+        preview.src = `../../img/empleados/${employeeData.cedula}.jpg`
+      }
       employeeId = employeeData.id_empleado
 
       console.log(employeeId)
@@ -489,6 +493,9 @@ function validateEmployeeForm({
       })
 
       employeeId = undefined
+
+      let preview = document.getElementById('empleado-foto')
+      preview.src = `../src/assets/img/default.jpg`
     }
 
     if (e.target.id === 'add-dependency') {
@@ -751,7 +758,7 @@ function previewImage(event) {
 
     // Guardar estado de la url
     fieldList.foto = e.target.result
-    fieldList.tipo_foto = file.type.replace('image/', '')
+    // fieldList.tipo_foto = file.type.replace('image/', '')
 
     preview.src = dataURL
     preview.style.display = 'block' // Mostrar la imagen una vez cargada
