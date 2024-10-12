@@ -21,38 +21,80 @@ try {
         throw new Exception("Esta identificación ya fue ingresada con un empleado");
     }
 
-    // Procesar la imagen
-    if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
-        $cedula = $data['cedula'];
-        $target_dir = "img" . DIRECTORY_SEPARATOR . $cedula . DIRECTORY_SEPARATOR; // Ruta donde se guardará la imagen
+    $foto = $data['foto'];
+    $tipoFoto = $data["tipo_foto"];
 
-        // Crear carpeta si no existe
-        if (!is_dir($target_dir)) {
-            if (!mkdir($target_dir, 0777, true) && !is_dir($target_dir)) {
-                $error_message = "Error al crear la carpeta: $target_dir";
-                registrarError($error_message);
-                throw new Exception($error_message);
-            }
+    if (isset($data['foto'])) {
+        $cedula = $data['cedula'];
+
+
+        $fotoBase64 = $data['foto'];
+        $fotoDecodificada = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $fotoBase64));
+
+        if (!$fotoDecodificada) {
+            $error_message = "Error al decodificar la imagen.";
+            throw new Exception($error_message);
+
         }
 
-        $file_name = basename($_FILES['foto']['name']);
-        $target_file = $target_dir . $file_name;
+        // Procesar la imagen como sea necesario
+        // Por ejemplo, guardarla en una carpeta
+        $cedula = $data['cedula'];
+        $target_dir = __DIR__ . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "img" . DIRECTORY_SEPARATOR . "empleados" . DIRECTORY_SEPARATOR;
 
-        // Mover el archivo subido a la carpeta
-        if (!move_uploaded_file($_FILES['foto']['tmp_name'], $target_file)) {
-            $error_message = "Error al mover el archivo subido.";
+        if (!is_dir($target_dir)) {
+            mkdir($target_dir, 0, true);
+        }
+
+        $nombreArchivo = "$cedula.$tipoFoto";
+
+        if (!file_put_contents($target_dir . $nombreArchivo, $fotoDecodificada)) {
+            $error_message = "Error al guardar la imagen en el servidor.";
             registrarError($error_message);
             throw new Exception($error_message);
         }
+
     } else {
         $error_message = "No se recibió ninguna imagen o hubo un error en la carga.";
         registrarError($error_message);
         throw new Exception($error_message);
     }
 
+
+
+
+    // // Procesar la imagen
+    // if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
+    //     $cedula = $data['cedula'];
+    //     $target_dir = "img" . DIRECTORY_SEPARATOR . $cedula . DIRECTORY_SEPARATOR; // Ruta donde se guardará la imagen
+
+    //     // Crear carpeta si no existe
+    //     if (!is_dir($target_dir)) {
+    //         if (!mkdir($target_dir, 0777, true) && !is_dir($target_dir)) {
+    //             $error_message = "Error al crear la carpeta: $target_dir";
+    //             registrarError($error_message);
+    //             throw new Exception($error_message);
+    //         }
+    //     }
+
+    //     $file_name = basename($_FILES['foto']['name']);
+    //     $target_file = $target_dir . $file_name;
+
+    //     // Mover el archivo subido a la carpeta
+    //     if (!move_uploaded_file($_FILES['foto']['tmp_name'], $target_file)) {
+    //         $error_message = "Error al mover el archivo subido.";
+    //         registrarError($error_message);
+    //         throw new Exception($error_message);
+    //     }
+    // } else {
+    //     $error_message = "No se recibió ninguna imagen o hubo un error en la carga.";
+    //     registrarError($error_message);
+    //     throw new Exception($error_message);
+    // }
+
     // Construir la consulta SQL para insertar datos
     $sql = "INSERT INTO empleados (nacionalidad, cedula, nombres, otros_años, status, observacion, cod_cargo, banco, cuenta_bancaria, hijos, instruccion_academica, discapacidades, tipo_nomina, id_dependencia, verificado, correcion, beca, fecha_ingreso, id_categoria, id_partida, foto)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)";
 
     // Preparar la declaración SQL
     $stmt = $conexion->prepare($sql);
@@ -68,7 +110,7 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $correcion = NULL;
 
     // Vincular parámetros y ejecutar la consulta
-    $stmt->bind_param("sssssssssssssssssssss", $data["nacionalidad"], $data["cedula"], $data["nombres"], $data["otros_años"], $data["status"], $data["observacion"], $data["cod_cargo"], $data["banco"], $data["cuenta_bancaria"], $data["hijos"], $data["instruccion_academica"], $data["discapacidades"], $data["tipo_nomina"], $data["id_dependencia"], $verificado, $correcion, $data["beca"], $data["fecha_ingreso"], $data["id_categoria"], $data['id_partida'], $file_name);
+    $stmt->bind_param("sssssssssssssssssssss", $data["nacionalidad"], $data["cedula"], $data["nombres"], $data["otros_años"], $data["status"], $data["observacion"], $data["cod_cargo"], $data["banco"], $data["cuenta_bancaria"], $data["hijos"], $data["instruccion_academica"], $data["discapacidades"], $data["tipo_nomina"], $data["id_dependencia"], $verificado, $correcion, $data["beca"], $data["fecha_ingreso"], $data["id_categoria"], $data['id_partida'], $nombreArchivo);
 
     if ($stmt->execute()) {
         // Obtener el ID del empleado insertado
