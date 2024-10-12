@@ -12,6 +12,7 @@ $valor_nuevo = '';
 $campo = '';
 $tabla = "empleados";
 $errores = array();
+$cedula = ''; // Variable para guardar la cédula
 
 // Iterar sobre el array recibido e insertar cada conjunto de valores
 foreach ($data as $item) {
@@ -19,15 +20,68 @@ foreach ($data as $item) {
     $campo = $item[1];
     $valor_nuevo = $item[2];
     $valor_anterior = $item[3];
+    
+    // Verificar si el campo es 'cedula'
+    if ($campo === 'cedula') {
+        $cedula = $valor_nuevo; // Guardar la nueva cédula
+    }
+
+    // Verificar si el campo es 'foto'
+    if ($campo === 'foto') {
+        // Crear la ruta para almacenar la imagen
+        $target_dir = "img" . DIRECTORY_SEPARATOR . $cedula . DIRECTORY_SEPARATOR;
+
+        // Crear la carpeta si no existe
+        if (!is_dir($target_dir)) {
+            if (!mkdir($target_dir, 0777, true) && !is_dir($target_dir)) {
+                array_push($errores, "Error al crear la carpeta: $target_dir");
+                continue; // Salir del ciclo en caso de error
+            }
+        }
+
+        // Manejar el archivo subido
+        if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
+            $file_name = basename($_FILES['foto']['name']);
+            $target_file = $target_dir . $file_name;
+
+            // Eliminar la imagen anterior si existe
+            if ($valor_anterior) {
+                $archivo_anterior = $target_dir . basename($valor_anterior);
+                if (file_exists($archivo_anterior)) {
+                    unlink($archivo_anterior); // Eliminar el archivo anterior
+                }
+            }
+
+            // Mover el archivo subido a la carpeta
+            if (!move_uploaded_file($_FILES['foto']['tmp_name'], $target_file)) {
+                array_push($errores, "Error al mover el archivo subido para el empleado ID: $empleado_id.");
+                continue; // Salir del ciclo en caso de error
+            }
+
+            // Actualizar el campo foto con el nuevo nombre
+            $valor_nuevo = $file_name;
+        } else {
+            array_push($errores, "No se recibió ninguna imagen o hubo un error en la carga.");
+            continue; // Salir del ciclo en caso de error
+        }
+    }
+
+    // Actualizar el campo correspondiente en la base de datos
     $movimiento .= "$campo: $valor_nuevo. ";
 
     $stmt2 = mysqli_prepare($conexion, "UPDATE empleados SET $campo = ? WHERE id = ?");
     $stmt2->bind_param('si', $valor_nuevo, $empleado_id);
+    
     if (!$stmt2->execute()) {
         array_push($errores, $campo);
     }
+    
     $stmt2->close();
 }
+
+
+echo $response;
+
 
 // Array para almacenar los ids de nómina únicos
 $tipo_nomina = array();
