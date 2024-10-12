@@ -2,6 +2,8 @@
 require_once '../sistema_global/conexion.php';
 require_once '../sistema_global/session.php';
 require_once '../sistema_global/notificaciones.php';
+require_once '../sistema_global/errores.php';
+
 
 // Recibir el array de valores desde JavaScript
 $data = json_decode(file_get_contents('php://input'), true);
@@ -34,7 +36,9 @@ foreach ($data as $item) {
         // Crear la carpeta si no existe
         if (!is_dir($target_dir)) {
             if (!mkdir($target_dir, 0777, true) && !is_dir($target_dir)) {
-                array_push($errores, "Error al crear la carpeta: $target_dir");
+                $error_message = "Error al crear la carpeta: $target_dir";
+                registrarError($error_message);
+                array_push($errores, $error_message);
                 continue; // Salir del ciclo en caso de error
             }
         }
@@ -54,14 +58,18 @@ foreach ($data as $item) {
 
             // Mover el archivo subido a la carpeta
             if (!move_uploaded_file($_FILES['foto']['tmp_name'], $target_file)) {
-                array_push($errores, "Error al mover el archivo subido para el empleado ID: $empleado_id.");
+                $error_message = "Error al mover el archivo subido para el empleado ID: $empleado_id.";
+                registrarError($error_message);
+                array_push($errores, $error_message);
                 continue; // Salir del ciclo en caso de error
             }
 
             // Actualizar el campo foto con el nuevo nombre
             $valor_nuevo = $file_name;
         } else {
-            array_push($errores, "No se recibió ninguna imagen o hubo un error en la carga.");
+            $error_message = "No se recibió ninguna imagen o hubo un error en la carga.";
+            registrarError($error_message);
+            array_push($errores, $error_message);
             continue; // Salir del ciclo en caso de error
         }
     }
@@ -73,11 +81,14 @@ foreach ($data as $item) {
     $stmt2->bind_param('si', $valor_nuevo, $empleado_id);
     
     if (!$stmt2->execute()) {
+        $error_message = "Error al actualizar el campo $campo para el empleado ID: $empleado_id.";
+        registrarError($error_message);
         array_push($errores, $campo);
     }
     
     $stmt2->close();
 }
+
 
 
 echo $response;

@@ -1,7 +1,7 @@
 <?php
 require_once '../sistema_global/session.php';
 require_once '../sistema_global/conexion.php';
-
+require_once '../sistema_global/errores.php';
 // Recibir el array enviado desde el primer archivo
 $data = json_decode(file_get_contents('php://input'), true);
 
@@ -29,7 +29,9 @@ try {
         // Crear carpeta si no existe
         if (!is_dir($target_dir)) {
             if (!mkdir($target_dir, 0777, true) && !is_dir($target_dir)) {
-                throw new Exception("Error al crear la carpeta: $target_dir");
+                $error_message = "Error al crear la carpeta: $target_dir";
+                registrarError($error_message);
+                throw new Exception($error_message);
             }
         }
 
@@ -38,10 +40,14 @@ try {
 
         // Mover el archivo subido a la carpeta
         if (!move_uploaded_file($_FILES['foto']['tmp_name'], $target_file)) {
-            throw new Exception("Error al mover el archivo subido.");
+            $error_message = "Error al mover el archivo subido.";
+            registrarError($error_message);
+            throw new Exception($error_message);
         }
     } else {
-        throw new Exception("No se recibió ninguna imagen o hubo un error en la carga.");
+        $error_message = "No se recibió ninguna imagen o hubo un error en la carga.";
+        registrarError($error_message);
+        throw new Exception($error_message);
     }
 
     // Construir la consulta SQL para insertar datos
@@ -52,7 +58,9 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt = $conexion->prepare($sql);
 
     if ($stmt === false) {
-        throw new Exception("Error en la preparación de la consulta: $conexion->error");
+        $error_message = "Error en la preparación de la consulta: $conexion->error";
+        registrarError($error_message);
+        throw new Exception($error_message);
     }
 
     // Crear variables para valores constantes
@@ -75,17 +83,23 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         $stmt_mov = $conexion->prepare("INSERT INTO movimientos (id_empleado, id_nomina, fecha_movimiento, accion, descripcion, status) VALUES (?, ?, ?, ?, ?, ?)");
         if (!$stmt_mov) {
-            throw new Exception("Error en la preparación de la declaración INSERT movimientos: $conexion->error");
+            $error_message = "Error en la preparación de la declaración INSERT movimientos: $conexion->error";
+            registrarError($error_message);
+            throw new Exception($error_message);
         }
         $stmt_mov->bind_param("issssi", $id_empleado, $tipo_nomina_json, $fecha_movimiento, $accion, $descripcion, $status);
         if (!$stmt_mov->execute()) {
-            throw new Exception("Error al momento de registrar movimiento: $stmt_mov->error");
+            $error_message = "Error al momento de registrar movimiento: $stmt_mov->error";
+            registrarError($error_message);
+            throw new Exception($error_message);
         }
         $stmt_mov->close();
 
         ajustarValoresEmpleado($id_empleado);
     } else {
-        throw new Exception("Error al insertar datos: $stmt->error");
+        $error_message = "Error al insertar datos: $stmt->error";
+        registrarError($error_message);
+        throw new Exception($error_message);
     }
 
     // Si todo se procesa exitosamente, confirmar la transacción
@@ -95,11 +109,15 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     // En caso de error, revertir la transacción
     $conexion->rollback();
 
+    // Registrar el error
+    registrarError($e->getMessage());
+
     // Devolver una respuesta de error al cliente en formato JSON
     $response = json_encode(['error' => $e->getMessage()]);
 }
 
 echo $response;
+
 
 
 
