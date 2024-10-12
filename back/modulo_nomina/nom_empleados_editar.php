@@ -28,7 +28,7 @@ foreach ($data as $item) {
     // Verificar si el campo es 'foto'
     if ($campo === 'foto') {
         // Ruta de la imagen
-        $target_dir = __DIR__ . DIRECTORY_SEPARATOR . "img" . DIRECTORY_SEPARATOR . "empleados" . DIRECTORY_SEPARATOR;
+        $target_dir = __DIR__ . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "img" . DIRECTORY_SEPARATOR . "empleados" . DIRECTORY_SEPARATOR;
         $nombreArchivo = "$cedula.jpg";
         $target_file = $target_dir . $nombreArchivo;
 

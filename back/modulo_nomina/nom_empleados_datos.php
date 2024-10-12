@@ -23,7 +23,7 @@ $result = $stmt->get_result();
 $datos = array();
 
 // Definir la ruta de la carpeta de fotos
-$ruta_fotos = __DIR__ . DIRECTORY_SEPARATOR . "img" . DIRECTORY_SEPARATOR . "empleados" . DIRECTORY_SEPARATOR;
+$ruta_fotos = __DIR__ . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "img" . DIRECTORY_SEPARATOR . "empleados" . DIRECTORY_SEPARATOR;
 
 if ($result->num_rows > 0) {
     // Llenar el array con los datos obtenidos de la consulta

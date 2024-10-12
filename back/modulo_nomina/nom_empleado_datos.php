@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id'])) {
 
     if ($result->num_rows > 0) {
         // Definir la ruta de la carpeta de fotos
-        $ruta_fotos = __DIR__ . DIRECTORY_SEPARATOR . "img" . DIRECTORY_SEPARATOR . "empleados" . DIRECTORY_SEPARATOR;
+        $ruta_fotos = __DIR__ . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "img" . DIRECTORY_SEPARATOR . "empleados" . DIRECTORY_SEPARATOR;
 
         // Llenar el array con los datos obtenidos de la consulta
         while ($row = $result->fetch_assoc()) {
