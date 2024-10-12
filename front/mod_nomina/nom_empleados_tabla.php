@@ -83,8 +83,28 @@ require_once '../../back/sistema_global/session.php';
           <div class="card-body modal-box-content">
 
             <form class="row overflow-x-hidden employee-form" id="employee-form" autocomplete="off">
+              <div class="row mb-4">
+                <picture>
+
+                  <img id="empleado-foto" src="../../front/src/assets/img/default.jpg" class="img-thumbnail" alt="..."
+                    style="height: 100px;">
+                  <figcaption>Foto personal cargada</figcaption>
+                </picture>
+
+
+              </div>
               <div class="form-group">
                 <div class="row">
+
+
+                  <div class="col-sm-4">
+                    <div class="mb-3">
+                      <label for="empleado-foto-input" class="form-label">Foto personal</label>
+                      <input class="form-control" type="file" id="empleado-foto-input">
+                    </div>
+
+                  </div>
+
                   <div class="col-sm">
                     <label class="form-label" class="form-label" for="nombres">NOMBRE
                       COMPLETO</label>
@@ -102,11 +122,13 @@ require_once '../../back/sistema_global/session.php';
                     </select> -->
                   </div>
 
+
+
                 </div>
 
               </div>
 
-              <div class="form-group">
+              <div class=" form-group">
                 <div class="row">
                   <div class="col-sm">
                     <label class="form-label" for="nacionalidad">NACIONALIDAD</label>
