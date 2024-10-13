@@ -1,261 +1,146 @@
 <nav class="pc-sidebar">
   <div class="navbar-wrapper">
     <div class="m-header">
-      <img src="<?php echo constant('URL') ?>/src/assets/images/logo.png" width="40px" class="img-fluid logo-lg"
+      <img src="../../src/assets/images/logo.png" width="40px" class="img-fluid logo-lg"
         alt="logo">
     </div>
     <div class="navbar-content">
       <ul class="pc-navbar">
-        <?php if ($_SESSION["u_oficina_id"] == 1) { //nomina 
-        ?>
+
+        <?php
+        require_once '../../back/sistema_global/conexion.php';
+
+        $oficinas = [
+          1 => 'Nomina',
+          2 => 'Registro y control',
+          3 => 'Relaciones laborales',
+          4 => 'Formulación',
+          5 => 'Ejecución Presupuestaria'
+        ];
+
+        echo ' <li class="pc-item pc-caption">
+            <label>' . $oficinas[$_SESSION["u_oficina_id"]] . '</label>
+            <i data-feather="sidebar"></i>
+          </li>';
+
+
+        $menu = [];
+        $oficina = $_SESSION["u_oficina"];
+        $stmt = mysqli_prepare($conexion, "SELECT * FROM `menu` WHERE oficina = ?"); // SACAR TODOS LOS ITEMS DEL MODULO
+        $stmt->bind_param('s', $oficina);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if ($result->num_rows > 0) {
+          while ($row = $result->fetch_assoc()) {
+            $listar = false;
+
+
+            $listar = ($_SESSION["u_nivel"] == 1 || isset($_SESSION['permisos'][$row['id']])); // Verificar tipo de usuario o nivel de acceso
+
+
+            if ($listar) { // Si tiene acceso
+              // Configuración base para cada item o sub-item
+              $item = [
+                "tipo" => "item",
+                "categoria" => $row['categoria'],
+                "icono" => $row['icono'] ?? 'bx-error',
+                "enlace" => $row['dir'] ?? '#',
+                "nombre" => $row['nombre'] ?? 'Sin nombre',
+                "sub-item" => null
+              ];
+
+              if (is_null($row['categoria'])) {
+                // Es un item normal
+                $menu[$row['id']] = $item;
+              } else {
+                // Es un sub-item
+                if (!isset($menu[$row['categoria']])) {
+                  // Crear la categoría si no existe
+                  $menu[$row['categoria']] = [
+                    "tipo" => "categoria",
+                    "categoria" => $row['categoria'],
+                    "icono" => $row['icono'] ?? 'bx-error',
+                    "enlace" => null,
+                    "nombre" => null,
+                    "sub-item" => []
+                  ];
+                }
+
+                // Agregar el sub-item a la categoría existente
+                $menu[$row['categoria']]['sub-item'][] = [
+                  "enlace" => $row['dir'] ?? '#',
+                  "nombre" => $row['nombre'] ?? 'Sin nombre'
+                ];
+              }
+            }
+          }
+        }
+        $stmt->close();
+
+
+
+        function generarMenu($menu)
+        {
+          $url_base = constant('URL') . 'front/';
+
+          foreach ($menu as $item) {
+            if ($item['tipo'] == 'item') {
+              // Es un item normal
+              echo '<li class="pc-item">';
+              echo '<a href="' . $url_base . htmlspecialchars($item['enlace']) . '" class="pc-link">';
+              echo '<span class="pc-micon"><i class="bx ' . htmlspecialchars($item['icono']) . '"></i></span>';
+              echo '<span class="pc-mtext">' . htmlspecialchars($item['nombre']) . '</span>';
+              echo '</a>';
+              echo '</li>';
+            } elseif ($item['tipo'] == 'categoria') {
+              // Es una categoría con sub-items
+              echo '<li class="pc-item pc-hasmenu">';
+              echo '<a class="pc-link">';
+              echo '<span class="pc-micon"><i class="bx ' . htmlspecialchars($item['icono']) . '"></i></span>';
+              echo '<span class="pc-mtext">' . htmlspecialchars($item['categoria']) . '</span>';
+              echo '<span class="pc-arrow"><i class="ti ti-chevron-right"></i></span>';
+              echo '</a>';
+              echo '<ul class="pc-submenu">';
+
+              // Recorrer los sub-items de la categoría
+              foreach ($item['sub-item'] as $subItem) {
+                echo '<li class="pc-item">';
+                echo '<a class="pc-link" href="' . $url_base . htmlspecialchars($subItem['enlace']) . '">';
+                echo htmlspecialchars($subItem['nombre']);
+                echo '</a>';
+                echo '</li>';
+              }
+
+              echo '</ul>';
+              echo '</li>';
+            }
+          }
+        }
+        generarMenu($menu);
+
+        if ($_SESSION["u_nivel"] == '1') { ?>
 
           <li class="pc-item pc-caption">
-            <label>Nómina</label>
+            <label>Administrativo</label>
             <i data-feather="sidebar"></i>
           </li>
 
           <li class="pc-item pc-hasmenu">
             <a href="#!" class="pc-link">
               <span class="pc-micon">
-                <i class='bx bx-cog'></i>
+                <i class='bx bx-user'></i>
               </span>
-              <span class="pc-mtext">Mantenimiento</span><span class="pc-arrow"><i class="ti ti-chevron-right"></i></span>
+              <span class="pc-mtext">Usuarios</span><span class="pc-arrow"><i class="ti ti-chevron-right"></i></span>
             </a>
             <ul class="pc-submenu">
-              <li class="pc-item"><a class="pc-link" href="<?php echo constant('URL') ?>front/mod_nomina/index">Inicio</a>
+              <li class="pc-item"><a class="pc-link" href="<?php echo constant('URL') ?>front/mod_global/global_users">Nuevos</a>
               </li>
-              <li class="pc-item"><a class="pc-link" href="<?php echo constant('URL') ?>front/mod_nomina/nom_reportes">Reportes</a>
-              </li>
-              <li class="pc-item"><a class="pc-link"
-                  href="<?php echo constant('URL') ?>front/mod_nomina/nom_errores">Estatus</a></li>
-
-              <li class="pc-item"><a class="pc-link"
-                  href="<?php echo constant('URL') ?>front/mod_nomina/nom_columnas">Nuevos campos</a></li>
-              <li class="pc-item"><a class="pc-link"
-                  href="<?php echo constant('URL') ?>front/mod_nomina/nom_valores">Asignar valores</a></li>
-            </ul>
-          </li>
-
-
-
-
-          <li class="pc-item pc-hasmenu">
-            <a href="#!" class="pc-link">
-              <span class="pc-micon">
-                <i class='bx bx-objects-vertical-bottom'></i>
-              </span>
-              <span class="pc-mtext">Movimientos</span><span class="pc-arrow"><i class="ti ti-chevron-right"></i></span>
-            </a>
-            <ul class="pc-submenu">
-              <li class="pc-item"><a class="pc-link" href="<?php echo constant('URL') ?>front/mod_nomina/nom_dependencias">Gestión de Unidades</a></li>
-              <li class="pc-item"><a class="pc-link" href="<?php echo constant('URL') ?>front/mod_nomina/nom_dependencias_tabla">Unidades</a></li>
-              <li class="pc-item"><a class="pc-link" href="<?php echo constant('URL') ?>front/mod_nomina/nom_conceptos">Conceptos</a></li>
-              <li class="pc-item"><a class="pc-link" href="<?php echo constant('URL') ?>front/mod_nomina/nom_tabulador_tabla">Tabuladores</a></li>
-              <li class="pc-item"><a class="pc-link" href="<?php echo constant('URL') ?>front/mod_nomina/nom_empleados_tabla">Empleados</a></li>
-              <li class="pc-item"><a class="pc-link" href="<?php echo constant('URL') ?>front/mod_nomina/nom_estatus_empleados">Estatus de empleados</a>
-              </li>
-
-              <li class="pc-item"><a class="pc-link"
-                  href="<?php echo constant('URL') ?>front/mod_nomina/nom_categorias_tabla">Categorías</a></li>
-              <!-- <li class="pc-item"><a class="pc-link"
-                  href="<?php echo constant('URL') ?>front/mod_nomina/nom_empleados_registrar">Registrar Personal</a>
-              </li> -->
-              <li class="pc-item"><a class="pc-link"
-                  href="<?php echo constant('URL') ?>front/mod_nomina/nom_bancos">Bancos</a>
+              <li class="pc-item"><a class="pc-link" href="<?php echo constant('URL') ?>front/mod_global/global_users_access">Permisos</a>
               </li>
             </ul>
           </li>
-          <li class="pc-item pc-hasmenu">
-            <a href="#!" class="pc-link">
-              <span class="pc-micon">
-                <i class='bx bx-wallet-alt'></i>
-              </span>
-              <span class="pc-mtext">Nómina</span><span class="pc-arrow"><i class="ti ti-chevron-right"></i></span>
-            </a>
-            <ul class="pc-submenu">
-              <li class="pc-item"><a class="pc-link" href="<?php echo constant('URL') ?>front/mod_nomina/nom_grupos">Registro de nominas</a></li>
-              <li class="pc-item"><a class="pc-link" href="<?php echo constant('URL') ?>front/mod_nomina/nom_peticiones_form">Pagar nomina</a></li>
-              <li class="pc-item"><a class="pc-link" href="<?php echo constant('URL') ?>front/mod_nomina/nom_peticiones_historico">Consulta de histórico</a></li>
-              <li class="pc-item"><a class="pc-link" href="<?php echo constant('URL') ?>front/mod_nomina/nom_recibo_individual">Recibo de pago</a></li>
-            </ul>
-          </li>
-        <?php } elseif ($_SESSION["u_oficina_id"] == 2) { //_registro_control 
-        ?>
-
-          <li class="pc-item pc-caption">
-            <label>Registro y control</label>
-            <i data-feather="sidebar"></i>
-          </li>
-
-
-
-          <li class="pc-item">
-            <a href="<?php echo constant('URL') ?>front/mod_registro_control/index" class="pc-link d-flex">
-              <span class="pc-micon">
-                <i class='bx bx-file'></i>
-              </span>
-
-
-              <div class="w-100 d-flex justify-content-between">
-                <span class="pc-mtext">Pagos de Nómina</span>
-
-                <section id="section-badge-nominas-pendientes">
-
-
-                </section>
-              </div>
-
-            </a>
-          </li>
-
-
-          <li class="pc-item">
-            <a href="<?php echo constant('URL') ?>front/mod_registro_control/regcom_reintegros" class="pc-link d-flex">
-              <span class="pc-micon">
-                <i class='bx bx-refresh'></i>
-              </span>
-
-
-              <div class="pc-mtext">Reintegros</div>
-
-
-            </a>
-
-          </li>
-
-
-
-        <?php } elseif ($_SESSION["u_oficina_id"] == 3) {  //_relaciones_laborales 
-        ?>
-          <li class="pc-item pc-caption">
-            <label>Inicio</label>
-            <i data-feather="sidebar"></i>
-          </li>
-
-          <li class="pc-item">
-            <a href="<?php echo constant('URL') ?>front/mod_relaciones_laborales/index" class="pc-link">
-              <span class="pc-micon"><i class='bx bx-detail'></i></span>
-              <span class="pc-mtext">Netos de pago</span>
-            </a>
-          </li>
-        <?php } else if ($_SESSION["u_oficina_id"] == 4) { ?>
-
-          <li class="pc-item pc-caption">
-            <label>Formulación</label>
-            <i data-feather="sidebar"></i>
-          </li>
-          <li class="pc-item">
-            <a href="<?php echo constant('URL') ?>front/mod_pl_formulacion/index" class="pc-link">
-              <span class="pc-micon"><i class='bx bx-home'></i></span>
-              <span class="pc-mtext">Ejercicio fiscal</span>
-            </a>
-          </li>
-
-
-
-
-
-
-
-
-
-
-
-
-
-          <li class="pc-item pc-hasmenu">
-            <a href="#!" class="pc-link">
-              <span class="pc-micon">
-                <i class='bx bx-spreadsheet'></i>
-              </span>
-              <span class="pc-mtext">Partidas</span><span class="pc-arrow"><i class="ti ti-chevron-right"></i></span>
-            </a>
-            <ul class="pc-submenu">
-              <li class="pc-item"><a class="pc-link" href="<?php echo constant('URL') ?>front/mod_pl_formulacion/form_distribucion_presupuestaria_vista">Distribución</a></li>
-              <li class="pc-item"><a class="pc-link" href="<?php echo constant('URL') ?>front/mod_pl_formulacion/form_partidas_tabla">Registro</a></li>
-
-            </ul>
-          </li>
-
-          <li class="pc-item">
-            <a href="<?php echo constant('URL') ?>front/mod_pl_formulacion/form_asignacion_entes_vista" class="pc-link">
-              <span class="pc-micon"><i class='bx bx-sitemap'></i></span>
-              <span class="pc-mtext">Distribución por entes</span>
-            </a>
-          </li>
-
-
-          <li class="pc-item">
-            <a href="<?php echo constant('URL') ?>front/mod_pl_formulacion/form_plan_inversion" class="pc-link">
-              <span class="pc-micon"><i class='bx bx-calendar-event'></i></span>
-              <span class="pc-mtext">Plan de inversión</span>
-            </a>
-          </li>
-
-
-
-
-
-
-        <?php } else if ($_SESSION["u_oficina_id"] == 5) { ?>
-
-          <li class="pc-item pc-caption">
-            <label>Ejecución Presupuestaria</label>
-            <i data-feather="sidebar"></i>
-          </li>
-
-          <li class="pc-item pc-hasmenu">
-            <a href="#!" class="pc-link">
-              <span class="pc-micon">
-                <i class='bx bx-cog'></i>
-              </span>
-              <span class="pc-mtext">Ejecución presupuestaria</span><span class="pc-arrow"><i class="ti ti-chevron-right"></i></span>
-            </a>
-            <ul class="pc-submenu">
-              <li class="pc-item"><a class="pc-link" href="<?php echo constant('URL') ?>front/mod_ejecucion_presupuestaria/pre_solicitudes_tabla">Solicitudes de dozavos</a>
-              </li>
-              <li class="pc-item"><a class="pc-link" href="<?php echo constant('URL') ?>front/mod_ejecucion_presupuestaria/pre_gastos_form">Gastos de Funcionamiento</a>
-              </li>
-
-            </ul>
-          </li>
-
         <?php } ?>
-
-
-
-
-
-
-        <!--
-
-
-        banco='Venezuela' OR banco='Tesoro' 
-        valor: 15.5
-
-        -->
-
-
-
-        <?php if ($_SESSION["u_nivel"] == '1') { ?>
-
-          <li class="pc-item pc-caption">
-            <label>Usuarios</label>
-            <i data-feather="sidebar"></i>
-          </li>
-          <li class="pc-item">
-            <a href="<?php echo constant('URL') ?>front/mod_global/global_users" class="pc-link">
-              <span class="pc-micon"><i class='bx bx-user'></i></span>
-              <span class="pc-mtext">Usuarios</span>
-            </a>
-          </li>
-
-        <?php } ?>
-
-
-
       </ul>
-
     </div>
   </div>
 </nav>

@@ -125,7 +125,6 @@ function seguirGuia(notificacion, guia) {
   });
 }
 
-// has una funcion que obtenga la url y verifique si esta en el directorio 'mod_registro_control', se der correcto, manda un alert
 function verificarUrl() {
   var url = window.location.href;
   if (url.indexOf("mod_registro_control") != -1) {
@@ -133,7 +132,7 @@ function verificarUrl() {
   }
 }
 
-verificarUrl();
+//verificarUrl();
 
 function getCantidadPeticiones() {
   $.ajax({

@@ -44,4 +44,28 @@ if (!@$_SESSION["u_oficina"]) {
 			exit;
 		}
 	}
+
+
+	// Verificar acceso de los usuarios nivel 2
+	if ($_SESSION["u_nivel"] == 2) {
+		$url_completa = "http://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+
+		// Verificar si la URL contiene 'mod_global' para permitir el acceso a todos
+		if (strpos($url_completa, 'sigob/front') == true && strpos($url_completa, 'global_perfil') == false) {
+			// verificar si la pagina que se esta cargando esta en el nivel de acceso del user
+			$coincidencia = false;
+			foreach ($_SESSION["permisos"] as $key => $value) {
+				$url_acceso = constant('URL') . 'front/' . $value;
+
+				if ($url_acceso == $url_completa) {
+					$coincidencia = true;
+				}
+			}
+
+			if ($coincidencia == false) {
+				// Si no coincide, redirigir al usuario a la página principal
+				header("Location: " . constant('URL'));
+			}
+		}
+	}
 }

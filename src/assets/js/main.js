@@ -435,7 +435,12 @@ function addOptionsCamposCondicionantes() {
   });
 }
 
-addOptionsCamposCondicionantes();
+// obten la url y verifica si estamos en el directorio mod_nomina
+var url = window.location.href;
+if (url.indexOf("mod_nomina") > -1) {
+  // si estamos en el directorio mod_nomina, ejecuta la función addOptionsCampos
+  addOptionsCamposCondicionantes();
+}
 
 // Configuracion de lenguaje de datatable
 const lenguaje_datat = {
