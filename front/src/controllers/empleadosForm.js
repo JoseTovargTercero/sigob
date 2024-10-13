@@ -253,6 +253,10 @@ function validateEmployeeForm({
       delete employeeData.dependencia
 
       employeeData.id = employeeData.id_empleado
+      if (employeeData.foto) {
+        let preview = document.getElementById('empleado-foto')
+        preview.src = `../../img/empleados/${employeeData.cedula}.jpg`
+      }
       employeeId = employeeData.id_empleado
 
       console.log(employeeId)
@@ -489,6 +493,9 @@ function validateEmployeeForm({
       })
 
       employeeId = undefined
+
+      let preview = document.getElementById('empleado-foto')
+      preview.src = `../src/assets/img/default.jpg`
     }
 
     if (e.target.id === 'add-dependency') {
@@ -625,9 +632,9 @@ function validateEmployeeForm({
         type: NOTIFICATIONS_TYPES.send,
         successFunction: function () {
           sendEmployeeData({ data: fieldList }).then((res) => {
-            closeModal({ modalId: 'modal-employee-form' })
             loadEmployeeData()
             validateEmployeeTable()
+            closeModal({ modalId: 'modal-employee-form' })
           })
         },
 
@@ -713,17 +720,50 @@ async function loadCategorias() {
 }
 
 function previewImage(event) {
-  var input = event.target
-  var reader = new FileReader()
-  reader.onload = function () {
-    var dataURL = reader.result
-    var preview = document.getElementById('empleado-foto')
+  let input = event.target
+
+  if (input.files === 0) return
+
+  let file = input.files[0]
+
+  console.log(file)
+
+  if (!['image/jpeg', 'image/png'].includes(file.type)) {
+    toastNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Tipo de archivo no admitido',
+    })
+
+    event.target.value = ''
+    return
+  }
+
+  if (file.size > 2 * 1024 * 1024) {
+    // Validar el tamaño del archivo
+    // Mostrar un mensaje de error si el archivo es demasiado grande
+    toastNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Archivo demasiado grande',
+    })
+    return
+  }
+
+  let reader = new FileReader()
+  reader.onload = function (e) {
+    console.log(e)
+
+    let dataURL = reader.result
+    let preview = document.getElementById('empleado-foto')
     preview.style.display = 'none'
+
+    // Guardar estado de la url
+    fieldList.foto = e.target.result
+    // fieldList.tipo_foto = file.type.replace('image/', '')
 
     preview.src = dataURL
     preview.style.display = 'block' // Mostrar la imagen una vez cargada
   }
-  reader.readAsDataURL(input.files[0])
+  reader.readAsDataURL(file)
 }
 
 function clearImagePreview() {

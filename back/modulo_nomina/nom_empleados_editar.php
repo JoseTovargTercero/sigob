@@ -9,29 +9,42 @@ require_once '../sistema_global/errores.php';
 $data = json_decode(file_get_contents('php://input'), true);
 $empleado_id = 0;
 $movimiento = "Se han modificado los campos: ";
-$valor_anterior = '';
 $valor_nuevo = '';
 $campo = '';
-$tabla = "empleados";
 $errores = array();
 $cedula = ''; // Variable para guardar la cédula
 
 // Iterar sobre el array recibido e insertar cada conjunto de valores
 foreach ($data as $item) {
-    $empleado_id = $item[0];
-    $campo = $item[1];
-    $valor_nuevo = $item[2];
-    $valor_anterior = $item[3];
-    
-    // Verificar si el campo es 'cedula'
-    if ($campo === 'cedula') {
-        $cedula = $valor_nuevo; // Guardar la nueva cédula
+    $empleado_id = $item[0]; // Asumimos que el primer elemento es el ID del empleado
+    $campo = $item[1]; // El segundo elemento es el campo a actualizar
+    $valor_nuevo = $item[2]; // El tercer elemento es el nuevo valor
+
+    // Solo buscamos la cédula una vez al inicio
+    if (empty($cedula)) {
+        // Consulta para obtener la cédula del empleado
+        $stmtCedula = $conexion->prepare("SELECT cedula FROM empleados WHERE id = ?");
+        $stmtCedula->bind_param("i", $empleado_id);
+        $stmtCedula->execute();
+        $stmtCedula->bind_result($cedula);
+        $stmtCedula->fetch();
+        $stmtCedula->close();
+
+        // Verificar si se obtuvo la cédula
+        if (empty($cedula)) {
+            $error_message = "No se encontró la cédula para el empleado ID: $empleado_id.";
+            registrarError($error_message);
+            array_push($errores, $error_message);
+            continue; // Salir del ciclo en caso de error
+        }
     }
 
     // Verificar si el campo es 'foto'
     if ($campo === 'foto') {
-        // Crear la ruta para almacenar la imagen
-        $target_dir = "img" . DIRECTORY_SEPARATOR . $cedula . DIRECTORY_SEPARATOR;
+        // Ruta de la imagen
+        $target_dir = __DIR__ . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "img" . DIRECTORY_SEPARATOR . "empleados" . DIRECTORY_SEPARATOR;
+        $nombreArchivo = "$cedula.jpg"; // Usar la cédula para el nombre del archivo
+        $target_file = $target_dir . $nombreArchivo;
 
         // Crear la carpeta si no existe
         if (!is_dir($target_dir)) {
@@ -43,55 +56,65 @@ foreach ($data as $item) {
             }
         }
 
-        // Manejar el archivo subido
-        if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
-            $file_name = basename($_FILES['foto']['name']);
-            $target_file = $target_dir . $file_name;
+        // Eliminar la imagen anterior si existe
+        if (file_exists($target_file)) {
+            unlink($target_file);
+        }
 
-            // Eliminar la imagen anterior si existe
-            if ($valor_anterior) {
-                $archivo_anterior = $target_dir . basename($valor_anterior);
-                if (file_exists($archivo_anterior)) {
-                    unlink($archivo_anterior); // Eliminar el archivo anterior
-                }
-            }
+        // Decodificar la imagen Base64
+        $fotoBase64 = $valor_nuevo;
+        $fotoDecodificada = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $fotoBase64));
 
-            // Mover el archivo subido a la carpeta
-            if (!move_uploaded_file($_FILES['foto']['tmp_name'], $target_file)) {
-                $error_message = "Error al mover el archivo subido para el empleado ID: $empleado_id.";
-                registrarError($error_message);
-                array_push($errores, $error_message);
-                continue; // Salir del ciclo en caso de error
-            }
-
-            // Actualizar el campo foto con el nuevo nombre
-            $valor_nuevo = $file_name;
-        } else {
-            $error_message = "No se recibió ninguna imagen o hubo un error en la carga.";
+        if (!$fotoDecodificada) {
+            $error_message = "Error al decodificar la imagen para el empleado ID: $empleado_id.";
             registrarError($error_message);
             array_push($errores, $error_message);
             continue; // Salir del ciclo en caso de error
         }
-    }
 
-    // Actualizar el campo correspondiente en la base de datos
-    $movimiento .= "$campo: $valor_nuevo. ";
+        // Crear la imagen en memoria
+        $imagen = imagecreatefromstring($fotoDecodificada);
+        if (!$imagen) {
+            $error_message = "Error al crear la imagen desde los datos Base64.";
+            registrarError($error_message);
+            array_push($errores, $error_message);
+            continue; // Salir del ciclo en caso de error
+        }
 
-    $stmt2 = mysqli_prepare($conexion, "UPDATE empleados SET $campo = ? WHERE id = ?");
-    $stmt2->bind_param('si', $valor_nuevo, $empleado_id);
-    
-    if (!$stmt2->execute()) {
-        $error_message = "Error al actualizar el campo $campo para el empleado ID: $empleado_id.";
-        registrarError($error_message);
-        array_push($errores, $campo);
+        // Guardar la imagen como JPG con calidad de 75
+        if (!imagejpeg($imagen, $target_file, 75)) {
+            $error_message = "Error al guardar la imagen en formato JPG para el empleado ID: $empleado_id.";
+            registrarError($error_message);
+            array_push($errores, $error_message);
+            imagedestroy($imagen); // Liberar memoria
+            continue; // Salir del ciclo en caso de error
+        }
+
+        // Liberar la memoria de la imagen
+        imagedestroy($imagen);
+    } else {
+        // Actualizar el campo correspondiente en la base de datos si no es 'foto'
+        $movimiento .= "$campo: $valor_nuevo. ";
+        $stmt2 = mysqli_prepare($conexion, "UPDATE empleados SET $campo = ? WHERE id = ?");
+        $stmt2->bind_param('si', $valor_nuevo, $empleado_id);
+
+        if (!$stmt2->execute()) {
+            $error_message = "Error al actualizar el campo $campo para el empleado ID: $empleado_id.";
+            registrarError($error_message);
+            array_push($errores, $campo);
+        }
+
+        $stmt2->close();
     }
-    
-    $stmt2->close();
 }
 
 
 
-echo $response;
+// echo $response;
+
+
+
+
 
 
 // Array para almacenar los ids de nómina únicos

@@ -47,7 +47,8 @@ export async function employeeCard({ id, elementToInsert }) {
     id_dependencia = employeedeData.id_dependencia,
     discapacidades = employeedeData.discapacidades,
     tipo_nomina = employeedeData.tipo_nomina,
-    observacion = employeedeData.observacion
+    observacion = employeedeData.observacion,
+    foto = employeedeData.foto
 
   const getCargo = async () => {
     let cargos = await getJobData()
@@ -94,6 +95,13 @@ export async function employeeCard({ id, elementToInsert }) {
     return textoSalida
   }
 
+  const validarImagen = () => {
+    if (!foto) {
+      return '../../front/src/assets/img/default.jpg'
+    }
+    return `../../img/empleados/${cedula}.jpg`
+  }
+
   let employeeCardElement = `    <div class='modal-window slide-up-animation' id='modal-employee'>
       <div class='modal-box card w-90'>
         <div class='row'>
@@ -117,7 +125,7 @@ export async function employeeCard({ id, elementToInsert }) {
                 
             <img
               id='empleado-foto'
-              src='../../front/src/assets/img/default.jpg'
+              src='${validarImagen()}'
               class='img-thumbnail mx-auto'
               alt='...'
               style='height: 100px; object-fit: contain;'
