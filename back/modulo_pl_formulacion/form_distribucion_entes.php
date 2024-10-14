@@ -5,11 +5,12 @@ require_once '../sistema_global/session.php';
 require_once '../sistema_global/errores.php';
 
 // Función para insertar una nueva distribución en la tabla distribucion_ente
-function insertarDistribucion($id_ente, $partidas, $id_ejercicio)
+function insertarDistribucion($id_ente, $partidas, $id_ejercicio, $id_asignacion)
 {
     global $conexion;
     $status = 0;
     $comentario = "";  // Campo agregado con valor vacío
+    $fecha = date("Y-m-d");  // Obtener la fecha actual
 
     try {
         $conexion->begin_transaction();
@@ -42,15 +43,15 @@ function insertarDistribucion($id_ente, $partidas, $id_ejercicio)
             $sumaMontos += $partida['monto'];
         }
 
-        // Consultar el monto_total de la tabla asignacion_ente
-        $sqlMontoTotal = "SELECT monto_total FROM asignacion_ente WHERE id_ente = ? AND id_ejercicio = ?";
+        // Consultar el monto_total de la tabla asignacion_ente usando el id_asignacion
+        $sqlMontoTotal = "SELECT monto_total FROM asignacion_ente WHERE id = ?";
         $stmtMontoTotal = $conexion->prepare($sqlMontoTotal);
-        $stmtMontoTotal->bind_param("ii", $id_ente, $id_ejercicio);
+        $stmtMontoTotal->bind_param("i", $id_asignacion);
         $stmtMontoTotal->execute();
         $resultadoMontoTotal = $stmtMontoTotal->get_result();
 
         if ($resultadoMontoTotal->num_rows === 0) {
-            throw new Exception("No se encontró una asignación presupuestaria para el ente y ejercicio especificados.");
+            throw new Exception("No se encontró una asignación presupuestaria para el ID especificado.");
         }
 
         $filaMontoTotal = $resultadoMontoTotal->fetch_assoc();
@@ -65,12 +66,18 @@ function insertarDistribucion($id_ente, $partidas, $id_ejercicio)
         $partidas_json = json_encode($partidas);
 
         // Insertar los datos en la tabla distribucion_ente
-        $sqlInsert = "INSERT INTO distribucion_ente (id_ente, partidas, monto_total, status, id_ejercicio, comentario) VALUES (?, ?, ?, ?, ?, ?)";
+        $sqlInsert = "INSERT INTO distribucion_ente (id_ente, partidas, monto_total, status, id_ejercicio, comentario, fecha, id_asignacion) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         $stmtInsert = $conexion->prepare($sqlInsert);
-        $stmtInsert->bind_param("isdiss", $id_ente, $partidas_json, $monto_total, $status, $id_ejercicio, $comentario);
+        $stmtInsert->bind_param("isdisssi", $id_ente, $partidas_json, $monto_total, $status, $id_ejercicio, $comentario, $fecha, $id_asignacion);
         $stmtInsert->execute();
 
         if ($stmtInsert->affected_rows > 0) {
+            // Actualizar el status de asignacion_ente a 1
+            $sqlUpdateAsignacion = "UPDATE asignacion_ente SET status = 1 WHERE id = ?";
+            $stmtUpdateAsignacion = $conexion->prepare($sqlUpdateAsignacion);
+            $stmtUpdateAsignacion->bind_param("i", $id_asignacion);
+            $stmtUpdateAsignacion->execute();
+
             $conexion->commit();
             return json_encode(["success" => "Distribución insertada correctamente"]);
         } else {
@@ -180,12 +187,12 @@ function eliminarDistribucionEntes($id)
     }
 }
 
-// Función para consultar un registro por ID en la tabla distribucion_entes y obtener detalles adicionales
+// Función para consultar un registro por ID en la tabla distribucion_entes y obtener detalles adicionales 
 function consultarDistribucionPorId($id)
 {
     global $conexion;
 
-    $sqlSelectById = "SELECT id, id_ente, partidas, monto_total, status, id_ejercicio FROM distribucion_entes WHERE id = ?";
+    $sqlSelectById = "SELECT id, id_ente, partidas, monto_total, status, id_ejercicio, id_asignacion FROM distribucion_entes WHERE id = ?";
     $stmtSelectById = $conexion->prepare($sqlSelectById);
     $stmtSelectById->bind_param("i", $id);
     $stmtSelectById->execute();
@@ -240,7 +247,20 @@ function consultarDistribucionPorId($id)
 
         $distribucion['partidas'] = $partidasDetalles;
 
-        // Devolver la respuesta final con monto_total incluido
+        // Obtener los detalles de la asignación
+        $sqlAsignacion = "SELECT id, id_ente, monto_total, id_ejercicio, status FROM asignacion_ente WHERE id = ?";
+        $stmtAsignacion = $conexion->prepare($sqlAsignacion);
+        $stmtAsignacion->bind_param("i", $distribucion['id_asignacion']);
+        $stmtAsignacion->execute();
+        $resultAsignacion = $stmtAsignacion->get_result();
+
+        if ($resultAsignacion->num_rows > 0) {
+            $distribucion['asignacion'] = $resultAsignacion->fetch_assoc();
+        } else {
+            $distribucion['asignacion'] = null;
+        }
+
+        // Devolver la respuesta final con monto_total y asignación incluida
         return json_encode(["success" => $distribucion]);
     } else {
         return json_encode(["error" => "No se encontró la distribución con el ID especificado."]);
@@ -248,12 +268,13 @@ function consultarDistribucionPorId($id)
 }
 
 
+
 // Función para consultar todos los registros en la tabla distribucion_entes
 function consultarTodasDistribuciones()
 {
     global $conexion;
 
-    $sqlSelectAll = "SELECT id, id_ente, partidas, monto_total, status, id_ejercicio FROM distribucion_entes";
+    $sqlSelectAll = "SELECT id, id_ente, partidas, monto_total, status, id_ejercicio, id_asignacion FROM distribucion_entes";
     $resultado = $conexion->query($sqlSelectAll);
 
     if ($resultado->num_rows > 0) {
@@ -305,6 +326,20 @@ function consultarTodasDistribuciones()
             }
 
             $fila['partidas'] = $partidasDetalles;
+
+            // Obtener los detalles de la asignación
+            $sqlAsignacion = "SELECT id, id_ente, monto_total, id_ejercicio, status FROM asignacion_ente WHERE id = ?";
+            $stmtAsignacion = $conexion->prepare($sqlAsignacion);
+            $stmtAsignacion->bind_param("i", $fila['id_asignacion']);
+            $stmtAsignacion->execute();
+            $resultAsignacion = $stmtAsignacion->get_result();
+
+            if ($resultAsignacion->num_rows > 0) {
+                $fila['asignacion'] = $resultAsignacion->fetch_assoc();
+            } else {
+                $fila['asignacion'] = null;
+            }
+
             $distribuciones[] = $fila;
         }
 
@@ -313,6 +348,7 @@ function consultarTodasDistribuciones()
         return json_encode(["error" => "No se encontraron distribuciones registradas."]);
     }
 }
+
 
 
 

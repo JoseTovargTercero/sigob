@@ -12,9 +12,12 @@ function insertarAsignacionEnte($id_ente, $monto_total, $id_ejercicio)
     $conexion->begin_transaction();
 
     try {
-        $sql = "INSERT INTO asignacion_ente (id_ente, monto_total, id_ejercicio) VALUES (?, ?, ?)";
+        $fecha = date('Y-m-d');
+        $status = 0;
+        
+        $sql = "INSERT INTO asignacion_ente (id_ente, monto_total, id_ejercicio, fecha, status) VALUES (?, ?, ?, ?, ?)";
         $stmt = $conexion->prepare($sql);
-        $stmt->bind_param("idi", $id_ente, $monto_total, $id_ejercicio);
+        $stmt->bind_param("idisi", $id_ente, $monto_total, $id_ejercicio, $fecha, $status);
         $stmt->execute();
 
         if ($stmt->affected_rows > 0) {
@@ -88,7 +91,10 @@ function consultarAsignacionPorId($id)
     global $conexion;
 
     try {
-        $sql = "SELECT * FROM asignacion_ente WHERE id = ?";
+        $sql = "SELECT a.*, e.ente_nombre, e.tipo_ente 
+                FROM asignacion_ente a
+                JOIN entes e ON a.id_ente = e.id
+                WHERE a.id = ?";
         $stmt = $conexion->prepare($sql);
         $stmt->bind_param("i", $id);
         $stmt->execute();
@@ -111,7 +117,9 @@ function consultarTodasAsignaciones()
     global $conexion;
 
     try {
-        $sql = "SELECT * FROM asignacion_ente";
+        $sql = "SELECT a.*, e.ente_nombre, e.tipo_ente 
+                FROM asignacion_ente a
+                JOIN entes e ON a.id_ente = e.id";
         $result = $conexion->query($sql);
 
         $asignaciones = [];
@@ -126,7 +134,6 @@ function consultarTodasAsignaciones()
     }
 }
 
-
 // Procesar la solicitud
 $data = json_decode(file_get_contents("php://input"), true);
 
@@ -140,7 +147,7 @@ if (isset($data["accion"])) {
         $id_ejercicio = $data["id_ejercicio"];
         echo insertarAsignacionEnte($id_ente, $monto_total, $id_ejercicio);
 
-        // Actualizar datos
+    // Actualizar datos
     } elseif ($accion === "update" && isset($data["id"]) && isset($data["id_ente"]) && isset($data["monto_total"]) && isset($data["id_ejercicio"])) {
         $id = $data["id"];
         $id_ente = $data["id_ente"];
@@ -148,21 +155,21 @@ if (isset($data["accion"])) {
         $id_ejercicio = $data["id_ejercicio"];
         echo actualizarAsignacionEnte($id, $id_ente, $monto_total, $id_ejercicio);
 
-        // Eliminar datos
+    // Eliminar datos
     } elseif ($accion === "delete" && isset($data["id"])) {
         $id = $data["id"];
         echo eliminarAsignacionEnte($id);
 
-        // Consultar por ID
+    // Consultar por ID
     } elseif ($accion === "consultar_por_id" && isset($data["id"])) {
         $id = $data["id"];
         echo consultarAsignacionPorId($id);
 
-        // Consultar todos los registros
+    // Consultar todos los registros
     } elseif ($accion === "consultar") {
         echo consultarTodasAsignaciones();
 
-        // Acción no válida o faltan datos
+    // Acción no válida o faltan datos
     } else {
         echo json_encode(['error' => "Acción no válida o faltan datos"]);
     }

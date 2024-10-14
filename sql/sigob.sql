@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 14-10-2024 a las 06:00:51
+-- Tiempo de generación: 15-10-2024 a las 00:08:47
 -- Versión del servidor: 10.4.27-MariaDB
 -- Versión de PHP: 7.4.33
 
@@ -31,7 +31,9 @@ CREATE TABLE `asignacion_ente` (
   `id` int(255) NOT NULL,
   `id_ente` int(255) NOT NULL,
   `monto_total` varchar(255) NOT NULL,
-  `id_ejercicio` int(255) NOT NULL
+  `id_ejercicio` int(255) NOT NULL,
+  `fecha` varchar(255) NOT NULL,
+  `status` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -1005,7 +1007,9 @@ CREATE TABLE `distribucion_entes` (
   `monto_total` varchar(255) NOT NULL,
   `status` int(255) NOT NULL,
   `id_ejercicio` int(255) NOT NULL,
-  `comentario` longtext NOT NULL
+  `comentario` longtext NOT NULL,
+  `fecha` varchar(255) NOT NULL,
+  `id_asignacion` int(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
