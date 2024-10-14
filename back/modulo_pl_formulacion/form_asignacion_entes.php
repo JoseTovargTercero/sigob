@@ -91,6 +91,7 @@ function consultarAsignacionPorId($id)
     global $conexion;
 
     try {
+        // Consulta principal para obtener los datos de asignacion_ente y sus detalles del ente
         $sql = "SELECT a.*, e.ente_nombre, e.tipo_ente 
                 FROM asignacion_ente a
                 JOIN entes e ON a.id_ente = e.id
@@ -101,7 +102,22 @@ function consultarAsignacionPorId($id)
         $result = $stmt->get_result();
 
         if ($result->num_rows > 0) {
-            return json_encode(["success" => $result->fetch_assoc()]);
+            $asignacion = $result->fetch_assoc();
+
+            // Consulta adicional para obtener los detalles de distribucion_entes asociados al id_asignacion
+            $sqlDistribucion = "SELECT * FROM distribucion_entes WHERE id_asignacion = ?";
+            $stmtDistribucion = $conexion->prepare($sqlDistribucion);
+            $stmtDistribucion->bind_param("i", $id);
+            $stmtDistribucion->execute();
+            $resultDistribucion = $stmtDistribucion->get_result();
+
+            if ($resultDistribucion->num_rows > 0) {
+                $asignacion['distribucion'] = $resultDistribucion->fetch_assoc();
+            } else {
+                $asignacion['distribucion'] = false;
+            }
+
+            return json_encode(["success" => $asignacion]);
         } else {
             return json_encode(["error" => "No se encontró el registro."]);
         }
@@ -110,6 +126,7 @@ function consultarAsignacionPorId($id)
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 // Función para consultar todos los registros en asignacion_ente
 function consultarTodasAsignaciones()
