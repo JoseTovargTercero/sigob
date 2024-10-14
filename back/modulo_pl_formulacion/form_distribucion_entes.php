@@ -359,11 +359,12 @@ if (isset($data["accion"])) {
     $accion = $data["accion"];
 
     // Insertar datos
-    if ($accion === "insert" && isset($data["id_ente"]) && isset($data["partidas"]) && isset($data["id_ejercicio"])) {
+    if ($accion === "insert" && isset($data["id_ente"]) && isset($data["partidas"]) && isset($data["id_ejercicio"] && isset($data["id_asignacion"])) {
         $id_ente = $data["id_ente"];
         $partidas = $data["partidas"]; // Asumimos que 'partidas' es un array de arrays con 'id_partida' y 'monto'
         $id_ejercicio = $data["id_ejercicio"];
-        echo insertarDistribucion($id_ente, $partidas, $id_ejercicio);
+        $id_asignacion = $data["id_asignacion"];
+        echo insertarDistribucion($id_ente, $partidas, $id_ejercicio, $id_asignacion);
 
         // Actualizar datos
     } elseif ($accion === "update" && isset($data["id"]) && isset($data["id_ente"]) && isset($data["partidas"]) && isset($data["id_ejercicio"])) {
