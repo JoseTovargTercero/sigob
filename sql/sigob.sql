@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.4
+-- version 5.2.0
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 14-10-2024 a las 03:22:44
--- Versión del servidor: 10.4.16-MariaDB
--- Versión de PHP: 7.4.12
+-- Tiempo de generación: 14-10-2024 a las 05:55:25
+-- Versión del servidor: 10.4.27-MariaDB
+-- Versión de PHP: 7.4.33
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -32,7 +32,7 @@ CREATE TABLE `asignacion_ente` (
   `id_ente` int(255) NOT NULL,
   `monto_total` varchar(255) NOT NULL,
   `id_ejercicio` int(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -43,8 +43,8 @@ CREATE TABLE `asignacion_ente` (
 CREATE TABLE `backups` (
   `id` int(11) NOT NULL,
   `user` int(11) NOT NULL,
-  `fecha` varchar(20) COLLATE latin1_spanish_ci NOT NULL,
-  `tablas` varchar(255) COLLATE latin1_spanish_ci NOT NULL
+  `fecha` varchar(20) NOT NULL,
+  `tablas` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 --
@@ -65,10 +65,10 @@ INSERT INTO `backups` (`id`, `user`, `fecha`, `tablas`) VALUES
 
 CREATE TABLE `bancos` (
   `id` int(11) NOT NULL,
-  `prefijo` varchar(50) COLLATE latin1_spanish_ci NOT NULL,
-  `nombre` varchar(255) COLLATE latin1_spanish_ci NOT NULL,
-  `matriz` varchar(255) COLLATE latin1_spanish_ci NOT NULL,
-  `afiliado` varchar(20) COLLATE latin1_spanish_ci NOT NULL
+  `prefijo` varchar(50) NOT NULL,
+  `nombre` varchar(255) NOT NULL,
+  `matriz` varchar(255) NOT NULL,
+  `afiliado` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 --
@@ -90,7 +90,7 @@ CREATE TABLE `cargos_grados` (
   `cargo` varchar(255) DEFAULT NULL,
   `cod_cargo` varchar(5) DEFAULT NULL,
   `grado` varchar(2) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
 -- Volcado de datos para la tabla `cargos_grados`
@@ -643,7 +643,7 @@ CREATE TABLE `categorias` (
   `id` int(11) NOT NULL,
   `categoria` varchar(255) NOT NULL,
   `categoria_nombre` longtext NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `categorias`
@@ -748,7 +748,7 @@ CREATE TABLE `compromisos` (
   `correlativo` varchar(255) NOT NULL,
   `tipo` varchar(255) NOT NULL,
   `id_registro` int(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -767,7 +767,7 @@ CREATE TABLE `conceptos` (
   `maxval` int(1) NOT NULL DEFAULT 0,
   `tipo_calculo_origen` int(11) NOT NULL DEFAULT 0,
   `codigo_concepto` varchar(50) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
 -- Volcado de datos para la tabla `conceptos`
@@ -812,7 +812,7 @@ CREATE TABLE `conceptos_aplicados` (
   `nomina_restar` varchar(255) NOT NULL,
   `multiplicador` varchar(255) NOT NULL,
   `otra_nomina` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `conceptos_aplicados`
@@ -851,9 +851,9 @@ INSERT INTO `conceptos_aplicados` (`id`, `concepto_id`, `nom_concepto`, `fecha_a
 
 CREATE TABLE `conceptos_formulacion` (
   `id` int(11) NOT NULL,
-  `tipo_calculo` varchar(10) COLLATE latin1_spanish_ci NOT NULL,
-  `condicion` varchar(255) COLLATE latin1_spanish_ci NOT NULL,
-  `valor` varchar(50) COLLATE latin1_spanish_ci NOT NULL,
+  `tipo_calculo` varchar(10) NOT NULL,
+  `condicion` varchar(255) NOT NULL,
+  `valor` varchar(50) NOT NULL,
   `concepto_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
@@ -878,7 +878,7 @@ CREATE TABLE `correcciones` (
   `fecha_correccion` date NOT NULL,
   `status` int(11) NOT NULL,
   `peticion_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `correcciones`
@@ -898,7 +898,7 @@ CREATE TABLE `dependencias` (
   `dependencia` varchar(255) NOT NULL,
   `cod_dependencia` varchar(10) NOT NULL,
   `id_categoria` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `dependencias`
@@ -1004,8 +1004,9 @@ CREATE TABLE `distribucion_entes` (
   `partidas` longtext NOT NULL,
   `monto_total` varchar(255) NOT NULL,
   `status` int(255) NOT NULL,
-  `id_ejercicio` int(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `id_ejercicio` int(255) NOT NULL,
+  `comentario` longtext NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -1020,7 +1021,7 @@ CREATE TABLE `distribucion_presupuestaria` (
   `id_ejercicio` int(255) NOT NULL,
   `monto_actual` varchar(255) NOT NULL,
   `status` int(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -1034,7 +1035,7 @@ CREATE TABLE `ejercicio_fiscal` (
   `situado` varchar(255) NOT NULL,
   `divisor` varchar(255) NOT NULL,
   `status` int(1) NOT NULL DEFAULT 1
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `ejercicio_fiscal`
@@ -1051,27 +1052,27 @@ INSERT INTO `ejercicio_fiscal` (`id`, `ano`, `situado`, `divisor`, `status`) VAL
 
 CREATE TABLE `empleados` (
   `id` int(11) NOT NULL,
-  `nacionalidad` varchar(2) COLLATE latin1_spanish_ci NOT NULL,
-  `cedula` varchar(20) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `nombres` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `nacionalidad` varchar(2) NOT NULL,
+  `cedula` varchar(20) DEFAULT NULL,
+  `nombres` varchar(255) DEFAULT NULL,
   `otros_años` int(11) NOT NULL DEFAULT 0,
-  `status` varchar(5) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `observacion` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `cod_cargo` varchar(10) COLLATE latin1_spanish_ci NOT NULL,
-  `banco` varchar(255) COLLATE latin1_spanish_ci NOT NULL,
-  `cuenta_bancaria` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `status` varchar(5) DEFAULT NULL,
+  `observacion` varchar(255) DEFAULT NULL,
+  `cod_cargo` varchar(10) NOT NULL,
+  `banco` varchar(255) NOT NULL,
+  `cuenta_bancaria` varchar(255) DEFAULT NULL,
   `hijos` int(11) NOT NULL DEFAULT 0,
   `instruccion_academica` int(11) NOT NULL DEFAULT 0,
   `discapacidades` int(2) NOT NULL DEFAULT 0,
-  `tipo_nomina` varchar(10) COLLATE latin1_spanish_ci NOT NULL,
+  `tipo_nomina` varchar(10) NOT NULL,
   `id_dependencia` int(255) NOT NULL,
   `verificado` int(1) NOT NULL DEFAULT 0,
-  `correcion` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `correcion` varchar(255) DEFAULT NULL,
   `beca` int(2) NOT NULL DEFAULT 0,
   `fecha_ingreso` date DEFAULT NULL,
   `id_categoria` int(11) NOT NULL,
-  `id_partida` longtext COLLATE latin1_spanish_ci NOT NULL,
-  `foto` longtext COLLATE latin1_spanish_ci NOT NULL
+  `id_partida` longtext NOT NULL,
+  `foto` longtext NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 --
@@ -2453,22 +2454,22 @@ INSERT INTO `empleados` (`id`, `nacionalidad`, `cedula`, `nombres`, `otros_años
 
 CREATE TABLE `empleados_pasados` (
   `id` int(11) NOT NULL,
-  `nacionalidad` varchar(2) COLLATE latin1_spanish_ci NOT NULL,
-  `cedula` varchar(20) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `nombres` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `nacionalidad` varchar(2) NOT NULL,
+  `cedula` varchar(20) DEFAULT NULL,
+  `nombres` varchar(255) DEFAULT NULL,
   `otros_años` int(11) NOT NULL DEFAULT 0,
-  `status` varchar(5) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `observacion` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `cod_cargo` varchar(10) COLLATE latin1_spanish_ci NOT NULL,
-  `banco` varchar(255) COLLATE latin1_spanish_ci NOT NULL,
-  `cuenta_bancaria` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `status` varchar(5) DEFAULT NULL,
+  `observacion` varchar(255) DEFAULT NULL,
+  `cod_cargo` varchar(10) NOT NULL,
+  `banco` varchar(255) NOT NULL,
+  `cuenta_bancaria` varchar(255) DEFAULT NULL,
   `hijos` int(11) NOT NULL DEFAULT 0,
   `instruccion_academica` int(11) NOT NULL DEFAULT 0,
   `discapacidades` int(2) NOT NULL DEFAULT 0,
-  `tipo_nomina` varchar(255) COLLATE latin1_spanish_ci NOT NULL,
+  `tipo_nomina` varchar(255) NOT NULL,
   `id_dependencia` int(255) NOT NULL,
   `verificado` int(1) NOT NULL DEFAULT 0,
-  `correcion` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `correcion` varchar(255) DEFAULT NULL,
   `beca` int(2) NOT NULL DEFAULT 0,
   `fecha_ingreso` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
@@ -3885,7 +3886,7 @@ CREATE TABLE `entes` (
   `id` int(255) NOT NULL,
   `ente_nombre` longtext NOT NULL,
   `tipo_ente` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `entes`
@@ -3905,7 +3906,7 @@ CREATE TABLE `error_log` (
   `id` int(255) NOT NULL,
   `descripcion` longtext NOT NULL,
   `fecha` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -3917,7 +3918,7 @@ CREATE TABLE `frecuencias_por_grupo` (
   `id` int(11) NOT NULL,
   `id_grupo` int(11) NOT NULL,
   `tipo` varchar(10) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `frecuencias_por_grupo`
@@ -3941,7 +3942,7 @@ CREATE TABLE `gastos` (
   `monto` varchar(255) NOT NULL,
   `status` int(255) NOT NULL,
   `id_ejercicio` int(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -3954,7 +3955,7 @@ CREATE TABLE `historico_conceptos` (
   `identificador` varchar(255) NOT NULL,
   `valor` varchar(255) NOT NULL,
   `fecha` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `historico_conceptos`
@@ -3982,7 +3983,7 @@ CREATE TABLE `historico_reintegros` (
   `nombre_nomina` varchar(255) NOT NULL,
   `fecha` varchar(255) NOT NULL,
   `time` datetime NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `historico_reintegros`
@@ -4660,7 +4661,7 @@ CREATE TABLE `informacion_pdf` (
   `correlativo` varchar(255) NOT NULL,
   `identificador` varchar(255) NOT NULL,
   `banco` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `informacion_pdf`
@@ -4697,7 +4698,7 @@ CREATE TABLE `menu` (
   `nombre` varchar(255) NOT NULL,
   `dir` varchar(255) NOT NULL,
   `icono` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `menu`
@@ -4739,11 +4740,11 @@ INSERT INTO `menu` (`id`, `oficina`, `categoria`, `nombre`, `dir`, `icono`) VALU
 CREATE TABLE `modificaciones_empleados` (
   `id` int(11) NOT NULL,
   `empleado` int(11) NOT NULL,
-  `campo` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `valor` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `campo` varchar(255) DEFAULT NULL,
+  `valor` varchar(255) DEFAULT NULL,
   `timestamp` datetime NOT NULL DEFAULT current_timestamp(),
   `user_acepta` int(10) NOT NULL DEFAULT 0,
-  `fecha` varchar(50) COLLATE latin1_spanish_ci NOT NULL
+  `fecha` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 -- --------------------------------------------------------
@@ -4755,15 +4756,15 @@ CREATE TABLE `modificaciones_empleados` (
 CREATE TABLE `movimientos` (
   `id` int(11) NOT NULL,
   `id_empleado` int(10) NOT NULL,
-  `id_nomina` varchar(255) COLLATE latin1_spanish_ci NOT NULL,
+  `id_nomina` varchar(255) NOT NULL,
   `fecha_movimiento` datetime NOT NULL DEFAULT current_timestamp(),
-  `accion` varchar(50) COLLATE latin1_spanish_ci NOT NULL,
-  `tabla` varchar(255) COLLATE latin1_spanish_ci NOT NULL,
-  `campo` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `descripcion` longtext COLLATE latin1_spanish_ci NOT NULL,
-  `valor_anterior` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `valor_nuevo` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `usuario_id` varchar(255) COLLATE latin1_spanish_ci NOT NULL,
+  `accion` varchar(50) NOT NULL,
+  `tabla` varchar(255) NOT NULL,
+  `campo` varchar(255) DEFAULT NULL,
+  `descripcion` longtext NOT NULL,
+  `valor_anterior` varchar(255) DEFAULT NULL,
+  `valor_nuevo` varchar(255) DEFAULT NULL,
+  `usuario_id` varchar(255) NOT NULL,
   `status` int(11) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
@@ -4784,11 +4785,11 @@ INSERT INTO `movimientos` (`id`, `id_empleado`, `id_nomina`, `fecha_movimiento`,
 
 CREATE TABLE `nominas` (
   `id` int(11) NOT NULL,
-  `grupo_nomina` varchar(255) COLLATE latin1_spanish_ci NOT NULL,
-  `nombre` varchar(255) COLLATE latin1_spanish_ci NOT NULL,
-  `frecuencia` varchar(255) COLLATE latin1_spanish_ci NOT NULL,
-  `tipo` varchar(255) COLLATE latin1_spanish_ci NOT NULL,
-  `conceptos_aplicados` varchar(255) COLLATE latin1_spanish_ci NOT NULL
+  `grupo_nomina` varchar(255) NOT NULL,
+  `nombre` varchar(255) NOT NULL,
+  `frecuencia` varchar(255) NOT NULL,
+  `tipo` varchar(255) NOT NULL,
+  `conceptos_aplicados` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 --
@@ -4823,7 +4824,7 @@ CREATE TABLE `nominas_conceptos` (
   `cod_nomina` varchar(10) DEFAULT NULL,
   `nom_nomina` varchar(255) DEFAULT NULL,
   `tipo_concepto` varchar(1) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
 -- Volcado de datos para la tabla `nominas_conceptos`
@@ -4854,8 +4855,8 @@ INSERT INTO `nominas_conceptos` (`id`, `contador_cod_con`, `cod_concepto`, `nom_
 
 CREATE TABLE `nominas_grupos` (
   `id` int(11) NOT NULL,
-  `codigo` varchar(20) COLLATE latin1_spanish_ci NOT NULL,
-  `nombre` varchar(255) COLLATE latin1_spanish_ci NOT NULL,
+  `codigo` varchar(20) NOT NULL,
+  `nombre` varchar(255) NOT NULL,
   `creado` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
@@ -4877,12 +4878,12 @@ INSERT INTO `nominas_grupos` (`id`, `codigo`, `nombre`, `creado`) VALUES
 CREATE TABLE `notificaciones` (
   `id` int(11) NOT NULL,
   `user_1` int(11) NOT NULL,
-  `user_2` varchar(150) COLLATE latin1_spanish_ci NOT NULL,
+  `user_2` varchar(150) NOT NULL,
   `tipo` int(11) NOT NULL,
-  `guia` longtext COLLATE latin1_spanish_ci NOT NULL,
+  `guia` longtext NOT NULL,
   `date` datetime DEFAULT current_timestamp(),
   `visto` int(1) NOT NULL DEFAULT 0,
-  `comentario` varchar(255) COLLATE latin1_spanish_ci NOT NULL
+  `comentario` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 --
@@ -4907,7 +4908,7 @@ CREATE TABLE `partidas_presupuestarias` (
   `nombre` longtext NOT NULL,
   `descripcion` longtext NOT NULL,
   `status` int(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `partidas_presupuestarias`
@@ -5033,9 +5034,9 @@ INSERT INTO `partidas_presupuestarias` (`id`, `partida`, `nombre`, `descripcion`
 
 CREATE TABLE `password_resets` (
   `id` int(11) NOT NULL,
-  `email` varchar(255) COLLATE latin1_spanish_ci NOT NULL,
-  `token` varchar(255) COLLATE latin1_spanish_ci NOT NULL,
-  `expires` varchar(255) COLLATE latin1_spanish_ci NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `token` varchar(255) NOT NULL,
+  `expires` varchar(255) NOT NULL,
   `attempts` int(11) DEFAULT 0,
   `last_attempt` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
@@ -5060,7 +5061,7 @@ CREATE TABLE `peticiones` (
   `identificador` varchar(255) NOT NULL,
   `status_archivos` varchar(255) NOT NULL,
   `correccion` longtext DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `peticiones`
@@ -5088,7 +5089,7 @@ CREATE TABLE `plan_inversion` (
   `id_ejercicio` int(255) NOT NULL,
   `monto_total` varchar(255) NOT NULL,
   `fecha` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `plan_inversion`
@@ -5112,7 +5113,7 @@ CREATE TABLE `poa_actividades` (
   `total` varchar(255) NOT NULL,
   `id_ente` varchar(255) NOT NULL,
   `fecha` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -5122,8 +5123,8 @@ CREATE TABLE `poa_actividades` (
 
 CREATE TABLE `primantiguedad` (
   `id` int(255) NOT NULL,
-  `porcentaje` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `tiempo` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL
+  `porcentaje` varchar(255) NOT NULL,
+  `tiempo` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -5164,8 +5165,8 @@ INSERT INTO `primantiguedad` (`id`, `porcentaje`, `tiempo`) VALUES
 
 CREATE TABLE `profesiones` (
   `id_profesion` int(255) NOT NULL,
-  `profesion` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `porcentaje` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL
+  `profesion` varchar(255) NOT NULL,
+  `porcentaje` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -5195,7 +5196,7 @@ CREATE TABLE `proyecto_inversion` (
   `id_partida` varchar(255) NOT NULL,
   `status` int(255) NOT NULL DEFAULT 0,
   `comentario` longtext NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -5218,7 +5219,7 @@ CREATE TABLE `recibo_pago` (
   `nombre_nomina` varchar(255) NOT NULL,
   `fecha_inicio` varchar(255) NOT NULL,
   `fecha_fin` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `recibo_pago`
@@ -9367,14 +9368,14 @@ INSERT INTO `recibo_pago` (`id`, `id_empleado`, `sueldo_base`, `sueldo_integral`
 
 CREATE TABLE `reportes` (
   `id` int(11) NOT NULL,
-  `furmulacion` longtext COLLATE latin1_spanish_ci NOT NULL,
-  `nominas` longtext COLLATE latin1_spanish_ci NOT NULL,
-  `columnas` longtext COLLATE latin1_spanish_ci NOT NULL,
-  `formato` varchar(10) COLLATE latin1_spanish_ci NOT NULL,
-  `nombre` varchar(255) COLLATE latin1_spanish_ci NOT NULL,
+  `furmulacion` longtext NOT NULL,
+  `nominas` longtext NOT NULL,
+  `columnas` longtext NOT NULL,
+  `formato` varchar(10) NOT NULL,
+  `nombre` varchar(255) NOT NULL,
   `user` int(10) NOT NULL,
   `creacion` datetime NOT NULL DEFAULT current_timestamp(),
-  `tipoFiltro` varchar(255) COLLATE latin1_spanish_ci NOT NULL
+  `tipoFiltro` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 --
@@ -9416,7 +9417,7 @@ CREATE TABLE `solicitud_dozavos` (
   `partidas` varchar(255) NOT NULL,
   `id_ente` int(255) NOT NULL,
   `status` int(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `solicitud_dozavos`
@@ -9450,7 +9451,7 @@ CREATE TABLE `system_users` (
   `creado` datetime NOT NULL DEFAULT current_timestamp(),
   `u_nivel` int(11) NOT NULL,
   `u_status` int(11) NOT NULL DEFAULT 1
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
 -- Volcado de datos para la tabla `system_users`
@@ -9474,7 +9475,7 @@ CREATE TABLE `system_users_permisos` (
   `id` int(11) NOT NULL,
   `id_user` int(11) NOT NULL,
   `id_item_menu` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `system_users_permisos`
@@ -9502,7 +9503,7 @@ CREATE TABLE `tabuladores` (
   `pasos` varchar(255) NOT NULL,
   `aniosPasos` varchar(255) NOT NULL,
   `timestamp` date NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `tabuladores`
@@ -9523,7 +9524,7 @@ CREATE TABLE `tabuladores_estr` (
   `grado` varchar(255) NOT NULL,
   `monto` varchar(255) NOT NULL,
   `tabulador_id` int(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `tabuladores_estr`
@@ -9932,7 +9933,7 @@ CREATE TABLE `tasa` (
   `descripcion` varchar(255) NOT NULL,
   `simbolo` varchar(255) NOT NULL,
   `valor` varchar(2000) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `tasa`
@@ -9953,7 +9954,7 @@ CREATE TABLE `tasa_historico` (
   `precio` varchar(255) NOT NULL,
   `descripcion` varchar(2000) NOT NULL,
   `fecha` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `tasa_historico`
@@ -9975,7 +9976,7 @@ CREATE TABLE `tipo_gastos` (
   `id` int(255) NOT NULL,
   `nombre` longtext NOT NULL,
   `id_partida` int(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -9992,7 +9993,7 @@ CREATE TABLE `traspasos` (
   `fecha` varchar(255) NOT NULL,
   `monto_anterior` varchar(255) NOT NULL,
   `monto_actual` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -10008,7 +10009,7 @@ CREATE TABLE `txt` (
   `identificador` varchar(255) NOT NULL,
   `fecha_pagar` varchar(255) NOT NULL,
   `correlativo` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `txt`
