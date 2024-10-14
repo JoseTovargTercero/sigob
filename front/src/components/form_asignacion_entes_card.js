@@ -172,7 +172,7 @@ function validarEntesTabla() {
       topStart: function () {
         let toolbar = document.createElement('div')
         toolbar.innerHTML = `
-                <h5 class="text-center mb-0">Lista de partidas solicitadas por el ente:</h5>
+                <h5 class="text-center mb-0">Lista de entes pendientes por asignación anual:</h5>
                           `
         return toolbar
       },

@@ -176,8 +176,8 @@ export const form_distribucion_ente_card = async ({
     }
     if (e.target.id === 'distribucion-ente-rechazar') {
       confirmNotification({
-        type: NOTIFICATIONS_TYPES.send,
-        message: `¿Desea aceptar esta distribución de presupuesto?`,
+        type: NOTIFICATIONS_TYPES.delete,
+        message: `¿Desea rechazar esta distribución de presupuesto?`,
         successFunction: async function () {
           let res = await rechazarDistribucionEnte({
             id: distribucionId,
