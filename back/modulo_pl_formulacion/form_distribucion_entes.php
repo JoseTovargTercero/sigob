@@ -96,11 +96,11 @@ function actualizarEstadoDistribucion($id, $status, $comentario)
 
         // Verificar el valor de status para aprobar o rechazar
         if ($status == 1) {
-            $sqlUpdate = "UPDATE distribucion_ente SET status = 1, comentario = '' WHERE id = ?";
+            $sqlUpdate = "UPDATE distribucion_entes SET status = 1, comentario = '' WHERE id = ?";
             $stmtUpdate = $conexion->prepare($sqlUpdate);
             $stmtUpdate->bind_param("i", $id);
         } elseif ($status == 2) {
-            $sqlUpdate = "UPDATE distribucion_ente SET status = 2, comentario = ? WHERE id = ?";
+            $sqlUpdate = "UPDATE distribucion_entes SET status = 2, comentario = ? WHERE id = ?";
             $stmtUpdate = $conexion->prepare($sqlUpdate);
             $stmtUpdate->bind_param("si", $comentario, $id);
 
