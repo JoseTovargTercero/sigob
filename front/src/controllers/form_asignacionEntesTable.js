@@ -1,4 +1,8 @@
-import { getEntesPlan, getEntesPlanes } from '../api/form_entes.js'
+import {
+  getDistribucionEntes,
+  getEntesPlan,
+  getEntesPlanes,
+} from '../api/form_entes.js'
 
 let datos = [
   {
@@ -147,9 +151,9 @@ const tableLanguage = {
   },
 }
 
-let planesTable
+let distribucionEntesTable
 export const validateAsignacionEntesTable = async () => {
-  planesTable = new DataTable('#asignacion-entes-table', {
+  distribucionEntesTable = new DataTable('#asignacion-entes-table', {
     columns: [{ data: 'ente_nombre' }, { data: 'monto' }, { data: 'acciones' }],
     responsive: true,
     scrollY: 400,
@@ -158,7 +162,7 @@ export const validateAsignacionEntesTable = async () => {
       topStart: function () {
         let toolbar = document.createElement('div')
         toolbar.innerHTML = `
-            <h5 class="text-center">Asignación presupuestaria a entes</h5>
+            <h5 class="text-center">Validar distribución presupuestaria de entes</h5>
                       `
         return toolbar
       },
@@ -172,29 +176,29 @@ export const validateAsignacionEntesTable = async () => {
 }
 
 export const loadAsignacionEntesTable = async () => {
-  let planes = await getEntesPlanes()
+  // let planes = await getEntesPlanes()
+  let distribuciones = await getDistribucionEntes()
 
-  if (!Array.isArray(datos)) return
+  if (!Array.isArray(distribuciones.fullInfo)) return
 
-  if (!planes || planes.error) return
+  if (!distribuciones || distribuciones.error) return
 
-  let datosOrdenados = [...planes].sort((a, b) => a.id - b.id)
+  let datosOrdenados = [...distribuciones.fullInfo].sort((a, b) => a.id - b.id)
   let data = datosOrdenados.map((el) => {
     return {
       ente_nombre: el.ente_nombre,
-      monto: el.monto,
-      acciones: el.id_poa
-        ? `<button class="btn btn-info btn-sm" data-validarId="${el.id}">VALIDAR</button>`
-        : 'Sin plan operativo',
+      monto: el.monto_total,
+      tipo: el.tipo_ente,
+      acciones: `<button class="btn btn-info btn-sm" data-validarId="${el.id}">VALIDAR</button>`,
     }
   })
 
-  planesTable.clear().draw()
+  distribucionEntesTable.clear().draw()
 
   // console.log(datosOrdenados)
-  planesTable.rows.add(data).draw()
+  distribucionEntesTable.rows.add(data).draw()
 }
 
 export async function deletePartidaRow({ id, row }) {
-  planesTable.row(row).remove().draw()
+  distribucionEntesTable.row(row).remove().draw()
 }

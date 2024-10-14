@@ -102,7 +102,7 @@ export async function employeeCard({ id, elementToInsert }) {
     return `../../img/empleados/${cedula}.jpg`
   }
 
-  let employeeCardElement = `    <div class='modal-window slide-up-animation' id='modal-employee'>
+  let employeeCardElement = ` <div class='modal-window slide-up-animation' id='modal-employee'>
       <div class='modal-box card w-90'>
         <div class='row'>
           <div class='card-header modal-box-header'>
@@ -118,32 +118,28 @@ export async function employeeCard({ id, elementToInsert }) {
           </div>
         </div>
 
-        <div class='modal-box-contentcard-body'>
+        <div class='modal-box-content card-body'>
           <div class='row'>
             <div class='col'>
-            <div class="d-flex flex-column align-content-center mb-2">
-                
-            <img
-              id='empleado-foto'
-              src='${validarImagen()}'
-              class='img-thumbnail mx-auto'
-              alt='...'
-              style='height: 100px; object-fit: contain;'
-            />
-            
-          </div>
+              <div class='d-flex flex-column align-content-center mb-2'>
+                <img
+                  id='empleado-foto'
+                  src='${validarImagen()}'
+                  class='img-thumbnail mx-auto'
+                  alt='...'
+                  style='height: 100px; object-fit: contain;'
+                />
+              </div>
               <div>
                 <h3>${nombres}</h3>
                 <p>Cargo: ${await getCargo()}</p>
                 <p>Fecha de Ingreso: ${fecha_ingreso}</p>
                 <p>Cédula: ${cedula}</p>
                 <p>
-                  Nacionalidad: ${
-                    nacionalidad === 'V' ? 'Venezolano' : 'Extranjero'
-                  }
+                  Nacionalidad: $
+                  {nacionalidad === 'V' ? 'Venezolano' : 'Extranjero'}
                 </p>
               </div>
-             
             </div>
             <div class='col-md-6'>
               <h4>Información Personal</h4>
@@ -158,10 +154,8 @@ export async function employeeCard({ id, elementToInsert }) {
             <div class='col-md-6'>
               <h4>Información Laboral</h4>
               <p>
-                Experiencia laboral: ${calcularAniosLaborales(
-                  fecha_ingreso,
-                  otros_años
-                )}
+                Experiencia laboral: $
+                {calcularAniosLaborales(fecha_ingreso, otros_años)}
               </p>
               <p>Dependencia laboral: ${dependencia}</p>
               <p>

@@ -117,6 +117,13 @@ let datos = [
 const ejercicioFiscalUrl =
   '../../../../sigob/back/modulo_pl_formulacion/form_ejercicio_fiscal.php'
 
+const entesUrl = '../../../../sigob/back/modulo_pl_formulacion/form_entes.php'
+
+const entesAsignacionUrl =
+  '../../../../sigob/back/modulo_pl_formulacion/form_asignacion_entes.php'
+const entesDistribucionUrl =
+  '../../../../sigob/back/modulo_pl_formulacion/form_distribucion_entes.php'
+
 const distribucionPresupuestariUrl =
   '../../../../sigob/back/modulo_pl_formulacion/form_distribucion.php'
 const getEntesPlanes = async () => {
@@ -209,4 +216,367 @@ const getEntesPlan = async (id) => {
   }
 }
 
-export { getEntesPlan, getEntesPlanes }
+const getEntes = async () => {
+  showLoader()
+  try {
+    let res = await fetch(entesUrl, {
+      method: 'POST',
+      body: JSON.stringify({ accion: 'obtener' }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    const clone = res.clone()
+
+    let text = await clone.text()
+
+    console.log(text)
+
+    const json = await res.json()
+
+    console.log(json)
+    if (json.success) {
+      let mappedData = mapData({
+        obj: json.success,
+        name: 'ente_nombre',
+        id: 'id',
+      })
+
+      return { mappedData, fullInfo: json.success }
+    }
+
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener información de los entes',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
+const getEnte = async (id) => {
+  showLoader()
+  try {
+    let res = await fetch(entesUrl, {
+      method: 'POST',
+      body: JSON.stringify({ accion: 'obtener_por_id', id }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    const clone = res.clone()
+
+    let text = await clone.text()
+
+    console.log(text)
+
+    const json = await res.json()
+
+    console.log(json)
+
+    if (json.success) {
+      return json.success
+    }
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
+
+    return json.success
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener información del ente',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
+const getAsignacionesEntes = async () => {
+  showLoader()
+  try {
+    let res = await fetch(entesAsignacionUrl, {
+      method: 'POST',
+      body: JSON.stringify({ accion: 'consultar' }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    const clone = res.clone()
+
+    let text = await clone.text()
+
+    console.log(text)
+
+    const json = await res.json()
+
+    console.log(json)
+    if (json.success) {
+      let mappedData = mapData({
+        obj: json.success,
+        name: 'ente_nombre',
+        id: 'id',
+      })
+
+      return { mappedData, fullInfo: json.success }
+    }
+
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener asignaciones de entes',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
+const asignarMontoEnte = async ({ id_ente, monto_total, id_ejercicio }) => {
+  showLoader()
+  try {
+    let res = await fetch(entesAsignacionUrl, {
+      method: 'POST',
+      body: JSON.stringify({
+        accion: 'insert',
+        id_ente,
+        monto_total,
+        id_ejercicio,
+      }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    const clone = res.clone()
+
+    let text = await clone.text()
+
+    console.log(text)
+
+    const json = await res.json()
+
+    console.log(json)
+
+    if (json.success) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.done,
+        message: json.success,
+      })
+    }
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
+
+    return json
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al asignar monto a ente',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
+const getDistribucionEntes = async () => {
+  showLoader()
+  try {
+    let res = await fetch(entesDistribucionUrl, {
+      method: 'POST',
+      body: JSON.stringify({ accion: 'consultar' }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    const clone = res.clone()
+
+    let text = await clone.text()
+
+    console.log(text)
+
+    const json = await res.json()
+
+    console.log(json)
+    if (json.success) {
+      let mappedData = mapData({
+        obj: json.success,
+        name: 'ente_nombre',
+        id: 'id',
+      })
+
+      return { mappedData, fullInfo: json.success }
+    }
+
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener distribucion de partidas',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
+const getDistribucionEnte = async (id) => {
+  showLoader()
+  try {
+    let res = await fetch(entesDistribucionUrl, {
+      method: 'POST',
+      body: JSON.stringify({ accion: 'consultar_id', id }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    const clone = res.clone()
+
+    let text = await clone.text()
+
+    console.log(text)
+
+    const json = await res.json()
+
+    console.log(json)
+    if (json.success) {
+      return json.success
+    }
+
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener distribucion de partidas',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
+const aceptarDistribucionEnte = async ({ id }) => {
+  showLoader()
+  try {
+    let res = await fetch(entesDistribucionUrl, {
+      method: 'POST',
+      body: JSON.stringify({
+        accion: 'aprobar_rechazar',
+        status: 1,
+        id,
+      }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    const clone = res.clone()
+
+    let text = await clone.text()
+
+    console.log(text)
+
+    const json = await res.json()
+
+    console.log(json)
+
+    if (json.success) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.done,
+        message: json.success,
+      })
+    }
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
+
+    return json
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al aceptar distribucion de ente',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
+const rechazarDistribucionEnte = async ({ id }) => {
+  showLoader()
+  try {
+    let res = await fetch(entesDistribucionUrl, {
+      method: 'POST',
+      body: JSON.stringify({
+        accion: 'aprobar_rechazar',
+        status: 2,
+        id,
+      }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    const clone = res.clone()
+
+    let text = await clone.text()
+
+    console.log(text)
+
+    const json = await res.json()
+
+    console.log(json)
+
+    if (json.success) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.done,
+        message: json.success,
+      })
+    }
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
+
+    return json
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al rechazar distribucion de ente',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
+export {
+  getEntesPlan,
+  getEntesPlanes,
+  getEnte,
+  getEntes,
+  asignarMontoEnte,
+  getAsignacionesEntes,
+  getDistribucionEntes,
+  getDistribucionEnte,
+  aceptarDistribucionEnte,
+  rechazarDistribucionEnte,
+}

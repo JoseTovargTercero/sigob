@@ -53,9 +53,9 @@ require_once '../../back/sistema_global/session.php';
             <div class="card-header d-flex justify-content-between">
               <div class="">
                 <h5 class="mb-0">Asignación de presupuesto a entes</h5>
-                <small class="mt-0 text-muted">Administre los planes operativos pendientes de los entes</small>
+                <small class="mt-0 text-muted">Asigne y administre el presupuesto anual de los entes</small>
               </div>
-
+              <button class="btn btn-primary" id="entes-asignar">REGISTRAR</button>
             </div>
             <div class="card-body">
               <div class="table-responsive p-1">

@@ -5,9 +5,10 @@ require_once '../sistema_global/session.php';
 require_once '../sistema_global/errores.php';
 
 // Función para insertar un registro en asignacion_ente
-function insertarAsignacionEnte($id_ente, $monto_total, $id_ejercicio) {
+function insertarAsignacionEnte($id_ente, $monto_total, $id_ejercicio)
+{
     global $conexion;
-    
+
     $conexion->begin_transaction();
 
     try {
@@ -30,7 +31,8 @@ function insertarAsignacionEnte($id_ente, $monto_total, $id_ejercicio) {
 }
 
 // Función para actualizar un registro en asignacion_ente
-function actualizarAsignacionEnte($id, $id_ente, $monto_total, $id_ejercicio) {
+function actualizarAsignacionEnte($id, $id_ente, $monto_total, $id_ejercicio)
+{
     global $conexion;
 
     $conexion->begin_transaction();
@@ -55,7 +57,8 @@ function actualizarAsignacionEnte($id, $id_ente, $monto_total, $id_ejercicio) {
 }
 
 // Función para eliminar un registro de asignacion_ente
-function eliminarAsignacionEnte($id) {
+function eliminarAsignacionEnte($id)
+{
     global $conexion;
 
     $conexion->begin_transaction();
@@ -80,7 +83,8 @@ function eliminarAsignacionEnte($id) {
 }
 
 // Función para consultar un registro por ID en asignacion_ente
-function consultarAsignacionPorId($id) {
+function consultarAsignacionPorId($id)
+{
     global $conexion;
 
     try {
@@ -102,7 +106,8 @@ function consultarAsignacionPorId($id) {
 }
 
 // Función para consultar todos los registros en asignacion_ente
-function consultarTodasAsignaciones() {
+function consultarTodasAsignaciones()
+{
     global $conexion;
 
     try {
@@ -135,7 +140,7 @@ if (isset($data["accion"])) {
         $id_ejercicio = $data["id_ejercicio"];
         echo insertarAsignacionEnte($id_ente, $monto_total, $id_ejercicio);
 
-    // Actualizar datos
+        // Actualizar datos
     } elseif ($accion === "update" && isset($data["id"]) && isset($data["id_ente"]) && isset($data["monto_total"]) && isset($data["id_ejercicio"])) {
         $id = $data["id"];
         $id_ente = $data["id_ente"];
@@ -143,27 +148,25 @@ if (isset($data["accion"])) {
         $id_ejercicio = $data["id_ejercicio"];
         echo actualizarAsignacionEnte($id, $id_ente, $monto_total, $id_ejercicio);
 
-    // Eliminar datos
+        // Eliminar datos
     } elseif ($accion === "delete" && isset($data["id"])) {
         $id = $data["id"];
         echo eliminarAsignacionEnte($id);
 
-    // Consultar por ID
+        // Consultar por ID
     } elseif ($accion === "consultar_por_id" && isset($data["id"])) {
         $id = $data["id"];
         echo consultarAsignacionPorId($id);
 
-    // Consultar todos los registros
-    } elseif ($accion === "consultar_todas") {
+        // Consultar todos los registros
+    } elseif ($accion === "consultar") {
         echo consultarTodasAsignaciones();
 
-    // Acción no válida o faltan datos
+        // Acción no válida o faltan datos
     } else {
         echo json_encode(['error' => "Acción no válida o faltan datos"]);
     }
 } else {
     echo json_encode(['error' => "No se recibió ninguna acción"]);
 }
-?>
-
 ?>

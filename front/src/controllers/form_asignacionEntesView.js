@@ -1,6 +1,9 @@
 import { getEntesPlan } from '../api/form_entes.js'
 import { getEjecicio, getEjecicios } from '../api/pre_distribucion.js'
+import { form_asignacion_entes_card } from '../components/form_asignacion_entes_card.js'
+
 import { form_asignacion_entes_form_card } from '../components/form_asignacion_entes_form_card.js'
+import { form_distribucion_ente_card } from '../components/form_distribucion_ente_card.js'
 import {
   ejerciciosLista,
   validarEjercicioActual,
@@ -18,12 +21,16 @@ export const validateAsignacionEntesView = async () => {
 
   d.addEventListener('click', async (e) => {
     if (e.target.dataset.validarid) {
-      let plan = await getEntesPlan(Number(e.target.dataset.validarid))
-      scroll(0, 0)
-      form_asignacion_entes_form_card({
+      // let plan = await getEntesPlan(Number(e.target.dataset.validarid))
+      // scroll(0, 0)
+      // form_asignacion_entes_form_card({
+      //   elementToInset: 'asignacion-entes-view',
+      //   plan: plan,
+      //   ejercicioFiscal,
+      // })
+      form_distribucion_ente_card({
         elementToInset: 'asignacion-entes-view',
-        plan: plan,
-        ejercicioFiscal,
+        distribucionId: e.target.dataset.validarid,
       })
     }
     if (e.target.dataset.ejercicioid) {
@@ -33,6 +40,12 @@ export const validateAsignacionEntesView = async () => {
 
       ejercicioFiscal = await validarEjercicioActual({
         ejercicioTarget: e.target,
+      })
+    }
+    if (e.target.id === 'entes-asignar') {
+      form_asignacion_entes_card({
+        elementToInset: 'asignacion-entes-view',
+        ejercicioFiscal,
       })
     }
 

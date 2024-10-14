@@ -159,7 +159,7 @@ if (isset($data["accion"])) {
         } else {
             echo eliminarEnte($data["id"]);
         }
-    } elseif ($accion === "obtener_todos") {
+    } elseif ($accion === "obtener") {
         echo obtenerTodosEntes();
     } elseif ($accion === "obtener_por_id") {
         if (empty($data["id"])) {

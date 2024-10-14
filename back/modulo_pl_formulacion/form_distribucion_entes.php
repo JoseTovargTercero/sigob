@@ -5,7 +5,8 @@ require_once '../sistema_global/session.php';
 require_once '../sistema_global/errores.php';
 
 // Función para insertar una nueva distribución en la tabla distribucion_ente
-function insertarDistribucion($id_ente, $partidas, $id_ejercicio) {
+function insertarDistribucion($id_ente, $partidas, $id_ejercicio)
+{
     global $conexion;
     $status = 0;
     $comentario = "";  // Campo agregado con valor vacío
@@ -86,7 +87,8 @@ function insertarDistribucion($id_ente, $partidas, $id_ejercicio) {
 
 
 // Función para aprobar o rechazar la distribución
-function actualizarEstadoDistribucion($id, $status, $comentario = "") {
+function actualizarEstadoDistribucion($id, $status, $comentario)
+{
     global $conexion;
 
     try {
@@ -101,6 +103,7 @@ function actualizarEstadoDistribucion($id, $status, $comentario = "") {
             $sqlUpdate = "UPDATE distribucion_ente SET status = 2, comentario = ? WHERE id = ?";
             $stmtUpdate = $conexion->prepare($sqlUpdate);
             $stmtUpdate->bind_param("si", $comentario, $id);
+
         } else {
             throw new Exception("Estado no válido. Utilice 1 para aprobar o 2 para rechazar.");
         }
@@ -126,7 +129,8 @@ function actualizarEstadoDistribucion($id, $status, $comentario = "") {
 
 
 // Función para actualizar un registro en la tabla distribucion_entes
-function actualizarDistribucionEntes($id, $id_ente, $partidas, $id_ejercicio) {
+function actualizarDistribucionEntes($id, $id_ente, $partidas, $id_ejercicio)
+{
     global $conexion;
     $conexion->begin_transaction();
 
@@ -152,7 +156,8 @@ function actualizarDistribucionEntes($id, $id_ente, $partidas, $id_ejercicio) {
 }
 
 // Función para eliminar un registro en la tabla distribucion_entes
-function eliminarDistribucionEntes($id) {
+function eliminarDistribucionEntes($id)
+{
     global $conexion;
     $conexion->begin_transaction();
 
@@ -176,7 +181,8 @@ function eliminarDistribucionEntes($id) {
 }
 
 // Función para consultar un registro por ID en la tabla distribucion_entes y obtener detalles adicionales
-function consultarDistribucionPorId($id) {
+function consultarDistribucionPorId($id)
+{
     global $conexion;
 
     $sqlSelectById = "SELECT id, id_ente, partidas, monto_total, status, id_ejercicio FROM distribucion_entes WHERE id = ?";
@@ -235,7 +241,7 @@ function consultarDistribucionPorId($id) {
         $distribucion['partidas'] = $partidasDetalles;
 
         // Devolver la respuesta final con monto_total incluido
-        return json_encode($distribucion);
+        return json_encode(["success" => $distribucion]);
     } else {
         return json_encode(["error" => "No se encontró la distribución con el ID especificado."]);
     }
@@ -243,7 +249,8 @@ function consultarDistribucionPorId($id) {
 
 
 // Función para consultar todos los registros en la tabla distribucion_entes
-function consultarTodasDistribuciones() {
+function consultarTodasDistribuciones()
+{
     global $conexion;
 
     $sqlSelectAll = "SELECT id, id_ente, partidas, monto_total, status, id_ejercicio FROM distribucion_entes";
@@ -301,7 +308,7 @@ function consultarTodasDistribuciones() {
             $distribuciones[] = $fila;
         }
 
-        return json_encode($distribuciones);
+        return json_encode(["success" => $distribuciones]);
     } else {
         return json_encode(["error" => "No se encontraron distribuciones registradas."]);
     }
@@ -320,9 +327,9 @@ if (isset($data["accion"])) {
         $id_ente = $data["id_ente"];
         $partidas = $data["partidas"]; // Asumimos que 'partidas' es un array de arrays con 'id_partida' y 'monto'
         $id_ejercicio = $data["id_ejercicio"];
-        echo insertarDistribucionEntes($id_ente, $partidas, $id_ejercicio);
+        echo insertarDistribucion($id_ente, $partidas, $id_ejercicio);
 
-    // Actualizar datos
+        // Actualizar datos
     } elseif ($accion === "update" && isset($data["id"]) && isset($data["id_ente"]) && isset($data["partidas"]) && isset($data["id_ejercicio"])) {
         $id = $data["id"];
         $id_ente = $data["id_ente"];
@@ -330,28 +337,28 @@ if (isset($data["accion"])) {
         $id_ejercicio = $data["id_ejercicio"];
         echo actualizarDistribucionEntes($id, $id_ente, $partidas, $id_ejercicio);
 
-    // Eliminar datos
+        // Eliminar datos
     } elseif ($accion === "delete" && isset($data["id"])) {
         $id = $data["id"];
         echo eliminarDistribucionEntes($id);
 
-    // Consultar por ID
-    } elseif ($accion === "consultar_por_id" && isset($data["id"])) {
+        // Consultar por ID
+    } elseif ($accion === "consultar_id" && isset($data["id"])) {
         $id = $data["id"];
         echo consultarDistribucionPorId($id);
 
-    // Consultar todos los registros
-    } elseif ($accion === "consultar_todas") {
+        // Consultar todos los registros
+    } elseif ($accion === "consultar") {
         echo consultarTodasDistribuciones();
 
-    // Aprobar o rechazar la distribución
+        // Aprobar o rechazar la distribución
     } elseif ($accion === "aprobar_rechazar" && isset($data["id"]) && isset($data["status"])) {
         $id = $data["id"];
         $status = $data["status"];
         $comentario = isset($data["comentario"]) ? $data["comentario"] : ""; // Comentario opcional
         echo actualizarEstadoDistribucion($id, $status, $comentario);
 
-    // Acción no válida o faltan datos
+        // Acción no válida o faltan datos
     } else {
         echo json_encode(['error' => "Acción no válida o faltan datos"]);
     }
@@ -360,4 +367,3 @@ if (isset($data["accion"])) {
 }
 
 ?>
-
