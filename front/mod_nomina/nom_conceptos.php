@@ -47,18 +47,22 @@ if ($nomina) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
+
 </head>
 <?php require_once '../includes/header.php' ?>
 
 <body data-pc-preset="preset-1" data-pc-sidebar-caption="true" data-pc-direction="ltr" data-pc-theme="light">
 
-
+  <script src="../../src/assets/js/chosen.jquery.min.js"></script>
+  <link rel="stylesheet" href="../../src/assets/css/chosen.min.css">
 
   </div>
   <?php require_once '../includes/menu.php' ?>
   <!-- [ MENU ] -->
   <?php require_once '../includes/top-bar.php' ?>
   <!-- [ top bar ] -->
+
+
 
   <!-- [ Main Content ] start -->
   <div class="pc-container">
@@ -76,9 +80,8 @@ if ($nomina) {
       </div>
       <!-- [ Main Content ] start -->
       <div class="row mb3">
+
         <!-- [ worldLow section ] start -->
-
-
         <div class="col-lg-12 mb-3 hide" id="section-editar">
           <div class="card">
             <div class="card-header">
@@ -96,18 +99,12 @@ if ($nomina) {
                     <label class="form-label" for="valor-editar"></label>
                     <input type="number" class="form-control" id="valor-editar" name="valor-editar">
                   </section>
-
-
-
-
-
                 </div>
                 <div class="col-lg-6">
 
                   <section class="mb-3 hide" id="section-formulado_editar">
                     <ol class="list-group" id="listaformulada"></ol>
                   </section>
-
                 </div>
                 <div class="d-flex mt-3">
                   <button type="button" id="btn-editar"
@@ -117,9 +114,7 @@ if ($nomina) {
               </div>
             </div>
           </div>
-
         </div>
-
 
         <div class="col-lg-12 mb-3 hide" id="section-registro">
           <div class="card">
@@ -247,7 +242,7 @@ if ($nomina) {
                       <th class="w-15"></th>
                       <th class="w-15"></th>
                     </tr>
-                    <tr id="section_registro" class="hide">
+                    <tr id="section_registro">
                       <th></th>
                       <th>
                         <input type="text" class="form-control" name="codigo_concepto" id="codigo_concepto"
@@ -268,8 +263,43 @@ if ($nomina) {
                           <option value="D">Deducción</option>
                           <option value="P">Aporte</option>
                         </select></th>
-                      <th><input type="text" list="partidas" class="form-control" name="partida" id="partida"
-                          placeholder="Partida"></th>
+                      <td>
+
+
+                        <div style="width: 30%;">
+
+
+                          <select data-placeholder="Seleccione una partida" name="partida" id="partida" class="chosen-select form-control">
+                            <option value=""></option>
+
+                            <?php
+
+
+                            $sql = "SELECT partida, descripcion FROM partidas_presupuestarias";
+                            $stmt = $conexion->prepare($sql);
+                            $stmt->execute();
+                            $result = $stmt->get_result();
+
+                            if ($result === false) {
+                              throw new Exception("Error en la consulta: $conexion->error");
+                            }
+
+                            $clasificador = array();
+                            if ($result->num_rows > 0) {
+                              while ($row = $result->fetch_assoc()) {
+                                $clasificador[] = [$row['partida'], $row['descripcion']];
+                                echo '<option value="' . $row['partida'] . '">' . $row['partida'] . ' - ' . $row['descripcion'] . '</option>' . PHP_EOL;
+                              }
+                            }
+
+                            $stmt->close();
+
+                            ?>
+                          </select>
+
+                        </div>
+
+                      </td>
                       <th colspan=2><button type="submit" class="btn btn-sm btn-primary"
                           id="btn-continuar">Continuar</button>
                       </th>
@@ -289,16 +319,29 @@ if ($nomina) {
     </div>
   </div>
   <!-- [ Main Content ] end -->
-  <datalist id="partidas"></datalist>
+
+
   <script src="../../src/assets/js/plugins/simplebar.min.js"></script>
   <script src="../../src/assets/js/plugins/bootstrap.min.js"></script>
   <script src="../../src/assets/js/plugins/feather.min.js"></script>
   <script src="../../src/assets/js/pcoded.js"></script>
-  <script src="../../src/assets/js/clasificador-presupuestario.js"></script>
-
   <script src="../../src/assets/js/main.js"></script>
   <script src="../../src/assets/js/notificaciones.js"></script>
   <script src="../../src/assets/js/ajax_class.js"></script>
+
+  <script>
+    // Inicializamos un objeto vacío en JavaScript
+    let clasificador = {};
+
+    // Convertimos los valores de PHP a un objeto JavaScript
+    <?php
+    foreach ($clasificador as $item) {
+      // $item[0] es 'partida' y $item[1] es 'descripcion'
+      echo "clasificador['" . $item[0] . "'] = '" . addslashes($item[1]) . "';\n";
+    }
+    ?>
+  </script>
+
   <script>
     let tipo_concepto = {
       'A': 'Asignacion',
@@ -307,6 +350,12 @@ if ($nomina) {
     }
     const url_back = '../../back/modulo_nomina/nom_conceptos_back.php';
     const nomina_g = "<?php echo ($nomina ? $nomina : '0') ?>";
+
+
+
+    $('.chosen-select').chosen({}).change(function(obj, result) {
+      console.debug("changed: %o", arguments);
+    });
 
 
     /**
@@ -581,6 +630,7 @@ if ($nomina) {
         return;
       } else {
         // verificar si la partida existe como key en el objeto 'clasificador'
+
         if (!clasificador.hasOwnProperty(partida)) {
           toast_s('error', 'Partida no encontrada')
           return;
@@ -1150,7 +1200,13 @@ if ($nomina) {
         $('#section-valor label').html(labes[type]);
         $('#section-valor input').attr('placeholder', titulos_placeholders[type]);
       }
+      0
     }
+
+    // cuando la pagina termine de ser cargada agrega la clase hide a #section_registro
+    $(document).ready(function() {
+      $('#section_registro').addClass('hide');
+    });
   </script>
 
 </body>

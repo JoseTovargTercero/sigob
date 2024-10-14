@@ -144,3 +144,10 @@
     </div>
   </div>
 </nav>
+
+
+<!--
+registro de concepto no valida las partidas
+Un proyecto puede tener varias partidas
+pruebas generales en red
+tasa del dia en red
