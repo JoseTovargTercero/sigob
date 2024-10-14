@@ -8,6 +8,7 @@ require_once '../sistema_global/errores.php';
 function insertarDistribucion($id_ente, $partidas, $id_ejercicio) {
     global $conexion;
     $status = 0;
+    $comentario = "";  // Campo agregado con valor vacío
 
     try {
         $conexion->begin_transaction();
@@ -27,17 +28,18 @@ function insertarDistribucion($id_ente, $partidas, $id_ejercicio) {
         $tipo_ente = $filaTipoEnte['tipo_ente'];
 
         // Verificar el formato de las partidas basado en el tipo_ente
-        if ($tipo_ente === 'J' || $tipo_ente === 'D') {
-            $num_partidas = count($partidas);
-            if ($tipo_ente === 'D' && $num_partidas > 1) {
-                throw new Exception("El tipo de ente Descentralizado solo permite una partida.");
-            }
-        } else {
+        $num_partidas = count($partidas);
+        if ($tipo_ente === 'D' && $num_partidas > 1) {
+            throw new Exception("El tipo de ente Descentralizado solo permite una partida.");
+        } elseif (!in_array($tipo_ente, ['J', 'D'])) {
             throw new Exception("Tipo de ente no válido.");
         }
 
-        // Convertir el array de partidas al formato requerido
-        $partidas_json = json_encode($partidas);
+        // Sumar los montos de las partidas
+        $sumaMontos = 0;
+        foreach ($partidas as $partida) {
+            $sumaMontos += $partida['monto'];
+        }
 
         // Consultar el monto_total de la tabla asignacion_ente
         $sqlMontoTotal = "SELECT monto_total FROM asignacion_ente WHERE id_ente = ? AND id_ejercicio = ?";
@@ -53,10 +55,18 @@ function insertarDistribucion($id_ente, $partidas, $id_ejercicio) {
         $filaMontoTotal = $resultadoMontoTotal->fetch_assoc();
         $monto_total = $filaMontoTotal['monto_total'];
 
+        // Verificar si la suma de los montos de las partidas es igual a monto_total
+        if ($sumaMontos != $monto_total) {
+            throw new Exception("La suma de los montos de las partidas no es igual al monto total.");
+        }
+
+        // Convertir el array de partidas a JSON
+        $partidas_json = json_encode($partidas);
+
         // Insertar los datos en la tabla distribucion_ente
-        $sqlInsert = "INSERT INTO distribucion_ente (id_ente, partidas, monto_total, status, id_ejercicio) VALUES (?, ?, ?, ?, ?)";
+        $sqlInsert = "INSERT INTO distribucion_ente (id_ente, partidas, monto_total, status, id_ejercicio, comentario) VALUES (?, ?, ?, ?, ?, ?)";
         $stmtInsert = $conexion->prepare($sqlInsert);
-        $stmtInsert->bind_param("isdii", $id_ente, $partidas_json, $monto_total, $status, $id_ejercicio);
+        $stmtInsert->bind_param("isdiss", $id_ente, $partidas_json, $monto_total, $status, $id_ejercicio, $comentario);
         $stmtInsert->execute();
 
         if ($stmtInsert->affected_rows > 0) {
@@ -73,23 +83,36 @@ function insertarDistribucion($id_ente, $partidas, $id_ejercicio) {
     }
 }
 
-// Función para aprobar la distribución
-function aprobarDistribucion($id) {
+
+
+// Función para aprobar o rechazar la distribución
+function actualizarEstadoDistribucion($id, $status, $comentario = "") {
     global $conexion;
 
     try {
         $conexion->begin_transaction();
 
-        $sqlUpdate = "UPDATE distribucion_ente SET status = 1 WHERE id = ?";
-        $stmtUpdate = $conexion->prepare($sqlUpdate);
-        $stmtUpdate->bind_param("i", $id);
+        // Verificar el valor de status para aprobar o rechazar
+        if ($status == 1) {
+            $sqlUpdate = "UPDATE distribucion_ente SET status = 1, comentario = '' WHERE id = ?";
+            $stmtUpdate = $conexion->prepare($sqlUpdate);
+            $stmtUpdate->bind_param("i", $id);
+        } elseif ($status == 2) {
+            $sqlUpdate = "UPDATE distribucion_ente SET status = 2, comentario = ? WHERE id = ?";
+            $stmtUpdate = $conexion->prepare($sqlUpdate);
+            $stmtUpdate->bind_param("si", $comentario, $id);
+        } else {
+            throw new Exception("Estado no válido. Utilice 1 para aprobar o 2 para rechazar.");
+        }
+
         $stmtUpdate->execute();
 
         if ($stmtUpdate->affected_rows > 0) {
             $conexion->commit();
-            return json_encode(["success" => "Distribución aprobada correctamente"]);
+            $mensaje = ($status == 1) ? "Distribución aprobada correctamente" : "Distribución rechazada correctamente";
+            return json_encode(["success" => $mensaje]);
         } else {
-            throw new Exception("No se encontró el registro de distribución o ya estaba aprobado.");
+            throw new Exception("No se encontró el registro de distribución o el estado ya estaba configurado.");
         }
 
     } catch (Exception $e) {
@@ -98,6 +121,9 @@ function aprobarDistribucion($id) {
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
+
+
 
 // Función para actualizar un registro en la tabla distribucion_entes
 function actualizarDistribucionEntes($id, $id_ente, $partidas, $id_ejercicio) {
@@ -161,7 +187,7 @@ function consultarDistribucionPorId($id) {
 
     if ($resultado->num_rows > 0) {
         $distribucion = $resultado->fetch_assoc();
-        
+
         // Obtener los detalles del ente
         $sqlEnte = "SELECT ente_nombre, tipo_ente FROM entes WHERE id = ?";
         $stmtEnte = $conexion->prepare($sqlEnte);
@@ -172,28 +198,36 @@ function consultarDistribucionPorId($id) {
         if ($resultEnte->num_rows > 0) {
             $ente = $resultEnte->fetch_assoc();
             $distribucion['ente_nombre'] = $ente['ente_nombre'];
-            $distribucion['tipo_ente'] = ($ente['tipo_ente'] == 'J') ? 'Juridico' : 'Descentralizado';
+            $distribucion['tipo_ente'] = $ente['tipo_ente'];
         } else {
             $distribucion['ente_nombre'] = null;
             $distribucion['tipo_ente'] = null;
         }
 
-        // Formatear el status
-        $distribucion['status'] = ($distribucion['status'] == 0) ? 'En espera' : 'Aprobado';
-
         // Formatear las partidas
-        $partidasArray = json_decode($distribucion['partidas'], true); // Asumimos que está guardado como JSON
+        $partidasArray = json_decode($distribucion['partidas'], true); // Asumimos que está guardado como JSON con id_partida y monto
         $partidasDetalles = [];
 
         if (!empty($partidasArray)) {
-            $sqlPartidas = "SELECT id, partida, descripcion FROM partidas_presupuestarias WHERE id IN (" . implode(",", $partidasArray) . ")";
+            $idsPartidas = array_column($partidasArray, 'id_partida'); // Extraer solo los IDs de las partidas
+            $sqlPartidas = "SELECT id, partida, descripcion FROM partidas_presupuestarias WHERE id IN (" . implode(",", $idsPartidas) . ")";
             $resultPartidas = $conexion->query($sqlPartidas);
 
             while ($partida = $resultPartidas->fetch_assoc()) {
+                // Buscar el monto correspondiente en el array de partidas original
+                $monto = null;
+                foreach ($partidasArray as $p) {
+                    if ($p['id_partida'] == $partida['id']) {
+                        $monto = $p['monto'];
+                        break;
+                    }
+                }
+
                 $partidasDetalles[] = [
                     'id' => $partida['id'],
                     'partida' => $partida['partida'],
-                    'descripcion' => $partida['descripcion']
+                    'descripcion' => $partida['descripcion'],
+                    'monto' => $monto
                 ];
             }
         }
@@ -229,28 +263,36 @@ function consultarTodasDistribuciones() {
             if ($resultEnte->num_rows > 0) {
                 $ente = $resultEnte->fetch_assoc();
                 $fila['ente_nombre'] = $ente['ente_nombre'];
-                $fila['tipo_ente'] = ($ente['tipo_ente'] == 'J') ? 'Juridico' : 'Descentralizado';
+                $fila['tipo_ente'] = $ente['tipo_ente'];
             } else {
                 $fila['ente_nombre'] = null;
                 $fila['tipo_ente'] = null;
             }
 
-            // Formatear el status
-            $fila['status'] = ($fila['status'] == 0) ? 'En espera' : 'Aprobado';
-
-            // Formatear las partidas
-            $partidasArray = json_decode($fila['partidas'], true); // Asumimos que está guardado como JSON
+            // Formatear las partidas y obtener sus montos
+            $partidasArray = json_decode($fila['partidas'], true); // Asumimos que está guardado como JSON con id_partida y monto
             $partidasDetalles = [];
 
             if (!empty($partidasArray)) {
-                $sqlPartidas = "SELECT id, partida, descripcion FROM partidas_presupuestarias WHERE id IN (" . implode(",", $partidasArray) . ")";
+                $idsPartidas = array_column($partidasArray, 'id_partida'); // Extraer solo los IDs de las partidas
+                $sqlPartidas = "SELECT id, partida, descripcion FROM partidas_presupuestarias WHERE id IN (" . implode(",", $idsPartidas) . ")";
                 $resultPartidas = $conexion->query($sqlPartidas);
 
                 while ($partida = $resultPartidas->fetch_assoc()) {
+                    // Buscar el monto correspondiente en el array de partidas original
+                    $monto = null;
+                    foreach ($partidasArray as $p) {
+                        if ($p['id_partida'] == $partida['id']) {
+                            $monto = $p['monto'];
+                            break;
+                        }
+                    }
+
                     $partidasDetalles[] = [
                         'id' => $partida['id'],
                         'partida' => $partida['partida'],
-                        'descripcion' => $partida['descripcion']
+                        'descripcion' => $partida['descripcion'],
+                        'monto' => $monto
                     ];
                 }
             }
@@ -266,6 +308,7 @@ function consultarTodasDistribuciones() {
 }
 
 
+
 // Procesar la solicitud
 $data = json_decode(file_get_contents("php://input"), true);
 
@@ -275,7 +318,7 @@ if (isset($data["accion"])) {
     // Insertar datos
     if ($accion === "insert" && isset($data["id_ente"]) && isset($data["partidas"]) && isset($data["id_ejercicio"])) {
         $id_ente = $data["id_ente"];
-        $partidas = $data["partidas"];
+        $partidas = $data["partidas"]; // Asumimos que 'partidas' es un array de arrays con 'id_partida' y 'monto'
         $id_ejercicio = $data["id_ejercicio"];
         echo insertarDistribucionEntes($id_ente, $partidas, $id_ejercicio);
 
@@ -283,7 +326,7 @@ if (isset($data["accion"])) {
     } elseif ($accion === "update" && isset($data["id"]) && isset($data["id_ente"]) && isset($data["partidas"]) && isset($data["id_ejercicio"])) {
         $id = $data["id"];
         $id_ente = $data["id_ente"];
-        $partidas = $data["partidas"];
+        $partidas = $data["partidas"]; // Asumimos que 'partidas' es un array de arrays con 'id_partida' y 'monto'
         $id_ejercicio = $data["id_ejercicio"];
         echo actualizarDistribucionEntes($id, $id_ente, $partidas, $id_ejercicio);
 
@@ -301,6 +344,13 @@ if (isset($data["accion"])) {
     } elseif ($accion === "consultar_todas") {
         echo consultarTodasDistribuciones();
 
+    // Aprobar o rechazar la distribución
+    } elseif ($accion === "aprobar_rechazar" && isset($data["id"]) && isset($data["status"])) {
+        $id = $data["id"];
+        $status = $data["status"];
+        $comentario = isset($data["comentario"]) ? $data["comentario"] : ""; // Comentario opcional
+        echo actualizarEstadoDistribucion($id, $status, $comentario);
+
     // Acción no válida o faltan datos
     } else {
         echo json_encode(['error' => "Acción no válida o faltan datos"]);
@@ -308,6 +358,6 @@ if (isset($data["accion"])) {
 } else {
     echo json_encode(['error' => "No se recibió ninguna acción"]);
 }
-?>
 
 ?>
+
