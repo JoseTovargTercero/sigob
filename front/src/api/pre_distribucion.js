@@ -25,11 +25,11 @@ const getEjecicios = async (id) => {
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
 
-    const clone = res.clone()
+    // const clone = res.clone()
 
-    let text = await clone.text()
+    // let text = await clone.text()
 
-    console.log(text)
+    // console.log(text)
 
     const json = await res.json()
 
@@ -144,12 +144,13 @@ const enviarDistribucionPresupuestaria = async ({ arrayDatos }) => {
   }
 }
 
-const enviarDistribucionPresupuestariaEntes = async ({ arrayDatos, tipo }) => {
+const enviarDistribucionPresupuestariaEntes = async ({ data, tipo }) => {
   showLoader()
   try {
+    console.log({ accion: 'insert', ...data })
     let res = await fetch(distribucionPresupuestariaEntesUrl, {
       method: 'POST',
-      body: JSON.stringify({ arrayDatos, tipo, accion: 'insert' }),
+      body: JSON.stringify({ accion: 'insert', ...data }),
     })
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }

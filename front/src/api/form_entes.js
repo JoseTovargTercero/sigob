@@ -344,6 +344,44 @@ const getAsignacionesEntes = async () => {
   }
 }
 
+const getAsignacionesEnte = async (id) => {
+  showLoader()
+  try {
+    let res = await fetch(entesAsignacionUrl, {
+      method: 'POST',
+      body: JSON.stringify({ accion: 'consultar_por_id', id }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    const clone = res.clone()
+
+    let text = await clone.text()
+
+    console.log(text)
+
+    const json = await res.json()
+
+    console.log(json)
+    if (json.success) {
+      return json.success
+    }
+
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener asignaciones de entes',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
 const asignarMontoEnte = async ({ id_ente, monto_total, id_ejercicio }) => {
   showLoader()
   try {
@@ -422,7 +460,8 @@ const getDistribucionEntes = async () => {
     }
 
     if (json.error) {
-      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+      return json
+      // toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
     }
   } catch (e) {
     console.log(e)
@@ -461,6 +500,7 @@ const getDistribucionEnte = async (id) => {
 
     if (json.error) {
       toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+      return json
     }
   } catch (e) {
     console.log(e)
@@ -575,6 +615,7 @@ export {
   getEntes,
   asignarMontoEnte,
   getAsignacionesEntes,
+  getAsignacionesEnte,
   getDistribucionEntes,
   getDistribucionEnte,
   aceptarDistribucionEnte,

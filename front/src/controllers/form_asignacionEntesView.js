@@ -1,4 +1,8 @@
-import { getEntesPlan } from '../api/form_entes.js'
+import {
+  getAsignacionesEnte,
+  getDistribucionEnte,
+  getEntesPlan,
+} from '../api/form_entes.js'
 import { getEjecicio, getEjecicios } from '../api/pre_distribucion.js'
 import { form_asignacion_entes_card } from '../components/form_asignacion_entes_card.js'
 
@@ -22,16 +26,17 @@ export const validateAsignacionEntesView = async () => {
   d.addEventListener('click', async (e) => {
     if (e.target.dataset.validarid) {
       // let plan = await getEntesPlan(Number(e.target.dataset.validarid))
-      // scroll(0, 0)
-      // form_asignacion_entes_form_card({
-      //   elementToInset: 'asignacion-entes-view',
-      //   plan: plan,
-      //   ejercicioFiscal,
-      // })
-      form_distribucion_ente_card({
+      scroll(0, 0)
+      let asignacion = await getAsignacionesEnte(e.target.dataset.validarid)
+      form_asignacion_entes_form_card({
         elementToInset: 'asignacion-entes-view',
-        distribucionId: e.target.dataset.validarid,
+        asignacion: asignacion,
+        ejercicioFiscal,
       })
+      // form_distribucion_ente_card({
+      //   elementToInset: 'asignacion-entes-view',
+      //   distribucionId: e.target.dataset.validarid,
+      // })
     }
     if (e.target.dataset.ejercicioid) {
       // QUITAR CARD SI SE CAMBIA EL AÑO FISCAL
@@ -42,6 +47,8 @@ export const validateAsignacionEntesView = async () => {
         ejercicioTarget: e.target,
       })
     }
+
+    // REGISTRAR NUEVA ASIGNACIÓN A ENTE
     if (e.target.id === 'entes-asignar') {
       form_asignacion_entes_card({
         elementToInset: 'asignacion-entes-view',

@@ -147,7 +147,7 @@ function obtenerTodosEjerciciosFiscales()
                         $totalMontoInicial += $sumRow['monto_inicial'];
 
                         // Consultar la tabla partidas_presupuestarias para obtener la partida asociada
-                        $sqlPartida = "SELECT id, partida FROM partidas_presupuestarias WHERE id = ?";
+                        $sqlPartida = "SELECT id, partida, nombre, descripcion FROM partidas_presupuestarias WHERE id = ?";
                         $stmtPartida = $conexion->prepare($sqlPartida);
                         $stmtPartida->bind_param("i", $sumRow['id_partida']);
                         $stmtPartida->execute();
@@ -155,17 +155,22 @@ function obtenerTodosEjerciciosFiscales()
 
                         if ($resultPartida->num_rows > 0) {
                             $partidaRow = $resultPartida->fetch_assoc();
-                            $partidaNombre = $partidaRow['partida'];
+                            $partidaNombre = $partidaRow['nombre'];
+                            $partidaDescripcion = $partidaRow['descripcion'];
+                            $partidaPartida = $partidaRow['partida'];
                             $partidaId = $partidaRow['id'];
 
                             // Crear array con las 3 propiedades: partida, monto_inicial, monto_actual
                             $partidasArray[] = [
                                 'id' => $partidaId,
-                                'partida' => $partidaNombre,
+                                'partida' => $partidaPartida,
+                                'nombre' => $partidaNombre,
+                                'descripcion' => $partidaDescripcion,
                                 'monto_inicial' => $sumRow['monto_inicial'],
                                 'monto_actual' => $sumRow['monto_actual']
                             ];
                         }
+
 
                         $stmtPartida->close();
                     }
@@ -232,7 +237,7 @@ function obtenerEjercicioFiscalPorId($id)
                     $totalMontoInicial += $rowDistribucion['monto_inicial'];
 
                     // Obtener el valor de partida de la tabla partidas_presupuestarias
-                    $sqlPartida = "SELECT id, partida FROM partidas_presupuestarias WHERE id = ?";
+                    $sqlPartida = "SELECT id, partida, nombre, descripcion FROM partidas_presupuestarias WHERE id = ?";
                     $stmtPartida = $conexion->prepare($sqlPartida);
                     $stmtPartida->bind_param("i", $rowDistribucion['id_partida']);
                     $stmtPartida->execute();
@@ -240,13 +245,17 @@ function obtenerEjercicioFiscalPorId($id)
 
                     if ($resultPartida->num_rows > 0) {
                         $partidaRow = $resultPartida->fetch_assoc();
-                        $partidaNombre = $partidaRow['partida'];
+                        $partidaNombre = $partidaRow['nombre'];
+                        $partidaDescripcion = $partidaRow['descripcion'];
+                        $partidaPartida = $partidaRow['partida'];
                         $partidaId = $partidaRow['id'];
 
                         // Crear array con las 3 propiedades: partida, monto_inicial, monto_actual
                         $partidasArray[] = [
                             'id' => $partidaId,
-                            'partida' => $partidaNombre,
+                            'partida' => $partidaPartida,
+                            'nombre' => $partidaNombre,
+                            'descripcion' => $partidaDescripcion,
                             'monto_inicial' => $rowDistribucion['monto_inicial'],
                             'monto_actual' => $rowDistribucion['monto_actual']
                         ];

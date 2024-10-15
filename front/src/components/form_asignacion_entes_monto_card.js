@@ -1,4 +1,5 @@
 import { asignarMontoEnte, getEnte } from '../api/form_entes.js'
+import { loadAsignacionEntesTable } from '../controllers/form_asignacionEntesTable.js'
 import {
   confirmNotification,
   hideLoader,
@@ -163,6 +164,7 @@ export const form_asignacion_entes_monto_card = async ({
             elementToInset: 'asignacion-entes-view',
             ejercicioFiscal,
           })
+          loadAsignacionEntesTable()
           closeCard()
         }
       },

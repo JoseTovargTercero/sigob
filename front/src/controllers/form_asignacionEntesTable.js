@@ -1,4 +1,5 @@
 import {
+  getAsignacionesEntes,
   getDistribucionEntes,
   getEntesPlan,
   getEntesPlanes,
@@ -151,10 +152,15 @@ const tableLanguage = {
   },
 }
 
-let distribucionEntesTable
+let asignacionEntesTable
 export const validateAsignacionEntesTable = async () => {
-  distribucionEntesTable = new DataTable('#asignacion-entes-table', {
-    columns: [{ data: 'ente_nombre' }, { data: 'monto' }, { data: 'acciones' }],
+  asignacionEntesTable = new DataTable('#asignacion-entes-table', {
+    columns: [
+      { data: 'ente_nombre' },
+      { data: 'monto' },
+      { data: 'fecha' },
+      { data: 'acciones' },
+    ],
     responsive: true,
     scrollY: 400,
     language: tableLanguage,
@@ -162,7 +168,7 @@ export const validateAsignacionEntesTable = async () => {
       topStart: function () {
         let toolbar = document.createElement('div')
         toolbar.innerHTML = `
-            <h5 class="text-center">Validar distribución presupuestaria de entes</h5>
+            <h5 class="text-center">Lista de asignación presupuestaria a entes</h5>
                       `
         return toolbar
       },
@@ -176,6 +182,55 @@ export const validateAsignacionEntesTable = async () => {
 }
 
 export const loadAsignacionEntesTable = async () => {
+  // let planes = await getEntesPlanes()
+  let asignaciones = await getAsignacionesEntes()
+
+  if (!Array.isArray(asignaciones.fullInfo)) return
+
+  if (!asignaciones || asignaciones.error) return
+
+  let datosOrdenados = [...asignaciones.fullInfo].sort((a, b) => a.id - b.id)
+  let data = datosOrdenados.map((el) => {
+    return {
+      ente_nombre: `Distribucion para ente "${el.ente_nombre}"`,
+      monto: el.monto_total,
+      tipo: el.tipo_ente,
+      fecha: el.fecha,
+      acciones: `<button class="btn btn-info btn-sm" data-validarId="${el.id}">VALIDAR</button>`,
+    }
+  })
+
+  asignacionEntesTable.clear().draw()
+
+  // console.log(datosOrdenados)
+  asignacionEntesTable.rows.add(data).draw()
+}
+
+let distribucionEntesTable2
+export const validateAsignacionEntesTable2 = async () => {
+  distribucionEntesTable = new DataTable('#distribucion-entes-table', {
+    columns: [{ data: 'ente_nombre' }, { data: 'monto' }, { data: 'acciones' }],
+    responsive: true,
+    scrollY: 400,
+    language: tableLanguage,
+    layout: {
+      topStart: function () {
+        let toolbar = document.createElement('div')
+        toolbar.innerHTML = `
+            <h5 class="text-center">Historial de asignaciones a entes</h5>
+                      `
+        return toolbar
+      },
+      topEnd: { search: { placeholder: 'Buscar...' } },
+      bottomStart: 'info',
+      bottomEnd: 'paging',
+    },
+  })
+
+  loadAsignacionEntesTable()
+}
+
+export const loadAsignacionEntesTable2 = async () => {
   // let planes = await getEntesPlanes()
   let distribuciones = await getDistribucionEntes()
 

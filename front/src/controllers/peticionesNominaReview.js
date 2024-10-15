@@ -3,9 +3,7 @@ import { getRegConMovimiento } from '../api/movimientos.js'
 import {
   confirmarPeticionNomina,
   generarNominaTxt,
-  getComparacionNomina,
-  getComparacionNomina2,
-  getPeticionesNomina,
+  getRegConComparacionNomina,
   getRegConPeticionesNomina,
 } from '../api/peticionesNomina.js'
 import { rechazarPeticionCard } from '../components/rechazarPeticionCard.js'
@@ -31,7 +29,7 @@ let correcciones = []
 let movimientosId = []
 
 export async function validateRequestNomForm() {
-  let requestInfo = await getRegConPeticionesNomina()
+  // let requestInfo = await getRegConPeticionesNomina()
 
   let requestComparationForm = d.getElementById('request-nom-form')
 
@@ -51,7 +49,7 @@ export async function validateRequestNomForm() {
       fieldList.id = peticion.id
       fieldList.correlativo = peticion.correlativo
 
-      let comparacionNomina = await getComparacionNomina({
+      let comparacionNomina = await getRegConComparacionNomina({
         correlativo: peticion.correlativo,
         nombre_nomina: peticion.nombre_nomina,
       })
@@ -121,7 +119,7 @@ export async function validateRequestNomForm() {
 
       // console.log(fieldList)
 
-      let peticiones = await getComparacionNomina({
+      let peticiones = await getRegConComparacionNomina({
         correlativo: fieldList.correlativo,
         nombre_nomina: fieldList.nombre_nomina,
       })

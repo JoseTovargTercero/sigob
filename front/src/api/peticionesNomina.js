@@ -22,6 +22,10 @@ const getSemanasDelAnioUrl =
 
 const comparacionNominaUrl =
   '../../../../../sigob/back/modulo_nomina/nom_comparacion_nominas.php'
+
+const regconComparacionNominaUrl =
+  '../../../../sigob/back/modulo_registro_control/regcon_comparacion_nominas.php'
+
 const comparacionNominaUrl2 =
   '../../../../../sigob/back/modulo_nomina/nom_comparacion_nominas2.php'
 
@@ -42,6 +46,9 @@ const regConObtenerPeticionesNominaUrl =
 
 const creacionNominasTxtUrl =
   '../../../../../sigob/back/modulo_nomina/nom_creacion_txt.php'
+
+const regconCreacionNominasTxtUrl =
+  '../../../../sigob/back/modulo_registro_control/regcon_creacion_txt.php'
 
 const descargarNominaTxtUrl = (correlativo) =>
   `../../../../../sigob/back/modulo_nomina/nom_txt_descargas.php?correlativo=${correlativo}`
@@ -263,6 +270,43 @@ const getComparacionNomina = async ({ correlativo, nombre_nomina }) => {
   }
 }
 
+const getRegConComparacionNomina = async ({ correlativo, nombre_nomina }) => {
+  showLoader()
+  try {
+    let res = await fetch(regconComparacionNominaUrl, {
+      method: 'POST',
+      body: JSON.stringify({ correlativo, nombre_nomina }),
+    })
+
+    let clone = res.clone()
+    let text = await clone.text()
+
+    console.log(text)
+
+    let data = await res.json()
+
+    let { registro_actual, registro_anterior } = data
+
+    if (data.registro_anterior.id !== 0) {
+      registro_anterior = mapComparationRequest(registro_anterior)
+    } else {
+      data.registro_anterior = false
+    }
+
+    registro_actual = mapComparationRequest(registro_actual)
+
+    return data
+  } catch (e) {
+    console.log(e.message)
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener peticiones',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
 const getComparacionNomina2 = async ({ nombre_nomina }) => {
   showLoader()
   try {
@@ -447,7 +491,7 @@ const generarNominaTxt = async ({ correlativo, identificador }) => {
   showLoader()
 
   try {
-    let res = await fetch(creacionNominasTxtUrl, {
+    let res = await fetch(regconCreacionNominasTxtUrl, {
       method: 'POST',
       body: JSON.stringify({ correlativo, identificador }),
     })
@@ -535,6 +579,7 @@ export {
   descargarNominaTxt,
   getComparacionNomina,
   getComparacionNomina2,
+  getRegConComparacionNomina,
   confirmarPeticionNomina,
 }
 

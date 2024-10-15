@@ -66,7 +66,7 @@ function insertarDistribucion($id_ente, $partidas, $id_ejercicio, $id_asignacion
         $partidas_json = json_encode($partidas);
 
         // Insertar los datos en la tabla distribucion_ente
-        $sqlInsert = "INSERT INTO distribucion_ente (id_ente, partidas, monto_total, status, id_ejercicio, comentario, fecha, id_asignacion) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        $sqlInsert = "INSERT INTO distribucion_entes (id_ente, partidas, monto_total, status, id_ejercicio, comentario, fecha, id_asignacion) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         $stmtInsert = $conexion->prepare($sqlInsert);
         $stmtInsert->bind_param("isdisssi", $id_ente, $partidas_json, $monto_total, $status, $id_ejercicio, $comentario, $fecha, $id_asignacion);
         $stmtInsert->execute();
@@ -359,7 +359,7 @@ if (isset($data["accion"])) {
     $accion = $data["accion"];
 
     // Insertar datos
-    if ($accion === "insert" && isset($data["id_ente"]) && isset($data["partidas"]) && isset($data["id_ejercicio"] && isset($data["id_asignacion"])) {
+    if ($accion === "insert" && isset($data["id_ente"]) && isset($data["partidas"]) && isset($data["id_ejercicio"]) && isset($data["id_asignacion"])) {
         $id_ente = $data["id_ente"];
         $partidas = $data["partidas"]; // Asumimos que 'partidas' es un array de arrays con 'id_partida' y 'monto'
         $id_ejercicio = $data["id_ejercicio"];

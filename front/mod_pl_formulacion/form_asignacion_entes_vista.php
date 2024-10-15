@@ -58,11 +58,21 @@ require_once '../../back/sistema_global/session.php';
               <button class="btn btn-primary" id="entes-asignar">REGISTRAR</button>
             </div>
             <div class="card-body">
-              <div class="table-responsive p-1">
+              <!-- <div class="table-responsive d-none">
+                <table id="distribucion-entes-table" class="table table-striped" style="width:100%">
+                  <thead class="w-100">
+                    <th>DISTRIBUCION</th>
+                    <th>MONTO</th>
+                    <th>ACCIONES</th>
+                  </thead>
+                </table>
+              </div> -->
+              <div class="table-responsive">
                 <table id="asignacion-entes-table" class="table table-striped" style="width:100%">
                   <thead class="w-100">
                     <th>ENTE</th>
-                    <th>MONTO</th>
+                    <th>MONTO ASIGNADO</th>
+                    <th>FECHA</th>
                     <th>ACCIONES</th>
                   </thead>
                 </table>
