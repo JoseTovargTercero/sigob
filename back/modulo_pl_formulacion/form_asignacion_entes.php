@@ -117,10 +117,31 @@ function consultarAsignacionPorId($id)
                 // Decodificar el campo 'partidas' de JSON a array
                 if (!empty($distribucion['partidas'])) {
                     $distribucion['partidas'] = json_decode($distribucion['partidas'], true);
+                    
+                    // Iterar sobre cada partida y obtener detalles adicionales de partidas_presupuestarias
+                    foreach ($distribucion['partidas'] as &$partida) {
+                        $idPartida = $partida['id_partida'];
+                        
+                        // Consulta para obtener partida y descripcion de partidas_presupuestarias
+                        $sqlPartidaDetalles = "SELECT partida, descripcion FROM partidas_presupuestarias WHERE id = ?";
+                        $stmtPartidaDetalles = $conexion->prepare($sqlPartidaDetalles);
+                        $stmtPartidaDetalles->bind_param("i", $idPartida);
+                        $stmtPartidaDetalles->execute();
+                        $resultPartidaDetalles = $stmtPartidaDetalles->get_result();
+
+                        if ($resultPartidaDetalles->num_rows > 0) {
+                            $partidaDetalles = $resultPartidaDetalles->fetch_assoc();
+                            $partida['partida'] = $partidaDetalles['partida'];
+                            $partida['descripcion'] = $partidaDetalles['descripcion'];
+                        } else {
+                            $partida['partida'] = null;
+                            $partida['descripcion'] = null;
+                        }
+                    }
                 } else {
                     $distribucion['partidas'] = [];
                 }
-                
+
                 $asignacion['distribucion'] = $distribucion;
             } else {
                 $asignacion['distribucion'] = false;
@@ -135,6 +156,7 @@ function consultarAsignacionPorId($id)
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 
 
