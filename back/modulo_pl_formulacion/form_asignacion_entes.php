@@ -112,7 +112,16 @@ function consultarAsignacionPorId($id)
             $resultDistribucion = $stmtDistribucion->get_result();
 
             if ($resultDistribucion->num_rows > 0) {
-                $asignacion['distribucion'] = $resultDistribucion->fetch_assoc();
+                $distribucion = $resultDistribucion->fetch_assoc();
+                
+                // Decodificar el campo 'partidas' de JSON a array
+                if (!empty($distribucion['partidas'])) {
+                    $distribucion['partidas'] = json_decode($distribucion['partidas'], true);
+                } else {
+                    $distribucion['partidas'] = [];
+                }
+                
+                $asignacion['distribucion'] = $distribucion;
             } else {
                 $asignacion['distribucion'] = false;
             }
@@ -126,6 +135,7 @@ function consultarAsignacionPorId($id)
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 
 // Función para consultar todos los registros en asignacion_ente
