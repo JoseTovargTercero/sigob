@@ -88,7 +88,7 @@
               </div>
               <ul class="p-0 list-unstyled d-block">
                 <li class="border-bottom">
-                  <a href="<?php echo constant('URL') ?>perfil" class="p-3 d-flex align-items-center">
+                  <a href="<?php echo constant('URL') ?>/front/mod_global/global_perfil" class="p-3 d-flex align-items-center">
                     <i data-feather="user"></i>
                     <span class="ms-2">Perfil</span>
                   </a>

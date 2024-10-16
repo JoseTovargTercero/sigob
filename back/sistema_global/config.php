@@ -11,13 +11,13 @@ if ($_SERVER['SERVER_NAME'] == 'localhost') {
     define('PASSWORD', "JH6$.GnJA6eL");
     define('USER', 'sigob_user');
 } else {
-    $url = 'http://'. $_SERVER['SERVER_NAME'].'/sigob/';
+    $url = 'http://' . $_SERVER['SERVER_NAME'] . '/sigob/';
     define('URL', $url);
-    define('PASSWORD', "JH6$.GnJA6eL");
-    define('USER', 'sigob_user');
+    define('PASSWORD', "");
+    define('USER', 'root');
 }
 
-  
+
 
 
 
@@ -25,5 +25,3 @@ if ($_SERVER['SERVER_NAME'] == 'localhost') {
 define('HOST', 'localhost');
 define('DB', 'sigob');
 define('CHARSET', 'utf8mb4');
-
-?>

@@ -76,6 +76,12 @@ $stmt->close();
 
 
 
+
+
+
+
+
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -414,7 +420,7 @@ $stmt->close();
 
 
 
-          <div class="card mb-3" style="height: 35vh;">
+          <div class="card mb-3" style="height: 62vh;">
             <div class="card-body">
               <div class="d-flex flex-column">
                 <div class="card-title mb-auto">
@@ -423,22 +429,11 @@ $stmt->close();
 
                 </div>
 
-                <div id="grafico_1" style="width: 100%; height: 25vh;"></div>
+                <div id="grafico_1" style="width: 100%; height: 50vh;"></div>
               </div>
             </div>
           </div>
-          <div class="card " style="height: 25vh;">
-            <div class="card-body text-center">
-              <h5 class="mb-3">Asignado a entes</h5><i class="fas fa-user-friends f-30 text-success"></i>
-              <h2 class="f-w-300 mt-3">1,285</h2><span class="text-muted">Situado distribuido</span>
-              <div class="progress mt-4 m-b-40">
-                <div class="progress-bar bg-brand-color-1" role="progressbar" style="width: 75%; height: 7px"
-                  aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
-              </div>
-              <div class="text-center">
-              </div>
-            </div>
-          </div>
+
         </div>
         <div class="col-lg-12">
           <div class="card" style="min-height: 165px;">
@@ -458,7 +453,6 @@ $stmt->close();
                     <th>Partida</th>
                     <th>Asignación inicial</th>
                     <th>Disponibilidad</th>
-                    <th></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -481,10 +475,6 @@ $stmt->close();
                       </td>
                       <td class="text-center">' . number_format($row['monto_inicial'], 0, '.', '.') . ' Bs</td>
                       <td class="text-center">' . number_format($row['monto_actual'], 0, '.', '.') . ' Bs</td>
-                      <td><button type="button" class="btn btn-sm btn-primary" data-toggle="
-                      tooltip" title="Ver detalles">
-                      <i class="bx bx-detail"></i>
-                      </button></td>
                       </tr>';
                     }
                   }

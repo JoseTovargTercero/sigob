@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 15-10-2024 a las 18:24:41
+-- Tiempo de generación: 16-10-2024 a las 03:40:22
 -- Versión del servidor: 10.4.16-MariaDB
 -- Versión de PHP: 7.4.12
 
@@ -35,6 +35,13 @@ CREATE TABLE `asignacion_ente` (
   `fecha` varchar(255) DEFAULT NULL,
   `status` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `asignacion_ente`
+--
+
+INSERT INTO `asignacion_ente` (`id`, `id_ente`, `monto_total`, `id_ejercicio`, `fecha`, `status`) VALUES
+(1, 1, '2000', 1, '2024-10-15', '1');
 
 -- --------------------------------------------------------
 
@@ -1012,6 +1019,13 @@ CREATE TABLE `distribucion_entes` (
   `id_asignacion` int(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Volcado de datos para la tabla `distribucion_entes`
+--
+
+INSERT INTO `distribucion_entes` (`id`, `id_ente`, `partidas`, `monto_total`, `status`, `id_ejercicio`, `comentario`, `fecha`, `id_asignacion`) VALUES
+(1, 1, '[{\"id_partida\":\"1\",\"monto\":1000},{\"id_partida\":\"43\",\"monto\":1000}]', '2000', 1, 1, '', '2024-10-15', 1);
+
 -- --------------------------------------------------------
 
 --
@@ -1026,6 +1040,14 @@ CREATE TABLE `distribucion_presupuestaria` (
   `monto_actual` varchar(255) DEFAULT NULL,
   `status` int(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `distribucion_presupuestaria`
+--
+
+INSERT INTO `distribucion_presupuestaria` (`id`, `id_partida`, `monto_inicial`, `id_ejercicio`, `monto_actual`, `status`) VALUES
+(1, 1, '5000', 1, '5000', 1),
+(2, 43, '5000', 1, '5000', 1);
 
 -- --------------------------------------------------------
 
@@ -3913,6 +3935,13 @@ CREATE TABLE `error_log` (
   `fecha` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Volcado de datos para la tabla `error_log`
+--
+
+INSERT INTO `error_log` (`id`, `descripcion`, `fecha`) VALUES
+(1, 'Error al actualizar el proyecto de inversión.', '2024-10-15 20:02:13');
+
 -- --------------------------------------------------------
 
 --
@@ -4920,7 +4949,7 @@ CREATE TABLE `partidas_presupuestarias` (
 --
 
 INSERT INTO `partidas_presupuestarias` (`id`, `partida`, `nombre`, `descripcion`, `status`) VALUES
-(1, '401.01.01.00.0000', '', 'Sueldos básicos personal fijo a tiempo completo', 0),
+(1, '15.01.00.401.01.01.0000', 'P1', 'Sueldos básicos personal fijo a tiempo completo', 0),
 (2, '401.05.01.00.0000', '', 'Aguinaldos al personal empleado', 0),
 (3, '401.05.03.00.0000', '', 'Bono vacacional al personal empleado', 0),
 (4, '401.07.01.00.0000', '', 'Capacitacion y adiestramiento a empleados', 0),
@@ -4962,7 +4991,7 @@ INSERT INTO `partidas_presupuestarias` (`id`, `partida`, `nombre`, `descripcion`
 (40, '401.07.96.00.0001', '', 'Bono de estabilidad economica a empleados', 0),
 (41, '401.08.01.00.0000', '', 'Prestaciones sociales y otras indemnizaciones a empleados', 0),
 (42, '403.09.01.00.0000', '', 'Viaticos y pasajes dentro del pais', 0),
-(43, '401.01.18.10.0000', '', 'Remuneraciones al personal contratado a tiempo determinado', 0),
+(43, '16.01.00.401.18.10.0000', 'P2', 'Remuneraciones al personal contratado a tiempo determinado', 0),
 (44, '401.01.18.20.0000', '', 'Remuneraciones por honorarios profesionales', 0),
 (45, '401.02.01.00.0001', '', 'compensaciones previstas en las escalas de sueldos al personal obrero contratado', 0),
 (46, '401.03.37.00.0001', '', 'Primas de transporte al personal empleado contratado', 0),
@@ -5194,13 +5223,21 @@ INSERT INTO `profesiones` (`id_profesion`, `profesion`, `porcentaje`) VALUES
 
 CREATE TABLE `proyecto_inversion` (
   `id` int(255) NOT NULL,
-  `id_plan` int(255) NOT NULL,
+  `id_plan` int(255) DEFAULT NULL,
   `proyecto` longtext DEFAULT NULL,
   `descripcion` longtext DEFAULT NULL,
   `monto_proyecto` varchar(255) DEFAULT NULL,
   `status` int(255) NOT NULL DEFAULT 0,
   `comentario` longtext DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `proyecto_inversion`
+--
+
+INSERT INTO `proyecto_inversion` (`id`, `id_plan`, `proyecto`, `descripcion`, `monto_proyecto`, `status`, `comentario`) VALUES
+(6, 1, 'JOSE RICARDO ROMERO TOVAR78', '678678', '120', 0, NULL),
+(7, 1, 'JOSE RICARDO ROMERO TOVAR', '123123', '3', 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -5214,6 +5251,14 @@ CREATE TABLE `proyecto_inversion_partidas` (
   `partida` longtext DEFAULT NULL,
   `monto` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `proyecto_inversion_partidas`
+--
+
+INSERT INTO `proyecto_inversion_partidas` (`id`, `id_proyecto`, `partida`, `monto`) VALUES
+(20, 6, '401.05.03.00.0000', '120'),
+(21, 7, '401.05.03.00.0000', '3');
 
 -- --------------------------------------------------------
 
@@ -9467,20 +9512,22 @@ CREATE TABLE `system_users` (
   `u_contrasena` varchar(255) DEFAULT NULL,
   `creado` datetime NOT NULL DEFAULT current_timestamp(),
   `u_nivel` int(11) NOT NULL,
-  `u_status` int(11) NOT NULL DEFAULT 1
+  `u_status` int(11) NOT NULL DEFAULT 1,
+  `u_cedula` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Volcado de datos para la tabla `system_users`
 --
 
-INSERT INTO `system_users` (`u_id`, `u_nombre`, `u_oficina_id`, `u_oficina`, `u_email`, `u_contrasena`, `creado`, `u_nivel`, `u_status`) VALUES
-(31, 'user Nombre', 1, 'nomina', 'corro@correo.com', '$2y$10$EyP1MOY39kuw4uREdk7ao.UUzQ10YNIZ95IZLM70MUPo5J6YzEBVG', '2024-03-07 11:18:19', 1, 1),
-(33, 'otro user', 2, 'registro_control', 'correo2@correo.com', '$2y$10$EyP1MOY39kuw4uREdk7ao.UUzQ10YNIZ95IZLM70MUPo5J6YzEBVG', '2024-05-29 16:32:32', 2, 1),
-(34, 'relaciones_laborales_user\r\n', 3, 'relaciones_laborales', 'corro3@correo.com', '$2y$10$EyP1MOY39kuw4uREdk7ao.UUzQ10YNIZ95IZLM70MUPo5J6YzEBVG', '2024-08-06 18:31:06', 1, 1),
-(35, 'Ricardo', 4, 'pl_formulacion', 'rr@gmail.com', '$2y$10$azF/dOpnDs9sCTYiLEF7kO8612REFdjpk8Te.bih4BaNDSfhAw9MO', '2024-10-12 11:21:03', 1, 1),
-(36, 'Otro user', 4, 'pl_formulacion', 'dc@gmail.com', '$2y$10$rkLTvh67l6wU6P3sNrmDoOKE9fYZeEe46nkk7VtYcRB20nM0cgIZ.', '2024-10-12 15:47:50', 2, 1),
-(37, 'Otro user nomina', 1, 'nomina', 'll@gmail.com', '$2y$10$7rP3s5kmozULLCHQpVCQ9exS28MkvJpV8x4whtmS2Z0EnXD2YbeK.', '2024-10-12 21:15:58', 2, 1);
+INSERT INTO `system_users` (`u_id`, `u_nombre`, `u_oficina_id`, `u_oficina`, `u_email`, `u_contrasena`, `creado`, `u_nivel`, `u_status`, `u_cedula`) VALUES
+(31, 'user Nombre', 1, 'nomina', 'corro@correo.com', '$2y$10$EyP1MOY39kuw4uREdk7ao.UUzQ10YNIZ95IZLM70MUPo5J6YzEBVG', '2024-03-07 11:18:19', 1, 1, NULL),
+(33, 'otro user', 2, 'registro_control', 'correo2@correo.com', '$2y$10$EyP1MOY39kuw4uREdk7ao.UUzQ10YNIZ95IZLM70MUPo5J6YzEBVG', '2024-05-29 16:32:32', 2, 1, NULL),
+(34, 'relaciones_laborales_user\r\n', 3, 'relaciones_laborales', 'corro3@correo.com', '$2y$10$EyP1MOY39kuw4uREdk7ao.UUzQ10YNIZ95IZLM70MUPo5J6YzEBVG', '2024-08-06 18:31:06', 1, 1, NULL),
+(35, 'Ricardo', 4, 'pl_formulacion', 'rr@gmail.com', '$2y$10$azF/dOpnDs9sCTYiLEF7kO8612REFdjpk8Te.bih4BaNDSfhAw9MO', '2024-10-12 11:21:03', 1, 1, NULL),
+(36, 'Otro user', 4, 'pl_formulacion', 'dc@gmail.com', '$2y$10$rkLTvh67l6wU6P3sNrmDoOKE9fYZeEe46nkk7VtYcRB20nM0cgIZ.', '2024-10-12 15:47:50', 2, 1, NULL),
+(37, 'Otro user nomina', 1, 'nomina', 'll@gmail.com', '$2y$10$7rP3s5kmozULLCHQpVCQ9exS28MkvJpV8x4whtmS2Z0EnXD2YbeK.', '2024-10-12 21:15:58', 2, 1, NULL),
+(38, 'YO', 4, 'pl_formulacion', 'AAAac.80014.dc@gmail.com', '$2y$10$agrYERdHIj0MRd.oIGFpsuu3HXsJZZSe1/pTD2X/9s/I.AswY0/OC', '2024-10-15 21:25:50', 2, 1, '27640176');
 
 -- --------------------------------------------------------
 
@@ -9505,7 +9552,10 @@ INSERT INTO `system_users_permisos` (`id`, `id_user`, `id_item_menu`) VALUES
 (9, 37, 24),
 (10, 37, 25),
 (11, 37, 18),
-(12, 37, 20);
+(12, 37, 20),
+(13, 38, 1),
+(14, 38, 2),
+(15, 38, 3);
 
 -- --------------------------------------------------------
 
@@ -9957,7 +10007,7 @@ CREATE TABLE `tasa` (
 --
 
 INSERT INTO `tasa` (`id`, `descripcion`, `simbolo`, `valor`) VALUES
-(1, 'Precio del Dólar Actual', '$', '38.888');
+(1, 'Precio del Dólar Actual', '$', '38.9179');
 
 -- --------------------------------------------------------
 
@@ -9982,7 +10032,8 @@ INSERT INTO `tasa_historico` (`id`, `u_nombre`, `precio`, `descripcion`, `fecha`
 (2, 'sigob', '36.8105', 'actualizacion automática', '25-09-2024'),
 (3, 'sigob', '37.0358', 'actualizacion automática', '05-10-2024'),
 (4, 'sigob', '38.8857', 'actualizacion automática', '12-10-2024'),
-(5, 'sigob', '38.888', 'actualizacion automática', '14-10-2024');
+(5, 'sigob', '38.888', 'actualizacion automática', '14-10-2024'),
+(6, 'sigob', '38.9179', 'actualizacion automática', '15-10-2024');
 
 -- --------------------------------------------------------
 
@@ -14578,7 +14629,7 @@ ALTER TABLE `txt`
 -- AUTO_INCREMENT de la tabla `asignacion_ente`
 --
 ALTER TABLE `asignacion_ente`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `backups`
@@ -14644,13 +14695,13 @@ ALTER TABLE `dependencias`
 -- AUTO_INCREMENT de la tabla `distribucion_entes`
 --
 ALTER TABLE `distribucion_entes`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `distribucion_presupuestaria`
 --
 ALTER TABLE `distribucion_presupuestaria`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `ejercicio_fiscal`
@@ -14686,7 +14737,7 @@ ALTER TABLE `entes`
 -- AUTO_INCREMENT de la tabla `error_log`
 --
 ALTER TABLE `error_log`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `frecuencias_por_grupo`
@@ -14806,13 +14857,13 @@ ALTER TABLE `profesiones`
 -- AUTO_INCREMENT de la tabla `proyecto_inversion`
 --
 ALTER TABLE `proyecto_inversion`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de la tabla `proyecto_inversion_partidas`
 --
 ALTER TABLE `proyecto_inversion_partidas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT de la tabla `recibo_pago`
@@ -14836,13 +14887,13 @@ ALTER TABLE `solicitud_dozavos`
 -- AUTO_INCREMENT de la tabla `system_users`
 --
 ALTER TABLE `system_users`
-  MODIFY `u_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+  MODIFY `u_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
 -- AUTO_INCREMENT de la tabla `system_users_permisos`
 --
 ALTER TABLE `system_users_permisos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT de la tabla `tabuladores`
@@ -14866,7 +14917,7 @@ ALTER TABLE `tasa`
 -- AUTO_INCREMENT de la tabla `tasa_historico`
 --
 ALTER TABLE `tasa_historico`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `traspasos`
