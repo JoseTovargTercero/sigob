@@ -77,7 +77,9 @@ $stmt->close();
 
   <style>
     #table td,
-    #table th {
+    #table th,
+    #table-2 td,
+    #table-2 th {
       text-align: center;
     }
 
@@ -210,15 +212,10 @@ $stmt->close();
                   <span>Total de proyectos: </span>
                   <b id="total_proyectos"></b>
                 </li>
-
-
-
                 <li class="mb-1 d-flex flex-column flex-sm-row justify-content-between text-center gap-3">
                   <span>Proyectos ejecutados: </span>
                   <b id="total_proyectos_ejecutados"></b>
                 </li>
-
-
                 <li class="mb-1 d-flex flex-column flex-sm-row justify-content-between text-center gap-3">
                   <span>Proyectos pendientes: </span>
                   <b id="total_proyectos_pendientes"></b>
@@ -228,7 +225,6 @@ $stmt->close();
               <hr>
             </div>
           </div>
-
 
 
 
@@ -251,6 +247,69 @@ $stmt->close();
 
 
       <div class="row ">
+        <div class="col-lg-12 hide" id="vista_datalles">
+          <div class="card">
+            <div class="card-body">
+              <div class="d-flex flex-column">
+                <div class="card-title mb-auto d-flex justify-content-between">
+                  <h5 class="mb-0">Detalles del proyecto</h5>
+
+                  <button class="btn avtar avtar-xs btn-light-dark" onclick="$('#vista_datalles').addClass('hide')"><i class="bx bx-x f-20"></i></button>
+
+                </div>
+
+
+                <div class="mt-2 card-body">
+
+                  <div class="row">
+                    <div class="col-lg-4 br-g">
+                      <div class="mb-3">
+                        <small class="text-muted">Nombre del proyecto:</small>
+                        <h5 class="fw-bold" id="info_nombre_p"></h5>
+                      </div>
+
+                      <div class="mb-3">
+                        <small class="text-muted">Descripción del proyecto:</small>
+                        <p class="text-dark" id="info_descripcion_p"></p>
+                      </div>
+
+                      <div class="mb-4 d-flex justify-content-between">
+                        <small class="text-muted">Asignación presupuestaria:</small>
+                        <h5 class="fw-bold" id="info_monto_p"></h5>
+                      </div>
+
+
+
+                      <div class="text-center" id="info_estatus_p">
+                      </div>
+
+
+                    </div>
+                    <div class="col-lg-8">
+
+                      <table class="table" id="table-2">
+                        <thead>
+                          <tr>
+                            <th>#</th>
+                            <th>Partida</th>
+                            <th>Nombre</th>
+                            <th>Asignación</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
 
 
 
@@ -279,19 +338,39 @@ $stmt->close();
                   </div>
 
 
-                  <div class="mb-3">
-                    <label for="partida" class="form-label">Asignación presupuestaria (Monto)</label>
+                  <div class="mb-4">
+                    <label for="partida" class="form-label">Asignación presupuestaria total (Monto)</label>
                     <input type="text" class="form-control" id="monto" placeholder="Indique el monto asignado para la ejecución del proyecto">
                   </div>
 
 
-
-
-                  <div class="mb-4">
-                    <label for="partida" class="form-label">Partida presupuestaria</label>
-                    <input type="text" list="partidas" id="partida" class="form-control" placeholder="Indique la partida">
+                  <div class="mb-2 mt-3">
+                    <h6 class=" text-uppercase ">Distribución presupuestaria</h6>
+                    <!-- Gradient divider -->
+                    <hr data-content="AND" class="hr-text">
                   </div>
 
+                  <div class="mb-3" id="section-partidas">
+                    <div class="row mb-2 d-asignacion">
+                      <div class="col-lg-8">
+                        <label class="form-label">Partida presupuestaria</label>
+                        <input type="text" list="partidas" class="form-control c_partida" placeholder="Indique la partida">
+                      </div>
+                      <div class="col-lg-4 row">
+                        <div class="col-lg-9">
+                          <label class="form-label">Monto</label>
+                          <input type="text" class="form-control c_monto" placeholder="Indique el monto">
+                        </div>
+                        <div class="col-lg-3 g-self-e">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+
+                  <div class="text-center mb-4">
+                    <button class="btn btn-sm bg-brand-color-1 text-white" id="btn-add-row-inputs"><i class="bx bx-plus"></i>Agregar otra partida</button>
+                  </div>
 
                   <div class="mb-3 d-flex justify-content-between">
                     <button class="btn btn-secondary" id="btn-cancelar-registro">Cancelar</button>
@@ -319,7 +398,7 @@ $stmt->close();
                 </div>
 
 
-                <section class="mt-2 card-body">
+                <div class="mt-2 card-body">
 
                   <table class="table" id="table">
                     <thead>
@@ -330,22 +409,17 @@ $stmt->close();
                         <th>Estatus</th>
                         <th></th>
                         <th></th>
+                        <th></th>
                       </tr>
                     </thead>
                     <tbody>
                     </tbody>
                   </table>
-                </section>
+                </div>
               </div>
             </div>
           </div>
         </div>
-
-
-
-
-
-
       </div>
 
       <div class="dialogs">
@@ -368,6 +442,7 @@ $stmt->close();
           </div>
         </div>
       </div>
+
 
       <datalist id="partidas"></datalist>
 
@@ -392,12 +467,64 @@ $stmt->close();
                             'id' => $id_plan_inversion,
                             'monto' => $plan_inversion_monto
                           ]); ?>;
+
         let monto_total_proyectos = 0;
         let proyectos = []
 
 
         // Obtener la lista de partidas
         let clasificador = {};
+
+
+        // DATA TABLE
+        var DataTable = $("#table").DataTable({
+          language: lenguaje_datat
+        });
+        var DataTable_2 = $("#table-2").DataTable({
+          language: lenguaje_datat
+        });
+
+
+
+        // agregar los campos para mas partidas
+        function addInputsPartidas() {
+          var section = document.getElementById('section-partidas');
+
+          var row = document.createElement('div');
+          row.innerHTML = `<div class="row mb-2 fila d-asignacion">
+                      <div class="col-lg-8">
+                        <label class="form-label">Partida presupuestaria</label>
+                        <input type="text" list="partidas" class="form-control c_partida" placeholder="Indique la partida">
+                      </div>
+                      <div class="col-lg-4 row">
+                        <div class="col-lg-9">
+                          <label  class="form-label">Monto</label>
+                          <input type="text" class="form-control c_monto" placeholder="Indique el monto">
+                        </div>
+                        <div class="col-lg-3 g-self-e">
+                          <button class="btn btn-light-danger btn-delete-row"><i class="bx bx-x f-20"></i></button>
+                        </div>
+                      </div>
+                    </div>
+                    `
+          section.appendChild(row);
+        }
+
+        document.getElementById('btn-add-row-inputs').addEventListener('click', addInputsPartidas)
+
+        // Eliminar los campos creados para mas partidas
+        document.addEventListener('click', function(event) {
+          if (event.target.closest('.btn-delete-row')) {
+            const row = event.target.closest('.fila');
+            row.remove();
+          }
+        });
+
+
+
+
+
+
 
         function getPartidas() {
           $.ajax({
@@ -426,7 +553,7 @@ $stmt->close();
               }
             },
             error: function(xhr, status, error) {
-              console.log(error);
+              console.log(xhr.responseText);
             },
           });
         }
@@ -436,12 +563,44 @@ $stmt->close();
 
 
 
-        function ejecutarProyecto() {
+        /*
+                
+                status
+                partidas
+                */
+        function getDetallesProyecto(proyecto_id) {
+          let infoProyecto = proyectos[proyecto_id]
 
+          document.getElementById('info_nombre_p').innerHTML = infoProyecto[1]
+          document.getElementById('info_descripcion_p').innerHTML = infoProyecto[2]
+          document.getElementById('info_monto_p').innerHTML = infoProyecto[3] + ' Bs'
+          document.getElementById('info_estatus_p').innerHTML = infoProyecto[4] === 1 ?
+            `<span class="badge bg-light-primary text-lg">Ejecutado</span>` : `<span class="badge bg-light-secondary text-lg">Pendiente</span>`
+
+          DataTable_2.clear();
+          let data = []
+          let cont = 1;
+          for (const key in infoProyecto[5]) {
+            data.push(
+              [cont++,
+                infoProyecto[5][key]['partida'],
+                infoProyecto[5][key]['nombre'],
+                infoProyecto[5][key]['monto']
+              ])
+          }
+          DataTable_2.rows.add(data).draw();
+
+          document.getElementById('vista_datalles').classList.remove('hide')
+
+        }
+
+
+
+
+
+        function ejecutarProyecto() {
           let comentario = $('#comentario').val()
           toggleDialogs()
-
-
 
           Swal.fire({
             title: "¿Estás seguro?",
@@ -496,67 +655,143 @@ $stmt->close();
             accion = 'registrar_proyecto'
             $('#vista_registro').removeClass('hide')
             $('#vista-tabla').addClass('hide')
+            $('#vista_datalles').addClass('hide')
           }
         }
 
+
+        // Mostrar interfaz para editar proyecto existente
         function editarProyecto(id) {
+          $('#vista_datalles').addClass('hide')
+
           accion = 'update_proyecto'
-          console.log(proyectos[id])
 
           $('#nombre').val(proyectos[id]['1'])
           $('#descripcion').val(proyectos[id]['2'])
           $('#monto').val(proyectos[id]['3'])
           $('#partida').val(proyectos[id]['4'])
 
+          // ejecutar addInputsPartidas() tantas partidas haya en proyectos[id]['5']
+
+          let cantidadPartidas = proyectos[id]['5'].length
+          $('.fila').remove()
+
+          let i = 1
+          while (i < cantidadPartidas) {
+            addInputsPartidas()
+            i++
+          }
+
+          // Iterar sobre cada d-asignacion dentro de #section-partidas
+          $('#section-partidas .d-asignacion').each(function(index) {
+            let partida = proyectos[id]['5'][index]['partida'];
+            let monto = proyectos[id]['5'][index]['monto'];
+
+            // Asignar el valor de 'partida' al campo c_partida dentro de la fila actual
+            $(this).find('.c_partida').val(partida);
+
+            // Asignar el valor de 'monto' al campo c_monto dentro de la fila actual
+            $(this).find('.c_monto').val(monto);
+          });
 
           $('#vista_registro').removeClass('hide')
           $('#vista-tabla').addClass('hide')
-
         }
-
-        // DATA TABLE
-        var DataTable = $("#table").DataTable({
-          language: lenguaje_datat
-        });
-
 
         function cancelarRegistro() {
           $('#vista_registro').addClass('hide')
           $('#vista-tabla').removeClass('hide')
           $('.form-control').val('')
+          $('.fila').remove()
         }
         document.getElementById('btn-cancelar-registro').addEventListener('click', cancelarRegistro)
 
         // Registrrar nuevo proyecto
         function guardarProyecto() {
+
+          // Obtener todos los campos de partida y monto
+          const partidas = document.querySelectorAll('.c_partida');
+          const montos = document.querySelectorAll('.c_monto');
+
+          // Crear un array para almacenar los valores
+          const datos_presupuestarios = [];
+          let consolidado = 0;
+
+          let errors = false;
+
+          // Recorrer cada campo de partida y monto
+          partidas.forEach((partida, index) => {
+            const monto = montos[index].value; // Obtener el valor del monto correspondiente
+
+
+            // Verificar si el campo de partida está vacío
+            if (partida.value === '') {
+              errors = true;
+              partida.classList.add('border-danger'); // Agregar la clase 'errors' al campo de partida vacío
+              toast_s('error', 'Faltan datos');
+            }
+
+            // Verificar si la partida no es encontrada en el clasificador
+            if (!clasificador.hasOwnProperty(partida.value)) {
+              errors = true;
+              partida.classList.add('border-danger'); // Agregar la clase 'errors' al campo cuya partida no se encontró
+              toast_s('error', 'Faltan datos');
+            }
+
+            // Verificar si el campo de monto está vacío
+            if (monto === '') {
+              errors = true;
+              montos[index].classList.add('border-danger'); // Agregar la clase 'errors' al campo de monto vacío
+              toast_s('error', 'Faltan datos');
+            }
+
+            consolidado += parseInt(monto)
+            // Agregar los valores válidos al array de datos
+            datos_presupuestarios.push({
+              partida: partida.value,
+              monto: monto
+            });
+          });
+
           const nombre = $("#nombre").val();
           const descripcion = $("#descripcion").val();
-          const monto = $("#monto").val().replace(/\./g, "");
-          // quitar puntos de monto
-          const partida = $("#partida").val();
+          const monto_total = $("#monto").val().replace(/\./g, "");
 
-          console.log(partida)
+          // quitar puntos de monto
+          if (consolidado != monto_total) {
+            toast_s('error', 'El monto total no coincide con las asignaciones por partida.');
+            errors = true;
+          }
+
+          if (!validarCampo('nombre')) {
+            errors = true;
+          }
+          if (!validarCampo('descripcion')) {
+            errors = true;
+          }
+          if (!validarCampo('monto')) {
+            errors = true;
+          }
+          // Si hay errores, detener la ejecución
+          if (errors) {
+            return;
+          }
+
           const proyecto = {
             nombre: nombre.trim(),
             descripcion: descripcion.trim(),
-            monto: monto.trim(),
-            partida: partida.trim(),
+            monto: monto_total.trim(),
+            partida: datos_presupuestarios,
             id_plan: planData.id,
             id: ''
           }
-          console.log(proyecto)
-          if (nombre == '' || descripcion == '' || monto == '' || partida == '') {
-            toast_s('error', 'Todos los campos son obligatorios')
-            return
-          }
 
-
-
+          // enviar los datos al back con el nuevo formato
           if (accion == 'update_proyecto') {
-            nueva_dist = (parseInt(monto_total_proyectos) - parseInt(proyectos[edt][3])) + parseInt(monto);
+            nueva_dist = (parseInt(monto_total_proyectos) - parseInt(proyectos[edt][3])) + parseInt(monto_total);
             proyecto.id = edt
           } else {
-            nueva_dist = parseInt(monto_total_proyectos) + parseInt(monto);
+            nueva_dist = parseInt(monto_total_proyectos) + parseInt(monto_total);
           }
 
 
@@ -565,12 +800,7 @@ $stmt->close();
             return
           }
 
-          if (!clasificador.hasOwnProperty(partida)) {
-            toast_s('error', 'Partida no encontrada')
-            return;
-          }
-
-          if (verificarMonto(monto)) {
+          if (verificarMonto(monto_total)) {
             $.ajax({
               url: url_back,
               type: "json",
@@ -584,12 +814,16 @@ $stmt->close();
                   toast_s('success', 'Proyecto ' + (accion == 'update_proyecto' ? 'actualizado' : 'registrado') + ' con éxito')
                   get_tabla()
                   cancelarRegistro()
+
+                  $('.fila').remove()
                 } else {
+                  console.log(response)
                   toast_s('error', 'Error al ' + (accion == 'update_proyecto' ? 'actualizar' : 'registrar') + ' proyecto')
                 }
               },
               error: function(xhr, status, error) {
-                console.log(error);
+                console.log(xhr.responseText);
+
               },
             });
           }
@@ -649,6 +883,13 @@ $stmt->close();
             const id = event.target.closest('.btn-edit').getAttribute('data-edit-id');
             editar(id);
           }
+
+          if (event.target.closest('.btn-detalles-p')) { // ACCION DE ELIMINAR
+            const id = event.target.closest('.btn-detalles-p').getAttribute('data-id-proyecto');
+            getDetallesProyecto(id);
+          }
+
+
         });
 
         var edt
@@ -857,7 +1098,6 @@ $stmt->close();
               accion: 'get_proyectos',
               id_plan: planData.id
             }),
-
             success: function(response) {
               let data_tabla = [] // Informacion de la tabla
 
@@ -878,7 +1118,8 @@ $stmt->close();
                     item.proyecto,
                     item.descripcion,
                     item.monto_proyecto,
-                    item.id_partida
+                    item.status,
+                    item.partidas
                   ]
 
                   data_tabla.push([
@@ -887,8 +1128,12 @@ $stmt->close();
                     item.monto_proyecto,
                     item.status === 1 ?
                     `<span class="badge bg-light-primary">Ejecutado</span>` : `<span class="badge bg-light-secondary">Pendiente</span>`,
+                    `<button data-id-proyecto="${item.id}" type="button" class="btn avtar avtar-xs btn-success btn-detalles-p" data-toggle="
+                      tooltip" title="Ver detalles">
+                      <i class="bx bx-detail"></i>
+                      </button>`,
                     item.status === 0 ?
-                    `<button class="btn btn-edit btn-sm bg-brand-color-2 text-white" data-edit-id="${item.id}"><i class="bx bx-edit-alt"></i></button>` :
+                    `<button class="btn btn-edit btn-sm bg-brand-color-2 text-white " data-edit-id="${item.id}"><i class="bx bx-edit-alt"></i></button>` :
                     '-',
                     item.status === 0 ?
                     `<button class="btn btn-danger btn-sm btn-delete" data-delete-id="${item.id}"><i class="bx bx-trash"></i></button>` :
@@ -921,7 +1166,8 @@ $stmt->close();
               }
             },
             error: function(xhr, status, error) {
-              console.log(error);
+              console.error(xhr.responseText);
+              console.error(error);
             },
           });
         }

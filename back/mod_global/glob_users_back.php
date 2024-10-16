@@ -3,14 +3,15 @@ require_once '../sistema_global/conexion.php';
 require_once '../sistema_global/session.php';
 
 if ($_SESSION["u_nivel"] != 1) {
-    header("Location:".constant('URL'));
+    header("Location:" . constant('URL'));
 }
 
 
 $u_oficina_id = $_SESSION["u_oficina_id"];
 $u_oficina = $_SESSION["u_oficina"];
 
-function verificarPermiso($id){
+function verificarPermiso($id)
+{
     global $conexion;
     global $u_oficina_id;
 
@@ -30,9 +31,9 @@ function verificarPermiso($id){
 
 
 if (@$_POST["tabla"]) {
-    
+
     $datos = array();
-    
+
     $stmt = mysqli_prepare($conexion, "SELECT * FROM `system_users` WHERE u_oficina_id = ? AND u_nivel!='1'");
     $stmt->bind_param('s', $u_oficina_id);
     $stmt->execute();
@@ -43,28 +44,28 @@ if (@$_POST["tabla"]) {
                 "u_id" => $row["u_id"],
                 "u_nombre" => $row["u_nombre"],
                 "u_status" => $row["u_status"],
-                "creado" => $row["creado"]
+                "creado" => $row["creado"],
+                "u_cedula" => $row["u_cedula"]
             );
         }
     }
     $stmt->close();
     echo json_encode($datos);
-    
-}elseif (@$_POST["eliminar"]) {
+} elseif (@$_POST["eliminar"]) {
     $id = $_POST["id"];
     if (verificarPermiso($id)) {
         $stmt = $conexion->prepare("DELETE FROM `system_users` WHERE u_id = ?");
         $stmt->bind_param("i", $id);
         $stmt->execute();
         $stmt->close();
-        
+
         if ($stmt) {
             echo 'ok';
         } else {
             echo 'error';
         }
     }
-}elseif (@$_POST["bloquear"]) {
+} elseif (@$_POST["bloquear"]) {
     $id = $_POST["id"];
     if (verificarPermiso($id)) {
 
@@ -73,9 +74,9 @@ if (@$_POST["tabla"]) {
         $stmt->execute();
         $result = $stmt->get_result();
         if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            $n_estatus =  ($row['u_status'] == '1' ? '0' : '1');
-        }
+            while ($row = $result->fetch_assoc()) {
+                $n_estatus =  ($row['u_status'] == '1' ? '0' : '1');
+            }
         }
         $stmt->close();
 
@@ -86,13 +87,16 @@ if (@$_POST["tabla"]) {
         if ($stmt2) {
             echo 'ok';
         }
-        $stmt2 -> close();
+        $stmt2->close();
     }
-}elseif (@$_POST["registro"]) {
+} elseif (@$_POST["registro"]) {
     $nombre = $_POST["nombre"];
-    $mail = $_POST["mail"];
+    $mail = strtolower($_POST["mail"]);
     $pass1 = $_POST["pass1"];
     $pass2 = $_POST["pass2"];
+    $cedula = $_POST["cedula"];
+
+
 
     if ($pass1 != $pass2) {
         echo 'pass';
@@ -105,8 +109,8 @@ if (@$_POST["tabla"]) {
     $stmt->execute();
     $result = $stmt->get_result();
     if ($result->num_rows > 0) {
-    echo 'existe';
-    exit();
+        echo 'existe';
+        exit();
     }
     $stmt->close();
 
@@ -117,22 +121,16 @@ if (@$_POST["tabla"]) {
 
 
 
-	$pass = password_hash($pass1, PASSWORD_BCRYPT);
+    $pass = password_hash($pass1, PASSWORD_BCRYPT);
 
-    $stmt_o = $conexion->prepare("INSERT INTO system_users (u_nombre, u_oficina_id, u_oficina, u_email, u_contrasena, u_nivel) VALUES (?,?,?,?,?,'2')");
-    $stmt_o->bind_param("sssss", $nombre, $u_oficina_id, $u_oficina, $mail, $pass);
+    $stmt_o = $conexion->prepare("INSERT INTO system_users (u_nombre, u_oficina_id, u_oficina, u_email, u_contrasena, u_nivel, u_cedula) VALUES (?,?,?,?,?,'2',?)");
+    $stmt_o->bind_param("ssssss", $nombre, $u_oficina_id, $u_oficina, $mail, $pass, $cedula);
     $stmt_o->execute();
 
     if ($stmt_o) {
-    echo "ok";
-    }else {
-    echo "error";
+        echo "ok";
+    } else {
+        echo "error";
     }
     $stmt_o->close();
-
-
-
 }
-
-
-?>

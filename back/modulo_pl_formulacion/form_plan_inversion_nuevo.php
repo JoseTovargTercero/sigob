@@ -28,7 +28,9 @@ function guardarEjercicioPlan($id, $monto)
         if ($stmt->affected_rows > 0) {
             return json_encode(["success" => "Datos del plan de inversión guardados correctamente"]);
         } else {
-            throw new Exception("No se pudo guardar los datosl");
+            // obtener el error
+            $error = $stmt->error;
+            throw new Exception("Error al guardar los datos del plan de inversión: $error");
         }
     } catch (Exception $e) {
         registrarError($e->getMessage());

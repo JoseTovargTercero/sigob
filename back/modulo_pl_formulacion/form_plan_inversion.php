@@ -20,9 +20,6 @@ function guardarProyecto($proyectosArray)
 {
     global $conexion;
 
-
-
-
     try {
         // Verificar que el array de proyectos no esté vacío
         if (empty($proyectosArray)) {
@@ -34,22 +31,41 @@ function guardarProyecto($proyectosArray)
         $nombre = $proyectosArray['nombre'];
         $descripcion = $proyectosArray['descripcion'];
         $monto = $proyectosArray['monto'];
-        $partida = $proyectosArray['partida'];
         $id_plan = $proyectosArray['id_plan'];
 
         $sqlProyecto = "INSERT INTO proyecto_inversion (
             id_plan,
             proyecto,
             descripcion,
-            monto_proyecto,
-            id_partida) VALUES (?, ?, ?, ?, ?)";
+            monto_proyecto) VALUES (?, ?, ?, ?)";
         $stmtProyecto = $conexion->prepare($sqlProyecto);
-        $stmtProyecto->bind_param("issss", $id_plan, $nombre, $descripcion, $monto, $partida);
+        $stmtProyecto->bind_param("isss", $id_plan, $nombre, $descripcion, $monto);
         $stmtProyecto->execute();
 
         if ($stmtProyecto->affected_rows <= 0) {
-            throw new Exception("Error al insertar en la tabla proyecto_inversion.");
+            $error = $stmtProyecto->error;
+            throw new Exception("Error al insertar en la tabla proyecto_inversion. $error");
         }
+        // obten el id del elemento registrado
+
+        $partidas_montos = $proyectosArray['partida']; // fatos presupuesto
+        $id_proyecto = $conexion->insert_id;
+        // Insertar las partidas en la tabla plan_inversion
+
+
+        $stmt_o = $conexion->prepare("INSERT INTO proyecto_inversion_partidas (id_proyecto, partida, monto) VALUES (?, ?, ?)");
+
+
+        foreach ($partidas_montos as $item) {
+            $partida = $item['partida'];
+            $monto = $item['monto'];
+
+            $stmt_o->bind_param("iss", $id_proyecto, $partida, $monto);
+            $stmt_o->execute();
+        }
+
+
+        $stmt_o->close();
 
         $stmtProyecto->close();
 
@@ -93,8 +109,8 @@ function actualizarProyectoInversion($proyecto)
         $id_proyecto = $proyecto['id'];
         $nombre_proyecto = $proyecto['nombre'];
         $monto_proyecto = $proyecto['monto'];
-        $id_partida = $proyecto['partida'];
         $descripcion = $proyecto['descripcion'];
+        $partidas_montos = $proyecto['partida'];
 
         // Verificar si el proyecto ya ha sido ejecutado
         $sqlCheckStatus = "SELECT status FROM proyecto_inversion WHERE id = ?";
@@ -109,13 +125,47 @@ function actualizarProyectoInversion($proyecto)
             throw new Exception("Este proyecto ya ha sido ejecutado y no se puede modificar.");
         }
 
+        $error = false;
         // Actualizar los datos del proyecto
-        $sql = "UPDATE proyecto_inversion SET proyecto = ?, descripcion=?, monto_proyecto = ?, id_partida = ? WHERE id = ?";
+        $sql = "UPDATE proyecto_inversion SET proyecto = ?, descripcion=?, monto_proyecto = ? WHERE id = ?";
         $stmt = $conexion->prepare($sql);
-        $stmt->bind_param("ssdsi", $nombre_proyecto, $descripcion, $monto_proyecto, $id_partida, $id_proyecto);
-        $stmt->execute();
+        $stmt->bind_param("ssdi", $nombre_proyecto, $descripcion, $monto_proyecto, $id_proyecto);
+        if (!$stmt->execute()) {
+            $error = true;
+        }
+        $stmt->close();
 
-        if ($stmt->affected_rows <= 0) {
+
+
+
+        $stmt_d = $conexion->prepare("DELETE FROM `proyecto_inversion_partidas` WHERE id_proyecto= ?");
+        $stmt_d->bind_param("i", $id_proyecto);
+        if (!$stmt_d->execute()) {
+            $error = true;
+        }
+        $stmt_d->close();
+
+
+
+        $stmt_o = $conexion->prepare("INSERT INTO proyecto_inversion_partidas (id_proyecto, partida, monto) VALUES (?, ?, ?)");
+
+
+        foreach ($partidas_montos as $item) {
+            $partida = $item['partida'];
+            $monto = $item['monto'];
+
+            $stmt_o->bind_param("iss", $id_proyecto, $partida, $monto);
+            if (!$stmt_o->execute()) {
+                $error = true;
+            }
+        }
+
+
+        $stmt_o->close();
+
+
+
+        if ($error) {
             throw new Exception("Error al actualizar el proyecto de inversión.");
         }
 
@@ -180,14 +230,15 @@ function eliminarPlanInversion($id_plan)
     }
 }
 
-// Obtener lista de proyectos
-function getProyectos($id_plan)
+function getPartidasXProyecto($proyecto)
 {
     global $conexion;
     $data = [];
 
-    $stmt = mysqli_prepare($conexion, "SELECT PI.descripcion, PI.id, PI.proyecto, PI.monto_proyecto, PI.id_partida, PI.status FROM `proyecto_inversion` AS PI WHERE id_plan = ?");
-    $stmt->bind_param('s', $id_plan);
+    $stmt = mysqli_prepare($conexion, "SELECT PIP.partida, PIP.monto, PA.nombre FROM `proyecto_inversion_partidas` AS PIP
+    LEFT JOIN partidas_presupuestarias AS PA ON PA.partida=PIP.partida
+     WHERE id_proyecto = ?");
+    $stmt->bind_param('s', $proyecto);
     $stmt->execute();
     $result = $stmt->get_result();
     if ($result->num_rows > 0) {
@@ -195,6 +246,46 @@ function getProyectos($id_plan)
             array_push($data, $row);
         }
     }
+    $stmt->close();
+
+    return $data;
+}
+
+// Obtener lista de proyectos
+function getProyectos($id_plan)
+{
+    global $conexion;
+    $data = [];
+
+    $stmt = mysqli_prepare($conexion, "SELECT PI.descripcion, PI.id, PI.proyecto, PI.monto_proyecto, PI.status FROM `proyecto_inversion` AS PI WHERE id_plan = ?");
+    $stmt->bind_param('s', $id_plan);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            array_push(
+                $data,
+                [
+                    'id' => $row['id'],
+                    'proyecto' => $row['proyecto'],
+                    'descripcion' => $row['descripcion'],
+                    'status' => $row['status'],
+                    'monto_proyecto' => $row['monto_proyecto'],
+                    'partidas' => getPartidasXProyecto($row['id'])
+                ]
+            );
+        }
+    }
+
+
+
+
+
+
+
+
+
+
     $stmt->close();
 
     return json_encode(['success' => $data]);
@@ -226,7 +317,14 @@ function eliminarProyecto($id)
     $stmt->bind_param("i", $id);
 
     if ($stmt->execute()) {
-        echo json_encode(['success' => 'No se pudo eliminar el proyecto']);
+
+        $stmt_d = $conexion->prepare("DELETE FROM `proyecto_inversion_partidas` WHERE id_proyecto= ?");
+        $stmt_d->bind_param("i", $id);
+        $stmt_d->execute();
+        $stmt_d->close();
+
+
+        echo json_encode(['success' => 'Proyecto eliminado']);
     } else {
         echo json_encode(['error' => 'No se pudo eliminar el proyecto']);
     }

@@ -234,6 +234,16 @@ $(document).ready(function () {
   });
 });
 
+function validarCampo(campo) {
+  var value = $("#" + campo).val();
+  if (value.trim() == "") {
+    $("#" + campo).addClass("border-danger");
+    toast_s("error", "Hay campos vacíos");
+    return false;
+  }
+  return true;
+}
+
 document.addEventListener("DOMContentLoaded", function () {
   // Select all inputs with the 'check-length' class
   const inputs = document.querySelectorAll(".check-length");

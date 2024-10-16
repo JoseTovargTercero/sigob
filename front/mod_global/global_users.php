@@ -64,6 +64,7 @@ require_once '../../back/sistema_global/session.php';
                   <thead>
                     <tr>
                       <th class="w-5"></th>
+                      <th class="w-10">Cédula</th>
                       <th class="w-10">Usuario</th>
                       <th class="w-50">Fecha de creación</th>
                       <th class="w-10"></th>
@@ -86,7 +87,7 @@ require_once '../../back/sistema_global/session.php';
               $('#vistaPrincipal').removeClass('col-lg-12')
               $('#vistaPrincipal').addClass('col-lg-8')
               $('#vistaRegistro').removeClass('hide')
-            }else{
+            } else {
               $('#vistaPrincipal').addClass('col-lg-12')
               $('#vistaPrincipal').removeClass('col-lg-8')
               $('#vistaRegistro').addClass('hide')
@@ -109,30 +110,36 @@ require_once '../../back/sistema_global/session.php';
             <div class="card-body">
               <form id="form-data">
 
-              <div class="mb-3">
-                <label for="nombre" class="form-label">Nombre</label>
-                <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Nombre completo">
-              </div>
-              <div class="mb-3">
-                <label for="mail" class="form-label">Correo</label>
-                <input type="email" class="form-control" id="mail" name="mail" placeholder="Correo electrónico">
-              </div>
-            
-              <div class="mb-3">
-                <label for="pass1" class="form-label">Contraseña</label>
-                <input type="password" autocomplete="off" class="form-control" id="pass1" name="pass1" placeholder="Contraseña">
-              </div>
-            
-              <div class="mb-3">
-                <label for="pass2" class="form-label">Repetir Contraseña</label>
-                <input type="password" autocomplete="off" class="form-control" id="pass2" name="pass2" placeholder="Repetir Contraseña">
-              </div>
+                <div class="mb-3">
+                  <label for="nombre" class="form-label">Nombre</label>
+                  <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Nombre completo">
+                </div>
+                <div class="mb-3">
+                  <label for="cedula" class="form-label">Cédula</label>
+                  <input type="text" class="form-control" id="cedula" name="cedula" placeholder="Cédula">
+                </div>
 
-              <div class="mb-3 text-end">
-                <button class="btn btn-primary" type="submit">Guardar</button>
-              </div>
+
+                <div class="mb-3">
+                  <label for="mail" class="form-label">Correo</label>
+                  <input type="email" class="form-control" id="mail" name="mail" placeholder="Correo electrónico">
+                </div>
+
+                <div class="mb-3">
+                  <label for="pass1" class="form-label">Contraseña</label>
+                  <input type="password" autocomplete="off" class="form-control" id="pass1" name="pass1" placeholder="Contraseña">
+                </div>
+
+                <div class="mb-3">
+                  <label for="pass2" class="form-label">Repetir Contraseña</label>
+                  <input type="password" autocomplete="off" class="form-control" id="pass2" name="pass2" placeholder="Repetir Contraseña">
+                </div>
+
+                <div class="mb-3 text-end">
+                  <button class="btn btn-primary" type="submit">Guardar</button>
+                </div>
               </form>
-            
+
             </div>
           </div>
         </div>
@@ -176,10 +183,12 @@ require_once '../../back/sistema_global/session.php';
               let u_nombre = data[i].u_nombre;
               let creado = data[i].creado;
               let u_status = data[i].u_status;
+              let cedula = data[i].u_cedula ?? '';
 
 
               $('#table tbody').append(`<tr>
               <td><i class="bx bx-user"></i></td>
+              <td>` + cedula + `</td>
               <td>` + u_nombre + `</td>
               <td>` + creado + `</td>
 
@@ -188,10 +197,10 @@ require_once '../../back/sistema_global/session.php';
               <td><a class="pointer btn-wicon badge me-2 bg-light-dark  f-12" onclick="verGrupo(` + u_id + `)"> <i class="bx bx-detail"></i> Historial</a></td>
 
 
-              `+ (u_status == '1' ?  `<td><a class="pointer btn-wicon badge me-2 bg-warning f-12 text-black" onclick="bloquear(` + u_id + `)"> <i class="bx bx-block"></i> Bloquear</a></td>` : `<td><a class="pointer btn-wicon badge me-2 bg-info f-12 text-white" onclick="bloquear(` + u_id + `)"> <i class="bx bx-unblock"></i> Desbloquear</a></td>`)+
-              
+              ` + (u_status == '1' ? `<td><a class="pointer btn-wicon badge me-2 bg-warning f-12 text-black" onclick="bloquear(` + u_id + `)"> <i class="bx bx-block"></i> Bloquear</a></td>` : `<td><a class="pointer btn-wicon badge me-2 bg-info f-12 text-white" onclick="bloquear(` + u_id + `)"> <i class="bx bx-unblock"></i> Desbloquear</a></td>`) +
 
-              `
+
+                `
               <td><a class="pointer btn-wicon badge me-2 bg-brand-color-2 text-white f-12" onclick="eliminar(` + u_id + `)"><i class="bx bx-trash"></i> Eliminar</a></td>
               </tr>`);
             }
@@ -311,57 +320,57 @@ require_once '../../back/sistema_global/session.php';
 
     /*  Guardar informacion */
     $(document).ready(function(e) {
-            $("#form-data").on('submit', function(e) {
-                e.preventDefault();
-                let formData = new FormData(this);
+      $("#form-data").on('submit', function(e) {
+        e.preventDefault();
+        let formData = new FormData(this);
 
-                if ($('#nombre').val() == '' || $('#mail').val() == '' || $('#pass1').val() == '' || $('#pass2').val() == '') {
-                  toast_s('error', 'Rellene todos los campos')
-                  return
-                }
+        if ($('#nombre').val() == '' || $('#cedula').val() == '' || $('#mail').val() == '' || $('#pass1').val() == '' || $('#pass2').val() == '') {
+          toast_s('error', 'Rellene todos los campos')
+          return
+        }
 
-                if ($('#pass1').val() !== $('#pass2').val()) {
-                  toast_s('error', 'Las contraseñas no coinciden')
-                  return
-                }
-
-
-                formData.append('registro', true);
-
-                $.ajax({
-                    type: 'POST',
-                    url: url_back,
-                    data: formData,
-                    contentType: false,
-                    cache: false,
-                    processData: false,
-                    success: function(msg) {
-                      let msgTrim = msg.trim()
-
-                      if (msgTrim == 'ok') {
-                        toast_s('success', 'Guardado con éxito')
-                        cargarTabla()
-                        setVista('a')
-                        $('#form-data')[0].reset()
-                        
-                      }else if (msgTrim == 'pass') {
-                        toast_s('error', 'Las contraseñas no coinciden')
-                      }else if (msgTrim == 'existe') {
-                        toast_s('error', 'Ya existe un usuario con el correo indicado')
-                      }
-
-                    }
-                }).fail(function(jqXHR, textStatus, errorThrown) {
-
-                  alert('Uncaught Error: ' + jqXHR.responseText);
-                });
-
-            });
+        if ($('#pass1').val() !== $('#pass2').val()) {
+          toast_s('error', 'Las contraseñas no coinciden')
+          return
+        }
 
 
+        formData.append('registro', true);
 
+        $.ajax({
+          type: 'POST',
+          url: url_back,
+          data: formData,
+          contentType: false,
+          cache: false,
+          processData: false,
+          success: function(msg) {
+            let msgTrim = msg.trim()
 
+            if (msgTrim == 'ok') {
+              toast_s('success', 'Guardado con éxito')
+              cargarTabla()
+              setVista('a')
+              $('#form-data')[0].reset()
+
+            } else if (msgTrim == 'pass') {
+              toast_s('error', 'Las contraseñas no coinciden')
+            } else if (msgTrim == 'existe') {
+              toast_s('error', 'Ya existe un usuario con el correo indicado')
+            }
+
+          }
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+
+          alert('Uncaught Error: ' + jqXHR.responseText);
         });
+
+      });
+
+
+
+
+    });
   </script>
 
 </body>
