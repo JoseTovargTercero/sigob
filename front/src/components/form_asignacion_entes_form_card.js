@@ -381,7 +381,7 @@ export const form_asignacion_entes_form_card = async ({
 
   const asignarMontoPartidas = () => {
     return ` <div id='card-body-part3' class='slide-up-animation'>
-        <h4 class='text-center text-info'>Asigne el monto a partidas:</h4>
+        <h4 class='text-center text-info'>Distribución presupuestaria:</h4>
 
         <div class='row align-items-center text-center'>
           <div class='col'>
@@ -392,10 +392,10 @@ export const form_asignacion_entes_form_card = async ({
           <div class='col'>
             
             <h5>
-              Asignado total: <b id=''>${asignacion.monto_total}</b>
+              Asignación total: <b id=''>${asignacion.monto_total}</b>
             </h5>
             <h5>
-              Asignación a ente: <b id='monto-total-asignado'><span class="p-2 text-secondary">0</span></b>
+              Distribución presupuestaria actual: <b id='monto-total-asignado'><span class="p-2 text-secondary">0</span></b>
             </h5>
           </div>
           <div class='col'>

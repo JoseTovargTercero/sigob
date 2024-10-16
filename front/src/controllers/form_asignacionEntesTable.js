@@ -192,11 +192,14 @@ export const loadAsignacionEntesTable = async () => {
   let datosOrdenados = [...asignaciones.fullInfo].sort((a, b) => a.id - b.id)
   let data = datosOrdenados.map((el) => {
     return {
-      ente_nombre: `Distribucion para ente "${el.ente_nombre}"`,
+      ente_nombre: el.ente_nombre,
       monto: el.monto_total,
       tipo: el.tipo_ente,
       fecha: el.fecha,
-      acciones: `<button class="btn btn-info btn-sm" data-validarId="${el.id}">VALIDAR</button>`,
+      acciones:
+        el.status === 0
+          ? `<button class="btn btn-primary btn-sm" data-validarId="${el.id}">VALIDAR</button>`
+          : `<button class="btn btn-secondary btn-sm" data-validarId="${el.id}">DETALLES</button>`,
     }
   })
 
