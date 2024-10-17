@@ -153,7 +153,7 @@ const tableLanguage = {
 }
 
 let asignacionEntesTable
-export const validateAsignacionEntesTable = async () => {
+export const validateAsignacionEntesTable = async (id_ejercicio) => {
   asignacionEntesTable = new DataTable('#asignacion-entes-table', {
     columns: [
       { data: 'ente_nombre' },
@@ -178,10 +178,10 @@ export const validateAsignacionEntesTable = async () => {
     },
   })
 
-  loadAsignacionEntesTable()
+  loadAsignacionEntesTable(id_ejercicio)
 }
 
-export const loadAsignacionEntesTable = async () => {
+export const loadAsignacionEntesTable = async (id_ejercicio) => {
   // let planes = await getEntesPlanes()
   let asignaciones = await getAsignacionesEntes()
 
@@ -190,18 +190,22 @@ export const loadAsignacionEntesTable = async () => {
   if (!asignaciones || asignaciones.error) return
 
   let datosOrdenados = [...asignaciones.fullInfo].sort((a, b) => a.id - b.id)
-  let data = datosOrdenados.map((el) => {
-    return {
-      ente_nombre: el.ente_nombre,
-      monto: el.monto_total,
-      tipo: el.tipo_ente,
-      fecha: el.fecha,
-      acciones:
-        el.status === 0
-          ? `<button class="btn btn-primary btn-sm" data-validarId="${el.id}">VALIDAR</button>`
-          : `<button class="btn btn-secondary btn-sm" data-validarId="${el.id}">DETALLES</button>`,
-    }
-  })
+
+  let data = datosOrdenados
+    .filter((el) => Number(el.id_ejercicio) === Number(id_ejercicio))
+    .map((el) => {
+      return {
+        ente_nombre: el.ente_nombre,
+        monto: el.monto_total,
+        tipo: el.tipo_ente,
+        fecha: el.fecha,
+        acciones:
+          el.status === 0
+            ? `<button class="btn btn-primary btn-sm" data-validarId="${el.id}">VALIDAR</button>`
+            : `<button class="btn btn-secondary btn-sm" data-validarId="${el.id}">DETALLES</button>`,
+      }
+    })
+  console.log(data)
 
   asignacionEntesTable.clear().draw()
 

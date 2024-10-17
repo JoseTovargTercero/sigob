@@ -12,16 +12,19 @@ import {
   ejerciciosLista,
   validarEjercicioActual,
 } from '../components/form_ejerciciosLista.js'
-import { validateAsignacionEntesTable } from './form_asignacionEntesTable.js'
+import {
+  loadAsignacionEntesTable,
+  validateAsignacionEntesTable,
+} from './form_asignacionEntesTable.js'
 
 const d = document
 
 export const validateAsignacionEntesView = async () => {
-  validateAsignacionEntesTable()
-
   let ejercicioFiscal = await ejerciciosLista({
     elementToInsert: 'ejercicios-fiscales',
   })
+
+  validateAsignacionEntesTable(ejercicioFiscal.id)
 
   d.addEventListener('click', async (e) => {
     if (e.target.dataset.validarid) {
@@ -46,6 +49,8 @@ export const validateAsignacionEntesView = async () => {
       ejercicioFiscal = await validarEjercicioActual({
         ejercicioTarget: e.target,
       })
+
+      await loadAsignacionEntesTable(ejercicioFiscal.id)
     }
 
     // REGISTRAR NUEVA ASIGNACIÓN A ENTE
