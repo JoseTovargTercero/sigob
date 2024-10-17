@@ -58,10 +58,8 @@
               <div class="text-center mt-4">
                 <button type="submit" class="btn btn-primary shadow px-sm-4">Verificar</button>
               </div>
-              <div class="d-flex justify-content-between align-items-end mt-4">
-                Copy
-
-
+              <div class="mt-4 text-center">
+                SIGOB © <?php echo date('Y') ?> CRNE2024/ 354719
               </div>
             </form>
           </div>
@@ -69,11 +67,6 @@
       </div>
     </div>
   </div>
-  <!-- [ Main Content ] end -->
-  <!-- Required Js
-  preset-3
-  -->
-
   <script src="src/form.js"></script>
 </body>
 
