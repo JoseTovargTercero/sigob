@@ -250,7 +250,8 @@ export const form_distribucion_form_card = ({ elementToInset }) => {
       ejercicio = await getEjecicio(e.target.value)
 
       montos.total = ejercicio.situado
-      montos.restante = ejercicio.restante
+      montos.restante =
+        ejercicio.distribuido === 0 ? ejercicio.situado : ejercicio.restante
       montoTotalElement.textContent = montos.total
       actualizarMontoRestante(montos.restante)
       cargarPartidas()
