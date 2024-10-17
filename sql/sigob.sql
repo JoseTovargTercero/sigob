@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 16-10-2024 a las 03:40:22
+-- Tiempo de generación: 17-10-2024 a las 16:03:13
 -- Versión del servidor: 10.4.16-MariaDB
 -- Versión de PHP: 7.4.12
 
@@ -4807,8 +4807,8 @@ CREATE TABLE `movimientos` (
 --
 
 INSERT INTO `movimientos` (`id`, `id_empleado`, `id_nomina`, `fecha_movimiento`, `accion`, `tabla`, `campo`, `descripcion`, `valor_anterior`, `valor_nuevo`, `usuario_id`, `status`) VALUES
-(9, 1061, '0', '2024-07-15 19:54:28', 'UPDATE', '', '', 'Se han modificado los campos: hijos: 1. ', '', '', '', 1),
-(10, 1061, '0', '2024-07-15 19:54:52', 'UPDATE', '', '', 'Se han modificado los campos: hijos: 2. ', '', '', '', 1),
+(9, 1061, '0', '2024-07-15 19:54:28', 'UPDATE', '', '', 'Se han modificado los campos: hijos: 1. ', '', '', '38', 1),
+(10, 1061, '0', '2024-07-15 19:54:52', 'UPDATE', '', '', 'Se han modificado los campos: hijos: 2. ', '', '', '38', 1),
 (13, 1061, '[33,34,35]', '2024-08-19 12:30:18', 'UPDATE', 'empleados', 'nombres', 'Se han modificado los campos: nombres:  GAVINI MEDINA CARMEN2. ', ' GAVINI MEDINA CARMEN', ' GAVINI MEDINA CARMEN2', '31', 1);
 
 -- --------------------------------------------------------
@@ -9521,13 +9521,13 @@ CREATE TABLE `system_users` (
 --
 
 INSERT INTO `system_users` (`u_id`, `u_nombre`, `u_oficina_id`, `u_oficina`, `u_email`, `u_contrasena`, `creado`, `u_nivel`, `u_status`, `u_cedula`) VALUES
-(31, 'user Nombre', 1, 'nomina', 'corro@correo.com', '$2y$10$EyP1MOY39kuw4uREdk7ao.UUzQ10YNIZ95IZLM70MUPo5J6YzEBVG', '2024-03-07 11:18:19', 1, 1, NULL),
-(33, 'otro user', 2, 'registro_control', 'correo2@correo.com', '$2y$10$EyP1MOY39kuw4uREdk7ao.UUzQ10YNIZ95IZLM70MUPo5J6YzEBVG', '2024-05-29 16:32:32', 2, 1, NULL),
-(34, 'relaciones_laborales_user\r\n', 3, 'relaciones_laborales', 'corro3@correo.com', '$2y$10$EyP1MOY39kuw4uREdk7ao.UUzQ10YNIZ95IZLM70MUPo5J6YzEBVG', '2024-08-06 18:31:06', 1, 1, NULL),
-(35, 'Ricardo', 4, 'pl_formulacion', 'rr@gmail.com', '$2y$10$azF/dOpnDs9sCTYiLEF7kO8612REFdjpk8Te.bih4BaNDSfhAw9MO', '2024-10-12 11:21:03', 1, 1, NULL),
-(36, 'Otro user', 4, 'pl_formulacion', 'dc@gmail.com', '$2y$10$rkLTvh67l6wU6P3sNrmDoOKE9fYZeEe46nkk7VtYcRB20nM0cgIZ.', '2024-10-12 15:47:50', 2, 1, NULL),
-(37, 'Otro user nomina', 1, 'nomina', 'll@gmail.com', '$2y$10$7rP3s5kmozULLCHQpVCQ9exS28MkvJpV8x4whtmS2Z0EnXD2YbeK.', '2024-10-12 21:15:58', 2, 1, NULL),
-(38, 'YO', 4, 'pl_formulacion', 'AAAac.80014.dc@gmail.com', '$2y$10$agrYERdHIj0MRd.oIGFpsuu3HXsJZZSe1/pTD2X/9s/I.AswY0/OC', '2024-10-15 21:25:50', 2, 1, '27640176');
+(31, 'user Nombre', 1, 'nomina', 'corro@correo.com', '$2y$10$EyP1MOY39kuw4uREdk7ao.UUzQ10YNIZ95IZLM70MUPo5J6YzEBVG', '2024-03-07 11:18:19', 1, 1, '6722697'),
+(33, 'otro user', 2, 'registro_control', 'correo2@correo.com', '$2y$10$EyP1MOY39kuw4uREdk7ao.UUzQ10YNIZ95IZLM70MUPo5J6YzEBVG', '2024-05-29 16:32:32', 2, 1, '6722697'),
+(34, 'relaciones_laborales_user\r\n', 3, 'relaciones_laborales', 'corro3@correo.com', '$2y$10$EyP1MOY39kuw4uREdk7ao.UUzQ10YNIZ95IZLM70MUPo5J6YzEBVG', '2024-08-06 18:31:06', 1, 1, '6722697'),
+(35, 'Ricardo', 4, 'pl_formulacion', 'rr@gmail.com', '$2y$10$azF/dOpnDs9sCTYiLEF7kO8612REFdjpk8Te.bih4BaNDSfhAw9MO', '2024-10-12 11:21:03', 1, 1, '6722697'),
+(36, 'Otro user', 4, 'pl_formulacion', 'dc@gmail.com', '$2y$10$rkLTvh67l6wU6P3sNrmDoOKE9fYZeEe46nkk7VtYcRB20nM0cgIZ.', '2024-10-12 15:47:50', 2, 1, '6722697'),
+(37, 'Otro user nomina', 1, 'nomina', 'll@gmail.com', '$2y$10$7rP3s5kmozULLCHQpVCQ9exS28MkvJpV8x4whtmS2Z0EnXD2YbeK.', '2024-10-12 21:15:58', 2, 1, '6722697'),
+(38, 'YO', 4, 'pl_formulacion', 'AAAac.80014.dc@gmail.com', '$2y$10$3uf.A1xijNn8S10tm7uVUecZFAiucPQ81ENB0D5nJTS96sfLcp6pG', '2024-10-15 21:25:50', 2, 1, '27640176');
 
 -- --------------------------------------------------------
 
@@ -10007,7 +10007,7 @@ CREATE TABLE `tasa` (
 --
 
 INSERT INTO `tasa` (`id`, `descripcion`, `simbolo`, `valor`) VALUES
-(1, 'Precio del Dólar Actual', '$', '38.9179');
+(1, 'Precio del Dólar Actual', '$', '39.0116');
 
 -- --------------------------------------------------------
 
@@ -10033,7 +10033,8 @@ INSERT INTO `tasa_historico` (`id`, `u_nombre`, `precio`, `descripcion`, `fecha`
 (3, 'sigob', '37.0358', 'actualizacion automática', '05-10-2024'),
 (4, 'sigob', '38.8857', 'actualizacion automática', '12-10-2024'),
 (5, 'sigob', '38.888', 'actualizacion automática', '14-10-2024'),
-(6, 'sigob', '38.9179', 'actualizacion automática', '15-10-2024');
+(6, 'sigob', '38.9179', 'actualizacion automática', '15-10-2024'),
+(7, 'sigob', '39.0116', 'actualizacion automática', '17-10-2024');
 
 -- --------------------------------------------------------
 
@@ -14887,7 +14888,7 @@ ALTER TABLE `solicitud_dozavos`
 -- AUTO_INCREMENT de la tabla `system_users`
 --
 ALTER TABLE `system_users`
-  MODIFY `u_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+  MODIFY `u_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 
 --
 -- AUTO_INCREMENT de la tabla `system_users_permisos`
@@ -14917,7 +14918,7 @@ ALTER TABLE `tasa`
 -- AUTO_INCREMENT de la tabla `tasa_historico`
 --
 ALTER TABLE `tasa_historico`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de la tabla `traspasos`
