@@ -20,19 +20,26 @@ import {
 } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 const d = document
-export const form_distribucion_form_card = ({ elementToInset }) => {
-  let montos = { total: 0, restante: 0, acumulado: 0 }
+export const form_distribucion_form_card = ({
+  elementToInset,
+  ejercicioFiscal,
+}) => {
+  let montos = {
+    total: ejercicioFiscal.situado,
+    restante: ejercicioFiscal.restante,
+    acumulado: 0,
+  }
   let partidas
 
   let ejercicio
 
-  let fieldList = { id_ejercicio: '' }
+  let fieldList = { id_ejercicio: ejercicioFiscal.id }
   let fieldListErrors = {
-    id_ejercicio: {
-      value: true,
-      message: 'Eleccione un ejercicio fiscal',
-      type: 'number',
-    },
+    // id_ejercicio: {
+    //   value: true,
+    //   message: 'Eleccione un ejercicio fiscal',
+    //   type: 'number',
+    // },
     // descripcion: {
     //   value: true,
     //   message: 'Añada una descripción al plan operativo',
@@ -84,14 +91,6 @@ export const form_distribucion_form_card = ({ elementToInset }) => {
               </small>
             </div>
           </div>
-          <div class='form-group'>
-            <label for='monto' class='form-label'>
-              Seleccionar ejercicio fiscal
-            </label>
-            <select class='form-select distribucion-input' name='id_ejercicio' id='search-select-ejercicio'>
-              <option>Elegir...</option>
-            </select>
-          </div>
 
           <h5 class="mb-0">Distribución de presupuesto por partida</h5>
           <small class='text-muted'>
@@ -117,12 +116,19 @@ export const form_distribucion_form_card = ({ elementToInset }) => {
 
   // Cargar select de ejercicios
 
-  cargarSelectEjercicios()
+  cargarPartidas()
   let numsRows = 0
+
+  console.log(ejercicioFiscal)
 
   let cardElement = d.getElementById('distribucion-form-card')
   let montoTotalElement = d.getElementById('monto-total')
   let montoRestanteElement = d.getElementById('monto-restante')
+
+  montoTotalElement.textContent = ejercicioFiscal.situado
+  montoRestanteElement.innerHTML = ejercicioFiscal.restante
+    ? `<span class="text-success">${ejercicioFiscal.restante}</span>`
+    : `<span class="text-secondary">${ejercicioFiscal.restante}</span>`
 
   let partidalist = d.getElementById('lista-partidas')
   let formElement = d.getElementById('distribucion-form')
@@ -165,6 +171,9 @@ export const form_distribucion_form_card = ({ elementToInset }) => {
           fieldListErrors,
         })
       })
+
+      console.log(fieldList, fieldListErrors)
+      console.log(montos)
 
       if (Object.values(fieldListErrors).some((el) => el.value)) {
         return toastNotification({
@@ -440,13 +449,29 @@ export const form_distribucion_form_card = ({ elementToInset }) => {
     return false
   }
 
+  // async function cargarSelectEjercicios() {
+  //   let selectEjercicio = d.getElementById('select-search-ejercicio')
+  //   let ejercicios = await getEjecicios()
+
+  //   let options = ejercicios.map((el) => {
+  //     if (Number(el.id) === Number(ejercicioFiscal.id)) {
+  //       return <option value='${}' selected></option>
+  //     }else{
+  //       return <option value='${}' selected></option>
+  //     }
+  //   })
+
+  //   selectEjercicio.innerHTML = options.join('')
+  //   // insertOptions({ input: 'ejercicio', data: ejercicios.mappedData })
+  // }
+
   function enviarInformacion(data) {
     confirmNotification({
       type: NOTIFICATIONS_TYPES.send,
       message: '¿Desea registrar esta distribución presupuestaria?',
       successFunction: async function () {
         let res = await enviarDistribucionPresupuestaria({ arrayDatos: data })
-        let ejericioActualizado = await getEjecicio(ejercicio.id)
+        let ejericioActualizado = await getEjecicio(ejercicioFiscal.id)
         if (res.success) {
           loadDistribucionTable(ejericioActualizado.partidas)
           closeCard()
@@ -459,13 +484,6 @@ export const form_distribucion_form_card = ({ elementToInset }) => {
 
   cardElement.addEventListener('input', validateInputFunction)
   cardElement.addEventListener('click', validateClick)
-}
-
-async function cargarSelectEjercicios() {
-  d.getElementById('ejercicio')
-  let ejercicios = await getEjecicios()
-
-  insertOptions({ input: 'ejercicio', data: ejercicios.mappedData })
 }
 
 function partidaRow(partidaNum) {
