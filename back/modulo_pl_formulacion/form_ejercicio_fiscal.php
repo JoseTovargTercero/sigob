@@ -284,6 +284,78 @@ function obtenerEjercicioFiscalPorId($id)
 }
 
 
+// Función para modificar las partidas en distribucion_presupuestaria
+function modificarPartida($partida1, $partida2, $monto) {
+    global $conexion;
+
+    try {
+        // Iniciar transacción
+        $conexion->begin_transaction();
+
+        // Verificar si partida1 existe y obtener datos
+        $sql1 = "SELECT id, monto_actual, id_ejercicio FROM distribucion_presupuestaria WHERE id = ?";
+        $stmt1 = $conexion->prepare($sql1);
+        $stmt1->bind_param("i", $partida1);
+        $stmt1->execute();
+        $result1 = $stmt1->get_result();
+
+        if ($result1->num_rows === 0) {
+            throw new Exception("La partida a designar no existe.");
+        }
+
+        $registro1 = $result1->fetch_assoc();
+        $montoActual1 = $registro1['monto_actual'];
+        $idEjercicio = $registro1['id_ejercicio'];
+
+        // Verificar que el monto a restar no sea mayor que el monto actual de partida1
+        if ($monto > $montoActual1) {
+            throw new Exception("El monto a transferir excede el monto actual de la partida a designar.");
+        }
+
+        // Verificar si partida2 existe
+        $sql2 = "SELECT id, monto_actual FROM distribucion_presupuestaria WHERE id = ?";
+        $stmt2 = $conexion->prepare($sql2);
+        $stmt2->bind_param("i", $partida2);
+        $stmt2->execute();
+        $result2 = $stmt2->get_result();
+
+        if ($result2->num_rows === 0) {
+            // Insertar partida2 si no existe
+            $sqlInsert = "INSERT INTO distribucion_presupuestaria (id_partida, monto_inicial, id_ejercicio, monto_actual, status) VALUES (?, ?, ?, ?, 1)";
+            $stmtInsert = $conexion->prepare($sqlInsert);
+            $stmtInsert->bind_param("isis", $partida2, $monto, $idEjercicio, $monto);
+            $stmtInsert->execute();
+        } else {
+            // Actualizar monto_actual en partida2
+            $registro2 = $result2->fetch_assoc();
+            $montoActual2 = $registro2['monto_actual'] + $monto;
+
+            $sqlUpdate2 = "UPDATE distribucion_presupuestaria SET monto_actual = ? WHERE id = ?";
+            $stmtUpdate2 = $conexion->prepare($sqlUpdate2);
+            $stmtUpdate2->bind_param("di", $montoActual2, $partida2);
+            $stmtUpdate2->execute();
+        }
+
+        // Restar el monto en partida1
+        $nuevoMonto1 = $montoActual1 - $monto;
+        $sqlUpdate1 = "UPDATE distribucion_presupuestaria SET monto_actual = ? WHERE id = ?";
+        $stmtUpdate1 = $conexion->prepare($sqlUpdate1);
+        $stmtUpdate1->bind_param("di", $nuevoMonto1, $partida1);
+        $stmtUpdate1->execute();
+
+        // Confirmar la transacción
+        $conexion->commit();
+
+        return json_encode(["success" => "La modificación de partidas se realizó correctamente."]);
+    } catch (Exception $e) {
+        // Revertir la transacción en caso de error
+        $conexion->rollback();
+        registrarError($e->getMessage());
+        return json_encode(['error' => $e->getMessage()]);
+    }
+}
+
+
 // Procesar la solicitud
 $data = json_decode(file_get_contents("php://input"), true);
 
@@ -316,9 +388,16 @@ if (isset($data["accion"])) {
         } else {
             echo obtenerEjercicioFiscalPorId($data["id"]);
         }
+    } elseif (isset($data["accion"]) && $data["accion"] === "modificar_partida") {
+        if (empty($data["partida1"]) || empty($data["partida2"]) || empty($data["monto"])) {
+            echo json_encode(['error' => "Faltaron uno o más valores (partida1, partida2, monto)"]);
+        } else {
+        echo modificarPartida($data["partida1"], $data["partida2"], $data["monto"]);
+        }
     } else {
         echo json_encode(['error' => "Acción no aceptada"]);
     }
 } else {
     echo json_encode(['error' => "No se especificó ninguna acción"]);
 }
+
