@@ -351,7 +351,7 @@ $stmt->close();
       <div class="row ">
 
         <div class="col-lg-8">
-          <div class="card" style="height: 62vh;">
+          <div class="card" style="height: 72vh;">
             <div class="card-body">
               <div class="d-flex flex-column">
                 <div class="card-title mb-auto d-flex justify-content-between">
@@ -420,7 +420,7 @@ $stmt->close();
 
 
 
-          <div class="card mb-3" style="height: 62vh;">
+          <div class="card mb-3" style="height: 72vh;">
             <div class="card-body">
               <div class="d-flex flex-column">
                 <div class="card-title mb-auto">

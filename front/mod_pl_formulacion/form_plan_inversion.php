@@ -384,7 +384,7 @@ $stmt->close();
 
 
         <div class="col-lg-12" id="vista-tabla">
-          <div class="card" style="height: 62vh;">
+          <div class="card">
             <div class="card-body">
               <div class="d-flex flex-column">
                 <div class="card-title mb-auto d-flex justify-content-between">
