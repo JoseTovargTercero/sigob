@@ -587,6 +587,14 @@ const mapData = ({ obj, name, id }) => {
     return { name: el[name], id: el[id] }
   })
 }
+const mapDataManual = ({ obj, name, id }) => {
+  return obj.map((el) => {
+    let names = name.map((n) => el[n])
+    let descripcion = names.join('.')
+
+    return { name: descripcion, id: el[id] }
+  })
+}
 
 // INSERTAR DATOS EN SELECT DE FORMA DINÁMICA
 // SE NECESITA PASAR UN OBJETO CON LAS PROPIEDADES ID Y NAME
@@ -654,6 +662,7 @@ export {
   validateStatusText,
   empleadosDiferencia,
   mapData,
+  mapDataManual,
   separarMiles,
   insertOptions,
 }
