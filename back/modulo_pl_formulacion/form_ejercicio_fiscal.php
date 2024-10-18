@@ -140,7 +140,6 @@ function obtenerTodosEjerciciosFiscales()
 
                 $totalMontoInicial = 0;
                 $distribucionPartidas = null;
-                $sectorInformacion = null;
 
                 if ($resultSum->num_rows > 0) {
                     // Recorrer los registros de distribucion_presupuestaria
@@ -161,42 +160,43 @@ function obtenerTodosEjerciciosFiscales()
                             $partidaPartida = $partidaRow['partida'];
                             $partidaId = $partidaRow['id'];
 
-                            // Asignar las propiedades a distribucion_partidas
+                            // Realizar la consulta en pl_sectores_presupuestarios utilizando id_sector
+                            $sqlSector = "SELECT * FROM pl_sectores_presupuestarios WHERE id = ?";
+                            $stmtSector = $conexion->prepare($sqlSector);
+                            $stmtSector->bind_param("i", $sumRow['id_sector']);
+                            $stmtSector->execute();
+                            $resultSector = $stmtSector->get_result();
+
+                            $sectorInformacion = null;
+                            if ($resultSector->num_rows > 0) {
+                                $sectorInformacion = $resultSector->fetch_assoc();
+                            }
+
+                            // Asignar las propiedades a distribucion_partidas incluyendo sector_informacion
                             $distribucionPartidas = [
                                 'id' => $partidaId,
                                 'partida' => $partidaPartida,
                                 'nombre' => $partidaNombre,
                                 'descripcion' => $partidaDescripcion,
                                 'monto_inicial' => $sumRow['monto_inicial'],
-                                'monto_actual' => $sumRow['monto_actual']
+                                'monto_actual' => $sumRow['monto_actual'],
+                                'sector_informacion' => $sectorInformacion
                             ];
+
+                            $stmtSector->close();
                         }
 
                         $stmtPartida->close();
-
-                        // Realizar la consulta en pl_sectores_presupuestarios utilizando id_sector
-                        $sqlSector = "SELECT * FROM pl_sectores_presupuestarios WHERE id = ?";
-                        $stmtSector = $conexion->prepare($sqlSector);
-                        $stmtSector->bind_param("i", $sumRow['id_sector']);
-                        $stmtSector->execute();
-                        $resultSector = $stmtSector->get_result();
-
-                        if ($resultSector->num_rows > 0) {
-                            $sectorInformacion = $resultSector->fetch_assoc();
-                        }
-
-                        $stmtSector->close();
                     }
                 }
 
                 // Calcular el restante
                 $restante = $situado - $totalMontoInicial;
 
-                // Añadir el restante, distribuido, distribucion_partidas y sector_informacion al array del ejercicio
+                // Añadir el restante, distribuido, y distribucion_partidas al array del ejercicio
                 $row['restante'] = $restante;
                 $row['distribuido'] = $totalMontoInicial;
                 $row['distribucion_partidas'] = $distribucionPartidas;
-                $row['sector_informacion'] = $sectorInformacion;
 
                 // Añadir al array final de ejercicios
                 $ejercicios[] = $row;
@@ -245,8 +245,7 @@ function obtenerEjercicioFiscalPorId($id)
             $resultDistribucion = $stmtDistribucion->get_result();
 
             $totalMontoInicial = 0;
-            $distribucionPartidas = null;
-            $sectorInformacion = null;
+            $distribucionPartidas = [];
 
             if ($resultDistribucion->num_rows > 0) {
                 while ($rowDistribucion = $resultDistribucion->fetch_assoc()) {
@@ -266,42 +265,43 @@ function obtenerEjercicioFiscalPorId($id)
                         $partidaPartida = $partidaRow['partida'];
                         $partidaId = $partidaRow['id'];
 
-                        // Asignar las propiedades a distribucion_partidas
-                        $distribucionPartidas = [
+                        // Realizar la consulta en pl_sectores_presupuestarios utilizando id_sector
+                        $sqlSector = "SELECT * FROM pl_sectores_presupuestarios WHERE id = ?";
+                        $stmtSector = $conexion->prepare($sqlSector);
+                        $stmtSector->bind_param("i", $rowDistribucion['id_sector']);
+                        $stmtSector->execute();
+                        $resultSector = $stmtSector->get_result();
+
+                        $sectorInformacion = null;
+                        if ($resultSector->num_rows > 0) {
+                            $sectorInformacion = $resultSector->fetch_assoc();
+                        }
+
+                        // Asignar las propiedades a distribucion_partidas incluyendo sector_informacion
+                        $distribucionPartidas[] = [
                             'id' => $partidaId,
                             'partida' => $partidaPartida,
                             'nombre' => $partidaNombre,
                             'descripcion' => $partidaDescripcion,
                             'monto_inicial' => $rowDistribucion['monto_inicial'],
-                            'monto_actual' => $rowDistribucion['monto_actual']
+                            'monto_actual' => $rowDistribucion['monto_actual'],
+                            'sector_informacion' => $sectorInformacion
                         ];
+
+                        $stmtSector->close();
                     }
 
                     $stmtPartida->close();
-
-                    // Realizar la consulta en pl_sectores_presupuestarios utilizando id_sector
-                    $sqlSector = "SELECT * FROM pl_sectores_presupuestarios WHERE id = ?";
-                    $stmtSector = $conexion->prepare($sqlSector);
-                    $stmtSector->bind_param("i", $rowDistribucion['id_sector']);
-                    $stmtSector->execute();
-                    $resultSector = $stmtSector->get_result();
-
-                    if ($resultSector->num_rows > 0) {
-                        $sectorInformacion = $resultSector->fetch_assoc();
-                    }
-
-                    $stmtSector->close();
                 }
             }
 
             // Calcular el restante
             $restante = $ejercicio['situado'] - $totalMontoInicial;
 
-            // Añadir el restante, distribuido, distribucion_partidas y sector_informacion al array de respuesta
+            // Añadir el restante, distribuido y distribucion_partidas al array de respuesta
             $ejercicio['restante'] = $restante;
             $ejercicio['distribuido'] = $totalMontoInicial;
             $ejercicio['distribucion_partidas'] = $distribucionPartidas;
-            $ejercicio['sector_informacion'] = $sectorInformacion;
 
             return json_encode(["success" => $ejercicio]);
         } else {
@@ -312,6 +312,7 @@ function obtenerEjercicioFiscalPorId($id)
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 
 
