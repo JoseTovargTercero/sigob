@@ -221,7 +221,7 @@ function getPartidasXProyecto($proyecto)
     global $conexion;
     $data = [];
 
-    $stmt = mysqli_prepare($conexion, "SELECT PIP.partida, PIP.monto, PA.nombre, PIP.sector_id, SE.sector, SE.programa, SE.proyecto FROM `proyecto_inversion_partidas` AS PIP
+    $stmt = mysqli_prepare($conexion, "SELECT DISTINCT(PA.partida), PIP.partida, PIP.monto, PA.nombre, PIP.sector_id, SE.sector, SE.programa, SE.proyecto FROM `proyecto_inversion_partidas` AS PIP
     LEFT JOIN partidas_presupuestarias AS PA ON PA.partida=PIP.partida
     LEFT JOIN pl_sectores_presupuestarios AS SE ON SE.id=PIP.sector_id
      WHERE id_proyecto = ?");
