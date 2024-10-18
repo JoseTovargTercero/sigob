@@ -26,14 +26,20 @@ function guardarDistribucionPresupuestaria($dataArray)
             $id_sector = $registro[3]; // Nuevo campo
 
             // Validar que no existan duplicados con el mismo id_partida e id_ejercicio
-            $verificarSql = "SELECT * FROM distribucion_presupuestaria WHERE id_partida = ? AND id_ejercicio = ?";
+            $verificarSql = "SELECT PP.partida FROM distribucion_presupuestaria AS DP 
+            LEFT JOIN partidas_presupuestarias AS PP ON PP.id=DP.id_partida
+            WHERE id_partida = ? AND id_ejercicio = ? AND id_sector = ?";
             $stmtVerificar = $conexion->prepare($verificarSql);
-            $stmtVerificar->bind_param("ii", $id_partida, $id_ejercicio);
+            $stmtVerificar->bind_param("iii", $id_partida, $id_ejercicio, $id_sector);
             $stmtVerificar->execute();
             $resultadoVerificar = $stmtVerificar->get_result();
 
             if ($resultadoVerificar->num_rows > 0) {
-                throw new Exception("Una partida ya está registrada en este ejercicio fiscal");
+                while ($row = $resultadoVerificar->fetch_assoc()) {
+                    $partida_repetida = $row['partida'];
+                }
+
+                throw new Exception("Una partida ya esta en uso en el mismo sector: " . $partida_repetida);
             }
 
             // Verificar que el ejercicio fiscal esté abierto (status = 1)
@@ -69,7 +75,6 @@ function guardarDistribucionPresupuestaria($dataArray)
         }
 
         return json_encode(["success" => "Datos de distribución presupuestaria guardados correctamente"]);
-
     } catch (Exception $e) {
         registrarError($e->getMessage());
         return json_encode(['error' => $e->getMessage()]);
@@ -156,7 +161,6 @@ function actualizarDistribucion($id, $id_partida, $monto_inicial, $id_ejercicio,
         } else {
             throw new Exception("Error al actualizar el registro");
         }
-
     } catch (Exception $e) {
         return json_encode(['error' => $e->getMessage()]);
     }
