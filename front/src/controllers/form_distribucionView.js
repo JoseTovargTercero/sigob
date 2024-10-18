@@ -16,14 +16,13 @@ const d = document
 export const validateDistribucionView = async () => {
   let btnNewElement = d.getElementById('partida-registrar')
 
-  let sectores = await getSectores()
-  console.log(sectores)
-
   let ejercicioFiscal = await ejerciciosLista({
     elementToInsert: 'ejercicios-fiscales',
   })
 
-  validateDistribucionTable({ partidas: ejercicioFiscal.partidas })
+  console.log(ejercicioFiscal)
+
+  validateDistribucionTable({ partidas: ejercicioFiscal.distribucion_partidas })
 
   d.addEventListener('click', async (e) => {
     if (e.target.id === 'distribucion-registrar') {
@@ -42,7 +41,7 @@ export const validateDistribucionView = async () => {
         ejercicioTarget: e.target,
       })
 
-      loadDistribucionTable(ejercicioFiscal.partidas)
+      loadDistribucionTable(ejercicioFiscal.distribucion_partidas)
     }
     if (e.target.dataset.editarid) {
       let partidas = await getFormPartidas()
@@ -51,7 +50,7 @@ export const validateDistribucionView = async () => {
       form_distribucion_modificar_form_card({
         elementToInset: 'distribucion-view',
         partidas: partidas.fullInfo,
-        distribucionPartidas: ejercicioFiscal.partidas,
+        distribucionPartidas: ejercicioFiscal.distribucion_partidas,
       })
     }
   })
