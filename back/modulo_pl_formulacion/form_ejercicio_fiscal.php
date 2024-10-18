@@ -132,14 +132,15 @@ function obtenerTodosEjerciciosFiscales()
                 $situado = $row['situado'];
 
                 // Calcular la sumatoria de los montos iniciales en distribucion_presupuestaria para este id_ejercicio
-                $sqlSum = "SELECT id_partida, monto_inicial, monto_actual FROM distribucion_presupuestaria WHERE id_ejercicio = ?";
+                $sqlSum = "SELECT id_partida, monto_inicial, monto_actual, id_sector FROM distribucion_presupuestaria WHERE id_ejercicio = ?";
                 $stmtSum = $conexion->prepare($sqlSum);
                 $stmtSum->bind_param("i", $id_ejercicio);
                 $stmtSum->execute();
                 $resultSum = $stmtSum->get_result();
 
                 $totalMontoInicial = 0;
-                $partidasArray = [];
+                $distribucionPartidas = null;
+                $sectorInformacion = null;
 
                 if ($resultSum->num_rows > 0) {
                     // Recorrer los registros de distribucion_presupuestaria
@@ -160,8 +161,8 @@ function obtenerTodosEjerciciosFiscales()
                             $partidaPartida = $partidaRow['partida'];
                             $partidaId = $partidaRow['id'];
 
-                            // Crear array con las 3 propiedades: partida, monto_inicial, monto_actual
-                            $partidasArray[] = [
+                            // Asignar las propiedades a distribucion_partidas
+                            $distribucionPartidas = [
                                 'id' => $partidaId,
                                 'partida' => $partidaPartida,
                                 'nombre' => $partidaNombre,
@@ -171,18 +172,31 @@ function obtenerTodosEjerciciosFiscales()
                             ];
                         }
 
-
                         $stmtPartida->close();
+
+                        // Realizar la consulta en pl_sectores_presupuestarios utilizando id_sector
+                        $sqlSector = "SELECT * FROM pl_sectores_presupuestarios WHERE id = ?";
+                        $stmtSector = $conexion->prepare($sqlSector);
+                        $stmtSector->bind_param("i", $sumRow['id_sector']);
+                        $stmtSector->execute();
+                        $resultSector = $stmtSector->get_result();
+
+                        if ($resultSector->num_rows > 0) {
+                            $sectorInformacion = $resultSector->fetch_assoc();
+                        }
+
+                        $stmtSector->close();
                     }
                 }
 
                 // Calcular el restante
                 $restante = $situado - $totalMontoInicial;
 
-                // Añadir el restante, distribuido y las partidas al array del ejercicio
+                // Añadir el restante, distribuido, distribucion_partidas y sector_informacion al array del ejercicio
                 $row['restante'] = $restante;
                 $row['distribuido'] = $totalMontoInicial;
-                $row['partidas'] = $partidasArray;
+                $row['distribucion_partidas'] = $distribucionPartidas;
+                $row['sector_informacion'] = $sectorInformacion;
 
                 // Añadir al array final de ejercicios
                 $ejercicios[] = $row;
@@ -198,6 +212,7 @@ function obtenerTodosEjerciciosFiscales()
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 
 
@@ -221,7 +236,7 @@ function obtenerEjercicioFiscalPorId($id)
             $ejercicio = $result->fetch_assoc();
 
             // Consulta para obtener los registros de distribucion_presupuestaria y sumar los montos iniciales
-            $sqlDistribucion = "SELECT id_partida, monto_inicial, monto_actual 
+            $sqlDistribucion = "SELECT id_partida, monto_inicial, monto_actual, id_sector 
                                 FROM distribucion_presupuestaria 
                                 WHERE id_ejercicio = ?";
             $stmtDistribucion = $conexion->prepare($sqlDistribucion);
@@ -230,7 +245,8 @@ function obtenerEjercicioFiscalPorId($id)
             $resultDistribucion = $stmtDistribucion->get_result();
 
             $totalMontoInicial = 0;
-            $partidasArray = [];
+            $distribucionPartidas = null;
+            $sectorInformacion = null;
 
             if ($resultDistribucion->num_rows > 0) {
                 while ($rowDistribucion = $resultDistribucion->fetch_assoc()) {
@@ -250,8 +266,8 @@ function obtenerEjercicioFiscalPorId($id)
                         $partidaPartida = $partidaRow['partida'];
                         $partidaId = $partidaRow['id'];
 
-                        // Crear array con las 3 propiedades: partida, monto_inicial, monto_actual
-                        $partidasArray[] = [
+                        // Asignar las propiedades a distribucion_partidas
+                        $distribucionPartidas = [
                             'id' => $partidaId,
                             'partida' => $partidaPartida,
                             'nombre' => $partidaNombre,
@@ -262,16 +278,30 @@ function obtenerEjercicioFiscalPorId($id)
                     }
 
                     $stmtPartida->close();
+
+                    // Realizar la consulta en pl_sectores_presupuestarios utilizando id_sector
+                    $sqlSector = "SELECT * FROM pl_sectores_presupuestarios WHERE id = ?";
+                    $stmtSector = $conexion->prepare($sqlSector);
+                    $stmtSector->bind_param("i", $rowDistribucion['id_sector']);
+                    $stmtSector->execute();
+                    $resultSector = $stmtSector->get_result();
+
+                    if ($resultSector->num_rows > 0) {
+                        $sectorInformacion = $resultSector->fetch_assoc();
+                    }
+
+                    $stmtSector->close();
                 }
             }
 
             // Calcular el restante
             $restante = $ejercicio['situado'] - $totalMontoInicial;
 
-            // Añadir el restante, distribuido y las partidas al array de respuesta
+            // Añadir el restante, distribuido, distribucion_partidas y sector_informacion al array de respuesta
             $ejercicio['restante'] = $restante;
             $ejercicio['distribuido'] = $totalMontoInicial;
-            $ejercicio['partidas'] = $partidasArray;
+            $ejercicio['distribucion_partidas'] = $distribucionPartidas;
+            $ejercicio['sector_informacion'] = $sectorInformacion;
 
             return json_encode(["success" => $ejercicio]);
         } else {
@@ -282,6 +312,7 @@ function obtenerEjercicioFiscalPorId($id)
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 
 // Función para modificar las partidas en distribucion_presupuestaria
