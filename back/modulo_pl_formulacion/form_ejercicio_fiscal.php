@@ -139,7 +139,7 @@ function obtenerTodosEjerciciosFiscales()
                 $resultSum = $stmtSum->get_result();
 
                 $totalMontoInicial = 0;
-                $distribucionPartidas = null;
+                $distribucionPartidas = [];
 
                 if ($resultSum->num_rows > 0) {
                     // Recorrer los registros de distribucion_presupuestaria
@@ -172,8 +172,8 @@ function obtenerTodosEjerciciosFiscales()
                                 $sectorInformacion = $resultSector->fetch_assoc();
                             }
 
-                            // Asignar las propiedades a distribucion_partidas incluyendo sector_informacion
-                            $distribucionPartidas = [
+                            // Agregar las propiedades a distribucion_partidas
+                            $distribucionPartidas[] = [
                                 'id' => $partidaId,
                                 'partida' => $partidaPartida,
                                 'nombre' => $partidaNombre,
@@ -212,6 +212,7 @@ function obtenerTodosEjerciciosFiscales()
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 
 
