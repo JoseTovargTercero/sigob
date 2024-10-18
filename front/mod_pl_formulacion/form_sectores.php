@@ -243,7 +243,7 @@ $stmt->close();
 
 
       <script>
-        const url_back = '../../back/modulo_pl_formulacion/form_sectores.php'
+        const url_back = '../../back/modulo_pl_formulacion/form_sectores_back.php'
         let sectores = []
 
         // DATA TABLE
@@ -434,6 +434,7 @@ $stmt->close();
             }),
             success: function(response) {
               let data_tabla = [] // Informacion de la tabla
+              console.log(response)
 
               if (response.success) {
                 let count = 1;

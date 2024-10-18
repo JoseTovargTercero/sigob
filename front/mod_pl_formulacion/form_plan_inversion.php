@@ -59,9 +59,6 @@ if ($result->num_rows > 0) {
 }
 $stmt->close();
 
-
-
-
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -72,9 +69,6 @@ $stmt->close();
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-
-
-
   <style>
     #table td,
     #table th,
@@ -134,6 +128,8 @@ $stmt->close();
 
 </head>
 <?php require_once '../includes/header.php' ?>
+<script src="../../src/assets/js/chosen.jquery.min.js"></script>
+<link rel="stylesheet" href="../../src/assets/css/chosen.min.css">
 
 <body data-pc-preset="preset-1" data-pc-sidebar-caption="true" data-pc-direction="ltr" data-pc-theme="light">
   <div class="loader-bg">
@@ -291,6 +287,7 @@ $stmt->close();
                         <thead>
                           <tr>
                             <th>#</th>
+                            <th>Sector</th>
                             <th>Partida</th>
                             <th>Nombre</th>
                             <th>Asignación</th>
@@ -313,7 +310,7 @@ $stmt->close();
 
 
 
-        <div class="col-lg-12 hide" id="vista_registro">
+        <div class="col-lg-12" id="vista_registro">
           <div class="card">
             <div class="card-body">
               <div class="d-flex flex-column">
@@ -352,9 +349,18 @@ $stmt->close();
 
                   <div class="mb-3" id="section-partidas">
                     <div class="row mb-2 d-asignacion">
-                      <div class="col-lg-8">
+                      <div class="col-lg-4">
+
+                        <label class="form-label">Sector</label>
+                        <select type="text" class="form-control c_sector chosen-select">
+                          <option value="">Seleccione</option>
+                        </select>
+                      </div>
+                      <div class="col-lg-4">
                         <label class="form-label">Partida presupuestaria</label>
-                        <input type="text" list="partidas" class="form-control c_partida" placeholder="Indique la partida">
+                        <select type="text" class="form-control c_partida chosen-select">
+                          <option value="">Seleccione</option>
+                        </select>
                       </div>
                       <div class="col-lg-4 row">
                         <div class="col-lg-9">
@@ -444,7 +450,6 @@ $stmt->close();
       </div>
 
 
-      <datalist id="partidas"></datalist>
 
       <!-- [ Main Content ] end -->
       <script src="../../src/assets/js/plugins/simplebar.min.js"></script>
@@ -458,10 +463,31 @@ $stmt->close();
       <script src="../../src/assets/js/amcharts5/index.js"></script>
       <script src="../../src/assets/js/amcharts5/themes/Animated.js"></script>
       <script src="../../src/assets/js/amcharts5/xy.js"></script>
-      <script src="https://cdn.jsdelivr.net/npm/autonumeric@4.6.0"></script>
 
 
       <script>
+        let sectores_options = []
+        let partidas_options = []
+        <?php
+        $stmt = mysqli_prepare($conexion, "SELECT * FROM `pl_sectores_presupuestarios` ORDER BY sector");
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if ($result->num_rows > 0) {
+          while ($row = $result->fetch_assoc()) {
+            echo 'sectores_options.push(\'<option value="' . $row['id'] . '">' . $row['sector'] . '.' . $row['programa'] . '.' . $row['proyecto'] . ' - ' . $row['nombre'] . '</option>\');';
+          }
+        }
+        $stmt->close();
+
+
+        ?>
+
+        sectores_options.forEach(element => {
+          $('.c_sector').append(element)
+        });
+
+
+
         const url_back = '../../back/modulo_pl_formulacion/form_plan_inversion.php'
         const planData = <?php echo json_encode([
                             'id' => $id_plan_inversion,
@@ -488,14 +514,49 @@ $stmt->close();
 
         // agregar los campos para mas partidas
         function addInputsPartidas() {
+
+
+
           var section = document.getElementById('section-partidas');
 
           var row = document.createElement('div');
-          row.innerHTML = `<div class="row mb-2 fila d-asignacion">
-                      <div class="col-lg-8">
+
+          let inputSector = `<div class="col-lg-4">
+                          <label class="form-label">Sector</label>
+                          <select type="text" class="form-control c_sector chosen-select">
+                            <option value="">Seleccione</option>`
+
+          sectores_options.forEach(element => {
+            inputSector += element
+          });
+
+          inputSector += `</select>
+                        </div>`
+
+
+          let inputPartida = `<div class="col-lg-4">
                         <label class="form-label">Partida presupuestaria</label>
-                        <input type="text" list="partidas" class="form-control c_partida" placeholder="Indique la partida">
-                      </div>
+                         <select type="text" class="form-control c_partida chosen-select">
+                          <option value="">Seleccione</option>`
+
+          for (const key in clasificador) {
+            let element = clasificador[key];
+            inputPartida += '<option value="' +
+              key +
+              '">' + key + '-' + element +
+              "</option>"
+          }
+
+          inputPartida += `
+          </select></div>`
+
+
+
+
+          row.innerHTML = `<div class="row mb-2 fila d-asignacion">
+                        ${inputSector}
+                        ${inputPartida}
+                      
                       <div class="col-lg-4 row">
                         <div class="col-lg-9">
                           <label  class="form-label">Monto</label>
@@ -508,6 +569,13 @@ $stmt->close();
                     </div>
                     `
           section.appendChild(row);
+
+
+
+          $('.chosen-select').chosen({}).change(function(obj, result) {
+            console.debug("changed: %o", arguments);
+          });
+
         }
 
         document.getElementById('btn-add-row-inputs').addEventListener('click', addInputsPartidas)
@@ -522,10 +590,6 @@ $stmt->close();
 
 
 
-
-
-
-
         function getPartidas() {
           $.ajax({
             url: "../../back/modulo_pl_formulacion/form_partidas.php",
@@ -534,22 +598,21 @@ $stmt->close();
             data: JSON.stringify({
               accion: 'consultar'
             }),
-
             success: function(response) {
-
               if (response.success) {
                 let data = response.success;
-
                 data.forEach(function(item) {
-                  $("#partidas").append(
+                  sectores_options.push()
+
+                  $(".c_partida").append(
                     '<option value="' +
                     item.partida +
-                    '">' +
-                    item.descripcion +
+                    '">' + item.partida + '-' + item.descripcion +
                     "</option>"
                   );
                   clasificador[item.partida] = item.descripcion;
                 });
+
               }
             },
             error: function(xhr, status, error) {
@@ -562,9 +625,7 @@ $stmt->close();
 
 
 
-
         /*
-                
                 status
                 partidas
                 */
@@ -583,9 +644,10 @@ $stmt->close();
           for (const key in infoProyecto[5]) {
             data.push(
               [cont++,
+                infoProyecto[5][key]['sector'] + '.' + infoProyecto[5][key]['programa'] + '.' + infoProyecto[5][key]['proyecto'],
                 infoProyecto[5][key]['partida'],
                 infoProyecto[5][key]['nombre'],
-                infoProyecto[5][key]['monto']
+                infoProyecto[5][key]['monto'],
               ])
           }
           DataTable_2.rows.add(data).draw();
@@ -660,10 +722,13 @@ $stmt->close();
         }
 
 
+
         // Mostrar interfaz para editar proyecto existente
         function editarProyecto(id) {
           $('#vista_datalles').addClass('hide')
-
+          $('#vista_registro').removeClass('hide')
+          $('#vista-tabla').addClass('hide')
+          $('#cargando').show()
           accion = 'update_proyecto'
 
           $('#nombre').val(proyectos[id]['1'])
@@ -686,16 +751,19 @@ $stmt->close();
           $('#section-partidas .d-asignacion').each(function(index) {
             let partida = proyectos[id]['5'][index]['partida'];
             let monto = proyectos[id]['5'][index]['monto'];
+            let c_sector = proyectos[id]['5'][index]['sector_id'];
 
             // Asignar el valor de 'partida' al campo c_partida dentro de la fila actual
-            $(this).find('.c_partida').val(partida);
+            $(this).find('.c_sector').val(c_sector).trigger("chosen:updated"); // Actualiza Chosen después de seleccionar el valor
+            $(this).find('.c_partida').val(partida).trigger("chosen:updated");
+
 
             // Asignar el valor de 'monto' al campo c_monto dentro de la fila actual
             $(this).find('.c_monto').val(monto);
           });
+          $('#cargando').hide()
 
-          $('#vista_registro').removeClass('hide')
-          $('#vista-tabla').addClass('hide')
+
         }
 
         function cancelarRegistro() {
@@ -710,6 +778,7 @@ $stmt->close();
         function guardarProyecto() {
 
           // Obtener todos los campos de partida y monto
+          const c_sectores = document.querySelectorAll('.c_sector');
           const partidas = document.querySelectorAll('.c_partida');
           const montos = document.querySelectorAll('.c_monto');
 
@@ -722,6 +791,7 @@ $stmt->close();
           // Recorrer cada campo de partida y monto
           partidas.forEach((partida, index) => {
             const monto = montos[index].value; // Obtener el valor del monto correspondiente
+            const sector = c_sectores[index].value; // Obtener el valor del monto correspondiente
 
 
             // Verificar si el campo de partida está vacío
@@ -731,17 +801,15 @@ $stmt->close();
               toast_s('error', 'Faltan datos');
             }
 
-            // Verificar si la partida no es encontrada en el clasificador
-            if (!clasificador.hasOwnProperty(partida.value)) {
-              errors = true;
-              partida.classList.add('border-danger'); // Agregar la clase 'errors' al campo cuya partida no se encontró
-              toast_s('error', 'Faltan datos');
-            }
-
             // Verificar si el campo de monto está vacío
             if (monto === '') {
               errors = true;
               montos[index].classList.add('border-danger'); // Agregar la clase 'errors' al campo de monto vacío
+              toast_s('error', 'Faltan datos');
+            }
+            if (sector === '') {
+              errors = true;
+              c_sectores[index].classList.add('border-danger'); // Agregar la clase 'errors' al campo de monto vacío
               toast_s('error', 'Faltan datos');
             }
 
@@ -749,7 +817,8 @@ $stmt->close();
             // Agregar los valores válidos al array de datos
             datos_presupuestarios.push({
               partida: partida.value,
-              monto: monto
+              monto: monto,
+              sector: sector
             });
           });
 
@@ -816,6 +885,8 @@ $stmt->close();
                   cancelarRegistro()
 
                   $('.fila').remove()
+                  $(".c_partida").eq(0).val('').trigger("chosen:updated");
+                  $(".c_sector").eq(0).val('').trigger("chosen:updated");
                 } else {
                   console.log(response)
                   toast_s('error', 'Error al ' + (accion == 'update_proyecto' ? 'actualizar' : 'registrar') + ' proyecto')
@@ -1172,6 +1243,18 @@ $stmt->close();
           });
         }
         get_tabla()
+
+
+
+
+        // ejecutar una funcion cuando la pagina se cargue
+        $(document).ready(function() {
+          $('.chosen-select').chosen({}).change(function(obj, result) {
+            console.debug("changed: %o", arguments);
+          });
+
+          $('#vista_registro').addClass('hide')
+        })
       </script>
 
 </body>

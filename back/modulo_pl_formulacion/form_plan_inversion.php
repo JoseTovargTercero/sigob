@@ -53,14 +53,15 @@ function guardarProyecto($proyectosArray)
         // Insertar las partidas en la tabla plan_inversion
 
 
-        $stmt_o = $conexion->prepare("INSERT INTO proyecto_inversion_partidas (id_proyecto, partida, monto) VALUES (?, ?, ?)");
+        $stmt_o = $conexion->prepare("INSERT INTO proyecto_inversion_partidas (id_proyecto, partida, monto, sector_id) VALUES (?, ?, ?, ?)");
 
 
         foreach ($partidas_montos as $item) {
             $partida = $item['partida'];
             $monto = $item['monto'];
+            $sector = $item['sector'];
 
-            $stmt_o->bind_param("iss", $id_proyecto, $partida, $monto);
+            $stmt_o->bind_param("isss", $id_proyecto, $partida, $monto, $sector);
             $stmt_o->execute();
         }
 
@@ -134,41 +135,26 @@ function actualizarProyectoInversion($proyecto)
             $error = true;
         }
         $stmt->close();
-
-
-
-
         $stmt_d = $conexion->prepare("DELETE FROM `proyecto_inversion_partidas` WHERE id_proyecto= ?");
         $stmt_d->bind_param("i", $id_proyecto);
         if (!$stmt_d->execute()) {
             $error = true;
         }
         $stmt_d->close();
-
-
-
-        $stmt_o = $conexion->prepare("INSERT INTO proyecto_inversion_partidas (id_proyecto, partida, monto) VALUES (?, ?, ?)");
-
-
+        $stmt_o = $conexion->prepare("INSERT INTO proyecto_inversion_partidas (id_proyecto, partida, sector_id, monto) VALUES (?, ?, ?, ?)");
         foreach ($partidas_montos as $item) {
             $partida = $item['partida'];
             $monto = $item['monto'];
-
-            $stmt_o->bind_param("iss", $id_proyecto, $partida, $monto);
+            $sector = $item['sector'];
+            $stmt_o->bind_param("isss", $id_proyecto, $partida, $sector, $monto);
             if (!$stmt_o->execute()) {
                 $error = true;
             }
         }
-
-
         $stmt_o->close();
-
-
-
         if ($error) {
             throw new Exception("Error al actualizar el proyecto de inversión.");
         }
-
         return json_encode(["success" => "Proyecto actualizado correctamente."]);
     } catch (Exception $e) {
         registrarError($e->getMessage());
@@ -235,8 +221,9 @@ function getPartidasXProyecto($proyecto)
     global $conexion;
     $data = [];
 
-    $stmt = mysqli_prepare($conexion, "SELECT PIP.partida, PIP.monto, PA.nombre FROM `proyecto_inversion_partidas` AS PIP
+    $stmt = mysqli_prepare($conexion, "SELECT PIP.partida, PIP.monto, PA.nombre, PIP.sector_id, SE.sector, SE.programa, SE.proyecto FROM `proyecto_inversion_partidas` AS PIP
     LEFT JOIN partidas_presupuestarias AS PA ON PA.partida=PIP.partida
+    LEFT JOIN pl_sectores_presupuestarios AS SE ON SE.id=PIP.sector_id
      WHERE id_proyecto = ?");
     $stmt->bind_param('s', $proyecto);
     $stmt->execute();
@@ -276,18 +263,7 @@ function getProyectos($id_plan)
             );
         }
     }
-
-
-
-
-
-
-
-
-
-
     $stmt->close();
-
     return json_encode(['success' => $data]);
 }
 
