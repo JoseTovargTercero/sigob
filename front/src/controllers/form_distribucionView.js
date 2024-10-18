@@ -6,8 +6,11 @@ import {
   ejerciciosLista,
   validarEjercicioActual,
 } from '../components/form_ejerciciosLista.js'
+import { confirmNotification } from '../helpers/helpers.js'
+import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 
 import {
+  deleteDistribucionRow,
   loadDistribucionTable,
   validateDistribucionTable,
 } from './form_distribucionTable.js'
@@ -51,6 +54,20 @@ export const validateDistribucionView = async () => {
         elementToInset: 'distribucion-view',
         partidas: partidas.fullInfo,
         distribucionPartidas: ejercicioFiscal.distribucion_partidas,
+      })
+    }
+
+    if (e.target.dataset.eliminarid) {
+      confirmNotification({
+        type: NOTIFICATIONS_TYPES.delete,
+        message: '¿Desea eliminar esta distribución?',
+        successFunction: async function () {
+          let row = e.target.closest('tr')
+          deleteDistribucionRow({ row })
+          // let res = await eliminarDistribucion(e.target.dataset.eliminarid)
+          // if (res.success) {
+          // }
+        },
       })
     }
   })

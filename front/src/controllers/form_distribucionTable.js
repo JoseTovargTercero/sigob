@@ -26,10 +26,10 @@ const tableLanguage = {
   },
 }
 
-let partidasTable
+let distribucionTable
 export const validateDistribucionTable = async ({ partidas }) => {
   console.log(partidas)
-  partidasTable = new DataTable('#distribucion-table', {
+  distribucionTable = new DataTable('#distribucion-table', {
     columns: [
       { data: 'sector_nombre' },
       { data: 'sector_cod' },
@@ -78,16 +78,17 @@ export const loadDistribucionTable = async (partidas) => {
       monto_inicial: `${separarMiles(el.monto_inicial)} Bs`,
       acciones: `
       <button class="btn btn-info btn-sm" data-editarid="${el.id}">Modificar</button>
+      <button class="btn btn-danger btn-sm" data-eliminarid="${el.id}">Eliminar</button>
       `,
     }
   })
 
-  partidasTable.clear().draw()
+  distribucionTable.clear().draw()
 
   // console.log(datosOrdenados)
-  partidasTable.rows.add(data).draw()
+  distribucionTable.rows.add(data).draw()
 }
 
-export async function deletePartidaRow({ id, row }) {
-  partidasTable.row(row).remove().draw()
+export async function deleteDistribucionRow({ id, row }) {
+  distribucionTable.row(row).remove().draw()
 }
