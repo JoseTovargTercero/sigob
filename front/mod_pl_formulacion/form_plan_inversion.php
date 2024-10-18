@@ -641,7 +641,9 @@ $stmt->close();
           DataTable_2.clear();
           let data = []
           let cont = 1;
+          console.log(infoProyecto)
           for (const key in infoProyecto[5]) {
+
             data.push(
               [cont++,
                 infoProyecto[5][key]['sector'] + '.' + infoProyecto[5][key]['programa'] + '.' + infoProyecto[5][key]['proyecto'],
@@ -787,6 +789,7 @@ $stmt->close();
           let consolidado = 0;
 
           let errors = false;
+          let listaControlPartidas = []
 
           // Recorrer cada campo de partida y monto
           partidas.forEach((partida, index) => {
@@ -820,7 +823,17 @@ $stmt->close();
               monto: monto,
               sector: sector
             });
+
+            if (listaControlPartidas[sector + '.' + partida.value]) {
+              toast_s('error', 'Hay una o mas partidas dentro del mismo sector que se repiten.');
+              errors = true;
+            } else {
+              listaControlPartidas[sector + '.' + partida.value] = true
+            }
           });
+
+          // verificar si valores repetidos en listaControlPartidas
+
 
           const nombre = $("#nombre").val();
           const descripcion = $("#descripcion").val();
