@@ -144,6 +144,48 @@ const enviarDistribucionPresupuestaria = async ({ arrayDatos }) => {
   }
 }
 
+const eliminarDistribucion = async (id) => {
+  try {
+    let res = await fetch(distribucionPresupuestariaUrl, {
+      method: 'POST',
+      body: JSON.stringify({ id, accion: 'eliminar' }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    const clone = res.clone()
+
+    let text = await clone.text()
+
+    console.log(text)
+
+    const json = await res.json()
+
+    console.log(json)
+
+    if (json.success) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.done,
+        message: json.success,
+      })
+    }
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
+
+    return json
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al enviar datos',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
 const modificarPartida = async ({ partida1, partida2, monto }) => {
   showLoader()
   try {
@@ -241,4 +283,5 @@ export {
   getEjecicios,
   enviarDistribucionPresupuestaria,
   enviarDistribucionPresupuestariaEntes,
+  eliminarDistribucion,
 }

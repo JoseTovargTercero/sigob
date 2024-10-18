@@ -36,11 +36,11 @@ export const form_distribucion_form_card = async ({
 
   let fieldList = { id_ejercicio: ejercicioFiscal.id, id_sector: '' }
   let fieldListErrors = {
-    id_sector: {
-      value: true,
-      message: 'Seleccione un sector',
-      type: 'number',
-    },
+    // id_sector: {
+    //   value: true,
+    //   message: 'Seleccione un sector',
+    //   type: 'number',
+    // },
     // descripcion: {
     //   value: true,
     //   message: 'Añada una descripción al plan operativo',
@@ -112,7 +112,7 @@ export const form_distribucion_form_card = async ({
           <small class='text-muted'>
             Añada las partidas para realizar la distribución presupuestaria.
           </small>
-          <div id='lista-partidas'></div>
+          <div id='lista-partidas' class="mt-4"></div>
 
           <div class='d-flex gap-2 justify-content-center'>
             <button class='btn btn-success' id='add-row'>
@@ -179,18 +179,16 @@ export const form_distribucion_form_card = async ({
     // VALIDAR DATOS ANTES DE ENVIAR
 
     if (e.target.id === 'distribucion-guardar') {
-      let inputs = d.querySelectorAll('.distribucion-input')
-      inputs.forEach((input) => {
-        fieldList = validateInput({
-          target: input,
-          type: fieldListErrors[input.name].type,
-          fieldList,
-          fieldListErrors,
-        })
-      })
+      let sectorInput = d.querySelector('.distribucion-input')
 
-      console.log(fieldList, fieldListErrors)
-      console.log(montos)
+      if (sectorInput.value === '' || !sectorInput.value) {
+        console.log(sectorInput.value)
+        toastNotification({
+          type: NOTIFICATIONS_TYPES.fail,
+          message: 'Elija un sector',
+        })
+        return
+      }
 
       if (Object.values(fieldListErrors).some((el) => el.value)) {
         return toastNotification({
@@ -331,15 +329,17 @@ export const form_distribucion_form_card = async ({
       type: 'number',
     }
 
+    let options = [`<option value=''>Elegir partida...</option>`]
+
+    partidas.fullInfo.forEach((option) => {
+      let opt = `<option value="${option.id}">${option.partida} ${option.descripcion}</option>`
+      options.push(opt)
+    })
+
     let partidasList = d.getElementById(`partida-${newNumRow}`)
     partidasList.innerHTML = ''
-    let options = partidas.fullInfo
-      .map((option) => {
-        return `<option value="${option.id}">${option.partida} ${option.descripcion}</option>`
-      })
-      .join('')
 
-    partidasList.innerHTML = options
+    partidasList.innerHTML = options.join('')
 
     $('.chosen-select')
       .chosen()
@@ -448,7 +448,7 @@ export const form_distribucion_form_card = async ({
     if (mappedPartidas.some((el) => !el)) {
       toastNotification({
         type: NOTIFICATIONS_TYPES.fail,
-        message: 'Unas de las partidas utilizadas no está registrada',
+        message: 'Una o más partidas inválidas',
       })
       return false
     }
@@ -476,9 +476,11 @@ export const form_distribucion_form_card = async ({
   async function cargarSelectSectores() {
     let selectEjercicio = d.getElementById('search-select-sector')
     let sectores = await getSectores()
+    let options = [`<option value=''>Elegir sector...</option>`]
 
-    let options = sectores.fullInfo.map((sector) => {
-      return `<option value='${sector.id}'>${sector.programa}.${sector.proyecto}.${sector.sector} - ${sector.nombre}</option>`
+    sectores.fullInfo.forEach((sector) => {
+      let option = `<option value='${sector.id}'>${sector.programa}.${sector.proyecto}.${sector.sector} - ${sector.nombre}</option>`
+      options.push(option)
     })
 
     selectEjercicio.innerHTML = options.join('')
