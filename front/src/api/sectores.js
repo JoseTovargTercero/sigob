@@ -21,9 +21,9 @@ const getSectores = async () => {
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
 
-    let clone = res.clone()
-    let text = await clone.text()
-    console.log(text)
+    // let clone = res.clone()
+    // let text = await clone.text()
+    // console.log(text)
 
     const json = await res.json()
 

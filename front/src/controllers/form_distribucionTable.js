@@ -28,8 +28,11 @@ const tableLanguage = {
 
 let partidasTable
 export const validateDistribucionTable = async ({ partidas }) => {
+  console.log(partidas)
   partidasTable = new DataTable('#distribucion-table', {
     columns: [
+      { data: 'sector_nombre' },
+      { data: 'sector_cod' },
       { data: 'partida' },
       // { data: 'descripcion' },
       { data: 'monto_inicial' },
@@ -66,7 +69,10 @@ export const loadDistribucionTable = async (partidas) => {
 
   let datosOrdenados = [...partidas].sort((a, b) => a.id - b.id)
   let data = datosOrdenados.map((el) => {
+    let sectorCod = `${el.sector_informacion.programa}.${el.sector_informacion.proyecto}.${el.sector_informacion.sector}`
     return {
+      sector_nombre: el.sector_informacion.nombre,
+      sector_cod: sectorCod,
       partida: el.partida,
       // descripcion: el.descripcion,
       monto_inicial: `${separarMiles(el.monto_inicial)} Bs`,

@@ -5,9 +5,12 @@ require_once '../../back/sistema_global/session.php';
 <?php require_once '../includes/header.php' ?>
 
 <head>
-  <link rel="stylesheet" href="../src/styles/style.css">
-
   <title>Distribución presupuestarias</title>
+
+  <link rel="stylesheet" href="../src/styles/style.css">
+  <link rel="stylesheet" href="../../src/assets/css/chosen.min.css">
+
+  <script src="../../src/assets/js/chosen.jquery.min.js"></script>
 </head>
 
 <body>
@@ -56,6 +59,8 @@ require_once '../../back/sistema_global/session.php';
                 <table id="distribucion-table" class="table table-striped" style="width:100%">
                   <thead class="w-100">
 
+                    <th>SECTOR NOMBRE</th>
+                    <th>SECTOR CÓDIGO</th>
                     <th>PARTIDA</th>
                     <!-- <th>DESCRIPCION</th> -->
                     <th>MONTO</th>

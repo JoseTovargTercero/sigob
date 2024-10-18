@@ -10,6 +10,7 @@ import {
   getEjecicio,
   getEjecicios,
 } from '../api/pre_distribucion.js'
+import { getSectores } from '../api/sectores.js'
 import { loadDistribucionTable } from '../controllers/form_distribucionTable.js'
 import {
   confirmNotification,
@@ -20,7 +21,7 @@ import {
 } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 const d = document
-export const form_distribucion_form_card = ({
+export const form_distribucion_form_card = async ({
   elementToInset,
   ejercicioFiscal,
 }) => {
@@ -29,17 +30,17 @@ export const form_distribucion_form_card = ({
     restante: ejercicioFiscal.restante,
     acumulado: 0,
   }
-  let partidas
+  let partidas = await getFormPartidas()
 
   let ejercicio
 
-  let fieldList = { id_ejercicio: ejercicioFiscal.id }
+  let fieldList = { id_ejercicio: ejercicioFiscal.id, id_sector: '' }
   let fieldListErrors = {
-    // id_ejercicio: {
-    //   value: true,
-    //   message: 'Eleccione un ejercicio fiscal',
-    //   type: 'number',
-    // },
+    id_sector: {
+      value: true,
+      message: 'Seleccione un sector',
+      type: 'number',
+    },
     // descripcion: {
     //   value: true,
     //   message: 'Añada una descripción al plan operativo',
@@ -54,12 +55,12 @@ export const form_distribucion_form_card = ({
   const oldCardElement = d.getElementById('distribucion-form-card')
   if (oldCardElement) oldCardElement.remove()
 
-  let card = `    <div class='card slide-up-animation' id='distribucion-form-card'>
+  let card = `<div class='card slide-up-animation' id='distribucion-form-card'>
       <div class='card-header d-flex justify-content-between'>
         <div class=''>
-          <h5 class='mb-0'>Validar información de plan operativo</h5>
+          <h5 class='mb-0'>Realizar distribución presupuestaria</h5>
           <small class='mt-0 text-muted'>
-            Introduzca los datos para la verificar el plan operativo
+           Seleccione el sector y las partidas correspondientes
           </small>
         </div>
         <button
@@ -76,7 +77,8 @@ export const form_distribucion_form_card = ({
           <div class='row mb-4'>
             <div class='col'>
               <h6 class='mb-0'>
-                Monto total: <b id='monto-total'>Ejercicio fiscal no seleccionado</b>
+                Monto total:
+                <b id='monto-total'>Ejercicio fiscal no seleccionado</b>
               </h6>
               <small class='text-muted'>
                 Monto total restante dada la asignación por partida
@@ -84,7 +86,8 @@ export const form_distribucion_form_card = ({
             </div>
             <div class='col'>
               <h6 class='mb-0'>
-                Monto restante: <b id='monto-restante'>Ejercicio fiscal no seleccionado</b>
+                Monto restante:
+                <b id='monto-restante'>Ejercicio fiscal no seleccionado</b>
               </h6>
               <small class='text-muted'>
                 Monto total restante dada la asignación por partida
@@ -92,9 +95,22 @@ export const form_distribucion_form_card = ({
             </div>
           </div>
 
-          <h5 class="mb-0">Distribución de presupuesto por partida</h5>
+          <div class='form-group'>
+            <label for='search-select-sector' class='form-label'>
+              Seleccione el sector 
+            </label>
+            <select
+              class='form-select distribucion-input chosen-select'
+              name='id_sector'
+              id='search-select-sector'
+            >
+              <option>Elegir...</option>
+            </select>
+          </div>
+
+          <h5 class='mb-0'>Distribución de presupuesto por partida</h5>
           <small class='text-muted'>
-          Añada las partidas para realizar la distribución presupuestaria.
+            Añada las partidas para realizar la distribución presupuestaria.
           </small>
           <div id='lista-partidas'></div>
 
@@ -116,7 +132,6 @@ export const form_distribucion_form_card = ({
 
   // Cargar select de ejercicios
 
-  cargarPartidas()
   let numsRows = 0
 
   console.log(ejercicioFiscal)
@@ -132,6 +147,8 @@ export const form_distribucion_form_card = ({
 
   let partidalist = d.getElementById('lista-partidas')
   let formElement = d.getElementById('distribucion-form')
+
+  cargarSelectSectores()
 
   const closeCard = () => {
     // validateEditButtons()
@@ -235,36 +252,36 @@ export const form_distribucion_form_card = ({
   }
 
   async function validateInputFunction(e) {
-    if (e.target.name === 'id_ejercicio') {
-      if (!e.target.value) {
-        montos.total = 0
-        montoTotalElement.textContent = 'Ejercicio fiscal no seleccionado'
-        montoRestanteElement.textContent = 'Ejercicio fiscal no seleccionado'
-        let partidasListContainer = d.getElementById(`lista-partidas`)
+    // if (e.target.name === 'id_ejercicio') {
+    //   if (!e.target.value) {
+    //     montos.total = 0
+    //     montoTotalElement.textContent = 'Ejercicio fiscal no seleccionado'
+    //     montoRestanteElement.textContent = 'Ejercicio fiscal no seleccionado'
+    //     let partidasListContainer = d.getElementById(`lista-partidas`)
 
-        let rows = d.querySelectorAll('[data-row]')
-        if (rows.length > 0)
-          confirmNotification({
-            type: NOTIFICATIONS_TYPES.done,
-            message: 'Se eliminarán las filas de partidas añadidas',
-          })
+    //     let rows = d.querySelectorAll('[data-row]')
+    //     if (rows.length > 0)
+    //       confirmNotification({
+    //         type: NOTIFICATIONS_TYPES.done,
+    //         message: 'Se eliminarán las filas de partidas añadidas',
+    //       })
 
-        fieldListPartidas = {}
-        fieldListErrorsPartidas = {}
-        numsRows = 0
-        partidasListContainer.innerHTML = ''
-        return
-      }
+    //     fieldListPartidas = {}
+    //     fieldListErrorsPartidas = {}
+    //     numsRows = 0
+    //     partidasListContainer.innerHTML = ''
+    //     return
+    //   }
 
-      ejercicio = await getEjecicio(e.target.value)
+    //   ejercicio = await getEjecicio(e.target.value)
 
-      montos.total = ejercicio.situado
-      montos.restante =
-        ejercicio.distribuido === 0 ? ejercicio.situado : ejercicio.restante
-      montoTotalElement.textContent = montos.total
-      actualizarMontoRestante(montos.restante)
-      cargarPartidas()
-    }
+    //   montos.total = ejercicio.situado
+    //   montos.restante =
+    //     ejercicio.distribuido === 0 ? ejercicio.situado : ejercicio.restante
+    //   montoTotalElement.textContent = montos.total
+    //   actualizarMontoRestante(montos.restante)
+    //   cargarPartidas()
+    // }
     if (e.target.classList.contains('partida-monto')) {
       actualizarMontoRestante(montos.restante)
     }
@@ -277,23 +294,19 @@ export const form_distribucion_form_card = ({
         type: fieldListErrorsPartidas[e.target.name].type,
       })
     } else {
-      fieldList = validateInput({
-        target: e.target,
-        fieldList,
-        fieldListErrors,
-        type: fieldListErrors[e.target.name].type,
-      })
-      // console.log(e.target.value)
+      // fieldList = validateInput({
+      //   target: e.target,
+      //   fieldList,
+      //   fieldListErrors,
+      //   type: fieldListErrors[e.target.name].type,
+      // })
+      // console.log(e.target.value, e.target)
     }
 
     // console.log(fieldListPartidas, fieldListErrorsPartidas)
   }
 
   // CARGAR LISTA DE PARTIDAS
-
-  async function cargarPartidas() {
-    partidas = await getFormPartidas()
-  }
 
   // AÑADIR FILA DE PARTIDA
 
@@ -318,15 +331,21 @@ export const form_distribucion_form_card = ({
       type: 'number',
     }
 
-    let partidasList = d.getElementById(`partidas-list-${newNumRow}`)
+    let partidasList = d.getElementById(`partida-${newNumRow}`)
     partidasList.innerHTML = ''
     let options = partidas.fullInfo
       .map((option) => {
-        return `<option value="${option.partida}">${option.descripcion}</option>`
+        return `<option value="${option.id}">${option.partida} ${option.descripcion}</option>`
       })
       .join('')
 
     partidasList.innerHTML = options
+
+    $('.chosen-select')
+      .chosen()
+      .change(function (obj, result) {
+        console.log('changed: %o', arguments)
+      })
 
     return
   }
@@ -365,32 +384,32 @@ export const form_distribucion_form_card = ({
     let montoRestante = 0
 
     // VALIDAR LOS INPUTS DE CADA FILA
-    rows.forEach((el) => {
-      let partidaInput = el.querySelector(`#partida-${el.dataset.row}`)
-      let montoInput = el.querySelector(`#partida-monto-${el.dataset.row}`)
+    // rows.forEach((el) => {
+    //   let partidaInput = el.querySelector(`#partida-${el.dataset.row}`)
+    //   let montoInput = el.querySelector(`#partida-monto-${el.dataset.row}`)
 
-      validateInput({
-        target: partidaInput,
-        type: fieldListErrorsPartidas[partidaInput.name].type,
-        fieldList: fieldListPartidas,
-        fieldListErrors: fieldListErrorsPartidas,
-      })
+    //   validateInput({
+    //     target: partidaInput,
+    //     type: fieldListErrorsPartidas[partidaInput.name].type,
+    //     fieldList: fieldListPartidas,
+    //     fieldListErrors: fieldListErrorsPartidas,
+    //   })
 
-      validateInput({
-        target: montoInput,
-        type: fieldListErrorsPartidas[montoInput.name].type,
-        fieldList: fieldListPartidas,
-        fieldListErrors: fieldListErrorsPartidas,
-      })
-    })
+    //   validateInput({
+    //     target: montoInput,
+    //     type: fieldListErrorsPartidas[montoInput.name].type,
+    //     fieldList: fieldListPartidas,
+    //     fieldListErrors: fieldListErrorsPartidas,
+    //   })
+    // })
 
-    if (Object.values(fieldListErrorsPartidas).some((el) => el.value)) {
-      return toastNotification({
-        type: NOTIFICATIONS_TYPES.fail,
-        message:
-          'La distribución de partidas posee datos erróneos. Elimine o actualice las filas',
-      })
-    }
+    // if (Object.values(fieldListErrorsPartidas).some((el) => el.value)) {
+    //   return toastNotification({
+    //     type: NOTIFICATIONS_TYPES.fail,
+    //     message:
+    //       'La distribución de partidas posee datos erróneos. Elimine o actualice las filas',
+    //   })
+    // }
 
     // VERIFICAR SI SE HAN SELECCIONADO PARTIDAS
     if (rowsArray.length < 1) {
@@ -406,7 +425,7 @@ export const form_distribucion_form_card = ({
       let montoInput = el.querySelector(`#partida-monto-${el.dataset.row}`)
 
       let partidaEncontrada = partidas.fullInfo.find(
-        (partida) => partida.partida === partidaInput.value
+        (partida) => partida.id === partidaInput.value
       )
 
       // Verificar si la partida introducida existe
@@ -415,7 +434,12 @@ export const form_distribucion_form_card = ({
         return false
       }
 
-      return [partidaEncontrada.id, montoInput.value, fieldList.id_ejercicio]
+      return [
+        partidaEncontrada.id,
+        montoInput.value,
+        fieldList.id_ejercicio,
+        fieldList.id_sector,
+      ]
     })
 
     console.log(mappedPartidas)
@@ -449,21 +473,24 @@ export const form_distribucion_form_card = ({
     return false
   }
 
-  // async function cargarSelectEjercicios() {
-  //   let selectEjercicio = d.getElementById('select-search-ejercicio')
-  //   let ejercicios = await getEjecicios()
+  async function cargarSelectSectores() {
+    let selectEjercicio = d.getElementById('search-select-sector')
+    let sectores = await getSectores()
 
-  //   let options = ejercicios.map((el) => {
-  //     if (Number(el.id) === Number(ejercicioFiscal.id)) {
-  //       return <option value='${}' selected></option>
-  //     }else{
-  //       return <option value='${}' selected></option>
-  //     }
-  //   })
+    let options = sectores.fullInfo.map((sector) => {
+      return `<option value='${sector.id}'>${sector.programa}.${sector.proyecto}.${sector.sector} - ${sector.nombre}</option>`
+    })
 
-  //   selectEjercicio.innerHTML = options.join('')
-  //   // insertOptions({ input: 'ejercicio', data: ejercicios.mappedData })
-  // }
+    selectEjercicio.innerHTML = options.join('')
+    // insertOptions({ input: 'ejercicio', data: ejercicios.mappedData })
+
+    $('.chosen-select')
+      .chosen()
+      .change(function (obj, result) {
+        fieldList.id_sector = result.selected
+        console.log('changed: %o', result)
+      })
+  }
 
   function enviarInformacion(data) {
     confirmNotification({
@@ -473,7 +500,7 @@ export const form_distribucion_form_card = ({
         let res = await enviarDistribucionPresupuestaria({ arrayDatos: data })
         let ejericioActualizado = await getEjecicio(ejercicioFiscal.id)
         if (res.success) {
-          loadDistribucionTable(ejericioActualizado.partidas)
+          loadDistribucionTable(ejericioActualizado.distribucion_partidas)
           closeCard()
         }
       },
@@ -487,21 +514,19 @@ export const form_distribucion_form_card = ({
 }
 
 function partidaRow(partidaNum) {
-  let row = ` <div class='row slide-up-animation' data-row='${partidaNum}'>
+  let row = `<div class='row slide-up-animation' data-row='${partidaNum}'>
       <div class='col'>
         <div class='form-group'>
           <label for='monto' class='form-label'>
             Partida
           </label>
-          <input
-            class='form-control partida-input partida-partida'
+          <select
+            class='form-control partida-input partida-partida chosen-select'
             type='text'
             placeholder='Partida...'
-            list='partidas-list-${partidaNum}'
             name='partida-${partidaNum}'
             id='partida-${partidaNum}'
-          ></input>
-          <datalist id='partidas-list-${partidaNum}'></datalist>
+          ></select>
         </div>
       </div>
       <div class='col'>

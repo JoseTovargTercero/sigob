@@ -6,9 +6,11 @@ export const ejerciciosLista = async ({ elementToInsert, ejercicioFiscal }) => {
 
   let ejerciciosFiscales = await getEjecicios()
 
+  console.log(ejerciciosFiscales)
+
   let fechaActual = new Date().getFullYear()
 
-  let ejercicioActual
+  let ejercicioActualId
 
   if (!ejerciciosFiscales || ejerciciosFiscales.length === 0) {
     d.getElementById(elementToInsert).innerHTML = `<div class='col-sm'>
@@ -30,7 +32,7 @@ export const ejerciciosLista = async ({ elementToInsert, ejercicioFiscal }) => {
       let ano = Number(ejercicio.ano)
 
       if (ano === fechaActual) {
-        ejercicioActual = ejercicio
+        ejercicioActualId = ejercicio.id
         return `  <div class='col-sm-4'>
             <p>
               <a
@@ -59,6 +61,8 @@ export const ejerciciosLista = async ({ elementToInsert, ejercicioFiscal }) => {
     .join('')
 
   d.getElementById(elementToInsert).innerHTML = ejerciciosMapeados
+
+  let ejercicioActual = await getEjecicio(ejercicioActualId)
 
   return ejercicioActual
 }
