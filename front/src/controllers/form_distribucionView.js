@@ -1,4 +1,5 @@
 import { getFormPartidas } from '../api/partidas.js'
+import { getSectores } from '../api/sectores.js'
 import { form_distribucion_form_card } from '../components/form_distribucion_form_card.js'
 import { form_distribucion_modificar_form_card } from '../components/form_distribucion_modificar_card.js'
 import {
@@ -14,6 +15,9 @@ const d = document
 
 export const validateDistribucionView = async () => {
   let btnNewElement = d.getElementById('partida-registrar')
+
+  let sectores = await getSectores()
+  console.log(sectores)
 
   let ejercicioFiscal = await ejerciciosLista({
     elementToInsert: 'ejercicios-fiscales',
