@@ -165,6 +165,46 @@ function actualizarDistribucion($id, $id_partida, $monto_inicial, $id_ejercicio,
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+// Función para eliminar un registro por ID
+function eliminarDistribucion($id)
+{
+    global $conexion;
+
+    try {
+        // Verificar si el registro existe y su estado
+        $sql = "SELECT id, status FROM distribucion_presupuestaria WHERE id = ?";
+        $stmt = $conexion->prepare($sql);
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $distribucion = $result->fetch_assoc();
+
+        if (!$distribucion) {
+            throw new Exception("El registro no existe.");
+        }
+
+        // No permitir eliminar si el registro tiene status 0 (cerrado)
+        if ($distribucion['status'] == 0) {
+            throw new Exception("No se puede eliminar un registro cerrado.");
+        }
+
+        // Eliminar el registro
+        $sqlEliminar = "DELETE FROM distribucion_presupuestaria WHERE id = ?";
+        $stmtEliminar = $conexion->prepare($sqlEliminar);
+        $stmtEliminar->bind_param("i", $id);
+        $stmtEliminar->execute();
+
+        if ($stmtEliminar->affected_rows > 0) {
+            return json_encode(["success" => "Registro eliminado correctamente."]);
+        } else {
+            throw new Exception("Error al eliminar el registro.");
+        }
+    } catch (Exception $e) {
+        registrarError($e->getMessage());
+        return json_encode(['error' => $e->getMessage()]);
+    }
+}
+
 
 // Procesar la solicitud
 $data = json_decode(file_get_contents("php://input"), true);
