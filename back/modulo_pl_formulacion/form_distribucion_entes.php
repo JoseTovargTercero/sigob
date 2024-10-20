@@ -5,7 +5,7 @@ require_once '../sistema_global/session.php';
 require_once '../sistema_global/errores.php';
 
 // Función para insertar una nueva distribución en la tabla distribucion_ente
-function insertarDistribucion($id_ente, $partidas, $id_ejercicio, $id_asignacion)
+function insertarDistribucion($id_ente, $distribucion, $id_ejercicio, $id_asignacion)
 {
     global $conexion;
     $status = 0;
@@ -29,18 +29,18 @@ function insertarDistribucion($id_ente, $partidas, $id_ejercicio, $id_asignacion
         $filaTipoEnte = $resultadoTipoEnte->fetch_assoc();
         $tipo_ente = $filaTipoEnte['tipo_ente'];
 
-        // Verificar el formato de las partidas basado en el tipo_ente
-        $num_partidas = count($partidas);
-        if ($tipo_ente === 'D' && $num_partidas > 1) {
-            throw new Exception("El tipo de ente Descentralizado solo permite una partida.");
+        // Verificar el formato de la distribución basado en el tipo_ente
+        $num_distribuciones = count($distribucion);
+        if ($tipo_ente === 'D' && $num_distribuciones > 1) {
+            throw new Exception("El tipo de ente Descentralizado solo permite una distribución.");
         } elseif (!in_array($tipo_ente, ['J', 'D'])) {
             throw new Exception("Tipo de ente no válido.");
         }
 
-        // Sumar los montos de las partidas
+        // Sumar los montos de las distribuciones
         $sumaMontos = 0;
-        foreach ($partidas as $partida) {
-            $sumaMontos += $partida['monto'];
+        foreach ($distribucion as $item) {
+            $sumaMontos += $item['monto'];
         }
 
         // Consultar el monto_total de la tabla asignacion_ente usando el id_asignacion
@@ -57,18 +57,18 @@ function insertarDistribucion($id_ente, $partidas, $id_ejercicio, $id_asignacion
         $filaMontoTotal = $resultadoMontoTotal->fetch_assoc();
         $monto_total = $filaMontoTotal['monto_total'];
 
-        // Verificar si la suma de los montos de las partidas es igual a monto_total
+        // Verificar si la suma de los montos de las distribuciones es igual a monto_total
         if ($sumaMontos != $monto_total) {
-            throw new Exception("La suma de los montos de las partidas no es igual al monto total.");
+            throw new Exception("La suma de los montos de las distribuciones no es igual al monto total.");
         }
 
-        // Convertir el array de partidas a JSON
-        $partidas_json = json_encode($partidas);
+        // Convertir el array de distribuciones a JSON
+        $distribucion_json = json_encode($distribucion);
 
         // Insertar los datos en la tabla distribucion_ente
-        $sqlInsert = "INSERT INTO distribucion_entes (id_ente, partidas, monto_total, status, id_ejercicio, comentario, fecha, id_asignacion) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        $sqlInsert = "INSERT INTO distribucion_entes (id_ente, distribucion, monto_total, status, id_ejercicio, comentario, fecha, id_asignacion) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         $stmtInsert = $conexion->prepare($sqlInsert);
-        $stmtInsert->bind_param("isdisssi", $id_ente, $partidas_json, $monto_total, $status, $id_ejercicio, $comentario, $fecha, $id_asignacion);
+        $stmtInsert->bind_param("isdisssi", $id_ente, $distribucion_json, $monto_total, $status, $id_ejercicio, $comentario, $fecha, $id_asignacion);
         $stmtInsert->execute();
 
         if ($stmtInsert->affected_rows > 0) {
@@ -136,17 +136,19 @@ function actualizarEstadoDistribucion($id, $status, $comentario)
 
 
 // Función para actualizar un registro en la tabla distribucion_entes
-function actualizarDistribucionEntes($id, $id_ente, $partidas, $id_ejercicio)
+function actualizarDistribucionEntes($id, $id_ente, $distribucion, $id_ejercicio)
 {
     global $conexion;
     $conexion->begin_transaction();
 
     try {
-        $partidasFormateadas = json_encode($partidas);
+        // Convertir el array de distribuciones a JSON
+        $distribucionFormateada = json_encode($distribucion);
 
-        $sqlUpdate = "UPDATE distribucion_entes SET id_ente = ?, partidas = ?, id_ejercicio = ? WHERE id = ?";
+        // Actualizar el registro en la tabla distribucion_entes
+        $sqlUpdate = "UPDATE distribucion_entes SET id_ente = ?, distribucion = ?, id_ejercicio = ? WHERE id = ?";
         $stmtUpdate = $conexion->prepare($sqlUpdate);
-        $stmtUpdate->bind_param("isii", $id_ente, $partidasFormateadas, $id_ejercicio, $id);
+        $stmtUpdate->bind_param("isii", $id_ente, $distribucionFormateada, $id_ejercicio, $id);
         $stmtUpdate->execute();
 
         if ($stmtUpdate->affected_rows > 0) {
@@ -161,6 +163,7 @@ function actualizarDistribucionEntes($id, $id_ente, $partidas, $id_ejercicio)
         return json_encode(["error" => $e->getMessage()]);
     }
 }
+
 
 // Función para eliminar un registro en la tabla distribucion_entes
 function eliminarDistribucionEntes($id)
@@ -187,12 +190,12 @@ function eliminarDistribucionEntes($id)
     }
 }
 
-// Función para consultar un registro por ID en la tabla distribucion_entes y obtener detalles adicionales 
+// Función para consultar un registro por ID en la tabla distribucion_entes y obtener detalles adicionales
 function consultarDistribucionPorId($id)
 {
     global $conexion;
 
-    $sqlSelectById = "SELECT id, id_ente, partidas, monto_total, status, id_ejercicio, id_asignacion FROM distribucion_entes WHERE id = ?";
+    $sqlSelectById = "SELECT id, id_ente, distribucion, monto_total, status, id_ejercicio, id_asignacion FROM distribucion_entes WHERE id = ?";
     $stmtSelectById = $conexion->prepare($sqlSelectById);
     $stmtSelectById->bind_param("i", $id);
     $stmtSelectById->execute();
@@ -217,31 +220,61 @@ function consultarDistribucionPorId($id)
             $distribucion['tipo_ente'] = null;
         }
 
-        // Formatear las partidas
-        $partidasArray = json_decode($distribucion['partidas'], true); // Asumimos que está guardado como JSON con id_partida y monto
+        // Formatear la distribucion
+        $distribucionArray = json_decode($distribucion['distribucion'], true); // Asumimos que está guardado como JSON con id_distribucion y monto
         $partidasDetalles = [];
 
-        if (!empty($partidasArray)) {
-            $idsPartidas = array_column($partidasArray, 'id_partida'); // Extraer solo los IDs de las partidas
-            $sqlPartidas = "SELECT id, partida, descripcion FROM partidas_presupuestarias WHERE id IN (" . implode(",", $idsPartidas) . ")";
-            $resultPartidas = $conexion->query($sqlPartidas);
+        if (!empty($distribucionArray)) {
+            $idsDistribuciones = array_column($distribucionArray, 'id_distribucion'); // Extraer solo los IDs de distribuciones
 
-            while ($partida = $resultPartidas->fetch_assoc()) {
-                // Buscar el monto correspondiente en el array de partidas original
-                $monto = null;
-                foreach ($partidasArray as $p) {
-                    if ($p['id_partida'] == $partida['id']) {
-                        $monto = $p['monto'];
-                        break;
+            // Buscar en la tabla distribucion_presupuestaria los id_partida y id_sector
+            $sqlDistribucionPresup = "SELECT id_partida, id_sector FROM distribucion_presupuestaria WHERE id IN (" . implode(",", $idsDistribuciones) . ")";
+            $resultDistribucionPresup = $conexion->query($sqlDistribucionPresup);
+
+            while ($distPresup = $resultDistribucionPresup->fetch_assoc()) {
+                $idPartida = $distPresup['id_partida'];
+                $idSector = $distPresup['id_sector'];
+
+                // Obtener los detalles de la partida desde partidas_presupuestarias
+                $sqlPartida = "SELECT id, partida, descripcion FROM partidas_presupuestarias WHERE id = ?";
+                $stmtPartida = $conexion->prepare($sqlPartida);
+                $stmtPartida->bind_param("i", $idPartida);
+                $stmtPartida->execute();
+                $resultPartida = $stmtPartida->get_result();
+                
+                if ($resultPartida->num_rows > 0) {
+                    $partida = $resultPartida->fetch_assoc();
+
+                    // Buscar el monto correspondiente en el array de distribuciones original
+                    $monto = null;
+                    foreach ($distribucionArray as $d) {
+                        if ($d['id_distribucion'] == $idPartida) {
+                            $monto = $d['monto'];
+                            break;
+                        }
                     }
+
+                    $partidasDetalles[] = [
+                        'id' => $partida['id'],
+                        'partida' => $partida['partida'],
+                        'descripcion' => $partida['descripcion'],
+                        'monto' => $monto
+                    ];
                 }
 
-                $partidasDetalles[] = [
-                    'id' => $partida['id'],
-                    'partida' => $partida['partida'],
-                    'descripcion' => $partida['descripcion'],
-                    'monto' => $monto
-                ];
+                // Obtener la información del sector desde pl_sectores_presupuestarios
+                $sqlSector = "SELECT * FROM pl_sectores_presupuestarios WHERE id = ?";
+                $stmtSector = $conexion->prepare($sqlSector);
+                $stmtSector->bind_param("i", $idSector);
+                $stmtSector->execute();
+                $resultSector = $stmtSector->get_result();
+
+                if ($resultSector->num_rows > 0) {
+                    $sectorInfo = $resultSector->fetch_assoc();
+                    $distribucion['sector_informacion'] = $sectorInfo; // Agregar la información del sector
+                } else {
+                    $distribucion['sector_informacion'] = null;
+                }
             }
         }
 
@@ -260,7 +293,7 @@ function consultarDistribucionPorId($id)
             $distribucion['asignacion'] = null;
         }
 
-        // Devolver la respuesta final con monto_total y asignación incluida
+        // Devolver la respuesta final con monto_total, asignación y sector_informacion incluidos
         return json_encode(["success" => $distribucion]);
     } else {
         return json_encode(["error" => "No se encontró la distribución con el ID especificado."]);
@@ -274,7 +307,7 @@ function consultarTodasDistribuciones()
 {
     global $conexion;
 
-    $sqlSelectAll = "SELECT id, id_ente, partidas, monto_total, status, id_ejercicio, id_asignacion FROM distribucion_entes";
+    $sqlSelectAll = "SELECT id, id_ente, distribucion, monto_total, status, id_ejercicio, id_asignacion FROM distribucion_entes";
     $resultado = $conexion->query($sqlSelectAll);
 
     if ($resultado->num_rows > 0) {
@@ -297,31 +330,61 @@ function consultarTodasDistribuciones()
                 $fila['tipo_ente'] = null;
             }
 
-            // Formatear las partidas y obtener sus montos
-            $partidasArray = json_decode($fila['partidas'], true); // Asumimos que está guardado como JSON con id_partida y monto
+            // Formatear la distribucion y obtener sus detalles
+            $distribucionArray = json_decode($fila['distribucion'], true); // Asumimos que está guardado como JSON con id_distribucion y monto
             $partidasDetalles = [];
 
-            if (!empty($partidasArray)) {
-                $idsPartidas = array_column($partidasArray, 'id_partida'); // Extraer solo los IDs de las partidas
-                $sqlPartidas = "SELECT id, partida, descripcion FROM partidas_presupuestarias WHERE id IN (" . implode(",", $idsPartidas) . ")";
-                $resultPartidas = $conexion->query($sqlPartidas);
+            if (!empty($distribucionArray)) {
+                $idsDistribuciones = array_column($distribucionArray, 'id_distribucion'); // Extraer solo los IDs de distribuciones
 
-                while ($partida = $resultPartidas->fetch_assoc()) {
-                    // Buscar el monto correspondiente en el array de partidas original
-                    $monto = null;
-                    foreach ($partidasArray as $p) {
-                        if ($p['id_partida'] == $partida['id']) {
-                            $monto = $p['monto'];
-                            break;
+                // Buscar en la tabla distribucion_presupuestaria los id_partida y id_sector
+                $sqlDistribucionPresup = "SELECT id_partida, id_sector FROM distribucion_presupuestaria WHERE id IN (" . implode(",", $idsDistribuciones) . ")";
+                $resultDistribucionPresup = $conexion->query($sqlDistribucionPresup);
+
+                while ($distPresup = $resultDistribucionPresup->fetch_assoc()) {
+                    $idPartida = $distPresup['id_partida'];
+                    $idSector = $distPresup['id_sector'];
+
+                    // Obtener los detalles de la partida desde partidas_presupuestarias
+                    $sqlPartida = "SELECT id, partida, descripcion FROM partidas_presupuestarias WHERE id = ?";
+                    $stmtPartida = $conexion->prepare($sqlPartida);
+                    $stmtPartida->bind_param("i", $idPartida);
+                    $stmtPartida->execute();
+                    $resultPartida = $stmtPartida->get_result();
+
+                    if ($resultPartida->num_rows > 0) {
+                        $partida = $resultPartida->fetch_assoc();
+
+                        // Buscar el monto correspondiente en el array de distribuciones original
+                        $monto = null;
+                        foreach ($distribucionArray as $d) {
+                            if ($d['id_distribucion'] == $idPartida) {
+                                $monto = $d['monto'];
+                                break;
+                            }
                         }
+
+                        $partidasDetalles[] = [
+                            'id' => $partida['id'],
+                            'partida' => $partida['partida'],
+                            'descripcion' => $partida['descripcion'],
+                            'monto' => $monto
+                        ];
                     }
 
-                    $partidasDetalles[] = [
-                        'id' => $partida['id'],
-                        'partida' => $partida['partida'],
-                        'descripcion' => $partida['descripcion'],
-                        'monto' => $monto
-                    ];
+                    // Obtener la información del sector desde pl_sectores_presupuestarios
+                    $sqlSector = "SELECT * FROM pl_sectores_presupuestarios WHERE id = ?";
+                    $stmtSector = $conexion->prepare($sqlSector);
+                    $stmtSector->bind_param("i", $idSector);
+                    $stmtSector->execute();
+                    $resultSector = $stmtSector->get_result();
+
+                    if ($resultSector->num_rows > 0) {
+                        $sectorInfo = $resultSector->fetch_assoc();
+                        $fila['sector_informacion'] = $sectorInfo; // Agregar la información del sector
+                    } else {
+                        $fila['sector_informacion'] = null;
+                    }
                 }
             }
 
@@ -352,6 +415,7 @@ function consultarTodasDistribuciones()
 
 
 
+
 // Procesar la solicitud
 $data = json_decode(file_get_contents("php://input"), true);
 
@@ -359,20 +423,22 @@ if (isset($data["accion"])) {
     $accion = $data["accion"];
 
     // Insertar datos
-    if ($accion === "insert" && isset($data["id_ente"]) && isset($data["partidas"]) && isset($data["id_ejercicio"]) && isset($data["id_asignacion"])) {
+    if ($accion === "insert" && isset($data["id_ente"]) && isset($data["distribuciones"]) && isset($data["id_ejercicio"]) && isset($data["id_asignacion"])) {
         $id_ente = $data["id_ente"];
-        $partidas = $data["partidas"]; // Asumimos que 'partidas' es un array de arrays con 'id_partida' y 'monto'
+        $distribuciones = $data["distribuciones"]; // Asumimos que 'distribuciones' es un array de arrays con 'id_distribucion' y 'monto'
         $id_ejercicio = $data["id_ejercicio"];
         $id_asignacion = $data["id_asignacion"];
-        echo insertarDistribucion($id_ente, $partidas, $id_ejercicio, $id_asignacion);
+        
+        // Verificar si el ente puede tener varias o una sola distribución (según tipo de ente)
+        echo insertarDistribucion($id_ente, $distribuciones, $id_ejercicio, $id_asignacion);
 
         // Actualizar datos
-    } elseif ($accion === "update" && isset($data["id"]) && isset($data["id_ente"]) && isset($data["partidas"]) && isset($data["id_ejercicio"])) {
+    } elseif ($accion === "update" && isset($data["id"]) && isset($data["id_ente"]) && isset($data["distribuciones"]) && isset($data["id_ejercicio"])) {
         $id = $data["id"];
         $id_ente = $data["id_ente"];
-        $partidas = $data["partidas"]; // Asumimos que 'partidas' es un array de arrays con 'id_partida' y 'monto'
+        $distribuciones = $data["distribuciones"]; // Asumimos que 'distribuciones' es un array de arrays con 'id_distribucion' y 'monto'
         $id_ejercicio = $data["id_ejercicio"];
-        echo actualizarDistribucionEntes($id, $id_ente, $partidas, $id_ejercicio);
+        echo actualizarDistribucionEntes($id, $id_ente, $distribuciones, $id_ejercicio);
 
         // Eliminar datos
     } elseif ($accion === "delete" && isset($data["id"])) {
