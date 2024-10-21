@@ -139,7 +139,7 @@ function obtenerTodosEjerciciosFiscales()
                 $resultSum = $stmtSum->get_result();
 
                 $totalMontoInicial = 0;
-                $distribucionPartidas = null;
+                $distribucionPartidas = []; // Cambiado a un array para almacenar múltiples registros
 
                 if ($resultSum->num_rows > 0) {
                     // Recorrer los registros de distribucion_presupuestaria
@@ -173,7 +173,7 @@ function obtenerTodosEjerciciosFiscales()
                             }
 
                             // Asignar las propiedades a distribucion_partidas incluyendo sector_informacion
-                            $distribucionPartidas = [
+                            $distribucionPartidas[] = [
                                 'id' => $sumRow['id'], // ID de distribucion_presupuestaria
                                 'id_partida' => $partidaId, // ID de partida
                                 'partida' => $partidaPartida,
@@ -194,7 +194,7 @@ function obtenerTodosEjerciciosFiscales()
                 // Calcular el restante
                 $restante = $situado - $totalMontoInicial;
 
-                // Añadir el restante, distribuido, y distribucion_partidas al array del ejercicio
+                // Añadir el restante, distribuido y distribucion_partidas al array del ejercicio
                 $row['restante'] = $restante;
                 $row['distribuido'] = $totalMontoInicial;
                 $row['distribucion_partidas'] = $distribucionPartidas;
@@ -213,6 +213,7 @@ function obtenerTodosEjerciciosFiscales()
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 
 
@@ -246,7 +247,7 @@ function obtenerEjercicioFiscalPorId($id)
             $resultDistribucion = $stmtDistribucion->get_result();
 
             $totalMontoInicial = 0;
-            $distribucionPartidas = [];
+            $distribucionPartidas = []; // Cambiado a un array para almacenar múltiples registros
 
             if ($resultDistribucion->num_rows > 0) {
                 while ($rowDistribucion = $resultDistribucion->fetch_assoc()) {
@@ -290,7 +291,6 @@ function obtenerEjercicioFiscalPorId($id)
                             'sector_informacion' => $sectorInformacion
                         ];
 
-
                         $stmtSector->close();
                     }
 
@@ -315,6 +315,7 @@ function obtenerEjercicioFiscalPorId($id)
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 
 
