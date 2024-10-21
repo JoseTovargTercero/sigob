@@ -14,7 +14,7 @@ function insertarAsignacionEnte($id_ente, $monto_total, $id_ejercicio)
     try {
         $fecha = date('Y-m-d');
         $status = 0;
-        
+
         $sql = "INSERT INTO asignacion_ente (id_ente, monto_total, id_ejercicio, fecha, status) VALUES (?, ?, ?, ?, ?)";
         $stmt = $conexion->prepare($sql);
         $stmt->bind_param("idisi", $id_ente, $monto_total, $id_ejercicio, $fecha, $status);
@@ -113,16 +113,16 @@ function consultarAsignacionPorId($id)
             $resultDistribucion = $stmtDistribucion->get_result();
 
             if ($resultDistribucion->num_rows > 0) {
-                $distribuciones = [];
+
                 while ($distribucion = $resultDistribucion->fetch_assoc()) {
                     // Decodificar el campo 'distribucion' de JSON a array
                     if (!empty($distribucion['distribucion'])) {
-                        $distribucion['distribucion'] = json_decode($distribucion['distribucion'], true);
-                        
+                        $asignacion["distribucion_partidas"] = json_decode($distribucion['distribucion'], true);
+
                         // Iterar sobre cada distribución y obtener detalles adicionales de distribucion_presupuestarias
-                        foreach ($distribucion['distribucion'] as &$distribucionItem) {
+                        foreach ($asignacion["distribucion_partidas"] as &$distribucionItem) {
                             $idDistribucion = $distribucionItem['id_distribucion'];
-                            
+
                             // Consulta para obtener el id_partida y id_sector de distribucion_presupuestarias
                             $sqlDistribucionDetalles = "SELECT id_partida, id_sector FROM distribucion_presupuestaria WHERE id = ?";
                             $stmtDistribucionDetalles = $conexion->prepare($sqlDistribucionDetalles);
@@ -134,6 +134,7 @@ function consultarAsignacionPorId($id)
                                 $distribucionDetalles = $resultDistribucionDetalles->fetch_assoc();
                                 $distribucionItem['id_partida'] = $distribucionDetalles['id_partida'];
                                 $distribucionItem['id_sector'] = $distribucionDetalles['id_sector'];
+
 
                                 // Obtener detalles del sector
                                 $sqlSector = "SELECT * FROM pl_sectores_presupuestarios WHERE id = ?";
@@ -153,10 +154,10 @@ function consultarAsignacionPorId($id)
                             }
                         }
                     } else {
-                        $distribucion['distribucion'] = [];
+                        $asignacion["distribucion_partidas"] = [];
                     }
 
-                    $distribuciones[] = $distribucion;
+                    $distribuciones = $distribucion;
                 }
 
                 $asignacion['distribucion'] = $distribuciones;
@@ -172,7 +173,7 @@ function consultarAsignacionPorId($id)
         registrarError($e->getMessage());
         return json_encode(['error' => $e->getMessage()]);
     }
-}   
+}
 
 
 
@@ -216,7 +217,7 @@ if (isset($data["accion"])) {
         $id_ejercicio = $data["id_ejercicio"];
         echo insertarAsignacionEnte($id_ente, $monto_total, $id_ejercicio);
 
-    // Actualizar datos
+        // Actualizar datos
     } elseif ($accion === "update" && isset($data["id"]) && isset($data["id_ente"]) && isset($data["monto_total"]) && isset($data["id_ejercicio"])) {
         $id = $data["id"];
         $id_ente = $data["id_ente"];
@@ -224,21 +225,21 @@ if (isset($data["accion"])) {
         $id_ejercicio = $data["id_ejercicio"];
         echo actualizarAsignacionEnte($id, $id_ente, $monto_total, $id_ejercicio);
 
-    // Eliminar datos
+        // Eliminar datos
     } elseif ($accion === "delete" && isset($data["id"])) {
         $id = $data["id"];
         echo eliminarAsignacionEnte($id);
 
-    // Consultar por ID
+        // Consultar por ID
     } elseif ($accion === "consultar_por_id" && isset($data["id"])) {
         $id = $data["id"];
         echo consultarAsignacionPorId($id);
 
-    // Consultar todos los registros
+        // Consultar todos los registros
     } elseif ($accion === "consultar") {
         echo consultarTodasAsignaciones();
 
-    // Acción no válida o faltan datos
+        // Acción no válida o faltan datos
     } else {
         echo json_encode(['error' => "Acción no válida o faltan datos"]);
     }

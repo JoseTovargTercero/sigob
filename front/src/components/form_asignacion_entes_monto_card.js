@@ -164,7 +164,7 @@ export const form_asignacion_entes_monto_card = async ({
             elementToInset: 'asignacion-entes-view',
             ejercicioFiscal,
           })
-          loadAsignacionEntesTable()
+          loadAsignacionEntesTable(ejercicioFiscal.id)
           closeCard()
         }
       },
