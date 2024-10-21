@@ -114,50 +114,51 @@ function consultarAsignacionPorId($id)
             $resultDistribucion = $stmtDistribucion->get_result();
 
             if ($resultDistribucion->num_rows > 0) {
-                // Se espera un solo objeto de distribución
-                $distribucion = $resultDistribucion->fetch_assoc();
+                $distribuciones = [];
+                while ($distribucion = $resultDistribucion->fetch_assoc()) {
+                    // Decodificar el campo 'distribucion' que ahora es un solo objeto y cambiar su propiedad a 'distribucion_partidas'
+                    if (!empty($distribucion['distribucion'])) {
+                        $distribucion['distribucion_partidas'] = json_decode($distribucion['distribucion'], true);
 
-                // Decodificar el campo 'distribucion' de JSON a un solo objeto
-                if (!empty($distribucion['distribucion'])) {
-                    $distribucion['distribucion_partidas'] = json_decode($distribucion['distribucion'], true);
+                        // Obtener detalles de distribucion_presupuestarias relacionados al objeto de distribucion
+                        $idDistribucion = $distribucion['id'];
+                        
+                        // Consulta para obtener el id_partida y id_sector de distribucion_presupuestarias
+                        $sqlDistribucionDetalles = "SELECT id_partida, id_sector FROM distribucion_presupuestarias WHERE id = ?";
+                        $stmtDistribucionDetalles = $conexion->prepare($sqlDistribucionDetalles);
+                        $stmtDistribucionDetalles->bind_param("i", $idDistribucion);
+                        $stmtDistribucionDetalles->execute();
+                        $resultDistribucionDetalles = $stmtDistribucionDetalles->get_result();
 
-                    // Obtener detalles adicionales de distribucion_presupuestarias para distribucion_partidas
-                    $idDistribucion = $distribucion['distribucion_partidas']['id_distribucion'];
-                    
-                    // Consulta para obtener el id_partida y id_sector de distribucion_presupuestarias
-                    $sqlDistribucionDetalles = "SELECT id_partida, id_sector FROM distribucion_presupuestaria WHERE id = ?";
-                    $stmtDistribucionDetalles = $conexion->prepare($sqlDistribucionDetalles);
-                    $stmtDistribucionDetalles->bind_param("i", $idDistribucion);
-                    $stmtDistribucionDetalles->execute();
-                    $resultDistribucionDetalles = $stmtDistribucionDetalles->get_result();
+                        if ($resultDistribucionDetalles->num_rows > 0) {
+                            $distribucionDetalles = $resultDistribucionDetalles->fetch_assoc();
+                            $distribucion['id_partida'] = $distribucionDetalles['id_partida'];
+                            $distribucion['id_sector'] = $distribucionDetalles['id_sector'];
 
-                    if ($resultDistribucionDetalles->num_rows > 0) {
-                        $distribucionDetalles = $resultDistribucionDetalles->fetch_assoc();
-                        $distribucion['distribucion_partidas']['id_partida'] = $distribucionDetalles['id_partida'];
-                        $distribucion['distribucion_partidas']['id_sector'] = $distribucionDetalles['id_sector'];
+                            // Obtener detalles del sector
+                            $sqlSector = "SELECT * FROM pl_sectores_presupuestarios WHERE id = ?";
+                            $stmtSector = $conexion->prepare($sqlSector);
+                            $stmtSector->bind_param("i", $distribucionDetalles['id_sector']);
+                            $stmtSector->execute();
+                            $resultSector = $stmtSector->get_result();
 
-                        // Obtener detalles del sector
-                        $sqlSector = "SELECT * FROM pl_sectores_presupuestarios WHERE id = ?";
-                        $stmtSector = $conexion->prepare($sqlSector);
-                        $stmtSector->bind_param("i", $distribucionDetalles['id_sector']);
-                        $stmtSector->execute();
-                        $resultSector = $stmtSector->get_result();
-
-                        if ($resultSector->num_rows > 0) {
-                            $distribucion['distribucion_partidas']['sector_informacion'] = $resultSector->fetch_assoc();
+                            if ($resultSector->num_rows > 0) {
+                                $distribucion['sector_informacion'] = $resultSector->fetch_assoc();
+                            } else {
+                                $distribucion['sector_informacion'] = null;
+                            }
                         } else {
-                            $distribucion['distribucion_partidas']['sector_informacion'] = null;
+                            $distribucion['id_partida'] = null;
+                            $distribucion['id_sector'] = null;
                         }
                     } else {
-                        $distribucion['distribucion_partidas']['id_partida'] = null;
-                        $distribucion['distribucion_partidas']['id_sector'] = null;
+                        $distribucion['distribucion_partidas'] = [];
                     }
-                } else {
-                    $distribucion['distribucion_partidas'] = null;
+
+                    $distribuciones[] = $distribucion;
                 }
 
-                // Asignar el objeto distribución modificado a asignacion
-                $asignacion['distribucion'] = $distribucion;
+                $asignacion['distribucion'] = $distribuciones;
             } else {
                 $asignacion['distribucion'] = false;
             }
@@ -171,6 +172,8 @@ function consultarAsignacionPorId($id)
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
+
 
 
 
