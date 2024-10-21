@@ -156,7 +156,7 @@ function consultarAsignacionPorId($id)
                                 $resultPartida = $stmtPartida->get_result();
 
                                 if ($resultPartida->num_rows > 0) {
-                                    $distribucionItem['partida_informacion'] = $resultPartida->fetch_assoc();
+                                    $distribucionItem += $resultPartida->fetch_assoc();
                                 } else {
                                     $distribucionItem['partida_informacion'] = null;
                                 }
