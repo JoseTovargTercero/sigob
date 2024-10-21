@@ -135,7 +135,6 @@ function consultarAsignacionPorId($id)
                                 $distribucionItem['id_partida'] = $distribucionDetalles['id_partida'];
                                 $distribucionItem['id_sector'] = $distribucionDetalles['id_sector'];
 
-
                                 // Obtener detalles del sector
                                 $sqlSector = "SELECT * FROM pl_sectores_presupuestarios WHERE id = ?";
                                 $stmtSector = $conexion->prepare($sqlSector);
@@ -148,6 +147,20 @@ function consultarAsignacionPorId($id)
                                 } else {
                                     $distribucionItem['sector_informacion'] = null;
                                 }
+
+                                // Consulta para obtener los detalles de la partida de la tabla partidas_presupuestarias
+                                $sqlPartida = "SELECT * FROM partidas_presupuestarias WHERE id = ?";
+                                $stmtPartida = $conexion->prepare($sqlPartida);
+                                $stmtPartida->bind_param("i", $distribucionDetalles['id_partida']);
+                                $stmtPartida->execute();
+                                $resultPartida = $stmtPartida->get_result();
+
+                                if ($resultPartida->num_rows > 0) {
+                                    $distribucionItem['partida_informacion'] = $resultPartida->fetch_assoc();
+                                } else {
+                                    $distribucionItem['partida_informacion'] = null;
+                                }
+
                             } else {
                                 $distribucionItem['id_partida'] = null;
                                 $distribucionItem['id_sector'] = null;
