@@ -121,10 +121,10 @@ function consultarAsignacionPorId($id)
                         
                         // Iterar sobre cada distribución y obtener detalles adicionales de distribucion_presupuestarias
                         foreach ($distribucion['distribucion'] as &$distribucionItem) {
-                            $idDistribucion = $distribucionItem['id'];
+                            $idDistribucion = $distribucionItem['id_distribucion'];
                             
                             // Consulta para obtener el id_partida y id_sector de distribucion_presupuestarias
-                            $sqlDistribucionDetalles = "SELECT id_partida, id_sector FROM distribucion_presupuestarias WHERE id = ?";
+                            $sqlDistribucionDetalles = "SELECT id_partida, id_sector FROM distribucion_presupuestaria WHERE id = ?";
                             $stmtDistribucionDetalles = $conexion->prepare($sqlDistribucionDetalles);
                             $stmtDistribucionDetalles->bind_param("i", $idDistribucion);
                             $stmtDistribucionDetalles->execute();
