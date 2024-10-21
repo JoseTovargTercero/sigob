@@ -132,14 +132,14 @@ function obtenerTodosEjerciciosFiscales()
                 $situado = $row['situado'];
 
                 // Calcular la sumatoria de los montos iniciales en distribucion_presupuestaria para este id_ejercicio
-                $sqlSum = "SELECT id_partida, monto_inicial, monto_actual, id_sector FROM distribucion_presupuestaria WHERE id_ejercicio = ?";
+                $sqlSum = "SELECT id, id_partida, monto_inicial, monto_actual, id_sector FROM distribucion_presupuestaria WHERE id_ejercicio = ?";
                 $stmtSum = $conexion->prepare($sqlSum);
                 $stmtSum->bind_param("i", $id_ejercicio);
                 $stmtSum->execute();
                 $resultSum = $stmtSum->get_result();
 
                 $totalMontoInicial = 0;
-                $distribucionPartidas = [];
+                $distribucionPartidas = null;
 
                 if ($resultSum->num_rows > 0) {
                     // Recorrer los registros de distribucion_presupuestaria
@@ -172,9 +172,10 @@ function obtenerTodosEjerciciosFiscales()
                                 $sectorInformacion = $resultSector->fetch_assoc();
                             }
 
-                            // Agregar las propiedades a distribucion_partidas
-                            $distribucionPartidas[] = [
-                                'id' => $partidaId,
+                            // Asignar las propiedades a distribucion_partidas incluyendo sector_informacion
+                            $distribucionPartidas = [
+                                'id' => $sumRow['id'], // ID de distribucion_presupuestaria
+                                'id_partida' => $partidaId, // ID de partida
                                 'partida' => $partidaPartida,
                                 'nombre' => $partidaNombre,
                                 'descripcion' => $partidaDescripcion,
@@ -212,7 +213,6 @@ function obtenerTodosEjerciciosFiscales()
         return json_encode(['error' => $e->getMessage()]);
     }
 }
-
 
 
 
@@ -280,7 +280,8 @@ function obtenerEjercicioFiscalPorId($id)
 
                         // Asignar las propiedades a distribucion_partidas incluyendo sector_informacion
                         $distribucionPartidas[] = [
-                            'id' => $partidaId,
+                            'id' => $rowDistribucion['id'], // ID de distribucion_presupuestaria
+                            'id_partida' => $partidaId, // ID de partida
                             'partida' => $partidaPartida,
                             'nombre' => $partidaNombre,
                             'descripcion' => $partidaDescripcion,
@@ -288,6 +289,7 @@ function obtenerEjercicioFiscalPorId($id)
                             'monto_actual' => $rowDistribucion['monto_actual'],
                             'sector_informacion' => $sectorInformacion
                         ];
+
 
                         $stmtSector->close();
                     }
