@@ -114,53 +114,50 @@ function consultarAsignacionPorId($id)
             $resultDistribucion = $stmtDistribucion->get_result();
 
             if ($resultDistribucion->num_rows > 0) {
-                $distribuciones = [];
-                while ($distribucion = $resultDistribucion->fetch_assoc()) {
-                    // Decodificar el campo 'distribucion' de JSON a array
-                    if (!empty($distribucion['distribucion'])) {
-                        $distribucion['distribucion'] = json_decode($distribucion['distribucion'], true);
-                        
-                        // Iterar sobre cada distribución y obtener detalles adicionales de distribucion_presupuestarias
-                        foreach ($distribucion['distribucion'] as &$distribucionItem) {
-                            $idDistribucion = $distribucionItem['id_distribucion'];
-                            
-                            // Consulta para obtener el id_partida y id_sector de distribucion_presupuestarias
-                            $sqlDistribucionDetalles = "SELECT id_partida, id_sector FROM distribucion_presupuestarias WHERE id = ?";
-                            $stmtDistribucionDetalles = $conexion->prepare($sqlDistribucionDetalles);
-                            $stmtDistribucionDetalles->bind_param("i", $idDistribucion);
-                            $stmtDistribucionDetalles->execute();
-                            $resultDistribucionDetalles = $stmtDistribucionDetalles->get_result();
+                // Se espera un solo objeto de distribución
+                $distribucion = $resultDistribucion->fetch_assoc();
 
-                            if ($resultDistribucionDetalles->num_rows > 0) {
-                                $distribucionDetalles = $resultDistribucionDetalles->fetch_assoc();
-                                $distribucionItem['id_partida'] = $distribucionDetalles['id_partida'];
-                                $distribucionItem['id_sector'] = $distribucionDetalles['id_sector'];
+                // Decodificar el campo 'distribucion' de JSON a un solo objeto
+                if (!empty($distribucion['distribucion'])) {
+                    $distribucion['distribucion_partidas'] = json_decode($distribucion['distribucion'], true);
 
-                                // Obtener detalles del sector
-                                $sqlSector = "SELECT * FROM pl_sectores_presupuestarios WHERE id = ?";
-                                $stmtSector = $conexion->prepare($sqlSector);
-                                $stmtSector->bind_param("i", $distribucionDetalles['id_sector']);
-                                $stmtSector->execute();
-                                $resultSector = $stmtSector->get_result();
+                    // Obtener detalles adicionales de distribucion_presupuestarias para distribucion_partidas
+                    $idDistribucion = $distribucion['distribucion_partidas']['id_distribucion'];
+                    
+                    // Consulta para obtener el id_partida y id_sector de distribucion_presupuestarias
+                    $sqlDistribucionDetalles = "SELECT id_partida, id_sector FROM distribucion_presupuestaria WHERE id = ?";
+                    $stmtDistribucionDetalles = $conexion->prepare($sqlDistribucionDetalles);
+                    $stmtDistribucionDetalles->bind_param("i", $idDistribucion);
+                    $stmtDistribucionDetalles->execute();
+                    $resultDistribucionDetalles = $stmtDistribucionDetalles->get_result();
 
-                                if ($resultSector->num_rows > 0) {
-                                    $distribucionItem['sector_informacion'] = $resultSector->fetch_assoc();
-                                } else {
-                                    $distribucionItem['sector_informacion'] = null;
-                                }
-                            } else {
-                                $distribucionItem['id_partida'] = null;
-                                $distribucionItem['id_sector'] = null;
-                            }
+                    if ($resultDistribucionDetalles->num_rows > 0) {
+                        $distribucionDetalles = $resultDistribucionDetalles->fetch_assoc();
+                        $distribucion['distribucion_partidas']['id_partida'] = $distribucionDetalles['id_partida'];
+                        $distribucion['distribucion_partidas']['id_sector'] = $distribucionDetalles['id_sector'];
+
+                        // Obtener detalles del sector
+                        $sqlSector = "SELECT * FROM pl_sectores_presupuestarios WHERE id = ?";
+                        $stmtSector = $conexion->prepare($sqlSector);
+                        $stmtSector->bind_param("i", $distribucionDetalles['id_sector']);
+                        $stmtSector->execute();
+                        $resultSector = $stmtSector->get_result();
+
+                        if ($resultSector->num_rows > 0) {
+                            $distribucion['distribucion_partidas']['sector_informacion'] = $resultSector->fetch_assoc();
+                        } else {
+                            $distribucion['distribucion_partidas']['sector_informacion'] = null;
                         }
                     } else {
-                        $distribucion['distribucion'] = [];
+                        $distribucion['distribucion_partidas']['id_partida'] = null;
+                        $distribucion['distribucion_partidas']['id_sector'] = null;
                     }
-
-                    $distribuciones[] = $distribucion;
+                } else {
+                    $distribucion['distribucion_partidas'] = null;
                 }
 
-                $asignacion['distribucion'] = $distribuciones;
+                // Asignar el objeto distribución modificado a asignacion
+                $asignacion['distribucion'] = $distribucion;
             } else {
                 $asignacion['distribucion'] = false;
             }
@@ -174,6 +171,7 @@ function consultarAsignacionPorId($id)
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 
 
