@@ -116,20 +116,25 @@ export const form_asignacion_entes_form_card = async ({
   // PARTE 1
 
   const distribucionPartidasEnteList = ({ partidasList, checkbox }) => {
-    let liItems = partidasList.map((partida) => {
+    let liItems = partidasList.map((distribucion) => {
+      let sector_codigo = `${distribucion.sector_informacion.sector}.${distribucion.sector_informacion.programa}.${distribucion.sector_informacion.proyecto}`
+
       if (checkbox) {
         return ` <tr class=''>
-    <td><input type="checkbox" class="form-check-input input-check" value="${partida.id}" name="ente-partida-${partida.id}"/></td>
-    <td>${partida.partida}</td>
-    <td>${partida.nombre}</td>
-    <td>${partida.descripcion}</td>
+    <td><input type="checkbox" class="form-check-input input-check" value="${distribucion.id}" name="ente-partida-${distribucion.id}"/></td>
+    <td>${distribucion.sector_informacion.nombre}</td>
+    <td>${sector_codigo}</td>
+    <td>${distribucion.partida}</td>
+    <td>${distribucion.nombre}</td>
+    <td>${distribucion.descripcion}</td>
   </tr>`
       } else {
         return ` <tr class=''>
-    <td>${partida.partida}</td>
-    
-    <td>${partida.descripcion}</td>
-    <td>${partida.monto || 'No asignado'}</td>
+        <td>${distribucion.sector_informacion.nombre}</td>
+    <td>${sector_codigo}</td>
+    <td>${distribucion.partida}</td>
+    <td>${distribucion.descripcion}</td>
+    <td>${distribucion.monto || 'No asignado'}</td>
   </tr>`
       }
     })
@@ -153,14 +158,15 @@ export const form_asignacion_entes_form_card = async ({
         style='width:100%'
       >
         <thead class='w-100'>
-        <th>PARTIDA</th>
-          
+          <th>SECTOR NOMBRE</th>
+          <th>SECTOR CODIGO</th>
+          <th>PARTIDA</th>
           <th>DESCRIPCION</th>
           <th>MONTO</th>
         </thead>
         
         <tbody>${distribucionPartidasEnteList({
-          partidasList: asignacion.distribucion.partidas,
+          partidasList: asignacion.distribucion_partidas,
         })}</tbody>
       </table>`
             : `<div>
@@ -191,7 +197,7 @@ export const form_asignacion_entes_form_card = async ({
     //     </li>`
     // } else {
     // }
-    let liItems = ejercicioFiscal.partidas.map((partida) => {
+    let liItems = ejercicioFiscal.distribucion_partidas.map((partida) => {
       let partidaEncontrada = partidas.fullInfo.find(
         (par) => par.id == partida.id
       )
@@ -257,15 +263,17 @@ export const form_asignacion_entes_form_card = async ({
             >
               <thead class='w-100'>
                 <th>ELEGIR</th>
+                <th>SECTOR NOMBRE</th>
+                <th>SECTOR CODIGO</th>
                 <th>PARTIDA</th>
                 <th>NOMBRE</th>
                 <th>DESCRIPCION</th>
               </thead>
               ${
-                ejercicioFiscal.partidas
+                ejercicioFiscal.distribucion_partidas
                   ? `<tbody>${distribucionPartidasEnteList({
                       checkbox: true,
-                      partidasList: ejercicioFiscal.partidas,
+                      partidasList: ejercicioFiscal.distribucion_partidas,
                     })}</tbody>`
                   : `<tbody></tbody>`
               }
@@ -282,27 +290,29 @@ export const form_asignacion_entes_form_card = async ({
   const partidasSeleccionadasList = () => {
     let partidasRelacionadas = relacionarPartidas()
 
-    let liItems = partidasRelacionadas.map((partida) => {
-      fieldListPartidas[`partida-monto-${partida.id}`] = ''
-      fieldListErrorsPartidas[`partida-monto-${partida.id}`] = {
+    let liItems = partidasRelacionadas.map((distribucion) => {
+      fieldListPartidas[`partida-monto-${distribucion.id}`] = ''
+      fieldListErrorsPartidas[`partida-monto-${distribucion.id}`] = {
         value: true,
         message: 'Monto inválido',
         type: 'number',
       }
 
       return `  <tr>
-          <td>${partida.partida}</td>
-          <td>${partida.nombre}</td>
-          <td>${partida.monto_solicitado || 'Sin solicitar'}</td>
+          <td>${distribucion.sector_nombre}</td>
+          <td>${distribucion.sector_codigo}</td>
+          <td>${distribucion.partida}</td>
+          <td>${distribucion.nombre}</td>
+          <td>${distribucion.monto_solicitado || 'Sin solicitar'}</td>
           <td>
           <input
           class='form-control partida-input partida-monto-disponible'
           type='text'
-          data-valorinicial='${partida.monto_disponible}'
-          name='partida-monto-disponible-${partida.id}'
-          id='partida-monto-disponible-${partida.id}'
+          data-valorinicial='${distribucion.monto_disponible}'
+          name='partida-monto-disponible-${distribucion.id}'
+          id='partida-monto-disponible-${distribucion.id}'
           placeholder='Monto a asignar...'
-          value="${partida.monto_disponible}"
+          value="${distribucion.monto_disponible}"
 
           disabled
         />
@@ -312,9 +322,9 @@ export const form_asignacion_entes_form_card = async ({
             <input
               class='form-control partida-input partida-monto'
               type='number'
-              data-id='${partida.id}'
-              name='partida-monto-${partida.id}'
-              id='partida-monto-${partida.id}'
+              data-id='${distribucion.id}'
+              name='partida-monto-${distribucion.id}'
+              id='partida-monto-${distribucion.id}'
               placeholder='Monto a asignar...'
             />
           </td>
@@ -326,19 +336,21 @@ export const form_asignacion_entes_form_card = async ({
 
   function relacionarPartidas() {
     let partidasRelacionadas = partidasSeleccionadas.map((id) => {
-      let partidaEncontrada = partidas.fullInfo.find((par) => par.id == id)
-
-      let partidaEncontrada2 = ejercicioFiscal.partidas.find(
+      let partidaEncontrada = ejercicioFiscal.distribucion_partidas.find(
         (partida) => partida.id == id
       )
 
+      let sector_codigo = `${partidaEncontrada.sector_informacion.sector}.${partidaEncontrada.sector_informacion.programa}.${partidaEncontrada.sector_informacion.proyecto}`
+
       return {
         id: id,
+        sector_nombre: partidaEncontrada.sector_informacion.nombre,
+        sector_codigo,
         partida: partidaEncontrada.partida,
         nombre: partidaEncontrada.nombre || 'No asignado',
         descripcion: partidaEncontrada.descripcion,
-        monto_disponible: partidaEncontrada2
-          ? partidaEncontrada2.monto_inicial
+        monto_disponible: partidaEncontrada
+          ? partidaEncontrada.monto_actual
           : 0,
       }
     })
@@ -349,7 +361,7 @@ export const form_asignacion_entes_form_card = async ({
   }
 
   function partidaDisponibilidadPresupuestaria(id) {
-    let partidaEncontrada3 = ejercicioFiscal.partidas.find(
+    let partidaEncontrada3 = ejercicioFiscal.distribucion_partidas.find(
       (partida) => partida.id == id
     )
 
@@ -357,7 +369,7 @@ export const form_asignacion_entes_form_card = async ({
       let partidaEncontrada = partidas.fullInfo.find((par) => par.id == id)
 
       let partidaEncontrada2 = plan.partidas.find((partida) => partida.id == id)
-      let partidaEncontrada3 = ejercicioFiscal.partidas.find(
+      let partidaEncontrada3 = ejercicioFiscal.distribucion_partidas.find(
         (partida) => partida.id == id
       )
 
@@ -415,6 +427,8 @@ export const form_asignacion_entes_form_card = async ({
           style='width:100%'
         >
           <thead class='w-100'>
+            <th>SECTOR NOMBRE</th>
+            <th>SECTOR CODIGO</th>
             <th>PARTIDA</th>
             <th>NOMBRE</th>
             <th>MONTO SOLICITADO</th>
@@ -516,7 +530,7 @@ export const form_asignacion_entes_form_card = async ({
 
           if (res.success) {
             closeCard()
-            loadAsignacionEntesTable()
+            loadAsignacionEntesTable(ejercicioFiscal.id)
           }
         },
       })
@@ -533,15 +547,15 @@ export const form_asignacion_entes_form_card = async ({
 
           if (res.success) {
             closeCard()
-            loadAsignacionEntesTable()
+            loadAsignacionEntesTable(ejercicioFiscal.id)
           }
         },
       })
     }
 
-    if (e.target.id === 'btn-add') {
-      d.getElementById('form-nueva-partida').classList.remove('d-none')
-    }
+    // if (e.target.id === 'btn-add') {
+    //   d.getElementById('form-nueva-partida').classList.remove('d-none')
+    // }
     if (e.target.id === 'btn-add-partida') {
       d.getElementById('form-nueva-partida').classList.add('d-none')
 
@@ -623,7 +637,7 @@ export const form_asignacion_entes_form_card = async ({
         })
         if (res.success) {
           closeCard()
-          loadAsignacionEntesTable()
+          loadAsignacionEntesTable(ejercicioFiscal.id)
         }
       },
     })
@@ -632,7 +646,7 @@ export const form_asignacion_entes_form_card = async ({
   function validateFormFocus(e) {
     let btnNext = d.getElementById('btn-next')
     let btnPrevius = d.getElementById('btn-previus')
-    let btnAdd = d.getElementById('btn-add')
+    // let btnAdd = d.getElementById('btn-add')
     let cardBodyPart1 = d.getElementById('card-body-part1')
     let cardBodyPart2 = d.getElementById('card-body-part2')
     let cardBodyPart3 = d.getElementById('card-body-part3')
@@ -640,7 +654,7 @@ export const form_asignacion_entes_form_card = async ({
     if (e.target === btnNext) {
       scroll(0, 0)
       if (formFocus === 1) {
-        if (ejercicioFiscal.partidas.length < 1) {
+        if (ejercicioFiscal.distribucion_partidas.length < 1) {
           toastNotification({
             type: NOTIFICATIONS_TYPES.fail,
             message:
@@ -656,7 +670,7 @@ export const form_asignacion_entes_form_card = async ({
         formFocus++
         btnPrevius.classList.remove('d-none')
         btnPrevius.removeAttribute('disabled')
-        btnAdd.classList.remove('d-none')
+        // btnAdd.classList.remove('d-none')
         return
       }
       if (formFocus === 2) {
@@ -676,7 +690,7 @@ export const form_asignacion_entes_form_card = async ({
 
         validarAsignacionPartidasTable()
         btnNext.textContent = 'Enviar'
-        btnAdd.classList.add('d-none')
+        // btnAdd.classList.add('d-none')
         formFocus++
         return
       }
@@ -720,17 +734,17 @@ export const form_asignacion_entes_form_card = async ({
         }
 
         let mappedInfo = Array.from(inputsPartidas).map((input) => {
-          let id_partida = input.dataset.id
+          let id_distribucion = input.dataset.id
           let monto = Number(input.value)
 
-          return { id_partida, monto }
+          return { id_distribucion, monto }
         })
 
         let data = {
           id_ente: asignacion.id_ente,
-          id_asignacion: asignacion.id,
+          distribuciones: mappedInfo,
           id_ejercicio: ejercicioFiscal.id,
-          partidas: mappedInfo,
+          id_asignacion: asignacion.id,
         }
 
         enviarInformacion(data)
@@ -751,7 +765,7 @@ export const form_asignacion_entes_form_card = async ({
             cardBodyPart1.classList.remove('d-block')
             cardBodyPart1.classList.add('d-none')
             btnNext.textContent = 'Siguiente'
-            btnAdd.classList.remove('d-none')
+            // btnAdd.classList.remove('d-none')
 
             partidasSeleccionadas = []
             cardBody.innerHTML += seleccionPartidas()
@@ -764,7 +778,7 @@ export const form_asignacion_entes_form_card = async ({
       }
       if (formFocus === 2) {
         btnPrevius.setAttribute('disabled', true)
-        btnAdd.classList.add('d-none')
+        // btnAdd.classList.add('d-none')
 
         cardBodyPart2.remove()
 
@@ -902,8 +916,11 @@ function validarSeleccionPartidasTable() {
 
   seleccionPartidasTable = new DataTable('#asignacion-part3-table', {
     scrollY: 200,
+    responsive: true,
     colums: [
       { data: 'elegir' },
+      { data: 'sector_nombre' },
+      { data: 'sector_codigo' },
       { data: 'partida' },
       { data: 'nombre' },
       { data: 'descripcion' },

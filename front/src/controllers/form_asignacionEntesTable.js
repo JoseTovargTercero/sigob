@@ -200,7 +200,7 @@ export const loadAsignacionEntesTable = async (id_ejercicio) => {
         tipo: el.tipo_ente,
         fecha: el.fecha,
         acciones:
-          el.status === 0
+          Number(el.status) === 0
             ? `<button class="btn btn-primary btn-sm" data-validarId="${el.id}">VALIDAR</button>`
             : `<button class="btn btn-secondary btn-sm" data-validarId="${el.id}">DETALLES</button>`,
       }
