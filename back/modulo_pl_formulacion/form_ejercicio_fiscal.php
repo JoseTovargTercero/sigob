@@ -237,7 +237,7 @@ function obtenerEjercicioFiscalPorId($id)
             $ejercicio = $result->fetch_assoc();
 
             // Consulta para obtener los registros de distribucion_presupuestaria y sumar los montos iniciales
-            $sqlDistribucion = "SELECT id_partida, monto_inicial, monto_actual, id_sector 
+            $sqlDistribucion = "SELECT id, id_partida, monto_inicial, monto_actual, id_sector 
                                 FROM distribucion_presupuestaria 
                                 WHERE id_ejercicio = ?";
             $stmtDistribucion = $conexion->prepare($sqlDistribucion);
