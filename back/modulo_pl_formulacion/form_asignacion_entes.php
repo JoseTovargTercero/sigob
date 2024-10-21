@@ -105,7 +105,7 @@ function consultarAsignacionPorId($id)
             $asignacion = $result->fetch_assoc();
 
             // Consulta adicional para obtener los detalles de distribucion_entes asociados al id_asignacion
-            $sqlDistribucion = "SELECT id, id_ente, distribuciones, monto_total, status, id_ejercicio 
+            $sqlDistribucion = "SELECT id, id_ente, distribucion, monto_total, status, id_ejercicio 
                                 FROM distribucion_entes 
                                 WHERE id_asignacion = ?";
             $stmtDistribucion = $conexion->prepare($sqlDistribucion);
@@ -116,12 +116,12 @@ function consultarAsignacionPorId($id)
             if ($resultDistribucion->num_rows > 0) {
                 $distribuciones = [];
                 while ($distribucion = $resultDistribucion->fetch_assoc()) {
-                    // Decodificar el campo 'distribuciones' de JSON a array
-                    if (!empty($distribucion['distribuciones'])) {
-                        $distribucion['distribuciones'] = json_decode($distribucion['distribuciones'], true);
+                    // Decodificar el campo 'distribucion' de JSON a array
+                    if (!empty($distribucion['distribucion'])) {
+                        $distribucion['distribucion'] = json_decode($distribucion['distribucion'], true);
                         
                         // Iterar sobre cada distribución y obtener detalles adicionales de distribucion_presupuestarias
-                        foreach ($distribucion['distribuciones'] as &$distribucionItem) {
+                        foreach ($distribucion['distribucion'] as &$distribucionItem) {
                             $idDistribucion = $distribucionItem['id_distribucion'];
                             
                             // Consulta para obtener el id_partida y id_sector de distribucion_presupuestarias
@@ -154,7 +154,7 @@ function consultarAsignacionPorId($id)
                             }
                         }
                     } else {
-                        $distribucion['distribuciones'] = [];
+                        $distribucion['distribucion'] = [];
                     }
 
                     $distribuciones[] = $distribucion;
@@ -174,6 +174,7 @@ function consultarAsignacionPorId($id)
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 
 
