@@ -350,7 +350,7 @@ export const form_asignacion_entes_form_card = async ({
         nombre: partidaEncontrada.nombre || 'No asignado',
         descripcion: partidaEncontrada.descripcion,
         monto_disponible: partidaEncontrada
-          ? partidaEncontrada.monto_actual
+          ? partidaEncontrada.monto_inicial
           : 0,
       }
     })
