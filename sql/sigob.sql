@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 18-10-2024 a las 21:52:16
+-- Tiempo de generación: 22-10-2024 a las 14:49:41
 -- Versión del servidor: 10.4.16-MariaDB
 -- Versión de PHP: 7.4.12
 
@@ -1010,7 +1010,7 @@ INSERT INTO `dependencias` (`id_dependencia`, `dependencia`, `cod_dependencia`, 
 CREATE TABLE `distribucion_entes` (
   `id` int(255) NOT NULL,
   `id_ente` int(255) NOT NULL,
-  `partidas` longtext NOT NULL,
+  `distribucion` longtext NOT NULL,
   `monto_total` varchar(255) DEFAULT NULL,
   `status` int(255) NOT NULL,
   `id_ejercicio` int(255) NOT NULL,
@@ -1023,8 +1023,8 @@ CREATE TABLE `distribucion_entes` (
 -- Volcado de datos para la tabla `distribucion_entes`
 --
 
-INSERT INTO `distribucion_entes` (`id`, `id_ente`, `partidas`, `monto_total`, `status`, `id_ejercicio`, `comentario`, `fecha`, `id_asignacion`) VALUES
-(1, 1, '[{\"id_partida\":\"1\",\"monto\":1000},{\"id_partida\":\"43\",\"monto\":1000}]', '2000', 1, 1, '', '2024-10-15', 1);
+INSERT INTO `distribucion_entes` (`id`, `id_ente`, `distribucion`, `monto_total`, `status`, `id_ejercicio`, `comentario`, `fecha`, `id_asignacion`) VALUES
+(1, 1, '[{\"id_partida\":\"1\",\"monto\":1000},{\"id_partida\":\"43\",\"monto\":1000}]', '2000', 0, 1, '', '2024-10-15', 1);
 
 -- --------------------------------------------------------
 
@@ -1048,7 +1048,7 @@ CREATE TABLE `distribucion_presupuestaria` (
 
 INSERT INTO `distribucion_presupuestaria` (`id`, `id_partida`, `monto_inicial`, `id_ejercicio`, `monto_actual`, `id_sector`, `status`) VALUES
 (1, 1, '5000', 1, '5000', 1, 1),
-(2, 43, '5000', 1, '5000', 1, 1);
+(3, 1, '2000', 1, '2000', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -3941,7 +3941,8 @@ CREATE TABLE `error_log` (
 --
 
 INSERT INTO `error_log` (`id`, `descripcion`, `fecha`) VALUES
-(1, 'Error al actualizar el proyecto de inversión.', '2024-10-15 20:02:13');
+(1, 'Error al actualizar el proyecto de inversión.', '2024-10-15 20:02:13'),
+(2, 'Una partida ya está registrada en este ejercicio fiscal: 15.01.00.401.01.01.0000', '2024-10-18 17:15:35');
 
 -- --------------------------------------------------------
 
@@ -4765,7 +4766,8 @@ INSERT INTO `menu` (`id`, `oficina`, `categoria`, `nombre`, `dir`, `icono`) VALU
 (23, 'nomina', 'Movimientos', 'Bancos', 'mod_nomina/nom_bancos', 'bx-objects-vertical-bottom'),
 (24, 'nomina', 'Nómina', 'Registro de nominas', 'mod_nomina/nom_grupos', 'bx-wallet-alt'),
 (25, 'nomina', 'Nómina', 'Pagar nomina', 'mod_nomina/nom_peticiones_form', 'bx-wallet-alt'),
-(26, 'pl_formulacion', NULL, 'Sectores', 'mod_pl_formulacion/form_sectores', 'bx-objects-horizontal-right');
+(26, 'pl_formulacion', NULL, 'Sectores', 'mod_pl_formulacion/form_sectores', 'bx-objects-horizontal-right'),
+(27, 'pl_formulacion', NULL, 'Reportes', 'mod_pl_formulacion/form_reportes\r\n', 'bx-download');
 
 -- --------------------------------------------------------
 
@@ -5137,6 +5139,87 @@ INSERT INTO `plan_inversion` (`id`, `id_ejercicio`, `monto_total`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `pl_programas`
+--
+
+CREATE TABLE `pl_programas` (
+  `id` int(11) NOT NULL,
+  `sector` varchar(10) NOT NULL,
+  `programa` varchar(10) NOT NULL,
+  `denominancion` longtext NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `pl_programas`
+--
+
+INSERT INTO `pl_programas` (`id`, `sector`, `programa`, `denominancion`) VALUES
+(1, '01', '01', 'LEGISLACION Y SANCION DE INSTRUMENTOS JURIDICOS'),
+(2, '01', '02', 'CONTROL DE LA HACIENDA ESTADAL'),
+(3, '01', '03', 'REPRESENTACION JURIDICA DEL ESTADO'),
+(4, '01', '04', 'DIRECCION, COORDINACION PARA LAS POLITICAS DEL ESTADO'),
+(5, '01', '05', 'SECRETARIA DE COORDINACION'),
+(6, '01', '06', 'SERVICIOS DE ADMINISTRACION DE RECURSOS HUMANOS'),
+(7, '01', '07', 'PLANIFICACION Y ADMINISTRACION PRESUPUESTARIA'),
+(8, '01', '08', 'SERVICIOS DE ADMINISTRACION'),
+(9, '01', '09', 'SERVICIOS DE ADMINISTRACION DEL TESORO'),
+(10, '01', '10', 'SECRETARIA EJECUTIVA INDIGENA'),
+(11, '01', '11', 'UNIDAD ESTADAL DE AUDITORIA INTERNA'),
+(12, '01', '12', 'AREA DE CONTROL Y SEGUIMIENTO'),
+(13, '01', '13', 'SECREATARIA EJECUTIVA DE BIENES Y SERVICIOS'),
+(14, '02', '01', 'SERVICIOS SEGURIDAD, DEFENSA Y ORDEN PUBLICO'),
+(15, '02', '02', 'ASUNTOS CIVILES Y POLITICOS'),
+(16, '02', '03', 'ASUNTOS DE PREVENCION Y CALAMIDADES PUBLICAS'),
+(17, '02', '04', 'PREVENCION Y CONTROL DE SINIESTROS'),
+(18, '06', '01', 'PROMOCION Y DESARROLLO TURISTICO EN EL ESTADO'),
+(19, '08', '01', 'SERVICIOS ADMINISTRATIVOS Y APOYO A LA EDUCACION'),
+(20, '08', '02', 'EDUCACION BASICA, PREESCOLAR Y DIVERSIFICADA'),
+(21, '08', '03', 'MODERNIZACION Y FORTALECIMIENTO DE LA EDUCACION BASICA'),
+(22, '09', '01', 'SERVICIOS DE INFORMACION Y COMUNICACION AMAZONAS'),
+(23, '09', '02', 'SERVICIOS DE APOYO BIBLIOTECARIO'),
+(24, '09', '03', 'PROMOCION Y DESARROLLO CULTURAL'),
+(25, '09', '04', 'TECNOLOGIA DE INFORMACION'),
+(26, '11', '01', 'DIRECCION, COORDINACION Y CONTROL DE OBRAS EN EL ESTADO'),
+(27, '11', '02', 'CONSTRUCCION, MANTENIMIENTO Y CONSERVACION DE OBRAS DEL ESTADO'),
+(28, '12', '01', 'FOMENTO Y RESTITUCION DE LA SALUD'),
+(29, '13', '01', 'SERVICIOS DE DESARROLLO SOCIAL'),
+(30, '13', '02', 'DESARROLLO SOCIAL Y PODER POPULAR'),
+(31, '13', '03', 'SECRETARIA EJEC. INTEGRAL DE LAS PERSONAS CON DISCAPACIDAD'),
+(32, '13', '04', 'SECRETRARIA EJECUTIVA ATENCION INTEGRAL A LA MUJER, LA FAMILIA E IGUALDAD DE GENERO'),
+(33, '14', '01', 'CREDITOS ADMINISTRATIVOS POR EL PROGRAMA RR.HH'),
+(34, '15', '01', 'CREDITOS ADMINISTRADOS POR LA DIRECCION EJECUTIVA ');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `pl_sectores`
+--
+
+CREATE TABLE `pl_sectores` (
+  `id` int(11) NOT NULL,
+  `sector` varchar(11) NOT NULL,
+  `denominancion` longtext NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `pl_sectores`
+--
+
+INSERT INTO `pl_sectores` (`id`, `sector`, `denominancion`) VALUES
+(1, '01', 'DIRECCIÓN SUPERIOR DEL ESTADO'),
+(2, '02', 'SEGURIDAD Y DEFENSA'),
+(3, '06', 'TURISMO Y RECREACIÓN'),
+(4, '08', 'EDUCACIÓN, CULTURA Y DEPORTES'),
+(5, '09', 'CULTURA Y COMUNICACIÓN SOCIAL'),
+(6, '11', 'VIVIENDA, DESARROLLO URBANO Y SERVICIOS CONEXOS'),
+(7, '12', 'SALUD'),
+(8, '13', 'DESARROLLO SOCIAL Y PARTICIPACIÓN'),
+(9, '14', 'SEGURIDAD SOCIAL'),
+(10, '15', 'GASTOS NO CLASIFICADOS SECTORIALMENTE');
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `pl_sectores_presupuestarios`
 --
 
@@ -5292,8 +5375,7 @@ CREATE TABLE `proyecto_inversion` (
 --
 
 INSERT INTO `proyecto_inversion` (`id`, `id_plan`, `proyecto`, `descripcion`, `monto_proyecto`, `status`, `comentario`) VALUES
-(8, 1, 'JOSE RICARDO ROMERO TOVAR', '456456', '120', 0, NULL),
-(9, 1, 'JOSE RICARDO ROMERO TOVAR', '1414', '3', 0, NULL);
+(11, 1, 'JOSE RICARDO ROMERO TOVAR', '234234', '120', 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -5314,10 +5396,10 @@ CREATE TABLE `proyecto_inversion_partidas` (
 --
 
 INSERT INTO `proyecto_inversion_partidas` (`id`, `id_proyecto`, `partida`, `monto`, `sector_id`) VALUES
-(24, 8, '15.01.00.401.01.01.0000', '100', '2'),
-(25, 8, '401.07.01.00.0000', '20', '1'),
-(26, 9, '15.01.00.401.01.01.0000', '2', '2'),
-(27, 9, '401.04.96.00.0002', '1', '2');
+(32, 11, '15.01.00.401.01.01.0000', '100', '1'),
+(33, 11, '401.05.01.00.0000', '5', '1'),
+(34, 11, '15.01.00.401.01.01.0000', '11', '2'),
+(35, 11, '15.01.00.401.01.01.0000', '4', '1');
 
 -- --------------------------------------------------------
 
@@ -10066,7 +10148,7 @@ CREATE TABLE `tasa` (
 --
 
 INSERT INTO `tasa` (`id`, `descripcion`, `simbolo`, `valor`) VALUES
-(1, 'Precio del Dólar Actual', '$', '39.0116');
+(1, 'Precio del Dólar Actual', '$', '39.1813');
 
 -- --------------------------------------------------------
 
@@ -10093,7 +10175,10 @@ INSERT INTO `tasa_historico` (`id`, `u_nombre`, `precio`, `descripcion`, `fecha`
 (4, 'sigob', '38.8857', 'actualizacion automática', '12-10-2024'),
 (5, 'sigob', '38.888', 'actualizacion automática', '14-10-2024'),
 (6, 'sigob', '38.9179', 'actualizacion automática', '15-10-2024'),
-(7, 'sigob', '39.0116', 'actualizacion automática', '17-10-2024');
+(7, 'sigob', '39.0116', 'actualizacion automática', '17-10-2024'),
+(8, 'sigob', '39.1699', 'actualizacion automática', '19-10-2024'),
+(9, 'sigob', '0', 'actualizacion automática', '21-10-2024'),
+(10, 'sigob', '39.1813', 'actualizacion automática', '22-10-2024');
 
 -- --------------------------------------------------------
 
@@ -14585,6 +14670,18 @@ ALTER TABLE `plan_inversion`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indices de la tabla `pl_programas`
+--
+ALTER TABLE `pl_programas`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `pl_sectores`
+--
+ALTER TABLE `pl_sectores`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indices de la tabla `pl_sectores_presupuestarios`
 --
 ALTER TABLE `pl_sectores_presupuestarios`
@@ -14767,7 +14864,7 @@ ALTER TABLE `distribucion_entes`
 -- AUTO_INCREMENT de la tabla `distribucion_presupuestaria`
 --
 ALTER TABLE `distribucion_presupuestaria`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `ejercicio_fiscal`
@@ -14803,7 +14900,7 @@ ALTER TABLE `entes`
 -- AUTO_INCREMENT de la tabla `error_log`
 --
 ALTER TABLE `error_log`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `frecuencias_por_grupo`
@@ -14839,7 +14936,7 @@ ALTER TABLE `informacion_pdf`
 -- AUTO_INCREMENT de la tabla `menu`
 --
 ALTER TABLE `menu`
-  MODIFY `id` int(1) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `id` int(1) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT de la tabla `modificaciones_empleados`
@@ -14902,6 +14999,18 @@ ALTER TABLE `plan_inversion`
   MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
+-- AUTO_INCREMENT de la tabla `pl_programas`
+--
+ALTER TABLE `pl_programas`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
+
+--
+-- AUTO_INCREMENT de la tabla `pl_sectores`
+--
+ALTER TABLE `pl_sectores`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+--
 -- AUTO_INCREMENT de la tabla `pl_sectores_presupuestarios`
 --
 ALTER TABLE `pl_sectores_presupuestarios`
@@ -14929,13 +15038,13 @@ ALTER TABLE `profesiones`
 -- AUTO_INCREMENT de la tabla `proyecto_inversion`
 --
 ALTER TABLE `proyecto_inversion`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT de la tabla `proyecto_inversion_partidas`
 --
 ALTER TABLE `proyecto_inversion_partidas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
 
 --
 -- AUTO_INCREMENT de la tabla `recibo_pago`
@@ -14989,7 +15098,7 @@ ALTER TABLE `tasa`
 -- AUTO_INCREMENT de la tabla `tasa_historico`
 --
 ALTER TABLE `tasa_historico`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT de la tabla `traspasos`
