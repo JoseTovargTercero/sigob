@@ -3610,3 +3610,7 @@ hr.hr-text::before {
 .br-g {
   border-right: 1px solid #f3f3f3;
 }
+
+.text-bold {
+  font-weight: bold;
+}
