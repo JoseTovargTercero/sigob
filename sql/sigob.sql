@@ -5146,14 +5146,14 @@ INSERT INTO `plan_inversion` (`id`, `id_ejercicio`, `monto_total`) VALUES
 CREATE TABLE `pl_partidas` (
   `id` int(11) NOT NULL,
   `partida` varchar(20) NOT NULL,
-  `denominancion` longtext NOT NULL
+  `denominacion` longtext NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `pl_partidas`
 --
 
-INSERT INTO `pl_partidas` (`id`, `partida`, `denominancion`) VALUES
+INSERT INTO `pl_partidas` (`id`, `partida`, `denominacion`) VALUES
 (1, '401', 'GASTOS DE PERSONAL'),
 (2, '402', 'MATERIALES SUMINISTROS Y MERCANCIAS'),
 (3, '403', 'SERVICIOS NO PERSONALES \r\n'),
