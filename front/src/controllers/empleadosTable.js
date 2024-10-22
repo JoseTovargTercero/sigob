@@ -50,20 +50,25 @@ function employeeFormButton() {
   return toolbar
 }
 
-let employeeTable = new DataTable('#employee-table', {
-  responsive: true,
-  scrollY: 300,
-  language: tableLanguage,
-  layout: {
-    topEnd: employeeFormButton,
-    topStart: { search: { placeholder: 'Buscar...' } },
-    bottomStart: 'info',
-    bottomEnd: 'paging',
-  },
-  columns: tableColumns,
-})
-
+let employeeTable
 export const validateEmployeeTable = async () => {
+  employeeTable = new DataTable('#employee-table', {
+    responsive: true,
+    scrollY: 300,
+    language: tableLanguage,
+    layout: {
+      topEnd: employeeFormButton,
+      topStart: { search: { placeholder: 'Buscar...' } },
+      bottomStart: 'info',
+      bottomEnd: 'paging',
+    },
+    columns: tableColumns,
+  })
+
+  loadEmployeeTable()
+}
+
+export async function loadEmployeeTable() {
   if (!d.getElementById('employee-form')) return
 
   employeeTable.clear().draw()
@@ -93,16 +98,6 @@ export const validateEmployeeTable = async () => {
 
   // AÑADIR FILAS A TABLAS
   employeeTable.rows.add(data).draw()
-
-  d.addEventListener('click', (e) => {
-    // if (e.target.dataset.tableid) {
-    //   mostrarTabla(e.target.dataset.tableid)
-    //   d.querySelectorAll('.nav-link').forEach((el) => {
-    //     el.classList.remove('active')
-    //   })
-    //   e.target.classList.add('active')
-    // }
-  })
 }
 
 export async function confirmDeleteEmployee({ id, row, table }) {

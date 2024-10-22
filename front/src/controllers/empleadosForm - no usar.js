@@ -25,6 +25,7 @@ import {
 import { ALERT_TYPES, NOTIFICATIONS_TYPES } from '../helpers/types.js'
 import {
   confirmDeleteEmployee,
+  loadEmployeeTable,
   validateEmployeeTable,
 } from './empleadosTable.js'
 
@@ -621,7 +622,7 @@ function validateEmployeeForm({
             sendEmployeeInformationRequest({ data: fieldList }).then((res) => {
               closeModal({ modalId: 'modal-employee-form' })
               loadEmployeeData()
-              validateEmployeeTable()
+              loadEmployeeTable()
             })
           },
           message: '¿Desea actualizar la información de este empleado?',
@@ -633,7 +634,7 @@ function validateEmployeeForm({
         successFunction: function () {
           sendEmployeeData({ data: fieldList }).then((res) => {
             loadEmployeeData()
-            validateEmployeeTable()
+            loadEmployeeTable()
             closeModal({ modalId: 'modal-employee-form' })
           })
         },
@@ -758,7 +759,7 @@ function previewImage(event) {
 
     // Guardar estado de la url
     fieldList.foto = e.target.result
-    // fieldList.tipo_foto = file.type.replace('image/', '')
+    fieldList.tipo_foto = file.type.replace('image/', '')
 
     preview.src = dataURL
     preview.style.display = 'block' // Mostrar la imagen una vez cargada

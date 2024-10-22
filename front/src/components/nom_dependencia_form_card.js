@@ -35,7 +35,7 @@ export const nom_dependencia_form_card = async ({
   let cardElement = d.getElementById('modal-dependency')
   if (cardElement) cardElement.remove()
 
-  let card = `   <div id='modal-dependency' class='modal-window hide'>
+  let card = `   <div id='modal-dependency' class='modal-window'>
       <div class='modal-box short slide-up-animation'>
         <header class='modal-box-header'>
           <h4>AÑADIR NUEVA UNIDAD</h4>

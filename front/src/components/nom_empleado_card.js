@@ -136,8 +136,9 @@ export async function employeeCard({ id, elementToInsert }) {
                 <p>Fecha de Ingreso: ${fecha_ingreso}</p>
                 <p>Cédula: ${cedula}</p>
                 <p>
-                  Nacionalidad: $
-                  {nacionalidad === 'V' ? 'Venezolano' : 'Extranjero'}
+                  Nacionalidad: ${
+                    nacionalidad === 'V' ? 'Venezolano' : 'Extranjero'
+                  }
                 </p>
               </div>
             </div>
@@ -154,8 +155,10 @@ export async function employeeCard({ id, elementToInsert }) {
             <div class='col-md-6'>
               <h4>Información Laboral</h4>
               <p>
-                Experiencia laboral: $
-                {calcularAniosLaborales(fecha_ingreso, otros_años)}
+                Experiencia laboral: ${calcularAniosLaborales(
+                  fecha_ingreso,
+                  otros_años
+                )}
               </p>
               <p>Dependencia laboral: ${dependencia}</p>
               <p>

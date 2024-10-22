@@ -2,16 +2,15 @@ import { validateCategoriaForm } from './src/controllers/categoriasForm.js'
 import { loadCategoriasTable } from './src/controllers/categoriasTable.js'
 import { validateDependenciaForm } from './src/controllers/dependenciasForm.js'
 import { loadDependenciaTable } from './src/controllers/dependenciasTable.js'
-import { validateEmployeeForm } from './src/controllers/empleadosForm.js'
-import { validateEmployeeTable } from './src/controllers/empleadosTable.js'
+// import { validateEmployeeForm } from './src/controllers/empleadosForm - no usar.js'
+// import { validateEmployeeTable } from './src/controllers/empleadosTable.js'
 import { validateAsignacionEntesView } from './src/controllers/form_asignacionEntesView.js'
 import { validateDistribucionView } from './src/controllers/form_distribucionView.js'
 import { validatePartidasView } from './src/controllers/form_partidasView.js'
+import { validateEmployeeView } from './src/controllers/nom_employeeView.js'
 import { loadRequestTableHistorico } from './src/controllers/peticionesHistoricoTable.js'
 import { validateRequestForm } from './src/controllers/peticionesNominaForm.js'
-// import { validatePayNomForm } from './src/controllers/pagarNominaForm.js'
-// import { validateEmployeePayForm } from './src/controllers/peticionesNominaForm.js'
-// import { validateRequestForm } from './src/controllers/peticionesNominaForm2.js'
+
 import { validateRequestNomForm } from './src/controllers/peticionesNominaReview.js'
 import { validateGastosTable } from './src/controllers/pre_gastosFuncionamientoTable.js'
 import { validateGastosView } from './src/controllers/pre_gastosFuncionamientoView.js'
@@ -88,15 +87,18 @@ d.addEventListener('DOMContentLoaded', (e) => {
   }
 
   if (employeeTable) {
-    validateEmployeeTable()
-    validateEmployeeForm({
-      employeeInputClass: 'employee-input',
-      employeeSelectClass: 'employee-select',
-      btnId: 'btn-employee-save',
-      selectSearchInput: 'select-search-input',
-      selectSearch: ['cargo'],
-      btnAddId: 'add-dependency',
-    })
+    // validateEmployeeTable()
+
+    // validateEmployeeForm({
+    //   employeeInputClass: 'employee-input',
+    //   employeeSelectClass: 'employee-select',
+    //   btnId: 'btn-employee-save',
+    //   selectSearchInput: 'select-search-input',
+    //   selectSearch: ['cargo'],
+    //   btnAddId: 'add-dependency',
+    // })
+
+    validateEmployeeView()
     return
   }
 

@@ -8,6 +8,10 @@ require_once '../../back/sistema_global/session.php';
   <link rel="stylesheet" href="../src/styles/style.css">
 
   <title>PERSONAL</title>
+
+  <link rel="stylesheet" href="../../src/assets/css/chosen.min.css">
+
+  <script src="../../src/assets/js/chosen.jquery.min.js"></script>
 </head>
 
 <body>

@@ -27,38 +27,61 @@ try {
     if (isset($data['foto'])) {
         $cedula = $data['cedula'];
 
-
         $fotoBase64 = $data['foto'];
-        $fotoDecodificada = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $fotoBase64));
+        $fotoTipo = preg_replace('#^data:image/\w+;base64,#i', '', $fotoBase64);
+        $fotoDecodificada = base64_decode($fotoTipo);
 
         if (!$fotoDecodificada) {
             $error_message = "Error al decodificar la imagen.";
             throw new Exception($error_message);
-
         }
 
         // Procesar la imagen como sea necesario
         // Por ejemplo, guardarla en una carpeta
-        $cedula = $data['cedula'];
         $target_dir = __DIR__ . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "img" . DIRECTORY_SEPARATOR . "empleados" . DIRECTORY_SEPARATOR;
 
         if (!is_dir($target_dir)) {
             mkdir($target_dir, 0, true);
         }
 
-        $nombreArchivo = "$cedula.$tipoFoto";
+        $nombreArchivo = "$cedula.jpg";
 
-        if (!file_put_contents($target_dir . $nombreArchivo, $fotoDecodificada)) {
-            $error_message = "Error al guardar la imagen en el servidor.";
-            registrarError($error_message);
-            throw new Exception($error_message);
+        // Si la foto no es JPEG, conviértela a JPEG
+        if ($tipoFoto !== 'jpg' && $tipoFoto !== 'jpeg') {
+            // Guardar la imagen decodificada como un archivo temporal
+            $tempFileName = tempnam(sys_get_temp_dir(), 'prefix');
+            file_put_contents($tempFileName, $fotoDecodificada);
+
+            // Cargar la imagen temporal como una imagen en formato PNG
+            $pngImage = imagecreatefromstring($fotoDecodificada);
+
+            // Crear una nueva imagen en blanco en formato JPEG
+            $jpegImage = imagecreatetruecolor(imagesx($pngImage), imagesy($pngImage));
+
+            imagecopy($jpegImage, $pngImage, 0, 0, 0, 0, imagesx($pngImage), imagesy($pngImage));
+
+            // Guardar la nueva imagen en formato JPEG
+            imagejpeg($jpegImage, $target_dir . $nombreArchivo, 50); // El tercer parámetro (calidad) es opcional y se establece en 100 por defecto
+
+            // Liberar la memoria
+            imagedestroy($pngImage);
+            imagedestroy($jpegImage);
+            unlink($tempFileName); // Eliminar el archivo temporal
+        } else {
+            // Guardar la imagen tal como está
+            if (!file_put_contents($target_dir . $nombreArchivo, $fotoDecodificada)) {
+                $error_message = "Error al guardar la imagen en el servidor.";
+                registrarError($error_message);
+                throw new Exception($error_message);
+            }
         }
-
     } else {
-        $error_message = "No se recibió ninguna imagen o hubo un error en la carga.";
+        $error_message = "No se recibió ninguna imagen.";
         registrarError($error_message);
         throw new Exception($error_message);
     }
+
+
 
 
 
@@ -110,7 +133,7 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $correcion = NULL;
 
     // Vincular parámetros y ejecutar la consulta
-    $stmt->bind_param("sssssssssssssssssssss", $data["nacionalidad"], $data["cedula"], $data["nombres"], $data["otros_años"], $data["status"], $data["observacion"], $data["cod_cargo"], $data["banco"], $data["cuenta_bancaria"], $data["hijos"], $data["instruccion_academica"], $data["discapacidades"], $data["tipo_nomina"], $data["id_dependencia"], $verificado, $correcion, $data["beca"], $data["fecha_ingreso"], $data["id_categoria"], $data['id_partida']);
+    $stmt->bind_param("ssssssssssssssssssss", $data["nacionalidad"], $data["cedula"], $data["nombres"], $data["otros_años"], $data["status"], $data["observacion"], $data["cod_cargo"], $data["banco"], $data["cuenta_bancaria"], $data["hijos"], $data["instruccion_academica"], $data["discapacidades"], $data["tipo_nomina"], $data["id_dependencia"], $verificado, $correcion, $data["beca"], $data["fecha_ingreso"], $data["id_categoria"], $data['id_partida']);
 
     if ($stmt->execute()) {
         // Obtener el ID del empleado insertado

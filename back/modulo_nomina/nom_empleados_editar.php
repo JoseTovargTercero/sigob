@@ -39,59 +39,88 @@ foreach ($data as $item) {
         }
     }
 
-    // Verificar si el campo es 'foto'
     if ($campo === 'foto') {
-        // Ruta de la imagen
-        $target_dir = __DIR__ . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "img" . DIRECTORY_SEPARATOR . "empleados" . DIRECTORY_SEPARATOR;
-        $nombreArchivo = "$cedula.jpg"; // Usar la cédula para el nombre del archivo
-        $target_file = $target_dir . $nombreArchivo;
+        // Preparar la consulta SQL
+        $sql = "SELECT cedula FROM empleados WHERE id = ?";
 
-        // Crear la carpeta si no existe
-        if (!is_dir($target_dir)) {
-            if (!mkdir($target_dir, 0777, true) && !is_dir($target_dir)) {
-                $error_message = "Error al crear la carpeta: $target_dir";
-                registrarError($error_message);
-                array_push($errores, $error_message);
-                continue; // Salir del ciclo en caso de error
-            }
+        // Preparar la declaración y enlazar el parámetro
+        $stmt = $conexion->prepare($sql);
+        $stmt->bind_param("s", $empleado_id);
+
+        // Ejecutar la consulta
+        $stmt->execute();
+
+        // Obtener el resultado de la consulta
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+
+        if ($row) {
+            $cedula = $row['cedula'];
         }
+
+
+        $fotoBase64 = $valor_nuevo;
+        $fotoTipo = preg_replace('#^data:image/\w+;base64,#i', '', $fotoBase64);
+        $fotoDecodificada = base64_decode($fotoTipo);
+
+        if (!$fotoDecodificada) {
+            $error_message = "Error al decodificar la imagen.";
+            array_push($errores, $error_message);
+        }
+
+        // Procesar la imagen como sea necesario
+        // Por ejemplo, guardarla en una carpeta
+        $target_dir = __DIR__ . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "img" . DIRECTORY_SEPARATOR . "empleados" . DIRECTORY_SEPARATOR;
+
+        if (!is_dir($target_dir)) {
+            mkdir($target_dir, 0, true);
+        }
+
+
+
+
+        $nombreArchivo = "$cedula.jpg";
+
+        $target_file = $target_dir . $nombreArchivo;
 
         // Eliminar la imagen anterior si existe
         if (file_exists($target_file)) {
             unlink($target_file);
         }
 
-        // Decodificar la imagen Base64
-        $fotoBase64 = $valor_nuevo;
-        $fotoDecodificada = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $fotoBase64));
+        // Si la foto no es JPEG, conviértela a JPEG
 
-        if (!$fotoDecodificada) {
-            $error_message = "Error al decodificar la imagen para el empleado ID: $empleado_id.";
+        // Guardar la imagen decodificada como un archivo temporal
+        $tempFileName = tempnam(sys_get_temp_dir(), 'prefix');
+        file_put_contents($tempFileName, $fotoDecodificada);
+
+        // Cargar la imagen temporal como una imagen en formato PNG
+        $pngImage = imagecreatefromstring($fotoDecodificada);
+
+        // Crear una nueva imagen en blanco en formato JPEG
+        $jpegImage = imagecreatetruecolor(imagesx($pngImage), imagesy($pngImage));
+
+        imagecopy($jpegImage, $pngImage, 0, 0, 0, 0, imagesx($pngImage), imagesy($pngImage));
+
+        // Guardar la nueva imagen en formato JPEG
+        if (!imagejpeg($jpegImage, $target_dir . $nombreArchivo, 50)) {
+            $error_message = "Error al guardar la imagen en el servidor.";
             registrarError($error_message);
             array_push($errores, $error_message);
-            continue; // Salir del ciclo en caso de error
-        }
+        } // El tercer parámetro (calidad) es opcional y se establece en 100 por defecto
 
-        // Crear la imagen en memoria
-        $imagen = imagecreatefromstring($fotoDecodificada);
-        if (!$imagen) {
-            $error_message = "Error al crear la imagen desde los datos Base64.";
-            registrarError($error_message);
-            array_push($errores, $error_message);
-            continue; // Salir del ciclo en caso de error
-        }
+        // Liberar la memoria
+        imagedestroy($pngImage);
+        imagedestroy($jpegImage);
+        unlink($tempFileName); // Eliminar el archivo temporal
 
-        // Guardar la imagen como JPG con calidad de 75
-        if (!imagejpeg($imagen, $target_file, 75)) {
-            $error_message = "Error al guardar la imagen en formato JPG para el empleado ID: $empleado_id.";
-            registrarError($error_message);
-            array_push($errores, $error_message);
-            imagedestroy($imagen); // Liberar memoria
-            continue; // Salir del ciclo en caso de error
-        }
+        // // Guardar la imagen tal como está
+        // if (!file_put_contents($target_dir . $nombreArchivo, $fotoDecodificada)) {
+        //     $error_message = "Error al guardar la imagen en el servidor.";
+        //     registrarError($error_message);
+        //     array_push($errores, $error_message);
+        // }
 
-        // Liberar la memoria de la imagen
-        imagedestroy($imagen);
     } else {
         // Actualizar el campo correspondiente en la base de datos si no es 'foto'
         $movimiento .= "$campo: $valor_nuevo. ";
@@ -106,6 +135,65 @@ foreach ($data as $item) {
 
         $stmt2->close();
     }
+
+
+
+
+
+    // // Verificar si el campo es 'foto'
+    // if ($campo === 'foto') {
+    //     // Ruta de la imagen
+    //     $target_dir = __DIR__ . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "img" . DIRECTORY_SEPARATOR . "empleados" . DIRECTORY_SEPARATOR;
+    //     $nombreArchivo = "$cedula.jpg"; // Usar la cédula para el nombre del archivo
+    //     $target_file = $target_dir . $nombreArchivo;
+
+    //     // Crear la carpeta si no existe
+    //     if (!is_dir($target_dir)) {
+    //         if (!mkdir($target_dir, 0777, true) && !is_dir($target_dir)) {
+    //             $error_message = "Error al crear la carpeta: $target_dir";
+    //             registrarError($error_message);
+    //             array_push($errores, $error_message);
+    //             continue; // Salir del ciclo en caso de error
+    //         }
+    //     }
+
+    //     // Eliminar la imagen anterior si existe
+    //     if (file_exists($target_file)) {
+    //         unlink($target_file);
+    //     }
+
+    //     // Decodificar la imagen Base64
+    //     $fotoBase64 = $valor_nuevo;
+    //     $fotoDecodificada = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $fotoBase64));
+
+    //     if (!$fotoDecodificada) {
+    //         $error_message = "Error al decodificar la imagen para el empleado ID: $empleado_id.";
+    //         registrarError($error_message);
+    //         array_push($errores, $error_message);
+    //         continue; // Salir del ciclo en caso de error
+    //     }
+
+    //     // Crear la imagen en memoria
+    //     $imagen = imagecreatefromstring($fotoDecodificada);
+    //     if (!$imagen) {
+    //         $error_message = "Error al crear la imagen desde los datos Base64.";
+    //         registrarError($error_message);
+    //         array_push($errores, $error_message);
+    //         continue; // Salir del ciclo en caso de error
+    //     }
+
+    //     // Guardar la imagen como JPG con calidad de 75
+    //     if (!imagejpeg($imagen, $target_file, 75)) {
+    //         $error_message = "Error al guardar la imagen en formato JPG para el empleado ID: $empleado_id.";
+    //         registrarError($error_message);
+    //         array_push($errores, $error_message);
+    //         imagedestroy($imagen); // Liberar memoria
+    //         continue; // Salir del ciclo en caso de error
+    //     }
+
+    //     // Liberar la memoria de la imagen
+    //     imagedestroy($imagen);
+    // }
 }
 
 
