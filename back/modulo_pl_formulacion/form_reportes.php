@@ -36,7 +36,10 @@ $result = $conexion->query($query);
 if ($result === false) {
     die("Error en la consulta: " . $conexion->error);
 }
-$id_ejercicio = $_GET['id_ejercicio'];
+
+$data = json_decode(file_get_contents('php://input'), true)['data'];
+
+$id_ejercicio = $data['ejercicio_fiscal'];
 // Generar el array de archivos PDF con los sectores y programas
 $pdf_files = [];
 while ($row = $result->fetch_assoc()) {
@@ -104,4 +107,3 @@ foreach ($pdf_files as $pdf_filename) {
 
 // Salir del script
 exit;
-?>
