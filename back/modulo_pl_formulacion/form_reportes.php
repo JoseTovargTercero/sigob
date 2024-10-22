@@ -62,15 +62,49 @@ $url_pdf = "{$base_url}form_pdf_$tipo.php?id_ejercicio=" . $id_ejercicio;
 
 if ($tipo == '2015') { // Se generean
 
-    // Consulta para obtener todos los registros de la tabla pl_sectores_presupuestarios
-    $query = "SELECT id, sector, programa FROM pl_sectores_presupuestarios";
-    $result = $conexion->query($query);
+    // Datos de sector y programa
+    $sector = $data['sector'];
+    $programa = $data['programa'];
+
+    // Consulta base
+    $query = "SELECT id, sector, programa FROM pl_sectores_presupuestarios WHERE 1=1";
+    $params = [];
+    $types = "";
+
+    // Condiciones dinámicas para sector y programa
+    if ($sector != '') {
+        $query .= " AND sector = ?";
+        $params[] = $sector;
+        $types .= "s";  // 's' para string
+    }
+
+    if ($programa != '') {
+        $query .= " AND programa = ?";
+        $params[] = $programa;
+        $types .= "s";
+    }
+
+    // Preparar la consulta
+    $stmt = $conexion->prepare($query);
+
+    if ($stmt === false) {
+        die("Error en la preparación de la consulta: " . $conexion->error);
+    }
+
+    // Vincular parámetros si existen
+    if (!empty($params)) {
+        $stmt->bind_param($types, ...$params);
+    }
+
+    $stmt->execute();
+    $result = $stmt->get_result();
 
     if ($result === false) {
-        die("Error en la consulta: " . $conexion->error);
+        die("Error en la consulta: " . $stmt->error);
     }
 
     // Generar el array de archivos PDF con los sectores y programas
+    $pdf_files = [];
     while ($row = $result->fetch_assoc()) {
         $id = $row['id'];
         $sector = str_pad($row['sector'], 2, '0', STR_PAD_LEFT); // Asegurar formato de 2 dígitos
@@ -78,6 +112,9 @@ if ($tipo == '2015') { // Se generean
 
         $pdf_files["{$url_pdf}&id=$id"] = "{$sector}-{$programa}_CREDITOS.pdf";
     }
+
+    $result->free();
+    $stmt->close();
 } else {
     $pdf_files["{$url_pdf}"] = $reportes[$tipo]['nombre'] . ".pdf";
 }
