@@ -60,6 +60,10 @@ $reportes = [
         'nombre' => 'FORMULARIO 2010 TRASFERENCIAS Y DONACIONES',
         'formato' => 'A4-L'
     ],
+    '2015' => [
+        'nombre' => 'FORM. 2015 CRED. PRE. DEL SEC PRO. A NIVEL DE PAR.',
+        'formato' => 'A4-L'
+    ]
 ];
 
 $pdf_files = [];
