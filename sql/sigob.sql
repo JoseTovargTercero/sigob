@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 22-10-2024 a las 14:49:41
+-- Tiempo de generación: 22-10-2024 a las 21:53:51
 -- Versión del servidor: 10.4.16-MariaDB
 -- Versión de PHP: 7.4.12
 
@@ -1048,7 +1048,8 @@ CREATE TABLE `distribucion_presupuestaria` (
 
 INSERT INTO `distribucion_presupuestaria` (`id`, `id_partida`, `monto_inicial`, `id_ejercicio`, `monto_actual`, `id_sector`, `status`) VALUES
 (1, 1, '5000', 1, '5000', 1, 1),
-(3, 1, '2000', 1, '2000', 1, 1);
+(3, 2, '2000', 1, '2000', 1, 1),
+(4, 15, '1000', 1, '1000', 13, 1);
 
 -- --------------------------------------------------------
 
@@ -4953,7 +4954,7 @@ CREATE TABLE `partidas_presupuestarias` (
 --
 
 INSERT INTO `partidas_presupuestarias` (`id`, `partida`, `nombre`, `descripcion`, `status`) VALUES
-(1, '15.01.00.401.01.01.0000', 'P1', 'Sueldos básicos personal fijo a tiempo completo', 0),
+(1, '401.01.01.0000', 'P1', 'Sueldos básicos personal fijo a tiempo completo', 0),
 (2, '401.05.01.00.0000', '', 'Aguinaldos al personal empleado', 0),
 (3, '401.05.03.00.0000', '', 'Bono vacacional al personal empleado', 0),
 (4, '401.07.01.00.0000', '', 'Capacitacion y adiestramiento a empleados', 0),
@@ -5135,6 +5136,32 @@ CREATE TABLE `plan_inversion` (
 INSERT INTO `plan_inversion` (`id`, `id_ejercicio`, `monto_total`) VALUES
 (1, 1, '123'),
 (2, 2, '12');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `pl_partidas`
+--
+
+CREATE TABLE `pl_partidas` (
+  `id` int(11) NOT NULL,
+  `partida` varchar(20) NOT NULL,
+  `denominancion` longtext NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `pl_partidas`
+--
+
+INSERT INTO `pl_partidas` (`id`, `partida`, `denominancion`) VALUES
+(1, '401', 'GASTOS DE PERSONAL'),
+(2, '402', 'MATERIALES SUMINISTROS Y MERCANCIAS'),
+(3, '403', 'SERVICIOS NO PERSONALES \r\n'),
+(4, '404', 'ACTIVOS REALES '),
+(5, '407', 'TRANSFERENCIAS Y DONACIONES'),
+(6, '408', 'OTROS GASTOS'),
+(7, '411', 'DISMINUCION DE PASIVOS'),
+(8, '498', 'RECTIFICACIONES AL PRESUPUESTO');
 
 -- --------------------------------------------------------
 
@@ -14670,6 +14697,12 @@ ALTER TABLE `plan_inversion`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indices de la tabla `pl_partidas`
+--
+ALTER TABLE `pl_partidas`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indices de la tabla `pl_programas`
 --
 ALTER TABLE `pl_programas`
@@ -14864,7 +14897,7 @@ ALTER TABLE `distribucion_entes`
 -- AUTO_INCREMENT de la tabla `distribucion_presupuestaria`
 --
 ALTER TABLE `distribucion_presupuestaria`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `ejercicio_fiscal`
@@ -14997,6 +15030,12 @@ ALTER TABLE `peticiones`
 --
 ALTER TABLE `plan_inversion`
   MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT de la tabla `pl_partidas`
+--
+ALTER TABLE `pl_partidas`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de la tabla `pl_programas`
