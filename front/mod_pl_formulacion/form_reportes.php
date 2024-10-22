@@ -176,11 +176,11 @@ $stmt->close();
                 </div>
                 <div class="list-group mt-3" style="max-height: 100vh !important;">
                   <a class="list-group-item list-group-item-action pointer active" data-tab-id="2015" data-bs-toggle="tab"><b>2015</b> SEC/PART</a>
-                  <a class="list-group-item list-group-item-action pointer" data-tab-id="2002" data-bs-toggle="tab"><b>2002</b> RESUMEN DE LOS CRED. PRESP.SECTORES</a>
+                  <a class="list-group-item list-group-item-action pointer" data-tab-id="2002" data-bs-toggle="tab"><b>2002</b> RESUMEN DE LOS CRED. PRESP. SECTORES</a>
                   <a class="list-group-item list-group-item-action pointer" data-tab-id="2004" data-bs-toggle="tab"><b>2004</b> RESUMEN A NIVEL DE SECTORES. Y PROGRAMA</a>
-                  <a class="list-group-item list-group-item-action pointer" data-tab-id="2005" data-bs-toggle="tab"><b>2005</b> RESM CRED ANIVEL DE PARTIDASY PROGRAMAS</a>
+                  <a class="list-group-item list-group-item-action pointer" data-tab-id="2005" data-bs-toggle="tab"><b>2005</b> RESM CRED A NIVEL DE PARTIDAS Y PROGRAMAS</a>
                   <a class="list-group-item list-group-item-action pointer" data-tab-id="2006" data-bs-toggle="tab"><b>2006</b> RESUM. CRED. PRES. A NIVEL PARTIDAS DE SECTORES</a>
-                  <a class="list-group-item list-group-item-action pointer" data-tab-id="2009" data-bs-toggle="tab"><b>2009</b> GASTOS DE INVERSION ESTIMADO</a>
+                  <a class="list-group-item list-group-item-action pointer" data-tab-id="2009" data-bs-toggle="tab"><b>2009</b> GASTOS DE INVERSIÓN ESTIMADO</a>
                   <a class="list-group-item list-group-item-action pointer" data-tab-id="2010" data-bs-toggle="tab"><b>2010</b> TRASFERENCIAS Y DONACIONES</a>
                 </div>
               </div>
@@ -218,7 +218,9 @@ $stmt->close();
                 </div>
                 <div class="tab-content">
                   <p id="titulo" class="text-center mt-3 text-bold" style="min-height: 45px;">CRÉDITOS PRESUPUESTARIOS DEL SECTOR POR PROGRAMA A NIVEL DE PARTIDAS Y FUENTES DE FINANCIAMIENTO</p>
-                  <p id="texto"></p>
+                  <div id="texto">
+                    <div class="text-center text-info">En caso de querer exportar todos los sectores deje los campos vacíos.</div>
+                  </div>
                   <div class="tab-pane fade active show" id="2015" role="tabpanel" aria-labelledby="list-home-list">
                     <div class="mb-3 sect-input" id="sect-sector">
                       <label for="sector" class="form-label">Sector</label>
@@ -319,51 +321,51 @@ $stmt->close();
           '2015': {
             'inputs': ['sect-sector', 'sect-programa'],
             'titulo': 'CRÉDITOS PRESUPUESTARIOS DEL SECTOR POR PROGRAMA A NIVEL DE PARTIDAS Y FUENTES DE FINANCIAMIENTO',
-            'texto': '',
+            'texto': '<div class="text-center text-info">En caso de querer exportar todos los sectores deje los campos vacíos.</div>',
             'autorun': false,
-            'accion': ''
+            'nombre_archivo': 'FORM. 2015 CRED. PRE. DEL SEC PRO. A NIVEL DE PAR'
           },
           '2002': {
             'inputs': [],
             'titulo': 'RESUMEN DE LOS CRÉDITOS PRESUPUESTARIOS A NIVEL DE SECTORES',
             'texto': texto_nr,
             'autorun': true,
-            'link': 'hola'
+            'nombre_archivo': 'FORMULARIO 2002 RESUMEN DE LOS CRED. PRESP. SECTORES'
           },
           '2004': {
             'inputs': [],
             'titulo': 'RESUMEN DE LOS CRÉDITOS PRESUPUESTARIOS A NIVEL DE SECTORES Y PROGRAMAS Y FUENTES DE FINANCIAMIENTO',
             'texto': texto_nr,
             'autorun': true,
-            'accion': ''
+            'nombre_archivo': 'FORMULARIO 2004 RESUMEN A NIVEL DE SECTORES Y PROGRAMA'
           },
           '2005': {
             'inputs': [],
             'titulo': 'RESUMEN DE LOS CRÉDITOS PRESUPUESTARIOS A NIVEL DE PARTIDAS Y FUENTES DE FINANCIAMIENTO',
-            'texto': texto_nr,
+            'texto': texto_nr, // Que pasa si una partida tiene asignación por diferentes sectores? se suma?
             'autorun': true,
-            'accion': '' // Que pasa si una partida tiene asignación por diferentes sectores? se suma?
+            'nombre_archivo': 'FORMULARIO 2005 RESM CRED A NIVEL DE PARTIDAS Y PROGRAMAS 11-02-20-Copiar'
           },
           '2006': {
             'inputs': [],
             'titulo': 'RESUMEN DE LOS CRÉDITOS PRESUPUESTARIOS POR PARTIDAS A NIVEL DE SECTORES',
             'texto': texto_nr,
             'autorun': true,
-            'accion': ''
+            'nombre_archivo': 'FORMULARIO 2006 RESUM. CRED. PRES. A NIVEL  PARTIDAS DE SECTORES 11-02-20-Copiar'
           },
           '2009': {
             'inputs': [],
             'titulo': 'GASTOS DE INVERSIÓN ESTIMADOS POR EL ESTADO',
             'texto': texto_nr,
             'autorun': true,
-            'accion': ''
+            'nombre_archivo': 'FORMULARIO 2009 GASTOS DE INVERSIÓN ESTIMADO 11-02-20'
           },
           '2010': {
             'inputs': [],
             'titulo': ' TRANSFERENCIAS Y DONACIONES OTORGADAS A ORGANISMOS DEL SECTOR PUBLICO Y PRIVADO',
             'texto': texto_nr,
             'autorun': true,
-            'accion': ''
+            'nombre_archivo': 'FORMULARIO 2010 TRASFERENCIAS Y DONACIONES'
           }
         }
 
@@ -408,6 +410,7 @@ $stmt->close();
                 'sector': '',
                 'programa': '',
                 'ejercicio_fiscal': ejercicio_fiscal,
+                'tipo': tabId,
               }
               if (tabId == '2015') {
                 /*if ($('#sector').val() == '' || $('#programa').val() == '') {
@@ -429,7 +432,7 @@ $stmt->close();
                 // }
               }
 
-              sendData(data)
+              sendData(data, tabId)
               return
             }
           });
@@ -437,7 +440,7 @@ $stmt->close();
 
         document.getElementById('btn-descargar').addEventListener('click', generarReporte)
 
-        function sendData(data, url) {
+        function sendData(data, archivo) {
 
           $('#cargando').show();
 
@@ -460,20 +463,20 @@ $stmt->close();
             })
             .then(blob => {
               $('#cargando').hide();
+              let nombre = options[archivo]['nombre_archivo']
 
-              // Verificar si la respuesta es un archivo ZIP
               let contentType = blob.type;
               if (contentType === 'application/zip') {
                 let url = window.URL.createObjectURL(blob);
                 let a = document.createElement('a');
                 a.href = url;
-                a.download = 'reporte.zip'; // Usa el nombre proporcionado en el backend
+                a.download = nombre + '.zip';
                 document.body.appendChild(a);
                 a.click();
                 a.remove();
-                window.URL.revokeObjectURL(url); // Limpiar el URL creado
+                window.URL.revokeObjectURL(url);
               } else {
-                throw new Error('El contenido recibido no es un archivo PDF');
+                throw new Error('El contenido recibido no es un archivo ZIP');
               }
             })
             .catch(error => {
