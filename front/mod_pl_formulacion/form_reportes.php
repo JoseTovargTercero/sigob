@@ -300,7 +300,6 @@ $stmt->close();
 
           programas.forEach(element => {
             if (element[0] == sector_s) {
-              console.log(sector_s)
               document.getElementById('programa').innerHTML += `<option value="${element[1]}">${element[1]} - ${element[2]}</option>`
             }
           });

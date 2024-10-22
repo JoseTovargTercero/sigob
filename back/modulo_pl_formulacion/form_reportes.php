@@ -37,22 +37,28 @@ $fecha = date('d-m-y');
 
 $reportes = [
     '2002' => [
-        'nombre' => 'FORMULARIO 2002 RESUMEN DE LOS CRED. PRESP. SECTORES'
+        'nombre' => 'FORMULARIO 2002 RESUMEN DE LOS CRED. PRESP. SECTORES',
+        'formato' => 'A4-L'
     ],
     '2004' => [
-        'nombre' => 'FORMULARIO 2004 RESUMEN A NIVEL DE SECTORES. Y PROGRAMA'
+        'nombre' => 'FORMULARIO 2004 RESUMEN A NIVEL DE SECTORES. Y PROGRAMA',
+        'formato' => 'A4-L'
     ],
     '2005' => [
-        'nombre' => 'FORMULARIO 2005 RESM CRED A NIVEL DE PARTIDAS Y PROGRAMAS ' . $fecha
+        'nombre' => 'FORMULARIO 2005 RESM CRED A NIVEL DE PARTIDAS Y PROGRAMAS ' . $fecha,
+        'formato' => 'A4-L'
     ],
     '2006' => [
-        'nombre' => 'FORMULARIO 2006 RESUM. CRED. PRES. A NIVEL  PARTIDAS DE SECTORES ' . $fecha
+        'nombre' => 'FORMULARIO 2006 RESUM. CRED. PRES. A NIVEL  PARTIDAS DE SECTORES ' . $fecha,
+        'formato' => [430, 216]
     ],
     '2009' => [
-        'nombre' => 'FORMULARIO 2009 GASTOS DE INVERSION ESTIMADO ' . $fecha
+        'nombre' => 'FORMULARIO 2009 GASTOS DE INVERSION ESTIMADO ' . $fecha,
+        'formato' => 'A4-L'
     ],
     '2010' => [
-        'nombre' => 'FORMULARIO 2010 TRASFERENCIAS Y DONACIONES'
+        'nombre' => 'FORMULARIO 2010 TRASFERENCIAS Y DONACIONES',
+        'formato' => 'A4-L'
     ],
 ];
 
@@ -137,8 +143,9 @@ foreach ($pdf_files as $url => $pdf_filename) {
     // Obtener el contenido HTML
     $html = file_get_contents($url);
     // Generar el PDF con mPDF en orientación horizontal
-    $mpdf = new Mpdf(['mode' => 'utf-8', 'format' => 'A4-L']);
+    $mpdf = new Mpdf(['mode' => 'utf-8', 'format' => $reportes[$tipo]['formato']]);
     $mpdf->WriteHTML($html);
+
     // Guardar el PDF generado temporalmente en el servidor
     $mpdf->Output($pdf_filename, 'F');
     // Agregar el archivo PDF al archivo ZIP
