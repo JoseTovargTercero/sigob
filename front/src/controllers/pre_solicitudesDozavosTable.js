@@ -89,7 +89,7 @@ export async function loadSolicitudesDozavosTable() {
       entes: solicitud.ente || 'Ente',
       numero_compromiso: solicitud.numero_compromiso,
       descripcion: solicitud.descripcion,
-      tipo: solicitud.tipo,
+      tipo: solicitud.tipo || 'hola',
       monto: solicitud.monto,
       fecha: solicitud.fecha,
       acciones: ` <button class="btn btn-info btn-sm btn-view" data-detalleid="${solicitud.id}"><i class="bx bx-detail me-1"></i>Detalles</button>`,

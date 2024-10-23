@@ -38,11 +38,13 @@ require_once '../../back/sistema_global/session.php';
 
         <div class="col-lg-12 mb-3" id="solicitudes-dozavos-view">
           <div class="card">
-            <div class="card-header">
+
+            <div class="card-header d-flex justify-content-between">
               <div class="">
                 <h5 class="mb-0">Lista de solicitudes de dozavos por entes</h5>
                 <small class="mt-0 text-muted">Administre las solicitudes</small>
               </div>
+              <button class="btn btn-primary" id="solicitud-registrar">REGISTRAR</button>
             </div>
             <div class="card-body">
               <div class="table-responsive p-1">

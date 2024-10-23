@@ -8,7 +8,7 @@ import {
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 const d = document
 
-const nombre_componente = ({ elementToInset }) => {
+const nombre_componente = ({ elementToInsert }) => {
   let fieldList = { ejemplo: '' }
   let fieldListErrors = {
     ejemplo: {
@@ -24,10 +24,8 @@ const nombre_componente = ({ elementToInset }) => {
     <div class='card slide-up-animation' id='{nombre}-form-card'>
       <div class='card-header d-flex justify-content-between'>
         <div class=''>
-          <h5 class='mb-0'>Validar información de plan operativo</h5>
-          <small class='mt-0 text-muted'>
-            Introduzca los datos para la verificar el plan operativo
-          </small>
+          <h5 class='mb-0'>CAMBIAR TEXTO</h5>
+          <small class='mt-0 text-muted'>CAMBIAR TEXTO</small>
         </div>
         <button
           data-close='btn-close'
@@ -47,7 +45,7 @@ const nombre_componente = ({ elementToInset }) => {
     </div>
   )
 
-  d.getElementById(elementToInset).insertAdjacentHTML('afterbegin', card)
+  d.getElementById(elementToInsert).insertAdjacentHTML('afterbegin', card)
 
   let cardElement = d.getElementById('{nombre}-form-card')
   let formElement = d.getElementById('{nombre}-form')

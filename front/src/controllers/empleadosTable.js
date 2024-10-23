@@ -69,7 +69,7 @@ export const validateEmployeeTable = async () => {
 }
 
 export async function loadEmployeeTable() {
-  if (!d.getElementById('employee-form')) return
+  if (!d.getElementById('employee-table')) return
 
   employeeTable.clear().draw()
 

@@ -3,11 +3,11 @@ import {
   getDistribucionEnte,
   getEntesPlan,
 } from '../api/form_entes.js'
-import { getEjecicio, getEjecicios } from '../api/pre_distribucion.js'
+
 import { form_asignacion_entes_card } from '../components/form_asignacion_entes_card.js'
 
 import { form_asignacion_entes_form_card } from '../components/form_asignacion_entes_form_card.js'
-import { form_distribucion_ente_card } from '../components/form_distribucion_ente_card.js'
+
 import {
   ejerciciosLista,
   validarEjercicioActual,
@@ -36,10 +36,6 @@ export const validateAsignacionEntesView = async () => {
         asignacion: asignacion,
         ejercicioFiscal,
       })
-      // form_distribucion_ente_card({
-      //   elementToInset: 'asignacion-entes-view',
-      //   distribucionId: e.target.dataset.validarid,
-      // })
     }
     if (e.target.dataset.ejercicioid) {
       // QUITAR CARD SI SE CAMBIA EL AÑO FISCAL
