@@ -37,23 +37,33 @@ $fecha = date('d-m-y');
 
 $reportes = [
     '2002' => [
-        'nombre' => 'FORMULARIO 2002 RESUMEN DE LOS CRED. PRESP. SECTORES'
+        'nombre' => 'FORMULARIO 2002 RESUMEN DE LOS CRED. PRESP. SECTORES',
+        'formato' => 'A4-L'
     ],
     '2004' => [
-        'nombre' => 'FORMULARIO 2004 RESUMEN A NIVEL DE SECTORES. Y PROGRAMA'
+        'nombre' => 'FORMULARIO 2004 RESUMEN A NIVEL DE SECTORES. Y PROGRAMA',
+        'formato' => 'A4-L'
     ],
     '2005' => [
-        'nombre' => 'FORMULARIO 2005 RESM CRED A NIVEL DE PARTIDAS Y PROGRAMAS ' . $fecha
+        'nombre' => 'FORMULARIO 2005 RESM CRED A NIVEL DE PARTIDAS Y PROGRAMAS ' . $fecha,
+        'formato' => 'A4-L'
     ],
     '2006' => [
-        'nombre' => 'FORMULARIO 2006 RESUM. CRED. PRES. A NIVEL  PARTIDAS DE SECTORES ' . $fecha
+        'nombre' => 'FORMULARIO 2006 RESUM. CRED. PRES. A NIVEL  PARTIDAS DE SECTORES ' . $fecha,
+        'formato' => [430, 216]
     ],
     '2009' => [
-        'nombre' => 'FORMULARIO 2009 GASTOS DE INVERSION ESTIMADO ' . $fecha
+        'nombre' => 'FORMULARIO 2009 GASTOS DE INVERSION ESTIMADO ' . $fecha,
+        'formato' => 'A4-L'
     ],
     '2010' => [
-        'nombre' => 'FORMULARIO 2010 TRASFERENCIAS Y DONACIONES'
+        'nombre' => 'FORMULARIO 2010 TRASFERENCIAS Y DONACIONES',
+        'formato' => 'A4-L'
     ],
+    '2015' => [
+        'nombre' => 'FORM. 2015 CRED. PRE. DEL SEC PRO. A NIVEL DE PAR.',
+        'formato' => 'A4-L'
+    ]
 ];
 
 $pdf_files = [];
@@ -62,15 +72,49 @@ $url_pdf = "{$base_url}form_pdf_$tipo.php?id_ejercicio=" . $id_ejercicio;
 
 if ($tipo == '2015') { // Se generean
 
-    // Consulta para obtener todos los registros de la tabla pl_sectores_presupuestarios
-    $query = "SELECT id, sector, programa FROM pl_sectores_presupuestarios";
-    $result = $conexion->query($query);
+    // Datos de sector y programa
+    $sector = $data['sector'];
+    $programa = $data['programa'];
+
+    // Consulta base
+    $query = "SELECT id, sector, programa FROM pl_sectores_presupuestarios WHERE 1=1";
+    $params = [];
+    $types = "";
+
+    // Condiciones dinámicas para sector y programa
+    if ($sector != '') {
+        $query .= " AND sector = ?";
+        $params[] = $sector;
+        $types .= "s";  // 's' para string
+    }
+
+    if ($programa != '') {
+        $query .= " AND programa = ?";
+        $params[] = $programa;
+        $types .= "s";
+    }
+
+    // Preparar la consulta
+    $stmt = $conexion->prepare($query);
+
+    if ($stmt === false) {
+        die("Error en la preparación de la consulta: " . $conexion->error);
+    }
+
+    // Vincular parámetros si existen
+    if (!empty($params)) {
+        $stmt->bind_param($types, ...$params);
+    }
+
+    $stmt->execute();
+    $result = $stmt->get_result();
 
     if ($result === false) {
-        die("Error en la consulta: " . $conexion->error);
+        die("Error en la consulta: " . $stmt->error);
     }
 
     // Generar el array de archivos PDF con los sectores y programas
+    $pdf_files = [];
     while ($row = $result->fetch_assoc()) {
         $id = $row['id'];
         $sector = str_pad($row['sector'], 2, '0', STR_PAD_LEFT); // Asegurar formato de 2 dígitos
@@ -78,6 +122,9 @@ if ($tipo == '2015') { // Se generean
 
         $pdf_files["{$url_pdf}&id=$id"] = "{$sector}-{$programa}_CREDITOS.pdf";
     }
+
+    $result->free();
+    $stmt->close();
 } else {
     $pdf_files["{$url_pdf}"] = $reportes[$tipo]['nombre'] . ".pdf";
 }
@@ -100,8 +147,9 @@ foreach ($pdf_files as $url => $pdf_filename) {
     // Obtener el contenido HTML
     $html = file_get_contents($url);
     // Generar el PDF con mPDF en orientación horizontal
-    $mpdf = new Mpdf(['mode' => 'utf-8', 'format' => 'A4-L']);
+    $mpdf = new Mpdf(['mode' => 'utf-8', 'format' => $reportes[$tipo]['formato']]);
     $mpdf->WriteHTML($html);
+
     // Guardar el PDF generado temporalmente en el servidor
     $mpdf->Output($pdf_filename, 'F');
     // Agregar el archivo PDF al archivo ZIP
