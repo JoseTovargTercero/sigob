@@ -5173,14 +5173,14 @@ CREATE TABLE `pl_programas` (
   `id` int(11) NOT NULL,
   `sector` varchar(10) NOT NULL,
   `programa` varchar(10) NOT NULL,
-  `denominancion` longtext NOT NULL
+  `denominacion` longtext NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `pl_programas`
 --
 
-INSERT INTO `pl_programas` (`id`, `sector`, `programa`, `denominancion`) VALUES
+INSERT INTO `pl_programas` (`id`, `sector`, `programa`, `denominacion`) VALUES
 (1, '01', '01', 'LEGISLACION Y SANCION DE INSTRUMENTOS JURIDICOS'),
 (2, '01', '02', 'CONTROL DE LA HACIENDA ESTADAL'),
 (3, '01', '03', 'REPRESENTACION JURIDICA DEL ESTADO'),
@@ -5225,14 +5225,14 @@ INSERT INTO `pl_programas` (`id`, `sector`, `programa`, `denominancion`) VALUES
 CREATE TABLE `pl_sectores` (
   `id` int(11) NOT NULL,
   `sector` varchar(11) NOT NULL,
-  `denominancion` longtext NOT NULL
+  `denominacion` longtext NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `pl_sectores`
 --
 
-INSERT INTO `pl_sectores` (`id`, `sector`, `denominancion`) VALUES
+INSERT INTO `pl_sectores` (`id`, `sector`, `denominacion`) VALUES
 (1, '01', 'DIRECCIÓN SUPERIOR DEL ESTADO'),
 (2, '02', 'SEGURIDAD Y DEFENSA'),
 (3, '06', 'TURISMO Y RECREACIÓN'),

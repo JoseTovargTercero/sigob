@@ -234,8 +234,8 @@ $stmt->close();
                         if ($result->num_rows > 0) {
                           while ($row = $result->fetch_assoc()) {
                             $sector = $row['sector'];
-                            $denominancion = $row['denominancion'];
-                            echo ' <option value="' . $sector . '">' . $sector . ' - ' . $denominancion . '</option>;';
+                            $denominacion = $row['denominacion'];
+                            echo ' <option value="' . $sector . '">' . $sector . ' - ' . $denominacion . '</option>;';
                           }
                         }
                         $stmt->close();
@@ -283,9 +283,9 @@ $stmt->close();
           while ($row = $result->fetch_assoc()) {
             $programa = $row['programa'];
             $sector = $row['sector'];
-            $denominancion = $row['denominancion'];
+            $denominacion = $row['denominacion'];
 
-            echo 'programas.push(["' . $sector . '", "' . $programa . '", "' . $denominancion . '"]);' . PHP_EOL;
+            echo 'programas.push(["' . $sector . '", "' . $programa . '", "' . $denominacion . '"]);' . PHP_EOL;
           }
         }
         $stmt->close();
