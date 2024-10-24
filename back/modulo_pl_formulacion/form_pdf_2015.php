@@ -29,6 +29,21 @@ $sector_data = $result_sector->fetch_assoc();
 $sector = $sector_data['sector'];
 $programa = $sector_data['programa'];
 
+// Consultar denominación del sector
+$query_denominacion_sector = "SELECT denominacion FROM pl_sectores WHERE sector = ?";
+$stmt_denominacion_sector = $conexion->prepare($query_denominacion_sector);
+$stmt_denominacion_sector->bind_param('s', $sector);
+$stmt_denominacion_sector->execute();
+$result_denominacion_sector = $stmt_denominacion_sector->get_result();
+$denominacion_sector = $result_denominacion_sector->fetch_assoc()['denominacion'];
+
+// Consultar denominación del programa
+$query_denominacion_programa = "SELECT denominacion FROM pl_programas WHERE sector = ? AND programa = ?";
+$stmt_denominacion_programa = $conexion->prepare($query_denominacion_programa);
+$stmt_denominacion_programa->bind_param('ss', $sector, $programa);
+$stmt_denominacion_programa->execute();
+$result_denominacion_programa = $stmt_denominacion_programa->get_result();
+$denominacion_programa = $result_denominacion_programa->fetch_assoc()['denominacion'];
 
 // Consultar distribuciones presupuestarias
 $query_distribucion = "SELECT monto_inicial, id_partida FROM distribucion_presupuestaria WHERE id_sector = ? AND id_ejercicio = ?";
@@ -59,6 +74,8 @@ foreach ($distribuciones as $distribucion) {
     // Formatear los datos según el esquema solicitado
     $data[] = [$partida, $descripcion, 0, $monto_inicial, 0, 0, $monto_inicial];
 }
+
+// Aquí podrías agregar un paso adicional para imprimir o utilizar $denominacion_sector y $denominacion_programa, si lo necesitas
 ?>
 
 <!DOCTYPE html>
@@ -263,7 +280,7 @@ foreach ($distribuciones as $distribucion) {
 
     <table>
         <thead>
-            <tr>
+        <tr>
                 <td class="bl bt bb"></td>
                 <td class='bl bb bt text-center fw-bold' style="width: 10%;">CODIGO</td>
                 <td class='bl bb bt br text-center fw-bold' colspan="6">DENOMINACION:</td>
@@ -271,13 +288,13 @@ foreach ($distribuciones as $distribucion) {
             <tr>
                 <td class='bl bb text-center fw-bold' style="width: 10%;">SECTOR:</td>
                 <td class='bl bb text-center fw-bold'><?php echo $sector ?></td>
-                <td class='bl bb br text-left fw-bold' colspan="6">DIRECCION SUPERIOR DEL ESTADO</td>
+                <td class='bl bb br text-left fw-bold' colspan="6"><?php echo $denominacion_sector ?></td>
 
             </tr>
             <tr>
                 <td class='bl bb text-center fw-bold' style="width: 10%;">PROGRAMA</td>
                 <td class='bl bb text-center fw-bold'><?php echo $programa ?></td>
-                <td class='bl bb br text-left fw-bold' colspan="6">LEGISLACION Y SANCION DE INSTRUMENTOS JURIDICOS</td>
+                <td class='bl bb br text-left fw-bold' colspan="6"><?php echo $denominacion_programa ?></td>
 
             </tr>
 
