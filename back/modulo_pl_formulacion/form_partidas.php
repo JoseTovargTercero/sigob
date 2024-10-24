@@ -9,7 +9,7 @@ require_once '../sistema_global/errores.php';
 function validarCodigo($partida)
 {
     // Valida el formato xx.xx.si.xxx.xx.xx.xxxx
-    return preg_match('/^\d{2}\.\d{2}\.\d{2}\.\d{3}\.\d{2}\.\d{2}\.\d{4}$/', $partida);
+    return preg_match('/^\d{3}\.\d{2}\.\d{2}\.\d{2}\.\d{4}$/', $partida);
 }
 
 // Función para insertar una nueva partida
@@ -208,4 +208,3 @@ if (isset($data["accion"])) {
 }
 
 echo $response;
-

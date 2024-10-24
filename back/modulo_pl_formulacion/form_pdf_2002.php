@@ -1,7 +1,24 @@
-<?php 
-require_once '../sistema_global/conexion.php'; 
+<?php
+require_once '../sistema_global/conexion.php';
 
 $id_ejercicio = $_GET['id_ejercicio'];
+
+
+
+
+$query_sector = "SELECT * FROM ejercicio_fiscal WHERE id = ?";
+$stmt = $conexion->prepare($query_sector);
+$stmt->bind_param('i', $id_ejercicio);
+$stmt->execute();
+$result = $stmt->get_result();
+$data = $result->fetch_assoc();
+
+$ano = $data['ano'];
+$situado = $data['situado'];
+$stmt->close();
+
+
+
 
 // Inicializar array para almacenar los datos por sector
 $data = [];
@@ -87,6 +104,7 @@ foreach ($sectores_a_procesar as $sector) {
 
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Créditos Presupuestarios del Sector por Programa</title>
     <meta charset="UTF-8">
@@ -108,14 +126,42 @@ foreach ($sectores_a_procesar as $sector) {
             text-align: center;
         }
 
-        th, td {
-            border: 1px solid black;
+        td {
             padding: 5px;
         }
 
         th {
-            background-color: #dddddd;
             font-weight: bold;
+            text-align: center;
+        }
+
+        .py-0 {
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+        }
+
+        .pb-0 {
+            padding-bottom: 0 !important;
+        }
+
+        .pt-0 {
+            padding-top: 0 !important;
+        }
+
+        .b-1 {
+            border: 1px solid;
+        }
+
+        .bc-lightgray {
+            border-color: lightgray !important;
+        }
+
+        .bc-gray {
+            border-color: gray;
+        }
+
+        .pt-1 {
+            padding-top: 1rem !important;
         }
 
         .text-right {
@@ -131,7 +177,7 @@ foreach ($sectores_a_procesar as $sector) {
         }
 
         h2 {
-            font-size: 14px;
+            font-size: 16px;
             margin: 0;
         }
 
@@ -156,10 +202,58 @@ foreach ($sectores_a_procesar as $sector) {
             width: 120px;
         }
 
+        .t-border-0>tr>td {
+            border: none !important;
+        }
+
+        .fz-6 {
+            font-size: 5px !important;
+        }
+
+        .fz-8 {
+            font-size: 8px !important;
+        }
+
+        .fz-9 {
+            font-size: 9px !important;
+        }
+
+        .fz-10 {
+            font-size: 10px !important;
+        }
+
+        .bl {
+            border-left: 1px solid;
+        }
+
+        .br {
+            border-right: 1px solid;
+        }
+
+        .bb {
+            border-bottom: 1px solid;
+        }
+
+        .bt {
+            border-top: 1px solid;
+        }
+
+        .dw-nw {
+            white-space: nowrap !important
+        }
+
         @media print {
             .page-break {
                 page-break-after: always;
             }
+        }
+
+        .t-content {
+            page-break-inside: avoid;
+        }
+
+        .p-2 {
+            padding: 10px;
         }
     </style>
 </head>
@@ -170,54 +264,89 @@ foreach ($sectores_a_procesar as $sector) {
     // Imprimir el encabezado
     echo "
     <div style='font-size: 9px;'>
-        <table class='header-table'>
+        <table class='header-table bt br bb bl bc-lightgray'>
             <tr>
-                <td class='w-50'>
+                <td class='text-left' style='width: 20px'>
                     <img src='../../img/logo.jpg' class='logo'>
                 </td>
-                <td class='text-right w-50'>
-                    <div class='fw-bold'>GOBERNACION DEL ESTADO INDÍGENA DE AMAZONAS</div>
-                    <div>CÓDIGO PRESUPUESTARIO: E5100</div>
-                    <div>PRESUPUESTO: 2020</div>
-                    <div>Fecha: 27/12/2019</div>
+                <td class='text-left' style='vertical-align: top;padding-top: 13px;'>
+                    <b>
+                    REPÚBLICA BOLIVARIANA DE VENEZUELA <br>
+                    GOBERNACIÓN DEL ESTADO AMAZONAS 
+                    </b>
+                    </div>
+                    <td class='text-right' style='vertical-align: top;padding: 13px 10px 0 0; '>
+                    <b>
+                    Página: 1 de 1 <br>
+                    Fecha: " . date('d/m/Y') . " 
+                    </b>
+                </td>
+            </tr>
+               <tr >
+                <td colspan='3'>
+                <h2 align='center'>Resumen de los Creditos Presupuestarios a Nivel de Sectores</h2>
+                </td>
+            </tr>
+
+              <tr>
+                <td class='text-left'>
+                <b>PRESUPUESTO " . $ano . "</b>
                 </td>
             </tr>
         </table>
 
-        <h2 align='center'>Resumen de los Creditos Presupuestarios a Nivel de Sectores</h2>
-    ";
+        
+    "; ?>
 
-    // Inicio de tabla principal
-    echo "
-        <table>
-            <thead>
-                <tr>
-                    <th class='text-left'>Sector</th>
-                    <th class='text-left'>Denominación</th>
-                    <th>Ordinario</th>
-                    <th>Coordinado</th>
-                    <th>Total</th>
-                </tr>
-            </thead>
-            <tbody>";
+    <table>
+        <thead>
+            <tr>
+                <th class="bl bt bb" rowspan="2">Sector</th>
+                <th class="bl bt bb br p-2 text-left" style="width: 30%;" rowspan="2">Denominación</th>
+                <th class="bl bt bb br" colspan='3'>Asignación Presupuestaria</th>
+            </tr>
+            <tr>
+                <th class="bb br">Ordinario</th>
+                <th class="bb br">Coordinado</th>
+                <th class="bb br">Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            $t_ordinario = 0;
+            $t_coordinado = 0;
+            $t_totales = 0;
 
-    // Iterar sobre los datos formateados para crear la tabla
-    foreach ($data as $sector => $row) {
-        $monto_total = $row['monto_ordinario'] + $row['monto_coordinado'] + $row['monto_proyecto'];
-        echo "<tr>
-            <td class='text-left'>{$sector}</td>
-            <td class='text-left'>{$row['denominacion']}</td>
-            <td>{$row['monto_ordinario']}</td>
-            <td>{$row['monto_proyecto']}</td>
-            <td>{$monto_total}</td>
-        </tr>";
-    }
+            // Iterar sobre los datos formateados para crear la tabla
+            foreach ($data as $sector => $row) {
+                $monto_total = $row['monto_ordinario'] + $row['monto_coordinado'] + $row['monto_proyecto'];
+                $ordinario = $row['monto_ordinario'];
+                $coordinado = $row['monto_proyecto'];
+                $t_ordinario += $ordinario;
+                $t_coordinado += $coordinado;
+                $t_totales += $monto_total;
 
-    echo "
-            </tbody>
-        </table>
-    ";
-    ?>
+                echo "<tr>
+                    <td class='p-2 bl'>{$sector}</td>
+                    <td class='p-2 bl text-left'>{$row['denominacion']}</td>
+                    <td class='p-2 bl'>" . number_format($ordinario, 2, ',', '.') . "</td>
+                    <td class='p-2 bl'>" . number_format($coordinado, 2, ',', '.') . "</td>
+                    <td class='p-2 bl br'>" . number_format($monto_total, 2, ',', '.') . "</td>
+                </tr>";
+            }
+            ?>
+
+        </tbody>
+        <tfoot>
+            <tr>
+                <td class="bt bl bb" colspan='2'><b>TOTALES</b></td>
+                <td class="bt bl bb"><?php echo number_format($t_ordinario, 2, ',', '.') ?></td>
+                <td class="bt bl bb"><?php echo number_format($t_coordinado, 2, ',', '.') ?></td>
+                <td class="bt bl bb br"><?php echo number_format($t_totales, 2, ',', '.') ?></td>
+        </tfoot>
+    </table>
 
 </body>
+
+
 </html>
