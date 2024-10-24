@@ -31,10 +31,10 @@ export const validateDistribucionTable = async ({ partidas }) => {
   console.log(partidas)
   distribucionTable = new DataTable('#distribucion-table', {
     columns: [
-      { data: 'sector_nombre' },
+      // { data: 'sector_nombre' },
       { data: 'sector_cod' },
       { data: 'partida' },
-      // { data: 'descripcion' },
+      { data: 'descripcion' },
       { data: 'monto_inicial' },
       { data: 'acciones' },
     ],
@@ -69,12 +69,18 @@ export const loadDistribucionTable = async (partidas) => {
 
   let datosOrdenados = [...partidas].sort((a, b) => a.id - b.id)
   let data = datosOrdenados.map((el) => {
-    let sectorCod = `${el.sector_informacion.programa}.${el.sector_informacion.proyecto}.${el.sector_informacion.sector}`
+    let sector_codigo = `${el.sector_informacion.sector}.${el.sector_informacion.programa}.${el.sector_informacion.proyecto}`
+
+    let descripcion =
+      el.descripcion.length < 40
+        ? el.descripcion
+        : `${el.descripcion.slice(0, 40)} ...`
+
     return {
-      sector_nombre: el.sector_informacion.nombre,
-      sector_cod: sectorCod,
+      // sector_nombre: el.sector_informacion.nombre,
+      sector_cod: sector_codigo,
       partida: el.partida,
-      // descripcion: el.descripcion,
+      descripcion: descripcion,
       monto_inicial: `${separarMiles(el.monto_inicial)} Bs`,
       acciones: `
       <button class="btn btn-info btn-sm" data-editarid="${el.id}">Modificar</button>

@@ -119,21 +119,25 @@ export const form_asignacion_entes_form_card = async ({
     let liItems = partidasList.map((distribucion) => {
       let sector_codigo = `${distribucion.sector_informacion.sector}.${distribucion.sector_informacion.programa}.${distribucion.sector_informacion.proyecto}`
 
+      let descripcion =
+        distribucion.descripcion.length < 40
+          ? distribucion.descripcion
+          : `${distribucion.descripcion.slice(0, 40)} ...`
+
       if (checkbox) {
         return ` <tr class=''>
     <td><input type="checkbox" class="form-check-input input-check" value="${distribucion.id}" name="ente-partida-${distribucion.id}"/></td>
     <td>${distribucion.sector_informacion.nombre}</td>
     <td>${sector_codigo}</td>
     <td>${distribucion.partida}</td>
-    <td>${distribucion.nombre}</td>
-    <td>${distribucion.descripcion}</td>
+    <td title="${distribucion.descripcion}">${descripcion}</td>
   </tr>`
       } else {
         return ` <tr class=''>
         <td>${distribucion.sector_informacion.nombre}</td>
     <td>${sector_codigo}</td>
     <td>${distribucion.partida}</td>
-    <td>${distribucion.descripcion}</td>
+    <td title="${distribucion.descripcion}">${descripcion}</td>
     <td>${distribucion.monto || 'No asignado'}</td>
   </tr>`
       }
@@ -266,7 +270,7 @@ export const form_asignacion_entes_form_card = async ({
                 <th>SECTOR NOMBRE</th>
                 <th>SECTOR CODIGO</th>
                 <th>PARTIDA</th>
-                <th>NOMBRE</th>
+                
                 <th>DESCRIPCION</th>
               </thead>
               ${
@@ -916,7 +920,7 @@ function validarSeleccionPartidasTable() {
 
   seleccionPartidasTable = new DataTable('#asignacion-part3-table', {
     scrollY: 200,
-    responsive: true,
+    responsive: false,
     colums: [
       { data: 'elegir' },
       { data: 'sector_nombre' },

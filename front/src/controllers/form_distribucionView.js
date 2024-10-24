@@ -1,4 +1,5 @@
 import { getFormPartidas } from '../api/partidas.js'
+import { eliminarDistribucion } from '../api/pre_distribucion.js'
 import { getSectores } from '../api/sectores.js'
 import { form_distribucion_form_card } from '../components/form_distribucion_form_card.js'
 import { form_distribucion_modificar_form_card } from '../components/form_distribucion_modificar_card.js'
@@ -62,11 +63,11 @@ export const validateDistribucionView = async () => {
         type: NOTIFICATIONS_TYPES.delete,
         message: '¿Desea eliminar esta distribución?',
         successFunction: async function () {
-          let row = e.target.closest('tr')
-          deleteDistribucionRow({ row })
-          // let res = await eliminarDistribucion(e.target.dataset.eliminarid)
-          // if (res.success) {
-          // }
+          let res = await eliminarDistribucion(e.target.dataset.eliminarid)
+          if (res.success) {
+            let row = e.target.closest('tr')
+            deleteDistribucionRow({ row })
+          }
         },
       })
     }
