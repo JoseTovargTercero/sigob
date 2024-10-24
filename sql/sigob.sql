@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 24-10-2024 a las 18:17:51
+-- Tiempo de generación: 24-10-2024 a las 19:12:08
 -- Versión del servidor: 10.4.16-MariaDB
 -- Versión de PHP: 7.4.12
 
@@ -41,7 +41,8 @@ CREATE TABLE `asignacion_ente` (
 --
 
 INSERT INTO `asignacion_ente` (`id`, `id_ente`, `monto_total`, `id_ejercicio`, `fecha`, `status`) VALUES
-(1, 1, '2000', 1, '2024-10-15', '1');
+(1, 1, '2000', 1, '2024-10-15', '1'),
+(2, 2, '5000', 1, '2024-10-24', '1');
 
 -- --------------------------------------------------------
 
@@ -1024,7 +1025,8 @@ CREATE TABLE `distribucion_entes` (
 --
 
 INSERT INTO `distribucion_entes` (`id`, `id_ente`, `distribucion`, `monto_total`, `status`, `id_ejercicio`, `comentario`, `fecha`, `id_asignacion`) VALUES
-(1, 1, '[{\"id_partida\":\"1\",\"monto\":1000},{\"id_partida\":\"43\",\"monto\":1000}]', '2000', 0, 1, '', '2024-10-15', 1);
+(1, 1, '[{\"id_partida\":\"1\",\"monto\":1000},{\"id_partida\":\"43\",\"monto\":1000}]', '2000', 0, 1, '', '2024-10-15', 1),
+(2, 2, '[{\"id_distribucion\":\"1\",\"monto\":5000}]', '5000', 0, 1, '', '2024-10-24', 2);
 
 -- --------------------------------------------------------
 
@@ -1050,7 +1052,8 @@ INSERT INTO `distribucion_presupuestaria` (`id`, `id_partida`, `monto_inicial`, 
 (1, 1, '5000', 1, '5000', 1, 1),
 (3, 2, '2000', 1, '2000', 1, 1),
 (4, 15, '1000', 1, '1000', 13, 1),
-(5, 6, '1000', 1, '1000', 1, 1);
+(5, 6, '1000', 1, '1000', 1, 1),
+(6, 1501, '1000', 1, '1000', 33, 1);
 
 -- --------------------------------------------------------
 
@@ -3922,8 +3925,48 @@ CREATE TABLE `entes` (
 --
 
 INSERT INTO `entes` (`id`, `ente_nombre`, `tipo_ente`) VALUES
-(1, 'Ente de Prueba', 'J'),
-(2, 'Ente de prueba 2', 'D');
+(1, 'VICARIATO APOSTOLICO', 'D'),
+(2, 'AMAVISION', 'D'),
+(5, 'FUNDACION ORQUESTA SINFONICA JUVENIL E INFANTIL DE AMAZONAS', 'D'),
+(6, 'FUNDACION CULTURAL ESCUELA ACADEMICA DE ORQUESTAS Y BANDAS DE AMAZONAS', 'D'),
+(7, 'ESCUELA INTEGRAL DE DANZAS', 'D'),
+(8, 'FUNDAPRODICAM', 'D'),
+(9, 'SUPERINTENDENCIA DE ADMINISTRACION TRIBUTARIA DEL ESTADO AMAZONAS (SATEAMAZ)', 'D'),
+(10, 'MUSEO ETNOLOGICO', 'D'),
+(11, 'INSTITUTO REGIONAL DE DEPORTE AMAZONAS (I.R.D.A)', 'D'),
+(12, 'U.N.A', 'D'),
+(13, 'BIBLIOTECA PUBLICA SIMON RODRIGUEZ', 'D'),
+(14, 'AMAZONAS F.C', 'D'),
+(15, 'UNIVERSIDAD EXPERIMENTAL POLITECNICA DE LA FUERZA ARMADA NACIONAL NUCLEO AMAZONAS', 'D'),
+(16, 'UPEL', 'D'),
+(17, 'FUNDACIONIHIRU', 'D'),
+(18, 'FUNDA SALUD', 'D'),
+(19, 'HOSPITAL DR. JOSE GREGORIO HERNANDEZ', 'D'),
+(20, 'A.C. HERMANAS DE JESUS RESUCITADO CASA HOGAR \"CARMEN MARTINEZ\"', 'D'),
+(21, 'SIUMA', 'D'),
+(22, 'FUNDACION PARA LA ATENCION INTEGRAL A LA MUJER DE AMAZONAS', 'D'),
+(23, 'FUNDACION DE SISTEMA DE ATENCION INTEGRAL PARA LAS PERSONAS CON DISCAPACIDAD (SAIPDIS)', 'D'),
+(24, 'FUNDACION CENTRO DE HISTORIA DE LA IDENTIDAD AMAZONENCE', 'D'),
+(25, 'INVIOBRAS AMAZONAS', 'D'),
+(26, 'FUNDACION PROMO-AMAZONAS', 'D'),
+(27, 'INSCATA', 'D'),
+(28, 'LUBRICANTES AMAZONAS C.A', 'D'),
+(29, 'ALIMENTOS AMAZONAS C.A', 'D'),
+(30, 'HIDROAMAZONAS C.A', 'D'),
+(31, 'ASFALTO Y PAVIMENTOS AMAZONAS C.A', 'D'),
+(32, 'COMBUSTIBLES AMAZONAS C.A', 'D'),
+(33, 'SANEAMIENTO AMBIENTAL C.A', 'D'),
+(34, 'BLOQUES Y AGREGADOS AMAZONAS C.A', 'D'),
+(35, 'TEXTILES AMAZONAS C.A', 'D'),
+(36, 'ACUARIOS AMAZONAS', 'D'),
+(37, 'EXPORTADORA AMAZONAS C.A', 'D'),
+(38, 'GAS COMUNAL AMAZONAS C.A', 'D'),
+(39, 'FARMA-AMAZONAS C.A', 'D'),
+(40, 'EMPRESA FLUVIALES AMAZONAS C.A', 'D'),
+(41, 'EMPRESA PUBLICA DE AMAZONAS C.A', 'D'),
+(42, 'EMPRESA DE SERVICIOS Y MANTENIMIENTO GENERALES AMAZONAS C.A (SERVIAMAZONAS)', 'D'),
+(43, 'EMPRESA DE TURISMO', 'D'),
+(44, 'EMPRESA DE TURISMO', 'D');
 
 -- --------------------------------------------------------
 
@@ -3944,7 +3987,9 @@ CREATE TABLE `error_log` (
 INSERT INTO `error_log` (`id`, `descripcion`, `fecha`) VALUES
 (1, 'Error al actualizar el proyecto de inversión.', '2024-10-15 20:02:13'),
 (2, 'Una partida ya está registrada en este ejercicio fiscal: 15.01.00.401.01.01.0000', '2024-10-18 17:15:35'),
-(3, 'Una partida ya esta en uso en el mismo sector: 401.01.01.0000', '2024-10-24 11:21:20');
+(3, 'Una partida ya esta en uso en el mismo sector: 401.01.01.0000', '2024-10-24 11:21:20'),
+(4, 'El tipo de ente Descentralizado solo permite una distribución.', '2024-10-24 12:51:44'),
+(5, 'La suma de los montos de las distribuciones no es igual al monto total.', '2024-10-24 12:53:07');
 
 -- --------------------------------------------------------
 
@@ -16775,7 +16820,7 @@ ALTER TABLE `txt`
 -- AUTO_INCREMENT de la tabla `asignacion_ente`
 --
 ALTER TABLE `asignacion_ente`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `backups`
@@ -16841,13 +16886,13 @@ ALTER TABLE `dependencias`
 -- AUTO_INCREMENT de la tabla `distribucion_entes`
 --
 ALTER TABLE `distribucion_entes`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `distribucion_presupuestaria`
 --
 ALTER TABLE `distribucion_presupuestaria`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `ejercicio_fiscal`
@@ -16877,13 +16922,13 @@ ALTER TABLE `empleados_por_grupo`
 -- AUTO_INCREMENT de la tabla `entes`
 --
 ALTER TABLE `entes`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
 
 --
 -- AUTO_INCREMENT de la tabla `error_log`
 --
 ALTER TABLE `error_log`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `frecuencias_por_grupo`
