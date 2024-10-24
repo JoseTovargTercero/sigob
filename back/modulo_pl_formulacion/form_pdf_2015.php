@@ -53,8 +53,11 @@ $stmt_distribucion->execute();
 $result_distribucion = $stmt_distribucion->get_result();
 $distribuciones = $result_distribucion->fetch_all(MYSQLI_ASSOC);
 
-// Crear un array para almacenar los datos de la tabla
 $data = [];
+$totales_por_partida = [];
+$partidas_a_agrupadas = ['401', '402', '403', '404', '407', '408', '411', '498'];
+
+
 
 foreach ($distribuciones as $distribucion) {
     $monto_inicial = $distribucion['monto_inicial'];
@@ -68,11 +71,29 @@ foreach ($distribuciones as $distribucion) {
     $result_partida = $stmt_partida->get_result();
     $partida_data = $result_partida->fetch_assoc();
 
-    $partida = $partida_data['partida'];
-    $descripcion = $partida_data['descripcion'];
 
-    // Formatear los datos según el esquema solicitado
-    $data[] = [$partida, $descripcion, 0, $monto_inicial, 0, 0, $monto_inicial];
+    if (!$partida_data) {
+        echo 'No se encontraron registros en partidas_presupuestarias para el id_partida: ' . $id_partida . "<br>";
+        continue; // Continúa al siguiente registro
+    }
+
+    $partida = $partida_data['partida'] ?? 'N/A';
+    $descripcion = $partida_data['descripcion'] ?? 'N/A';
+
+
+
+    // Extraer el código de partida (los primeros 3 caracteres)
+    $codigo_partida = substr($partida, 0, 3);
+
+    // Agrupar datos por código de partida
+    if (in_array($codigo_partida, $partidas_a_agrupadas)) {
+        $data[$codigo_partida][] = [$partida, $descripcion, 0, $monto_inicial, 0, 0, $monto_inicial];
+
+        if (!isset($totales_por_partida[$codigo_partida])) {
+            $totales_por_partida[$codigo_partida] = 0;
+        }
+        $totales_por_partida[$codigo_partida] += $monto_inicial;
+    }
 }
 
 // Aquí podrías agregar un paso adicional para imprimir o utilizar $denominacion_sector y $denominacion_programa, si lo necesitas
@@ -320,38 +341,55 @@ foreach ($distribuciones as $distribucion) {
             </tr>
         </thead>
         <tbody>
-
-
             <?php
 
-            foreach ($data as $row) {
-                $ingreso_propio = $row[2];
-                $situado_estada = $row[3];
-                $fci = $row[4];
-                $otras_fuentes = $row[5];
-                $total = $row[6];
+            // Imprimir los registros agrupados y sus totales
+            foreach ($partidas_a_agrupadas as $codigo_agrupado) {
+                if (isset($data[$codigo_agrupado])) {
 
-                echo "<tr>
-            <td class='bl text-center'>" . str_replace('.', '-', $row[0]) . "</td>
-            <td class='bl text-left' colspan='2'>{$row[1]}</td>
-            <td class='bl'>" . number_format($ingreso_propio, 2, ',', '.') . "</td>
-            <td class='bl'>" . number_format($situado_estada, 2, ',', '.') . "</td>
-            <td class='bl'>" . number_format($fci, 2, ',', '.') . "</td>
-            <td class='bl'>" . number_format($otras_fuentes, 2, ',', '.') . "</td>
-            <td class='bl br'>" . number_format($total, 2, ',', '.') . "</td>
-        </tr>";
+                    $t_ingreso_propio = 0;
+                    $t_situado_estada = 0;
+                    $t_fci = 0;
+                    $t_otras_fuentes = 0;
+                    $t_total = 0;
+
+                    foreach ($data[$codigo_agrupado] as $row) {
+
+                        $t_ingreso_propio += $ingreso_propio = $row[2];
+                        $t_situado_estada += $situado_estada = $row[3];
+                        $t_fci += $fci = $row[4];
+                        $t_otras_fuentes += $otras_fuentes = $row[5];
+                        $t_total += $total = $row[6];
+
+                        echo "<tr>
+                            <td class='fz-8 bl'>{$row[0]}</td>
+                            <td colspan='2' class='fz-8 bl text-left'>{$row[1]}</td>
+                            <td class='fz-8 bl'>" .  number_format($ingreso_propio, 2, ',', '.') . "</td>
+                            <td class='fz-8 bl'>" .  number_format($situado_estada, 2, ',', '.') . "</td>
+                            <td class='fz-8 bl'>" .  number_format($fci, 2, ',', '.') . "</td>
+                            <td class='fz-8 bl'>" .  number_format($otras_fuentes, 2, ',', '.') . "</td>
+                            <td class='fz-8 bl br'>" .  number_format($total, 2, ',', '.') . "</td>
+                        </tr>";
+                    }
+
+                    // Imprimir total por partida
+                    $monto_total = $totales_por_partida[$codigo_agrupado];
+                    echo "<tr>
+                            <td class='bl bb'></td>
+                            <td colspan='2' class='bl bb fw-bold total_text'>TOTAL POR PARTIDA $codigo_agrupado</td>
+                            <td class='bl bb fw-bold total_text'>" . number_format($t_ingreso_propio, 2, ',', '.') . "</td>
+                            <td class='bl bb fw-bold total_text'>" . number_format($t_situado_estada, 2, ',', '.') . "</td>
+                            <td class='bl bb fw-bold total_text'>" . number_format($t_fci, 2, ',', '.') . "</td>
+                            <td class='bl bb fw-bold total_text'>" . number_format($t_otras_fuentes, 2, ',', '.') . "</td>
+                            <td class='bl br bb fw-bold total_text'>" . number_format($monto_total, 2, ',', '.') . "</td>
+                    </tr >";
+                }
             }
 
-
+            echo "</tbody >
+        </table>";
             ?>
 
-        </tbody>
-        <tfoot>
-            <tr>
-                <td colspan="8" class="bt"></td>
-            </tr>
-        </tfoot>
-    </table>
 
 </body>
 
