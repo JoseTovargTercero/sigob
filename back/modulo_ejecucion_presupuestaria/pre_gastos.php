@@ -4,6 +4,7 @@ require_once '../sistema_global/conexion.php';
 require_once '../sistema_global/session.php'; 
 require_once '../sistema_global/notificaciones.php';
 require_once 'pre_compromisos.php'; // Agregado
+require_once 'pre_dispo_presupuestaria.php'; // Agregado
 
 header('Content-Type: application/json');
 
@@ -33,24 +34,14 @@ function crearGasto($id_tipo, $descripcion, $monto, $id_ejercicio) {
         $filaTipoGasto = $resultadoTipoGasto->fetch_assoc();
         $id_partida = $filaTipoGasto['id_partida'];
 
-        // Paso 2: Consultar la tabla distribucion_presupuestaria para validar el monto actual
-        $sqlDistribucion = "SELECT monto_actual FROM distribucion_presupuestaria WHERE id_partida = ? AND id_ejercicio = ?";
-        $stmtDistribucion = $conexion->prepare($sqlDistribucion);
-        $stmtDistribucion->bind_param("ii", $id_partida, $id_ejercicio);
-        $stmtDistribucion->execute();
-        $resultadoDistribucion = $stmtDistribucion->get_result();
 
-        if ($resultadoDistribucion->num_rows === 0) {
-            throw new Exception("No se encontró una distribución presupuestaria con el id_partida y id_ejercicio proporcionados");
-        }
-
-        $filaDistribucion = $resultadoDistribucion->fetch_assoc();
-        $monto_actual = $filaDistribucion['monto_actual'];
-
-        // Paso 3: Verificar que el monto_actual sea mayor o igual que el monto del gasto
-        if ($monto_actual < $monto) {
+         // Verificar si el presupuesto es suficiente
+         $disponible = consultarDisponibilidad($id_partida, $id_ejercicio, $monto);
+        if (!$disponible) {
             throw new Exception("El presupuesto actual es inferior al monto del gasto. No se puede registrar el gasto.");
-        }
+        } 
+
+    
 
         // Paso 4: Insertar el gasto si el presupuesto es suficiente
         $sqlInsertGasto = "INSERT INTO gastos (id_tipo, descripcion, monto, status, id_ejercicio) VALUES (?, ?, ?, 0, ?)";
@@ -118,24 +109,17 @@ function gestionarGasto($idGasto, $accion) {
             $filaTipoGasto = $resultadoTipoGasto->fetch_assoc();
             $id_partida = $filaTipoGasto['id_partida'];
 
-            // Paso 2: Verificar la disponibilidad en la tabla distribucion_presupuestaria
-            $sqlDistribucion = "SELECT monto_actual FROM distribucion_presupuestaria WHERE id_partida = ? AND id_ejercicio = ?";
-            $stmtDistribucion = $conexion->prepare($sqlDistribucion);
-            $stmtDistribucion->bind_param("ii", $id_partida, $id_ejercicio);
-            $stmtDistribucion->execute();
-            $resultadoDistribucion = $stmtDistribucion->get_result();
 
-            if ($resultadoDistribucion->num_rows === 0) {
-                throw new Exception("No se encontró una distribución presupuestaria válida para el id_partida y id_ejercicio proporcionados");
-            }
+            // Llamar a la función y obtener el resultado
+    $resultado = consultarDisponibilidad($id_partida, $id_ejercicio, $monto);
 
-            $filaDistribucion = $resultadoDistribucion->fetch_assoc();
-            $monto_actual = $filaDistribucion['monto_actual'];
+    if ($resultado['exito']) {
+        $monto_actual = $resultado['monto_actual'];
+    } else {
+        throw new Exception("El presupuesto actual es inferior al monto del gasto. No se puede registrar el gasto.");
+        $monto_actual = $resultado['monto_actual'];
+    }
 
-            // Verificar que el monto actual sea igual o superior al monto del gasto
-            if ($monto_actual < $monto) {
-                throw new Exception("El presupuesto actual es inferior al monto del gasto. No se puede aceptar el gasto.");
-            }
 
             // Paso 3: Actualizar el status del gasto a 1 (aceptado)
             $sqlUpdateGasto = "UPDATE gastos SET status = 1 WHERE id = ?";
