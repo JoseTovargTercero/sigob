@@ -1,8 +1,19 @@
-<?php 
-require_once '../sistema_global/conexion.php'; 
+<?php
+require_once '../sistema_global/conexion.php';
 
 $id_ejercicio = $_GET['id_ejercicio'];
 
+
+$query_sector = "SELECT * FROM ejercicio_fiscal WHERE id = ?";
+$stmt = $conexion->prepare($query_sector);
+$stmt->bind_param('i', $id_ejercicio);
+$stmt->execute();
+$result = $stmt->get_result();
+$data = $result->fetch_assoc();
+
+$ano = $data['ano'];
+$situado = $data['situado'];
+$stmt->close();
 
 // Consultar distribuciones presupuestarias
 $query_distribucion = "SELECT monto_inicial, id_partida FROM distribucion_presupuestaria WHERE id_ejercicio = ?";
@@ -44,16 +55,16 @@ foreach ($distribuciones as $distribucion) {
 
     $partida = $partida_data['partida'] ?? 'N/A';
     $descripcion = $partida_data['descripcion'] ?? 'N/A';
-    
- 
+
+
 
     // Extraer el código de partida (los primeros 3 caracteres)
     $codigo_partida = substr($partida, 0, 3);
 
     // Agrupar datos por código de partida
     if (in_array($codigo_partida, $partidas_a_agrupadas)) {
-        $data[$codigo_partida][] = [$partida, $descripcion, '0,00', $monto_inicial, '0,00', '0,00', $monto_inicial];
-        
+        $data[$codigo_partida][] = [$partida, $descripcion, 0, $monto_inicial, 0, 0, $monto_inicial];
+
         if (!isset($totales_por_partida[$codigo_partida])) {
             $totales_por_partida[$codigo_partida] = 0;
         }
@@ -65,6 +76,7 @@ foreach ($distribuciones as $distribucion) {
 
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Créditos Presupuestarios del Sector por Programa</title>
     <meta charset="UTF-8">
@@ -86,14 +98,42 @@ foreach ($distribuciones as $distribucion) {
             text-align: center;
         }
 
-        th, td {
-            border: 1px solid black;
+        td {
             padding: 5px;
         }
 
         th {
-            background-color: #dddddd;
             font-weight: bold;
+            text-align: center;
+        }
+
+        .py-0 {
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+        }
+
+        .pb-0 {
+            padding-bottom: 0 !important;
+        }
+
+        .pt-0 {
+            padding-top: 0 !important;
+        }
+
+        .b-1 {
+            border: 1px solid;
+        }
+
+        .bc-lightgray {
+            border-color: lightgray !important;
+        }
+
+        .bc-gray {
+            border-color: gray;
+        }
+
+        .pt-1 {
+            padding-top: 1rem !important;
         }
 
         .text-right {
@@ -109,7 +149,7 @@ foreach ($distribuciones as $distribucion) {
         }
 
         h2 {
-            font-size: 14px;
+            font-size: 16px;
             margin: 0;
         }
 
@@ -134,10 +174,63 @@ foreach ($distribuciones as $distribucion) {
             width: 120px;
         }
 
+        .t-border-0>tr>td {
+            border: none !important;
+        }
+
+        .fz-6 {
+            font-size: 5px !important;
+        }
+
+        .fz-8 {
+            font-size: 8px !important;
+        }
+
+        .fz-9 {
+            font-size: 9px !important;
+        }
+
+        .fz-10 {
+            font-size: 10px !important;
+        }
+
+        .bl {
+            border-left: 1px solid gray;
+        }
+
+        .br {
+            border-right: 1px solid gray;
+        }
+
+        .bb {
+            border-bottom: 1px solid gray;
+        }
+
+        .bt {
+            border-top: 1px solid gray;
+        }
+
+        .dw-nw {
+            white-space: nowrap !important
+        }
+
         @media print {
             .page-break {
                 page-break-after: always;
             }
+        }
+
+        .t-content {
+            page-break-inside: avoid;
+        }
+
+        .p-2 {
+            padding: 10px;
+        }
+
+        .total_text {
+            color: #8e1e1e;
+            text-decoration: underline;
         }
     </style>
 </head>
@@ -148,66 +241,123 @@ foreach ($distribuciones as $distribucion) {
     // Imprimir el encabezado
     echo "
     <div style='font-size: 9px;'>
-        <table class='header-table'>
+        <table class='header-table bt br bb bl bc-lightgray'>
             <tr>
-                <td class='w-50'>
+                <td class='text-left' style='width: 20px'>
                     <img src='../../img/logo.jpg' class='logo'>
                 </td>
-                <td class='text-right w-50'>
-                    <div class='fw-bold'>GOBERNACION DEL ESTADO INDÍGENA DE AMAZONAS</div>
-                    <div>CÓDIGO PRESUPUESTARIO: E5100</div>
-                    <div>PRESUPUESTO: 2020</div>
-                    <div>Fecha: 27/12/2019</div>
+                <td class='text-left' style='vertical-align: top;padding-top: 13px;'>
+                    <b>
+                    REPÚBLICA BOLIVARIANA DE VENEZUELA <br>
+                    GOBERNACIÓN DEL ESTADO AMAZONAS  <br>
+                    CODIGO PRESUPUESTARIO: E5100 
+                    </b>
+                    </div>
+                    <td class='text-right' style='vertical-align: top;padding: 13px 10px 0 0; '>
+                    <b>
+                    Página: 1 de 1 <br>
+                    Fecha: " . date('d/m/Y') . " 
+                    </b>
+                </td>
+            </tr>
+               <tr >
+                <td colspan='3'>
+                <h2 align='center'>RESUMEN DE LOS CREDITOS PRESUPUESTARIOS A NIVEL DE PARTIDAS Y FUENTES DE FINANCIAMIENTO</h2>
+                </td>
+            </tr>
+
+              <tr>
+                <td class='text-left'>
+                <b>PRESUPUESTO " . $ano . "</b>
                 </td>
             </tr>
         </table>
+    "; ?>
 
-        <h2 align='center'>CRÉDITOS PRESUPUESTARIOS DEL SECTOR POR PROGRAMA A NIVEL DE PARTIDAS Y FUENTES DE FINANCIAMIENTO</h2>
-    ";
 
-    // Inicio de tabla principal
-    echo "
-        <table>
-            <thead>
-                <tr>
-                    <th class='text-left'>Partida</th>
-                    <th class='text-left'>Denominación</th>
-                    <th>Ingresos Propios</th>
-                    <th>Situado Estadal</th>
-                    <th>FCI</th>
-                    <th>Otras Fuentes</th>
-                    <th>Total</th>
-                </tr>
-            </thead>
-            <tbody>";
+    <table>
+        <thead>
+            <tr>
+                <th class="bt bl bb p-15" rowspan="3" style="width: 10%">Partida</th>
+                <th class="bt bl bb p-15" rowspan="3">Denominación</th>
+                <th class="bt bl bb br p-1" colspan="5">ASIGNACION PRESUPUESTARIA</th>
 
-    // Imprimir los registros agrupados y sus totales
-    foreach ($partidas_a_agrupadas as $codigo_agrupado) {
-        if (isset($data[$codigo_agrupado])) {
-            foreach ($data[$codigo_agrupado] as $row) {
-                echo "<tr>
-                    <td class='text-left'>{$row[0]}</td>
-                    <td class='text-left'>{$row[1]}</td>
-                    <td>{$row[2]}</td>
-                    <td>{$row[3]}</td>
-                    <td>{$row[4]}</td>
-                    <td>{$row[5]}</td>
-                    <td>{$row[6]}</td>
-                </tr>";
+            </tr>
+
+            <tr>
+                <th class="bb bl" rowspan="2" style="width: 10%">Ingresos Propios</th>
+                <th class="bb bl " colspan="2">Aporte legal</th>
+
+                <th class="bb br bl" rowspan="2" style="width: 10%">Otras Fuentes</th>
+                <th class="bb br" rowspan="2" style="width: 10%">Total</th>
+            </tr>
+
+            <tr>
+                <th class="bb bl" style="width: 10%;">Situado Estadal</th>
+                <th class="bb bl" style="width: 10%;">FCI</th>
+            </tr>
+        </thead>
+
+
+
+
+        <tbody>
+            <?php
+
+            // Imprimir los registros agrupados y sus totales
+            foreach ($partidas_a_agrupadas as $codigo_agrupado) {
+                if (isset($data[$codigo_agrupado])) {
+
+                    $t_ingreso_propio = 0;
+                    $t_situado_estada = 0;
+                    $t_fci = 0;
+                    $t_otras_fuentes = 0;
+                    $t_total = 0;
+
+                    foreach ($data[$codigo_agrupado] as $row) {
+
+                        $t_ingreso_propio += $ingreso_propio = $row[2];
+                        $t_situado_estada += $situado_estada = $row[3];
+                        $t_fci += $fci = $row[4];
+                        $t_otras_fuentes += $otras_fuentes = $row[5];
+                        $t_total += $total = $row[6];
+
+
+
+                        echo "<tr>
+                            <td class='fz-8 bl'>{$row[0]}</td>
+                            <td class='fz-8 bl text-left'>{$row[1]}</td>
+                            <td class='fz-8 bl'>" .  number_format($ingreso_propio, 2, ',', '.') . "</td>
+                            <td class='fz-8 bl'>" .  number_format($situado_estada, 2, ',', '.') . "</td>
+                            <td class='fz-8 bl'>" .  number_format($fci, 2, ',', '.') . "</td>
+                            <td class='fz-8 bl'>" .  number_format($otras_fuentes, 2, ',', '.') . "</td>
+                            <td class='fz-8 bl br'>" .  number_format($total, 2, ',', '.') . "</td>
+                        </tr>";
+                    }
+
+
+
+
+
+
+                    // Imprimir total por partida
+                    $monto_total = $totales_por_partida[$codigo_agrupado];
+                    echo "<tr>
+                            <td class='bl bb'></td>
+                            <td class='bl bb fw-bold total_text'>TOTAL POR PARTIDA $codigo_agrupado</td>
+                            <td class='bl bb fw-bold total_text'>" . number_format($t_ingreso_propio, 2, ',', '.') . "</td>
+                            <td class='bl bb fw-bold total_text'>" . number_format($t_situado_estada, 2, ',', '.') . "</td>
+                            <td class='bl bb fw-bold total_text'>" . number_format($t_fci, 2, ',', '.') . "</td>
+                            <td class='bl bb fw-bold total_text'>" . number_format($t_otras_fuentes, 2, ',', '.') . "</td>
+                            <td class='bl br bb fw-bold total_text'>" . number_format($monto_total, 2, ',', '.') . "</td>
+                    </tr >";
+                }
             }
 
-            // Imprimir total por partida
-            $monto_total = $totales_por_partida[$codigo_agrupado];
-            echo "<tr>
-                <td colspan='6' class='text-left fw-bold'>TOTAL POR PARTIDA $codigo_agrupado</td>
-                <td class='fw-bold'>$monto_total</td>
-            </tr>";
-        }
-    }
-
-    echo "</tbody>
+            echo "</tbody >
         </table>";
-    ?>
+            ?>
 
 </body>
+
 </html>
