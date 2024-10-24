@@ -237,9 +237,6 @@ foreach ($distribuciones as $distribucion) {
 
 <body>
 
-    <?php
-    // Imprimir el encabezado
-    echo "
     <div style='font-size: 9px;'>
         <table class='header-table bt br bb bl bc-lightgray'>
             <tr>
@@ -248,31 +245,30 @@ foreach ($distribuciones as $distribucion) {
                 </td>
                 <td class='text-left' style='vertical-align: top;padding-top: 13px;'>
                     <b>
-                    REPÚBLICA BOLIVARIANA DE VENEZUELA <br>
-                    GOBERNACIÓN DEL ESTADO AMAZONAS  <br>
-                    CODIGO PRESUPUESTARIO: E5100 
+                        REPÚBLICA BOLIVARIANA DE VENEZUELA <br>
+                        GOBERNACIÓN DEL ESTADO AMAZONAS <br>
+                        CODIGO PRESUPUESTARIO: E5100
                     </b>
-                    </div>
-                    <td class='text-right' style='vertical-align: top;padding: 13px 10px 0 0; '>
-                    <b>
-                    Página: 1 de 1 <br>
-                    Fecha: " . date('d/m/Y') . " 
-                    </b>
-                </td>
-            </tr>
-               <tr >
-                <td colspan='3'>
-                <h2 align='center'>RESUMEN DE LOS CREDITOS PRESUPUESTARIOS A NIVEL DE PARTIDAS Y FUENTES DE FINANCIAMIENTO</h2>
-                </td>
-            </tr>
+    </div>
+    <td class='text-right' style='vertical-align: top;padding: 13px 10px 0 0; '>
+        <b>
+            Página: 1 de 1 <br>
+            Fecha: <?php echo date('d/m/Y') ?>
+        </b>
+    </td>
+    </tr>
+    <tr>
+        <td colspan='3'>
+            <h2 align='center'>RESUMEN DE LOS CREDITOS PRESUPUESTARIOS A NIVEL DE PARTIDAS Y FUENTES DE FINANCIAMIENTO</h2>
+        </td>
+    </tr>
 
-              <tr>
-                <td class='text-left'>
-                <b>PRESUPUESTO " . $ano . "</b>
-                </td>
-            </tr>
-        </table>
-    "; ?>
+    <tr>
+        <td class='text-left'>
+            <b>PRESUPUESTO <?php echo $ano ?></b>
+        </td>
+    </tr>
+    </table>
 
 
     <table>
@@ -322,8 +318,6 @@ foreach ($distribuciones as $distribucion) {
                         $t_otras_fuentes += $otras_fuentes = $row[5];
                         $t_total += $total = $row[6];
 
-
-
                         echo "<tr>
                             <td class='fz-8 bl'>{$row[0]}</td>
                             <td class='fz-8 bl text-left'>{$row[1]}</td>
@@ -334,11 +328,6 @@ foreach ($distribuciones as $distribucion) {
                             <td class='fz-8 bl br'>" .  number_format($total, 2, ',', '.') . "</td>
                         </tr>";
                     }
-
-
-
-
-
 
                     // Imprimir total por partida
                     $monto_total = $totales_por_partida[$codigo_agrupado];

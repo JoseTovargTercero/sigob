@@ -147,7 +147,13 @@ foreach ($pdf_files as $url => $pdf_filename) {
     // Obtener el contenido HTML
     $html = file_get_contents($url);
     // Generar el PDF con mPDF en orientación horizontal
-    $mpdf = new Mpdf(['mode' => 'utf-8', 'format' => $reportes[$tipo]['formato']]);
+    $mpdf = new \Mpdf\Mpdf([
+        'mode' => 'utf-8',
+        'format' => $reportes[$tipo]['formato'],
+        'margin_left' => 8,  // Aproximadamente 10 píxeles
+        'margin_right' => 8  // Aproximadamente 10 píxeles
+    ]);
+
     $mpdf->WriteHTML($html);
 
     // Guardar el PDF generado temporalmente en el servidor
