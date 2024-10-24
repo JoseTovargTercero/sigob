@@ -144,8 +144,6 @@ export const form_asignacion_entes_monto_card = async ({
     }
   }
 
-  // CARGAR LISTA DE PARTIDAS
-
   function enviarInformacion() {
     confirmNotification({
       type: NOTIFICATIONS_TYPES.send,
@@ -160,10 +158,10 @@ export const form_asignacion_entes_monto_card = async ({
         })
 
         if (res.success) {
-          form_asignacion_entes_card({
-            elementToInset: 'asignacion-entes-view',
-            ejercicioFiscal,
-          })
+          // form_asignacion_entes_card({
+          //   elementToInset: 'asignacion-entes-view',
+          //   ejercicioFiscal,
+          // })
           loadAsignacionEntesTable(ejercicioFiscal.id)
           closeCard()
         }

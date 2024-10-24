@@ -916,7 +916,7 @@ function validarSeleccionPartidasTable() {
 
   seleccionPartidasTable = new DataTable('#asignacion-part3-table', {
     scrollY: 200,
-    responsive: true,
+    responsive: false,
     colums: [
       { data: 'elegir' },
       { data: 'sector_nombre' },
