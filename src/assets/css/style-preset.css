@@ -3614,3 +3614,55 @@ hr.hr-text::before {
 .text-bold {
   font-weight: bold;
 }
+
+.btn-float {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  margin: 15px;
+}
+
+.hr-w-btn {
+  width: 82%;
+  margin: 20px 0 0 9px;
+  opacity: 0.1;
+}
+
+.text-left {
+  text-align: left !important;
+}
+
+
+
+.btn-update,
+.btn-destroy {
+  position: relative;
+  /* Necesario para usar el ::before correctamente */
+  height: 33px !important;
+  width: 34px !important;
+  /* Tamaño del texto */
+}
+
+.btn-update::before {
+  content: "\eac0" !important;
+  font-family: "boxicons" !important;
+  font-weight: normal !important;
+  position: absolute !important;
+  left: 7px !important;
+  top: 49% !important;
+  transform: translateY(-50%) !important;
+  font-size: 16px !important;
+  color: white !important;
+}
+
+.btn-destroy::before {
+  content: "\ec50" !important;
+  font-family: "boxicons" !important;
+  font-weight: normal !important;
+  position: absolute !important;
+  left: 7px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  font-size: 16px !important;
+  color: white !important;
+}

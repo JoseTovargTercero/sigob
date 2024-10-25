@@ -2,44 +2,44 @@ import {
   actualizarPartida,
   getFormPartidas,
   guardarPartida,
-} from '../api/partidas.js'
-import { loadPartidasTable } from '../controllers/form_partidasTable.js'
+} from "../api/partidas.js";
+import { loadPartidasTable } from "../controllers/form_partidasTable.js";
 import {
   confirmNotification,
   insertOptions,
   toastNotification,
   validateInput,
-} from '../helpers/helpers.js'
-import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
+} from "../helpers/helpers.js";
+import { NOTIFICATIONS_TYPES } from "../helpers/types.js";
 
-const d = document
+const d = document;
 
 let fieldList = {
-  partida: '',
-  nombre: '',
-  descripcion: '',
-}
+  partida: "",
+  nombre: "",
+  descripcion: "",
+};
 
 let fieldListErrors = {
   partida: {
     value: true,
-    type: 'partida',
-    message: 'Formato no coincide',
+    type: "partida",
+    message: "Formato no coincide",
   },
   nombre: {
     value: true,
-    type: 'text',
-    message: 'Nombre inválido',
+    type: "text",
+    message: "Nombre inválido",
   },
   descripcion: {
     value: true,
-    type: 'text',
-    message: 'Descripción inválida',
+    type: "text",
+    message: "Descripción inválida",
   },
-}
+};
 export const form_partida_form_card = async ({ elementToInsert, id }) => {
-  const oldCardElement = d.getElementById('partida-form-card')
-  if (oldCardElement) oldCardElement.remove()
+  const oldCardElement = d.getElementById("partida-form-card");
+  if (oldCardElement) oldCardElement.remove();
 
   let card = `    <div class='card slide-up-animation' id='partida-form-card'>
       <div class='card-header d-flex justify-content-between'>
@@ -105,47 +105,47 @@ export const form_partida_form_card = async ({ elementToInsert, id }) => {
           Guardar
         </button>
       </div>
-    </div>`
+    </div>`;
 
-  d.getElementById(elementToInsert).insertAdjacentHTML('afterbegin', card)
+  d.getElementById(elementToInsert).insertAdjacentHTML("afterbegin", card);
 
-  const formElement = d.getElementById('partida-form')
-  const cardElement = d.getElementById('partida-form-card')
+  const formElement = d.getElementById("partida-form");
+  const cardElement = d.getElementById("partida-form-card");
 
   if (id) {
-    let partida = await getFormPartidas(id)
+    let partida = await getFormPartidas(id);
 
-    let inputs = formElement.querySelectorAll('input')
+    let inputs = formElement.querySelectorAll("input");
 
     inputs.forEach((input) => {
       // SI EL VALOR NO ES UNDEFINED COLOCAR VALOR EN SELECT
-      if (partida[input.name] !== undefined) input.value = partida[input.name]
+      if (partida[input.name] !== undefined) input.value = partida[input.name];
 
       validateInput({
         target: input,
         fieldList,
         fieldListErrors,
         type: fieldListErrors[input.name].type,
-      })
-    })
+      });
+    });
   }
 
   const closeCard = () => {
-    validateEditButtons()
-    cardElement.remove()
-    cardElement.removeEventListener('click', validateClick)
-    cardElement.removeEventListener('input', validateInputFunction)
+    validateEditButtons();
+    cardElement.remove();
+    cardElement.removeEventListener("click", validateClick);
+    cardElement.removeEventListener("input", validateInputFunction);
 
-    return false
-  }
+    return false;
+  };
 
   function validateClick(e) {
     if (e.target.dataset.close) {
-      closeCard()
+      closeCard();
     }
 
-    if (e.target.id === 'partida-guardar') {
-      let inputs = formElement.querySelectorAll('input')
+    if (e.target.id === "partida-guardar") {
+      let inputs = formElement.querySelectorAll("input");
 
       inputs.forEach((input) => {
         fieldList = validateInput({
@@ -153,47 +153,47 @@ export const form_partida_form_card = async ({ elementToInsert, id }) => {
           fieldList,
           fieldListErrors,
           type: fieldListErrors[input.name].type,
-        })
-      })
-      console.log(fieldListErrors)
+        });
+      });
+      console.log(fieldListErrors);
       if (Object.values(fieldListErrors).some((el) => el.value)) {
         return toastNotification({
           type: NOTIFICATIONS_TYPES.fail,
-          message: 'Valide nuevamente los campos',
-        })
+          message: "Valide nuevamente los campos",
+        });
       }
 
       if (id) {
         return confirmNotification({
           type: NOTIFICATIONS_TYPES.send,
-          message: '¿Desea actualizar esta partida?',
+          message: "¿Desea actualizar esta partida?",
           successFunction: async function () {
             let resultado = await actualizarPartida({
               partida: formElement.partida.value,
               nombre: formElement.nombre.value,
               descripcion: formElement.descripcion.value,
               id,
-            })
+            });
 
-            loadPartidasTable()
-            closeCard()
+            loadPartidasTable();
+            closeCard();
           },
-        })
+        });
       }
       confirmNotification({
         type: NOTIFICATIONS_TYPES.send,
-        message: '¿Desea guardar esta nueva partida?',
+        message: "¿Desea guardar esta nueva partida?",
         successFunction: async function () {
           let resultado = await guardarPartida({
             partida: formElement.partida.value,
             nombre: formElement.nombre.value,
             descripcion: formElement.descripcion.value,
-          })
+          });
 
-          loadPartidasTable()
-          closeCard()
+          loadPartidasTable();
+          closeCard();
         },
-      })
+      });
     }
   }
 
@@ -203,26 +203,25 @@ export const form_partida_form_card = async ({ elementToInsert, id }) => {
       fieldList,
       fieldListErrors,
       type: fieldListErrors[e.target.name].type,
-    })
+    });
 
-    console.log(fieldList)
+    console.log(fieldList);
   }
 
-  cardElement.addEventListener('input', validateInputFunction)
-  cardElement.addEventListener('click', validateClick)
-}
+  cardElement.addEventListener("input", validateInputFunction);
+  cardElement.addEventListener("click", validateClick);
+};
 
 function validateEditButtons() {
-  d.getElementById('partida-registrar').removeAttribute('disabled')
+  d.getElementById("partida-registrar").removeAttribute("disabled");
 
-  let editButtons = d.querySelectorAll('[data-editarid][disabled]')
+  let editButtons = d.querySelectorAll("[data-editarid][disabled]");
 
-  if (editButtons.length < 1) return
+  if (editButtons.length < 1) return;
 
   editButtons.forEach((btn) => {
-    if (btn.hasAttribute('disabled')) {
-      btn.removeAttribute('disabled')
-      btn.textContent = 'Editar'
+    if (btn.hasAttribute("disabled")) {
+      btn.removeAttribute("disabled");
     }
-  })
+  });
 }

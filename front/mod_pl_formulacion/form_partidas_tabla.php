@@ -18,8 +18,6 @@ require_once '../../back/sistema_global/session.php';
     <!-- [ top bar ] -->
 
 
-
-
     <div class="pc-container">
         <div class="pc-content">
             <div class="page-header">
@@ -49,10 +47,9 @@ require_once '../../back/sistema_global/session.php';
                             <div class="table-responsive p-1">
                                 <table id="partidas-table" class="table table-striped" style="width:100%">
                                     <thead class="w-100">
-                                        <th>CÓDIGO</th>
-                                        <th>NOMBRE</th>
+                                        <th class="text-left">CÓDIGO</th>
+                                        <th class="text-left">DESCRIPCIÓN</th>
                                         <th>ACCIONES</th>
-                                        <th>DESCRIPCIÓN</th>
                                     </thead>
 
                                 </table>

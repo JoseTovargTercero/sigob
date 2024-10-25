@@ -62,7 +62,7 @@ require_once '../../back/sistema_global/session.php';
                     <!-- <th>SECTOR NOMBRE</th> -->
                     <th>SECTOR</th>
                     <th>PARTIDA</th>
-                    <th>DESCRIPCION</th>
+                    <th class="text-left">DESCRIPCION</th>
                     <th>MONTO</th>
                     <th>ACCIONES</th>
 
