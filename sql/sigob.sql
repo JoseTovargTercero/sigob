@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 24-10-2024 a las 19:12:08
+-- Tiempo de generación: 25-10-2024 a las 02:26:58
 -- Versión del servidor: 10.4.16-MariaDB
 -- Versión de PHP: 7.4.12
 
@@ -41,8 +41,7 @@ CREATE TABLE `asignacion_ente` (
 --
 
 INSERT INTO `asignacion_ente` (`id`, `id_ente`, `monto_total`, `id_ejercicio`, `fecha`, `status`) VALUES
-(1, 1, '2000', 1, '2024-10-15', '1'),
-(2, 2, '5000', 1, '2024-10-24', '1');
+(3, 36, '2000', 1, '2024-10-24', '0');
 
 -- --------------------------------------------------------
 
@@ -1019,14 +1018,6 @@ CREATE TABLE `distribucion_entes` (
   `fecha` varchar(255) DEFAULT NULL,
   `id_asignacion` int(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Volcado de datos para la tabla `distribucion_entes`
---
-
-INSERT INTO `distribucion_entes` (`id`, `id_ente`, `distribucion`, `monto_total`, `status`, `id_ejercicio`, `comentario`, `fecha`, `id_asignacion`) VALUES
-(1, 1, '[{\"id_partida\":\"1\",\"monto\":1000},{\"id_partida\":\"43\",\"monto\":1000}]', '2000', 0, 1, '', '2024-10-15', 1),
-(2, 2, '[{\"id_distribucion\":\"1\",\"monto\":5000}]', '5000', 0, 1, '', '2024-10-24', 2);
 
 -- --------------------------------------------------------
 
@@ -3915,7 +3906,11 @@ INSERT INTO `empleados_por_grupo` (`id`, `id_empleado`, `id_grupo`, `status`) VA
 --
 
 CREATE TABLE `entes` (
-  `id` int(255) NOT NULL,
+  `id` int(11) NOT NULL,
+  `sector` varchar(10) NOT NULL,
+  `programa` varchar(10) NOT NULL,
+  `proyecto` varchar(10) NOT NULL,
+  `actividad` varchar(10) NOT NULL,
   `ente_nombre` longtext NOT NULL,
   `tipo_ente` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -3924,49 +3919,158 @@ CREATE TABLE `entes` (
 -- Volcado de datos para la tabla `entes`
 --
 
-INSERT INTO `entes` (`id`, `ente_nombre`, `tipo_ente`) VALUES
-(1, 'VICARIATO APOSTOLICO', 'D'),
-(2, 'AMAVISION', 'D'),
-(5, 'FUNDACION ORQUESTA SINFONICA JUVENIL E INFANTIL DE AMAZONAS', 'D'),
-(6, 'FUNDACION CULTURAL ESCUELA ACADEMICA DE ORQUESTAS Y BANDAS DE AMAZONAS', 'D'),
-(7, 'ESCUELA INTEGRAL DE DANZAS', 'D'),
-(8, 'FUNDAPRODICAM', 'D'),
-(9, 'SUPERINTENDENCIA DE ADMINISTRACION TRIBUTARIA DEL ESTADO AMAZONAS (SATEAMAZ)', 'D'),
-(10, 'MUSEO ETNOLOGICO', 'D'),
-(11, 'INSTITUTO REGIONAL DE DEPORTE AMAZONAS (I.R.D.A)', 'D'),
-(12, 'U.N.A', 'D'),
-(13, 'BIBLIOTECA PUBLICA SIMON RODRIGUEZ', 'D'),
-(14, 'AMAZONAS F.C', 'D'),
-(15, 'UNIVERSIDAD EXPERIMENTAL POLITECNICA DE LA FUERZA ARMADA NACIONAL NUCLEO AMAZONAS', 'D'),
-(16, 'UPEL', 'D'),
-(17, 'FUNDACIONIHIRU', 'D'),
-(18, 'FUNDA SALUD', 'D'),
-(19, 'HOSPITAL DR. JOSE GREGORIO HERNANDEZ', 'D'),
-(20, 'A.C. HERMANAS DE JESUS RESUCITADO CASA HOGAR \"CARMEN MARTINEZ\"', 'D'),
-(21, 'SIUMA', 'D'),
-(22, 'FUNDACION PARA LA ATENCION INTEGRAL A LA MUJER DE AMAZONAS', 'D'),
-(23, 'FUNDACION DE SISTEMA DE ATENCION INTEGRAL PARA LAS PERSONAS CON DISCAPACIDAD (SAIPDIS)', 'D'),
-(24, 'FUNDACION CENTRO DE HISTORIA DE LA IDENTIDAD AMAZONENCE', 'D'),
-(25, 'INVIOBRAS AMAZONAS', 'D'),
-(26, 'FUNDACION PROMO-AMAZONAS', 'D'),
-(27, 'INSCATA', 'D'),
-(28, 'LUBRICANTES AMAZONAS C.A', 'D'),
-(29, 'ALIMENTOS AMAZONAS C.A', 'D'),
-(30, 'HIDROAMAZONAS C.A', 'D'),
-(31, 'ASFALTO Y PAVIMENTOS AMAZONAS C.A', 'D'),
-(32, 'COMBUSTIBLES AMAZONAS C.A', 'D'),
-(33, 'SANEAMIENTO AMBIENTAL C.A', 'D'),
-(34, 'BLOQUES Y AGREGADOS AMAZONAS C.A', 'D'),
-(35, 'TEXTILES AMAZONAS C.A', 'D'),
-(36, 'ACUARIOS AMAZONAS', 'D'),
-(37, 'EXPORTADORA AMAZONAS C.A', 'D'),
-(38, 'GAS COMUNAL AMAZONAS C.A', 'D'),
-(39, 'FARMA-AMAZONAS C.A', 'D'),
-(40, 'EMPRESA FLUVIALES AMAZONAS C.A', 'D'),
-(41, 'EMPRESA PUBLICA DE AMAZONAS C.A', 'D'),
-(42, 'EMPRESA DE SERVICIOS Y MANTENIMIENTO GENERALES AMAZONAS C.A (SERVIAMAZONAS)', 'D'),
-(43, 'EMPRESA DE TURISMO', 'D'),
-(44, 'EMPRESA DE TURISMO', 'D');
+INSERT INTO `entes` (`id`, `sector`, `programa`, `proyecto`, `actividad`, `ente_nombre`, `tipo_ente`) VALUES
+(1, '01', '01', '00', '51', 'CONSEJO LEGISLATIVO', 'J'),
+(2, '01', '02', '00', '51', 'CONTRALORIA GENERAL DEL ESTADO', 'J'),
+(3, '01', '03', '00', '51', 'PROCURADORIA GENERAL', 'J'),
+(4, '01', '04', '00', '51', 'SECRETARIA DEL DESPACHO DEL GOBERNADOR YSECRETARIA DE LA GESTION PUBLICA', 'J'),
+(5, '01', '05', '00', '51', 'SECRETARIA GENERAL DE GOBIERNO', 'J'),
+(6, '01', '06', '00', '51', 'SECRETARIA EJECUTIVA DE GESTION HUMANO', 'J'),
+(7, '01', '07', '00', '51', 'SECRETARIA DE PLANIFICACION, PROYECTO Y PRESUPUESTO', 'J'),
+(8, '01', '08', '00', '51', 'SERVICIOS DE ADMINISTRACION', 'J'),
+(9, '01', '09', '00', '51', 'TESORERIA', 'J'),
+(10, '01', '10', '00', '51', 'SECRETARIA EJECUTIVA INDIGENA', 'J'),
+(11, '01', '11', '00', '51', 'AUDITORIA INTERNA', 'J'),
+(12, '02', '01', '00', '51', 'COORDINACION DE SERVICIOS POLICIALES', 'J'),
+(13, '02', '02', '00', '51', 'SECRETARIA DE POLITICA DE ASUNTOS FRONTERIZOS', 'J'),
+(14, '02', '03', '00', '51', 'PROTECCION CIVIL', 'J'),
+(15, '02', '04', '00', '51', 'PREVENCION Y CONTROL DE SINIESTRO (BOMBEROS)', 'J'),
+(16, '06', '01', '00', '51', 'SECREATARIA DE TURISMO', 'J'),
+(18, '08', '03', '00', '51', 'SEC. EJEC. PARA LA ATENCION DE  LA JUVENTUD Y ESTUDIANTE UNIVERSITARIO', 'J'),
+(19, '09', '01', '00', '51', 'SEC. EJEC.DEL SISTEMA DE INFOR. COM. ( SICOAMA)', 'J'),
+(20, '09', '02', '00', '51', 'ADMINISTRACION DE I.A.B.N-GOBERNACION', 'J'),
+(21, '09', '03', '00', '51', 'SECRETARIA DE CULTURA', 'J'),
+(22, '11', '01', '00', '51', 'SECRETARIA DE INFRAESTRUCTURA', 'J'),
+(23, '12', '01', '00', '51', 'ADMINISTRATIVOS MALARIOLOGIA-GOBERNACION', 'J'),
+(24, '13', '01', '00', '51', 'SECRETARIA Y COORDINACION', 'J'),
+(25, '13', '04', '00', '51', 'PROTECCION SOCIAL', 'J'),
+(26, '14', '01', '00', '51', 'CONTRATACION COLECTIVA DE EMPLEADOS', 'J'),
+(27, '15', '01', '00', '51', 'ENTES DESCENTRALIZADOS', 'D'),
+(28, '01', '13', '00', '51', 'SECREATARIA EJECUTIVA DE BIENES Y SERVICIOS', 'J'),
+(29, '15', '01', '00', '51', 'AMAVISION', 'D'),
+(30, '15', '01', '00', '51', 'FUNDACION ORQUESTA SINFONICA JUVENIL E INFANTIL DE AMAZONAS', 'D'),
+(31, '15', '01', '00', '51', 'FUNDACION CULTURAL ESCUELA ACADEMICA DE ORQUESTAS Y BANDAS DE AMAZONAS', 'D'),
+(32, '15', '01', '00', '51', 'ESCUELA INTEGRAL DE DANZAS', 'D'),
+(33, '15', '01', '00', '51', 'FUNDAPRODICAM', 'D'),
+(34, '15', '01', '00', '51', 'SUPERINTENDENCIA DE ADMINISTRACION TRIBUTARIA DEL ESTADO AMAZONAS (SATEAMAZ)', 'D'),
+(35, '15', '01', '00', '51', 'MUSEO ETNOLOGICO', 'D'),
+(36, '15', '01', '00', '51', 'INSTITUTO REGIONAL DE DEPORTE AMAZONAS (I.R.D.A)', 'D'),
+(37, '15', '01', '00', '51', 'U.N.A', 'D'),
+(38, '15', '01', '00', '51', 'BIBLIOTECA PUBLICA SIMON RODRIGUEZ', 'D'),
+(39, '15', '01', '00', '51', 'AMAZONAS F.C', 'D'),
+(40, '15', '01', '00', '51', 'UNIVERSIDAD EXPERIMENTAL POLITECNICA DE LA FUERZA ARMADA NACIONAL NUCLEO AMAZONAS', 'D'),
+(41, '15', '01', '00', '51', 'UPEL', 'D'),
+(42, '15', '01', '00', '51', 'FUNDACIONIHIRU', 'D'),
+(43, '15', '01', '00', '51', 'FUNDA SALUD', 'D'),
+(44, '15', '01', '00', '51', 'HOSPITAL DR. JOSE GREGORIO HERNANDEZ', 'D'),
+(45, '15', '01', '00', '51', 'A.C. HERMANAS DE JESUS RESUCITADO CASA HOGAR \"CARMEN MARTINEZ\"', 'D'),
+(46, '15', '01', '00', '51', 'SIUMA', 'D'),
+(47, '15', '01', '00', '51', 'FUNDACION PARA LA ATENCION INTEGRAL A LA MUJER DE AMAZONAS', 'D'),
+(48, '15', '01', '00', '51', 'FUNDACION DE SISTEMA DE ATENCION INTEGRAL PARA LAS PERSONAS CON DISCAPACIDAD (SAIPDIS)', 'D'),
+(49, '15', '01', '00', '51', 'FUNDACION CENTRO DE HISTORIA DE LA IDENTIDAD AMAZONENCE', 'D'),
+(50, '15', '01', '00', '51', 'INVIOBRAS AMAZONAS', 'D'),
+(51, '15', '01', '00', '51', 'FUNDACION PROMO-AMAZONAS', 'D'),
+(52, '15', '01', '00', '51', 'INSCATA', 'D'),
+(53, '15', '01', '00', '51', 'LUBRICANTES AMAZONAS C.A', 'D'),
+(54, '15', '01', '00', '51', 'ALIMENTOS AMAZONAS C.A', 'D'),
+(55, '15', '01', '00', '51', 'HIDROAMAZONAS C.A', 'D'),
+(56, '15', '01', '00', '51', 'ASFALTO Y PAVIMENTOS AMAZONAS C.A', 'D'),
+(57, '15', '01', '00', '51', 'COMBUSTIBLES AMAZONAS C.A', 'D'),
+(58, '15', '01', '00', '51', 'SANEAMIENTO AMBIENTAL C.A', 'D'),
+(59, '15', '01', '00', '51', 'BLOQUES Y AGREGADOS AMAZONAS C.A', 'D'),
+(60, '15', '01', '00', '51', 'TEXTILES AMAZONAS C.A', 'D'),
+(61, '15', '01', '00', '51', 'ACUARIOS AMAZONAS', 'D'),
+(62, '15', '01', '00', '51', 'EXPORTADORA AMAZONAS C.A', 'D'),
+(63, '15', '01', '00', '51', 'GAS COMUNAL AMAZONAS C.A', 'D'),
+(64, '15', '01', '00', '51', 'FARMA-AMAZONAS C.A', 'D'),
+(65, '15', '01', '00', '51', 'EMPRESA FLUVIALES AMAZONAS C.A', 'D'),
+(66, '15', '01', '00', '51', 'EMPRESA PUBLICA DE AMAZONAS C.A', 'D'),
+(67, '15', '01', '00', '51', 'EMPRESA DE SERVICIOS Y MANTENIMIENTO GENERALES AMAZONAS C.A (SERVIAMAZONAS)', 'D'),
+(68, '15', '01', '00', '51', 'EMPRESA DE TURISMO', 'D'),
+(69, '15', '01', '00', '51', 'EMPRESA DE TURISMO', 'D'),
+(70, '15', '01', '00', '51', 'VICARIATO APOSTOLICO', 'D');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `entes_dependencias`
+--
+
+CREATE TABLE `entes_dependencias` (
+  `id` int(255) NOT NULL,
+  `ue` varchar(10) NOT NULL,
+  `sector` varchar(10) NOT NULL,
+  `programa` varchar(10) NOT NULL,
+  `proyecto` varchar(10) NOT NULL,
+  `actividad` varchar(10) NOT NULL,
+  `ente_nombre` longtext NOT NULL,
+  `tipo_ente` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `entes_dependencias`
+--
+
+INSERT INTO `entes_dependencias` (`id`, `ue`, `sector`, `programa`, `proyecto`, `actividad`, `ente_nombre`, `tipo_ente`) VALUES
+(5, '4', '01', '04', '00', '52', 'SECRETARIA EJECUTIVA', 'J'),
+(6, '4', '01', '04', '00', '53', 'CONTRATACIONES PUBLICAS', 'J'),
+(7, '4', '01', '04', '00', '54', 'ASESORIA JURIDICA', 'J'),
+(9, '5', '01', '05', '00', '52', 'SERVICIOS DE INFORMACION Y CUSTODIA DE DOCUMENTOS', 'J'),
+(10, '5', '01', '05', '00', '53', 'ASESORAMIENTO JURIDICO', 'J'),
+(11, '5', '01', '05', '00', '54', 'ASUNTOS POLITICOS', 'J'),
+(12, '5', '01', '05', '00', '55', 'OFICINA DEL FONDO DE COMPENSACION INTERRITORIAL', 'J'),
+(14, '6', '01', '06', '00', '52', 'RECLUTAMIENTO Y SELECCION Y EVALUACION DE PERSONAL', 'J'),
+(15, '6', '01', '06', '00', '53', 'REGISTRO Y CONTROL', 'J'),
+(16, '6', '01', '06', '00', '54', 'PREVISION SOCIAL', 'J'),
+(17, '6', '01', '06', '00', '55', 'RELACIONES LABORALES', 'J'),
+(18, '6', '01', '06', '00', '56', 'AUDITORIA, CONTROL Y FISCALIZACION LABORAL', 'J'),
+(19, '6', '01', '06', '00', '57', 'SEGURO SOCIAL', 'J'),
+(20, '6', '01', '06', '00', '58', 'ELABORACION PROCESAMIENTO Y GENERACION DE NOMINAS', 'J'),
+(22, '7', '01', '07', '00', '52', 'FORMULACION Y EVALUACION PRESUPUESTARIA', 'J'),
+(23, '7', '01', '07', '00', '53', 'CONTROL Y EJECUCION PRESUPUESTARIA', 'J'),
+(24, '7', '01', '07', '00', '54', 'PLANIFICACION Y EVALUACION DE PROYECTOS', 'J'),
+(25, '7', '01', '07', '00', '55', 'INFORMATICA', 'J'),
+(27, '8', '01', '08', '00', '52', 'SERVICIOS CONTABLES', 'J'),
+(28, '8', '01', '08', '00', '53', 'SERVICIOS DE COMPRAS Y SUMINISTROS', 'J'),
+(29, '8', '01', '08', '00', '54', 'OFICINA DE BINES Y SERVICIOS', 'J'),
+(31, '9', '01', '09', '00', '52', 'SERVICIOS CONTABLES DEL TESORO', 'J'),
+(32, '9', '01', '09', '00', '53', 'UNIDAD DE ORDENAMIENTO DE PAGO', 'J'),
+(33, '9', '01', '09', '00', '54', 'SERVICIO DE APOYO FISCAL', 'J'),
+(36, '11', '02', '11', '00', '52', 'OFICINA DE CONTROL POSTERIOR', 'J'),
+(37, '11', '03', '11', '00', '53', 'OFICINA DE  DETERMINACION DE RESPONSABILIDAD', 'J'),
+(39, '28', '01', '13', '00', '52', 'OFICINA DE REGISTRO Y CONTROL DE BIENES MUEBLES E INMUEBLES', 'J'),
+(40, '28', '01', '13', '00', '53', 'OFICINA DE CONTABILIDAD', 'J'),
+(41, '28', '01', '13', '00', '54', 'OFICINA DE INVENTARIOS', 'J'),
+(42, '28', '01', '13', '00', '55', 'SEGURIDAD Y VIGILANCIA', 'J'),
+(44, '12', '03', '01', '00', '52', 'CIRMIL', 'J'),
+(49, '16', '06', '01', '00', '52', 'OPERADORES TURISTICO Y EMPRENDEDORES', 'J'),
+(50, '16', '06', '01', '00', '53', 'PROMOCION Y COMUNICACIÓN', 'J'),
+(51, '16', '06', '01', '00', '54', 'INSPECTOR DE TURISMO', 'J'),
+(52, '17', '08', '02', '00', '52', 'JUBILADOS Y PENSIONADOS DE EDUCACION', 'J'),
+(54, '18', '08', '03', '00', '52', 'ASUNTOS DE LA JUVENTUD', 'J'),
+(55, '18', '08', '03', '00', '53', 'JEFATURA DE LOS ESTUDIANTES', 'J'),
+(56, '18', '08', '03', '00', '54', 'ORIENTACION Y PREVENCION A LOS ESTUDIANTES', 'J'),
+(58, '19', '09', '01', '00', '52', 'JEFATURA DE PRENSA', 'J'),
+(59, '19', '09', '01', '00', '53', 'JEFATURA COMUNICACIÓN DIGITAL', 'J'),
+(60, '19', '09', '01', '00', '54', 'JEFATURA DE DISEÑO Y PUBLICIDAD', 'J'),
+(61, '19', '09', '01', '00', '55', 'OFICINA DE REDES SOCIALES', 'J'),
+(64, '21', '09', '03', '00', '57', 'CONTRUCCION Y MEJORAMIENTO DE OBRAS EN BINES PARA EL DESARROLLO CULTURAL (FCI)', 'J'),
+(66, '22', '11', '01', '00', '52', 'DIVISION DE SUPERVICION Y EVALUACION DE PROYECTO', 'J'),
+(67, '22', '11', '01', '00', '53', 'DIVISION DE INFORMATICA, REGISTRO Y CONTROL', 'J'),
+(68, '22', '11', '01', '00', '54', 'ASESORIA LEGAL', 'J'),
+(69, '22', '11', '02', '02', '57', 'CONTRUCCION Y MEJORAMIENTO DE OBRAS  (FCI)', 'J'),
+(71, '23', '12', '01', '00', '52', 'CONTRATACION COLECTIVA OBREROS DE LA SALUD', 'J'),
+(72, '23', '12', '01', '02', '57', 'CONTRUCCION Y MEJORAS DE OBRAS EN BIENES PARA EL FORTALECIMIENTO DE LA SALUD (FCI)', 'J'),
+(74, '24', '13', '01', '00', '52', 'JEFATRA DE SOLUCION DE CONFLICTOS', 'J'),
+(75, '24', '13', '01', '00', '53', 'GESTION COMUNAL', 'J'),
+(76, '24', '13', '01', '00', '54', 'FORMACION Y ASESORIA LEGAL', 'J'),
+(78, '25', '13', '04', '00', '52', 'PROGRAMAS SOCIALES', 'J'),
+(79, '25', '13', '04', '00', '53', 'ATENCION AL SERVIDOR PUBLICO', 'J'),
+(80, '25', '13', '04', '00', '54', 'GESTION INSTITUCIONAL', 'J'),
+(82, '26', '14', '01', '00', '52', 'CONTRATACION COLECTIVA DE OBREROS DE INFRAESTRUCTURA', 'J'),
+(83, '26', '14', '01', '00', '53', 'PENSIONADOS Y JUBILADOS', 'J'),
+(84, '26', '14', '01', '00', '54', 'CONTRATADOS GOBERNACION', 'J'),
+(85, '26', '14', '01', '00', '55', 'PERSONAL DIRECTIVO DE ALTO NIVEL Y JEFATURAS', 'J');
 
 -- --------------------------------------------------------
 
@@ -16587,6 +16691,12 @@ ALTER TABLE `empleados_por_grupo`
 -- Indices de la tabla `entes`
 --
 ALTER TABLE `entes`
+  ADD PRIMARY KEY (`ue`);
+
+--
+-- Indices de la tabla `entes_dependencias`
+--
+ALTER TABLE `entes_dependencias`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -16820,7 +16930,7 @@ ALTER TABLE `txt`
 -- AUTO_INCREMENT de la tabla `asignacion_ente`
 --
 ALTER TABLE `asignacion_ente`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `backups`
@@ -16922,7 +17032,13 @@ ALTER TABLE `empleados_por_grupo`
 -- AUTO_INCREMENT de la tabla `entes`
 --
 ALTER TABLE `entes`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
+  MODIFY `ue` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=71;
+
+--
+-- AUTO_INCREMENT de la tabla `entes_dependencias`
+--
+ALTER TABLE `entes_dependencias`
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=129;
 
 --
 -- AUTO_INCREMENT de la tabla `error_log`
