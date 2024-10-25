@@ -59,6 +59,10 @@ export const validateDistribucionView = async () => {
     }
 
     if (e.target.dataset.eliminarid) {
+      let ejercicioFiscalElement = d.querySelector(
+        `[data-ejercicioid="${ejercicioFiscal.id}"]`
+      )
+
       confirmNotification({
         type: NOTIFICATIONS_TYPES.delete,
         message: '¿Desea eliminar esta distribución?',
@@ -67,6 +71,9 @@ export const validateDistribucionView = async () => {
           if (res.success) {
             let row = e.target.closest('tr')
             deleteDistribucionRow({ row })
+            ejercicioFiscal = await validarEjercicioActual({
+              ejercicioTarget: ejercicioFiscalElement,
+            })
           }
         },
       })
