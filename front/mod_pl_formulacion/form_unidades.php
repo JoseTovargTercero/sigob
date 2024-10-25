@@ -42,6 +42,10 @@ $stmt->close();
       text-align: center !important;
       /* Alineación al centro, puedes cambiarla a 'left' o 'right' */
     }
+
+    select {
+      background-image: none !important;
+    }
   </style>
 
 </head>
@@ -363,33 +367,105 @@ $stmt->close();
 
 
       <div class="dialogs">
-        <div class="dialogs-content " style="width: 35%;">
+        <div class="dialogs-content " style="width: 45%;">
           <span class="close-button">×</span>
           <h5 class="mb-1">Agregar nueva dependencia interna</h5>
           <hr>
-          <p class="text-danger">
-            Unidad principal: <b id="nombre_unidad"></b>
+          <p class="text-danger mb-3">
+            Unidad principal: <b id="nombre_unidad"></b><br>
+            Sector: <b id="sector_informacion"></b><br>
           </p>
           <div class="card-body">
             <form id="nuevo_ente">
-              <div class="mb-3">
-                <label for="actividad_suu" class="form-label">Actividad</label>
-                <input id="actividad_suu" type="number" min="0" minlength="2" maxlength="2" class="form-control">
+
+              <input type="text" hidden id="id_ente">
+
+              <div class="row mb-3">
+                <div class="col-lg-4">
+                  <label for="sector-2" class="form-label">Sector</label>
+                  <select class="form-control" id="sector-2">
+                    <option value="">Seleccione</option>
+
+                    <?php
+                    $stmt = mysqli_prepare($conexion, "SELECT * FROM pl_sectores");
+                    $stmt->execute();
+                    $result = $stmt->get_result();
+                    if ($result->num_rows > 0) {
+                      while ($row = $result->fetch_assoc()) {
+                        $sector = $row['sector'];
+                        $denominacion = $row['denominacion'];
+                        echo ' <option value="' . $sector . '">' . $sector . ' - ' . $denominacion . '</option>;';
+                      }
+                    }
+                    $stmt->close();
+                    ?>
+                  </select>
+                </div>
+
+                <div class="col-lg-4">
+                  <label for="programa-2" class="form-label">Programa</label>
+                  <select class="form-control" id="programa-2">
+                    <option value="">Seleccione</option>
+                  </select>
+                </div>
+                <div class="col-lg-4">
+                  <label for="proyecto-" class="form-label">Proyecto</label>
+                  <select class="form-control" id="proyecto-2">
+                    <option value="">Seleccione</option>
+                    <option value="00">00</option>
+
+                    <?php
+                    $stmt = mysqli_prepare($conexion, "SELECT * FROM pl_proyectos");
+                    $stmt->execute();
+                    $result = $stmt->get_result();
+                    if ($result->num_rows > 0) {
+                      while ($row = $result->fetch_assoc()) {
+                        $proyecto_id = $row['proyecto_id'];
+                        $denominacion = $row['denominacion'];
+                        echo ' <option value="' . $proyecto_id . '">' . $proyecto_id . ' - ' . $denominacion . '</option>;';
+                      }
+                    }
+                    $stmt->close();
+                    ?>
+                  </select>
+
+
+                </div>
               </div>
-              <div class="mb-3">
-                <label for="denominacion_suu" class="form-label">Denominación</label>
-                <input id="denominacion_suu" type="text" class="form-control">
+              <div class="row">
+                <div class="mb-3 col-lg-3">
+                  <label for="actividad_suu" class="form-label">Actividad</label>
+                  <input id="actividad_suu" type="number" min="0" minlength="2" maxlength="2" class="form-control">
+                </div>
+                <div class="mb-3 col-lg-9">
+                  <label for="denominacion_suu" class="form-label">Denominación</label>
+                  <input id="denominacion_suu" type="text" class="form-control">
+                </div>
               </div>
+
+
+
+
               <div class="mb-2 d-flex justify-content-between">
+                <hr class="hr-w-btn">
                 <button type="submit" class="btn btn-primary">Guardar</button>
-                <button type="button" class="btn btn-secondary" onclick="toggleDialogs()">Cancelar</button>
               </div>
             </form>
+
+
+
+            <div class="mt-4" id="section_lista_actividades_usadas" style="background-color: #f9f9f9;padding: 15px;">
+              <p class="mb-3 text-info">Lista de actividades en uso</p>
+              <ul class="list-group" id="actividades_usadas"></ul>
+            </div>
           </div>
         </div>
       </div>
 
 
+      <div class="btn-float hide" id="btn-back">
+        <button type="button" class="btn btn-primary"> Regresar a la vista anterior</button>
+      </div>
 
       <!-- [ Main Content ] end -->
       <script src="../../src/assets/js/plugins/simplebar.min.js"></script>
@@ -483,47 +559,35 @@ $stmt->close();
           $('#vista_datalles').addClass('hide')
         }
 
+        var edt
 
         // Mostrar interfaz para editar proyecto existente
-        function editarProyecto(id) {
+        function editar(id) {
+          edt = id
+
           $('#vista_datalles').addClass('hide')
           $('#vista_registro').removeClass('hide')
           $('#vista-tabla').addClass('hide')
           $('#cargando').show()
-          accion = 'update_proyecto'
+          accion = 'update_ente'
 
-          $('#nombre').val(proyectos[id]['1'])
-          $('#descripcion').val(proyectos[id]['2'])
-          $('#monto').val(proyectos[id]['3'])
-          $('#partida').val(proyectos[id]['4'])
+          $('#nombre').val(entes[id]['6'])
+          $('#actividad').val(entes[id]['4'])
 
-          // ejecutar addInputsPartidas() tantas partidas haya en proyectos[id]['5']
+          let sector = entes[id]['1'];
 
-          let cantidadPartidas = proyectos[id]['5'].length
-          $('.fila').remove()
+          $("#sector" + " option[value='" + sector + "']").attr("selected", true);
 
-          let i = 1
-          while (i < cantidadPartidas) {
-            addInputsPartidas()
-            i++
+          if (get_programa(sector)) {
+            $("#programa" + " option[value='" + entes[id]['2'] + "']").attr("selected", true);
           }
 
-          // Iterar sobre cada d-asignacion dentro de #section-partidas
-          $('#section-partidas .d-asignacion').each(function(index) {
-            let partida = proyectos[id]['5'][index]['partida'];
-            let monto = proyectos[id]['5'][index]['monto'];
-            let c_sector = proyectos[id]['5'][index]['sector_id'];
+          $("#proyecto" + " option[value='" + entes[id]['3'] + "']").attr("selected", true);
+          $("#tipo_ente" + " option[value='" + entes[id]['5'] + "']").attr("selected", true);
 
-            // Asignar el valor de 'partida' al campo c_partida dentro de la fila actual
-            $(this).find('.c_sector').val(c_sector).trigger("chosen:updated"); // Actualiza Chosen después de seleccionar el valor
-            $(this).find('.c_partida').val(partida).trigger("chosen:updated");
-
-
-            // Asignar el valor de 'monto' al campo c_monto dentro de la fila actual
-            $(this).find('.c_monto').val(monto);
-          });
+          $('#actividad').attr('disabled', true)
+          $('#tipo_ente').attr('disabled', true)
           $('#cargando').hide()
-
 
         }
 
@@ -531,7 +595,9 @@ $stmt->close();
           $('#vista_registro').addClass('hide')
           $('#vista-tabla').removeClass('hide')
           $('.form-control').val('')
-          $('.fila').remove()
+
+          $('#actividad').attr('disabled', false)
+          $('#tipo_ente').attr('disabled', false)
         }
         document.getElementById('btn-cancelar-registro').addEventListener('click', cancelarRegistro)
 
@@ -563,9 +629,13 @@ $stmt->close();
             sector: sector,
             programa: programa,
             proyecto: proyecto,
-            tipo_ente: tipo_ente
+            tipo_ente: tipo_ente,
+            id_ente: null
           }
 
+          if (accion == 'update_ente') {
+            unidad.id_ente = edt
+          }
 
           $.ajax({
             url: url_back,
@@ -577,7 +647,7 @@ $stmt->close();
             }),
             success: function(response) {
               if (response.success) {
-                toast_s('success', 'Unidad ' + (accion == 'update_proyecto' ? 'actualizada' : 'registrada') + ' con éxito')
+                toast_s('success', 'Unidad ' + (accion == 'update_ente' ? 'actualizada' : 'registrada') + ' con éxito')
                 get_tabla()
                 cancelarRegistro()
 
@@ -585,7 +655,7 @@ $stmt->close();
 
               } else {
                 console.log(response)
-                toast_s('error', 'Error al ' + (accion == 'update_proyecto' ? 'actualizar' : 'registrar') + ' la unidad')
+                toast_s('error', 'Error al ' + (accion == 'update_ente' ? 'actualizar' : 'registrar') + ' la unidad')
               }
             },
             error: function(xhr, status, error) {
@@ -619,16 +689,21 @@ $stmt->close();
                 type: "json",
                 contentType: 'application/json',
                 data: JSON.stringify({
-                  accion: 'eliminar_proyecto',
-                  id_proyecto: id
+                  accion: 'eliminar_ente',
+                  id: id
                 }),
                 success: function(response) {
+
                   if (response.success) {
                     get_tabla()
+                    get_sub_unidades()
                     toast_s("success", "Eliminado con éxito");
                   } else {
                     toast_s("error", response.error);
                   }
+                },
+                error: function(xhr, status, error) {
+                  console.error(xhr.responseText);
                 },
               });
             }
@@ -650,6 +725,13 @@ $stmt->close();
             const id = event.target.closest('.btn-plus').getAttribute('data-add-id');
             agregaSubUnidad(id);
           }
+          if (event.target.closest('.li-search')) { // ACCION DE ELIMINAR
+            const texto = event.target.closest('.li-search').getAttribute('data-search');
+            buscarSuu(texto);
+          }
+
+
+
         });
 
         function agregaSubUnidad(id) {
@@ -662,48 +744,141 @@ $stmt->close();
           const info_ente_nombre = entes[id][6]
 
           document.getElementById('nombre_unidad').innerHTML = info_ente_nombre
+          document.getElementById('sector_informacion').innerHTML = `${info_sector}.${info_programa}.${info_proyecto}`
+          document.getElementById('id_ente').value = info_id
+
+
+          listarActividades()
+
 
           toggleDialogs()
         }
 
+        function listarActividades() {
+          // info de la actividades en uso
+          let id = document.getElementById('id_ente').value;
+          const actividades_usadas = sub_entes[id] || []; // Asigna un array vacío si sub_entes[id] es undefined
+
+          if (actividades_usadas.length == 0) {
+            document.getElementById('section_lista_actividades_usadas').classList.add('hide')
+          } else {
+            document.getElementById('section_lista_actividades_usadas').classList.remove('hide')
+          }
+
+          const actividades_usadas_html = actividades_usadas.map(function(item) {
+            return `<li class="list-group-item d-flex justify-content-between align-items-center pointer li-search" data-search="${item[7]}"><small>${item[7]}</small> <span class="badge bg-primary rounded-pill">${item[5]}</span></li>`;
+          }).join('');
+
+          document.getElementById('actividades_usadas').innerHTML = actividades_usadas_html;
+
+        }
+
+
+        function buscarSuu(suu) {
+          DataTable_2.search(suu).draw()
+          toggleDialogs()
+          document.getElementById('pills-profile-tab').click();
+          document.getElementById('btn-back').classList.remove('hide');
+        }
+
+
+
+
+
+        document.getElementById('btn-back').addEventListener('click', function(event) {
+          listarActividades()
+          document.getElementById('btn-back').classList.add('hide');
+          document.getElementById('pills-home-tab').click();
+          toggleDialogs()
+        })
 
 
         // onsubmit nuevo_ente
         document.getElementById('nuevo_ente').addEventListener('submit', function(event) {
           event.preventDefault();
+
+          const sector_2 = document.getElementById('sector-2').value;
+          const programa_2 = document.getElementById('programa-2').value;
+          const proyecto_2 = document.getElementById('proyecto-2').value;
           const actividad_suu = document.getElementById('actividad_suu').value;
           const denominacion_suu = document.getElementById('denominacion_suu').value;
+
+          if (denominacion_suu == '51') {
+            toast_s('error', 'No se puede registrar por la actividad 51')
+            return
+          }
+
+          let id = document.getElementById('id_ente').value;
+
+          const actividades_usadas = sub_entes[id] || [];
+
+          const actividades_usadas_ente = actividades_usadas.map(function(item) {
+            return item[5];
+          });
+
+          let campos = ['id_ente', 'sector-2', 'programa-2', 'proyecto-2', 'actividad_suu', 'denominacion_suu'];
+
+          let errors = false
+
+          campos.forEach(campo => {
+            if (!validarCampo(campo)) {
+              errors = true;
+            }
+          });
+
+          if (errors) {
+            toast_s('error', 'Todos los campos son obligatorios.');
+            return;
+          }
+
+
+          if (actividades_usadas_ente.indexOf(actividad_suu) != -1) {
+            toast_s('error', 'La actividad ya esta en uso.')
+            return;
+          }
+
+
+          $.ajax({
+            url: url_back,
+            type: "json",
+            contentType: 'application/json',
+            data: JSON.stringify({
+              accion: 'guardar_suu',
+              info: {
+                id_ente: id,
+                sector: sector_2,
+                programa: programa_2,
+                proyecto: proyecto_2,
+                actividad_suu: actividad_suu,
+                denominacion_suu: denominacion_suu
+              }
+            }),
+
+
+            success: function(response) {
+              let data_tabla = [] // Informacion de la tabla
+
+              if (response.success) {
+                get_sub_unidades()
+                toggleDialogs()
+                toast_s('success', 'Se ha agregado cone éxito.');
+              } else {
+                toast_s('error', 'Error al agregar la unidad.');
+              }
+            },
+            error: function(xhr, status, error) {
+              console.error(xhr.responseText);
+            },
+          });
+
+
+
 
         })
 
 
 
 
-        var edt
-
-        function editar(id) {
-          edt = id
-
-          Swal.fire({
-            title: "¿Que desea hacer?",
-            text: "¡Elija una de las opciones para modificar!",
-            icon: "info",
-            showCancelButton: true,
-            showDenyButton: true,
-            confirmButtonColor: "#04a9f5",
-            denyButtonColor: '#a389d4',
-            denyButtonText: "Información",
-            confirmButtonText: "Estatus",
-            cancelButtonText: "Cancelar",
-          }).then((result) => {
-            if (result.isConfirmed) {
-              toggleDialogs()
-            } else if (result.isDenied) {
-              editarProyecto(id)
-            }
-          });
-
-        }
 
         function get_tabla() {
           $.ajax({
@@ -740,7 +915,7 @@ $stmt->close();
                     item.ente_nombre,
                     item.sector + "." + item.programa + "." + item.proyecto,
                     item.tipo_ente == 'J' ?
-                    `<button title="Agregar dependencia interna" class="btn btn-plus btn-sm bg-brand-color-1 text-white " data-add-id="${item.id}"><i class="bx bx-plus"></i></button>` : '',
+                    `<button title="Agregar dependencia interna" class="btn btn-plus btn-sm bg-brand-color-1 text-white " data-add-id="${item.id}"><i class="bx bx-plus"></i></button>` : '-',
                     `<button class="btn btn-edit btn-sm bg-brand-color-2 text-white " data-edit-id="${item.id}"><i class="bx bx-edit-alt"></i></button>`,
                     `<button class="btn btn-danger btn-sm btn-delete" data-delete-id="${item.id}"><i class="bx bx-trash"></i></button>`
                   ]);
@@ -772,17 +947,24 @@ $stmt->close();
             }),
             success: function(response) {
               let data_tabla = [] // Informacion de la tabla
+              sub_entes = []
 
               if (response.success) {
                 let count = 1;
-                DataTable.clear()
+                DataTable_2.clear()
 
 
                 response.success.forEach(function(item) {
 
 
-                  sub_entes[item.id] = [
+
+                  if (!sub_entes[item.ue]) {
+                    sub_entes[item.ue] = [];
+                  }
+                  // Agrega los elementos al array existente
+                  sub_entes[item.ue].push([
                     item.id,
+                    item.ue,
                     item.sector,
                     item.programa,
                     item.proyecto,
@@ -790,7 +972,7 @@ $stmt->close();
                     item.tipo_ente,
                     item.ente_nombre,
                     item.nombre_ente_p
-                  ]
+                  ]);
 
                   data_tabla.push([
                     count++,
@@ -822,12 +1004,34 @@ $stmt->close();
         })
 
         // cargar el programa cuando el sector cambie
+
         document.getElementById('sector').addEventListener('change', function(event) {
           let sector_s = this.value;
+          get_programa(sector_s)
+        })
+
+
+        function get_programa(sector_s) {
           document.getElementById('programa').innerHTML = '<option value="">Seleccione</option>'
           programas.forEach(element => {
             if (element[0] == sector_s) {
               document.getElementById('programa').innerHTML += `<option value="${element[1]}">${element[1]} - ${element[2]}</option>`
+            }
+          });
+
+          return true
+        }
+
+
+
+
+        // cargar el programa cuando el sector cambie
+        document.getElementById('sector-2').addEventListener('change', function(event) {
+          let sector_s = this.value;
+          document.getElementById('programa-2').innerHTML = '<option value="">Seleccione</option>'
+          programas.forEach(element => {
+            if (element[0] == sector_s) {
+              document.getElementById('programa-2').innerHTML += `<option value="${element[1]}">${element[1]} - ${element[2]}</option>`
             }
           });
         })

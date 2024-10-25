@@ -278,7 +278,7 @@ function eliminarProyecto($id)
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
             if ($row['status'] == 1) {
-                echo json_encode(['error' => 'No se puedo eliminar un proyecto ejecutado']);
+                echo json_encode(['error' => 'No se puede eliminar un proyecto ejecutado']);
                 exit;
             }
         }

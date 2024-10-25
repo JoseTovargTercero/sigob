@@ -6,13 +6,6 @@ require_once '../sistema_global/session.php';
 require_once '../sistema_global/errores.php';
 
 
-// validar que el monto no supere el presupuesto
-function validarPresupuesto($plan, $monto)
-{
-
-    return true;
-}
-
 
 
 // Función para insertar datos en plan_inversion y proyecto_inversion
@@ -21,12 +14,10 @@ function guardarEnte($proyectosArray)
     global $conexion;
 
     try {
-        // Verificar que el array de proyectos no esté vacío
         if (empty($proyectosArray)) {
             throw new Exception("El array de proyectos está vacío");
         }
 
-        // Insertar los proyectos en la tabla proyecto_inversion
 
         $sector = $proyectosArray['sector'];
         $programa = $proyectosArray['programa'];
@@ -74,6 +65,61 @@ function guardarEnte($proyectosArray)
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+// Función para insertar datos en plan_inversion y proyecto_inversion
+function guardar_suu($info)
+{
+    global $conexion;
+
+    try {
+        if (empty($info)) {
+            throw new Exception("El array de proyectos está vacío");
+        }
+
+
+        $id_ente = $info['id_ente'];
+        $sector = $info['sector'];
+        $programa = $info['programa'];
+        $proyecto = $info['proyecto'];
+        $actividad_suu = $info['actividad_suu'];
+        $denominacion_suu = $info['denominacion_suu'];
+        $tipo_ente = 'J';
+
+        // verificar nombre
+        $stmt = mysqli_prepare($conexion, "SELECT * FROM `entes_dependencias` WHERE ente_nombre = ?");
+        $stmt->bind_param('s', $nombre);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if ($result->num_rows > 0) {
+            throw new Exception("Ya existe una dependencia con el mismo nombre");
+        }
+        $stmt->close();
+
+        $sql = "INSERT INTO entes_dependencias (
+        ue,
+        sector,
+        programa,
+        proyecto,
+        actividad,
+        ente_nombre,
+        tipo_ente
+        ) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $stmt = $conexion->prepare($sql);
+        $stmt->bind_param("sssssss", $id_ente, $sector, $programa, $proyecto, $actividad_suu, $denominacion_suu, $tipo_ente);
+        $stmt->execute();
+
+        if ($stmt->affected_rows <= 0) {
+            $error = $stmt->error;
+            throw new Exception("Error al registrar la dependencia. $error");
+        }
+
+        $stmt->close();
+
+        return json_encode(["success" => "Datos guardados correctamente."]);
+    } catch (Exception $e) {
+        registrarError($e->getMessage());
+        return json_encode(['error' => $e->getMessage()]);
+    }
+}
 
 // Función para actualizar datos en plan_inversion
 function actualizarPlanInversion($id_plan, $monto_total)
@@ -100,83 +146,31 @@ function actualizarPlanInversion($id_plan, $monto_total)
 }
 
 // Función para actualizar datos en proyecto_inversion
-function actualizarProyectoInversion($proyecto)
+function actualizarEnte($ente)
 {
     global $conexion;
 
     try {
-        $id_proyecto = $proyecto['id'];
-        $nombre_proyecto = $proyecto['nombre'];
-        $monto_proyecto = $proyecto['monto'];
-        $descripcion = $proyecto['descripcion'];
-        $partidas_montos = $proyecto['partida'];
-
-        // Verificar si el proyecto ya ha sido ejecutado
-        $sqlCheckStatus = "SELECT status FROM proyecto_inversion WHERE id = ?";
-        $stmtCheckStatus = $conexion->prepare($sqlCheckStatus);
-        $stmtCheckStatus->bind_param("i", $id_proyecto);
-        $stmtCheckStatus->execute();
-        $stmtCheckStatus->bind_result($status);
-        $stmtCheckStatus->fetch();
-        $stmtCheckStatus->close();
-
-        if ($status == 1) {
-            throw new Exception("Este proyecto ya ha sido ejecutado y no se puede modificar.");
-        }
+        $nombre = $ente['nombre'];
+        $sector = $ente['sector'];
+        $programa = $ente['programa'];
+        $proyecto = $ente['proyecto'];
+        $id_ente = $ente['id_ente'];
 
         $error = false;
         // Actualizar los datos del proyecto
-        $sql = "UPDATE proyecto_inversion SET proyecto = ?, descripcion=?, monto_proyecto = ? WHERE id = ?";
+        $sql = "UPDATE entes SET sector = ?, programa=?, proyecto = ?, ente_nombre= ? WHERE id = ?";
         $stmt = $conexion->prepare($sql);
-        $stmt->bind_param("ssdi", $nombre_proyecto, $descripcion, $monto_proyecto, $id_proyecto);
+        $stmt->bind_param("sssss", $sector, $programa, $proyecto, $nombre, $id_ente);
         if (!$stmt->execute()) {
             $error = true;
         }
         $stmt->close();
-        $stmt_d = $conexion->prepare("DELETE FROM `proyecto_inversion_partidas` WHERE id_proyecto= ?");
-        $stmt_d->bind_param("i", $id_proyecto);
-        if (!$stmt_d->execute()) {
-            $error = true;
-        }
-        $stmt_d->close();
-        $stmt_o = $conexion->prepare("INSERT INTO proyecto_inversion_partidas (id_proyecto, partida, sector_id, monto) VALUES (?, ?, ?, ?)");
-        foreach ($partidas_montos as $item) {
-            $partida = $item['partida'];
-            $monto = $item['monto'];
-            $sector = $item['sector'];
-            $stmt_o->bind_param("isss", $id_proyecto, $partida, $sector, $monto);
-            if (!$stmt_o->execute()) {
-                $error = true;
-            }
-        }
-        $stmt_o->close();
+
         if ($error) {
             throw new Exception("Error al actualizar el proyecto de inversión.");
         }
         return json_encode(["success" => "Proyecto actualizado correctamente."]);
-    } catch (Exception $e) {
-        registrarError($e->getMessage());
-        return json_encode(['error' => $e->getMessage()]);
-    }
-}
-
-// Función para modificar el estado de un proyecto a 1 (ejecutado)
-function ejecutarProyecto($comentario, $id_proyecto)
-{
-    global $conexion;
-
-    try {
-        $sql = "UPDATE proyecto_inversion SET status = 1, comentario=? WHERE id = ?";
-        $stmt = $conexion->prepare($sql);
-        $stmt->bind_param("si", $comentario, $id_proyecto);
-        $stmt->execute();
-
-        if ($stmt->affected_rows <= 0) {
-            throw new Exception("Error al actualizar el estado del proyecto.");
-        }
-
-        $stmt->close();
-        return json_encode(["success" => "Proyecto marcado como ejecutado."]);
     } catch (Exception $e) {
         registrarError($e->getMessage());
         return json_encode(['error' => $e->getMessage()]);
@@ -267,42 +261,72 @@ function get_sub_unidades()
 
 
 
-function eliminarProyecto($id)
+function eliminarEnte($id)
 {
     global $conexion;
 
-    $stmt = mysqli_prepare($conexion, "SELECT status FROM `proyecto_inversion` WHERE id = ? ");
+    $stmt_2 = mysqli_prepare($conexion, "SELECT * FROM `distribucion_entes` WHERE id_ente = ? ");
+    $stmt_2->bind_param('s', $id);
+    $stmt_2->execute();
+    $result_2 = $stmt_2->get_result();
+    if ($result_2->num_rows > 0) {
+        echo json_encode(['error' => 'No se puede eliminar, el ente tiene una asignación']);
+        exit;
+    }
+    $stmt_2->close();
+
+
+    $sub_entes = [];
+    $stmt = mysqli_prepare($conexion, "SELECT actividad FROM `entes_dependencias` WHERE ue = ?");
     $stmt->bind_param('s', $id);
     $stmt->execute();
     $result = $stmt->get_result();
+
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
-            if ($row['status'] == 1) {
-                echo json_encode(['error' => 'No se puedo eliminar un proyecto ejecutado']);
-                exit;
-            }
+            $sub_entes[] = $row['actividad'];  // Añade cada actividad al array de sub_entes
         }
-    } else {
-        echo json_encode(['error' => 'El proyecto no existe']);
-        exit;
     }
     $stmt->close();
+    /*
+    if (count($sub_entes) > 0) {
+        $placeholders = implode(',', array_fill(0, count($sub_entes), '?'));
+        $query = "SELECT * FROM `distribucion_entes` WHERE id_ente = ? AND actividad_id IN ($placeholders)";
+        $stmt_2 = mysqli_prepare($conexion, $query);
+
+        if ($stmt_2 === false) {
+            die("Error en la preparación de la consulta: " . $conexion->error);
+        }
+
+        $types = str_repeat('i', count($sub_entes) + 1);  // Primer 'i' para id_ente, el resto para actividad_id
+        $params = array_merge([$types, $id], $sub_entes);
+
+        $stmt_2->bind_param(...$params);
+        $stmt_2->execute();
+        $result_2 = $stmt_2->get_result();
+        if ($result_2->num_rows > 0) {
+            echo json_encode(['error' => 'No se puede eliminar, una dependencia de ente tiene una asignación']);
+            exit;
+        }
+        $stmt_2->close();
+    }
+*/
 
 
-    $stmt = $conexion->prepare("DELETE FROM `proyecto_inversion` WHERE id = ? AND status='0'");
+
+    $stmt = $conexion->prepare("DELETE FROM `entes` WHERE id = ? ");
     $stmt->bind_param("i", $id);
 
     if ($stmt->execute()) {
 
-        $stmt_d = $conexion->prepare("DELETE FROM `proyecto_inversion_partidas` WHERE id_proyecto= ?");
-        $stmt_d->bind_param("i", $id);
-        $stmt_d->execute();
-        $stmt_d->close();
+        $stmt_2 = $conexion->prepare("DELETE FROM `entes_dependencias` WHERE ue = ? ");
+        $stmt_2->bind_param("i", $id);
+        $stmt_2->execute();
+        $stmt_2->close();
 
-
-        echo json_encode(['success' => 'Proyecto eliminado']);
+        echo json_encode(['success' => 'Unidad eliminada']);
     } else {
-        echo json_encode(['error' => 'No se pudo eliminar el proyecto']);
+        echo json_encode(['error' => 'No se pudo eliminar la unidad']);
     }
     $stmt->close();
 }
@@ -315,21 +339,18 @@ if (isset($data["accion"])) {
 
     // Nuevos proyectos
     if ($accion === "registrar_ente" && isset($data["unidad"])) {
-        echo guardarEnte($data["unidad"]);
+        echo guardarEnte($data["unidad"]); // TODO: LISTO
         // Actualizar plan de inversión
-    } elseif ($accion === "update_plan" && isset($data["id_plan"]) && isset($data["monto_total"])) {
-        echo actualizarPlanInversion($data["id_plan"], $data["monto_total"]);
+    } elseif ($accion === "guardar_suu" && isset($data["info"])) {
+        echo guardar_suu($data["info"]); // TODO: LISTO
         // Actualizar proyecto de inversión
-    } elseif ($accion === "update_proyecto" && isset($data["proyecto"])) {
-        echo actualizarProyectoInversion($data["proyecto"]);
+    } elseif ($accion === "update_ente" && isset($data["unidad"])) {
+        echo actualizarEnte($data["unidad"]); // TODO: LISTO
         // Marcar proyecto como ejecutado
-    } elseif ($accion === "ejecutar_proyecto" && isset($data["id_proyecto"])) {
-        echo ejecutarProyecto($data["comentario"], $data["id_proyecto"]);
-        // Eliminar plan de inversión
     } elseif ($accion === "delete" && isset($data["id_plan"])) {
         echo eliminarPlanInversion($data["id_plan"]);
-    } elseif ($accion === 'eliminar_proyecto' && isset($data['id_proyecto'])) {
-        echo eliminarProyecto($data['id_proyecto']);
+    } elseif ($accion === 'eliminar_ente' && isset($data['id'])) {
+        echo eliminarEnte($data['id']);
     } elseif ($accion === "get_unidades") {
         echo get_unidades(); // TODO: LISTO
 
