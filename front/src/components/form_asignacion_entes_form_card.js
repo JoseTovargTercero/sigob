@@ -145,15 +145,44 @@ export const form_asignacion_entes_form_card = async ({
 
     return liItems.join('')
   }
-  const planEnte = async () => {
-    return ` <div id="card-body-part1" class="slide-up-animation">
-        <h4 class="text-blue-800">Información sobre asignación:</h4>
-        <h5>Nombre: ${asignacion.ente_nombre || 'Ente sin nombre'}</h5>
-        <h5>
-          Tipo: ${asignacion.tipo_ente === 'J' ? 'juridico' : 'Descentralizado'}
-        </h5>
-        <h5>Monto total asignado: ${separarMiles(asignacion.monto_total)}</h5>
 
+  const dependenciasEnteList = () => {
+    let dependencias = asignacion.dependencias
+
+    if (dependencias && dependencias.length > 0) {
+      let liItems = dependencias.map((dependencia) => {
+        return `<div class="form-check">
+  <input class="form-check-input" type="checkbox" value="${dependencia.id}" name="ente-dependencia-check-${dependencia.id}" id="ente-dependencia-check-${dependencia.id}">
+  <label class="form-check-label" for="ente-dependencia-check-${dependencia.id}">
+                ${dependencia.actividad} - ${dependencia.ente_nombre}
+  </label>
+</div>`
+      })
+
+      return `<h4 class='text-blue-800'>Dependendias de ente:</h4> ${liItems.join(
+        ''
+      )}`
+    } else {
+      return `<h4 class='text-red-800'>Ente no posee dependencias</h4>`
+    }
+  }
+  const planEnte = async () => {
+    return `<div id='card-body-part1' class='slide-up-animation'>
+        <div class='row'>
+          <div class='col'>
+            <h4 class='text-blue-800'>Información sobre asignación:</h4>
+            <h6>Nombre: ${asignacion.ente_nombre || 'Ente sin nombre'}</h6>
+            <h6>
+              Tipo: ${
+                asignacion.tipo_ente === 'J' ? 'juridico' : 'Descentralizado'
+              }
+            </h6>
+            <h6>
+              Monto total asignado: ${separarMiles(asignacion.monto_total)}
+            </h6>
+          </div>
+          <div class='col'>${dependenciasEnteList()}</div>
+        </div>
         ${
           asignacion.distribucion
             ? `  <table
@@ -182,9 +211,7 @@ export const form_asignacion_entes_form_card = async ({
               </h4>
             </div>`
         }
-      
-      </div>
-      `
+      </div>`
   }
 
   // PARTE 2
