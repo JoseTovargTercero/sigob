@@ -4,92 +4,102 @@ header('Content-Type: application/json');
 require_once '../sistema_global/session.php';
 require_once '../sistema_global/errores.php';
 
-// Función para insertar una nueva distribución en la tabla distribucion_ente
-function insertarDistribucion($id_ente, $distribucion, $id_ejercicio, $id_asignacion)
+// Función para insertar varias distribuciones en la tabla distribucion_entes
+function insertarDistribuciones($distribuciones)
 {
     global $conexion;
-    $status = 0;
-    $comentario = "";  // Campo agregado con valor vacío
-    $fecha = date("Y-m-d");  // Obtener la fecha actual
+
+    $fecha = date("Y-m-d"); // Obtener la fecha actual
 
     try {
         $conexion->begin_transaction();
 
-        // Consultar el tipo de ente para verificar si es 'J' o 'D'
-        $sqlTipoEnte = "SELECT tipo_ente FROM entes WHERE id = ?";
-        $stmtTipoEnte = $conexion->prepare($sqlTipoEnte);
-        $stmtTipoEnte->bind_param("i", $id_ente);
-        $stmtTipoEnte->execute();
-        $resultadoTipoEnte = $stmtTipoEnte->get_result();
+        foreach ($distribuciones as $distribucionData) {
+            // Extraer los datos del objeto actual
+            $id_ente = $distribucionData['id_ente'];
+            $actividad_id = $distribucionData['actividad_id'];
+            $distribucion = $distribucionData['distribuciones'];
+            $id_ejercicio = $distribucionData['id_ejercicio'];
+            $id_asignacion = $distribucionData['id_asignacion'];
+            $status = 0;
+            $comentario = ""; // Campo agregado con valor vacío
 
-        if ($resultadoTipoEnte->num_rows === 0) {
-            throw new Exception("No se encontró el ente especificado.");
+            // Consultar el tipo de ente para verificar si es 'J' o 'D'
+            $sqlTipoEnte = "SELECT tipo_ente FROM entes WHERE id = ?";
+            $stmtTipoEnte = $conexion->prepare($sqlTipoEnte);
+            $stmtTipoEnte->bind_param("i", $id_ente);
+            $stmtTipoEnte->execute();
+            $resultadoTipoEnte = $stmtTipoEnte->get_result();
+
+            if ($resultadoTipoEnte->num_rows === 0) {
+                throw new Exception("No se encontró el ente especificado.");
+            }
+
+            $filaTipoEnte = $resultadoTipoEnte->fetch_assoc();
+            $tipo_ente = $filaTipoEnte['tipo_ente'];
+
+            // Verificar el formato de la distribución basado en el tipo_ente
+            $num_distribuciones = count($distribucion);
+            if ($tipo_ente === 'D' && $num_distribuciones > 1) {
+                throw new Exception("El tipo de ente Descentralizado solo permite una distribución.");
+            } elseif (!in_array($tipo_ente, ['J', 'D'])) {
+                throw new Exception("Tipo de ente no válido.");
+            }
+
+            // Sumar los montos de las distribuciones
+            $sumaMontos = 0;
+            foreach ($distribucion as $item) {
+                $sumaMontos += $item['monto'];
+            }
+
+            // Consultar el monto_total de la tabla asignacion_ente usando el id_asignacion
+            $sqlMontoTotal = "SELECT monto_total FROM asignacion_ente WHERE id = ?";
+            $stmtMontoTotal = $conexion->prepare($sqlMontoTotal);
+            $stmtMontoTotal->bind_param("i", $id_asignacion);
+            $stmtMontoTotal->execute();
+            $resultadoMontoTotal = $stmtMontoTotal->get_result();
+
+            if ($resultadoMontoTotal->num_rows === 0) {
+                throw new Exception("No se encontró una asignación presupuestaria para el ID especificado.");
+            }
+
+            $filaMontoTotal = $resultadoMontoTotal->fetch_assoc();
+            $monto_total = $filaMontoTotal['monto_total'];
+
+            // Verificar si la suma de los montos de las distribuciones es igual a monto_total
+            if ($sumaMontos != $monto_total) {
+                throw new Exception("La suma de los montos de las distribuciones no es igual al monto total.");
+            }
+
+            // Convertir el array de distribuciones a JSON
+            $distribucion_json = json_encode($distribucion);
+
+            // Insertar los datos en la tabla distribucion_ente
+            $sqlInsert = "INSERT INTO distribucion_entes (id_ente, actividad_id, distribucion, monto_total, status, id_ejercicio, comentario, fecha, id_asignacion) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $stmtInsert = $conexion->prepare($sqlInsert);
+            $stmtInsert->bind_param("iisdisssi", $id_ente, $actividad_id, $distribucion_json, $monto_total, $status, $id_ejercicio, $comentario, $fecha, $id_asignacion);
+            $stmtInsert->execute();
+
+            if ($stmtInsert->affected_rows > 0) {
+                // Actualizar el status de asignacion_ente a 1
+                $sqlUpdateAsignacion = "UPDATE asignacion_ente SET status = 1 WHERE id = ?";
+                $stmtUpdateAsignacion = $conexion->prepare($sqlUpdateAsignacion);
+                $stmtUpdateAsignacion->bind_param("i", $id_asignacion);
+                $stmtUpdateAsignacion->execute();
+            } else {
+                throw new Exception("No se pudo insertar la distribución para el ente ID: $id_ente.");
+            }
         }
 
-        $filaTipoEnte = $resultadoTipoEnte->fetch_assoc();
-        $tipo_ente = $filaTipoEnte['tipo_ente'];
-
-        // Verificar el formato de la distribución basado en el tipo_ente
-        $num_distribuciones = count($distribucion);
-        if ($tipo_ente === 'D' && $num_distribuciones > 1) {
-            throw new Exception("El tipo de ente Descentralizado solo permite una distribución.");
-        } elseif (!in_array($tipo_ente, ['J', 'D'])) {
-            throw new Exception("Tipo de ente no válido.");
-        }
-
-        // Sumar los montos de las distribuciones
-        $sumaMontos = 0;
-        foreach ($distribucion as $item) {
-            $sumaMontos += $item['monto'];
-        }
-
-        // Consultar el monto_total de la tabla asignacion_ente usando el id_asignacion
-        $sqlMontoTotal = "SELECT monto_total FROM asignacion_ente WHERE id = ?";
-        $stmtMontoTotal = $conexion->prepare($sqlMontoTotal);
-        $stmtMontoTotal->bind_param("i", $id_asignacion);
-        $stmtMontoTotal->execute();
-        $resultadoMontoTotal = $stmtMontoTotal->get_result();
-
-        if ($resultadoMontoTotal->num_rows === 0) {
-            throw new Exception("No se encontró una asignación presupuestaria para el ID especificado.");
-        }
-
-        $filaMontoTotal = $resultadoMontoTotal->fetch_assoc();
-        $monto_total = $filaMontoTotal['monto_total'];
-
-        // Verificar si la suma de los montos de las distribuciones es igual a monto_total
-        if ($sumaMontos != $monto_total) {
-            throw new Exception("La suma de los montos de las distribuciones no es igual al monto total.");
-        }
-
-        // Convertir el array de distribuciones a JSON
-        $distribucion_json = json_encode($distribucion);
-
-        // Insertar los datos en la tabla distribucion_ente
-        $sqlInsert = "INSERT INTO distribucion_entes (id_ente, distribucion, monto_total, status, id_ejercicio, comentario, fecha, id_asignacion) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        $stmtInsert = $conexion->prepare($sqlInsert);
-        $stmtInsert->bind_param("isdisssi", $id_ente, $distribucion_json, $monto_total, $status, $id_ejercicio, $comentario, $fecha, $id_asignacion);
-        $stmtInsert->execute();
-
-        if ($stmtInsert->affected_rows > 0) {
-            // Actualizar el status de asignacion_ente a 1
-            $sqlUpdateAsignacion = "UPDATE asignacion_ente SET status = 1 WHERE id = ?";
-            $stmtUpdateAsignacion = $conexion->prepare($sqlUpdateAsignacion);
-            $stmtUpdateAsignacion->bind_param("i", $id_asignacion);
-            $stmtUpdateAsignacion->execute();
-
-            $conexion->commit();
-            return json_encode(["success" => "Distribución insertada correctamente"]);
-        } else {
-            throw new Exception("No se pudo insertar la distribución.");
-        }
-
+        $conexion->commit();
+        return json_encode(["success" => "Distribuciones insertadas correctamente"]);
     } catch (Exception $e) {
         $conexion->rollback();
         registrarError($e->getMessage());
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 
 
@@ -136,7 +146,7 @@ function actualizarEstadoDistribucion($id, $status, $comentario)
 
 
 // Función para actualizar un registro en la tabla distribucion_entes
-function actualizarDistribucionEntes($id, $id_ente, $distribucion, $id_ejercicio)
+function actualizarDistribucionEntes($id, $id_ente, $actividad_id, $distribucion, $id_ejercicio)
 {
     global $conexion;
     $conexion->begin_transaction();
@@ -145,10 +155,10 @@ function actualizarDistribucionEntes($id, $id_ente, $distribucion, $id_ejercicio
         // Convertir el array de distribuciones a JSON
         $distribucionFormateada = json_encode($distribucion);
 
-        // Actualizar el registro en la tabla distribucion_entes
-        $sqlUpdate = "UPDATE distribucion_entes SET id_ente = ?, distribucion = ?, id_ejercicio = ? WHERE id = ?";
+        // Actualizar el registro en la tabla distribucion_entes, incluyendo actividad_id
+        $sqlUpdate = "UPDATE distribucion_entes SET id_ente = ?, actividad_id = ?, distribucion = ?, id_ejercicio = ? WHERE id = ?";
         $stmtUpdate = $conexion->prepare($sqlUpdate);
-        $stmtUpdate->bind_param("isii", $id_ente, $distribucionFormateada, $id_ejercicio, $id);
+        $stmtUpdate->bind_param("iisii", $id_ente, $actividad_id, $distribucionFormateada, $id_ejercicio, $id);
         $stmtUpdate->execute();
 
         if ($stmtUpdate->affected_rows > 0) {
@@ -163,6 +173,8 @@ function actualizarDistribucionEntes($id, $id_ente, $distribucion, $id_ejercicio
         return json_encode(["error" => $e->getMessage()]);
     }
 }
+
+
 
 
 // Función para eliminar un registro en la tabla distribucion_entes
@@ -195,7 +207,7 @@ function consultarDistribucionPorId($id)
 {
     global $conexion;
 
-    $sqlSelectById = "SELECT id, id_ente, distribucion, monto_total, status, id_ejercicio, id_asignacion FROM distribucion_entes WHERE id = ?";
+    $sqlSelectById = "SELECT id, id_ente, distribucion, monto_total, status, id_ejercicio, id_asignacion, actividad_id FROM distribucion_entes WHERE id = ?";
     $stmtSelectById = $conexion->prepare($sqlSelectById);
     $stmtSelectById->bind_param("i", $id);
     $stmtSelectById->execute();
@@ -218,6 +230,19 @@ function consultarDistribucionPorId($id)
         } else {
             $distribucion['ente_nombre'] = null;
             $distribucion['tipo_ente'] = null;
+        }
+
+        // Obtener los detalles de la actividad
+        $sqlActividad = "SELECT * FROM entes_dependencias WHERE id = ?";
+        $stmtActividad = $conexion->prepare($sqlActividad);
+        $stmtActividad->bind_param("i", $distribucion['actividad_id']);
+        $stmtActividad->execute();
+        $resultActividad = $stmtActividad->get_result();
+
+        if ($resultActividad->num_rows > 0) {
+            $distribucion['actividad_informacion'] = $resultActividad->fetch_assoc();
+        } else {
+            $distribucion['actividad_informacion'] = null;
         }
 
         // Formatear la distribucion
@@ -302,12 +327,13 @@ function consultarDistribucionPorId($id)
 
 
 
+
 // Función para consultar todos los registros en la tabla distribucion_entes
 function consultarTodasDistribuciones()
 {
     global $conexion;
 
-    $sqlSelectAll = "SELECT id, id_ente, distribucion, monto_total, status, id_ejercicio, id_asignacion FROM distribucion_entes";
+    $sqlSelectAll = "SELECT id, id_ente, distribucion, monto_total, status, id_ejercicio, id_asignacion, actividad_id FROM distribucion_entes";
     $resultado = $conexion->query($sqlSelectAll);
 
     if ($resultado->num_rows > 0) {
@@ -328,6 +354,19 @@ function consultarTodasDistribuciones()
             } else {
                 $fila['ente_nombre'] = null;
                 $fila['tipo_ente'] = null;
+            }
+
+            // Obtener detalles de la actividad
+            $sqlActividad = "SELECT * FROM entes_dependencias WHERE id = ?";
+            $stmtActividad = $conexion->prepare($sqlActividad);
+            $stmtActividad->bind_param("i", $fila['actividad_id']);
+            $stmtActividad->execute();
+            $resultActividad = $stmtActividad->get_result();
+
+            if ($resultActividad->num_rows > 0) {
+                $fila['actividad_informacion'] = $resultActividad->fetch_assoc();
+            } else {
+                $fila['actividad_informacion'] = null;
             }
 
             // Formatear la distribucion y obtener sus detalles
@@ -416,6 +455,7 @@ function consultarTodasDistribuciones()
 
 
 
+
 // Procesar la solicitud
 $data = json_decode(file_get_contents("php://input"), true);
 
@@ -423,50 +463,61 @@ if (isset($data["accion"])) {
     $accion = $data["accion"];
 
     // Insertar datos
-    if ($accion === "insert" && isset($data["id_ente"]) && isset($data["distribuciones"]) && isset($data["id_ejercicio"]) && isset($data["id_asignacion"])) {
+    if ($accion === "insert" && isset($data["id_ente"]) && isset($data["actividad_id"]) && isset($data["distribuciones"]) && isset($data["id_ejercicio"]) && isset($data["id_asignacion"])) {
         $id_ente = $data["id_ente"];
+        $actividad_id = $data["actividad_id"];
         $distribuciones = $data["distribuciones"]; // Asumimos que 'distribuciones' es un array de arrays con 'id_distribucion' y 'monto'
         $id_ejercicio = $data["id_ejercicio"];
         $id_asignacion = $data["id_asignacion"];
         
-        // Verificar si el ente puede tener varias o una sola distribución (según tipo de ente)
-        echo insertarDistribucion($id_ente, $distribuciones, $id_ejercicio, $id_asignacion);
+        // Llamar a la función de inserción de distribuciones
+        echo insertarDistribuciones([
+            'id_ente' => $id_ente,
+            'actividad_id' => $actividad_id,
+            'distribuciones' => $distribuciones,
+            'id_ejercicio' => $id_ejercicio,
+            'id_asignacion' => $id_asignacion
+        ]);
 
-        // Actualizar datos
-    } elseif ($accion === "update" && isset($data["id"]) && isset($data["id_ente"]) && isset($data["distribuciones"]) && isset($data["id_ejercicio"])) {
+    // Actualizar datos
+    } elseif ($accion === "update" && isset($data["id"]) && isset($data["id_ente"]) && isset($data["actividad_id"]) && isset($data["distribuciones"]) && isset($data["id_ejercicio"])) {
         $id = $data["id"];
         $id_ente = $data["id_ente"];
+        $actividad_id = $data["actividad_id"];
         $distribuciones = $data["distribuciones"]; // Asumimos que 'distribuciones' es un array de arrays con 'id_distribucion' y 'monto'
         $id_ejercicio = $data["id_ejercicio"];
-        echo actualizarDistribucionEntes($id, $id_ente, $distribuciones, $id_ejercicio);
+        
+        // Llamar a la función de actualización de distribuciones
+        echo actualizarDistribucionEntes($id, $id_ente, $actividad_id, $distribuciones, $id_ejercicio);
 
-        // Eliminar datos
+    // Eliminar datos
     } elseif ($accion === "delete" && isset($data["id"])) {
         $id = $data["id"];
         echo eliminarDistribucionEntes($id);
 
-        // Consultar por ID
+    // Consultar por ID
     } elseif ($accion === "consultar_id" && isset($data["id"])) {
         $id = $data["id"];
         echo consultarDistribucionPorId($id);
 
-        // Consultar todos los registros
+    // Consultar todos los registros
     } elseif ($accion === "consultar") {
         echo consultarTodasDistribuciones();
 
-        // Aprobar o rechazar la distribución
+    // Aprobar o rechazar la distribución
     } elseif ($accion === "aprobar_rechazar" && isset($data["id"]) && isset($data["status"])) {
         $id = $data["id"];
         $status = $data["status"];
         $comentario = isset($data["comentario"]) ? $data["comentario"] : ""; // Comentario opcional
         echo actualizarEstadoDistribucion($id, $status, $comentario);
 
-        // Acción no válida o faltan datos
+    // Acción no válida o faltan datos
     } else {
         echo json_encode(['error' => "Acción no válida o faltan datos"]);
     }
 } else {
     echo json_encode(['error' => "No se recibió ninguna acción"]);
 }
+
 
 ?>
