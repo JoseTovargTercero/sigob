@@ -308,12 +308,9 @@ $stmt->close();
                         <td class='bl text-left'>{$item['denominacion']}</td>";
 
                     for ($i = 1; $i <= 15; $i++) {
-                        echo "<td class='bl text-right pt-1'><span class='dw-nw'>6.878.747.764,68</span></td>";
-                        //    echo "<td class='bl text-right pt-1'>" . number_format($item[str_pad($i, 2, '0', STR_PAD_LEFT)], '2', ',', '.') . "</td>";
+                        echo "<td class='bl text-right pt-1'>" . number_format($item[str_pad($i, 2, '0', STR_PAD_LEFT)], '2', ',', '.') . "</td>";
                     }
-
-                    echo "<td class='bl br text-right'>6.878.747.764,68</td></tr>";
-                    //  echo "<td class='bl br text-right'>" . number_format($total_partida, '2', ',', '.') . "</td></tr>";
+                    echo "<td class='bl br text-right'>" . number_format($total_partida, '2', ',', '.') . "</td></tr>";
                 }
                 ?>
 

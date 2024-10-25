@@ -55,7 +55,7 @@ $distribuciones = $result_distribucion->fetch_all(MYSQLI_ASSOC);
 
 $data = [];
 $totales_por_partida = [];
-$partidas_a_agrupadas = ['301','302','303','304','305','306','307','308','309','310','311','312','313','400','401', '402', '403', '404','405','406' '407', '408','409','410' '411','412','498'];
+$partidas_a_agrupadas = ['301', '302', '303', '304', '305', '306', '307', '308', '309', '310', '311', '312', '313', '400', '401', '402', '403', '404', '405', '406', '407', '408', '409', '410', '411', '412', '498'];
 
 
 
@@ -301,7 +301,7 @@ foreach ($distribuciones as $distribucion) {
 
     <table>
         <thead>
-        <tr>
+            <tr>
                 <td class="bl bt bb"></td>
                 <td class='bl bb bt text-center fw-bold' style="width: 10%;">CODIGO</td>
                 <td class='bl bb bt br text-center fw-bold' colspan="6">DENOMINACION:</td>
