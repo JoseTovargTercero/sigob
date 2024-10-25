@@ -178,6 +178,21 @@ function consultarAsignacionPorId($id)
                 $asignacion['distribucion'] = false;
             }
 
+            // Consulta adicional para obtener las dependencias de entes en entes_dependencias
+            $idEnte = $asignacion['id_ente'];
+            $sqlDependencias = "SELECT * FROM entes_dependencias WHERE ue = ?";
+            $stmtDependencias = $conexion->prepare($sqlDependencias);
+            $stmtDependencias->bind_param("i", $idEnte);
+            $stmtDependencias->execute();
+            $resultDependencias = $stmtDependencias->get_result();
+
+            // Guardar las dependencias en un array de arrays
+            $dependencias = [];
+            while ($dependencia = $resultDependencias->fetch_assoc()) {
+                $dependencias[] = $dependencia;
+            }
+            $asignacion['dependencias'] = $dependencias;
+
             return json_encode(["success" => $asignacion]);
         } else {
             return json_encode(["error" => "No se encontró el registro."]);
@@ -187,6 +202,7 @@ function consultarAsignacionPorId($id)
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 
 
