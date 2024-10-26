@@ -66,9 +66,9 @@ function insertarDistribuciones($distribuciones)
             $filaMontoTotal = $resultadoMontoTotal->fetch_assoc();
             $monto_total = $filaMontoTotal['monto_total'];
 
-            // Verificar si la suma de los montos de las distribuciones es igual a monto_total
-            if ($sumaMontos != $monto_total) {
-                throw new Exception("La suma de los montos de las distribuciones no es igual al monto total.");
+            // Verificar si la suma de los montos de las distribuciones es mayor a monto_total
+            if ($sumaMontos > $monto_total) {
+                throw new Exception("La suma de los montos de las distribuciones es mayor al monto total de la asignacion.");
             }
 
             // Convertir el array de distribuciones a JSON
