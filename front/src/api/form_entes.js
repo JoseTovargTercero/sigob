@@ -315,7 +315,7 @@ const getAsignacionesEntes = async () => {
 
     let text = await clone.text()
 
-    console.log(text)
+    // console.log(text)
 
     const json = await res.json()
 
@@ -359,7 +359,7 @@ const getAsignacionesEnte = async (id) => {
 
     let text = await clone.text()
 
-    console.log(text)
+    // console.log(text)
 
     const json = await res.json()
 

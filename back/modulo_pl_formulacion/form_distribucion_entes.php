@@ -266,7 +266,7 @@ function consultarDistribucionPorId($id)
                 $stmtPartida->bind_param("i", $idPartida);
                 $stmtPartida->execute();
                 $resultPartida = $stmtPartida->get_result();
-                
+
                 if ($resultPartida->num_rows > 0) {
                     $partida = $resultPartida->fetch_assoc();
 
@@ -463,55 +463,45 @@ if (isset($data["accion"])) {
     $accion = $data["accion"];
 
     // Insertar datos
-    if ($accion === "insert" && isset($data["id_ente"]) && isset($data["actividad_id"]) && isset($data["distribuciones"]) && isset($data["id_ejercicio"]) && isset($data["id_asignacion"])) {
-        $id_ente = $data["id_ente"];
-        $actividad_id = $data["actividad_id"];
-        $distribuciones = $data["distribuciones"]; // Asumimos que 'distribuciones' es un array de arrays con 'id_distribucion' y 'monto'
-        $id_ejercicio = $data["id_ejercicio"];
-        $id_asignacion = $data["id_asignacion"];
-        
-        // Llamar a la función de inserción de distribuciones
-        echo insertarDistribuciones([
-            'id_ente' => $id_ente,
-            'actividad_id' => $actividad_id,
-            'distribuciones' => $distribuciones,
-            'id_ejercicio' => $id_ejercicio,
-            'id_asignacion' => $id_asignacion
-        ]);
+    if ($accion === "insert" && isset($data["informacion"])) {
+        $distribuciones = $data["informacion"];
 
-    // Actualizar datos
+        // Llamar a la función de inserción de distribuciones
+        echo insertarDistribuciones($distribuciones);
+
+        // Actualizar datos
     } elseif ($accion === "update" && isset($data["id"]) && isset($data["id_ente"]) && isset($data["actividad_id"]) && isset($data["distribuciones"]) && isset($data["id_ejercicio"])) {
         $id = $data["id"];
         $id_ente = $data["id_ente"];
         $actividad_id = $data["actividad_id"];
         $distribuciones = $data["distribuciones"]; // Asumimos que 'distribuciones' es un array de arrays con 'id_distribucion' y 'monto'
         $id_ejercicio = $data["id_ejercicio"];
-        
+
         // Llamar a la función de actualización de distribuciones
         echo actualizarDistribucionEntes($id, $id_ente, $actividad_id, $distribuciones, $id_ejercicio);
 
-    // Eliminar datos
+        // Eliminar datos
     } elseif ($accion === "delete" && isset($data["id"])) {
         $id = $data["id"];
         echo eliminarDistribucionEntes($id);
 
-    // Consultar por ID
+        // Consultar por ID
     } elseif ($accion === "consultar_id" && isset($data["id"])) {
         $id = $data["id"];
         echo consultarDistribucionPorId($id);
 
-    // Consultar todos los registros
+        // Consultar todos los registros
     } elseif ($accion === "consultar") {
         echo consultarTodasDistribuciones();
 
-    // Aprobar o rechazar la distribución
+        // Aprobar o rechazar la distribución
     } elseif ($accion === "aprobar_rechazar" && isset($data["id"]) && isset($data["status"])) {
         $id = $data["id"];
         $status = $data["status"];
         $comentario = isset($data["comentario"]) ? $data["comentario"] : ""; // Comentario opcional
         echo actualizarEstadoDistribucion($id, $status, $comentario);
 
-    // Acción no válida o faltan datos
+        // Acción no válida o faltan datos
     } else {
         echo json_encode(['error' => "Acción no válida o faltan datos"]);
     }

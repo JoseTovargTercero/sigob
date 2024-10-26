@@ -78,10 +78,10 @@ export const form_asignacion_entes_form_card = async ({
 
   // DATOS A ENVIAR PARA REGISTRAR DISTRIBUCION
 
-  let distribucionActividadesRealizadas = []
+  let datosDistribucionActividades = []
 
   // DATOS PARA GENERAR TABLA EN PLAN ENTE
-  let datosDistribucionActividadesTabla = []
+  let datosDistribucionTabla = []
 
   let dependenciasList = asignacion.dependencias
 
@@ -128,6 +128,12 @@ export const form_asignacion_entes_form_card = async ({
 
   //
 
+  function recortarTexto(str, length) {
+    let texto = str.length < length ? str : `${str.slice(0, length)} ...`
+
+    return texto
+  }
+
   const distribucionPartidasEnteList = ({ partidasList, checkbox }) => {
     let dependenciaActividad = dependenciaEnteSeleccionada.actividad
     let dependenciaNombre = dependenciaEnteSeleccionada.ente_nombre
@@ -135,10 +141,7 @@ export const form_asignacion_entes_form_card = async ({
     let liItems = partidasList.map((distribucion) => {
       let sector_codigo = `${distribucion.sector_informacion.sector}.${distribucion.sector_informacion.programa}.${distribucion.sector_informacion.proyecto}`
 
-      let descripcion =
-        distribucion.descripcion.length < 40
-          ? distribucion.descripcion
-          : `${distribucion.descripcion.slice(0, 40)} ...`
+      let descripcion = recortarTexto(distribucion.descripcion, 40)
 
       if (checkbox) {
         return ` <tr class=''>
@@ -167,63 +170,154 @@ export const form_asignacion_entes_form_card = async ({
 
   // GENERAR TABLAS DINÁMICAS SEGÚN SE REQUIERA PARA QUE EL USUARIO PUEDA VISUALIZAR LO QUE EST´HACIENDO CON LAS ACTIVIDADES
 
-  const distribucionEntesActividadList = ({ partidasList, index }) => {
-    let dependenciaActividad = dependenciaEnteSeleccionada.actividad
-    let dependenciaNombre = dependenciaEnteSeleccionada.ente_nombre
+  const distribucionEntesActividadList = (arr) => {
+    // ;[
+    //   {
+    //     id_ente: 23,
+    //     actividad_id: 71,
+    //     distribuciones: [
+    //       {
+    //         id_distribucion: '9',
+    //         monto: 12,
+    //       },
+    //       {
+    //         id_distribucion: '10',
+    //         monto: 12,
+    //       },
+    //       {
+    //         id_distribucion: '11',
+    //         monto: 12,
+    //       },
+    //     ],
+    //     id_ejercicio: '1',
+    //     id_asignacion: 5,
+    //   },
+    // ]
+    // let partidaEncontrada = ejercicioFiscal.distribucion_partidas.find(
+    //   (partida) => partida.id == id
+    // )
 
-    let liItems = partidasList.map((distribucion) => {
-      return `  <tr class=''>
-          <td>${distribucion.sector_nombre}</td>
-          <td>${distribucion.sector_codigo}</td>
-          <td>${distribucion.partida}</td>
-          <td>${dependenciaActividad}</td>
-          <td>${dependenciaNombre}</td>
-        </tr>`
+    let dataRelacionada = arr.map((data) => {
+      let actividadEncontrada = asignacion.dependencias.find(
+        (dependencia) => Number(dependencia.id) === Number(data.actividad_id)
+      )
+
+      let distribucion = data.distribuciones.map((distribucionPartida) => {
+        let distribucionPartidaEncontrada =
+          ejercicioFiscal.distribucion_partidas.find(
+            (partida) => partida.id == distribucionPartida.id_distribucion
+          )
+
+        distribucionPartidaEncontrada.monto_asignado = distribucionPartida.monto
+
+        return distribucionPartidaEncontrada
+      })
+      // let sector_codigo = `${partidaEncontrada.sector_informacion.sector}.${partidaEncontrada.sector_informacion.programa}.${partidaEncontrada.sector_informacion.proyecto}`
+      // sector_nombre: partidaEncontrada.sector_informacion.nombre,
+      // sector_codigo,
+      // partida: partidaEncontrada.partida,
+      // nombre: partidaEncontrada.nombre || 'No asignado',
+      // descripcion: partidaEncontrada.descripcion,
+      // ?  monto_disponible: partidaEncontrada
+      //   partidaEncontrada.monto_inicial
+      // : 0,
+
+      return {
+        actividad_id: actividadEncontrada.id,
+        actividad: actividadEncontrada.actividad,
+        actividad_nombre: actividadEncontrada.ente_nombre,
+        distribucion,
+      }
     })
 
-    let table = ` <table
-        id='distribucion-partidas-tabla-${index}'
-        class='table table-striped table-sm'
-        style='width:100%'
-      >
-        <thead class='w-100'>
-          <th>SECTOR NOMBRE</th>
-          <th>SECTOR CODIGO</th>
-          <th>PARTIDA</th>
-          <th>ACTIVIDAD</th>
-          <th>ACTIVIDAD NOMBRE</th>
-        </thead>
+    let tablas = dataRelacionada.map((data) => {
+      let actividad = data.actividad,
+        actividad_nombre = data.actividad_nombre
 
-        <tbody>${liItems.join('')}</tbody>
-      </table>`
+      let montoTotalActividad = 0
 
-    return table
+      let rows = data.distribucion.map((partida) => {
+        let sector_codigo = `${partida.sector_informacion.sector}.${partida.sector_informacion.programa}.${partida.sector_informacion.proyecto}`,
+          sector_nombre = partida.sector_informacion.nombre,
+          partida_codigo = partida.partida,
+          nombre = partida.nombre || 'No asignado',
+          descripcion = partida.descripcion,
+          monto = partida.monto_asignado
+
+        montoTotalActividad += monto
+
+        return `<tr class=''>
+                  <td>${sector_nombre}</td>
+                  <td>${sector_codigo}</td>
+                  <td>${partida_codigo}</td>
+                  <td>${data.actividad}</td>
+                  <td>${monto}</td>
+              </tr>`
+      })
+
+      let tabla = ` <div class='row p-4 border bg-gray-100 rounded'>
+          <div class='col'>
+            <h4 class='text-green-800 text-center'>Distribución de partidas para actividad:</h4>
+            <h6>
+              Actividad: ${actividad} - ${actividad_nombre}
+            </h6>
+            <h6>
+              Monto total asignado: ${montoTotalActividad}
+            </h6>
+          </div>
+
+          <table
+            id='distribucion-partidas-tabla-${data.actividad_id}'
+            class='table table-striped table-sm'
+            style='width:100%'
+          >
+            <thead class='w-100'>
+              <th>SECTOR NOMBRE</th>
+              <th>SECTOR CODIGO</th>
+              <th>PARTIDA</th>
+              <th>ACTIVIDAD</th>
+              <th>MONTO</th>
+            </thead>
+
+            <tbody>${rows.join('')}</tbody>
+          </table>
+        </div>`
+
+      return tabla
+    })
+
+    return tablas
   }
 
   function validarTablas() {
-    distribucionActividadesRealizadas.forEach((el, index) => {
-      let planesTable = new DataTable(`#distribucion-partidas-tabla-${index}`, {
-        scrollY: 100,
-        language: tableLanguage,
-        layout: {
-          topStart: function () {
-            let toolbar = document.createElement('div')
-            toolbar.innerHTML = `
+    datosDistribucionActividades.forEach((el, index) => {
+      let planesTable = new DataTable(
+        `#distribucion-partidas-tabla-${el.actividad_id}`,
+        {
+          scrollY: 100,
+          language: tableLanguage,
+          layout: {
+            topStart: function () {
+              let toolbar = document.createElement('div')
+              toolbar.innerHTML = `
                 <h5 class="text-center mb-0">Partidas seleccionadas:</h5>
                           `
-            return toolbar
+              return toolbar
+            },
+            topEnd: { search: { placeholder: 'Buscar...' } },
+            bottomStart: 'info',
+            bottomEnd: 'paging',
           },
-          topEnd: { search: { placeholder: 'Buscar...' } },
-          bottomStart: 'info',
-          bottomEnd: 'paging',
-        },
-      })
+        }
+      )
     })
   }
 
   // GENERAR LISTA DE CHECKBOX DE LAS ACTIVIDADES LIGADAS AL ENTE
 
   const dependenciasEnteList = () => {
+    console.log(dependenciasList)
+
     if (dependenciasList && dependenciasList.length > 0) {
       let liItems = dependenciasList.map((dependencia) => {
         return `  <div class='form-check'>
@@ -248,7 +342,7 @@ export const form_asignacion_entes_form_card = async ({
         ''
       )}`
     } else {
-      return `<h4 class='text-red-800'>Ente no posee dependencias</h4>`
+      return `<h4 class='text-red-800'>Sin dependencias a usar</h4>`
     }
   }
 
@@ -272,13 +366,8 @@ export const form_asignacion_entes_form_card = async ({
           <div class='col'>${dependenciasEnteList()}</div>
         </div>
         ${
-          datosDistribucionActividadesTabla.length > 0
-            ? datosDistribucionActividadesTabla.map((tabla, index) => {
-                return distribucionEntesActividadList({
-                  partidasList: tabla,
-                  index,
-                })
-              })
+          datosDistribucionActividades.length > 0
+            ? distribucionEntesActividadList(datosDistribucionActividades)
             : asignacion.distribucion
             ? `  <table
         id='asignacion-part1-table'
@@ -464,6 +553,7 @@ export const form_asignacion_entes_form_card = async ({
   function relacionarPartidas() {
     let dependenciaActividad = dependenciaEnteSeleccionada.actividad
     let dependenciaNombre = dependenciaEnteSeleccionada.ente_nombre
+    let actividad_id = dependenciaEnteSeleccionada.id
 
     let partidasRelacionadas = partidasSeleccionadas.map((id) => {
       let partidaEncontrada = ejercicioFiscal.distribucion_partidas.find(
@@ -474,10 +564,46 @@ export const form_asignacion_entes_form_card = async ({
 
       return {
         id: id,
+        actividad_id,
         sector_nombre: partidaEncontrada.sector_informacion.nombre,
         sector_codigo,
         actividad: dependenciaActividad,
         actividad_nombre: dependenciaNombre,
+        partida: partidaEncontrada.partida,
+        nombre: partidaEncontrada.nombre || 'No asignado',
+        descripcion: partidaEncontrada.descripcion,
+        monto_disponible: partidaEncontrada
+          ? partidaEncontrada.monto_inicial
+          : 0,
+      }
+    })
+
+    console.log(partidasRelacionadas)
+
+    return partidasRelacionadas
+  }
+
+  function relacionarDependencias(arr) {
+    console.log(arr)
+
+    let partidasRelacionadas = arr.map((data) => {
+      let actividadEncontrada = asignacion.dependencias.find(
+        (dependencia) => Number(dependencia.id) === Number(data.actividad_id)
+      )
+
+      let partidaEncontrada = ejercicioFiscal.distribucion_partidas.find(
+        (partida) => partida.id == id
+      )
+
+      let sector_codigo = `${partidaEncontrada.sector_informacion.sector}.${partidaEncontrada.sector_informacion.programa}.${partidaEncontrada.sector_informacion.proyecto}`
+
+      return {
+        id: id,
+        actividad_id,
+        sector_nombre: partidaEncontrada.sector_informacion.nombre,
+        sector_codigo,
+        actividad: actividadEncontrada.actividad,
+        actividad_nombre: actividadEncontrada.ente_nombre,
         partida: partidaEncontrada.partida,
         nombre: partidaEncontrada.nombre || 'No asignado',
         descripcion: partidaEncontrada.descripcion,
@@ -777,10 +903,9 @@ export const form_asignacion_entes_form_card = async ({
       scroll(0, 0)
       if (formFocus === 1) {
         if (
-          asignacion.dependencias.length ===
-          distribucionActividadesRealizadas.length
+          asignacion.dependencias.length === datosDistribucionActividades.length
         ) {
-          enviarInformacion(distribucionActividadesRealizadas)
+          enviarInformacion(datosDistribucionActividades)
           return
         }
 
@@ -864,27 +989,20 @@ export const form_asignacion_entes_form_card = async ({
         }
 
         if (
-          asignacion.dependencias.length !==
-          distribucionActividadesRealizadas.length
+          asignacion.dependencias.length !== datosDistribucionActividades.length
         ) {
-          distribucionActividadesRealizadas.push(data)
+          datosDistribucionActividades.push(data)
 
-          datosDistribucionActividadesTabla.push(relacionarPartidas())
-
-          dependenciasList = asignacion.dependencias.filter(
+          dependenciasList = dependenciasList.filter(
             (dependencia) =>
-              !distribucionActividadesRealizadas.some(
+              !datosDistribucionActividades.some(
                 (el) => Number(el.actividad_id) === Number(dependencia.id)
               )
           )
 
-          console.log(dependenciasList)
-
           montos.distribuido_total = montos.acumulado
 
-          console.log(datosDistribucionActividadesTabla)
-
-          console.log(distribucionActividadesRealizadas)
+          distribucionEntesActividadList(datosDistribucionActividades)
           cardBody.innerHTML = await planEnte()
           validarTablas()
 
@@ -1005,7 +1123,7 @@ export const form_asignacion_entes_form_card = async ({
       return
     }
 
-    console.log(diferenciaSolicitado)
+    // console.log(diferenciaSolicitado)
 
     if (diferenciaSolicitado < 0) {
       montoElement.innerHTML = `<span class="px-2 rounded text-red-600 bg-red-100">${montos.acumulado}</span>`

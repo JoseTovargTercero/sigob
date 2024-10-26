@@ -237,10 +237,10 @@ const modificarPartida = async ({ partida1, partida2, monto }) => {
 const enviarDistribucionPresupuestariaEntes = async ({ data, tipo }) => {
   showLoader()
   try {
-    console.log({ accion: 'insert', ...data })
+    console.log({ accion: 'insert', informacion: data })
     let res = await fetch(distribucionPresupuestariaEntesUrl, {
       method: 'POST',
-      body: JSON.stringify({ accion: 'insert', ...data }),
+      body: JSON.stringify({ accion: 'insert', informacion: data }),
     })
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
