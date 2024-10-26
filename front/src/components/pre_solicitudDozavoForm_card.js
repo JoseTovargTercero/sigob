@@ -266,9 +266,37 @@ export const pre_solicitudGenerar_card = async ({
       closeCard()
     }
 
-    if (e.target.dataset.validarid) {
-      let asignacion = await getPreAsignacionEnte(e.target.dataset.validarid)
-      console.log(asignacion)
+    if (e.target.id === 'solicitud-generar') {
+      let dozavoMontoTotal = 0
+
+      let dozavoPartidas = asignacionEnte.distribucion_partidas.map(
+        (distribucion) => {
+          dozavoMontoTotal += Number(distribucion.monto)
+
+          let doceavaParte = Number(distribucion.monto) / 12
+
+          return {
+            id_distribucion: Number(distribucion.id_distribucion),
+            monto: doceavaParte,
+          }
+        }
+      )
+
+      let dozavoInformacion = {
+        id_ente: asignacionEnte.id_ente,
+        descripcion: 'DESCRIPCION EJEMPLO',
+        monto: dozavoMontoTotal,
+        partidas: dozavoPartidas,
+      }
+
+      console.log(dozavoInformacion)
+      // confirmNotification({
+      //   type: NOTIFICATIONS_TYPES.send,
+      //   message: `¿Desea generar la solicitud de dozavo del ente ${asignacionEnte.ente_nombre}`,
+      //   successFunction: function () {
+      //     console.log('hola')
+      //   },
+      // })
     }
   }
 

@@ -73,6 +73,17 @@ export const form_asignacion_entes_form_card = async ({
 
   // PARA GUARDAR PARTIDAS SELECCIONADAS
   let partidasSeleccionadas = []
+  // PARA GUARDAR DEPENDENCIAS DEL ENTE SELECCIONADAS
+  let dependenciaEnteSeleccionada = null
+
+  // DATOS A ENVIAR PARA REGISTRAR DISTRIBUCION
+
+  let distribucionActividadesRealizadas = []
+
+  // DATOS PARA GENERAR TABLA EN PLAN ENTE
+  let datosDistribucionActividadesTabla = []
+
+  let dependenciasList = asignacion.dependencias
 
   // CONTROLAR FOCUS DEL FORMUALRIO
   let formFocus = 1
@@ -84,7 +95,7 @@ export const form_asignacion_entes_form_card = async ({
   console.log(ejercicioFiscal)
   console.log(asignacion)
 
-  let montos = { total: 0, restante: 0, acumulado: 0 }
+  let montos = { total: 0, restante: 0, acumulado: 0, distribuido_total: 0 }
 
   montos.total = ejercicioFiscal.situado
   montos.restante = ejercicioFiscal.restante
@@ -115,7 +126,12 @@ export const form_asignacion_entes_form_card = async ({
 
   // PARTE 1
 
+  //
+
   const distribucionPartidasEnteList = ({ partidasList, checkbox }) => {
+    let dependenciaActividad = dependenciaEnteSeleccionada.actividad
+    let dependenciaNombre = dependenciaEnteSeleccionada.ente_nombre
+
     let liItems = partidasList.map((distribucion) => {
       let sector_codigo = `${distribucion.sector_informacion.sector}.${distribucion.sector_informacion.programa}.${distribucion.sector_informacion.proyecto}`
 
@@ -137,7 +153,10 @@ export const form_asignacion_entes_form_card = async ({
         <td>${distribucion.sector_informacion.nombre}</td>
     <td>${sector_codigo}</td>
     <td>${distribucion.partida}</td>
-    <td title="${distribucion.descripcion}">${descripcion}</td>
+    <td>${dependenciaActividad}</td>
+    <td>${dependenciaNombre}</td>
+    <td>${dependen}</td>
+    
     <td>${distribucion.monto || 'No asignado'}</td>
   </tr>`
       }
@@ -146,17 +165,83 @@ export const form_asignacion_entes_form_card = async ({
     return liItems.join('')
   }
 
-  const dependenciasEnteList = () => {
-    let dependencias = asignacion.dependencias
+  // GENERAR TABLAS DINÁMICAS SEGÚN SE REQUIERA PARA QUE EL USUARIO PUEDA VISUALIZAR LO QUE EST´HACIENDO CON LAS ACTIVIDADES
 
-    if (dependencias && dependencias.length > 0) {
-      let liItems = dependencias.map((dependencia) => {
-        return `<div class="form-check">
-  <input class="form-check-input" type="checkbox" value="${dependencia.id}" name="ente-dependencia-check-${dependencia.id}" id="ente-dependencia-check-${dependencia.id}">
-  <label class="form-check-label" for="ente-dependencia-check-${dependencia.id}">
-                ${dependencia.actividad} - ${dependencia.ente_nombre}
-  </label>
-</div>`
+  const distribucionEntesActividadList = ({ partidasList, index }) => {
+    let dependenciaActividad = dependenciaEnteSeleccionada.actividad
+    let dependenciaNombre = dependenciaEnteSeleccionada.ente_nombre
+
+    let liItems = partidasList.map((distribucion) => {
+      return `  <tr class=''>
+          <td>${distribucion.sector_nombre}</td>
+          <td>${distribucion.sector_codigo}</td>
+          <td>${distribucion.partida}</td>
+          <td>${dependenciaActividad}</td>
+          <td>${dependenciaNombre}</td>
+        </tr>`
+    })
+
+    let table = ` <table
+        id='distribucion-partidas-tabla-${index}'
+        class='table table-striped table-sm'
+        style='width:100%'
+      >
+        <thead class='w-100'>
+          <th>SECTOR NOMBRE</th>
+          <th>SECTOR CODIGO</th>
+          <th>PARTIDA</th>
+          <th>ACTIVIDAD</th>
+          <th>ACTIVIDAD NOMBRE</th>
+        </thead>
+
+        <tbody>${liItems.join('')}</tbody>
+      </table>`
+
+    return table
+  }
+
+  function validarTablas() {
+    distribucionActividadesRealizadas.forEach((el, index) => {
+      let planesTable = new DataTable(`#distribucion-partidas-tabla-${index}`, {
+        scrollY: 100,
+        language: tableLanguage,
+        layout: {
+          topStart: function () {
+            let toolbar = document.createElement('div')
+            toolbar.innerHTML = `
+                <h5 class="text-center mb-0">Partidas seleccionadas:</h5>
+                          `
+            return toolbar
+          },
+          topEnd: { search: { placeholder: 'Buscar...' } },
+          bottomStart: 'info',
+          bottomEnd: 'paging',
+        },
+      })
+    })
+  }
+
+  // GENERAR LISTA DE CHECKBOX DE LAS ACTIVIDADES LIGADAS AL ENTE
+
+  const dependenciasEnteList = () => {
+    if (dependenciasList && dependenciasList.length > 0) {
+      let liItems = dependenciasList.map((dependencia) => {
+        return `  <div class='form-check'>
+            <input
+              class='form-check-input'
+              type='radio'
+              value='${dependencia.id}'
+              data-dependencia="${dependencia.id}"
+              name='ente-dependencia'
+              id='ente-dependencia-check-${dependencia.id}'
+            />
+            <label
+              class='form-check-label'
+              for='ente-dependencia-check-${dependencia.id}'
+            >
+              ${dependencia.actividad} - ${dependencia.ente_nombre}
+            </label>
+          </div>`
       })
 
       return `<h4 class='text-blue-800'>Dependendias de ente:</h4> ${liItems.join(
@@ -166,6 +251,9 @@ export const form_asignacion_entes_form_card = async ({
       return `<h4 class='text-red-800'>Ente no posee dependencias</h4>`
     }
   }
+
+  // GENERAR CARD PRINCIPAL DONDE SE CARGARÍA LA INFORMACIÓN DE ASIGNACIÓN O DISTRIBUCIÓN DE PARTIDAS DEL ENTE
+
   const planEnte = async () => {
     return `<div id='card-body-part1' class='slide-up-animation'>
         <div class='row'>
@@ -184,7 +272,14 @@ export const form_asignacion_entes_form_card = async ({
           <div class='col'>${dependenciasEnteList()}</div>
         </div>
         ${
-          asignacion.distribucion
+          datosDistribucionActividadesTabla.length > 0
+            ? datosDistribucionActividadesTabla.map((tabla, index) => {
+                return distribucionEntesActividadList({
+                  partidasList: tabla,
+                  index,
+                })
+              })
+            : asignacion.distribucion
             ? `  <table
         id='asignacion-part1-table'
         class='table table-striped table-sm'
@@ -333,7 +428,8 @@ export const form_asignacion_entes_form_card = async ({
           <td>${distribucion.sector_nombre}</td>
           <td>${distribucion.sector_codigo}</td>
           <td>${distribucion.partida}</td>
-          <td>${distribucion.nombre}</td>
+          <td>${distribucion.actividad}</td>
+          <td>${distribucion.actividad_nombre}</td>
           <td>${distribucion.monto_solicitado || 'Sin solicitar'}</td>
           <td>
           <input
@@ -366,6 +462,9 @@ export const form_asignacion_entes_form_card = async ({
   }
 
   function relacionarPartidas() {
+    let dependenciaActividad = dependenciaEnteSeleccionada.actividad
+    let dependenciaNombre = dependenciaEnteSeleccionada.ente_nombre
+
     let partidasRelacionadas = partidasSeleccionadas.map((id) => {
       let partidaEncontrada = ejercicioFiscal.distribucion_partidas.find(
         (partida) => partida.id == id
@@ -377,6 +476,8 @@ export const form_asignacion_entes_form_card = async ({
         id: id,
         sector_nombre: partidaEncontrada.sector_informacion.nombre,
         sector_codigo,
+        actividad: dependenciaActividad,
+        actividad_nombre: dependenciaNombre,
         partida: partidaEncontrada.partida,
         nombre: partidaEncontrada.nombre || 'No asignado',
         descripcion: partidaEncontrada.descripcion,
@@ -391,61 +492,35 @@ export const form_asignacion_entes_form_card = async ({
     return partidasRelacionadas
   }
 
-  function partidaDisponibilidadPresupuestaria(id) {
-    let partidaEncontrada3 = ejercicioFiscal.distribucion_partidas.find(
-      (partida) => partida.id == id
-    )
-
-    let partidasRelacionadas = partidasSeleccionadas.map((id) => {
-      let partidaEncontrada = partidas.fullInfo.find((par) => par.id == id)
-
-      let partidaEncontrada2 = plan.partidas.find((partida) => partida.id == id)
-      let partidaEncontrada3 = ejercicioFiscal.distribucion_partidas.find(
-        (partida) => partida.id == id
-      )
-
-      return {
-        id: id,
-        partida: partidaEncontrada.partida,
-        descripcion: partidaEncontrada.descripcion,
-        monto_disponible: partidaEncontrada3
-          ? partidaEncontrada3.monto_inicial
-          : 'No asignado',
-        monto_solicitado: partidaEncontrada2
-          ? partidaEncontrada2.monto
-          : 'No solicitado',
-      }
-    })
-
-    console.log(partidasRelacionadas)
-
-    return partidasRelacionadas
-  }
-
   const asignarMontoPartidas = () => {
     return ` <div id='card-body-part3' class='slide-up-animation'>
         <h4 class='text-center text-info'>Distribución presupuestaria:</h4>
 
         <div class='row align-items-center text-center'>
           <div class='col'>
-            <h5>Ejercicio: ${separarMiles(montos.total)}</h5>
-            <h5>Restante: ${separarMiles(montos.restante)}</h5>
-            <h5>Distribuido: ${separarMiles(montos.distribuido)}</h5>
+            <h6>Ejercicio: ${separarMiles(montos.total)}</h6>
+            <h6>Restante: ${separarMiles(montos.restante)}</h6>
+            <h6>Distribuido: ${separarMiles(montos.distribuido)}</h6>
           </div>
           <div class='col'>
             
-            <h5>
+            <h6>
               Asignación total: <b id=''>${asignacion.monto_total}</b>
-            </h5>
-            <h5>
+            </h6>
+            <h6>
               Distribución presupuestaria actual: <b id='monto-total-asignado'><span class="p-2 text-secondary">0</span></b>
-            </h5>
+            </h6>
+            <h6>
+            Distribución presupuestaria actual: <b id='monto-total-distribuido'><span class="p-2 text-secondary">${
+              montos.distribuido_total
+            }</span></b>
+          </h6>
           </div>
           <div class='col'>
-            <h5>Nombre: ${asignacion.ente_nombre}</h5>
-            <h5>Tipo: ${
+            <h6>Nombre: ${asignacion.ente_nombre}</h6>
+            <h6>Tipo: ${
               asignacion.tipo_ente === 'J' ? 'Jurídico' : 'Descentralizado'
-            }</h5>
+            }</h6>
             
           </div>
           
@@ -461,6 +536,7 @@ export const form_asignacion_entes_form_card = async ({
             <th>SECTOR NOMBRE</th>
             <th>SECTOR CODIGO</th>
             <th>PARTIDA</th>
+            <th>ACTIVIDAD</th>
             <th>NOMBRE</th>
             <th>MONTO SOLICITADO</th>
             <th>MONTO DISPONIBLE</th>
@@ -496,7 +572,12 @@ export const form_asignacion_entes_form_card = async ({
     </button>
     <button class='btn btn-success d-none' id='btn-add'>
       Añadir
-    </button>`
+    </button>
+    
+    <button class='btn btn-success d-none' id='btn-send'>
+      Añadir
+    </button>
+    `
     }
   }
 
@@ -613,13 +694,21 @@ export const form_asignacion_entes_form_card = async ({
   async function validateInputFunction(e) {
     if (e.target.classList.contains('input-check')) {
       // VALIDAR SI HAY PARTIDAS REPETIDAS
-      validarCheckboxRepetido(e)
+      // validarCheckboxRepetido(e)
       // ALMACENAR PARTIDAS PARA LUEGO ASIGNAR MONTO
       partidasSeleccionadas = obtenerValorCheckbox({
         id_card: 'card-body-part2',
         id_text: 'partidas-seleccionadas',
       })
       console.log(partidasSeleccionadas)
+    }
+
+    if (e.target.dataset.dependencia) {
+      let dependencia = asignacion.dependencias.find(
+        (el) => Number(el.id) === Number(e.target.value)
+      )
+      dependenciaEnteSeleccionada = dependencia
+      console.log(dependenciaEnteSeleccionada)
     }
     if (e.target.classList.contains('partida-monto')) {
       fieldListPartidas = validateInput({
@@ -658,6 +747,7 @@ export const form_asignacion_entes_form_card = async ({
   // CARGAR LISTA DE PARTIDAS
 
   function enviarInformacion(data) {
+    console.log(data)
     confirmNotification({
       type: NOTIFICATIONS_TYPES.send,
       message: '¿Desea registrar esta distribución presupuestaria?',
@@ -674,9 +764,10 @@ export const form_asignacion_entes_form_card = async ({
     })
   }
 
-  function validateFormFocus(e) {
+  async function validateFormFocus(e) {
     let btnNext = d.getElementById('btn-next')
     let btnPrevius = d.getElementById('btn-previus')
+    let btnSend = d.getElementById('btn-send')
     // let btnAdd = d.getElementById('btn-add')
     let cardBodyPart1 = d.getElementById('card-body-part1')
     let cardBodyPart2 = d.getElementById('card-body-part2')
@@ -685,23 +776,16 @@ export const form_asignacion_entes_form_card = async ({
     if (e.target === btnNext) {
       scroll(0, 0)
       if (formFocus === 1) {
-        if (ejercicioFiscal.distribucion_partidas.length < 1) {
-          toastNotification({
-            type: NOTIFICATIONS_TYPES.fail,
-            message:
-              'El ejercicio fiscal actual no posee una distribución de partidas',
-          })
+        if (
+          asignacion.dependencias.length ===
+          distribucionActividadesRealizadas.length
+        ) {
+          enviarInformacion(distribucionActividadesRealizadas)
           return
         }
-        cardBodyPart1.classList.add('d-none')
 
-        cardBody.innerHTML += seleccionPartidas()
-        validarSeleccionPartidasTable()
+        formFocusPart1()
 
-        formFocus++
-        btnPrevius.classList.remove('d-none')
-        btnPrevius.removeAttribute('disabled')
-        // btnAdd.classList.remove('d-none')
         return
       }
       if (formFocus === 2) {
@@ -720,7 +804,7 @@ export const form_asignacion_entes_form_card = async ({
         cardBody.innerHTML += asignarMontoPartidas()
 
         validarAsignacionPartidasTable()
-        btnNext.textContent = 'Enviar'
+        // btnNext.textContent = 'Enviar'
         // btnAdd.classList.add('d-none')
         formFocus++
         return
@@ -773,12 +857,47 @@ export const form_asignacion_entes_form_card = async ({
 
         let data = {
           id_ente: asignacion.id_ente,
+          actividad_id: dependenciaEnteSeleccionada.id,
           distribuciones: mappedInfo,
           id_ejercicio: ejercicioFiscal.id,
           id_asignacion: asignacion.id,
         }
 
-        enviarInformacion(data)
+        if (
+          asignacion.dependencias.length !==
+          distribucionActividadesRealizadas.length
+        ) {
+          distribucionActividadesRealizadas.push(data)
+
+          datosDistribucionActividadesTabla.push(relacionarPartidas())
+
+          dependenciasList = asignacion.dependencias.filter(
+            (dependencia) =>
+              !distribucionActividadesRealizadas.some(
+                (el) => Number(el.actividad_id) === Number(dependencia.id)
+              )
+          )
+
+          console.log(dependenciasList)
+
+          montos.distribuido_total = montos.acumulado
+
+          console.log(datosDistribucionActividadesTabla)
+
+          console.log(distribucionActividadesRealizadas)
+          cardBody.innerHTML = await planEnte()
+          validarTablas()
+
+          dependenciaEnteSeleccionada = null
+          formFocus = 1
+          btnSend.classList.remove('d-none')
+
+          toastNotification({
+            type: NOTIFICATIONS_TYPES.done,
+            message: 'Distribución a actividad añadida',
+          })
+        }
+
         return
       }
     }
@@ -821,13 +940,56 @@ export const form_asignacion_entes_form_card = async ({
     }
   }
 
+  function formFocusPart1() {
+    let btnNext = d.getElementById('btn-next')
+    let btnPrevius = d.getElementById('btn-previus')
+    let btnSend = d.getElementById('btn-send')
+    // let btnAdd = d.getElementById('btn-add')
+    let cardBodyPart1 = d.getElementById('card-body-part1')
+    let cardBodyPart2 = d.getElementById('card-body-part2')
+    let cardBodyPart3 = d.getElementById('card-body-part3')
+
+    if (cardBodyPart3) cardBodyPart3.remove()
+
+    if (ejercicioFiscal.distribucion_partidas.length < 1) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.fail,
+        message:
+          'El ejercicio fiscal actual no posee una distribución de partidas',
+      })
+      return
+    }
+
+    if (!dependenciaEnteSeleccionada) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.fail,
+        message: 'Seleccione la actividad a asignar monto',
+      })
+      return
+    }
+
+    cardBodyPart1.classList.add('d-none')
+
+    cardBody.innerHTML += seleccionPartidas()
+    validarSeleccionPartidasTable()
+
+    formFocus++
+    btnPrevius.classList.remove('d-none')
+    btnSend.classList.add('d-none')
+    btnPrevius.removeAttribute('disabled')
+    // btnAdd.classList.remove('d-none')
+  }
+
   function actualizarMontoRestante() {
     let montoElement = d.getElementById('monto-total-asignado')
+    let montoDistribuidoTotalElement = d.getElementById(
+      'monto-total-distribuido'
+    )
 
     let inputsPartidasMontos = d.querySelectorAll('.partida-monto')
 
     // REINICIAR MONTO ACUMULADO
-    montos.acumulado = 0
+    montos.acumulado = montos.distribuido_total
 
     inputsPartidasMontos.forEach((input) => {
       montos.acumulado += Number(input.value)
@@ -835,6 +997,8 @@ export const form_asignacion_entes_form_card = async ({
 
     let diferenciaSolicitado =
       Number(montos.total_asignado) - Number(montos.acumulado)
+
+    montoDistribuidoTotalElement.innerHTML = montos.acumulado
 
     if (montos.acumulado > montos.distribuido) {
       montoElement.innerHTML = `<span class="text-danger">${montos.acumulado}</span>`
@@ -883,7 +1047,7 @@ export const form_asignacion_entes_form_card = async ({
 
     if (e.target.checked) {
       let checkboxes = cardCheckbox.querySelectorAll(
-        'input[type=checkbox]:checked'
+        '[data-dependencia] input[type=checkbox]:checked'
       )
       checkboxes.forEach((checkbox) => {
         if (
