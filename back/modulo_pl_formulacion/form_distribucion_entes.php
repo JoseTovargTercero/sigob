@@ -104,7 +104,7 @@ function insertarDistribuciones($distribuciones)
 
 
 // Función para aprobar o rechazar la distribución
-function actualizarEstadoDistribucion($id, $status, $comentario)
+function actualizarEstadoDistribucionPorAsignacion($id_asignacion, $status, $comentario = "")
 {
     global $conexion;
 
@@ -113,14 +113,13 @@ function actualizarEstadoDistribucion($id, $status, $comentario)
 
         // Verificar el valor de status para aprobar o rechazar
         if ($status == 1) {
-            $sqlUpdate = "UPDATE distribucion_entes SET status = 1, comentario = '' WHERE id = ?";
+            $sqlUpdate = "UPDATE distribucion_entes SET status = 1, comentario = '' WHERE id_asignacion = ?";
             $stmtUpdate = $conexion->prepare($sqlUpdate);
-            $stmtUpdate->bind_param("i", $id);
+            $stmtUpdate->bind_param("i", $id_asignacion);
         } elseif ($status == 2) {
-            $sqlUpdate = "UPDATE distribucion_entes SET status = 2, comentario = ? WHERE id = ?";
+            $sqlUpdate = "UPDATE distribucion_entes SET status = 2, comentario = ? WHERE id_asignacion = ?";
             $stmtUpdate = $conexion->prepare($sqlUpdate);
-            $stmtUpdate->bind_param("si", $comentario, $id);
-
+            $stmtUpdate->bind_param("si", $comentario, $id_asignacion);
         } else {
             throw new Exception("Estado no válido. Utilice 1 para aprobar o 2 para rechazar.");
         }
@@ -129,10 +128,10 @@ function actualizarEstadoDistribucion($id, $status, $comentario)
 
         if ($stmtUpdate->affected_rows > 0) {
             $conexion->commit();
-            $mensaje = ($status == 1) ? "Distribución aprobada correctamente" : "Distribución rechazada correctamente";
+            $mensaje = ($status == 1) ? "Distribuciones aprobadas correctamente" : "Distribuciones rechazadas correctamente";
             return json_encode(["success" => $mensaje]);
         } else {
-            throw new Exception("No se encontró el registro de distribución o el estado ya estaba configurado.");
+            throw new Exception("No se encontraron registros de distribución con el id_asignacion especificado o los estados ya estaban configurados.");
         }
 
     } catch (Exception $e) {
@@ -141,6 +140,7 @@ function actualizarEstadoDistribucion($id, $status, $comentario)
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 
 
@@ -495,11 +495,11 @@ if (isset($data["accion"])) {
         echo consultarTodasDistribuciones();
 
         // Aprobar o rechazar la distribución
-    } elseif ($accion === "aprobar_rechazar" && isset($data["id"]) && isset($data["status"])) {
-        $id = $data["id"];
+    } elseif ($accion === "aprobar_rechazar" && isset($data["id_asignacion"]) && isset($data["status"])) {
+        $id_asignacion = $data["id_asignacion"];
         $status = $data["status"];
         $comentario = isset($data["comentario"]) ? $data["comentario"] : ""; // Comentario opcional
-        echo actualizarEstadoDistribucion($id, $status, $comentario);
+        echo actualizarEstadoDistribucionPorAsignacion($id_asignacion, $status, $comentario);
 
         // Acción no válida o faltan datos
     } else {
