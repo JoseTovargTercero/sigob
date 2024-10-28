@@ -4,27 +4,24 @@ header('Content-Type: application/json');
 require_once '../sistema_global/session.php';
 require_once '../sistema_global/errores.php';
 
-// Función para insertar varias distribuciones en la tabla distribucion_entes
 function insertarDistribuciones($distribuciones)
 {
     global $conexion;
 
-    $fecha = date("Y-m-d"); // Obtener la fecha actual
+    $fecha = date("Y-m-d");
 
     try {
         $conexion->begin_transaction();
 
         foreach ($distribuciones as $distribucionData) {
-            // Extraer los datos del objeto actual
             $id_ente = $distribucionData['id_ente'];
             $actividad_id = isset($distribucionData['actividad_id']) ? $distribucionData['actividad_id'] : null;
             $distribucion = $distribucionData['distribuciones'];
             $id_ejercicio = $distribucionData['id_ejercicio'];
             $id_asignacion = $distribucionData['id_asignacion'];
             $status = 0;
-            $comentario = ""; // Campo agregado con valor vacío
+            $comentario = "";
 
-            // Consultar el tipo de ente para verificar si es 'J' o 'D'
             $sqlTipoEnte = "SELECT tipo_ente FROM entes WHERE id = ?";
             $stmtTipoEnte = $conexion->prepare($sqlTipoEnte);
             $stmtTipoEnte->bind_param("i", $id_ente);
@@ -38,7 +35,6 @@ function insertarDistribuciones($distribuciones)
             $filaTipoEnte = $resultadoTipoEnte->fetch_assoc();
             $tipo_ente = $filaTipoEnte['tipo_ente'];
 
-            // Verificar el formato de la distribución basado en el tipo_ente
             $num_distribuciones = count($distribucion);
             if ($tipo_ente === 'D' && $num_distribuciones > 1) {
                 throw new Exception("El tipo de ente Descentralizado solo permite una distribución.");
@@ -46,13 +42,11 @@ function insertarDistribuciones($distribuciones)
                 throw new Exception("Tipo de ente no válido.");
             }
 
-            // Sumar los montos de las distribuciones
             $sumaMontos = 0;
             foreach ($distribucion as $item) {
                 $sumaMontos += $item['monto'];
             }
 
-            // Consultar el monto_total de la tabla asignacion_ente usando el id_asignacion
             $sqlMontoTotal = "SELECT monto_total FROM asignacion_ente WHERE id = ?";
             $stmtMontoTotal = $conexion->prepare($sqlMontoTotal);
             $stmtMontoTotal->bind_param("i", $id_asignacion);
@@ -66,29 +60,27 @@ function insertarDistribuciones($distribuciones)
             $filaMontoTotal = $resultadoMontoTotal->fetch_assoc();
             $monto_total = $filaMontoTotal['monto_total'];
 
-            // Verificar si la suma de los montos de las distribuciones es mayor a monto_total
             if ($sumaMontos > $monto_total) {
                 throw new Exception("La suma de los montos de las distribuciones es mayor al monto total de la asignacion.");
             }
 
-            // Convertir el array de distribuciones a JSON
             $distribucion_json = json_encode($distribucion);
+            if ($distribucion_json === false) {
+                throw new Exception("Error al convertir el array de distribución a JSON.");
+            }
 
-            // Insertar los datos en la tabla distribucion_ente
             $sqlInsert = "INSERT INTO distribucion_entes (id_ente, actividad_id, distribucion, monto_total, status, id_ejercicio, comentario, fecha, id_asignacion) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $stmtInsert = $conexion->prepare($sqlInsert);
-            
-            // Comprobación de actividad_id para bind_param
+
             if ($actividad_id === null) {
-                $stmtInsert->bind_param("isdsisssi", $id_ente, $actividad_id, $distribucion_json, $monto_total, $status, $id_ejercicio, $comentario, $fecha, $id_asignacion);
+                $stmtInsert->bind_param("ississssi", $id_ente, $actividad_id, $distribucion_json, $monto_total, $status, $id_ejercicio, $comentario, $fecha, $id_asignacion);
             } else {
-                $stmtInsert->bind_param("isdissssi", $id_ente, $actividad_id, $distribucion_json, $monto_total, $status, $id_ejercicio, $comentario, $fecha, $id_asignacion);
+                $stmtInsert->bind_param("iisissssi", $id_ente, $actividad_id, $distribucion_json, $monto_total, $status, $id_ejercicio, $comentario, $fecha, $id_asignacion);
             }
-            
+
             $stmtInsert->execute();
 
             if ($stmtInsert->affected_rows > 0) {
-                // Actualizar el status de asignacion_ente a 1
                 $sqlUpdateAsignacion = "UPDATE asignacion_ente SET status = 1 WHERE id = ?";
                 $stmtUpdateAsignacion = $conexion->prepare($sqlUpdateAsignacion);
                 $stmtUpdateAsignacion->bind_param("i", $id_asignacion);
