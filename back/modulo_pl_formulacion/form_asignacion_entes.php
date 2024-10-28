@@ -172,18 +172,12 @@ function consultarAsignacionPorId($id)
             $stmtDependencias->execute();
             $resultDependencias = $stmtDependencias->get_result();
 
-            if ($resultDependencias->num_rows > 0) {
-                $dependencias = [];
-                while ($dependencia = $resultDependencias->fetch_assoc()) {
-                    $dependencias[] = $dependencia;
-                }
-                $asignacion['dependencias'] = $dependencias;
-            } else {
-                $asignacion['dependencias'] = [
-                    'ente_nombre' => $asignacion['ente_nombre'],
-                    'tipo_ente' => $asignacion['tipo_ente'],
-                ];
+            // Guardar las dependencias en un array si existen registros, si no, devolver un array vacío
+            $dependencias = [];
+            while ($dependencia = $resultDependencias->fetch_assoc()) {
+                $dependencias[] = $dependencia;
             }
+            $asignacion['dependencias'] = $dependencias;
 
             return json_encode(["success" => $asignacion]);
         } else {
@@ -194,7 +188,6 @@ function consultarAsignacionPorId($id)
         return json_encode(['error' => $e->getMessage()]);
     }
 }
-
 
 
 
