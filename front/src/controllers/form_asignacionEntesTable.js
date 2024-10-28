@@ -199,10 +199,17 @@ export const loadAsignacionEntesTable = async (id_ejercicio) => {
         monto: el.monto_total,
         tipo: el.tipo_ente,
         fecha: el.fecha,
-        acciones:
+        acciones: `
+        ${
           Number(el.status) === 0
-            ? `<button class="btn btn-primary btn-sm" data-validarId="${el.id}">VALIDAR</button>`
-            : `<button class="btn btn-secondary btn-sm" data-validarId="${el.id}">DETALLES</button>`,
+            ? `
+            <button class="btn btn-primary btn-sm" data-validarId="${el.id}">VALIDAR</button>`
+            : `<button class="btn btn-secondary btn-sm" data-validarId="${el.id}">DETALLES</button>`
+        }
+          <button class="btn btn-danger btn-sm btn-destroy" data-eliminarid="${
+            el.id
+          }"></button>
+        `,
       }
     })
   console.log(data)

@@ -523,7 +523,7 @@ const aceptarDistribucionEnte = async ({ id }) => {
       body: JSON.stringify({
         accion: 'aprobar_rechazar',
         status: 1,
-        id,
+        id_asignacion: id,
       }),
     })
 
@@ -563,6 +563,8 @@ const aceptarDistribucionEnte = async ({ id }) => {
 }
 
 const rechazarDistribucionEnte = async ({ id }) => {
+  console.log(id)
+
   showLoader()
   try {
     let res = await fetch(entesDistribucionUrl, {
@@ -570,7 +572,7 @@ const rechazarDistribucionEnte = async ({ id }) => {
       body: JSON.stringify({
         accion: 'aprobar_rechazar',
         status: 2,
-        id,
+        id_asignacion: id,
       }),
     })
 

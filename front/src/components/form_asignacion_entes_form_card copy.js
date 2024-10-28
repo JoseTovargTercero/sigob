@@ -83,6 +83,8 @@ export const form_asignacion_entes_form_card = async ({
   // DATOS PARA GENERAR TABLA EN PLAN ENTE
   let datosDistribucionTabla = []
 
+  let dependenciasList = asignacion.dependencias
+
   // CONTROLAR FOCUS DEL FORMUALRIO
   let formFocus = 1
 
@@ -133,54 +135,43 @@ export const form_asignacion_entes_form_card = async ({
   }
 
   const distribucionPartidasEnteCheckbox = ({ partidasList, checkbox }) => {
-    let dependenciaActividad, dependenciaNombre
-
-    if (dependenciaEnteSeleccionada) {
-      dependenciaActividad = dependenciaEnteSeleccionada.actividad
-      dependenciaNombre = dependenciaEnteSeleccionada.ente_nombre
-    } else {
-      dependenciaActividad = '-'
-      dependenciaNombre = '-'
-    }
+    let dependenciaActividad = dependenciaEnteSeleccionada.actividad
+    let dependenciaNombre = dependenciaEnteSeleccionada.ente_nombre
 
     let liItems = partidasList.map((distribucion) => {
       let sector_codigo = `${distribucion.sector_informacion.sector}.${distribucion.sector_informacion.programa}.${distribucion.sector_informacion.proyecto}`
 
       let descripcion = recortarTexto(distribucion.descripcion, 40)
 
-      return ` <tr class=''>
+      if (checkbox) {
+        return ` <tr class=''>
     <td><input type="checkbox" class="form-check-input input-check" value="${distribucion.id}" name="ente-partida-${distribucion.id}"/></td>
     <td>${distribucion.sector_informacion.nombre}</td>
     <td>${sector_codigo}</td>
     <td>${distribucion.partida}</td>
     <td title="${distribucion.descripcion}">${descripcion}</td>
   </tr>`
+      } else {
+        return ` <tr class=''>
+        <td>${distribucion.sector_informacion.nombre}</td>
+    <td>${sector_codigo}</td>
+    <td>${distribucion.partida}</td>
+    <td>${dependenciaActividad}</td>
+    <td>${dependenciaNombre}</td>
+    <td>${dependen}</td>
+    
+    <td>${distribucion.monto || 'No asignado'}</td>
+  </tr>`
+      }
     })
 
     return liItems.join('')
   }
 
   const distribucionPartidasEnteList = ({ info }) => {
-    let data = info
-
-    let tablas = data.map((actividad) => {
+    let tablas = info.map((actividad) => {
       let actividad_codigo = actividad.actividad,
-        actividad_nombre = actividad.ente_nombre,
-        status
-
-      if (actividad.status) {
-        if (actividad.status === 0) {
-          status = `<span class='btn btn-sm btn-secondary'>Pendiente</span>`
-        }
-        if (actividad.status === 1) {
-          status = `<span class='btn btn-sm btn-success'>Aceptado</span>`
-        }
-        if (actividad.status === 2) {
-          status = `<span class='btn btn-sm btn-danger'>Rechazada</span>`
-        }
-      } else {
-        status = `<span class='btn btn-sm btn-secondary'>Pendiente</span>`
-      }
+        actividad_nombre = actividad.ente_nombre
 
       let montoTotalActividad = 0
 
@@ -190,9 +181,9 @@ export const form_asignacion_entes_form_card = async ({
           partida_codigo = partida.partida,
           nombre = partida.nombre || 'No asignado',
           descripcion = partida.descripcion,
-          monto = partida.monto
+          monto = partida.monto_asignado
 
-        montoTotalActividad += Number(monto)
+        montoTotalActividad += monto
 
         return `<tr class=''>
                     <td>${sector_nombre}</td>
@@ -205,23 +196,12 @@ export const form_asignacion_entes_form_card = async ({
 
       let tabla = ` <div class='row p-4 border bg-gray-100 rounded'>
       <div class='col'>
-              <div class="d-flex justify-content-between mb-4">
-            <h4 class='text-green-800 text-center'>Distribución de partidas para actividad:</h4>
-            ${
-              // COLOCAR BOTÓN PARA ELIMINAR SI ESTÁ EN PROCESO DE DISTRIBUCIÓN
-              Number(asignacion.status) === 1
-                ? ''
-                : `<button class="btn btn-danger btn-sm btn-destroy" data-eliminaractividadid="${actividad.actividad_id}"></button>`
-            }
-            </div>
+        <h4 class='text-green-800 text-center'>Distribución de partidas para actividad:</h4>
         <h6>
           Actividad: ${actividad_codigo} - ${actividad_nombre}
         </h6>
         <h6>
           Monto total asignado: ${montoTotalActividad}
-        </h6>
-        <h6>
-          Estado: ${status}
         </h6>
       </div>
 
@@ -250,6 +230,32 @@ export const form_asignacion_entes_form_card = async ({
   // GENERAR TABLAS DINÁMICAS SEGÚN SE REQUIERA PARA QUE EL USUARIO PUEDA VISUALIZAR LO QUE EST´HACIENDO CON LAS ACTIVIDADES
 
   const distribucionEntesActividadList = (arr) => {
+    // ;[
+    //   {
+    //     id_ente: 23,
+    //     actividad_id: 71,
+    //     distribuciones: [
+    //       {
+    //         id_distribucion: '9',
+    //         monto: 12,
+    //       },
+    //       {
+    //         id_distribucion: '10',
+    //         monto: 12,
+    //       },
+    //       {
+    //         id_distribucion: '11',
+    //         monto: 12,
+    //       },
+    //     ],
+    //     id_ejercicio: '1',
+    //     id_asignacion: 5,
+    //   },
+    // ]
+    // let partidaEncontrada = ejercicioFiscal.distribucion_partidas.find(
+    //   (partida) => partida.id == id
+    // )
+
     let dataRelacionada = arr.map((data) => {
       let actividadEncontrada = asignacion.dependencias.find(
         (dependencia) => Number(dependencia.id) === Number(data.actividad_id)
@@ -265,6 +271,15 @@ export const form_asignacion_entes_form_card = async ({
 
         return distribucionPartidaEncontrada
       })
+      // let sector_codigo = `${partidaEncontrada.sector_informacion.sector}.${partidaEncontrada.sector_informacion.programa}.${partidaEncontrada.sector_informacion.proyecto}`
+      // sector_nombre: partidaEncontrada.sector_informacion.nombre,
+      // sector_codigo,
+      // partida: partidaEncontrada.partida,
+      // nombre: partidaEncontrada.nombre || 'No asignado',
+      // descripcion: partidaEncontrada.descripcion,
+      // ?  monto_disponible: partidaEncontrada
+      //   partidaEncontrada.monto_inicial
+      // : 0,
 
       return {
         actividad_id: actividadEncontrada.id,
@@ -333,8 +348,8 @@ export const form_asignacion_entes_form_card = async ({
     return tablas
   }
 
-  function validarTablas(tablas) {
-    tablas.forEach((el, index) => {
+  function validarTablas() {
+    datosDistribucionActividades.forEach((el, index) => {
       let planesTable = new DataTable(
         `#distribucion-partidas-tabla-${el.actividad_id}`,
         {
@@ -360,56 +375,27 @@ export const form_asignacion_entes_form_card = async ({
   // GENERAR LISTA DE CHECKBOX DE LAS ACTIVIDADES LIGADAS AL ENTE
 
   const dependenciasEnteList = () => {
-    let dependenciasList = asignacion.dependencias.filter(
-      (dependencia) =>
-        !datosDistribucionActividades.some(
-          (el) => Number(el.actividad_id) === Number(dependencia.id)
-        )
-    )
+    console.log(dependenciasList)
 
     if (dependenciasList && dependenciasList.length > 0) {
-      let liItems
-      if (Number(asignacion.status) === 1) {
-        liItems = dependenciasList.map((dependencia) => {
-          return `  <div class='form-check'>
-              <input
-                class='form-check-input'
-                type='checkbox'
-                value='${dependencia.id}'
-                data-dependencia="${dependencia.id}"
-                name='ente-dependencia'
-                id='ente-dependencia-check-${dependencia.id}'
-                checked
-                disabled
-              />
-              <label
-                class='form-check-label'
-                for='ente-dependencia-check-${dependencia.id}'
-              >
-                ${dependencia.actividad} - ${dependencia.ente_nombre}
-              </label>
-            </div>`
-        })
-      } else {
-        liItems = dependenciasList.map((dependencia) => {
-          return `  <div class='form-check'>
-              <input
-                class='form-check-input'
-                type='radio'
-                value='${dependencia.id}'
-                data-dependencia="${dependencia.id}"
-                name='ente-dependencia'
-                id='ente-dependencia-check-${dependencia.id}'
-              />
-              <label
-                class='form-check-label'
-                for='ente-dependencia-check-${dependencia.id}'
-              >
-                ${dependencia.actividad} - ${dependencia.ente_nombre}
-              </label>
-            </div>`
-        })
-      }
+      let liItems = dependenciasList.map((dependencia) => {
+        return `  <div class='form-check'>
+            <input
+              class='form-check-input'
+              type='radio'
+              value='${dependencia.id}'
+              data-dependencia="${dependencia.id}"
+              name='ente-dependencia'
+              id='ente-dependencia-check-${dependencia.id}'
+            />
+            <label
+              class='form-check-label'
+              for='ente-dependencia-check-${dependencia.id}'
+            >
+              ${dependencia.actividad} - ${dependencia.ente_nombre}
+            </label>
+          </div>`
+      })
 
       return `<h4 class='text-blue-800'>Dependendias de ente:</h4> ${liItems.join(
         ''
@@ -422,41 +408,43 @@ export const form_asignacion_entes_form_card = async ({
   // GENERAR CARD PRINCIPAL DONDE SE CARGARÍA LA INFORMACIÓN DE ASIGNACIÓN O DISTRIBUCIÓN DE PARTIDAS DEL ENTE
 
   const planEnte = async () => {
-    let tipo = asignacion.tipo_ente
     return `<div id='card-body-part1' class='slide-up-animation'>
         <div class='row'>
           <div class='col'>
             <h4 class='text-blue-800'>Información sobre asignación:</h4>
             <h6>Nombre: ${asignacion.ente_nombre || 'Ente sin nombre'}</h6>
             <h6>
-              Tipo: ${tipo === 'J' ? 'juridico' : 'Descentralizado'}
+              Tipo: ${
+                asignacion.tipo_ente === 'J' ? 'juridico' : 'Descentralizado'
+              }
             </h6>
             <h6>
               Monto total asignado: ${separarMiles(asignacion.monto_total)}
             </h6>
-            ${
-              montos.distribuido_total > 0
-                ? `<h6>
-              Monto total distribuido: ${separarMiles(montos.distribuido_total)}
-            </h6>`
-                : ''
-            }
-           
           </div>
-          ${
-            tipo === 'J'
-              ? `<div class='col'>${dependenciasEnteList()}</div>`
-              : ''
-          }
-          
+          <div class='col'>${dependenciasEnteList()}</div>
         </div>
         ${
-          asignacion.actividades_entes.length > 0
-            ? distribucionPartidasEnteList({
-                info: asignacion.actividades_entes,
-              })
-            : datosDistribucionActividades.length > 0
-            ? distribucionPartidasEnteList({ info: relacionarActividades() })
+          datosDistribucionActividades.length > 0
+            ? distribucionEntesActividadList(datosDistribucionActividades)
+            : asignacion.actividades_entes.length > 0
+            ? `  <table
+        id='asignacion-part1-table'
+        class='table table-striped table-sm'
+        style='width:100%'
+      >
+        <thead class='w-100'>
+          <th>SECTOR NOMBRE</th>
+          <th>SECTOR CODIGO</th>
+          <th>PARTIDA</th>
+          <th>DESCRIPCION</th>
+          <th>MONTO</th>
+        </thead>
+        
+        <tbody>${distribucionPartidasEnteList({
+          info: asignacion.actividades_entes,
+        })}</tbody>
+      </table>`
             : `<div>
               <h4 class='text-center text-blue-800'>
                 Esta asignación no posee distribución de partidas.
@@ -470,6 +458,41 @@ export const form_asignacion_entes_form_card = async ({
   }
 
   // PARTE 2
+
+  const distribucionPartidasList = () => {
+    // if (!ejercicio)
+    //   return ` <li class='list-group-item list-group-item-danger'>
+    //       <h6>No se pudo obtener las partidas del ejercicio fiscal</h6>
+    //     </li>`
+
+    // if (ejercicio.partidas < 1) {
+    //   return ` <li class='list-group-item list-group-item-danger'>
+    //       <h6>No hay partidas distribuidas en el ejercicio fiscal</h6>
+    //     </li>`
+    // } else {
+    // }
+    let liItems = ejercicioFiscal.distribucion_partidas.map((partida) => {
+      let partidaEncontrada = partidas.fullInfo.find(
+        (par) => par.id == partida.id
+      )
+
+      return ` <tr>
+          <td>
+            <input type='checkbox' value="${
+              partida.id
+            }" class="form-check-input input-check" name='partida-ejercicio-${
+        partida.id
+      }' id='partida-ejetcicio-${partida.id}' />
+          </td>
+          <td>${partidaEncontrada.partida}</td>
+          <td>${partidaEncontrada.nombre}</td>
+          <td>${partidaEncontrada.descripcion}</td>
+          <td> ${separarMiles(partida.monto_inicial)} Bs.</td>
+        </tr>`
+    })
+
+    return liItems.join('')
+  }
 
   const formularioNuevaPartida = () => {
     let options = partidas.fullInfo
@@ -587,16 +610,9 @@ export const form_asignacion_entes_form_card = async ({
   }
 
   function relacionarPartidas() {
-    let dependenciaActividad, dependenciaNombre, actividad_id
-
-    if (dependenciaEnteSeleccionada) {
-      dependenciaActividad = dependenciaEnteSeleccionada.actividad
-      dependenciaNombre = dependenciaEnteSeleccionada.ente_nombre
-      actividad_id = null
-    } else {
-      dependenciaActividad = '-'
-      dependenciaNombre = '-'
-    }
+    let dependenciaActividad = dependenciaEnteSeleccionada.actividad
+    let dependenciaNombre = dependenciaEnteSeleccionada.ente_nombre
+    let actividad_id = dependenciaEnteSeleccionada.id
 
     let partidasRelacionadas = partidasSeleccionadas.map((id) => {
       let partidaEncontrada = ejercicioFiscal.distribucion_partidas.find(
@@ -626,51 +642,39 @@ export const form_asignacion_entes_form_card = async ({
     return partidasRelacionadas
   }
 
-  function relacionarActividades() {
-    let dataRelacionada = datosDistribucionActividades.map((data) => {
-      let {
-        id_ente,
-        actividad_id,
-        distribuciones,
-        id_ejercicio,
-        id_asignacion,
-      } = data
+  function relacionarDependencias(arr) {
+    console.log(arr)
 
+    let partidasRelacionadas = arr.map((data) => {
       let actividadEncontrada = asignacion.dependencias.find(
-        (dependencia) => Number(dependencia.id) === Number(actividad_id)
+        (dependencia) => Number(dependencia.id) === Number(data.actividad_id)
       )
 
-      let monto_asignado = 0
+      let partidaEncontrada = ejercicioFiscal.distribucion_partidas.find(
+        (partida) => partida.id == id
+      )
 
-      let distribucion = distribuciones.map((distribucionPartida) => {
-        let distribucionPartidaEncontrada =
-          ejercicioFiscal.distribucion_partidas.find(
-            (partida) =>
-              Number(partida.id) === Number(distribucionPartida.id_distribucion)
-          )
-
-        distribucionPartidaEncontrada.monto = distribucionPartida.monto
-
-        monto_asignado += Number(distribucionPartida.monto)
-
-        return distribucionPartidaEncontrada
-      })
+      let sector_codigo = `${partidaEncontrada.sector_informacion.sector}.${partidaEncontrada.sector_informacion.programa}.${partidaEncontrada.sector_informacion.proyecto}`
 
       return {
-        id_ejercicio,
-        actividad_id: actividadEncontrada
-          ? Number(actividadEncontrada.id)
-          : null,
-        id_ente,
-        actividad: actividadEncontrada ? actividadEncontrada.actividad : '-',
-        ente_nombre: actividadEncontrada
-          ? actividadEncontrada.ente_nombre
-          : '-',
-        distribucion_partidas: distribucion,
+        id: id,
+        actividad_id,
+        sector_nombre: partidaEncontrada.sector_informacion.nombre,
+        sector_codigo,
+        actividad: actividadEncontrada.actividad,
+        actividad_nombre: actividadEncontrada.ente_nombre,
+        partida: partidaEncontrada.partida,
+        nombre: partidaEncontrada.nombre || 'No asignado',
+        descripcion: partidaEncontrada.descripcion,
+        monto_disponible: partidaEncontrada
+          ? partidaEncontrada.monto_inicial
+          : 0,
       }
     })
 
-    return dataRelacionada
+    console.log(partidasRelacionadas)
+
+    return partidasRelacionadas
   }
 
   const asignarMontoPartidas = () => {
@@ -730,32 +734,20 @@ export const form_asignacion_entes_form_card = async ({
   }
 
   const validarFooter = () => {
-    if (asignacion.actividades_entes.length > 1) {
-      let distribucionesEstanPendientes = asignacion.actividades_entes.every(
-        (distribucion) => Number(distribucion.status) === 0
-      )
-      let distribucionesEstanAprobadas = asignacion.actividades_entes.every(
-        (distribucion) => Number(distribucion.status) === 1
-      )
-      let distribucionesEstanRechazadas = asignacion.actividades_entes.every(
-        (distribucion) => Number(distribucion.status) === 2
-      )
-
-      if (distribucionesEstanAprobadas) {
+    if (asignacion.distribucion) {
+      if (asignacion.distribucion.status === 1) {
         return `<span class='btn btn-success'>Esta distribucion fue aprobada</span>`
       }
-      if (distribucionesEstanRechazadas) {
-        return `<span class='btn btn-danger'>Esta distribucion fue rechazada</span>`
+      if (asignacion.distribucion.status === 2) {
+        return `<span class='btn btn-warning'>Esta distribucion fue rechazada</span>`
       }
 
-      if (distribucionesEstanPendientes) {
-        return `<button class='btn btn-primary' id='distribucion-ente-aceptar'>
-        Aceptar distribuciones
-      </button>
-      <button class='btn btn-danger' id='distribucion-ente-rechazar'>
-        Rechazar
-      </button>`
-      }
+      return `<button class='btn btn-primary' id='distribucion-ente-aceptar'>
+      Guardar
+    </button>
+    <button class='btn btn-danger' id='distribucion-ente-rechazar'>
+      Rechazar
+    </button>`
     } else {
       return ` <button class='btn btn-secondary' id='btn-previus'>
       Atrás
@@ -804,12 +796,8 @@ export const form_asignacion_entes_form_card = async ({
   let cardBody = d.getElementById('card-body-container')
 
   // INICIALIZAR CARD
-
   cardBody.innerHTML = await planEnte()
-  if (asignacion.actividades_entes.length > 0) {
-    validarTablas(asignacion.actividades_entes)
-  }
-  // validarPartidasEntesTable()
+  validarPartidasEntesTable()
 
   let cardElement = d.getElementById('asignacion-entes-form-card')
   // let formElement = d.getElementById('asignacion-entes-form')
@@ -823,56 +811,18 @@ export const form_asignacion_entes_form_card = async ({
     return false
   }
 
-  async function validateClick(e) {
+  function validateClick(e) {
     if (e.target.dataset.close) {
       closeCard()
     }
 
-    if (e.target.dataset.eliminaractividadid) {
-      console.log(datosDistribucionActividades)
-
-      // ACTUALIZAR TOTAL DISTRIBUIDO
-
-      let montoRestar = datosDistribucionActividades.find(
-        (el) =>
-          Number(el.actividad_id) !==
-          Number(e.target.dataset.eliminaractividadid)
-      ).monto_total_asignado
-
-      montos.distribuido_total -= montoRestar
-
-      if (asignacion.tipo_ente === 'D') {
-        datosDistribucionActividades = datosDistribucionActividades.pop()
-      } else {
-        datosDistribucionActividades = datosDistribucionActividades.filter(
-          (el) => {
-            return (
-              Number(el.actividad_id) !==
-              Number(e.target.dataset.eliminaractividadid)
-            )
-          }
-        )
-      }
-
-      console.log(montos)
-
-      // ELIMINAR TABLA Y ACTUALIZAR CARD
-
-      cardBody.innerHTML = await planEnte()
-    }
-
-    if (e.target.id === 'btn-send') {
-      if (datosDistribucionActividades.length > 1) {
-        enviarInformacion(datosDistribucionActividades)
-      }
-    }
     if (e.target.id === 'distribucion-ente-aceptar') {
       confirmNotification({
         type: NOTIFICATIONS_TYPES.send,
         message: `¿Desea aceptar esta distribución de presupuesto?`,
         successFunction: async function () {
           let res = await aceptarDistribucionEnte({
-            id: asignacion.id,
+            id: asignacion.distribucion.id,
           })
 
           if (res.success) {
@@ -889,7 +839,7 @@ export const form_asignacion_entes_form_card = async ({
         message: `¿Desea rechazar esta distribución de presupuesto?`,
         successFunction: async function () {
           let res = await rechazarDistribucionEnte({
-            id: asignacion.id,
+            id: asignacion.distribucion.id,
           })
 
           if (res.success) {
@@ -1012,17 +962,7 @@ export const form_asignacion_entes_form_card = async ({
       scroll(0, 0)
       if (formFocus === 1) {
         if (
-          asignacion.dependencias.length ===
-            datosDistribucionActividades.length &&
-          datosDistribucionActividades.length > 0
-        ) {
-          enviarInformacion(datosDistribucionActividades)
-          return
-        }
-
-        if (
-          asignacion.tipo_ente === 'D' &&
-          datosDistribucionActividades.length > 0
+          asignacion.dependencias.length === datosDistribucionActividades.length
         ) {
           enviarInformacion(datosDistribucionActividades)
           return
@@ -1092,49 +1032,48 @@ export const form_asignacion_entes_form_card = async ({
           return
         }
 
-        let monto_total_asignado = 0
-
         let mappedInfo = Array.from(inputsPartidas).map((input) => {
           let id_distribucion = input.dataset.id
           let monto = Number(input.value)
-          monto_total_asignado += monto
+
           return { id_distribucion, monto }
         })
 
         let data = {
           id_ente: asignacion.id_ente,
-          actividad_id: dependenciaEnteSeleccionada
-            ? dependenciaEnteSeleccionada.id
-            : dependenciaEnteSeleccionada,
+          actividad_id: dependenciaEnteSeleccionada.id,
           distribuciones: mappedInfo,
           id_ejercicio: ejercicioFiscal.id,
           id_asignacion: asignacion.id,
-          monto_total_asignado,
         }
 
-        datosDistribucionActividades.push(data)
+        if (
+          asignacion.dependencias.length !== datosDistribucionActividades.length
+        ) {
+          datosDistribucionActividades.push(data)
 
-        // dependenciasList = dependenciasList.filter(
-        //   (dependencia) =>
-        //     !datosDistribucionActividades.some(
-        //       (el) => Number(el.actividad_id) === Number(dependencia.id)
-        //     )
-        // )
+          dependenciasList = dependenciasList.filter(
+            (dependencia) =>
+              !datosDistribucionActividades.some(
+                (el) => Number(el.actividad_id) === Number(dependencia.id)
+              )
+          )
 
-        montos.distribuido_total = montos.acumulado
+          montos.distribuido_total = montos.acumulado
 
-        // distribucionEntesActividadList(datosDistribucionActividades)
-        cardBody.innerHTML = await planEnte()
-        validarTablas(datosDistribucionActividades)
+          distribucionEntesActividadList(datosDistribucionActividades)
+          cardBody.innerHTML = await planEnte()
+          validarTablas()
 
-        dependenciaEnteSeleccionada = null
-        formFocus = 1
-        btnSend.classList.remove('d-none')
+          dependenciaEnteSeleccionada = null
+          formFocus = 1
+          btnSend.classList.remove('d-none')
 
-        toastNotification({
-          type: NOTIFICATIONS_TYPES.done,
-          message: 'Distribución a actividad añadida',
-        })
+          toastNotification({
+            type: NOTIFICATIONS_TYPES.done,
+            message: 'Distribución a actividad añadida',
+          })
+        }
 
         return
       }
@@ -1198,7 +1137,7 @@ export const form_asignacion_entes_form_card = async ({
       return
     }
 
-    if (!dependenciaEnteSeleccionada && asignacion.dependencias.length > 0) {
+    if (!dependenciaEnteSeleccionada) {
       toastNotification({
         type: NOTIFICATIONS_TYPES.fail,
         message: 'Seleccione la actividad a asignar monto',
