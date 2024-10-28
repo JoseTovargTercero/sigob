@@ -17,7 +17,7 @@ function insertarDistribuciones($distribuciones)
         foreach ($distribuciones as $distribucionData) {
             // Extraer los datos del objeto actual
             $id_ente = $distribucionData['id_ente'];
-            $actividad_id = $distribucionData['actividad_id'];
+            $actividad_id = isset($distribucionData['actividad_id']) ? $distribucionData['actividad_id'] : null;
             $distribucion = $distribucionData['distribuciones'];
             $id_ejercicio = $distribucionData['id_ejercicio'];
             $id_asignacion = $distribucionData['id_asignacion'];
@@ -77,7 +77,14 @@ function insertarDistribuciones($distribuciones)
             // Insertar los datos en la tabla distribucion_ente
             $sqlInsert = "INSERT INTO distribucion_entes (id_ente, actividad_id, distribucion, monto_total, status, id_ejercicio, comentario, fecha, id_asignacion) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $stmtInsert = $conexion->prepare($sqlInsert);
-            $stmtInsert->bind_param("iisdisssi", $id_ente, $actividad_id, $distribucion_json, $monto_total, $status, $id_ejercicio, $comentario, $fecha, $id_asignacion);
+            
+            // Comprobación de actividad_id para bind_param
+            if ($actividad_id === null) {
+                $stmtInsert->bind_param("isdsisssi", $id_ente, $actividad_id, $distribucion_json, $monto_total, $status, $id_ejercicio, $comentario, $fecha, $id_asignacion);
+            } else {
+                $stmtInsert->bind_param("isdissssi", $id_ente, $actividad_id, $distribucion_json, $monto_total, $status, $id_ejercicio, $comentario, $fecha, $id_asignacion);
+            }
+            
             $stmtInsert->execute();
 
             if ($stmtInsert->affected_rows > 0) {
@@ -99,6 +106,7 @@ function insertarDistribuciones($distribuciones)
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 
 

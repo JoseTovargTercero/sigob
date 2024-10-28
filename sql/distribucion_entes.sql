@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 26-10-2024 a las 02:08:24
+-- Tiempo de generación: 28-10-2024 a las 03:59:10
 -- Versión del servidor: 10.4.27-MariaDB
 -- Versión de PHP: 7.4.33
 
@@ -30,7 +30,7 @@ SET time_zone = "+00:00";
 CREATE TABLE `distribucion_entes` (
   `id` int(255) NOT NULL,
   `id_ente` int(255) NOT NULL,
-  `actividad_id` int(255) NOT NULL,
+  `actividad_id` int(255) DEFAULT NULL,
   `distribucion` longtext NOT NULL,
   `monto_total` varchar(255) DEFAULT NULL,
   `status` int(255) NOT NULL,
@@ -39,6 +39,14 @@ CREATE TABLE `distribucion_entes` (
   `fecha` varchar(255) DEFAULT NULL,
   `id_asignacion` int(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `distribucion_entes`
+--
+
+INSERT INTO `distribucion_entes` (`id`, `id_ente`, `actividad_id`, `distribucion`, `monto_total`, `status`, `id_ejercicio`, `comentario`, `fecha`, `id_asignacion`) VALUES
+(3, 23, 71, '[{\"id_distribucion\":\"9\",\"monto\":500}]', '2500', 0, 1, '', '2024-10-27', 5),
+(4, 23, 72, '[{\"id_distribucion\":\"10\",\"monto\":500}]', '2500', 0, 1, '', '2024-10-27', 5);
 
 --
 -- Índices para tablas volcadas
@@ -58,7 +66,7 @@ ALTER TABLE `distribucion_entes`
 -- AUTO_INCREMENT de la tabla `distribucion_entes`
 --
 ALTER TABLE `distribucion_entes`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
