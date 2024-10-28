@@ -77,7 +77,7 @@ function _ejemplo_config($tabla)
     return [
         'columnas' => ['columna1', 'columna2'],
         'tabla' => $tabla,
-        'condicion' => "columna1 = 'valor'",
+        'where' => "id='1' OR id='2' AND sector='02'",
         'order_by' => [
             ['nombre_campo' => 'columna2', 'asc_desc' => 'DESC']
         ],
@@ -86,4 +86,5 @@ function _ejemplo_config($tabla)
         ]
     ];
 }
+    
     */

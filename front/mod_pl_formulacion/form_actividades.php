@@ -218,6 +218,7 @@ $stmt->close();
                   id: id
                 }),
                 success: function(response) {
+                  console.log(response)
 
                   if (response.success) {
                     get_tabla()
@@ -252,8 +253,8 @@ $stmt->close();
         document.getElementById('data_actividad').addEventListener('submit', function(event) {
           event.preventDefault();
 
-          const nombre = document.getElementById('nombre').value;
           const actividad = document.getElementById('actividad').value;
+          const nombre = document.getElementById('nombre').value;
 
 
           let campos = ['nombre', 'actividad'];

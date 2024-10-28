@@ -1,7 +1,4 @@
 <?php
-
-
-
 class DatabaseHandler
 {
     private $conexion;
@@ -16,42 +13,17 @@ class DatabaseHandler
         }
     }
 
-
     /**
-     * Realizar una consulta SELECT en la base de datos.
+     * Realizar una consulta SELECT a la base de datos.
      * 
-     * Este método permite realizar consultas a una tabla específica, 
-     * seleccionando las columnas deseadas, aplicando condiciones, 
-     * ordenando los resultados y realizando uniones (INNER JOIN) 
-     * con otras tablas si es necesario. Los resultados se devuelven 
-     * en formato JSON con una clave 'success' que contiene los datos obtenidos.
-     *
-     * @param array $columnas Columnas a seleccionar en la consulta. 
-     *                               Si se omite, se seleccionan todas las columnas.
-     * @param string $nombre_tabla Nombre de la tabla de la cual se desea realizar la consulta.
-     * @param string $condicion Condición para filtrar los registros (ej. 'id = 1'). 
-     *                          Por defecto es una cadena vacía, lo que significa que no hay filtrado.
-     * @param array $order_by Arreglo que especifica cómo se deben ordenar los resultados.
-     *                        Cada elemento debe ser un array asociativo con 'campo' y 'order' (ASC o DESC).
-     * Formato
-     *      ['campo' => 'id', 'order' => 'ASC'],
-     *      ['campo' => 'actividad', 'order' => 'DESC']
-     * 
-     * @param array $join Arreglo que especifica las uniones con otras tablas. 
-     *                    Cada elemento debe ser un array asociativo con la tabla y su condición de unión.
-     * Formato
-     *      'tabla_join' => 'entes.id = tabla_join.id',
-     *      'pl_programas' => 'entes.programa = pl_programas.programa'
-     * 
-     * @throws Exception Si ocurre un error al preparar, ejecutar la consulta o al obtener los resultados.
-     * @return string Resultado de la consulta en formato JSON, incluyendo un array 'success' 
-     *                con los registros obtenidos.
-     * 
-     *
+     * @param array|string $columnas Columnas a seleccionar, o '*' para todas.
+     * @param string $nombre_tabla Nombre de la tabla desde la que se seleccionan los datos.
+     * @param string $condicion Condición en formato SQL con operadores (=, !=, <, >, <=, >=).
+     * @param array $order_by Opcional. Array con la estructura [['campo' => 'nombre_campo', 'order' => 'ASC|DESC']].
+     * @param array $join Opcional. Array con la estructura ['nombre_tabla' => 'condicion_join'] para realizar INNER JOIN.
+     * @throws Exception Si hay un error al preparar o ejecutar la consulta.
+     * @return string Resultado de la consulta en formato JSON, con los datos seleccionados.
      */
-
-
-
     public function select($columnas = ['*'], $nombre_tabla, $condicion = "", $order_by = [], $join = [])
     {
         $data = [];
@@ -68,11 +40,20 @@ class DatabaseHandler
                 $query .= " INNER JOIN $tabla ON $condicion_join";
             }
         }
-
-        // Agregar condición si está presente
+        $valores = [];
         if (!empty($condicion)) {
+            // Eliminar espacios alrededor de los operadores en $condicion
+            $condicion = preg_replace('/\s*([=<>!]+)\s*/', '$1', $condicion);
+
+            // Reemplazar valores después de operadores con '?' y eliminar comillas alrededor del valor
+            $condicion = preg_replace_callback('/([=<>!]+)(["\'`]?)(\S+)\2/', function ($matches) use (&$valores) {
+                $valores[] = trim($matches[3]);  // Agrega el valor sin comillas al array
+                return $matches[1] . ' ?';       // Retorna el operador seguido de '?'
+            }, $condicion);
+
             $query .= " WHERE $condicion";
         }
+
 
         // Agregar orden si está presente
         if (!empty($order_by)) {
@@ -87,135 +68,157 @@ class DatabaseHandler
             }
         }
 
-        // Preparar 
+        // Preparar consulta
         $stmt = mysqli_prepare($this->conexion, $query);
         if (!$stmt) {
             throw new Exception("Error al preparar la consulta: " . $this->conexion->error);
         }
 
-        // Ejecutar 
+
+        // Determinar tipos y vincular parámetros
+        if (!empty($valores)) {
+            $tipos = '';
+            foreach ($valores as $valor) {
+                // Obtener el tipo del valor utilizando getParamType
+                $tipos .= $this->getParamType($valor);
+            }
+            $stmt->bind_param($tipos, ...$valores);
+        }
+
+        // Ejecutar
         if (!$stmt->execute()) {
-            throw new Exception("Error al ejecutar la consulta: " . $stmt->error);
+            throw new Exception("Error  al ejecutar la consulta: " . $stmt->error);
         }
 
         // Obtener resultados
         $result = $stmt->get_result();
         if ($result === false) {
-            throw new Exception("Error al obtener los resultados: " . $stmt->error);
+            throw new Exception("Error  al obtener los resultados: " . $stmt->error);
         }
 
-        // Almacenar resultados en un array
+        // Almacenar resultados
         while ($row = $result->fetch_assoc()) {
             array_push($data, $row);
         }
 
         $stmt->close();
 
-
         return json_encode(['success' => $data]);
     }
 
 
+    /**
+     * Devuelve el tipo de parámetro para registro según el tipo de valor.
+     *
+     * @param mixed $param Valor del parámetro.
+     * @return string Tipo de parámetro
+     */
+    private function getParamType($param)
+    {
+        switch (gettype($param)) {
+            case 'integer':
+                return 'i';
+            case 'double':
+                return 'd';
+            case 'string':
+                return 's';
+            default:
+                return 'b';
+        }
+    }
 
-
-
-
-
-
-
-
-
- /// TODO: PENDIENTE
+    /**
+     * Inserta un nuevo registro en una tabla de la base de datos, verificando previamente
+     * la unicidad de los campos si es necesario.
+     *
+     * @param string $tabla Nombre de la tabla donde se insertará el registro.
+     * @param array $campos_valores Array asociativo con los datos a insertar, en donde cada elemento es un array que contiene la información de un campo en el siguiente formato:
+     *                              [
+     *                                  0 => 'nombre_columna', // Nombre de la columna en la base de datos
+     *                                  1 => 'valor',          // Valor a insertar
+     *                                  2 => 'unicidad'        // (Opcional) Indica si el campo debe ser único. Si es true, se verificará la existencia del valor.
+     *                              ]
+     * @return array Resultado de la operación, incluyendo el ID insertado si se realizó con éxito.
+     *
+     * @throws Exception Si no se especifican campos y valores, si alguno de los campos ya existe cuando debe ser único, o si ocurre un error en la consulta.
+     *
+     * Ejemplo de Uso:
+     * $campos_valores = [
+     *     ['nombre_columna1', 'valor1', true],   // campo único
+     *     ['nombre_columna2', 'valor2']          // sin verificación de unicidad
+     * ];
+     */
     public function insert($tabla, $campos_valores)
     {
-        // Validación y preparación de campos y placeholders
-        $campos = [];
+        if (empty($campos_valores) || !is_array($campos_valores)) {
+            throw new Exception("Se requiere un array de campos y valores para la inserción.");
+        }
+
+        $columnas = [];
         $placeholders = [];
-        $tipos = '';
-        $valores = [];
-        $condicionUnica = '';
+        $param_types = "";
+        $params = [];
+        $condicion_unicidad = [];
 
-        foreach ($campos_valores as $item) {
-            // Expandir cada elemento a un array de 4 elementos, rellenando con null si faltan
-            list($campo, $valor, $tipo, $unico) = array_pad($item, 4, null);
+        foreach ($campos_valores as $campo_info) {
+            if (!is_array($campo_info) || count($campo_info) < 2) {
+                throw new Exception("Cada campo debe ser un array con al menos la columna y el valor.");
+            }
 
-            $campos[] = $campo;
-            $placeholders[] = '?';
-            $tipos .= $tipo;
-            $valores[] = $valor;
+            $columna = $campo_info[0];
+            $valor = $campo_info[1];
+            $tipo = $this->getParamType($valor);
+            $unicidad = isset($campo_info[3]) ? $campo_info[3] : false;
 
-            // Si $unico es true, agregamos la condición a la cadena $condicionUnica
-            if ($unico === true) {
-                $condicionUnica .= ($condicionUnica ? " AND " : "") . "$campo = '$valor'";
+            // Agregar el campo a la condición de unicidad si es necesario
+            if ($unicidad === true) {
+                $condicion_unicidad[] = "$columna = '$valor'";
+            }
+
+            // Construcción de los valores para la inserción
+            $columnas[] = $columna;
+            $placeholders[] = "?";
+            $param_types .= $tipo;
+            $params[] = $valor;
+        }
+
+        // Verificar unicidad solo si hay campos marcados como únicos
+        if (!empty($condicion_unicidad)) {
+            $condicion_unica = implode(" AND ", $condicion_unicidad);
+            $coincidencias = $this->comprobar_existencia([
+                ['tabla' => $tabla, 'condicion' => $condicion_unica]
+            ]);
+
+            if ($coincidencias > 0) {
+                throw new Exception("Uno o más valores de campos únicos ya existen en la base de datos.");
             }
         }
 
+        // Generar la consulta de inserción
+        $columnas_string = implode(", ", $columnas);
+        $placeholders_string = implode(", ", $placeholders);
+        $query = "INSERT INTO `$tabla` ($columnas_string) VALUES ($placeholders_string)";
 
-        if (!empty($condicionUnica)) {
-            $valoresUnicos = [
-                ['tabla' => $tabla, 'condicion' => $condicionUnica]
-            ];
-            // Ejecutar comprobación de existencia
-            $totalCoincidencias = $this->comprobar_existencia($valoresUnicos);
-
-            // Si hay coincidencias, retornar mensaje de error sin ejecutar la inserción
-            if ($totalCoincidencias > 0) {
-                throw new Exception("El registro ya existe en la tabla.");
-            }
-        }
-
-        // quedaste aca, valida que registre y mejora la comprovacion y select para que use stmt
-
-
-
-        // Preparar la consulta SQL de inserción
-        $query = "INSERT INTO `$tabla` (" . implode(', ', $campos) . ") VALUES (" . implode(', ', $placeholders) . ")";
         $stmt = $this->conexion->prepare($query);
-
         if (!$stmt) {
             throw new Exception("Error al preparar la consulta INSERT: " . $this->conexion->error);
         }
 
-        // Asignar tipos y valores a la consulta preparada
-        $stmt->bind_param($tipos, ...$valores);
-
-        // Ejecutar la consulta de inserción
+        $stmt->bind_param($param_types, ...$params);
         if (!$stmt->execute()) {
             $stmt->close();
             throw new Exception("Error al ejecutar la consulta INSERT: " . $stmt->error);
         }
 
-        // Obtener el número de filas afectadas
-        $affected_rows = $stmt->affected_rows;
-        $stmt->close();
 
-        // Registrar la acción
-        $this->logAction('INSERT', $tabla, json_encode($campos_valores), $affected_rows);
+        $insert_id = $stmt->insert_id;
+        $stmt->close();
 
         return [
             'success' => true,
-            'affected_rows' => $affected_rows
+            'insert_id' => $insert_id
         ];
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     /**
      * Eliminar registros de una tabla en la base de datos.
@@ -230,22 +233,48 @@ class DatabaseHandler
      * @param string $condicion Condición que especifica qué registros se deben eliminar (ej. 'id = 1').
      * @throws Exception Si la condición está vacía o si ocurre un error al preparar o ejecutar la consulta.
      * @return array Resultado de la operación, incluyendo un indicador de éxito y el número de filas afectadas.
+     * 
+     * 
      */
+
+
+
     public function delete($nombre_tabla, $condicion)
     {
         if (empty($condicion)) {
             throw new Exception("No se ha recibido la información requerida.");
         }
 
-        $query = "DELETE FROM `$nombre_tabla` WHERE $condicion";
-        $stmt = $this->conexion->prepare($query);
+        $valores = [];
+        // Eliminar espacios alrededor de los operadores en $condicion
+        $condicion = preg_replace('/\s*([=<>!]+)\s*/', '$1', $condicion);
 
-        // Verificar si la preparación fue exitosa
+        // Reemplazar valores después de operadores con '?'
+        $condicion = preg_replace_callback('/([=<>!]+)(["\'`]?)(\S+)\2/', function ($matches) use (&$valores) {
+            // Eliminar comillas y añadir el valor limpio al array
+            $valor = trim($matches[3], "'\"`");
+            $valores[] = $valor; // Añadir el valor al array
+            return $matches[1] . ' ?'; // Retornar el operador seguido de '?'
+        }, $condicion);
+
+        $query = "DELETE FROM `$nombre_tabla` WHERE $condicion";
+
+        // Preparar la consulta
+        $stmt = $this->conexion->prepare($query);
         if (!$stmt) {
             throw new Exception("Error al preparar la consulta DELETE: " . $this->conexion->error);
         }
 
-        // Ejecutar
+        // Determinar tipos y vincular parámetros
+        if (!empty($valores)) {
+            $tipos = '';
+            foreach ($valores as $valor) {
+                $tipos .= $this->getParamType($valor);
+            }
+            $stmt->bind_param($tipos, ...$valores);
+        }
+
+        // Ejecutar la consulta
         if (!$stmt->execute()) {
             $stmt->close();
             throw new Exception("Error al ejecutar la consulta DELETE: " . $stmt->error);
@@ -264,9 +293,6 @@ class DatabaseHandler
         ];
     }
 
-
-
-
     /**
      * Actualizar registros en la base de datos.
      * 
@@ -280,27 +306,28 @@ class DatabaseHandler
      */
     public function update($nombre_tabla, $valores, $where)
     {
-        // Verificar si se recibieron valores y la condición WHERE
         if (empty($valores) || empty($where)) {
             throw new Exception("Se requieren valores para actualizar y una condición WHERE.");
         }
 
-        // Generar la parte SET de la consulta
         $set_clause = [];
-        $param_types = ""; // Inicializar la cadena de tipos
+        $param_types = "";
+        $params = [];
 
         foreach ($valores as $item) {
-            if (count($item) !== 3) {
-                throw new Exception("Cada elemento del array de valores debe contener el campo, valor y tipo.");
+            if (count($item) < 2) {
+                throw new Exception("Cada elemento del array de valores debe contener al menos el campo y el valor.");
             }
 
             $campo = $item[0];
             $valor = $item[1];
-            $tipo = $item[2];
+
+            // Si el tipo está definido en el índice 2, se usa; de lo contrario, se determina con getParamType
+            $tipo = isset($item[2]) ? $item[2] : $this->getParamType($valor);
 
             $set_clause[] = "$campo = ?";
-            $param_types .= $tipo; // Agregar el tipo a la cadena de tipos
-            $params[] = $valor; // Agregar el valor al array de parámetros
+            $param_types .= $tipo;
+            $params[] = $valor;
         }
 
         $set_clause_string = implode(", ", $set_clause);
@@ -326,8 +353,6 @@ class DatabaseHandler
         // Cerrar la sentencia y registrar la acción
         $affected_rows = $stmt->affected_rows;
         $stmt->close();
-
-        // Registrar la acción
         $this->logAction('UPDATE', $nombre_tabla, $where, $affected_rows);
 
         return [
@@ -335,10 +360,6 @@ class DatabaseHandler
             'affected_rows' => $affected_rows
         ];
     }
-
-
-
-
 
     /**
      * Almacenar las acciones realizada por el usuario.
@@ -373,9 +394,6 @@ class DatabaseHandler
         }
         $stmt->close();
     }
-
-
-
 
 
     /**
