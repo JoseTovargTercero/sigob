@@ -84,7 +84,6 @@ function eliminarAsignacionEnte($id)
         return json_encode(['error' => $e->getMessage()]);
     }
 }
-
 function consultarAsignacionPorId($id)
 {
     global $conexion;
@@ -107,7 +106,7 @@ function consultarAsignacionPorId($id)
             $sqlActividades = "SELECT de.id AS actividad_id, de.id_ente, de.distribucion, de.monto_total, de.status, de.id_ejercicio,
                                       ed.actividad, ed.ente_nombre
                                FROM distribucion_entes de
-                               JOIN entes_dependencias ed ON de.actividad_id = ed.id
+                               LEFT JOIN entes_dependencias ed ON de.actividad_id = ed.id
                                WHERE de.id_asignacion = ? AND de.id_ejercicio = ?";
             $stmtActividades = $conexion->prepare($sqlActividades);
             $stmtActividades->bind_param("ii", $id, $asignacion['id_ejercicio']);
@@ -116,11 +115,9 @@ function consultarAsignacionPorId($id)
 
             $actividadesEntes = [];
             while ($actividad = $resultActividades->fetch_assoc()) {
-                // Decodificar el campo 'distribucion' de JSON a array
                 if (!empty($actividad['distribucion'])) {
                     $actividad["distribucion_partidas"] = json_decode($actividad['distribucion'], true);
 
-                    // Iterar sobre cada distribución y obtener detalles adicionales de distribucion_presupuestaria
                     foreach ($actividad["distribucion_partidas"] as &$distribucionItem) {
                         $idDistribucion = $distribucionItem['id_distribucion'];
 
@@ -143,24 +140,16 @@ function consultarAsignacionPorId($id)
                             $stmtSector->execute();
                             $resultSector = $stmtSector->get_result();
 
-                            if ($resultSector->num_rows > 0) {
-                                $distribucionItem['sector_informacion'] = $resultSector->fetch_assoc();
-                            } else {
-                                $distribucionItem['sector_informacion'] = null;
-                            }
+                            $distribucionItem['sector_informacion'] = $resultSector->num_rows > 0 ? $resultSector->fetch_assoc() : null;
 
-                            // Consulta para obtener los detalles de la partida de la tabla partidas_presupuestarias
+                            // Consulta para obtener los detalles de la partida
                             $sqlPartida = "SELECT * FROM partidas_presupuestarias WHERE id = ?";
                             $stmtPartida = $conexion->prepare($sqlPartida);
                             $stmtPartida->bind_param("i", $distribucionDetalles['id_partida']);
                             $stmtPartida->execute();
                             $resultPartida = $stmtPartida->get_result();
 
-                            if ($resultPartida->num_rows > 0) {
-                                $distribucionItem += $resultPartida->fetch_assoc();
-                            } else {
-                                $distribucionItem['partida_informacion'] = null;
-                            }
+                            $distribucionItem += $resultPartida->num_rows > 0 ? $resultPartida->fetch_assoc() : ['partida_informacion' => null];
                         } else {
                             $distribucionItem['id_partida'] = null;
                             $distribucionItem['id_sector'] = null;
@@ -175,26 +164,25 @@ function consultarAsignacionPorId($id)
 
             $asignacion['actividades_entes'] = $actividadesEntes;
 
-            // Establecer dependencias como null si actividad_id es null en alguna actividad
-            $asignacion['dependencias'] = (isset($actividad['actividad_id']) && !is_null($actividad['actividad_id']))
-                ? []
-                : null;
+            // Verificar si hay dependencias
+            $idEnte = $asignacion['id_ente'];
+            $sqlDependencias = "SELECT * FROM entes_dependencias WHERE ue = ?";
+            $stmtDependencias = $conexion->prepare($sqlDependencias);
+            $stmtDependencias->bind_param("i", $idEnte);
+            $stmtDependencias->execute();
+            $resultDependencias = $stmtDependencias->get_result();
 
-            if ($asignacion['dependencias'] !== null) {
-                // Consulta adicional para obtener las dependencias de entes en entes_dependencias
-                $idEnte = $asignacion['id_ente'];
-                $sqlDependencias = "SELECT * FROM entes_dependencias WHERE ue = ?";
-                $stmtDependencias = $conexion->prepare($sqlDependencias);
-                $stmtDependencias->bind_param("i", $idEnte);
-                $stmtDependencias->execute();
-                $resultDependencias = $stmtDependencias->get_result();
-
-                // Guardar las dependencias en un array de arrays
+            if ($resultDependencias->num_rows > 0) {
                 $dependencias = [];
                 while ($dependencia = $resultDependencias->fetch_assoc()) {
                     $dependencias[] = $dependencia;
                 }
                 $asignacion['dependencias'] = $dependencias;
+            } else {
+                $asignacion['dependencias'] = [
+                    'ente_nombre' => $asignacion['ente_nombre'],
+                    'tipo_ente' => $asignacion['tipo_ente'],
+                ];
             }
 
             return json_encode(["success" => $asignacion]);
@@ -206,6 +194,8 @@ function consultarAsignacionPorId($id)
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
+
 
 
 
