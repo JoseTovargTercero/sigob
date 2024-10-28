@@ -842,7 +842,7 @@ export const form_asignacion_entes_form_card = async ({
       montos.distribuido_total -= montoRestar
 
       if (asignacion.tipo_ente === 'D') {
-        datosDistribucionActividades = datosDistribucionActividades.pop()
+        datosDistribucionActividades = []
       } else {
         datosDistribucionActividades = datosDistribucionActividades.filter(
           (el) => {
