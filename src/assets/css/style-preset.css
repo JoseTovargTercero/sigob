@@ -3666,3 +3666,8 @@ hr.hr-text::before {
   font-size: 16px !important;
   color: white !important;
 }
+
+
+select {
+  background-image: none !important;
+}
