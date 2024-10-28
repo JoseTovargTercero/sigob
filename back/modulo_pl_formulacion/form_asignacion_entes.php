@@ -175,20 +175,27 @@ function consultarAsignacionPorId($id)
 
             $asignacion['actividades_entes'] = $actividadesEntes;
 
-            // Consulta adicional para obtener las dependencias de entes en entes_dependencias
-            $idEnte = $asignacion['id_ente'];
-            $sqlDependencias = "SELECT * FROM entes_dependencias WHERE ue = ?";
-            $stmtDependencias = $conexion->prepare($sqlDependencias);
-            $stmtDependencias->bind_param("i", $idEnte);
-            $stmtDependencias->execute();
-            $resultDependencias = $stmtDependencias->get_result();
+            // Establecer dependencias como null si actividad_id es null en alguna actividad
+            $asignacion['dependencias'] = (isset($actividad['actividad_id']) && !is_null($actividad['actividad_id']))
+                ? []
+                : null;
 
-            // Guardar las dependencias en un array de arrays
-            $dependencias = [];
-            while ($dependencia = $resultDependencias->fetch_assoc()) {
-                $dependencias[] = $dependencia;
+            if ($asignacion['dependencias'] !== null) {
+                // Consulta adicional para obtener las dependencias de entes en entes_dependencias
+                $idEnte = $asignacion['id_ente'];
+                $sqlDependencias = "SELECT * FROM entes_dependencias WHERE ue = ?";
+                $stmtDependencias = $conexion->prepare($sqlDependencias);
+                $stmtDependencias->bind_param("i", $idEnte);
+                $stmtDependencias->execute();
+                $resultDependencias = $stmtDependencias->get_result();
+
+                // Guardar las dependencias en un array de arrays
+                $dependencias = [];
+                while ($dependencia = $resultDependencias->fetch_assoc()) {
+                    $dependencias[] = $dependencia;
+                }
+                $asignacion['dependencias'] = $dependencias;
             }
-            $asignacion['dependencias'] = $dependencias;
 
             return json_encode(["success" => $asignacion]);
         } else {
@@ -199,6 +206,7 @@ function consultarAsignacionPorId($id)
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 
 
