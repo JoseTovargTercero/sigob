@@ -1,3 +1,4 @@
+import { modificarMontoDistribucion } from '../api/pre_distribucion.js'
 import {
   confirmNotification,
   hideLoader,
@@ -25,17 +26,6 @@ export const form_distribucion_modificar_form_card = ({
     'partida-monto': 0,
   }
   let fieldListErrors = {
-    'partida-1': {
-      value: true,
-      message: 'Partida inválida',
-      type: 'partida',
-    },
-    'partida-2': {
-      value: true,
-      message: 'Partida inválida',
-      type: 'partida',
-    },
-
     'partida-monto': {
       value: true,
       message: 'Monto inválido',
@@ -85,7 +75,14 @@ export const form_distribucion_modificar_form_card = ({
         <option value="">Elegir...</option>
         ${optionsPartidasDistribucion}
       </select>
-    </div>`
+    </div>
+    
+              <h6 class='mb-0'>
+                Asignado:
+                <b id='partida-2-monto'>Partida no seleccionada</b>
+              </h6>
+    
+    `
 
   let selectNuevo = `    <div class='row'>
       <div class='col'>
@@ -211,12 +208,7 @@ export const form_distribucion_modificar_form_card = ({
                 />
               </div>
             </div>
-            <div class='col'>
-              <h6 class='mb-0'>
-                Asignado:
-                <b id='partida-2-monto'>Partida no seleccioanda</b>
-              </h6>
-            </div>
+            
           </div>
         </form>
       </div>
@@ -251,7 +243,7 @@ export const form_distribucion_modificar_form_card = ({
       )
 
       // ACTUALIZAR MONTOS CON LA NUEVA PARTIDA A DISTRIBUIR
-      montos.disponible = Number(partidaEncontrada.monto_inicial)
+      montos.disponible = Number(partidaEncontrada.monto_actual)
       montos.restante = montos.disponible
 
       d.getElementById('monto-disponible').textContent = montos.disponible
@@ -262,7 +254,20 @@ export const form_distribucion_modificar_form_card = ({
     .chosen()
     .change(function (obj, result) {
       fieldList['partida-2'] = result.selected
-      console.log('changed: %o', result)
+      let value = result.selected
+
+      let checkbox = d.getElementById('nueva-partida-check')
+
+      if (!checkbox.checked) {
+        let partidaEncontrada = distribucionPartidas.find(
+          (partida) => Number(partida.id) === Number(value)
+        )
+
+        let partidaConMontoElement = d.getElementById('partida-2-monto')
+        partidaConMontoElement.textContent = partidaEncontrada
+          ? partidaEncontrada.monto_actual
+          : 'Seleccione una partida'
+      }
     })
 
   let cardElement = d.getElementById('distribucion-modificar-card')
@@ -292,25 +297,60 @@ export const form_distribucion_modificar_form_card = ({
     if (e.target.id === 'distribucion-modificar-guardar') {
       let checkInput = d.getElementById('nueva-partida-check')
 
+      if (!fieldList['partida-1']) {
+        toastNotification({
+          type: NOTIFICATIONS_TYPES.fail,
+          message: 'Elija la distribucion emisora',
+        })
+        return
+      }
+
+      if (!fieldList['partida-2']) {
+        toastNotification({
+          type: NOTIFICATIONS_TYPES.fail,
+          message: 'Elija la distribucion o partida destino',
+        })
+        return
+      }
+
+      if (!fieldList['partida-monto']) {
+        toastNotification({
+          type: NOTIFICATIONS_TYPES.fail,
+          message: 'Seleccione el monto a asignar',
+        })
+        return
+      }
+
       let data
       if (checkInput.checked) {
+        if (!fieldList.id_sector) {
+          toastNotification({
+            type: NOTIFICATIONS_TYPES.fail,
+            message: 'Seleccione el sector para continuar',
+          })
+          return
+        }
+
         data = {
+          id_ejercicio: ejercicioFiscal.id,
+          id_distribucion1: fieldList['partida-1'],
+          id_distribucion2: null,
           id_sector: fieldList.id_sector,
-          id_sector: fieldList.id_sector,
-          id_partida1: fieldList['partida-1'],
-          id_partida2: fieldList['partida-2'],
+          id_partida: fieldList['partida-2'],
           monto: fieldList['partida-monto'],
         }
       } else {
         data = {
+          id_ejercicio: ejercicioFiscal.id,
+          id_distribucion1: fieldList['partida-1'],
+          id_distribucion2: fieldList['partida-2'],
           id_sector: null,
-          id_partida1: fieldList['partida-1'],
-          id_partida2: fieldList['partida-2'],
+          id_partida: null,
           monto: fieldList['partida-monto'],
         }
       }
 
-      enviarInformacion()
+      enviarInformacion(data)
     }
   }
 
@@ -334,6 +374,7 @@ export const form_distribucion_modificar_form_card = ({
 
     montos.acumulado = Number(partidaMonto.value)
     montos.restante = Number(montos.disponible) - Number(montos.acumulado)
+
     if (montos.restante < 0) montos.restante = 0
 
     if (montos.restante < 0) {
@@ -376,7 +417,20 @@ export const form_distribucion_modificar_form_card = ({
         .chosen()
         .change(function (obj, result) {
           fieldList['partida-2'] = result.selected
-          console.log('changed: %o', result)
+          let value = result.selected
+
+          let checkbox = d.getElementById('nueva-partida-check')
+
+          if (!checkbox.checked) {
+            let partidaEncontrada = distribucionPartidas.find(
+              (partida) => Number(partida.id) === Number(value)
+            )
+
+            let partidaConMontoElement = d.getElementById('partida-2-monto')
+            partidaConMontoElement.textContent = partidaEncontrada
+              ? partidaEncontrada.monto_actual
+              : 'Seleccione una partida'
+          }
         })
       $('.chosen-select-3')
         .chosen()
@@ -385,9 +439,6 @@ export const form_distribucion_modificar_form_card = ({
           console.log('changed: %o', result)
         })
 
-      let partidaConMontoElement = d.getElementById('partida-2-monto')
-      partidaConMontoElement.textContent = 'Partida no seleccionada'
-
       actualizarMontoRestante()
       return
     }
@@ -395,25 +446,34 @@ export const form_distribucion_modificar_form_card = ({
     if (e.target.id === 'partida-monto') {
       console.log(e.target.value)
       actualizarMontoRestante()
+
+      fieldList = validateInput({
+        target: e.target,
+        fieldList,
+        fieldListErrors,
+        type: fieldListErrors[e.target.name].type,
+      })
     }
-
-    console.log(fieldList)
-
-    // validarCampos(e)
-
-    fieldList = validateInput({
-      target: e.target,
-      fieldList,
-      fieldListErrors,
-      type: fieldListErrors[e.target.name].type,
-    })
 
     console.log(fieldList)
   }
 
   // CARGAR LISTA DE PARTIDAS
 
-  function enviarInformacion(data) {}
+  function enviarInformacion(data) {
+    console.log(data)
+    confirmNotification({
+      type: NOTIFICATIONS_TYPES.send,
+      message: '¿Desea registrar esta distribución presupuestaria?',
+      successFunction: async function () {
+        let res = await modificarMontoDistribucion(data)
+        if (res.success) {
+          closeCard()
+          loadAsignacionEntesTable(ejercicioFiscal.id)
+        }
+      },
+    })
+  }
 
   formElement.addEventListener('submit', (e) => e.preventDefault())
 

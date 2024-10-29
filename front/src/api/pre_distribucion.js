@@ -186,16 +186,26 @@ const eliminarDistribucion = async (id) => {
   }
 }
 
-const modificarPartida = async ({ partida1, partida2, monto }) => {
+const modificarMontoDistribucion = async ({
+  id_ejercicio,
+  id_distribucion1,
+  id_distribucion2,
+  id_sector,
+  id_partida,
+  monto,
+}) => {
   showLoader()
   try {
-    let res = await fetch(ejercicioFiscalUrl, {
+    let res = await fetch(distribucionPresupuestariaUrl, {
       method: 'POST',
       body: JSON.stringify({
-        partida1,
-        partida2,
+        id_ejercicio,
+        id_distribucion1,
+        id_distribucion2,
+        id_sector,
+        id_partida,
         monto,
-        accion: 'modificar_partida',
+        accion: 'actualizar_monto_distribucion',
       }),
     })
 
@@ -282,6 +292,7 @@ export {
   getEjecicio,
   getEjecicios,
   enviarDistribucionPresupuestaria,
+  modificarMontoDistribucion,
   enviarDistribucionPresupuestariaEntes,
   eliminarDistribucion,
 }
