@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 25-10-2024 a las 05:19:25
+-- Tiempo de generación: 29-10-2024 a las 00:15:37
 -- Versión del servidor: 10.4.16-MariaDB
 -- Versión de PHP: 7.4.12
 
@@ -44,6 +44,53 @@ INSERT INTO `asignacion_ente` (`id`, `id_ente`, `monto_total`, `id_ejercicio`, `
 (3, 36, '2000', 1, '2024-10-24', '0'),
 (4, 20, '2000', 1, '2024-10-24', '0'),
 (5, 23, '2500', 1, '2024-10-24', '0');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `audit_logs`
+--
+
+CREATE TABLE `audit_logs` (
+  `id` int(11) NOT NULL,
+  `action_type` varchar(50) DEFAULT NULL,
+  `table_name` varchar(100) DEFAULT NULL,
+  `situation` varchar(255) DEFAULT NULL,
+  `affected_rows` int(11) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `timestamp` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `audit_logs`
+--
+
+INSERT INTO `audit_logs` (`id`, `action_type`, `table_name`, `situation`, `affected_rows`, `user_id`, `timestamp`) VALUES
+(1, 'DELETE', 'pl_actividades', 'id = 2', 1, 35, '2024-10-26 23:08:22'),
+(2, 'DELETE', 'pl_actividades', 'id = 4', 1, 35, '2024-10-26 23:08:51'),
+(3, 'DELETE', 'pl_actividades', 'id = 3', 1, 35, '2024-10-26 23:10:20'),
+(4, 'DELETE', 'pl_actividades', 'id = 5', 1, 35, '2024-10-26 23:11:37'),
+(5, 'DELETE', 'pl_actividades', 'id = 7', 1, 35, '2024-10-26 23:16:14'),
+(6, 'DELETE', 'pl_actividades', 'id = 8', 1, 35, '2024-10-26 23:16:34'),
+(7, 'DELETE', 'pl_actividades', 'id = 9', 1, 35, '2024-10-26 23:20:42'),
+(8, 'UPDATE', 'pl_actividades', 'id = 10', 1, 35, '2024-10-27 00:28:46'),
+(9, 'UPDATE', 'pl_actividades', 'id = 10', 1, 35, '2024-10-27 00:28:54'),
+(10, 'DELETE', 'pl_actividades', 'id = \'10\'', 1, 35, '2024-10-28 18:12:18'),
+(11, 'UPDATE', 'pl_actividades', 'id = \'11\'', 1, 35, '2024-10-28 18:22:25'),
+(12, 'UPDATE', 'pl_actividades', 'id = \'11\'', 1, 35, '2024-10-28 18:22:35'),
+(13, 'UPDATE', 'pl_actividades', 'id = \'11\' OR id=\'12\'', 1, 35, '2024-10-28 18:22:56'),
+(14, 'UPDATE', 'pl_actividades', 'id = 11', 1, 35, '2024-10-28 19:02:35'),
+(15, 'DELETE', 'pl_actividades', 'id= ?', 0, 35, '2024-10-28 19:02:42'),
+(16, 'DELETE', 'pl_actividades', 'id= ?', 0, 35, '2024-10-28 19:02:48'),
+(17, 'DELETE', 'pl_actividades', 'id= ?', 0, 35, '2024-10-28 19:03:09'),
+(18, 'DELETE', 'pl_actividades', 'id', 5, 35, '2024-10-28 19:05:51'),
+(19, 'DELETE', 'pl_actividades', 'id', 0, 35, '2024-10-28 19:06:00'),
+(20, 'DELETE', 'pl_actividades', 'id', 1, 35, '2024-10-28 19:10:30'),
+(21, 'DELETE', 'pl_actividades', 'id', 3, 35, '2024-10-28 19:11:29'),
+(22, 'DELETE', 'pl_actividades', 'id= ?', 1, 35, '2024-10-28 19:14:11'),
+(23, 'DELETE', 'pl_actividades', 'id= ?', 1, 35, '2024-10-28 19:14:16'),
+(24, 'UPDATE', 'pl_actividades', 'id = 23', 1, 35, '2024-10-28 19:14:29'),
+(25, 'DELETE', 'pl_actividades', 'id= ?', 1, 35, '2024-10-28 19:14:32');
 
 -- --------------------------------------------------------
 
@@ -1012,6 +1059,7 @@ INSERT INTO `dependencias` (`id_dependencia`, `dependencia`, `cod_dependencia`, 
 CREATE TABLE `distribucion_entes` (
   `id` int(255) NOT NULL,
   `id_ente` int(255) NOT NULL,
+  `actividad_id` int(255) DEFAULT NULL,
   `distribucion` longtext NOT NULL,
   `monto_total` varchar(255) DEFAULT NULL,
   `status` int(255) NOT NULL,
@@ -1020,6 +1068,14 @@ CREATE TABLE `distribucion_entes` (
   `fecha` varchar(255) DEFAULT NULL,
   `id_asignacion` int(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `distribucion_entes`
+--
+
+INSERT INTO `distribucion_entes` (`id`, `id_ente`, `actividad_id`, `distribucion`, `monto_total`, `status`, `id_ejercicio`, `comentario`, `fecha`, `id_asignacion`) VALUES
+(3, 23, 71, '[{\"id_distribucion\":\"9\",\"monto\":500}]', '2500', 0, 1, '', '2024-10-27', 5),
+(4, 23, 72, '[{\"id_distribucion\":\"10\",\"monto\":500}]', '2500', 0, 1, '', '2024-10-27', 5);
 
 -- --------------------------------------------------------
 
@@ -3921,7 +3977,7 @@ CREATE TABLE `entes` (
 --
 
 INSERT INTO `entes` (`id`, `sector`, `programa`, `proyecto`, `actividad`, `ente_nombre`, `tipo_ente`) VALUES
-(1, '01', '01', '00', '51', 'CONSEJO LEGISLATIVO', 'J'),
+(1, '01', '01', '00', '10', 'CONSEJO LEGISLATIVO', 'J'),
 (2, '01', '02', '00', '51', 'CONTRALORIA GENERAL DEL ESTADO', 'J'),
 (3, '01', '03', '00', '51', 'PROCURADORIA GENERAL', 'J'),
 (4, '01', '04', '00', '51', 'SECRETARIA DEL DESPACHO DEL GOBERNADOR YSECRETARIA DE LA GESTION PUBLICA', 'J'),
@@ -3939,7 +3995,6 @@ INSERT INTO `entes` (`id`, `sector`, `programa`, `proyecto`, `actividad`, `ente_
 (16, '06', '01', '00', '51', 'SECREATARIA DE TURISMO', 'J'),
 (18, '08', '03', '00', '51', 'SEC. EJEC. PARA LA ATENCION DE  LA JUVENTUD Y ESTUDIANTE UNIVERSITARIO', 'J'),
 (19, '09', '01', '00', '51', 'SEC. EJEC.DEL SISTEMA DE INFOR. COM. ( SICOAMA)', 'J'),
-(20, '09', '02', '00', '51', 'ADMINISTRACION DE I.A.B.N-GOBERNACION', 'J'),
 (21, '09', '03', '00', '51', 'SECRETARIA DE CULTURA', 'J'),
 (22, '11', '01', '00', '51', 'SECRETARIA DE INFRAESTRUCTURA', 'J'),
 (23, '12', '01', '00', '51', 'ADMINISTRATIVOS MALARIOLOGIA-GOBERNACION', 'J'),
@@ -6512,6 +6567,18 @@ CREATE TABLE `plan_inversion` (
 INSERT INTO `plan_inversion` (`id`, `id_ejercicio`, `monto_total`) VALUES
 (1, 1, '123'),
 (2, 2, '12');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `pl_actividades`
+--
+
+CREATE TABLE `pl_actividades` (
+  `id` int(11) NOT NULL,
+  `actividad` varchar(10) NOT NULL,
+  `denominacion` longtext NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -11570,7 +11637,7 @@ CREATE TABLE `tasa` (
 --
 
 INSERT INTO `tasa` (`id`, `descripcion`, `simbolo`, `valor`) VALUES
-(1, 'Precio del Dólar Actual', '$', '40.8803');
+(1, 'Precio del Dólar Actual', '$', '41.0429');
 
 -- --------------------------------------------------------
 
@@ -11601,7 +11668,8 @@ INSERT INTO `tasa_historico` (`id`, `u_nombre`, `precio`, `descripcion`, `fecha`
 (8, 'sigob', '39.1699', 'actualizacion automática', '19-10-2024'),
 (9, 'sigob', '0', 'actualizacion automática', '21-10-2024'),
 (10, 'sigob', '39.1813', 'actualizacion automática', '22-10-2024'),
-(11, 'sigob', '40.8803', 'actualizacion automática', '24-10-2024');
+(11, 'sigob', '40.8803', 'actualizacion automática', '24-10-2024'),
+(12, 'sigob', '41.0429', 'actualizacion automática', '27-10-2024');
 
 -- --------------------------------------------------------
 
@@ -15889,6 +15957,12 @@ ALTER TABLE `asignacion_ente`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indices de la tabla `audit_logs`
+--
+ALTER TABLE `audit_logs`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indices de la tabla `backups`
 --
 ALTER TABLE `backups`
@@ -16099,6 +16173,12 @@ ALTER TABLE `plan_inversion`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indices de la tabla `pl_actividades`
+--
+ALTER TABLE `pl_actividades`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indices de la tabla `pl_partidas`
 --
 ALTER TABLE `pl_partidas`
@@ -16236,6 +16316,12 @@ ALTER TABLE `asignacion_ente`
   MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
+-- AUTO_INCREMENT de la tabla `audit_logs`
+--
+ALTER TABLE `audit_logs`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+
+--
 -- AUTO_INCREMENT de la tabla `backups`
 --
 ALTER TABLE `backups`
@@ -16299,7 +16385,7 @@ ALTER TABLE `dependencias`
 -- AUTO_INCREMENT de la tabla `distribucion_entes`
 --
 ALTER TABLE `distribucion_entes`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `distribucion_presupuestaria`
@@ -16446,6 +16532,12 @@ ALTER TABLE `plan_inversion`
   MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
+-- AUTO_INCREMENT de la tabla `pl_actividades`
+--
+ALTER TABLE `pl_actividades`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+
+--
 -- AUTO_INCREMENT de la tabla `pl_partidas`
 --
 ALTER TABLE `pl_partidas`
@@ -16557,7 +16649,7 @@ ALTER TABLE `tasa`
 -- AUTO_INCREMENT de la tabla `tasa_historico`
 --
 ALTER TABLE `tasa_historico`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT de la tabla `traspasos`
