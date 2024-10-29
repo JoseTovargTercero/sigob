@@ -11,15 +11,17 @@ const d = document
 
 export const form_distribucion_modificar_form_card = ({
   elementToInset,
-  distribucionPartidas,
+  ejercicioFiscal,
   partidas,
+  sectores,
 }) => {
-  console.log(distribucionPartidas, partidas)
+  let distribucionPartidas = ejercicioFiscal.distribucion_partidas
+  console.log(distribucionPartidas, partidas, sectores)
 
   let fieldList = {
     'partida-1': '',
     'partida-2': '',
-    'partida-3': '',
+    id_sector: '',
     'partida-monto': 0,
   }
   let fieldListErrors = {
@@ -33,11 +35,7 @@ export const form_distribucion_modificar_form_card = ({
       message: 'Partida inválida',
       type: 'partida',
     },
-    'partida-3': {
-      value: true,
-      message: 'Partida inválida',
-      type: 'partida',
-    },
+
     'partida-monto': {
       value: true,
       message: 'Monto inválido',
@@ -51,9 +49,9 @@ export const form_distribucion_modificar_form_card = ({
 
   let optionsPartidasDistribucion = distribucionPartidas
     .map((option) => {
-      return `<option value="${option.partida}">Monto: ${separarMiles(
-        option.monto_inicial
-      )}</option>`
+      let sector_codigo = `${option.sector_informacion.sector}.${option.sector_informacion.programa}.${option.sector_informacion.proyecto}`
+
+      return `<option value="${option.id}">${sector_codigo} - ${option.partida}</option>`
     })
     .join('')
 
@@ -65,11 +63,62 @@ export const form_distribucion_modificar_form_card = ({
         )
     )
     .map((option) => {
-      return `<option value="${option.partida}">${option.descripcion}</option>`
+      return `<option value="${option.id}">${option.partida}</option>`
     })
     .join('')
 
-  let card = `    <div class='card slide-up-animation' id='distribucion-modificar-card'>
+  let optionsSectores = sectores.map((option) => {
+    let sector_codigo = `${option.sector}.${option.programa}.${option.proyecto}`
+
+    return `<option value="${option.id}">${sector_codigo}</option>`
+  })
+
+  let selectDistribucion = `<div class='form-group slide-up-animation'>
+      <label for='partida-distribucion' class='form-label'>
+        Partida a asignar (distribucion)
+      </label>
+      <select
+        class='form-select partida-input chosen-select-2'
+        name='partida-2'
+        id='partida-distribucion'
+      >
+        <option value="">Elegir...</option>
+        ${optionsPartidasDistribucion}
+      </select>
+    </div>`
+
+  let selectNuevo = `    <div class='row'>
+      <div class='col'>
+        <div class='form-group slide-up-animation'>
+          <label for='partida-nueva' class='form-label'>
+            Sector
+          </label>
+          <select
+            class='form-select partida-input chosen-select-3'
+            name='id_sector'
+            id='id_sector'
+          >
+            <option value=''>Elegir...</option>${optionsSectores}
+          </select>
+        </div>
+      </div>
+      <div class='col'>
+        <div class='form-group slide-up-animation'>
+          <label for='partida-nueva' class='form-label'>
+            Partida a asignar (nueva)
+          </label>
+          <select
+            class='form-select partida-input chosen-select-2'
+            name='partida-2'
+            id='partida-nueva'
+          >
+            <option value=''>Elegir...</option>${optionsPartidasListNueva}
+          </select>
+        </div>
+      </div>
+    </div>`
+
+  let card = ` <div class='card slide-up-animation' id='distribucion-modificar-card'>
       <div class='card-header d-flex justify-content-between'>
         <div class=''>
           <h5 class='mb-0'>Modificar valor entre partidas</h5>
@@ -92,22 +141,22 @@ export const form_distribucion_modificar_form_card = ({
           <div class='row mb-4'>
             <div class='col'>
               <h6 class='mb-0'>
-                Monto total:
-                <b id='monto-disponible'>Partida no seleccioanda</b>
+                Monto disponible:
+                <b id='monto-disponible'>Partida no seleccionada</b>
               </h6>
               <small class='text-muted'>Monto disponible en esta partida</small>
             </div>
             <div class='col'>
               <h6 class='mb-0'>
                 Restante:
-                <b id='monto-restante'>Ejercicio fiscal no seleccionado</b>
+                <b id='monto-restante'>Partida no seleccionada</b>
               </h6>
               <small class='text-muted'>Restante de partida a distribuir</small>
             </div>
             <div class='col'>
               <h6 class='mb-0'>
                 Asignación:
-                <b id='monto-asignado'>Ejercicio fiscal no seleccionado</b>
+                <b id='monto-asignado'>Monto no asignado</b>
               </h6>
               <small class='text-muted'>
                 Monto total asignado a nueva partida
@@ -131,58 +180,26 @@ export const form_distribucion_modificar_form_card = ({
           <div class='row'>
             <div class='col'>
               <div class='form-group'>
-                <label class='form-label'>Partida a modificar</label>
-                <input
-                  class='form-control partida-input'
-                  name='partida-1'
-                  type='text'
-                  placeholder='Partida a designar monto'
-                  id='partida-distribuida'
-                  list='partidas-list-distribucion'
-                />
-              </div>
-              <datalist id='partidas-list-distribucion'>
-                ${optionsPartidasDistribucion}
-              </datalist>
-            </div>
-            <div class='col'>
-              <div class='form-group slide-up-animation'>
-                <label class='form-label'>
-                  Partida a asignar (distribucion)
+                <label for='partida-distribuida' class='form-label'>
+                  Partida a modificar
                 </label>
-                <input
-                  class='form-control partida-input'
-                  name='partida-2'
-                  type='text'
-                  placeholder='Partida (distribucion)'
-                  id='partida-distribucion'
-                  list='partidas-list-distribucion'
-                />
-              </div>
-
-              <div class='form-group d-none slide-up-animation'>
-                <label class='form-label'>Partida a asignar (nueva)</label>
-                <input
-                  class='form-control partida-input'
-                  name='partida-3'
-                  type='text'
-                  placeholder='Partida (nueva)'
-                  id='partida-nueva'
-                  list='partidas-list-nueva'
-                />
-                <datalist id='partidas-list-nueva'>
-                  ${optionsPartidasListNueva}
-                </datalist>
-              </div>
-
-              <div>
-                <h6 class='mb-0'>
-                  Asignado:
-                  <b id='partida-2-monto'>Partida no seleccioanda</b>
-                </h6>
+                <select
+                  class='form-select partida-input chosen-select'
+                  name='partida-1'
+                  id='partida-distribuida'
+                >
+                <option value="">Elegir...</option>
+                  ${optionsPartidasDistribucion}
+                </select>
               </div>
             </div>
-            <div class='col'>
+            <div class='col' id='select-change'>
+              ${selectDistribucion}
+            </div>
+           
+          </div>
+          <div class='row'>
+          <div class='col'>
               <div class='form-group partida-input'>
                 <label class='form-label'>Monto a asignar</label>
                 <input
@@ -193,6 +210,12 @@ export const form_distribucion_modificar_form_card = ({
                   placeholder='Monto a asignar...'
                 />
               </div>
+            </div>
+            <div class='col'>
+              <h6 class='mb-0'>
+                Asignado:
+                <b id='partida-2-monto'>Partida no seleccioanda</b>
+              </h6>
             </div>
           </div>
         </form>
@@ -205,6 +228,42 @@ export const form_distribucion_modificar_form_card = ({
     </div>`
 
   d.getElementById(elementToInset).insertAdjacentHTML('afterbegin', card)
+
+  $('.chosen-select')
+    .chosen()
+    .change(function (obj, result) {
+      console.log('changed: %o', obj)
+      let value = result.selected
+      fieldList['partida-1'] = value
+
+      if (!value) {
+        // ACTUALIZAR MONTOS CON LA NUEVA PARTIDA A DISTRIBUIR
+        montos.disponible = 0
+        montos.restante = montos.disponible
+
+        d.getElementById('monto-disponible').textContent = montos.disponible
+        d.getElementById('monto-restante').textContent = montos.restante
+        return
+      }
+
+      let partidaEncontrada = distribucionPartidas.find(
+        (partida) => Number(partida.id) === Number(value)
+      )
+
+      // ACTUALIZAR MONTOS CON LA NUEVA PARTIDA A DISTRIBUIR
+      montos.disponible = Number(partidaEncontrada.monto_inicial)
+      montos.restante = montos.disponible
+
+      d.getElementById('monto-disponible').textContent = montos.disponible
+      d.getElementById('monto-restante').textContent = montos.restante
+    })
+
+  $('.chosen-select-2')
+    .chosen()
+    .change(function (obj, result) {
+      fieldList['partida-2'] = result.selected
+      console.log('changed: %o', result)
+    })
 
   let cardElement = d.getElementById('distribucion-modificar-card')
   let formElement = d.getElementById('distribucion-modificar-form-card')
@@ -227,173 +286,31 @@ export const form_distribucion_modificar_form_card = ({
   }
 
   function validateClick(e) {
-    let inputCheck = d.getElementById('nueva-partida-check')
-    let partidaADistribuir = d.getElementById('partida-distribuida')
-    let partidaDistribucion = d.getElementById('partida-distribucion')
-    let partidaNueva = d.getElementById('partida-nueva')
-
-    let partidaMonto = d.getElementById('partida-monto')
-
-    let montoDisponibleElement = d.getElementById('monto-disponible')
-    let montoRestanteElement = d.getElementById('monto-restante')
-    let partidaConMontoElement = d.getElementById('partida-2-monto')
-
     if (e.target.dataset.close) {
       closeCard()
     }
     if (e.target.id === 'distribucion-modificar-guardar') {
-      fieldList = validateInput({
-        target: partidaADistribuir,
-        fieldList,
-        fieldListErrors,
-        type: fieldListErrors[partidaADistribuir.name].type,
-      })
+      let checkInput = d.getElementById('nueva-partida-check')
 
-      if (inputCheck.checked) {
-        fieldListErrors[partidaNueva.name].value = true
-        fieldListErrors[partidaDistribucion.name].value = false
-
-        fieldList = validateInput({
-          target: partidaNueva,
-          fieldList,
-          fieldListErrors,
-          type: fieldListErrors[partidaNueva.name].type,
-        })
+      let data
+      if (checkInput.checked) {
+        data = {
+          id_sector: fieldList.id_sector,
+          id_sector: fieldList.id_sector,
+          id_partida1: fieldList['partida-1'],
+          id_partida2: fieldList['partida-2'],
+          monto: fieldList['partida-monto'],
+        }
       } else {
-        fieldListErrors[partidaDistribucion.name].value = true
-        fieldListErrors[partidaNueva.name].value = false
-        fieldList = validateInput({
-          target: partidaDistribucion,
-          fieldList,
-          fieldListErrors,
-          type: fieldListErrors[partidaDistribucion.name].type,
-        })
+        data = {
+          id_sector: null,
+          id_partida1: fieldList['partida-1'],
+          id_partida2: fieldList['partida-2'],
+          monto: fieldList['partida-monto'],
+        }
       }
-
-      fieldList = validateInput({
-        target: partidaMonto,
-        fieldList,
-        fieldListErrors,
-        type: fieldListErrors[partidaMonto.name].type,
-      })
-
-      let partida1 = partidas.find(
-        (partida) => partida.partida === fieldList['partida-1']
-      )
-      let partida2 = inputCheck.checked
-        ? partidas.find((partida) => partida.partida === fieldList['partida-3'])
-        : partidas.find((partida) => partida.partida === fieldList['partida-2'])
-
-      console.log(fieldListErrors)
-      console.log(partida1, partida2)
 
       enviarInformacion()
-    }
-  }
-
-  function validarCampos(e) {
-    let partidaADistribuir = d.getElementById('partida-distribuida')
-    let partidaDistribucion = d.getElementById('partida-distribucion')
-    let partidaNueva = d.getElementById('partida-nueva')
-    let partidaMonto = d.getElementById('partida-monto')
-
-    let montoDisponibleElement = d.getElementById('monto-disponible')
-    let montoRestanteElement = d.getElementById('monto-restante')
-    let partidaConMontoElement = d.getElementById('partida-2-monto')
-
-    if (e.target === partidaADistribuir) {
-      if (
-        partidaADistribuir.value === partidaDistribucion.value ||
-        partidaADistribuir.value === partidaNueva.value
-      ) {
-        e.target.value = ''
-        toastNotification({
-          type: NOTIFICATIONS_TYPES.fail,
-          message:
-            'Está partida ya fue seleccionada, cambie el valor de los otros campos',
-        })
-      } else {
-        let partidaEncontrada = distribucionPartidas.find(
-          (partida) => partida.partida === e.target.value
-        )
-        if (partidaEncontrada) {
-          // INICIALIZAR Y REINICIAR VALORES AL CAMBIAR LA PARTIDA A MODIFICAR
-          montos.disponible = partidaEncontrada.monto_inicial
-          montos.restante = partidaEncontrada.monto_inicial
-
-          partidaMonto.value = 0
-
-          montoDisponibleElement.textContent = montos.disponible
-          montoRestanteElement.textContent = montos.restante
-
-          actualizarMontoRestante()
-        } else {
-          montos.disponible = 0
-          montos.restante = 0
-          partidaMonto.value = 0
-
-          montoDisponibleElement.textContent = 'Partida no encontrada'
-          montoRestanteElement.textContent = 'Partida no encontrada'
-
-          actualizarMontoRestante()
-        }
-      }
-    }
-
-    if (e.target === partidaDistribucion) {
-      if (!e.target.value) {
-        partidaConMontoElement.textContent = 'Partida no seleccionada'
-        return
-      }
-
-      if (
-        partidaDistribucion.value === partidaADistribuir.value ||
-        partidaDistribucion.value === partidaNueva.value
-      ) {
-        e.target.value = ''
-        toastNotification({
-          type: NOTIFICATIONS_TYPES.fail,
-          message:
-            'Está partida ya fue seleccionada, cambie el valor de los otros campos',
-        })
-
-        return
-      } else {
-        let partidaEncontrada = distribucionPartidas.find(
-          (partida) => partida.partida === e.target.value
-        )
-
-        if (partidaEncontrada) {
-          partidaConMontoElement.textContent = partidaEncontrada.monto_inicial
-        } else {
-          partidaConMontoElement.textContent =
-            'Esta partida no tiene un monto asignado'
-        }
-
-        // if (partidaEncontrada) {
-        //   d.getElementById('monto-tal').textContent =
-        //     partidaEncontrada.monto_inicial
-        // }
-      }
-    }
-
-    if (e.target === partidaNueva) {
-      if (
-        partidaNueva.value === partidaADistribuir.value ||
-        partidaNueva.value === partidaDistribucion.value
-      ) {
-        e.target.value = ''
-        toastNotification({
-          type: NOTIFICATIONS_TYPES.fail,
-          message:
-            'Está partida ya fue seleccionada, cambie el valor de los otros campos',
-        })
-      }
-    }
-
-    if (e.target === partidaMonto) {
-      console.log(partidaMonto.value)
-      actualizarMontoRestante()
     }
   }
 
@@ -407,8 +324,16 @@ export const form_distribucion_modificar_form_card = ({
 
     if (isNaN(Number(partidaMonto.value))) return
 
+    if (Number(montos.disponible) === 0) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.fail,
+        message: 'Elija una partida para actualizar el monto disponible',
+      })
+      return
+    }
+
     montos.acumulado = Number(partidaMonto.value)
-    montos.restante = montos.disponible - montos.acumulado
+    montos.restante = Number(montos.disponible) - Number(montos.acumulado)
     if (montos.restante < 0) montos.restante = 0
 
     if (montos.restante < 0) {
@@ -421,6 +346,10 @@ export const form_distribucion_modificar_form_card = ({
       montoRestanteElement.innerHTML = `<span class="class="px-2 rounded text-secondary">${montos.restante}</span>`
       partidaMonto.value = montos.disponible
       montos.acumulado = montos.disponible
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.fail,
+        message: 'No se puede superar el total disponible',
+      })
     }
     montoAsignadoElement.textContent = montos.acumulado
   }
@@ -429,34 +358,57 @@ export const form_distribucion_modificar_form_card = ({
     let partidaADistribuir = d.getElementById('partida-distribuida')
     let partidaDistribucion = d.getElementById('partida-distribucion')
     let partidaNueva = d.getElementById('partida-nueva')
+    let partidaContainer = d.getElementById('select-change')
 
     if (e.target.id === 'partida-distribuida') {
     }
     if (e.target.id === 'nueva-partida-check') {
       if (e.target.checked) {
-        partidaNueva.parentElement.classList.remove('d-none')
-        partidaDistribucion.parentElement.classList.add('d-none')
+        partidaContainer.innerHTML = selectNuevo
       } else {
-        partidaNueva.parentElement.classList.add('d-none')
-        partidaDistribucion.parentElement.classList.remove('d-none')
+        fieldList.id_sector = null
+        partidaContainer.innerHTML = selectDistribucion
       }
-      partidaNueva.value = ''
-      partidaDistribucion.value = ''
+      $('.chosen-select-2').chosen('destroy')
+      $('.chosen-select-3').chosen('destroy')
+
+      $('.chosen-select-2')
+        .chosen()
+        .change(function (obj, result) {
+          fieldList['partida-2'] = result.selected
+          console.log('changed: %o', result)
+        })
+      $('.chosen-select-3')
+        .chosen()
+        .change(function (obj, result) {
+          fieldList.id_sector = result.selected
+          console.log('changed: %o', result)
+        })
 
       let partidaConMontoElement = d.getElementById('partida-2-monto')
       partidaConMontoElement.textContent = 'Partida no seleccionada'
 
       actualizarMontoRestante()
+      return
     }
 
-    validarCampos(e)
+    if (e.target.id === 'partida-monto') {
+      console.log(e.target.value)
+      actualizarMontoRestante()
+    }
 
-    // fieldList = validateInput({
-    //   target: e.target,
-    //   fieldList,
-    //   fieldListErrors,
-    //   type: fieldListErrors[e.target.name].type,
-    // })
+    console.log(fieldList)
+
+    // validarCampos(e)
+
+    fieldList = validateInput({
+      target: e.target,
+      fieldList,
+      fieldListErrors,
+      type: fieldListErrors[e.target.name].type,
+    })
+
+    console.log(fieldList)
   }
 
   // CARGAR LISTA DE PARTIDAS

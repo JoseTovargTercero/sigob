@@ -83,3 +83,34 @@ const nombre_componente = ({ elementToInsert }) => {
   cardElement.addEventListener('input', validateInputFunction)
   cardElement.addEventListener('click', validateClick)
 }
+
+function chosenSelect() {
+  let select = ` <div class='form-group'>
+      <label for='search-select-{nombre}' class='form-label'>
+        Seleccione el sector
+      </label>
+      <select
+        class='form-select {nombre}-input chosen-select'
+        name='id_sector'
+        id='search-select-{nombre}'
+      >
+        <option>Elegir...</option>
+      </select>
+    </div>`
+
+  let options = [`<option>Elegir...</option>`]
+  let data
+
+  data.fullInfo.forEach((sector) => {
+    let option = `<option value='${sector.id}'>${sector.sector}.${sector.programa}.${sector.proyecto} - ${sector.nombre}</option>`
+    options.push(option)
+  })
+
+  selectEjercicio.innerHTML = options.join('')
+
+  $('.chosen-select')
+    .chosen()
+    .change(function (obj, result) {
+      console.log('changed: %o', arguments)
+    })
+}

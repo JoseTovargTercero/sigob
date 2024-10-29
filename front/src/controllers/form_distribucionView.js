@@ -49,12 +49,14 @@ export const validateDistribucionView = async () => {
     }
     if (e.target.dataset.editarid) {
       let partidas = await getFormPartidas()
+      let sectores = await getSectores()
 
       console.log(partidas, ejercicioFiscal.partidas)
       form_distribucion_modificar_form_card({
         elementToInset: 'distribucion-view',
         partidas: partidas.fullInfo,
-        distribucionPartidas: ejercicioFiscal.distribucion_partidas,
+        sectores: sectores.fullInfo,
+        ejercicioFiscal: ejercicioFiscal,
       })
     }
 
