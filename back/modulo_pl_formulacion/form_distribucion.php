@@ -165,6 +165,68 @@ function actualizarDistribucion($id, $id_partida, $monto_inicial, $id_ejercicio,
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
+
+function actualizarMontoDistribucion($id_sector, $id_ejercicio, $id_distribucion1, $id_distribucion2 = null, $id_partida = null, $monto) {
+    global $conexion;
+
+    try {
+        $conexion->begin_transaction();
+
+        if ($id_sector === null) {
+            // Caso: id_sector es null, se manejan id_distribucion1 y id_distribucion2
+            $sqlDistribucion1 = "SELECT monto_actual FROM distribucion_presupuestaria WHERE id = ?";
+            $stmtDistribucion1 = $conexion->prepare($sqlDistribucion1);
+            $stmtDistribucion1->bind_param("i", $id_distribucion1);
+            $stmtDistribucion1->execute();
+            $resultadoDistribucion1 = $stmtDistribucion1->get_result();
+
+            $sqlDistribucion2 = "SELECT monto_actual FROM distribucion_presupuestaria WHERE id = ?";
+            $stmtDistribucion2 = $conexion->prepare($sqlDistribucion2);
+            $stmtDistribucion2->bind_param("i", $id_distribucion2);
+            $stmtDistribucion2->execute();
+            $resultadoDistribucion2 = $stmtDistribucion2->get_result();
+
+            if ($resultadoDistribucion1->num_rows > 0 && $resultadoDistribucion2->num_rows > 0) {
+                // Resta el monto a distribucion1
+                $sqlResta = "UPDATE distribucion_presupuestaria SET monto_actual = monto_actual - ? WHERE id = ?";
+                $stmtResta = $conexion->prepare($sqlResta);
+                $stmtResta->bind_param("di", $monto, $id_distribucion1);
+                $stmtResta->execute();
+
+                // Suma el monto a distribucion2
+                $sqlSuma = "UPDATE distribucion_presupuestaria SET monto_actual = monto_actual + ? WHERE id = ?";
+                $stmtSuma = $conexion->prepare($sqlSuma);
+                $stmtSuma->bind_param("di", $monto, $id_distribucion2);
+                $stmtSuma->execute();
+            } else {
+                throw new Exception("Uno o ambos registros no existen para id_distribucion1 o id_distribucion2.");
+            }
+        } else {
+            // Caso: id_sector no es null, se usa id_partida
+            $sqlInsert = "INSERT INTO distribucion_presupuestaria (id_partida, monto_inicial, id_ejercicio, monto_actual, id_sector, status) 
+                          VALUES (?, ?, ?, ?, NULL, 1)";
+            $stmtInsert = $conexion->prepare($sqlInsert);
+            $stmtInsert->bind_param("ididi", $id_partida, $monto, $id_ejercicio, $monto, $id_sector);
+            $stmtInsert->execute();
+
+            // Actualizar monto_actual para id_distribucion1
+            $sqlUpdateDistribucion1 = "UPDATE distribucion_presupuestaria SET monto_actual = monto_actual - ? WHERE id = ?";
+            $stmtUpdateDistribucion1 = $conexion->prepare($sqlUpdateDistribucion1);
+            $stmtUpdateDistribucion1->bind_param("di", $monto, $id_distribucion1);
+            $stmtUpdateDistribucion1->execute();
+        }
+
+        $conexion->commit();
+        return json_encode(["success" => "Operación completada correctamente"]);
+    } catch (Exception $e) {
+        $conexion->rollback();
+        registrarError($e->getMessage());
+        return json_encode(["error" => $e->getMessage()]);
+    }
+}
+
+
 // Función para eliminar un registro por ID
 function eliminarDistribucion($id)
 {
@@ -229,6 +291,18 @@ if (isset($data["accion"])) {
 
         case 'eliminar':
             echo eliminarDistribucion($data["id"]);
+            break;
+
+        case 'actualizar_monto_distribucion':
+            // Llamado a actualizarMontoDistribucion con parámetros específicos
+            echo actualizarMontoDistribucion(
+                $data["id_sector"] ?? null,
+                $data["id_ejercicio"],
+                $data["id_distribucion1"],
+                $data["id_distribucion2"] ?? null,
+                $data["id_partida"] ?? null,
+                $data["monto"]
+            );
             break;
 
         default:
