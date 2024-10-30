@@ -235,9 +235,15 @@ function consultarInformacionPorId($tabla, $id) {
 
     try {
         $resultado = $db->select("*", $tabla, $condicion);
-        return json_encode($resultado);
+        
+        if (!empty($resultado)) {
+            // Devolver el resultado directamente, ya que cada campo es dinámico
+            return json_encode(['success' => $resultado]);
+        } else {
+            return json_encode(['error' => 'Registro no encontrado.']);
+        }
     } catch (Exception $e) {
-        throw new Exception("Error: " . $e->getMessage());
+        return json_encode(['error' => "Error: " . $e->getMessage()]);
     }
 }
 
@@ -246,9 +252,15 @@ function consultarInformacionTodos($tabla) {
 
     try {
         $resultado = $db->select("*", $tabla);
-        return json_encode($resultado);
+        
+        if (!empty($resultado)) {
+            // Devolver todos los resultados directamente, sin especificar campos
+            return json_encode(['success' => $resultado]);
+        } else {
+            return json_encode(['error' => 'No se encontraron registros.']);
+        }
     } catch (Exception $e) {
-        throw new Exception("Error: " . $e->getMessage());
+        return json_encode(['error' => "Error: " . $e->getMessage()]);
     }
 }
 
