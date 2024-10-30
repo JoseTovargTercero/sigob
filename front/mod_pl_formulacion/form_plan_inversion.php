@@ -323,20 +323,20 @@ $stmt->close();
                 <div class="mt-2 card-body">
 
                   <div class="mb-3">
-                    <label for="partida" class="form-label">Nombre del proyecto</label>
+                    <label for="nombre" class="form-label">Nombre del proyecto</label>
                     <input type="text" id="nombre" class="form-control" placeholder="Nombre del proyecto">
                   </div>
 
 
                   <div class="mb-3">
-                    <label for="partida" class="form-label">Descripción del proyecto</label>
+                    <label for="descripcion" class="form-label">Descripción del proyecto</label>
                     <textarea type="text" id="descripcion" class="form-control">
                     </textarea>
                   </div>
 
 
                   <div class="mb-4">
-                    <label for="partida" class="form-label">Asignación presupuestaria total (Monto)</label>
+                    <label for="monto" class="form-label">Asignación presupuestaria total (Monto)</label>
                     <input type="text" class="form-control" id="monto" placeholder="Indique el monto asignado para la ejecución del proyecto">
                   </div>
 
@@ -543,7 +543,7 @@ $stmt->close();
             let element = clasificador[key];
             inputPartida += '<option value="' +
               key +
-              '">' + key + '-' + element +
+              '">' + element[1] + '-' + element[0] +
               "</option>"
           }
 
@@ -606,11 +606,11 @@ $stmt->close();
 
                   $(".c_partida").append(
                     '<option value="' +
-                    item.partida +
+                    item.id +
                     '">' + item.partida + '-' + item.descripcion +
                     "</option>"
                   );
-                  clasificador[item.partida] = item.descripcion;
+                  clasificador[item.id] = [item.descripcion, item.partida];
                 });
 
               }
@@ -647,7 +647,7 @@ $stmt->close();
             data.push(
               [cont++,
                 infoProyecto[5][key]['sector'] + '.' + infoProyecto[5][key]['programa'] + '.' + infoProyecto[5][key]['proyecto'],
-                infoProyecto[5][key]['partida'],
+                infoProyecto[5][key]['partidad_n'],
                 infoProyecto[5][key]['nombre'],
                 infoProyecto[5][key]['monto'],
               ])
