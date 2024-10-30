@@ -5,9 +5,6 @@ header('Content-Type: application/json');
 require_once '../sistema_global/session.php';
 require_once '../sistema_global/errores.php';
 
-
-
-
 // Función para insertar datos en plan_inversion y proyecto_inversion
 function guardarEnte($proyectosArray)
 {
@@ -177,38 +174,6 @@ function actualizarEnte($ente)
     }
 }
 
-// Función para eliminar datos en plan_inversion
-function eliminarPlanInversion($id_plan)
-{
-    global $conexion;
-
-    try {
-        // Eliminar los proyectos relacionados
-        $sqlDeleteProyectos = "DELETE FROM proyecto_inversion WHERE id_plan = ?";
-        $stmtDeleteProyectos = $conexion->prepare($sqlDeleteProyectos);
-        $stmtDeleteProyectos->bind_param("i", $id_plan);
-        $stmtDeleteProyectos->execute();
-        $stmtDeleteProyectos->close();
-
-        // Eliminar el plan de inversión
-        $sql = "DELETE FROM plan_inversion WHERE id = ?";
-        $stmt = $conexion->prepare($sql);
-        $stmt->bind_param("i", $id_plan);
-        $stmt->execute();
-
-        if ($stmt->affected_rows <= 0) {
-            throw new Exception("Error al eliminar el plan de inversión.");
-        }
-
-        $stmt->close();
-        return json_encode(["success" => "Plan de inversión y proyectos eliminados correctamente."]);
-    } catch (Exception $e) {
-        registrarError($e->getMessage());
-        return json_encode(['error' => $e->getMessage()]);
-    }
-}
-
-
 
 // Obtener lista de entes
 function get_unidades()
@@ -216,7 +181,11 @@ function get_unidades()
     global $conexion;
     $data = [];
 
-    $stmt = mysqli_prepare($conexion, "SELECT * FROM `entes` ORDER BY tipo_ente DESC, ente_nombre ASC ");
+    $stmt = mysqli_prepare($conexion, "SELECT entes.*, pl_sectores.sector AS sector_n, pl_programas.programa AS programa_n, pl_proyectos.proyecto_id AS proyecto_n FROM `entes`
+    LEFT JOIN pl_sectores ON entes.sector = pl_sectores.id
+    LEFT JOIN pl_programas ON entes.programa = pl_programas.id
+    LEFT JOIN pl_proyectos ON entes.proyecto = pl_proyectos.id
+     ORDER BY tipo_ente DESC, ente_nombre ASC ");
     $stmt->execute();
     $result = $stmt->get_result();
     if ($result->num_rows > 0) {
@@ -231,19 +200,21 @@ function get_unidades()
     return json_encode(['success' => $data]);
 }
 
-
-
-
-
-
 // Obtener lista de subEntes
 function get_sub_unidades()
 {
     global $conexion;
     $data = [];
 
-    $stmt = mysqli_prepare($conexion, "SELECT entes_dependencias.*, entes.ente_nombre AS nombre_ente_p FROM `entes_dependencias`
+
+
+
+
+    $stmt = mysqli_prepare($conexion, "SELECT entes_dependencias.*, entes.ente_nombre AS nombre_ente_p, pl_sectores.sector AS sector_n, pl_programas.programa AS programa_n, pl_proyectos.proyecto_id AS proyecto_n FROM `entes_dependencias`
     LEFT JOIN entes ON entes.id = entes_dependencias.ue
+    LEFT JOIN pl_sectores ON entes_dependencias.sector = pl_sectores.id
+    LEFT JOIN pl_programas ON entes_dependencias.programa = pl_programas.id
+    LEFT JOIN pl_proyectos ON entes_dependencias.proyecto = pl_proyectos.id
      ORDER BY entes_dependencias.ue ASC, entes_dependencias.ente_nombre ASC ");
     $stmt->execute();
     $result = $stmt->get_result();
@@ -288,31 +259,6 @@ function eliminarEnte($id)
         }
     }
     $stmt->close();
-    /*
-    if (count($sub_entes) > 0) {
-        $placeholders = implode(',', array_fill(0, count($sub_entes), '?'));
-        $query = "SELECT * FROM `distribucion_entes` WHERE id_ente = ? AND actividad_id IN ($placeholders)";
-        $stmt_2 = mysqli_prepare($conexion, $query);
-
-        if ($stmt_2 === false) {
-            die("Error en la preparación de la consulta: " . $conexion->error);
-        }
-
-        $types = str_repeat('i', count($sub_entes) + 1);  // Primer 'i' para id_ente, el resto para actividad_id
-        $params = array_merge([$types, $id], $sub_entes);
-
-        $stmt_2->bind_param(...$params);
-        $stmt_2->execute();
-        $result_2 = $stmt_2->get_result();
-        if ($result_2->num_rows > 0) {
-            echo json_encode(['error' => 'No se puede eliminar, una dependencia de ente tiene una asignación']);
-            exit;
-        }
-        $stmt_2->close();
-    }
-*/
-
-
 
     $stmt = $conexion->prepare("DELETE FROM `entes` WHERE id = ? ");
     $stmt->bind_param("i", $id);
@@ -340,15 +286,10 @@ if (isset($data["accion"])) {
     // Nuevos proyectos
     if ($accion === "registrar_ente" && isset($data["unidad"])) {
         echo guardarEnte($data["unidad"]); // TODO: LISTO
-        // Actualizar plan de inversión
     } elseif ($accion === "guardar_suu" && isset($data["info"])) {
         echo guardar_suu($data["info"]); // TODO: LISTO
-        // Actualizar proyecto de inversión
     } elseif ($accion === "update_ente" && isset($data["unidad"])) {
         echo actualizarEnte($data["unidad"]); // TODO: LISTO
-        // Marcar proyecto como ejecutado
-    } elseif ($accion === "delete" && isset($data["id_plan"])) {
-        echo eliminarPlanInversion($data["id_plan"]);
     } elseif ($accion === 'eliminar_ente' && isset($data['id'])) {
         echo eliminarEnte($data['id']);
     } elseif ($accion === "get_unidades") {
