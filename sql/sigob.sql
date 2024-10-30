@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 29-10-2024 a las 00:15:37
+-- Tiempo de generación: 30-10-2024 a las 16:26:36
 -- Versión del servidor: 10.4.16-MariaDB
 -- Versión de PHP: 7.4.12
 
@@ -1049,6 +1049,58 @@ INSERT INTO `dependencias` (`id_dependencia`, `dependencia`, `cod_dependencia`, 
 (84, 'CONTRATADOS GOBERNACION', '14.01.54', 0),
 (85, 'PERSONAL DIRECTIVO DE ALTO NIVEL Y JEFATURAS', '14.01.55', 0),
 (86, 'ENTES DESCENTRALIZADOS', '15.01.51', 0);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `descripcion_programas`
+--
+
+CREATE TABLE `descripcion_programas` (
+  `id` int(255) NOT NULL,
+  `id_sector` int(255) NOT NULL,
+  `id_programa` int(255) NOT NULL,
+  `descripcion` longtext NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `descripcion_programas`
+--
+
+INSERT INTO `descripcion_programas` (`id`, `id_sector`, `id_programa`, `descripcion`) VALUES
+(1, 1, 1, 'Con este programa se satisfacen las necesidades legislativas  del Estado, se elaboran nuevas leyes y se reforman las que  lo ameritan, así como resoluciones para obtención de medidas seguras para el buen ejercicio de la Entidad, en beneficio de la comunidad Amazonense; atendiendo necesidades tanto del sector público, como del sector privado por tratarse de leyes que afectan a toda la población.\r\n\r\n \r\nEntre otras actividades estarán la de legislar en materias de su competencia de acuerdo a la Constitución,  Leyes del Estado y la Nación, para dotarlo de instrumentos normativos legales que permitan la promoción del desarrollo integral y sustentable del Estado.\r\n'),
+(2, 1, 2, 'La Contraloría del Estado Amazonas,  es el órgano de control, vigilancia y fiscalización de los ingresos, gastos y bienes públicos del Estado y a tal efecto goza de autonomía orgánica y funcional,  de conformidad con lo establecido en el articulo 163 de la Constitución de la República Bolivariana de Venezuela, sin menoscabo de la función de control, seguimiento y evaluación de la Contraloría General de la República. \r\n \r\nLa Contraloría del Estado Amazonas, ahora como órgano integrante del Sistema Nacional de Control Fiscal, el cual es un conjunto de órganos, estructuras, recursos y procesos que integrados bajo la rectoría de la Contraloría General de la República, interactúan coordinadamente a fin de lograr la unidad de dirección de los sistemas y procedimientos de control  que coadyuven al logro de los objetivos generales de los distintos entes y organismos sujetos a control fiscal, así como también al buen funcionamiento de la administración pública; cuyos objetivos son:\r\n \r\n* Fortalecer la capacidad del Estado para ejecutar eficazmente su función de gobierno.\r\n\r\n* Lograr la transparencia y la eficiencia en el manejo de los recursos del sector público   y así contribuir a optimizar la calidad de vida de la ciudadanía.\r\n\r\n* Establecer las responsabilidades por la comisión de irregularidades relacionadas con la gestión  de las entidades públicas.\r\n'),
+(3, 1, 3, 'Le corresponde representar y amparar judicial y extrajudicialmente, conforme a las instrucciones emanadas del Ejecutivo Regional o del Consejo Legislativo los intereses del Estado, sus bienes, su patrimonio, rentas y derechos, redactar y suscribir conforme a las instrucciones que le fueren comunicadas por el Ejecutivo Regional, por el Consejo Legislativo, los documentos contentivos de actos, negocio o contratos que conciernan al Estado; además prestar asesoría jurídica a los órganos y dependencia del Estado.\r\n	\r\nAsistir en representación del Estado a las discusiones de los Contratos Colectivos que el Ejecutivo regional, Consejo Legislativo y sus dependencias, órganos auxiliares y conexos tengan a bien suscribir con sus trabajadores.\r\n\r\nLlevar un inventario permanente de los bienes inmuebles del Estado,  velar por el estricto  cumplimiento de las leyes, en el ámbito del estado y pedir por ante los organismos jurisdiccionales competentes la nulidad de leyes, decretos, ordenanzas, acuerdos y resoluciones dictadas en el Estado.\r\n \r\nPresentar proyectos de leyes ante el Consejo Legislativo Regional y solicitar la reforma parcial de las ya existentes, cuando ella sea pertinente a los intereses del Estado y la Nación.\r\n \r\nElaborar su propio Presupuesto de Gastos a fin de ser incluidos en el Presupuesto General de Ingresos y Gastos del Estado, y ordenar traslados de partidas y otros movimientos contables dentro de su propio presupuesto anual de gasto, conforme a lo establecido en la Ley orgánica de Administración del Estado, Ley Orgánica de Presupuesto y la Ley Orgánica de Régimen presupuestario del Estado y demás normativa vigente.\r\n'),
+(4, 1, 4, 'El Gobernador del estado como Jefe del Ejecutivo Regional y Agente del Ejecutivo Nacional, tendrá las facultades previstas en la Constitución de la República, la Ley sobre Elección y Remoción de Gobernadores, Ley Orgánica de Descentralización, Delimitación y Transferencia de competencia del poder público, la Constitución del Estado Amazonas y las otras normativas legales vigentes.\r\n \r\n \r\nEl propósito de este programa, es responder en el más alto nivel, el estricto cumplimiento de todas las actividades que sean necesarias para Gobernar el Estado Amazonas y para coordinar acciones administrativas y sociales, en función del desarrollo económico y social sustentable del Estado.\r\n'),
+(5, 1, 6, 'Es el órgano directo e inmediato del Gobernador a cuyo cargo esta la supervisión de las actividades administrativas del Ejecutivo del Estado Amazonas, conforme a las directrices que le imparta el Gobernador. El Secretario Ejecutivo Regional, en lo político y administrativo, tanto en el ámbito interno como municipal.\r\n \r\nDentro de las funciones del Secretario Ejecutivo de Coordinación, esta en velar por el estricto cumplimiento de todas las normas que rige la administración y vigilancia del patrimonio del Estado.\r\n \r\nSon atribuciones además, del Secretario Ejecutivo de Coordinación, mantener relaciones institucionales con el Consejo legislativo, las autoridades Municipales, los órganos de la Administración Nacional, el Clero, las Organizaciones Políticas, Sindicales, Gerencia e Empresariales y en General con todo los Sectores representativos de las comunidades que conforman el Estado en representación del Gobierno.\r\n \r\nEs de su competencia, coordinar el trabajo de las secretarías del Ejecutivo, oficinas auxiliares del Despacho de la Gobernación y las actividades de los Comisionados y las Comisiones que el Gobernador designe conforme a la Ley.\r\n \r\nConducir los procesos de ajuste de la estructura organizativa de la Gobernación, en procura de elevar la eficiencia de su gestión.\r\n'),
+(6, 1, 6, 'Este programa tiene como atribuciones, la aplicación de las normas y principios que rigen la administración del personal, como elemento fundamental de funcionamiento del Gobierno Estadal.\r\n \r\n \r\nAdministra la Ejecución de los Contratos Colectivos, coordinando las relaciones obreros patronales, en el cumplimiento de las cláusulas y convenios, así como la aplicación de las Leyes y Reglamentos que rigen las normas y procedimientos administrativos en lo concerniente a la materia de recursos humanos.\r\n'),
+(7, 1, 7, 'Asistir y asesorar al Gobernador del Estado, en todo lo concerniente a la Planificación y Administración Presupuestaria de la Gestión, e igualmente a las diferentes secretarías y oficinas dependientes del Ejecutivo Regional y demás poderes públicos, cuando estos lo soliciten. \r\n \r\nFormular en coordinación con la estructura del Ejecutivo Regional el proyecto de Ley de Presupuesto. \r\n \r\nEjercer la Secretaría Técnica del Comité de Planificación y Coordinación de Políticas Públicas e integrar las comisiones de trabajo a las cuales sea designado por el Gobernador para la elaboración del Plan Operativo Anual y Plan Estadal de Desarrollo Estadal.  \r\n'),
+(8, 1, 8, 'El programa Servicios de Administración, se encarga de ejecutar en el marco de la norma financiera el presupuesto del Estado.\r\n \r\n \r\nCoordinar los servicios de compras de bienes y servicios; el registro del patrimonio de la Gobernación y de reproducción e imprenta.\r\n \r\n \r\nAdelantar la contabilidad fiscal del Ejecutivo Regional, de acuerdo a las pautas establecidas en la Ley.\r\n'),
+(9, 1, 9, 'El objeto de este programa, es el registro, control y cancelación de los  compromisos adquiridos por la Gobernación del Estado, a través de sistemas que aseguren el adecuado manejo del Tesoro Público; así como también, el control de valores en custodia, la existencia del Tesoro y la recaudación de los fondos provenientes de la renta de diversas índoles, cumpliendo con lo dispuesto en la ley Orgánica de régimen Presupuestario, Ley General de Venta y  Gastos públicos del Estado, Ley Orgánica de Contraloría General del Estado y demás normativas vigentes de este Estado.\r\n \r\n \r\nRealiza además, todo los pagos ejecutado por Gobernación, a través de las diferentes cuentas habilitadas, Promueve actividades laborales para organizar todas las operaciones de recaudación,  custodia de valores y velar por el fiel cumplimiento de acuerdo a las disposiciones legales vigentes.\r\n'),
+(10, 1, 12, 'La Secretaría De Control y Seguimiento de Gestión Pública que Ejercerá el Control y La Fiscalización de La Gestión Pública Desarrollada por la Gobernación del Estado Amazonas con el fin de dar cumplimiento Efectivo y Eficiente de los objetivos y Metas de este Ente Gubernamental\r\nFUNCIONES DE LA SECRETARÍA DE CONTROL Y SEGUMIENTO DE GESTION PÚBLICA:\r\n\r\n\r\nVelar por el cumplimiento de las políticas y directrices dictadas por el ejecutivo regional.\r\n\r\nSupervisar las actividades de las Secretarías Ejecutivas y las distintas dependencias de la Gobernación del Estado Amazonas de acuerdo a las directrices impartidas por el ciudadano Gobernador del Estado.\r\n\r\n Dar seguimiento a los proyectos o programas a ejecutar por parte del ejecutivo regional.\r\n'),
+(11, 1, 10, 'Elaborar el programa anual de política indigenista, previa consulta con las comunidades, pueblos y grupos étnicos indígenas orientados al mejoramiento de las condiciones de vidas, trabajo y salud, así como su nivel educativo.\r\n \r\nSupervisar  y hacer cumplir las directrices de las políticas indigenistas.\r\n \r\nOrientar a la población indígena, sobre su organización y el establecimiento de cooperativa de producción y consumo.\r\n \r\nDefender y hacer respetar los derechos de los indígenas consagrados en la Constitución Nacional, Constitución Estadal, Leyes Nacionales y en tratados Internacionales ratificados por Venezuela.\r\n \r\nCoordinar los recursos y las acciones dirigidas a promover en las poblaciones indígenas del Estado Amazonas\r\n \r\nEstablecer nexos con los entes públicos, Nacionales  y Regionales, que hacen vida activa en el Estado Amazonas, a fin  de coordinar acciones a favor de las comunidades indígenas, a través de los diferentes Institutos Crediticios Nacionales y Estadales. \r\n\r\nDesarrollar acciones en las comunidades indígenas que contribuyan al desarrollo socio-económico y la autogestión\r\n'),
+(12, 1, 13, 'Funciones de la Secretaria Ejecutiva de bienes y servicios:\r\n Dirigir, coordinar y establecer estrategia de recepción, entrega y movilización de bienes muebles adquiridos por la Gobernación para el equipamiento de las unidades administrativas.\r\nRealizar y Ejecutar periódicamente programa de actualización de inventarios de bienes asignados a distintas oficinas, tanto en las unidades administrativas dependientes como en los entes coordinados.\r\nDiseñar, controlar y supervisar, la vigilancia y resguardo de los bienes e instalaciones que son propiedades patrimoniales de la Gobernación.\r\nLlevar registro y control de bienes muebles e inmuebles, así como rendir informe a la administración y tesorería sobre el registro contable para el ajuste periódico a la hacienda pública del estado.\r\nRealizar el control perceptivo, que permita captar la veracidad, exactitud y calidad de obras, bienes y servicios. Para así verificar la sinceridad y correcta realización de las operaciones administrativas, a través de comprobación in situ.\r\n'),
+(13, 1, 11, 'Los servicios de Control y Gestión comprenden el plan de organización, las políticas, normas, métodos y procedimientos adaptados dentro de un ente u organismo, sujeto a la Ley del Estatuto de la función pública, para  salvaguardar sus recursos, verificar su exactitud y veracidad de la información financiera y administrativa y promover la eficiencia económica y la calidad en sus operaciones. Estimular la observancia de las políticas, presentar y lograr el cumplimiento de misión, objetivos y metas.\r\n \r\nRealizar actividades de coordinar y dirigir los programas de auditoria a efectuarse en los organismos públicos, centralizados, dependientes financiera y presupuestariamente de la Gobernación del Estado Amazonas.\r\n \r\nEn materia de asuntos legales, el Auditor Interno de acuerdo a los casos presentados y a las situaciones que se origen en el ámbito administrativo y financiero, ordenará las aperturas, investigaciones y averiguaciones administrativas que amerite el caso.\r\n'),
+(14, 2, 14, 'En este programa se desarrollan acciones tendentes para el rescate y mejora de la imagen institucional, mediante la ejecución de todas las actividades en lo referente a seguridad, defensa y orden público en primer orden y en otro sentido, en lo que al aspecto administrativo se refiere; cumpliendo eficientemente con la misión encomendada por el Despacho Superior durante todo el año, apoyando el plan de equipamiento general, con el adiestramiento y capacitación de todo el personal policial, técnicos,  administrativos y obreros e igualmente con los recursos logísticos y financieros necesarios para su completa confiabilidad.\r\n'),
+(15, 2, 15, 'Esta unidad ejecutora tiene como finalidad la coordinación de programas dirigidos a resguardar la seguridad y orden público, cumplir y hacer cumplir los decretos, ordenanzas, resoluciones y demás disposiciones que la Gobernación imparta de acuerdo a la ley.\r\n \r\nCoordinar con los organismos competentes la implantación de medidas de resguardo de la colectividad afectada por calamidades públicas, el servir de enlace entre el Ejecutivo y las Fuerzas Armadas Policiales y demás organismos de Seguridad del Estado.\r\n \r\nEn otro orden de acción también se dedica  a la administración de asuntos civiles y preparar el personal policial, profesional técnico y obreros para coadyuvar al cumplimiento del orden público.  \r\n'),
+(16, 2, 16, 'El objetivo primordial de este programa se puede resumir en tres funciones principales:\r\n \r\n- Actuar cordialmente para reducir al mínimo las  calamidades públicas por causas naturales.\r\n \r\n- Coordinar acciones preventivas y asistenciales.\r\n \r\n- Coordinar operativos en épocas festivas y de asueto para evitar perdida de vida.\r\n'),
+(17, 2, 17, 'El Cuerpo de Bomberos del Estado Amazonas, tiene como finalidad prestar sus servicios encaminados a la seguridad en lo referente a la prevención, protección, combate, extinción de incendios y otros siniestros, así como también, la investigación de las causas y su origen, la atención de emergencias pre-hospitalaria, los servicios de rescate y salvamento y la participación en los programas para la atención de emergencias o desastre dirigida a la formación de la comunidad.\r\n \r\nLos Bomberos utilizan métodos para proteger mercancías, objetos y el interior de edificios de los daños que puedan sufrir por fuego y el agua, los objetos se cubren con material impermeable y el agua se evacua con aspiradores de agua, sumideros y bombas portátiles. La mayoría de las unidades de bomberos disponen de equipos de salvaguardia.\r\n'),
+(18, 3, 18, 'La Secretaría de turismo, es el órgano ejecutor de la política turística y recreativa del Estado, a través de la cual contribuirá al desarrollo económico y social de la región, proponiendo el uso racional de los atractivos turísticos que existen en el Estado.\r\n \r\nLa riqueza y abundancia de paisajes naturales presentes en el Estado, define una amplia potencialidad turística, recreacional y contemplativa.\r\n \r\nPor lo que corresponden a este sector  la planificación y realización de programas y acciones para  que la actividad turística se convierta en una de las fuentes fundamentales para propiciar  el desarrollo económico, social y cultural del  Estado Amazonas.\r\n \r\nEn tal sentido las acciones concretas a desarrollar serán destinadas a delimitar y promover las áreas de  mayor porvenir turismo, así como la creación y mantenimiento de la infraestructura necesaria para su desarrollo. Además, dentro de estas acciones están comprendidas, velar por el mantenimiento y conservación de las instalaciones ya existentes y coordinar acciones con los organismos responsables de administrar las zonas  ABRAE del Estado con el objetivo de incorporarlas al patrimonio de uso  turístico.\r\n'),
+(19, 4, 19, 'Esta Unidad programática tiene como función garantizar el cumplimiento  del proceso educativo, para el logro de la educación Integral de los ciudadanos  del procedo educativo, para el logro de  la Educación Integral de los ciudadanos del Estado.\r\n \r\nPropicia y estimula la modernización de los sistemas administrativos, con el  fin de lograr los objetivos deseados en el sector educativo.\r\n \r\nEstablece convenios con los institutos que hacen vida activa en la región, a fin de implementar procedimientos que permitan capacitar y orientar al docente.\r\n'),
+(20, 4, 20, 'Este programa comprende el área de la docencia y el apoyo técnico que imparte  en los centros educacionales urbanos y rurales del Estado. A través del mismo, se mantiene el servicio de educación pre-escolar y básica, además de la coordinación de comedores escolares.\r\n \r\nEn esta unidad programática, se reflejan los beneficios que por Contratación Colectiva reciben los trabajadores de la enseñanza dependiente del Ejecutivo Regional, con la intención de mejorar la calidad de la educación en el Estado Amazonas. También se llevan a cabo programas de asistencia al indígena de alfabetización. También se lleva a cabo programas de asistencia al indígena de alfabetización, asistencia integral a los centros educacionales y de supervisión, igualmente se le brinda apoyo a la Zona Educativa.\r\n'),
+(21, 5, 22, 'La Secretaria de Información y Comunicación SICOAMA tiene como objetivo principal lograr que  el pueblo sea el  vocero principal de la gestión de gobierno Pueblo-Gobierno a través de la creación innovadora y permanente de canales de comunicación con énfasis en la retroalimentación que sirvan para la consolidación de una nueva forma de gobierno que rompa los paradigmas de la democracia representativa resolviendo los problemas que le impiden a Amazonas lograr su desarrollo político, económico y social. Entre sus funciones:\r\n \r\nDiseñar la política comunicacional del Gobierno de Amazonas, de acuerdo a los lineamientos establecidos por el Gobernador.\r\nPlanificar y ejecutar las acciones destinadas a consolidar la política comunicacional del Gobierno de Amazonas.\r\nCoordinar la acción conjunta de los medios oficiales para el cumplimiento de los lineamientos comunicacionales previstos por los niveles de gobierno nacional y regional.\r\nDiseñar, ejecutar y hacer seguimiento del Plan Operativo Anual de la Secretaría de Información y Comunicación del estado Amazonas.\r\n'),
+(22, 5, 23, 'La  Biblioteca Nacional de Venezuela, ha desarrollado el sistema de Biblioteca pública como parte de una estrategia orientada a brindar a la población, el más amplio acceso a la  información que requiere.\r\n\r\nPartiendo de esta concepción y para optimizar el uso de los recursos disponibles se  ha desarrollo un modelo de redes Estadales cuya estructura medular la constituye la Biblioteca Pública Central.\r\n \r\nLos servicios Bibliotecarios públicos representan los medios eficaces para lograr la atención y satisfacción de las necesidades de información, aprendizaje y recreación de la población. La cobertura de la red en el Estado amazonas cubre todos los municipios, teniendo como objetivo principal:\r\n\r\n- Dotar a la entidad de una infraestructura de servicios bibliotecarios, dirigida a tender necesidades básicas de información, conocimiento y recreación de la comunidad.\r\n\r\n- Formar adecuadamente a los usuarios para que obtengan mejores beneficios de la información.\r\n\r\n- Promover el uso de la lectura y de la información como instrumento para el desarrollo individual y colectivo.\r\n\r\n- Apoyar a la educación en todos sus niveles y en especial, la educación y la investigación. \r\n'),
+(23, 5, 24, 'La Secretaría de Cultura y Comunicación, es la encargada de promover, fomentar y conservar los valores culturales de la región. A través de la Dirección y Coordinación de la Cultura de la Gobernación del Estado Amazonas, se formulan y ejecutan acciones de desarrollo cultural orientadas principalmente a la investigación, difusión de actividades autóctonas y rescate  de los valores culturales propios de nuestro Estado.\r\n'),
+(24, 5, 25, 'Tiene como objetivo la coordinación de los mecanismos tecnológicos que desarrolle la ciencia a través del uso y aplicación de los medios electrónicos , informáticos y telemáticos para la organización y funcionamiento institucional.\r\n \r\nTambién tiene como fin planificar, promover y aplicar las políticas públicas en materia de las tecnologías de información y comunicación de la Gobernación del Estado Amazonas y organismos adscritos.\r\n'),
+(25, 6, 27, 'Coordinar la ejecucion de obras del Fondo de Compensacion Interterritorial, asi como tambien la formulacion y evaluacion de proyectos relacionados con obras dirigidas al bienestar de  la colectividad Amazonense.\r\n'),
+(26, 6, 26, 'Tiene como objetivo la coordinacion, mejoramiento fomento, direccion y control de actividades relacionadas con la vivienda, desarrollo urbano y los servicios conexos. de la misma manera, formular proyectos de acondicionamiento de servicios basicos, de mantenimiento de obras y del transporte.\r\n\r\n     Coordinar la ejecucion de obras del Fondo de Compensaci{on Interterritorial, asi como tambien la formulacion y evaluacion de proyectos relacionados con obras dirigidas al bienestar de  la colectividad Amazonense.\r\n'),
+(27, 7, 28, 'La implementación de este programa persigue de manera esencial lograr los objetivos de la política sanitaria y asistencial del Estado. En este sentido se lleva a cabo la ejecución de actividades tendentes a mejorar la atención médica, programa de información y orientación ciudadana e igualmente fortalecer las acciones destinadas al funcionamiento y operación de las instalaciones de los servicios de salud.\r\n'),
+(28, 8, 29, 'A través de la Secretaría de Desarrollo Social, se velará por la seguridad social en el Estado Amazonas; por ende este programa tiene como objetivo general, promover el desarrollo social en la región, en coordinación con los organismos nacionales estadales públicos y privados, mediante la ejecución de actividad y programas dirigidos al mejoramiento del nivel económico, social y cultura de la comunidades indígenas, rurales y urbanas. Corresponde a la Secretaría, las siguientes funciones:\r\n \r\n- Ejecutar la política social del Gobierno Estadal.\r\n\r\n- Asistencia de las comunidades en situación de emergencia.\r\n\r\n- Apoyar la Creación y organización de cooperativas y demás instituciones destinadas a mejorar la economía popular, así como la protección de las asociaciones, sociedades y comunidades que tenga como objetivo el mejor desarrollo socio económico del Estado.\r\n\r\n- Lo relativo a la asistencia y bienestar social a cargo de la Gobernación.\r\n\r\n- Realizar actividades de promoción, coordinación y supervisión de proyectos y mantenimiento de obras comunales.\r\n'),
+(29, 8, 30, 'la Secretaria Ejecutiva de Participaciòn popular, cuyo objetivo es liderar el proceso de fortalecimiento de las organizaciones comunales y sociales y la implementacion de un Sistema de Participaciòn Popular, a los fines del ejercicio del control social y la intervencion de las politicas publicas que permitan la incidencia efectiva de las comunidades en las decisiones, la transformacion de las conciencias en el interior de las masas oprimidas que conlleven a que nuestro pueblo sea constructor de su propio destino, por cuanto desde esta perspectiva, se concibe a la persona como ser social producto de las realaciones sociales, que permite que la actividad social sea un proceso como reflejo de la realidad y resultado de la reflexion consciente de esa realidad\r\n'),
+(30, 8, 31, 'Este programa tiene como objetivo incluir a las personas con discapacidad para brindar atención integral a la población con vulnerabilidad para introducirlo en el ámbito laboral, en el cumplimiento de las políticas relacionadas con la discapacidad.                                              \r\n   Esta unidad programática tiene como función:\r\n- Participar en la formulación de lineamientos, políticas, planes, proyectos y estrategias en materia de atención a personas con limitaciones físicas.\r\n- Promover la participación ciudadana en lo social y en lo económico a través de los comités comunitarios, asociaciones, cooperativas, empresas comunitarias y de cogestión y autogestión,en función de la organización de las personas con discapacidad, que conlleve a una mejor articulación e identificación con los organos y entes de la administración pública nacional, estadal y municipal, así como también a las personas naturales y jurídicas    de derecho privado.\r\n- La prestación de servicios asistenciales en materia jurídica, social y cultural a las personas con discapacidad. \r\n- Conocer sobre situaciones de discriminación a las personas con discapacidad y tramitarlas ante las autoridades competentes.\r\n'),
+(31, 8, 32, 'A través de atención integral a la mujer, familia e igualdad de genero , se garantizará la igualdad de oportunidades de la mujer, para promover la participación protagónica de la mujer en los ámbitos políticos, económicos y sociales tanto a nivel regional como nacional. Entre sus funciones principales se encuentran:\r\n- Participar, planificar e instrumentar lineamientos, políticas, planes, proyectos y estrategias en materia de atención integral a la mujer, familia e igualdad de genero, dirigido al empoderamiento de las mujeres en materia jurídica, social, cultural, política, económica y recreativa, especialmente de las mujeres indígenas, campesinas, afrodescientes, pescadoras, obreras, con discapacidad, en situaciones de indigencia, desplazadas, las privadas de libertad, las amas de casa, la tercera edad, las niñas y adolescentes para garantizarles el pleno ejercicio de su libertad y el desarrolllo de sus capacidades y destrezas en una sociedad democrática, participativa, protagónica, igualitaria y socialista.\r\n- Atender y orientar a través de programas de rehabilitación a los hombres procesados en materia de violencia de genero, coordinadamente con la fiscalía del Ministerio Público, la unidad de atención a la victima y los tribunales penales en materia de violencia de genero.\r\n- Conocer sobre situaciones de discriminación contra las mujeres y tramitarlas a las autoridades competentes.\r\n'),
+(32, 9, 33, 'Este programa tiene entre sus funciones: planificar, coordinar y administrar con objetividad las políticas destinadas a la seguridad social del personal activo de la Gobernación del Estado. De acuerdo a las normativas laborales y otras leyes vigente para tal fin.\r\n'),
+(33, 10, 34, 'Controla de manera idónea los créditos presupuestarios asignados a las partidas de Compromisos Pendientes de Ejercicios anteriores, rectificaciones al presupuesto y otras transferencias a entes descentralizados necesarias para el mejor desenvolvimiento de la gestión pública.\r\n');
 
 -- --------------------------------------------------------
 
@@ -3977,72 +4029,72 @@ CREATE TABLE `entes` (
 --
 
 INSERT INTO `entes` (`id`, `sector`, `programa`, `proyecto`, `actividad`, `ente_nombre`, `tipo_ente`) VALUES
-(1, '01', '01', '00', '10', 'CONSEJO LEGISLATIVO', 'J'),
-(2, '01', '02', '00', '51', 'CONTRALORIA GENERAL DEL ESTADO', 'J'),
-(3, '01', '03', '00', '51', 'PROCURADORIA GENERAL', 'J'),
-(4, '01', '04', '00', '51', 'SECRETARIA DEL DESPACHO DEL GOBERNADOR YSECRETARIA DE LA GESTION PUBLICA', 'J'),
-(5, '01', '05', '00', '51', 'SECRETARIA GENERAL DE GOBIERNO', 'J'),
-(6, '01', '06', '00', '51', 'SECRETARIA EJECUTIVA DE GESTION HUMANO', 'J'),
-(7, '01', '07', '00', '51', 'SECRETARIA DE PLANIFICACION, PROYECTO Y PRESUPUESTO', 'J'),
-(8, '01', '08', '00', '51', 'SERVICIOS DE ADMINISTRACION', 'J'),
-(9, '01', '09', '00', '51', 'TESORERIA', 'J'),
-(10, '01', '10', '00', '51', 'SECRETARIA EJECUTIVA INDIGENA', 'J'),
-(11, '01', '11', '00', '51', 'AUDITORIA INTERNA', 'J'),
-(12, '02', '01', '00', '51', 'COORDINACION DE SERVICIOS POLICIALES', 'J'),
-(13, '02', '02', '00', '51', 'SECRETARIA DE POLITICA DE ASUNTOS FRONTERIZOS', 'J'),
-(14, '02', '03', '00', '51', 'PROTECCION CIVIL', 'J'),
-(15, '02', '04', '00', '51', 'PREVENCION Y CONTROL DE SINIESTRO (BOMBEROS)', 'J'),
-(16, '06', '01', '00', '51', 'SECREATARIA DE TURISMO', 'J'),
-(18, '08', '03', '00', '51', 'SEC. EJEC. PARA LA ATENCION DE  LA JUVENTUD Y ESTUDIANTE UNIVERSITARIO', 'J'),
-(19, '09', '01', '00', '51', 'SEC. EJEC.DEL SISTEMA DE INFOR. COM. ( SICOAMA)', 'J'),
-(21, '09', '03', '00', '51', 'SECRETARIA DE CULTURA', 'J'),
-(22, '11', '01', '00', '51', 'SECRETARIA DE INFRAESTRUCTURA', 'J'),
-(23, '12', '01', '00', '51', 'ADMINISTRATIVOS MALARIOLOGIA-GOBERNACION', 'J'),
-(24, '13', '01', '00', '51', 'SECRETARIA Y COORDINACION', 'J'),
-(25, '13', '04', '00', '51', 'PROTECCION SOCIAL', 'J'),
-(26, '14', '01', '00', '51', 'CONTRATACION COLECTIVA DE EMPLEADOS', 'J'),
-(28, '01', '13', '00', '51', 'SECREATARIA EJECUTIVA DE BIENES Y SERVICIOS', 'J'),
-(29, '15', '01', '00', '51', 'AMAVISION', 'D'),
-(30, '15', '01', '00', '51', 'FUNDACION ORQUESTA SINFONICA JUVENIL E INFANTIL DE AMAZONAS', 'D'),
-(31, '15', '01', '00', '51', 'FUNDACION CULTURAL ESCUELA ACADEMICA DE ORQUESTAS Y BANDAS DE AMAZONAS', 'D'),
-(32, '15', '01', '00', '51', 'ESCUELA INTEGRAL DE DANZAS', 'D'),
-(33, '15', '01', '00', '51', 'FUNDAPRODICAM', 'D'),
-(34, '15', '01', '00', '51', 'SUPERINTENDENCIA DE ADMINISTRACION TRIBUTARIA DEL ESTADO AMAZONAS (SATEAMAZ)', 'D'),
-(35, '15', '01', '00', '51', 'MUSEO ETNOLOGICO', 'D'),
-(36, '15', '01', '00', '51', 'INSTITUTO REGIONAL DE DEPORTE AMAZONAS (I.R.D.A)', 'D'),
-(37, '15', '01', '00', '51', 'U.N.A', 'D'),
-(38, '15', '01', '00', '51', 'BIBLIOTECA PUBLICA SIMON RODRIGUEZ', 'D'),
-(39, '15', '01', '00', '51', 'AMAZONAS F.C', 'D'),
-(40, '15', '01', '00', '51', 'UNIVERSIDAD EXPERIMENTAL POLITECNICA DE LA FUERZA ARMADA NACIONAL NUCLEO AMAZONAS', 'D'),
-(41, '15', '01', '00', '51', 'UPEL', 'D'),
-(42, '15', '01', '00', '51', 'FUNDACIONIHIRU', 'D'),
-(43, '15', '01', '00', '51', 'FUNDA SALUD', 'D'),
-(44, '15', '01', '00', '51', 'HOSPITAL DR. JOSE GREGORIO HERNANDEZ', 'D'),
-(45, '15', '01', '00', '51', 'A.C. HERMANAS DE JESUS RESUCITADO CASA HOGAR \"CARMEN MARTINEZ\"', 'D'),
-(46, '15', '01', '00', '51', 'SIUMA', 'D'),
-(47, '15', '01', '00', '51', 'FUNDACION PARA LA ATENCION INTEGRAL A LA MUJER DE AMAZONAS', 'D'),
-(48, '15', '01', '00', '51', 'FUNDACION DE SISTEMA DE ATENCION INTEGRAL PARA LAS PERSONAS CON DISCAPACIDAD (SAIPDIS)', 'D'),
-(49, '15', '01', '00', '51', 'FUNDACION CENTRO DE HISTORIA DE LA IDENTIDAD AMAZONENCE', 'D'),
-(50, '15', '01', '00', '51', 'INVIOBRAS AMAZONAS', 'D'),
-(51, '15', '01', '00', '51', 'FUNDACION PROMO-AMAZONAS', 'D'),
-(52, '15', '01', '00', '51', 'INSCATA', 'D'),
-(53, '15', '01', '00', '51', 'LUBRICANTES AMAZONAS C.A', 'D'),
-(54, '15', '01', '00', '51', 'ALIMENTOS AMAZONAS C.A', 'D'),
-(55, '15', '01', '00', '51', 'HIDROAMAZONAS C.A', 'D'),
-(56, '15', '01', '00', '51', 'ASFALTO Y PAVIMENTOS AMAZONAS C.A', 'D'),
-(57, '15', '01', '00', '51', 'COMBUSTIBLES AMAZONAS C.A', 'D'),
-(58, '15', '01', '00', '51', 'SANEAMIENTO AMBIENTAL C.A', 'D'),
-(59, '15', '01', '00', '51', 'BLOQUES Y AGREGADOS AMAZONAS C.A', 'D'),
-(60, '15', '01', '00', '51', 'TEXTILES AMAZONAS C.A', 'D'),
-(61, '15', '01', '00', '51', 'ACUARIOS AMAZONAS', 'D'),
-(62, '15', '01', '00', '51', 'EXPORTADORA AMAZONAS C.A', 'D'),
-(63, '15', '01', '00', '51', 'GAS COMUNAL AMAZONAS C.A', 'D'),
-(64, '15', '01', '00', '51', 'FARMA-AMAZONAS C.A', 'D'),
-(65, '15', '01', '00', '51', 'EMPRESA FLUVIALES AMAZONAS C.A', 'D'),
-(66, '15', '01', '00', '51', 'EMPRESA PUBLICA DE AMAZONAS C.A', 'D'),
-(67, '15', '01', '00', '51', 'EMPRESA DE SERVICIOS Y MANTENIMIENTO GENERALES AMAZONAS C.A (SERVIAMAZONAS)', 'D'),
-(68, '15', '01', '00', '51', 'EMPRESA DE TURISMO', 'D'),
-(70, '15', '01', '00', '51', 'VICARIATO APOSTOLICO', 'D');
+(1, '1', '1', '0', '51', 'CONSEJO LEGISLATIVO', 'J'),
+(2, '1', '2', '0', '51', 'CONTRALORIA GENERAL DEL ESTADO', 'J'),
+(3, '1', '3', '0', '51', 'PROCURADORIA GENERAL', 'J'),
+(4, '1', '4', '0', '51', 'SECRETARIA DEL DESPACHO DEL GOBERNADOR YSECRETARIA DE LA GESTION PUBLICA', 'J'),
+(5, '1', '5', '0', '51', 'SECRETARIA GENERAL DE GOBIERNO', 'J'),
+(6, '1', '6', '0', '51', 'SECRETARIA EJECUTIVA DE GESTION HUMANO', 'J'),
+(7, '1', '7', '0', '51', 'SECRETARIA DE PLANIFICACION, PROYECTO Y PRESUPUESTO', 'J'),
+(8, '1', '8', '0', '51', 'SERVICIOS DE ADMINISTRACION', 'J'),
+(9, '1', '9', '0', '51', 'TESORERIA', 'J'),
+(10, '1', '10', '0', '51', 'SECRETARIA EJECUTIVA INDIGENA', 'J'),
+(11, '1', '11', '0', '51', 'AUDITORIA INTERNA', 'J'),
+(12, '2', '14', '0', '51', 'COORDINACION DE SERVICIOS POLICIALES', 'J'),
+(13, '2', '15', '0', '51', 'SECRETARIA DE POLITICA DE ASUNTOS FRONTERIZOS', 'J'),
+(14, '2', '16', '0', '51', 'PROTECCION CIVIL', 'J'),
+(15, '2', '17', '0', '51', 'PREVENCION Y CONTROL DE SINIESTRO (BOMBEROS)', 'J'),
+(16, '3', '18', '0', '51', 'SECREATARIA DE TURISMO', 'J'),
+(18, '4', '21', '0', '51', 'SEC. EJEC. PARA LA ATENCION DE  LA JUVENTUD Y ESTUDIANTE UNIVERSITARIO', 'J'),
+(19, '5', '22', '0', '51', 'SEC. EJEC.DEL SISTEMA DE INFOR. COM. ( SICOAMA)', 'J'),
+(21, '5', '24', '0', '51', 'SECRETARIA DE CULTURA', 'J'),
+(22, '6', '26', '0', '51', 'SECRETARIA DE INFRAESTRUCTURA', 'J'),
+(23, '7', '28', '0', '51', 'ADMINISTRATIVOS MALARIOLOGIA-GOBERNACION', 'J'),
+(24, '8', '29', '0', '51', 'SECRETARIA Y COORDINACION', 'J'),
+(25, '8', '32', '0', '51', 'PROTECCION SOCIAL', 'J'),
+(26, '9', '33', '0', '51', 'CONTRATACION COLECTIVA DE EMPLEADOS', 'J'),
+(28, '1', '13', '0', '51', 'SECREATARIA EJECUTIVA DE BIENES Y SERVICIOS', 'J'),
+(29, '10', '34', '0', '51', 'AMAVISION', 'D'),
+(30, '10', '34', '0', '51', 'FUNDACION ORQUESTA SINFONICA JUVENIL E INFANTIL DE AMAZONAS', 'D'),
+(31, '10', '34', '0', '51', 'FUNDACION CULTURAL ESCUELA ACADEMICA DE ORQUESTAS Y BANDAS DE AMAZONAS', 'D'),
+(32, '10', '34', '0', '51', 'ESCUELA INTEGRAL DE DANZAS', 'D'),
+(33, '10', '34', '0', '51', 'FUNDAPRODICAM', 'D'),
+(34, '10', '34', '0', '51', 'SUPERINTENDENCIA DE ADMINISTRACION TRIBUTARIA DEL ESTADO AMAZONAS (SATEAMAZ)', 'D'),
+(35, '10', '34', '0', '51', 'MUSEO ETNOLOGICO', 'D'),
+(36, '10', '34', '0', '51', 'INSTITUTO REGIONAL DE DEPORTE AMAZONAS (I.R.D.A)', 'D'),
+(37, '10', '34', '0', '51', 'U.N.A', 'D'),
+(38, '10', '34', '0', '51', 'BIBLIOTECA PUBLICA SIMON RODRIGUEZ', 'D'),
+(39, '10', '34', '0', '51', 'AMAZONAS F.C', 'D'),
+(40, '10', '34', '0', '51', 'UNIVERSIDAD EXPERIMENTAL POLITECNICA DE LA FUERZA ARMADA NACIONAL NUCLEO AMAZONAS', 'D'),
+(41, '10', '34', '0', '51', 'UPEL', 'D'),
+(42, '10', '34', '0', '51', 'FUNDACIONIHIRU', 'D'),
+(43, '10', '34', '0', '51', 'FUNDA SALUD', 'D'),
+(44, '10', '34', '0', '51', 'HOSPITAL DR. JOSE GREGORIO HERNANDEZ', 'D'),
+(45, '10', '34', '0', '51', 'A.C. HERMANAS DE JESUS RESUCITADO CASA HOGAR \"CARMEN MARTINEZ\"', 'D'),
+(46, '10', '34', '0', '51', 'SIUMA', 'D'),
+(47, '10', '34', '0', '51', 'FUNDACION PARA LA ATENCION INTEGRAL A LA MUJER DE AMAZONAS', 'D'),
+(48, '10', '34', '0', '51', 'FUNDACION DE SISTEMA DE ATENCION INTEGRAL PARA LAS PERSONAS CON DISCAPACIDAD (SAIPDIS)', 'D'),
+(49, '10', '34', '0', '51', 'FUNDACION CENTRO DE HISTORIA DE LA IDENTIDAD AMAZONENCE', 'D'),
+(50, '10', '34', '0', '51', 'INVIOBRAS AMAZONAS', 'D'),
+(51, '10', '34', '0', '51', 'FUNDACION PROMO-AMAZONAS', 'D'),
+(52, '10', '34', '0', '51', 'INSCATA', 'D'),
+(53, '10', '34', '0', '51', 'LUBRICANTES AMAZONAS C.A', 'D'),
+(54, '10', '34', '0', '51', 'ALIMENTOS AMAZONAS C.A', 'D'),
+(55, '10', '34', '0', '51', 'HIDROAMAZONAS C.A', 'D'),
+(56, '10', '34', '0', '51', 'ASFALTO Y PAVIMENTOS AMAZONAS C.A', 'D'),
+(57, '10', '34', '0', '51', 'COMBUSTIBLES AMAZONAS C.A', 'D'),
+(58, '10', '34', '0', '51', 'SANEAMIENTO AMBIENTAL C.A', 'D'),
+(59, '10', '34', '0', '51', 'BLOQUES Y AGREGADOS AMAZONAS C.A', 'D'),
+(60, '10', '34', '0', '51', 'TEXTILES AMAZONAS C.A', 'D'),
+(61, '10', '34', '0', '51', 'ACUARIOS AMAZONAS', 'D'),
+(62, '10', '34', '0', '51', 'EXPORTADORA AMAZONAS C.A', 'D'),
+(63, '10', '34', '0', '51', 'GAS COMUNAL AMAZONAS C.A', 'D'),
+(64, '10', '34', '0', '51', 'FARMA-AMAZONAS C.A', 'D'),
+(65, '10', '34', '0', '51', 'EMPRESA FLUVIALES AMAZONAS C.A', 'D'),
+(66, '10', '34', '0', '51', 'EMPRESA PUBLICA DE AMAZONAS C.A', 'D'),
+(67, '10', '34', '0', '51', 'EMPRESA DE SERVICIOS Y MANTENIMIENTO GENERALES AMAZONAS C.A (SERVIAMAZONAS)', 'D'),
+(68, '10', '34', '0', '51', 'EMPRESA DE TURISMO', 'D'),
+(70, '10', '34', '0', '51', 'VICARIATO APOSTOLICO', 'D');
 
 -- --------------------------------------------------------
 
@@ -4066,65 +4118,65 @@ CREATE TABLE `entes_dependencias` (
 --
 
 INSERT INTO `entes_dependencias` (`id`, `ue`, `sector`, `programa`, `proyecto`, `actividad`, `ente_nombre`, `tipo_ente`) VALUES
-(5, '4', '01', '04', '00', '52', 'SECRETARIA EJECUTIVA', 'J'),
-(6, '4', '01', '04', '00', '53', 'CONTRATACIONES PUBLICAS', 'J'),
-(7, '4', '01', '04', '00', '54', 'ASESORIA JURIDICA', 'J'),
-(9, '5', '01', '05', '00', '52', 'SERVICIOS DE INFORMACION Y CUSTODIA DE DOCUMENTOS', 'J'),
-(10, '5', '01', '05', '00', '53', 'ASESORAMIENTO JURIDICO', 'J'),
-(11, '5', '01', '05', '00', '54', 'ASUNTOS POLITICOS', 'J'),
-(12, '5', '01', '05', '00', '55', 'OFICINA DEL FONDO DE COMPENSACION INTERRITORIAL', 'J'),
-(14, '6', '01', '06', '00', '52', 'RECLUTAMIENTO Y SELECCION Y EVALUACION DE PERSONAL', 'J'),
-(15, '6', '01', '06', '00', '53', 'REGISTRO Y CONTROL', 'J'),
-(16, '6', '01', '06', '00', '54', 'PREVISION SOCIAL', 'J'),
-(17, '6', '01', '06', '00', '55', 'RELACIONES LABORALES', 'J'),
-(18, '6', '01', '06', '00', '56', 'AUDITORIA, CONTROL Y FISCALIZACION LABORAL', 'J'),
-(19, '6', '01', '06', '00', '57', 'SEGURO SOCIAL', 'J'),
-(20, '6', '01', '06', '00', '58', 'ELABORACION PROCESAMIENTO Y GENERACION DE NOMINAS', 'J'),
-(22, '7', '01', '07', '00', '52', 'FORMULACION Y EVALUACION PRESUPUESTARIA', 'J'),
-(23, '7', '01', '07', '00', '53', 'CONTROL Y EJECUCION PRESUPUESTARIA', 'J'),
-(24, '7', '01', '07', '00', '54', 'PLANIFICACION Y EVALUACION DE PROYECTOS', 'J'),
-(25, '7', '01', '07', '00', '55', 'INFORMATICA', 'J'),
-(27, '8', '01', '08', '00', '52', 'SERVICIOS CONTABLES', 'J'),
-(28, '8', '01', '08', '00', '53', 'SERVICIOS DE COMPRAS Y SUMINISTROS', 'J'),
-(29, '8', '01', '08', '00', '54', 'OFICINA DE BINES Y SERVICIOS', 'J'),
-(31, '9', '01', '09', '00', '52', 'SERVICIOS CONTABLES DEL TESORO', 'J'),
-(32, '9', '01', '09', '00', '53', 'UNIDAD DE ORDENAMIENTO DE PAGO', 'J'),
-(33, '9', '01', '09', '00', '54', 'SERVICIO DE APOYO FISCAL', 'J'),
-(36, '11', '02', '11', '00', '52', 'OFICINA DE CONTROL POSTERIOR', 'J'),
-(37, '11', '03', '11', '00', '53', 'OFICINA DE  DETERMINACION DE RESPONSABILIDAD', 'J'),
-(39, '28', '01', '13', '00', '52', 'OFICINA DE REGISTRO Y CONTROL DE BIENES MUEBLES E INMUEBLES', 'J'),
-(40, '28', '01', '13', '00', '53', 'OFICINA DE CONTABILIDAD', 'J'),
-(41, '28', '01', '13', '00', '54', 'OFICINA DE INVENTARIOS', 'J'),
-(42, '28', '01', '13', '00', '55', 'SEGURIDAD Y VIGILANCIA', 'J'),
-(44, '12', '03', '01', '00', '52', 'CIRMIL', 'J'),
-(49, '16', '06', '01', '00', '52', 'OPERADORES TURISTICO Y EMPRENDEDORES', 'J'),
-(50, '16', '06', '01', '00', '53', 'PROMOCION Y COMUNICACIÓN', 'J'),
-(51, '16', '06', '01', '00', '54', 'INSPECTOR DE TURISMO', 'J'),
-(52, '17', '08', '02', '00', '52', 'JUBILADOS Y PENSIONADOS DE EDUCACION', 'J'),
-(54, '18', '08', '03', '00', '52', 'ASUNTOS DE LA JUVENTUD', 'J'),
-(55, '18', '08', '03', '00', '53', 'JEFATURA DE LOS ESTUDIANTES', 'J'),
-(56, '18', '08', '03', '00', '54', 'ORIENTACION Y PREVENCION A LOS ESTUDIANTES', 'J'),
-(58, '19', '09', '01', '00', '52', 'JEFATURA DE PRENSA', 'J'),
-(59, '19', '09', '01', '00', '53', 'JEFATURA COMUNICACIÓN DIGITAL', 'J'),
-(60, '19', '09', '01', '00', '54', 'JEFATURA DE DISEÑO Y PUBLICIDAD', 'J'),
-(61, '19', '09', '01', '00', '55', 'OFICINA DE REDES SOCIALES', 'J'),
-(64, '21', '09', '03', '00', '57', 'CONTRUCCION Y MEJORAMIENTO DE OBRAS EN BINES PARA EL DESARROLLO CULTURAL (FCI)', 'J'),
-(66, '22', '11', '01', '00', '52', 'DIVISION DE SUPERVICION Y EVALUACION DE PROYECTO', 'J'),
-(67, '22', '11', '01', '00', '53', 'DIVISION DE INFORMATICA, REGISTRO Y CONTROL', 'J'),
-(68, '22', '11', '01', '00', '54', 'ASESORIA LEGAL', 'J'),
-(69, '22', '11', '02', '02', '57', 'CONTRUCCION Y MEJORAMIENTO DE OBRAS  (FCI)', 'J'),
-(71, '23', '12', '01', '00', '52', 'CONTRATACION COLECTIVA OBREROS DE LA SALUD', 'J'),
-(72, '23', '12', '01', '02', '57', 'CONTRUCCION Y MEJORAS DE OBRAS EN BIENES PARA EL FORTALECIMIENTO DE LA SALUD (FCI)', 'J'),
-(74, '24', '13', '01', '00', '52', 'JEFATRA DE SOLUCION DE CONFLICTOS', 'J'),
-(75, '24', '13', '01', '00', '53', 'GESTION COMUNAL', 'J'),
-(76, '24', '13', '01', '00', '54', 'FORMACION Y ASESORIA LEGAL', 'J'),
-(78, '25', '13', '04', '00', '52', 'PROGRAMAS SOCIALES', 'J'),
-(79, '25', '13', '04', '00', '53', 'ATENCION AL SERVIDOR PUBLICO', 'J'),
-(80, '25', '13', '04', '00', '54', 'GESTION INSTITUCIONAL', 'J'),
-(82, '26', '14', '01', '00', '52', 'CONTRATACION COLECTIVA DE OBREROS DE INFRAESTRUCTURA', 'J'),
-(83, '26', '14', '01', '00', '53', 'PENSIONADOS Y JUBILADOS', 'J'),
-(84, '26', '14', '01', '00', '54', 'CONTRATADOS GOBERNACION', 'J'),
-(85, '26', '14', '01', '00', '55', 'PERSONAL DIRECTIVO DE ALTO NIVEL Y JEFATURAS', 'J');
+(5, '4', '1', '4', '0', '52', 'SECRETARIA EJECUTIVA', 'J'),
+(6, '4', '1', '4', '0', '53', 'CONTRATACIONES PUBLICAS', 'J'),
+(7, '4', '1', '4', '0', '54', 'ASESORIA JURIDICA', 'J'),
+(9, '5', '1', '5', '0', '52', 'SERVICIOS DE INFORMACION Y CUSTODIA DE DOCUMENTOS', 'J'),
+(10, '5', '1', '5', '0', '53', 'ASESORAMIENTO JURIDICO', 'J'),
+(11, '5', '1', '5', '0', '54', 'ASUNTOS POLITICOS', 'J'),
+(12, '5', '1', '5', '0', '55', 'OFICINA DEL FONDO DE COMPENSACION INTERRITORIAL', 'J'),
+(14, '6', '1', '6', '0', '52', 'RECLUTAMIENTO Y SELECCION Y EVALUACION DE PERSONAL', 'J'),
+(15, '6', '1', '6', '0', '53', 'REGISTRO Y CONTROL', 'J'),
+(16, '6', '1', '6', '0', '54', 'PREVISION SOCIAL', 'J'),
+(17, '6', '1', '6', '0', '55', 'RELACIONES LABORALES', 'J'),
+(18, '6', '1', '6', '0', '56', 'AUDITORIA, CONTROL Y FISCALIZACION LABORAL', 'J'),
+(19, '6', '1', '6', '0', '57', 'SEGURO SOCIAL', 'J'),
+(20, '6', '1', '6', '0', '58', 'ELABORACION PROCESAMIENTO Y GENERACION DE NOMINAS', 'J'),
+(22, '7', '1', '7', '0', '52', 'FORMULACION Y EVALUACION PRESUPUESTARIA', 'J'),
+(23, '7', '1', '7', '0', '53', 'CONTROL Y EJECUCION PRESUPUESTARIA', 'J'),
+(24, '7', '1', '7', '0', '54', 'PLANIFICACION Y EVALUACION DE PROYECTOS', 'J'),
+(25, '7', '1', '7', '0', '55', 'INFORMATICA', 'J'),
+(27, '8', '1', '8', '0', '52', 'SERVICIOS CONTABLES', 'J'),
+(28, '8', '1', '8', '0', '53', 'SERVICIOS DE COMPRAS Y SUMINISTROS', 'J'),
+(29, '8', '1', '8', '0', '54', 'OFICINA DE BINES Y SERVICIOS', 'J'),
+(31, '9', '1', '9', '0', '52', 'SERVICIOS CONTABLES DEL TESORO', 'J'),
+(32, '9', '1', '9', '0', '53', 'UNIDAD DE ORDENAMIENTO DE PAGO', 'J'),
+(33, '9', '1', '9', '0', '54', 'SERVICIO DE APOYO FISCAL', 'J'),
+(36, '11', '1', '11', '0', '52', 'OFICINA DE CONTROL POSTERIOR', 'J'),
+(37, '11', '1', '11', '0', '53', 'OFICINA DE  DETERMINACION DE RESPONSABILIDAD', 'J'),
+(39, '28', '1', '13', '0', '52', 'OFICINA DE REGISTRO Y CONTROL DE BIENES MUEBLES E INMUEBLES', 'J'),
+(40, '28', '1', '13', '0', '53', 'OFICINA DE CONTABILIDAD', 'J'),
+(41, '28', '1', '13', '0', '54', 'OFICINA DE INVENTARIOS', 'J'),
+(42, '28', '1', '13', '0', '55', 'SEGURIDAD Y VIGILANCIA', 'J'),
+(44, '12', '2', '14', '0', '52', 'CIRMIL', 'J'),
+(49, '16', '3', '18', '0', '52', 'OPERADORES TURISTICO Y EMPRENDEDORES', 'J'),
+(50, '16', '3', '18', '0', '53', 'PROMOCION Y COMUNICACIÓN', 'J'),
+(51, '16', '3', '18', '0', '54', 'INSPECTOR DE TURISMO', 'J'),
+(52, '17', '4', '20', '0', '52', 'JUBILADOS Y PENSIONADOS DE EDUCACION', 'J'),
+(54, '18', '4', '21', '0', '52', 'ASUNTOS DE LA JUVENTUD', 'J'),
+(55, '18', '4', '21', '0', '53', 'JEFATURA DE LOS ESTUDIANTES', 'J'),
+(56, '18', '4', '21', '0', '54', 'ORIENTACION Y PREVENCION A LOS ESTUDIANTES', 'J'),
+(58, '19', '5', '22', '0', '52', 'JEFATURA DE PRENSA', 'J'),
+(59, '19', '5', '22', '0', '53', 'JEFATURA COMUNICACIÓN DIGITAL', 'J'),
+(60, '19', '5', '22', '0', '54', 'JEFATURA DE DISEÑO Y PUBLICIDAD', 'J'),
+(61, '19', '5', '22', '0', '55', 'OFICINA DE REDES SOCIALES', 'J'),
+(64, '21', '5', '24', '0', '57', 'CONTRUCCION Y MEJORAMIENTO DE OBRAS EN BINES PARA EL DESARROLLO CULTURAL (FCI)', 'J'),
+(66, '22', '6', '26', '0', '52', 'DIVISION DE SUPERVICION Y EVALUACION DE PROYECTO', 'J'),
+(67, '22', '6', '26', '0', '53', 'DIVISION DE INFORMATICA, REGISTRO Y CONTROL', 'J'),
+(68, '22', '6', '26', '0', '54', 'ASESORIA LEGAL', 'J'),
+(69, '22', '6', '27', '1', '57', 'CONTRUCCION Y MEJORAMIENTO DE OBRAS  (FCI)', 'J'),
+(71, '23', '7', '28', '0', '52', 'CONTRATACION COLECTIVA OBREROS DE LA SALUD', 'J'),
+(72, '23', '7', '28', '1', '57', 'CONTRUCCION Y MEJORAS DE OBRAS EN BIENES PARA EL FORTALECIMIENTO DE LA SALUD (FCI)', 'J'),
+(74, '24', '8', '29', '0', '52', 'JEFATRA DE SOLUCION DE CONFLICTOS', 'J'),
+(75, '24', '8', '29', '0', '53', 'GESTION COMUNAL', 'J'),
+(76, '24', '8', '29', '0', '54', 'FORMACION Y ASESORIA LEGAL', 'J'),
+(78, '25', '8', '32', '0', '52', 'PROGRAMAS SOCIALES', 'J'),
+(79, '25', '8', '32', '0', '53', 'ATENCION AL SERVIDOR PUBLICO', 'J'),
+(80, '25', '8', '32', '0', '54', 'GESTION INSTITUCIONAL', 'J'),
+(82, '26', '9', '33', '0', '52', 'CONTRATACION COLECTIVA DE OBREROS DE INFRAESTRUCTURA', 'J'),
+(83, '26', '9', '33', '0', '53', 'PENSIONADOS Y JUBILADOS', 'J'),
+(84, '26', '9', '33', '0', '54', 'CONTRATADOS GOBERNACION', 'J'),
+(85, '26', '9', '33', '0', '55', 'PERSONAL DIRECTIVO DE ALTO NIVEL Y JEFATURAS', 'J');
 
 -- --------------------------------------------------------
 
@@ -4889,6 +4941,76 @@ INSERT INTO `historico_reintegros` (`id`, `id_empleado`, `sueldo_base`, `asignac
 (652, '24', '324.69', '{\"CONTRIBUCION POR DISCAPACIDAD\":\"5\",\"PRIMA POR HIJO EMPLEADOS\":\"5\",\"PRIMA POR TRANSPORTE\":\"50\",\"PRIMA POR ANTIGUEDAD EMPLEADOS\":\"10\",\"PRIMA POR ESCALAFON\":\"5\"}', '[]', '[]', '399.69', '004 Empleados  Empleados Regional', '05-2024', '2024-08-19 14:20:24'),
 (653, '24', '324.69', '{\"CONTRIBUCION POR DISCAPACIDAD\":\"5\",\"PRIMA POR HIJO EMPLEADOS\":\"5\",\"PRIMA POR TRANSPORTE\":\"60\",\"PRIMA POR ANTIGUEDAD EMPLEADOS\":\"10\",\"PRIMA POR ESCALAFON\":\"5\"}', '[]', '[]', '409.69', '004 Empleados  Empleados Regional', '06-2024', '2024-08-19 14:20:24'),
 (654, '24', '324.69', '{\"CONTRIBUCION POR DISCAPACIDAD\":\"5\",\"PRIMA POR HIJO EMPLEADOS\":\"5\",\"PRIMA POR TRANSPORTE\":\"60\",\"PRIMA POR ANTIGUEDAD EMPLEADOS\":\"10\",\"PRIMA POR ESCALAFON\":\"5\"}', '[]', '[]', '409.69', '004 Empleados  Empleados Regional', '07-2024', '2024-08-19 14:20:24');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `informacion_consejo`
+--
+
+CREATE TABLE `informacion_consejo` (
+  `id` int(255) NOT NULL,
+  `nombre_apellido_presidente` longtext NOT NULL,
+  `nombre_apellido_secretario` longtext NOT NULL,
+  `domicilio` longtext NOT NULL,
+  `telefono` longtext NOT NULL,
+  `pagina_web` longtext NOT NULL,
+  `email` longtext NOT NULL,
+  `consejo_local` longtext NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `informacion_consejo`
+--
+
+INSERT INTO `informacion_consejo` (`id`, `nombre_apellido_presidente`, `nombre_apellido_secretario`, `domicilio`, `telefono`, `pagina_web`, `email`, `consejo_local`) VALUES
+(1, 'Lesgiladora: Delkis Bastidas', 'Abg. Lester Mirabal', 'Avenida Aeropuerto Sector \"Simón Bolivar\".', '', '', '', '');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `informacion_contraloria`
+--
+
+CREATE TABLE `informacion_contraloria` (
+  `id` int(255) NOT NULL,
+  `nombre_apellido_contralor` longtext NOT NULL,
+  `domicilio` longtext NOT NULL,
+  `telefono` longtext NOT NULL,
+  `pagina_web` longtext NOT NULL,
+  `email` longtext NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `informacion_contraloria`
+--
+
+INSERT INTO `informacion_contraloria` (`id`, `nombre_apellido_contralor`, `domicilio`, `telefono`, `pagina_web`, `email`) VALUES
+(1, 'Abog. Guillermo Forti', 'AVENIDA AEROPUERTO SECTOR LOS LIRIOS \"SEDE DE LA  CONTRALORIA\"', '0248-5212759', 'www.contraloriaestadoamazonas.gob.ve', 'contraloria_amazonas@yahoo.es');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `informacion_gobernacion`
+--
+
+CREATE TABLE `informacion_gobernacion` (
+  `id` int(255) NOT NULL,
+  `identificacion` longtext NOT NULL,
+  `domicilio` longtext NOT NULL,
+  `telefono` longtext NOT NULL,
+  `pagina_web` longtext NOT NULL,
+  `fax` longtext NOT NULL,
+  `codigo_postal` longtext NOT NULL,
+  `nombre_apellido_gobernador` longtext NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `informacion_gobernacion`
+--
+
+INSERT INTO `informacion_gobernacion` (`id`, `identificacion`, `domicilio`, `telefono`, `pagina_web`, `fax`, `codigo_postal`, `nombre_apellido_gobernador`) VALUES
+(1, 'GOBERNACIÓN DE AMAZONAS', 'AVENIDA RIO NEGRO. FRENTE A LA PLAZA BOLIVAR.', '0248-5212759', 'www.contraloriaestadoamazonas.gob.ve', '', '7101', 'Ing.MIGUEL RODRIGUEZ');
 
 -- --------------------------------------------------------
 
@@ -6514,6 +6636,31 @@ CREATE TABLE `password_resets` (
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `personal_directivo`
+--
+
+CREATE TABLE `personal_directivo` (
+  `id` int(255) NOT NULL,
+  `direccion` longtext NOT NULL,
+  `nombre_apellido` longtext NOT NULL,
+  `email` longtext NOT NULL,
+  `telefono` longtext NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `personal_directivo`
+--
+
+INSERT INTO `personal_directivo` (`id`, `direccion`, `nombre_apellido`, `email`, `telefono`) VALUES
+(1, 'Planificación y/o Presupuesto', 'Lic. JUAN GOMEZ', '', ''),
+(2, 'Administración y/o Finanzas', 'Prof. Yenny Romero', '', ''),
+(3, 'Recursos Humanos y/o Personal', 'Lic. Maria Rojas', '', ''),
+(4, 'Sindico (a) Procurador (a)', 'Abog. Luis Machado', '', ''),
+(5, 'Cronista del Municipio:', '', '', '');
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `peticiones`
 --
 
@@ -6624,40 +6771,40 @@ CREATE TABLE `pl_programas` (
 --
 
 INSERT INTO `pl_programas` (`id`, `sector`, `programa`, `denominacion`) VALUES
-(1, '01', '01', 'LEGISLACION Y SANCION DE INSTRUMENTOS JURIDICOS'),
-(2, '01', '02', 'CONTROL DE LA HACIENDA ESTADAL'),
-(3, '01', '03', 'REPRESENTACION JURIDICA DEL ESTADO'),
-(4, '01', '04', 'DIRECCION, COORDINACION PARA LAS POLITICAS DEL ESTADO'),
-(5, '01', '05', 'SECRETARIA DE COORDINACION'),
-(6, '01', '06', 'SERVICIOS DE ADMINISTRACION DE RECURSOS HUMANOS'),
-(7, '01', '07', 'PLANIFICACION Y ADMINISTRACION PRESUPUESTARIA'),
-(8, '01', '08', 'SERVICIOS DE ADMINISTRACION'),
-(9, '01', '09', 'SERVICIOS DE ADMINISTRACION DEL TESORO'),
-(10, '01', '10', 'SECRETARIA EJECUTIVA INDIGENA'),
-(11, '01', '11', 'UNIDAD ESTADAL DE AUDITORIA INTERNA'),
-(12, '01', '12', 'AREA DE CONTROL Y SEGUIMIENTO'),
-(13, '01', '13', 'SECREATARIA EJECUTIVA DE BIENES Y SERVICIOS'),
-(14, '02', '01', 'SERVICIOS SEGURIDAD, DEFENSA Y ORDEN PUBLICO'),
-(15, '02', '02', 'ASUNTOS CIVILES Y POLITICOS'),
-(16, '02', '03', 'ASUNTOS DE PREVENCION Y CALAMIDADES PUBLICAS'),
-(17, '02', '04', 'PREVENCION Y CONTROL DE SINIESTROS'),
-(18, '06', '01', 'PROMOCION Y DESARROLLO TURISTICO EN EL ESTADO'),
-(19, '08', '01', 'SERVICIOS ADMINISTRATIVOS Y APOYO A LA EDUCACION'),
-(20, '08', '02', 'EDUCACION BASICA, PREESCOLAR Y DIVERSIFICADA'),
-(21, '08', '03', 'MODERNIZACION Y FORTALECIMIENTO DE LA EDUCACION BASICA'),
-(22, '09', '01', 'SERVICIOS DE INFORMACION Y COMUNICACION AMAZONAS'),
-(23, '09', '02', 'SERVICIOS DE APOYO BIBLIOTECARIO'),
-(24, '09', '03', 'PROMOCION Y DESARROLLO CULTURAL'),
-(25, '09', '04', 'TECNOLOGIA DE INFORMACION'),
-(26, '11', '01', 'DIRECCION, COORDINACION Y CONTROL DE OBRAS EN EL ESTADO'),
-(27, '11', '02', 'CONSTRUCCION, MANTENIMIENTO Y CONSERVACION DE OBRAS DEL ESTADO'),
-(28, '12', '01', 'FOMENTO Y RESTITUCION DE LA SALUD'),
-(29, '13', '01', 'SERVICIOS DE DESARROLLO SOCIAL'),
-(30, '13', '02', 'DESARROLLO SOCIAL Y PODER POPULAR'),
-(31, '13', '03', 'SECRETARIA EJEC. INTEGRAL DE LAS PERSONAS CON DISCAPACIDAD'),
-(32, '13', '04', 'SECRETRARIA EJECUTIVA ATENCION INTEGRAL A LA MUJER, LA FAMILIA E IGUALDAD DE GENERO'),
-(33, '14', '01', 'CREDITOS ADMINISTRATIVOS POR EL PROGRAMA RR.HH'),
-(34, '15', '01', 'CREDITOS ADMINISTRADOS POR LA DIRECCION EJECUTIVA ');
+(1, '1', '01', 'LEGISLACION Y SANCION DE INSTRUMENTOS JURIDICOS'),
+(2, '1', '02', 'CONTROL DE LA HACIENDA ESTADAL'),
+(3, '1', '03', 'REPRESENTACION JURIDICA DEL ESTADO'),
+(4, '1', '04', 'DIRECCION, COORDINACION PARA LAS POLITICAS DEL ESTADO'),
+(5, '1', '05', 'SECRETARIA DE COORDINACION'),
+(6, '1', '06', 'SERVICIOS DE ADMINISTRACION DE RECURSOS HUMANOS'),
+(7, '1', '07', 'PLANIFICACION Y ADMINISTRACION PRESUPUESTARIA'),
+(8, '1', '08', 'SERVICIOS DE ADMINISTRACION'),
+(9, '1', '09', 'SERVICIOS DE ADMINISTRACION DEL TESORO'),
+(10, '1', '10', 'SECRETARIA EJECUTIVA INDIGENA'),
+(11, '1', '11', 'UNIDAD ESTADAL DE AUDITORIA INTERNA'),
+(12, '1', '12', 'AREA DE CONTROL Y SEGUIMIENTO'),
+(13, '1', '13', 'SECREATARIA EJECUTIVA DE BIENES Y SERVICIOS'),
+(14, '2', '01', 'SERVICIOS SEGURIDAD, DEFENSA Y ORDEN PUBLICO'),
+(15, '2', '02', 'ASUNTOS CIVILES Y POLITICOS'),
+(16, '2', '03', 'ASUNTOS DE PREVENCION Y CALAMIDADES PUBLICAS'),
+(17, '2', '04', 'PREVENCION Y CONTROL DE SINIESTROS'),
+(18, '3', '01', 'PROMOCION Y DESARROLLO TURISTICO EN EL ESTADO'),
+(19, '4', '01', 'SERVICIOS ADMINISTRATIVOS Y APOYO A LA EDUCACION'),
+(20, '4', '02', 'EDUCACION BASICA, PREESCOLAR Y DIVERSIFICADA'),
+(21, '4', '03', 'MODERNIZACION Y FORTALECIMIENTO DE LA EDUCACION BASICA'),
+(22, '5', '01', 'SERVICIOS DE INFORMACION Y COMUNICACION AMAZONAS'),
+(23, '5', '02', 'SERVICIOS DE APOYO BIBLIOTECARIO'),
+(24, '5', '03', 'PROMOCION Y DESARROLLO CULTURAL'),
+(25, '5', '04', 'TECNOLOGIA DE INFORMACION'),
+(26, '6', '01', 'DIRECCION, COORDINACION Y CONTROL DE OBRAS EN EL ESTADO'),
+(27, '6', '02', 'CONSTRUCCION, MANTENIMIENTO Y CONSERVACION DE OBRAS DEL ESTADO'),
+(28, '7', '01', 'FOMENTO Y RESTITUCION DE LA SALUD'),
+(29, '8', '01', 'SERVICIOS DE DESARROLLO SOCIAL'),
+(30, '8', '02', 'DESARROLLO SOCIAL Y PODER POPULAR'),
+(31, '8', '03', 'SECRETARIA EJEC. INTEGRAL DE LAS PERSONAS CON DISCAPACIDAD'),
+(32, '8', '04', 'SECRETRARIA EJECUTIVA ATENCION INTEGRAL A LA MUJER, LA FAMILIA E IGUALDAD DE GENERO'),
+(33, '9', '01', 'CREDITOS ADMINISTRATIVOS POR EL PROGRAMA RR.HH'),
+(34, '10', '01', 'CREDITOS ADMINISTRADOS POR LA DIRECCION EJECUTIVA ');
 
 -- --------------------------------------------------------
 
@@ -16023,6 +16170,12 @@ ALTER TABLE `dependencias`
   ADD PRIMARY KEY (`id_dependencia`);
 
 --
+-- Indices de la tabla `descripcion_programas`
+--
+ALTER TABLE `descripcion_programas`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indices de la tabla `distribucion_entes`
 --
 ALTER TABLE `distribucion_entes`
@@ -16101,6 +16254,24 @@ ALTER TABLE `historico_reintegros`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indices de la tabla `informacion_consejo`
+--
+ALTER TABLE `informacion_consejo`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `informacion_contraloria`
+--
+ALTER TABLE `informacion_contraloria`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `informacion_gobernacion`
+--
+ALTER TABLE `informacion_gobernacion`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indices de la tabla `informacion_pdf`
 --
 ALTER TABLE `informacion_pdf`
@@ -16158,6 +16329,12 @@ ALTER TABLE `partidas_presupuestarias`
 -- Indices de la tabla `password_resets`
 --
 ALTER TABLE `password_resets`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `personal_directivo`
+--
+ALTER TABLE `personal_directivo`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -16382,6 +16559,12 @@ ALTER TABLE `dependencias`
   MODIFY `id_dependencia` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=87;
 
 --
+-- AUTO_INCREMENT de la tabla `descripcion_programas`
+--
+ALTER TABLE `descripcion_programas`
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+
+--
 -- AUTO_INCREMENT de la tabla `distribucion_entes`
 --
 ALTER TABLE `distribucion_entes`
@@ -16421,13 +16604,13 @@ ALTER TABLE `empleados_por_grupo`
 -- AUTO_INCREMENT de la tabla `entes`
 --
 ALTER TABLE `entes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=74;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=76;
 
 --
 -- AUTO_INCREMENT de la tabla `entes_dependencias`
 --
 ALTER TABLE `entes_dependencias`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=129;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=130;
 
 --
 -- AUTO_INCREMENT de la tabla `error_log`
@@ -16458,6 +16641,24 @@ ALTER TABLE `historico_conceptos`
 --
 ALTER TABLE `historico_reintegros`
   MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=655;
+
+--
+-- AUTO_INCREMENT de la tabla `informacion_consejo`
+--
+ALTER TABLE `informacion_consejo`
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT de la tabla `informacion_contraloria`
+--
+ALTER TABLE `informacion_contraloria`
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT de la tabla `informacion_gobernacion`
+--
+ALTER TABLE `informacion_gobernacion`
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `informacion_pdf`
@@ -16518,6 +16719,12 @@ ALTER TABLE `partidas_presupuestarias`
 --
 ALTER TABLE `password_resets`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `personal_directivo`
+--
+ALTER TABLE `personal_directivo`
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `peticiones`
