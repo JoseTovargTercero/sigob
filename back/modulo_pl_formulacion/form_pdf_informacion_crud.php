@@ -234,10 +234,16 @@ function consultarInformacionPorId($tabla, $id) {
     $condicion = "id = " . intval($id);
 
     try {
-        $resultado = $db->select($tabla, "*", $condicion);
-        return json_encode($resultado);
+        $resultado = $db->select("*", $tabla, $condicion);
+        
+        if (!empty($resultado)) {
+            // Devolver el resultado directamente, ya que cada campo es dinámico
+            return $resultado;
+        } else {
+            return json_encode(['error' => 'Registro no encontrado.']);
+        }
     } catch (Exception $e) {
-        throw new Exception("Error: " . $e->getMessage());
+        return json_encode(['error' => "Error: " . $e->getMessage()]);
     }
 }
 
@@ -245,10 +251,16 @@ function consultarInformacionTodos($tabla) {
     global $db;
 
     try {
-        $resultado = $db->select($tabla, "*");
-        return json_encode($resultado);
+        $resultado = $db->select("*", $tabla);
+        
+        if (!empty($resultado)) {
+            // Devolver todos los resultados directamente, sin especificar campos
+            return $resultado;
+        } else {
+            return json_encode(['error' => 'No se encontraron registros.']);
+        }
     } catch (Exception $e) {
-        throw new Exception("Error: " . $e->getMessage());
+        return json_encode(['error' => "Error: " . $e->getMessage()]);
     }
 }
 
@@ -355,5 +367,5 @@ switch ($data["tabla"]) {
         $response = ["error" => "Tabla inválida."];
 }
 
-echo json_encode($response);
+echo $response;
 ?>
