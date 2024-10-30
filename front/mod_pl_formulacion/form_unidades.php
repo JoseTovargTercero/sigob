@@ -100,71 +100,7 @@ $stmt->close();
         <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
 
           <div class="row ">
-            <div class="col-lg-12 hide" id="vista_datalles">
-              <div class="card">
-                <div class="card-body">
-                  <div class="d-flex flex-column">
-                    <div class="card-title mb-auto d-flex justify-content-between">
-                      <h5 class="mb-0">Nueva unidad</h5>
 
-                      <button class="btn avtar avtar-xs btn-light-dark" onclick="$('#vista_datalles').addClass('hide')"><i class="bx bx-x f-20"></i></button>
-
-                    </div>
-
-
-                    <div class="mt-2 card-body">
-
-                      <div class="row">
-                        <div class="col-lg-4 br-g">
-                          <div class="mb-3">
-                            <small class="text-muted">Denominación:</small>
-                            <h5 class="fw-bold" id="info_nombre_p"></h5>
-                          </div>
-
-
-
-                          <div class="mb-3">
-                            <small class="text-muted">Sector:</small>
-                            <p class="text-dark" id="info_descripcion_p"></p>
-                          </div>
-
-                          <div class="mb-4 d-flex justify-content-between">
-                            <small class="text-muted">Asignación presupuestaria:</small>
-                            <h5 class="fw-bold" id="info_monto_p"></h5>
-                          </div>
-
-
-
-                          <div class="text-center" id="info_estatus_p">
-                          </div>
-
-
-                        </div>
-                        <div class="col-lg-8">
-
-                          <table class="table">
-                            <thead>
-                              <tr>
-                                <th>#</th>
-                                <th>Sector</th>
-                                <th>Partida</th>
-                                <th>Nombre</th>
-                                <th>Asignación</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
-
-
-                    </div>
-
-                  </div>
-                </div>
-              </div>
-            </div>
             <div class="col-lg-12" id="vista_registro">
               <div class="card">
                 <div class="card-body">
@@ -203,9 +139,10 @@ $stmt->close();
                               $result = $stmt->get_result();
                               if ($result->num_rows > 0) {
                                 while ($row = $result->fetch_assoc()) {
+                                  $id = $row['id'];
                                   $sector = $row['sector'];
                                   $denominacion = $row['denominacion'];
-                                  echo ' <option value="' . $sector . '">' . $sector . ' - ' . $denominacion . '</option>;';
+                                  echo ' <option value="' . $id . '">' . $sector . ' - ' . $denominacion . '</option>;';
                                 }
                               }
                               $stmt->close();
@@ -223,7 +160,7 @@ $stmt->close();
                             <label for="proyecto" class="form-label">Proyecto</label>
                             <select class="form-control" id="proyecto">
                               <option value="">Seleccione</option>
-                              <option value="00">00</option>
+                              <option value="0">00</option>
 
                               <?php
                               $stmt = mysqli_prepare($conexion, "SELECT * FROM pl_proyectos");
@@ -231,9 +168,10 @@ $stmt->close();
                               $result = $stmt->get_result();
                               if ($result->num_rows > 0) {
                                 while ($row = $result->fetch_assoc()) {
+                                  $id = $row['id'];
                                   $proyecto_id = $row['proyecto_id'];
                                   $denominacion = $row['denominacion'];
-                                  echo ' <option value="' . $proyecto_id . '">' . $proyecto_id . ' - ' . $denominacion . '</option>;';
+                                  echo ' <option value="' . $id . '">' . $proyecto_id . ' - ' . $denominacion . '</option>;';
                                 }
                               }
                               $stmt->close();
@@ -392,9 +330,10 @@ $stmt->close();
                     $result = $stmt->get_result();
                     if ($result->num_rows > 0) {
                       while ($row = $result->fetch_assoc()) {
+                        $id = $row['id'];
                         $sector = $row['sector'];
                         $denominacion = $row['denominacion'];
-                        echo ' <option value="' . $sector . '">' . $sector . ' - ' . $denominacion . '</option>;';
+                        echo ' <option value="' . $id . '">' . $sector . ' - ' . $denominacion . '</option>;';
                       }
                     }
                     $stmt->close();
@@ -412,7 +351,7 @@ $stmt->close();
                   <label for="proyecto-" class="form-label">Proyecto</label>
                   <select class="form-control" id="proyecto-2">
                     <option value="">Seleccione</option>
-                    <option value="00">00</option>
+                    <option value="0">00</option>
 
                     <?php
                     $stmt = mysqli_prepare($conexion, "SELECT * FROM pl_proyectos");
@@ -420,9 +359,10 @@ $stmt->close();
                     $result = $stmt->get_result();
                     if ($result->num_rows > 0) {
                       while ($row = $result->fetch_assoc()) {
+                        $id = $row['id'];
                         $proyecto_id = $row['proyecto_id'];
                         $denominacion = $row['denominacion'];
-                        echo ' <option value="' . $proyecto_id . '">' . $proyecto_id . ' - ' . $denominacion . '</option>;';
+                        echo ' <option value="' . $id . '">' . $proyecto_id . ' - ' . $denominacion . '</option>;';
                       }
                     }
                     $stmt->close();
@@ -493,7 +433,8 @@ $stmt->close();
             $programa = $row['programa'];
             $sector = $row['sector'];
             $denominacion = $row['denominacion'];
-            echo 'programas.push(["' . $sector . '", "' . $programa . '", "' . $denominacion . '"]);' . PHP_EOL;
+            $p_id = $row['id'];
+            echo 'programas.push(["' . $sector . '", "' . $programa . '", "' . $denominacion . '", "' . $p_id . '"]);' . PHP_EOL;
           }
         }
         $stmt->close();
@@ -909,11 +850,13 @@ $stmt->close();
                     item.ente_nombre
                   ]
 
+                  let proyecto_n = item.proyecto_n ?? '00'
+
                   data_tabla.push([
                     count++,
                     item.tipo_ente,
                     item.ente_nombre,
-                    item.sector + "." + item.programa + "." + item.proyecto,
+                    item.sector_n + "." + item.programa_n + "." + proyecto_n,
                     item.tipo_ente == 'J' ?
                     `<button title="Agregar dependencia interna" class="btn btn-plus btn-sm bg-brand-color-1 text-white " data-add-id="${item.id}"><i class="bx bx-plus"></i></button>` : '-',
                     `<button class="btn btn-edit btn-sm bg-brand-color-2 text-white " data-edit-id="${item.id}"><i class="bx bx-edit-alt"></i></button>`,
@@ -952,11 +895,7 @@ $stmt->close();
               if (response.success) {
                 let count = 1;
                 DataTable_2.clear()
-
-
                 response.success.forEach(function(item) {
-
-
 
                   if (!sub_entes[item.ue]) {
                     sub_entes[item.ue] = [];
@@ -974,11 +913,14 @@ $stmt->close();
                     item.nombre_ente_p
                   ]);
 
+                  let proyecto_n = item.proyecto_n ?? '00'
+
+
                   data_tabla.push([
                     count++,
                     item.tipo_ente,
                     item.ente_nombre + "<br> <small class='mt-0 text-muted'>" + item.nombre_ente_p + "</small>",
-                    item.sector + "." + item.programa + "." + item.proyecto,
+                    item.sector_n + "." + item.programa_n + "." + proyecto_n,
                     item.actividad,
                     `<button class="btn btn-danger btn-sm btn-delete" data-delete-id="${item.id}"><i class="bx bx-trash"></i></button>`
                   ]);
@@ -1015,7 +957,7 @@ $stmt->close();
           document.getElementById('programa').innerHTML = '<option value="">Seleccione</option>'
           programas.forEach(element => {
             if (element[0] == sector_s) {
-              document.getElementById('programa').innerHTML += `<option value="${element[1]}">${element[1]} - ${element[2]}</option>`
+              document.getElementById('programa').innerHTML += `<option value="${element[3]}">${element[1]} - ${element[2]}</option>`
             }
           });
 
@@ -1031,7 +973,7 @@ $stmt->close();
           document.getElementById('programa-2').innerHTML = '<option value="">Seleccione</option>'
           programas.forEach(element => {
             if (element[0] == sector_s) {
-              document.getElementById('programa-2').innerHTML += `<option value="${element[1]}">${element[1]} - ${element[2]}</option>`
+              document.getElementById('programa-2').innerHTML += `<option value="${element[3]}">${element[1]} - ${element[2]}</option>`
             }
           });
         })
