@@ -228,6 +228,30 @@ function eliminarInformacionConsejo($id) {
     }
 }
 
+function consultarInformacionPorId($tabla, $id) {
+    global $db;
+    
+    $condicion = "id = " . intval($id);
+
+    try {
+        $resultado = $db->select($tabla, "*", $condicion);
+        return json_encode($resultado);
+    } catch (Exception $e) {
+        throw new Exception("Error: " . $e->getMessage());
+    }
+}
+
+function consultarInformacionTodos($tabla) {
+    global $db;
+
+    try {
+        $resultado = $db->select($tabla, "*");
+        return json_encode($resultado);
+    } catch (Exception $e) {
+        throw new Exception("Error: " . $e->getMessage());
+    }
+}
+
 // PROCESAR SOLICITUDES
 $data = json_decode(file_get_contents("php://input"), true);
 if (!isset($data["accion"])) {
@@ -250,6 +274,12 @@ switch ($data["tabla"]) {
             case "borrar":
                 $response = isset($data['id']) ? eliminarInformacionContraloria($data['id']) : ["error" => "ID faltante."];
                 break;
+            case "consultar_por_id":
+                $response = isset($data['id']) ? consultarInformacionPorId('informacion_contraloria', $data['id']) : ["error" => "ID faltante."];
+                break;
+            case "consultar_todos":
+                $response = consultarInformacionTodos('informacion_contraloria');
+                break;
             default:
                 $response = ["error" => "Acción inválida."];
         }
@@ -265,6 +295,12 @@ switch ($data["tabla"]) {
                 break;
             case "borrar":
                 $response = isset($data['id']) ? eliminarInformacionGobernacion($data['id']) : ["error" => "ID faltante."];
+                break;
+            case "consultar_por_id":
+                $response = isset($data['id']) ? consultarInformacionPorId('informacion_gobernacion', $data['id']) : ["error" => "ID faltante."];
+                break;
+            case "consultar_todos":
+                $response = consultarInformacionTodos('informacion_gobernacion');
                 break;
             default:
                 $response = ["error" => "Acción inválida."];
@@ -282,6 +318,12 @@ switch ($data["tabla"]) {
             case "borrar":
                 $response = isset($data['id']) ? eliminarPersonalDirectivo($data['id']) : ["error" => "ID faltante."];
                 break;
+            case "consultar_por_id":
+                $response = isset($data['id']) ? consultarInformacionPorId('personal_directivo', $data['id']) : ["error" => "ID faltante."];
+                break;
+            case "consultar_todos":
+                $response = consultarInformacionTodos('personal_directivo');
+                break;
             default:
                 $response = ["error" => "Acción inválida."];
         }
@@ -297,6 +339,12 @@ switch ($data["tabla"]) {
                 break;
             case "borrar":
                 $response = isset($data['id']) ? eliminarInformacionConsejo($data['id']) : ["error" => "ID faltante."];
+                break;
+            case "consultar_por_id":
+                $response = isset($data['id']) ? consultarInformacionPorId('informacion_consejo', $data['id']) : ["error" => "ID faltante."];
+                break;
+            case "consultar_todos":
+                $response = consultarInformacionTodos('informacion_consejo');
                 break;
             default:
                 $response = ["error" => "Acción inválida."];

@@ -55,8 +55,31 @@ function eliminarDescripcionPrograma($id) {
         throw new Exception("Error: " . $e->getMessage());
     }
 }
+function consultarInformacionPorId($tabla, $id) {
+    global $db;
+    
+    $condicion = "id = " . intval($id);
 
+    try {
+        $resultado = $db->select($tabla, "*", $condicion);
+        return json_encode($resultado);
+    } catch (Exception $e) {
+        throw new Exception("Error: " . $e->getMessage());
+    }
+}
 
+function consultarInformacionTodos($tabla) {
+    global $db;
+
+    try {
+        $resultado = $db->select($tabla, "*");
+        return json_encode($resultado);
+    } catch (Exception $e) {
+        throw new Exception("Error: " . $e->getMessage());
+    }
+}
+
+// Procesar solicitud según tabla y acción especificada
 switch ($data["tabla"]) {
     case 'descripcion_programas':
         switch ($accion) {
@@ -69,12 +92,20 @@ switch ($data["tabla"]) {
             case "borrar":
                 $response = isset($data['id']) ? eliminarDescripcionPrograma($data['id']) : ["error" => "ID faltante."];
                 break;
+            case "consultar_por_id":
+                $response = isset($data['id']) ? consultarInformacionPorId('descripcion_programas', $data['id']) : ["error" => "ID faltante."];
+                break;
+            case "consultar_todos":
+                $response = consultarInformacionTodos('descripcion_programas');
+                break;
             default:
                 $response = ["error" => "Acción inválida."];
         }
         break;
 
-    // Agrega las demás tablas según sea necesario
     default:
         $response = ["error" => "Tabla inválida."];
 }
+
+echo json_encode($response);
+?>
