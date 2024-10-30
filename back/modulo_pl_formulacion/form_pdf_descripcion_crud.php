@@ -61,7 +61,7 @@ function consultarInformacionPorId($tabla, $id) {
     $condicion = "id = " . intval($id);
 
     try {
-        $resultado = $db->select($tabla, "*", $condicion);
+        $resultado = $db->select("*", $tabla, $condicion);
         return json_encode($resultado);
     } catch (Exception $e) {
         throw new Exception("Error: " . $e->getMessage());
@@ -72,7 +72,7 @@ function consultarInformacionTodos($tabla) {
     global $db;
 
     try {
-        $resultado = $db->select($tabla, "*");
+        $resultado = $db->select("*", $tabla);
         return json_encode($resultado);
     } catch (Exception $e) {
         throw new Exception("Error: " . $e->getMessage());
