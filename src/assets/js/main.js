@@ -474,6 +474,59 @@ const lenguaje_datat = {
   },
 };
 
+// Separador de miles
 function agregarSeparadorMiles(numero) {
   return numero.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
+
+// informacion del sistema
+const sistema = {
+  tablas: "../../back/sistema_global/_DBH-select.php",
+};
+
+/**
+ * Realiza una solicitud AJAX para obtener datos de una tabla específica de la base de datos.
+ * @param {string} tabla - El nombre de la tabla de la cual se desean obtener los datos.
+ * @param {Object|null} config - Configuración adicional para la solicitud (opcional).
+ * @returns {Promise} - Una promesa que se resuelve con la respuesta del servidor si la solicitud es exitosa,
+ *                      o se rechaza con el error en caso de fallo.
+ */
+function dbh_select(tabla, config = null) {
+  return new Promise((resolve, reject) => {
+    $.ajax({
+      url: sistema.tablas,
+      type: "POST",
+      contentType: "application/json",
+      dataType: "json",
+      data: JSON.stringify({
+        table: tabla,
+        config: config,
+      }),
+      success: resolve,
+      error: function (xhr, status, error) {
+        console.log(xhr.responseText);
+        reject(error);
+      },
+    });
+  });
+}
+
+/**
+ * Procesa la respuesta de `dbh_select` para construir opciones HTML o almacenar datos en un array.
+ * @param {Object} response - La respuesta recibida del servidor.
+ * @param {Array} optionsArray - Array donde se almacenarán los elementos procesados.
+ * @param {string|null} selector - Selector jQuery para un elemento del DOM donde se añadirán las opciones (opcional).
+ *                                 Si es null, solo se almacenarán en el array sin añadir al DOM.
+ * @param {function} formatOption - Función que define el formato de cada opción procesada.
+ *                                  Recibe un elemento de la respuesta y devuelve una cadena de texto o array
+ *                                  según el formato necesario.
+ */
+function handleResponse(response, optionsArray, selector, formatOption) {
+  if (response.success) {
+    response.success.forEach((item) => {
+      const option = formatOption(item);
+      optionsArray.push(option);
+      if (selector) $(selector).append(option);
+    });
+  }
 }

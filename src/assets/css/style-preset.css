@@ -3604,7 +3604,7 @@ hr.hr-text::before {
 #section-partidas {
   background-color: #fbfbfb;
   border-radius: 5px;
-  padding: 14px;
+  padding: 14px 2px;
 }
 
 .br-g {
@@ -3670,4 +3670,9 @@ hr.hr-text::before {
 
 select {
   background-image: none !important;
+}
+
+.icon-info {
+  font-size: 19px;
+  cursor: help;
 }

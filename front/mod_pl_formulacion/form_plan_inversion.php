@@ -289,7 +289,7 @@ $stmt->close();
                             <th>#</th>
                             <th>Sector</th>
                             <th>Partida</th>
-                            <th>Nombre</th>
+                            <th>Descripción</th>
                             <th>Asignación</th>
                           </tr>
                         </thead>
@@ -337,7 +337,7 @@ $stmt->close();
 
                   <div class="mb-4">
                     <label for="monto" class="form-label">Asignación presupuestaria total (Monto)</label>
-                    <input type="text" class="form-control" id="monto" placeholder="Indique el monto asignado para la ejecución del proyecto">
+                    <input type="number" class="form-control" id="monto" placeholder="Indique el monto asignado para la ejecución del proyecto">
                   </div>
 
 
@@ -349,23 +349,43 @@ $stmt->close();
 
                   <div class="mb-3" id="section-partidas">
                     <div class="row mb-2 d-asignacion">
-                      <div class="col-lg-4">
+                      <div class="col-lg-2">
 
                         <label class="form-label">Sector</label>
-                        <select type="text" class="form-control c_sector chosen-select">
+                        <select class="form-control c_sector chosen-select">
                           <option value="">Seleccione</option>
                         </select>
                       </div>
-                      <div class="col-lg-4">
-                        <label class="form-label">Partida presupuestaria</label>
-                        <select type="text" class="form-control c_partida chosen-select">
+                      <div class="col-lg-2">
+                        <label class="form-label">Programa</label>
+                        <select class="form-control c_program  chosen-select">
                           <option value="">Seleccione</option>
                         </select>
                       </div>
-                      <div class="col-lg-4 row">
+                      <div class="col-lg-2">
+                        <label class="form-label">Proyecto</label>
+                        <select class="form-control c_proyecto chosen-select">
+                          <option value="">Seleccione</option>
+                        </select>
+                      </div>
+
+                      <div class="col-lg-2">
+                        <label class="form-label">Actividad</label>
+                        <input class="form-control c_actividad" type="text" placeholder="Actividad">
+
+                      </div>
+
+
+                      <div class="col-lg-2">
+                        <label class="form-label">Partida</label>
+                        <select class="form-control c_partida chosen-select">
+                          <option value="">Seleccione</option>
+                        </select>
+                      </div>
+                      <div class="col-lg-2 row">
                         <div class="col-lg-9">
                           <label class="form-label">Monto</label>
-                          <input type="text" class="form-control c_monto" placeholder="Indique el monto">
+                          <input type="text" class="form-control c_monto" placeholder="Monto">
                         </div>
                         <div class="col-lg-3 g-self-e">
                         </div>
@@ -468,23 +488,10 @@ $stmt->close();
       <script>
         let sectores_options = []
         let partidas_options = []
-        <?php
-        $stmt = mysqli_prepare($conexion, "SELECT * FROM `pl_sectores_presupuestarios` ORDER BY sector");
-        $stmt->execute();
-        $result = $stmt->get_result();
-        if ($result->num_rows > 0) {
-          while ($row = $result->fetch_assoc()) {
-            echo 'sectores_options.push(\'<option value="' . $row['id'] . '">' . $row['sector'] . '.' . $row['programa'] . '.' . $row['proyecto'] . ' - ' . $row['nombre'] . '</option>\');';
-          }
-        }
-        $stmt->close();
+        let programas_options = []
+        let proyectos_options = []
 
 
-        ?>
-
-        sectores_options.forEach(element => {
-          $('.c_sector').append(element)
-        });
 
 
 
@@ -493,6 +500,65 @@ $stmt->close();
                             'id' => $id_plan_inversion,
                             'monto' => $plan_inversion_monto
                           ]); ?>;
+
+
+
+
+        // Llamadas a `dbh_select` para cada tabla
+        dbh_select('pl_sectores').then(response => {
+          handleResponse(
+            response,
+            sectores_options,
+            '.c_sector',
+            item => `<option value="${item.id}">${item.sector}.${item.denominacion}</option>`
+          );
+        }).catch(error => console.error("Error al obtener pl_sectores:", error));
+
+        dbh_select('pl_programas').then(response => {
+          handleResponse(
+            response,
+            programas_options,
+            null,
+            item => [item.sector, item.programa, item.denominacion, item.id]
+          );
+        }).catch(error => console.error("Error al obtener pl_programas:", error));
+
+
+
+
+        dbh_select('pl_proyectos').then(response => {
+          if (response.success) {
+            response.success.forEach(item => {
+              proyectos_options.push([item.proyecto_id, item.denominacion, item.id]);
+              $('.c_proyecto').append(`<option value="${item.id}">${item.proyecto_id} - ${item.denominacion}</option>`)
+
+            });
+            $('.chosen-select').chosen().trigger("chosen:updated");
+          }
+        }).catch(error => {
+          console.error("Error al obtener la información:", error);
+        });
+
+
+        dbh_select('partidas_presupuestarias').then(response => {
+          if (response.success) {
+            response.success.forEach(item => {
+              partidas_options.push([item.partida, item.descripcion, item.id]);
+              $('.c_partida.chosen-select').append(`<option value="${item.id}">${item.partida} - ${item.descripcion}</option>`)
+            });
+            $('.c_partida.chosen-select').chosen().trigger("chosen:updated");
+          }
+        }).catch(error => {
+          console.error("Error al obtener la información:", error);
+        });
+
+
+
+
+
+
+
+
 
         let monto_total_proyectos = 0;
         let proyectos = []
@@ -515,13 +581,11 @@ $stmt->close();
         // agregar los campos para mas partidas
         function addInputsPartidas() {
 
-
-
           var section = document.getElementById('section-partidas');
 
           var row = document.createElement('div');
 
-          let inputSector = `<div class="col-lg-4">
+          let inputSector = `<div class="col-lg-2">
                           <label class="form-label">Sector</label>
                           <select type="text" class="form-control c_sector chosen-select">
                             <option value="">Seleccione</option>`
@@ -534,7 +598,38 @@ $stmt->close();
                         </div>`
 
 
-          let inputPartida = `<div class="col-lg-4">
+
+
+          let input_pr_pr_ac = `
+                                <div class="col-lg-2">
+                        <label class="form-label">Programa</label>
+                        <select class="form-control c_program  chosen-select">
+                          <option value="">Seleccione</option>
+                        </select>
+                      </div>
+                      <div class="col-lg-2">
+                        <label class="form-label">Proyecto</label>
+                        <select class="form-control c_proyecto chosen-select">  <option value="">Seleccione</option> `
+
+
+          proyectos_options.forEach(element => {
+            input_pr_pr_ac += `<option value="${element[2]}">${element[0]} - ${element[1]}</option>`
+          });
+
+
+
+
+
+          input_pr_pr_ac += `</select>
+                      </div>
+
+                      <div class="col-lg-2">
+                        <label class="form-label">Actividad</label>
+                        <input class="form-control c_actividad" type="text">
+                      </div>
+          `
+
+          let inputPartida = `<div class="col-lg-2">
                         <label class="form-label">Partida presupuestaria</label>
                          <select type="text" class="form-control c_partida chosen-select">
                           <option value="">Seleccione</option>`
@@ -555,12 +650,13 @@ $stmt->close();
 
           row.innerHTML = `<div class="row mb-2 fila d-asignacion">
                         ${inputSector}
+                        ${input_pr_pr_ac}
                         ${inputPartida}
                       
-                      <div class="col-lg-4 row">
+                      <div class="col-lg-2 row">
                         <div class="col-lg-9">
                           <label  class="form-label">Monto</label>
-                          <input type="text" class="form-control c_monto" placeholder="Indique el monto">
+                          <input type="text" class="form-control c_monto" placeholder="Monto">
                         </div>
                         <div class="col-lg-3 g-self-e">
                           <button class="btn btn-light-danger btn-delete-row"><i class="bx bx-x f-20"></i></button>
@@ -576,6 +672,10 @@ $stmt->close();
             console.debug("changed: %o", arguments);
           });
 
+
+          initializeChosenEventListeners();
+          $('.chosen-select').chosen().trigger("chosen:updated");
+
         }
 
         document.getElementById('btn-add-row-inputs').addEventListener('click', addInputsPartidas)
@@ -587,6 +687,58 @@ $stmt->close();
             row.remove();
           }
         });
+
+
+        function initializeChosenEventListeners() {
+          // Selecciona todos los elementos con la clase .c_sector y .chosen-select
+          document.querySelectorAll('.c_sector.chosen-select').forEach(element => {
+            // Detecta cambios usando el evento específico de Chosen
+            $(element).on('change', function(event) {
+
+              const sector_s = event.target.value;
+              const contenedorAsignacion = event.target.closest('.d-asignacion');
+
+              if (contenedorAsignacion) {
+                const selectPartida = contenedorAsignacion.querySelector('.c_program');
+                if (selectPartida) {
+                  get_programa(sector_s, selectPartida);
+                }
+              }
+            });
+          });
+        }
+
+        // Llama a la función para establecer los listeners al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+          initializeChosenEventListeners();
+          $('.chosen-select').chosen().trigger("chosen:updated");
+        });
+
+
+
+
+
+        function get_programa(sector_s, selectPartida) {
+          // Reinicia las opciones del select .c_partida
+          selectPartida.innerHTML = '<option value="">Seleccione</option>';
+
+          // Filtra y agrega las opciones según el sector
+          programas_options.forEach(element => {
+            if (element[0] == sector_s) {
+              selectPartida.innerHTML += `<option value="${element[3]}">${element[1]} - ${element[2]}</option>`;
+            }
+          });
+
+          // Si estás usando Chosen, actualiza el select manualmente
+          $(selectPartida).trigger("chosen:updated");
+
+          return true;
+        }
+
+
+
+
+
 
 
 
@@ -624,11 +776,6 @@ $stmt->close();
         getPartidas();
 
 
-
-        /*
-                status
-                partidas
-                */
         function getDetallesProyecto(proyecto_id) {
           let infoProyecto = proyectos[proyecto_id]
 
@@ -641,14 +788,13 @@ $stmt->close();
           DataTable_2.clear();
           let data = []
           let cont = 1;
-          console.log(infoProyecto)
           for (const key in infoProyecto[5]) {
 
             data.push(
               [cont++,
                 infoProyecto[5][key]['sector'] + '.' + infoProyecto[5][key]['programa'] + '.' + infoProyecto[5][key]['proyecto'],
                 infoProyecto[5][key]['partidad_n'],
-                infoProyecto[5][key]['nombre'],
+                `<i class="bx bxs-info-circle icon-info" title="${infoProyecto[5][key]['descripcion']}"></i>`,
                 infoProyecto[5][key]['monto'],
               ])
           }
@@ -657,9 +803,6 @@ $stmt->close();
           document.getElementById('vista_datalles').classList.remove('hide')
 
         }
-
-
-
 
 
         function ejecutarProyecto() {
@@ -776,146 +919,6 @@ $stmt->close();
         }
         document.getElementById('btn-cancelar-registro').addEventListener('click', cancelarRegistro)
 
-        // Registrrar nuevo proyecto
-        function guardarProyecto() {
-
-          // Obtener todos los campos de partida y monto
-          const c_sectores = document.querySelectorAll('.c_sector');
-          const partidas = document.querySelectorAll('.c_partida');
-          const montos = document.querySelectorAll('.c_monto');
-
-          // Crear un array para almacenar los valores
-          const datos_presupuestarios = [];
-          let consolidado = 0;
-
-          let errors = false;
-          let listaControlPartidas = []
-
-          // Recorrer cada campo de partida y monto
-          partidas.forEach((partida, index) => {
-            const monto = montos[index].value; // Obtener el valor del monto correspondiente
-            const sector = c_sectores[index].value; // Obtener el valor del monto correspondiente
-
-
-            // Verificar si el campo de partida está vacío
-            if (partida.value === '') {
-              errors = true;
-              partida.classList.add('border-danger'); // Agregar la clase 'errors' al campo de partida vacío
-              toast_s('error', 'Faltan datos');
-            }
-
-            // Verificar si el campo de monto está vacío
-            if (monto === '') {
-              errors = true;
-              montos[index].classList.add('border-danger'); // Agregar la clase 'errors' al campo de monto vacío
-              toast_s('error', 'Faltan datos');
-            }
-            if (sector === '') {
-              errors = true;
-              c_sectores[index].classList.add('border-danger'); // Agregar la clase 'errors' al campo de monto vacío
-              toast_s('error', 'Faltan datos');
-            }
-
-            consolidado += parseInt(monto)
-            // Agregar los valores válidos al array de datos
-            datos_presupuestarios.push({
-              partida: partida.value,
-              monto: monto,
-              sector: sector
-            });
-
-            if (listaControlPartidas[sector + '.' + partida.value]) {
-              toast_s('error', 'Hay una o mas partidas dentro del mismo sector que se repiten.');
-              errors = true;
-            } else {
-              listaControlPartidas[sector + '.' + partida.value] = true
-            }
-          });
-
-          // verificar si valores repetidos en listaControlPartidas
-
-
-          const nombre = $("#nombre").val();
-          const descripcion = $("#descripcion").val();
-          const monto_total = $("#monto").val().replace(/\./g, "");
-
-          // quitar puntos de monto
-          if (consolidado != monto_total) {
-            toast_s('error', 'El monto total no coincide con las asignaciones por partida.');
-            errors = true;
-          }
-
-          if (!validarCampo('nombre')) {
-            errors = true;
-          }
-          if (!validarCampo('descripcion')) {
-            errors = true;
-          }
-          if (!validarCampo('monto')) {
-            errors = true;
-          }
-          // Si hay errores, detener la ejecución
-          if (errors) {
-            return;
-          }
-
-          const proyecto = {
-            nombre: nombre.trim(),
-            descripcion: descripcion.trim(),
-            monto: monto_total.trim(),
-            partida: datos_presupuestarios,
-            id_plan: planData.id,
-            id: ''
-          }
-
-          // enviar los datos al back con el nuevo formato
-          if (accion == 'update_proyecto') {
-            nueva_dist = (parseInt(monto_total_proyectos) - parseInt(proyectos[edt][3])) + parseInt(monto_total);
-            proyecto.id = edt
-          } else {
-            nueva_dist = parseInt(monto_total_proyectos) + parseInt(monto_total);
-          }
-
-
-          if (nueva_dist > parseInt(planData.monto)) {
-            toast_s("error", "El monto es mayor al presupuesto disponible");
-            return
-          }
-
-          if (verificarMonto(monto_total)) {
-            $.ajax({
-              url: url_back,
-              type: "json",
-              contentType: 'application/json',
-              data: JSON.stringify({
-                proyecto: proyecto,
-                accion: accion
-              }),
-              success: function(response) {
-                if (response.success) {
-                  toast_s('success', 'Proyecto ' + (accion == 'update_proyecto' ? 'actualizado' : 'registrado') + ' con éxito')
-                  get_tabla()
-                  cancelarRegistro()
-
-                  $('.fila').remove()
-                  $(".c_partida").eq(0).val('').trigger("chosen:updated");
-                  $(".c_sector").eq(0).val('').trigger("chosen:updated");
-                } else {
-                  console.log(response)
-                  toast_s('error', 'Error al ' + (accion == 'update_proyecto' ? 'actualizar' : 'registrar') + ' proyecto')
-                }
-              },
-              error: function(xhr, status, error) {
-                console.log(xhr.responseText);
-
-              },
-            });
-          }
-        }
-
-        // addevenlister btn-registro click
-
-        document.getElementById('btn-registro').addEventListener('click', guardarProyecto);
 
 
 
@@ -1260,12 +1263,150 @@ $stmt->close();
 
 
 
-        // ejecutar una funcion cuando la pagina se cargue
+
+
+
+
+
+
+        /**
+         * Función para registrar un nuevo proyecto con sus partidas y montos, validando los datos y enviándolos al servidor.
+         * Realiza comprobaciones de campos vacíos y montos duplicados en partidas dentro del mismo sector. Si hay errores
+         * en los datos, muestra mensajes de error y detiene el proceso de registro.
+         */
+        document.getElementById('btn-registro').addEventListener('click', function() {
+
+          const fields = {
+            sector: document.querySelectorAll('.c_sector'),
+            program: document.querySelectorAll('.c_program'),
+            proyecto: document.querySelectorAll('.c_proyecto'),
+            actividad: document.querySelectorAll('.c_actividad'),
+            partida: document.querySelectorAll('.c_partida'),
+            monto: document.querySelectorAll('.c_monto')
+          };
+
+          const datos_presupuestarios = [];
+          let consolidado = 0,
+            errors = false,
+            controlPartidas = {};
+
+
+          $(".border-danger").removeClass("border-danger");
+          // Validar y almacenar datos de cada partida
+          fields.partida.forEach((partida, index) => {
+            const values = {
+              sector: fields.sector[index].value,
+              program: fields.program[index].value,
+              proyecto: fields.proyecto[index].value,
+              actividad: fields.actividad[index].value,
+              partida: partida.value,
+              monto: fields.monto[index].value
+            };
+
+            // Verificar campos vacíos y aplicar la clase `border-danger` para campos `input` o `chosen-container` en caso de selects
+            for (let key in values) {
+              if (!values[key]) {
+                errors = true;
+                if (fields[key][index].tagName === 'SELECT') {
+                  $(fields[key][index]).next('.chosen-container').addClass('border-danger');
+                } else {
+                  fields[key][index].classList.add('border-danger');
+                }
+                toast_s('error', 'Faltan datos');
+              }
+            }
+
+            // Control de duplicados y suma de montos
+            const key = `${values.sector}.${values.partida}.${values.actividad}.${values.proyecto}`;
+            if (controlPartidas[key]) {
+              errors = true;
+              toast_s('error', 'Hay una o más partidas duplicadas en el mismo sector.');
+            } else {
+              controlPartidas[key] = true;
+              datos_presupuestarios.push(values);
+              consolidado += parseInt(values.monto);
+            }
+          });
+
+          const nombre = $("#nombre").val().trim(),
+            descripcion = $("#descripcion").val().trim(),
+            monto_total = parseInt($("#monto").val().replace(/\./g, ""));
+
+          // Validar monto total
+          if (consolidado !== monto_total) {
+            errors = true;
+            toast_s('error', 'El monto total no coincide con las asignaciones por partida.');
+          }
+
+          // Validar campos principales
+          ['nombre', 'descripcion', 'monto'].forEach(id => {
+            if (!validarCampo(id)) errors = true;
+          });
+
+          if (errors) return; // Detener si hay errores
+
+          // Preparar datos del proyecto
+          const proyecto = {
+            nombre: nombre,
+            descripcion: descripcion,
+            monto: monto_total,
+            partida: datos_presupuestarios,
+            id_plan: planData.id,
+            id: ''
+          };
+
+
+
+          // Calcular nueva distribución del presupuesto
+          if (accion === 'update_proyecto') {
+            nueva_dist = (parseInt(monto_total_proyectos) - parseInt(proyectos[edt][3])) + monto_total;
+            proyecto.id = edt;
+          } else {
+            nueva_dist = parseInt(monto_total_proyectos) + monto_total;
+          }
+
+          if (nueva_dist > parseInt(planData.monto)) {
+            toast_s("error", "El monto es mayor al presupuesto disponible");
+            return;
+          }
+
+          // Enviar datos al servidor
+          if (verificarMonto(monto_total)) {
+            $.ajax({
+              url: url_back,
+              type: "json",
+              contentType: 'application/json',
+              data: JSON.stringify({
+                proyecto: proyecto,
+                accion: accion
+              }),
+              success: function(response) {
+                if (response.success) {
+                  toast_s('success', `Proyecto ${accion === 'update_proyecto' ? 'actualizado' : 'registrado'} con éxito`);
+                  get_tabla();
+                  cancelarRegistro();
+                  $('.fila').remove();
+                  $(".c_partida, .c_sector").eq(0).val('').trigger("chosen:updated");
+                } else {
+                  console.log(response);
+                  toast_s('error', `Error al ${accion === 'update_proyecto' ? 'actualizar' : 'registrar'} proyecto`);
+                }
+              },
+              error: function(xhr) {
+                console.log(xhr.responseText);
+              }
+            });
+          }
+        });
+
+
+
+
+        // Cargar chosen y ocultar area de registro
         $(document).ready(function() {
           $('.chosen-select').chosen({}).change(function(obj, result) {
             console.debug("changed: %o", arguments);
           });
-
           $('#vista_registro').addClass('hide')
         })
       </script>

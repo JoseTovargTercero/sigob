@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 30-10-2024 a las 16:26:36
+-- Tiempo de generación: 30-10-2024 a las 22:45:03
 -- Versión del servidor: 10.4.16-MariaDB
 -- Versión de PHP: 7.4.12
 
@@ -43,7 +43,10 @@ CREATE TABLE `asignacion_ente` (
 INSERT INTO `asignacion_ente` (`id`, `id_ente`, `monto_total`, `id_ejercicio`, `fecha`, `status`) VALUES
 (3, 36, '2000', 1, '2024-10-24', '0'),
 (4, 20, '2000', 1, '2024-10-24', '0'),
-(5, 23, '2500', 1, '2024-10-24', '0');
+(5, 23, '2500', 1, '2024-10-24', '0'),
+(6, 61, '5000', 1, '2024-10-30', '0'),
+(7, 1, '5000', 1, '2024-10-30', '0'),
+(8, 4, '1000', 1, '2024-10-30', '0');
 
 -- --------------------------------------------------------
 
@@ -7011,7 +7014,7 @@ CREATE TABLE `proyecto_inversion` (
 --
 
 INSERT INTO `proyecto_inversion` (`id`, `id_plan`, `proyecto`, `descripcion`, `monto_proyecto`, `status`, `comentario`) VALUES
-(11, 1, 'JOSE RICARDO ROMERO TOVAR', '234234', '120', 0, NULL);
+(14, 1, 'otroooooooo', 'otro proyecto mas', '120', 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -7024,18 +7027,19 @@ CREATE TABLE `proyecto_inversion_partidas` (
   `id_proyecto` int(11) NOT NULL,
   `partida` longtext DEFAULT NULL,
   `monto` varchar(255) DEFAULT NULL,
-  `sector_id` varchar(255) DEFAULT NULL
+  `sector_id` varchar(255) DEFAULT NULL,
+  `programa_id` int(10) NOT NULL,
+  `proyecto_id` int(10) NOT NULL,
+  `actividad_id` int(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `proyecto_inversion_partidas`
 --
 
-INSERT INTO `proyecto_inversion_partidas` (`id`, `id_proyecto`, `partida`, `monto`, `sector_id`) VALUES
-(32, 11, '15.01.00.401.01.01.0000', '100', '1'),
-(33, 11, '401.05.01.00.0000', '5', '1'),
-(34, 11, '15.01.00.401.01.01.0000', '11', '2'),
-(35, 11, '15.01.00.401.01.01.0000', '4', '1');
+INSERT INTO `proyecto_inversion_partidas` (`id`, `id_proyecto`, `partida`, `monto`, `sector_id`, `programa_id`, `proyecto_id`, `actividad_id`) VALUES
+(38, 14, '724', '60', '1', 1, 1, 11),
+(39, 14, '724', '60', '1', 1, 1, 12);
 
 -- --------------------------------------------------------
 
@@ -11784,7 +11788,7 @@ CREATE TABLE `tasa` (
 --
 
 INSERT INTO `tasa` (`id`, `descripcion`, `simbolo`, `valor`) VALUES
-(1, 'Precio del Dólar Actual', '$', '41.0429');
+(1, 'Precio del Dólar Actual', '$', '42.2256');
 
 -- --------------------------------------------------------
 
@@ -11816,7 +11820,8 @@ INSERT INTO `tasa_historico` (`id`, `u_nombre`, `precio`, `descripcion`, `fecha`
 (9, 'sigob', '0', 'actualizacion automática', '21-10-2024'),
 (10, 'sigob', '39.1813', 'actualizacion automática', '22-10-2024'),
 (11, 'sigob', '40.8803', 'actualizacion automática', '24-10-2024'),
-(12, 'sigob', '41.0429', 'actualizacion automática', '27-10-2024');
+(12, 'sigob', '41.0429', 'actualizacion automática', '27-10-2024'),
+(13, 'sigob', '42.2256', 'actualizacion automática', '30-10-2024');
 
 -- --------------------------------------------------------
 
@@ -16490,7 +16495,7 @@ ALTER TABLE `txt`
 -- AUTO_INCREMENT de la tabla `asignacion_ente`
 --
 ALTER TABLE `asignacion_ente`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de la tabla `audit_logs`
@@ -16796,13 +16801,13 @@ ALTER TABLE `profesiones`
 -- AUTO_INCREMENT de la tabla `proyecto_inversion`
 --
 ALTER TABLE `proyecto_inversion`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT de la tabla `proyecto_inversion_partidas`
 --
 ALTER TABLE `proyecto_inversion_partidas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 
 --
 -- AUTO_INCREMENT de la tabla `recibo_pago`
@@ -16856,7 +16861,7 @@ ALTER TABLE `tasa`
 -- AUTO_INCREMENT de la tabla `tasa_historico`
 --
 ALTER TABLE `tasa_historico`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT de la tabla `traspasos`

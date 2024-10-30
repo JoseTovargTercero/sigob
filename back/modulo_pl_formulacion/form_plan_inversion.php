@@ -53,15 +53,18 @@ function guardarProyecto($proyectosArray)
         // Insertar las partidas en la tabla plan_inversion
 
 
-        $stmt_o = $conexion->prepare("INSERT INTO proyecto_inversion_partidas (id_proyecto, partida, monto, sector_id) VALUES (?, ?, ?, ?)");
+        $stmt_o = $conexion->prepare("INSERT INTO proyecto_inversion_partidas (id_proyecto, partida, monto, sector_id, programa_id, proyecto_id, actividad_id) VALUES (?, ?, ?, ?, ?, ?, ?)");
 
 
         foreach ($partidas_montos as $item) {
+            $sector = $item['sector'];
+            $program = $item['program'];
+            $proyecto = $item['proyecto'];
+            $actividad = $item['actividad'];
             $partida = $item['partida'];
             $monto = $item['monto'];
-            $sector = $item['sector'];
 
-            $stmt_o->bind_param("isss", $id_proyecto, $partida, $monto, $sector);
+            $stmt_o->bind_param("iisiiii", $id_proyecto, $partida, $monto, $sector, $program, $proyecto, $actividad);
             $stmt_o->execute();
         }
 
@@ -221,7 +224,7 @@ function getPartidasXProyecto($proyecto)
     global $conexion;
     $data = [];
 
-    $stmt = mysqli_prepare($conexion, "SELECT DISTINCT(PA.partida), PA.partida AS partidad_n, PIP.monto, PA.nombre, PIP.sector_id, SE.sector, SE.programa, SE.proyecto FROM `proyecto_inversion_partidas` AS PIP
+    $stmt = mysqli_prepare($conexion, "SELECT DISTINCT(PA.partida), PA.partida AS partidad_n, PIP.monto, PA.descripcion, PIP.sector_id, SE.sector, SE.programa, SE.proyecto FROM `proyecto_inversion_partidas` AS PIP
     LEFT JOIN partidas_presupuestarias AS PA ON PA.id=PIP.partida
     LEFT JOIN pl_sectores_presupuestarios AS SE ON SE.id=PIP.sector_id
      WHERE id_proyecto = ?");
