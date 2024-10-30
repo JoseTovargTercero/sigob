@@ -1,3 +1,7 @@
+import {
+  getContraloriaData,
+  getGobernacionData,
+} from '../api/form_informacion.js'
 import { getFormPartidas } from '../api/partidas.js'
 import { separarMiles } from '../helpers/helpers.js'
 
@@ -30,7 +34,13 @@ let gobernacionTable
 export const validateGobernacionTable = async () => {
   gobernacionTable = new DataTable('#gobernacion-table', {
     columns: [
-      // { data: 'sector_nombre' },
+      { data: 'identificacion' },
+      { data: 'domicilio' },
+      { data: 'telefono' },
+      { data: 'pagina_web' },
+      { data: 'fax' },
+      { data: 'codigo_postal' },
+      { data: 'nombre_apellido_gobernador' },
 
       { data: 'acciones' },
     ],
@@ -41,7 +51,7 @@ export const validateGobernacionTable = async () => {
       topStart: function () {
         let toolbar = document.createElement('div')
         toolbar.innerHTML = `
-            <h5 class="text-center">Lista de partidas</h5>
+            <h5 class="text-center">Lista de registros en la gobernación</h5>
                       `
         return toolbar
       },
@@ -55,24 +65,25 @@ export const validateGobernacionTable = async () => {
 }
 
 export const loadGobernacionTable = async () => {
-  //   let partidas = await getFormPartidas()
-  let partidas
-  if (!Array.isArray(partidas)) return
+  let gobernacionData = await getGobernacionData()
 
-  if (!partidas || partidas.error) return
+  if (!Array.isArray(gobernacionData.fullInfo)) return
 
-  console.log(partidas)
+  if (!gobernacionData.fullInfo || gobernacionData.error) return
 
-  let datosOrdenados = [...partidas].sort((a, b) => a.id - b.id)
+  console.log(gobernacionData)
+
+  let datosOrdenados = [...gobernacionData.fullInfo].sort((a, b) => a.id - b.id)
   let data = datosOrdenados.map((el) => {
-    let sector_codigo = `${el.sector_informacion.sector}.${el.sector_informacion.programa}.${el.sector_informacion.proyecto}`
-
-    let descripcion =
-      el.descripcion.length < 40
-        ? el.descripcion
-        : `${el.descripcion.slice(0, 40)} ...`
-
     return {
+      identificacion: el.identificacion,
+      domicilio: el.domicilio,
+      telefono: el.telefono,
+      pagina_web: el.pagina_web,
+      fax: el.fax || 'No asignado',
+      codigo_postal: el.codigo_postal,
+      nombre_apellido_gobernador: el.nombre_apellido_gobernador,
+
       // sector_nombre: el.sector_informacion.nombre,
       //   sector_cod: sector_codigo,
       //   partida: el.partida,
@@ -92,6 +103,77 @@ export const loadGobernacionTable = async () => {
   gobernacionTable.rows.add(data).draw()
 }
 
-export async function deleteDistribucionRow({ id, row }) {
+let contraloriaTable
+export const validateContraloriaTable = async () => {
+  contraloriaTable = new DataTable('#contraloria-table', {
+    columns: [
+      { data: 'nombre_apellido_contralor' },
+      { data: 'domicilio' },
+      { data: 'telefono' },
+      { data: 'pagina_web' },
+      { data: 'email' },
+      { data: 'acciones' },
+    ],
+    responsive: true,
+    scrollY: 400,
+    language: tableLanguage,
+    layout: {
+      topStart: function () {
+        let toolbar = document.createElement('div')
+        toolbar.innerHTML = `
+            <h5 class="text-center">Lista de registros en la contraloria</h5>
+                      `
+        return toolbar
+      },
+      topEnd: { search: { placeholder: 'Buscar...' } },
+      bottomStart: 'info',
+      bottomEnd: 'paging',
+    },
+  })
+
+  loadContraloriaTable()
+}
+
+export const loadContraloriaTable = async () => {
+  let contraloriaData = await getContraloriaData()
+
+  if (!Array.isArray(contraloriaData.fullInfo)) return
+
+  if (!contraloriaData.fullInfo || contraloriaData.error) return
+
+  console.log(contraloriaData)
+
+  let datosOrdenados = [...contraloriaData.fullInfo].sort((a, b) => a.id - b.id)
+  let data = datosOrdenados.map((el) => {
+    return {
+      nombre_apellido_contralor: el.nombre_apellido_contralor,
+      domicilio: el.domicilio,
+      telefono: el.telefono,
+      pagina_web: el.pagina_web,
+      email: el.email || 'No asignado',
+      // sector_nombre: el.sector_informacion.nombre,
+      //   sector_cod: sector_codigo,
+      //   partida: el.partida,
+      //   descripcion: descripcion,
+      //   monto_inicial: `${separarMiles(el.monto_inicial)} Bs`,
+      //   monto_actual: `${separarMiles(el.monto_actual)} Bs`,
+      acciones: `
+      <button class="btn btn-sm bg-brand-color-2 text-white btn-update" data-editarid="${el.id}"></button>
+      <button class="btn btn-danger btn-sm btn-destroy" data-eliminarid="${el.id}"></button>
+      `,
+    }
+  })
+
+  contraloriaTable.clear().draw()
+
+  // console.log(datosOrdenados)
+  contraloriaTable.rows.add(data).draw()
+}
+
+export async function deleteGobernacionRow({ id, row }) {
   gobernacionTable.row(row).remove().draw()
+}
+
+export async function deleteContraloriaRow({ id, row }) {
+  contraloriaTable.row(row).remove().draw()
 }

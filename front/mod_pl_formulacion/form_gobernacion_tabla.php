@@ -60,8 +60,13 @@ require_once '../../back/sistema_global/session.php';
                                 <table id="gobernacion-table" class="table table-striped" style="width:100%">
                                     <thead class="w-100">
 
-                                        <!-- <th>SECTOR NOMBRE</th> -->
-
+                                        <th>IDENTIFICACION</th>
+                                        <th>DOMICILIO</th>
+                                        <th>TELEFONO</th>
+                                        <th>WEB</th>
+                                        <th>FAX</th>
+                                        <th>COD POSTAL</th>
+                                        <th>GOBERNADOR</th>
                                         <th>ACCIONES</th>
 
                                     </thead>
