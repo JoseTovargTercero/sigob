@@ -67,6 +67,19 @@ function _default($tabla)
     ];
 }
 
+function _lista_programas($tabla)
+{
+    return [
+        'columnas' => ["$tabla.*", "pl_sectores.sector AS sector_n"],
+        'tabla' => $tabla,
+        'where' => null,
+        'order_by' => null,
+        'join' => [
+            'pl_sectores' => "$tabla.sector = pl_sectores.id"
+        ]
+    ];
+}
+
 
 
 

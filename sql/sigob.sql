@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 30-10-2024 a las 22:45:03
+-- Tiempo de generación: 31-10-2024 a las 00:45:04
 -- Versión del servidor: 10.4.16-MariaDB
 -- Versión de PHP: 7.4.12
 
@@ -93,7 +93,12 @@ INSERT INTO `audit_logs` (`id`, `action_type`, `table_name`, `situation`, `affec
 (22, 'DELETE', 'pl_actividades', 'id= ?', 1, 35, '2024-10-28 19:14:11'),
 (23, 'DELETE', 'pl_actividades', 'id= ?', 1, 35, '2024-10-28 19:14:16'),
 (24, 'UPDATE', 'pl_actividades', 'id = 23', 1, 35, '2024-10-28 19:14:29'),
-(25, 'DELETE', 'pl_actividades', 'id= ?', 1, 35, '2024-10-28 19:14:32');
+(25, 'DELETE', 'pl_actividades', 'id= ?', 1, 35, '2024-10-28 19:14:32'),
+(26, 'UPDATE', 'pl_programas', 'id = 38', 1, 35, '2024-10-30 19:32:47'),
+(27, 'UPDATE', 'pl_programas', 'id = 38', 1, 35, '2024-10-30 19:37:58'),
+(28, 'DELETE', 'pl_programas', 'id= ?', 1, 35, '2024-10-30 19:44:00'),
+(29, 'DELETE', 'pl_programas', 'id= ?', 1, 35, '2024-10-30 19:44:04'),
+(30, 'DELETE', 'pl_programas', 'id= ?', 1, 35, '2024-10-30 19:44:07');
 
 -- --------------------------------------------------------
 
@@ -5055,6 +5060,28 @@ INSERT INTO `informacion_pdf` (`id`, `cedula`, `total_pagar`, `correlativo`, `id
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `informacion_personas`
+--
+
+CREATE TABLE `informacion_personas` (
+  `id` int(255) NOT NULL,
+  `nombres` longtext NOT NULL,
+  `cargo` longtext NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `informacion_personas`
+--
+
+INSERT INTO `informacion_personas` (`id`, `nombres`, `cargo`) VALUES
+(1, 'LEG. DELKIS BASTIDAS ', 'PRESIDENTA'),
+(2, 'ABOG. LESTER MIRABAL', 'SECRETARIO DE CÁMARA '),
+(3, 'ING. MIGUEL RODRÍGUEZ', 'GOBERNADOR DEL ESTADO AMAZONAS'),
+(4, 'ING. ANALI HERRERA', 'SECRETARIA EJECUTIVA DE GOBIERNO');
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `menu`
 --
 
@@ -5100,7 +5127,8 @@ INSERT INTO `menu` (`id`, `oficina`, `categoria`, `nombre`, `dir`, `icono`) VALU
 (26, 'pl_formulacion', 'Configuracion', 'Sectores', 'mod_pl_formulacion/form_sectores', 'bx-objects-horizontal-right'),
 (27, 'pl_formulacion', NULL, 'Reportes', 'mod_pl_formulacion/form_reportes\r\n', 'bx-download'),
 (28, 'pl_formulacion', 'Configuracion', 'Actividades', 'mod_pl_formulacion/form_actividades', NULL),
-(29, 'pl_formulacion', 'Configuracion', 'Unidades', 'mod_pl_formulacion/form_unidades', 'bx-buildings');
+(29, 'pl_formulacion', 'Configuracion', 'Unidades', 'mod_pl_formulacion/form_unidades', 'bx-buildings'),
+(31, 'pl_formulacion', 'Configuracion', 'Programas', 'mod_pl_formulacion/form_programas', 'bx-objects-horizontal-right');
 
 -- --------------------------------------------------------
 
@@ -7038,8 +7066,8 @@ CREATE TABLE `proyecto_inversion_partidas` (
 --
 
 INSERT INTO `proyecto_inversion_partidas` (`id`, `id_proyecto`, `partida`, `monto`, `sector_id`, `programa_id`, `proyecto_id`, `actividad_id`) VALUES
-(38, 14, '724', '60', '1', 1, 1, 11),
-(39, 14, '724', '60', '1', 1, 1, 12);
+(42, 14, '724', '60', '1', 2, 1, 12),
+(43, 14, '725', '60', '2', 15, 0, 12);
 
 -- --------------------------------------------------------
 
@@ -16283,6 +16311,12 @@ ALTER TABLE `informacion_pdf`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indices de la tabla `informacion_personas`
+--
+ALTER TABLE `informacion_personas`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indices de la tabla `menu`
 --
 ALTER TABLE `menu`
@@ -16501,7 +16535,7 @@ ALTER TABLE `asignacion_ente`
 -- AUTO_INCREMENT de la tabla `audit_logs`
 --
 ALTER TABLE `audit_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT de la tabla `backups`
@@ -16672,10 +16706,16 @@ ALTER TABLE `informacion_pdf`
   MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=324;
 
 --
+-- AUTO_INCREMENT de la tabla `informacion_personas`
+--
+ALTER TABLE `informacion_personas`
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
 -- AUTO_INCREMENT de la tabla `menu`
 --
 ALTER TABLE `menu`
-  MODIFY `id` int(1) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `id` int(1) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT de la tabla `modificaciones_empleados`
@@ -16759,7 +16799,7 @@ ALTER TABLE `pl_partidas`
 -- AUTO_INCREMENT de la tabla `pl_programas`
 --
 ALTER TABLE `pl_programas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
 -- AUTO_INCREMENT de la tabla `pl_proyectos`
@@ -16807,7 +16847,7 @@ ALTER TABLE `proyecto_inversion`
 -- AUTO_INCREMENT de la tabla `proyecto_inversion_partidas`
 --
 ALTER TABLE `proyecto_inversion_partidas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
 
 --
 -- AUTO_INCREMENT de la tabla `recibo_pago`

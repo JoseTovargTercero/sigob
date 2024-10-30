@@ -168,7 +168,7 @@ class DatabaseHandler
             $columna = $campo_info[0];
             $valor = $campo_info[1];
             $tipo = $this->getParamType($valor);
-            $unicidad = isset($campo_info[3]) ? $campo_info[3] : false;
+            $unicidad = isset($campo_info[2]) ? $campo_info[2] : false;
 
             // Agregar el campo a la condición de unicidad si es necesario
             if ($unicidad === true) {
@@ -190,7 +190,7 @@ class DatabaseHandler
             ]);
 
             if ($coincidencias > 0) {
-                throw new Exception("Uno o más valores de campos únicos ya existen en la base de datos.");
+                return ['error' => 'Uno o más valores de campos únicos ya existen en la base de datos.'];
             }
         }
 
