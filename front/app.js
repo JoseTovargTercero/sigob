@@ -6,7 +6,14 @@ import { loadDependenciaTable } from './src/controllers/dependenciasTable.js'
 // import { validateEmployeeTable } from './src/controllers/empleadosTable.js'
 import { validateAsignacionEntesView } from './src/controllers/form_asignacionEntesView.js'
 import { validateDistribucionView } from './src/controllers/form_distribucionView.js'
-import { validateGobernacionTable } from './src/controllers/form_informacionTables.js'
+import {
+  validateContraloriaTable,
+  validateGobernacionTable,
+} from './src/controllers/form_informacionTables.js'
+import {
+  validateContraloriaView,
+  validateGobernacionView,
+} from './src/controllers/form_informacionView.js'
 import { validatePartidasView } from './src/controllers/form_partidasView.js'
 import { validateEmployeeView } from './src/controllers/nom_employeeView.js'
 import { loadRequestTableHistorico } from './src/controllers/peticionesHistoricoTable.js'
@@ -45,6 +52,7 @@ d.addEventListener('DOMContentLoaded', (e) => {
   const distribucionView = d.getElementById('distribucion-view')
   const asignacionEntesView = d.getElementById('asignacion-entes-view')
   const gobernacionView = d.getElementById('gobernacion-view')
+  const contraloriaView = d.getElementById('contraloria-view')
 
   if (tabulatorForm) {
     validateTabulatorForm({
@@ -177,7 +185,10 @@ d.addEventListener('DOMContentLoaded', (e) => {
   }
 
   if (gobernacionView) {
-    validateGobernacionTable()
+    validateGobernacionView()
+  }
+  if (contraloriaView) {
+    validateContraloriaView()
   }
 
   // if (payNomForm) {
