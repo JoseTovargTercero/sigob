@@ -5,19 +5,19 @@ header('Content-Type: application/json');
 require_once '../sistema_global/session.php';
 require_once '../sistema_global/errores.php';
 
-// Función para insertar un nuevo tipo de gasto
-function registrarTipoGasto($nombre, $id_partida)
+// Función para insertar un nuevo tipo de gasto con id_sector
+function registrarTipoGasto($nombre, $id_partida, $id_sector)
 {
     global $conexion;
-    if (empty($nombre) || empty($id_partida)) {
+    if (empty($nombre) || empty($id_partida) || empty($id_sector)) {
         return json_encode(['error' => "No puede registrar con campos vacíos"]);
     }
 
     try {
         // Registrar el nuevo tipo de gasto
-        $sql = "INSERT INTO tipo_gastos (nombre, id_partida) VALUES (?, ?)";
+        $sql = "INSERT INTO tipo_gastos (nombre, id_partida, id_sector) VALUES (?, ?, ?)";
         $stmt = $conexion->prepare($sql);
-        $stmt->bind_param("si", $nombre, $id_partida);
+        $stmt->bind_param("sii", $nombre, $id_partida, $id_sector);
         $stmt->execute();
 
         if ($stmt->affected_rows > 0) {
@@ -31,7 +31,7 @@ function registrarTipoGasto($nombre, $id_partida)
     }
 }
 
-// Función para consultar todos los tipos de gastos
+// Función para consultar todos los tipos de gastos, incluyendo id_sector
 function consultarTiposGastos()
 {
     global $conexion;
@@ -53,7 +53,7 @@ function consultarTiposGastos()
     }
 }
 
-// Función para consultar un tipo de gasto por ID
+// Función para consultar un tipo de gasto por ID, incluyendo id_sector
 function consultarTipoGastoPorId($id)
 {
     global $conexion;
@@ -82,21 +82,21 @@ function consultarTipoGastoPorId($id)
     }
 }
 
-// Función para actualizar un tipo de gasto
-function actualizarTipoGasto($id, $nombre, $id_partida)
+// Función para actualizar un tipo de gasto, incluyendo id_sector
+function actualizarTipoGasto($id, $nombre, $id_partida, $id_sector)
 {
     global $conexion;
 
     try {
         // Verificar que no falte ningún campo
-        if (empty($id) || empty($nombre) || empty($id_partida)) {
+        if (empty($id) || empty($nombre) || empty($id_partida) || empty($id_sector)) {
             return json_encode(['error' => "Debe rellenar todos los datos para actualizar"]);
         }
 
         // Actualizar el tipo de gasto
-        $sql = "UPDATE tipo_gastos SET nombre = ?, id_partida = ? WHERE id = ?";
+        $sql = "UPDATE tipo_gastos SET nombre = ?, id_partida = ?, id_sector = ? WHERE id = ?";
         $stmt = $conexion->prepare($sql);
-        $stmt->bind_param("sii", $nombre, $id_partida, $id);
+        $stmt->bind_param("siii", $nombre, $id_partida, $id_sector, $id);
         $stmt->execute();
 
         if ($stmt->affected_rows > 0) {
@@ -144,12 +144,13 @@ if (isset($data["accion"])) {
     $accion = $data["accion"];
     $nombre = $data["nombre"] ?? '';
     $id_partida = $data["id_partida"] ?? '';
+    $id_sector = $data["id_sector"] ?? '';
     $id = $data["id"] ?? '';
 
     if ($accion === "insert") {
-        $response = registrarTipoGasto($nombre, $id_partida);
+        $response = registrarTipoGasto($nombre, $id_partida, $id_sector);
     } elseif ($accion === "update") {
-        $response = actualizarTipoGasto($id, $nombre, $id_partida);
+        $response = actualizarTipoGasto($id, $nombre, $id_partida, $id_sector);
     } elseif ($accion === "delete") {
         $response = eliminarTipoGasto($id);
     } elseif ($accion === "consultar_todos") {
@@ -164,3 +165,4 @@ if (isset($data["accion"])) {
 }
 
 echo $response;
+?>
