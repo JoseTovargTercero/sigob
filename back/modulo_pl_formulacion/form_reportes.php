@@ -64,6 +64,18 @@ $reportes = [
         'nombre' => 'FORM. 2015 CRED. PRE. DEL SEC PRO. A NIVEL DE PAR.',
         'formato' => 'A4-L'
     ]
+    'informacion' => [
+        'nombre' => 'INFORMACIÓN GENERAL DE LA ENTIDAD FEDERAL.',
+        'formato' => 'A4-L'
+    ]
+    'indice' => [
+        'nombre' => 'ÍNDICE DE CATEGORÍAS PROGRAMÁTICAS.',
+        'formato' => 'A4-L'
+    ]
+    'descripcion' => [
+        'nombre' => 'DESCRIPCION DEL PROGRAMA,  SUB - PROGRAMA Y PROYECTO.',
+        'formato' => 'A4-L'
+    ]
 ];
 
 $pdf_files = [];
