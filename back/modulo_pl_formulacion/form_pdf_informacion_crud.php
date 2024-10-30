@@ -238,7 +238,7 @@ function consultarInformacionPorId($tabla, $id) {
         
         if (!empty($resultado)) {
             // Devolver el resultado directamente, ya que cada campo es dinámico
-            return json_encode([$resultado]);
+            return $resultado;
         } else {
             return json_encode(['error' => 'Registro no encontrado.']);
         }
@@ -255,7 +255,7 @@ function consultarInformacionTodos($tabla) {
         
         if (!empty($resultado)) {
             // Devolver todos los resultados directamente, sin especificar campos
-            return json_encode([$resultado]);
+            return $resultado;
         } else {
             return json_encode(['error' => 'No se encontraron registros.']);
         }
@@ -367,5 +367,5 @@ switch ($data["tabla"]) {
         $response = ["error" => "Tabla inválida."];
 }
 
-echo json_encode($response);
+echo $response;
 ?>
