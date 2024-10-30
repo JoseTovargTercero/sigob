@@ -553,13 +553,6 @@ $stmt->close();
         });
 
 
-
-
-
-
-
-
-
         let monto_total_proyectos = 0;
         let proyectos = []
 
@@ -718,30 +711,6 @@ $stmt->close();
 
 
 
-        function get_programa(sector_s, selectPartida) {
-          // Reinicia las opciones del select .c_partida
-          selectPartida.innerHTML = '<option value="">Seleccione</option>';
-
-          // Filtra y agrega las opciones según el sector
-          programas_options.forEach(element => {
-            if (element[0] == sector_s) {
-              selectPartida.innerHTML += `<option value="${element[3]}">${element[1]} - ${element[2]}</option>`;
-            }
-          });
-
-          // Si estás usando Chosen, actualiza el select manualmente
-          $(selectPartida).trigger("chosen:updated");
-
-          return true;
-        }
-
-
-
-
-
-
-
-
         function getPartidas() {
           $.ajax({
             url: "../../back/modulo_pl_formulacion/form_partidas.php",
@@ -894,22 +863,54 @@ $stmt->close();
 
           // Iterar sobre cada d-asignacion dentro de #section-partidas
           $('#section-partidas .d-asignacion').each(function(index) {
-            let partida = proyectos[id]['5'][index]['partida'];
+            let partida = proyectos[id]['5'][index]['partida_id'];
             let monto = proyectos[id]['5'][index]['monto'];
             let c_sector = proyectos[id]['5'][index]['sector_id'];
+            let c_program = proyectos[id]['5'][index]['programa_id'];
+            let c_proyecto = proyectos[id]['5'][index]['proyecto_id'];
+            let c_actividad = proyectos[id]['5'][index]['actividad_id'];
 
-            // Asignar el valor de 'partida' al campo c_partida dentro de la fila actual
-            $(this).find('.c_sector').val(c_sector).trigger("chosen:updated"); // Actualiza Chosen después de seleccionar el valor
+            let selectProgram = $(this).find('.c_program')[0];
+            get_programa(c_sector, selectProgram)
+
+            $(this).find('.c_sector').val(c_sector).trigger("chosen:updated");
             $(this).find('.c_partida').val(partida).trigger("chosen:updated");
+            $(this).find('.c_program').val(c_program).trigger("chosen:updated");
+            $(this).find('.c_proyecto').val(c_proyecto).trigger("chosen:updated");
 
 
-            // Asignar el valor de 'monto' al campo c_monto dentro de la fila actual
+            $(this).find('.c_actividad').val(c_actividad);
             $(this).find('.c_monto').val(monto);
           });
           $('#cargando').hide()
 
 
         }
+
+
+
+
+        function get_programa(sector_s, selectPartida) {
+          // Reinicia las opciones del select .c_partida
+          selectPartida.innerHTML = '<option value="">Seleccione</option>';
+
+          // Filtra y agrega las opciones según el sector
+          programas_options.forEach(element => {
+            if (element[0] == sector_s) {
+              selectPartida.innerHTML += `<option value="${element[3]}">${element[1]} - ${element[2]}</option>`;
+            }
+          });
+
+          // Si estás usando Chosen, actualiza el select manualmente
+          $(selectPartida).trigger("chosen:updated");
+
+          return true;
+        }
+
+
+
+
+
 
         function cancelarRegistro() {
           $('#vista_registro').addClass('hide')
@@ -918,7 +919,6 @@ $stmt->close();
           $('.fila').remove()
         }
         document.getElementById('btn-cancelar-registro').addEventListener('click', cancelarRegistro)
-
 
 
 
@@ -1007,7 +1007,6 @@ $stmt->close();
 
 
         // GRAFICO 1 - BARRAS HORIZONTALES
-        // Create root element
         var root = am5.Root.new("chartdiv");
 
         root.setThemes([
@@ -1297,7 +1296,7 @@ $stmt->close();
             const values = {
               sector: fields.sector[index].value,
               program: fields.program[index].value,
-              proyecto: fields.proyecto[index].value,
+              proyecto: (fields.proyecto[index].value != '' ? fields.proyecto[index].value : '0'),
               actividad: fields.actividad[index].value,
               partida: partida.value,
               monto: fields.monto[index].value
