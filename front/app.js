@@ -11,6 +11,7 @@ import {
   validateGobernacionTable,
 } from './src/controllers/form_informacionTables.js'
 import {
+  validateConsejoView,
   validateContraloriaView,
   validateGobernacionView,
 } from './src/controllers/form_informacionView.js'
@@ -53,6 +54,7 @@ d.addEventListener('DOMContentLoaded', (e) => {
   const asignacionEntesView = d.getElementById('asignacion-entes-view')
   const gobernacionView = d.getElementById('gobernacion-view')
   const contraloriaView = d.getElementById('contraloria-view')
+  const consejoView = d.getElementById('consejo-view')
 
   if (tabulatorForm) {
     validateTabulatorForm({
@@ -189,6 +191,9 @@ d.addEventListener('DOMContentLoaded', (e) => {
   }
   if (contraloriaView) {
     validateContraloriaView()
+  }
+  if (consejoView) {
+    validateConsejoView()
   }
 
   // if (payNomForm) {

@@ -460,6 +460,233 @@ const eliminarContraloriaId = async (id) => {
   }
 }
 
+// CONSEJO
+// CONSEJO
+// CONSEJO
+
+const getConsejoData = async () => {
+  showLoader()
+  try {
+    let res = await fetch(apiUrl, {
+      method: 'POST',
+      body: JSON.stringify({
+        tabla: 'informacion_consejo',
+        accion: 'consultar_todos',
+      }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+    console.log(res)
+    const json = await res.json()
+
+    console.log(json)
+
+    if (json.success) {
+      let mappedData = mapData({
+        obj: json.success,
+        name: 'nombre',
+        id: 'id',
+      })
+
+      return { mappedData, fullInfo: json.success }
+    }
+
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener información',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
+const getConsejoDataId = async (id) => {
+  showLoader()
+  try {
+    let res = await fetch(apiUrl, {
+      method: 'POST',
+      body: JSON.stringify({
+        tabla: 'informacion_consejo',
+        accion: 'consultar_por_id',
+        id: id,
+      }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    const clone = res.clone()
+
+    // let text = await clone.text()
+
+    // console.log(text)
+
+    const json = await res.json()
+
+    // console.log(json)
+    if (json.success) {
+      return json.success[0]
+    }
+
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
+    return json
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener información',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
+const registrarConsejoData = async ({ info }) => {
+  showLoader()
+  try {
+    let res = await fetch(apiUrl, {
+      method: 'POST',
+      body: JSON.stringify({
+        tabla: 'informacion_consejo',
+        accion: 'registrar',
+        info,
+      }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    const clone = res.clone()
+
+    let text = await clone.text()
+
+    console.log(text)
+
+    const json = await res.json()
+
+    // console.log(json)
+    if (json.success) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.done,
+        message: 'Se ha realizado el registro',
+      })
+    }
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
+    return json
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener información',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
+const actualizarConsejoData = async (info, id) => {
+  console.log(info)
+  showLoader()
+  try {
+    let res = await fetch(apiUrl, {
+      method: 'POST',
+      body: JSON.stringify({
+        tabla: 'informacion_consejo',
+        accion: 'actualizar',
+        info,
+      }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    const clone = res.clone()
+
+    let text = await clone.text()
+
+    console.log(text)
+
+    const json = await res.json()
+
+    // console.log(json)
+    if (json.success) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.done,
+        message: 'Se ha actualizado el registro',
+      })
+    }
+
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
+    return json
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener información',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
+const eliminarConsejoId = async (id) => {
+  showLoader()
+  try {
+    let res = await fetch(apiUrl, {
+      method: 'POST',
+      body: JSON.stringify({
+        tabla: 'informacion_consejo',
+        accion: 'borrar',
+        id: id,
+      }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    const clone = res.clone()
+
+    let text = await clone.text()
+
+    console.log(text)
+
+    const json = await res.json()
+
+    // console.log(json)
+    if (json.success) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.done,
+        message: 'Registro eliminado',
+      })
+    }
+
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
+    return json
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener información',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
 // PERSONAL DIRECTIVO
 // PERSONAL DIRECTIVO
 // PERSONAL DIRECTIVO
@@ -566,4 +793,9 @@ export {
   registrarContraloriaData,
   eliminarContraloriaId,
   actualizarContraloriaData,
+  getConsejoData,
+  getConsejoDataId,
+  registrarConsejoData,
+  eliminarConsejoId,
+  actualizarConsejoData,
 }
