@@ -58,7 +58,7 @@ $titulo = 'Sectores';
                   <h5 class="mb-0"><?php echo $titulo ?></h5>
                   <button class="btn btn-info btn-sm" onclick="nuevoProyecto()">
                     <i class="bx bx-plus"></i>
-                    Nuevo programa
+                    Nuevo sector
                   </button>
                 </div>
 
@@ -95,7 +95,7 @@ $titulo = 'Sectores';
 
             <div class="mb-3">
               <label for="partida" class="form-label">Denominación</label>
-              <input type="text" id="nombre" class="form-control" placeholder="Nombre del programa">
+              <input type="text" id="nombre" class="form-control" placeholder="Nombre del sector">
             </div>
 
             <div class="mb-3">

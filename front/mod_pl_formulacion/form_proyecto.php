@@ -58,7 +58,7 @@ $titulo = 'Proyectos';
                   <h5 class="mb-0"><?php echo $titulo ?></h5>
                   <button class="btn btn-info btn-sm" onclick="nuevoProyecto()">
                     <i class="bx bx-plus"></i>
-                    Nuevo programa
+                    Nuevo proyecto
                   </button>
                 </div>
 
