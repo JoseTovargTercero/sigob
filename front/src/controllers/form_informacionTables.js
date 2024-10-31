@@ -1,6 +1,7 @@
 import {
   getConsejoData,
   getContraloriaData,
+  getDirectivoData,
   getGobernacionData,
 } from '../api/form_informacion.js'
 import { getFormPartidas } from '../api/partidas.js'
@@ -242,6 +243,65 @@ export const loadConsejoTable = async () => {
   consejoTable.rows.add(data).draw()
 }
 
+let directivoTable
+export const validateDirectivoTable = async () => {
+  directivoTable = new DataTable('#directivo-table', {
+    columns: [
+      { data: 'nombre_apellido' },
+      { data: 'direccion' },
+      { data: 'email' },
+      { data: 'telefono' },
+      { data: 'acciones' },
+    ],
+    responsive: true,
+    scrollY: 400,
+    language: tableLanguage,
+    layout: {
+      topStart: function () {
+        let toolbar = document.createElement('div')
+        toolbar.innerHTML = `
+            <h5 class="text-center">Lista de registros en la contraloria</h5>
+                      `
+        return toolbar
+      },
+      topEnd: { search: { placeholder: 'Buscar...' } },
+      bottomStart: 'info',
+      bottomEnd: 'paging',
+    },
+  })
+
+  loadDirectivoTable()
+}
+
+export const loadDirectivoTable = async () => {
+  let directivoData = await getDirectivoData()
+
+  if (!Array.isArray(directivoData.fullInfo)) return
+
+  if (!directivoData.fullInfo || directivoData.error) return
+
+  console.log(directivoData)
+
+  let datosOrdenados = [...directivoData.fullInfo].sort((a, b) => a.id - b.id)
+  let data = datosOrdenados.map((el) => {
+    return {
+      nombre_apellido: el.nombre_apellido,
+      direccion: el.direccion,
+      email: el.email || 'No asignado',
+      telefono: el.telefono || 'No asignado',
+      acciones: `
+      <button class="btn btn-sm bg-brand-color-2 text-white btn-update" data-editarid="${el.id}"></button>
+      <button class="btn btn-danger btn-sm btn-destroy" data-eliminarid="${el.id}"></button>
+      `,
+    }
+  })
+
+  directivoTable.clear().draw()
+
+  // console.log(datosOrdenados)
+  directivoTable.rows.add(data).draw()
+}
+
 export async function deleteGobernacionRow({ id, row }) {
   gobernacionTable.row(row).remove().draw()
 }
@@ -251,4 +311,7 @@ export async function deleteContraloriaRow({ id, row }) {
 }
 export async function deleteConsejoRow({ id, row }) {
   consejoTable.row(row).remove().draw()
+}
+export async function deleteDirectivoRow({ id, row }) {
+  directivoTable.row(row).remove().draw()
 }

@@ -691,7 +691,7 @@ const eliminarConsejoId = async (id) => {
 // PERSONAL DIRECTIVO
 // PERSONAL DIRECTIVO
 
-const getPersonalDirectivo = async () => {
+const getDirectivoData = async () => {
   showLoader()
   try {
     let res = await fetch(apiUrl, {
@@ -703,16 +703,11 @@ const getPersonalDirectivo = async () => {
     })
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
-
-    const clone = res.clone()
-
-    let text = await clone.text()
-
-    console.log(text)
-
+    console.log(res)
     const json = await res.json()
 
-    // console.log(json)
+    console.log(json)
+
     if (json.success) {
       let mappedData = mapData({
         obj: json.success,
@@ -721,6 +716,48 @@ const getPersonalDirectivo = async () => {
       })
 
       return { mappedData, fullInfo: json.success }
+    }
+
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener información',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
+const getDirectivoDataId = async (id) => {
+  showLoader()
+  try {
+    let res = await fetch(apiUrl, {
+      method: 'POST',
+      body: JSON.stringify({
+        tabla: 'personal_directivo',
+        accion: 'consultar_por_id',
+        id: id,
+      }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    const clone = res.clone()
+
+    // let text = await clone.text()
+
+    // console.log(text)
+
+    const json = await res.json()
+
+    // console.log(json)
+    if (json.success) {
+      return json.success[0]
     }
 
     if (json.error) {
@@ -739,14 +776,106 @@ const getPersonalDirectivo = async () => {
   }
 }
 
-const getPersonalDirectivoId = async (id) => {
+const registrarDirectivoData = async ({ info }) => {
   showLoader()
   try {
     let res = await fetch(apiUrl, {
       method: 'POST',
       body: JSON.stringify({
         tabla: 'personal_directivo',
-        accion: 'consultar_por_id',
+        accion: 'registrar',
+        info,
+      }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    const clone = res.clone()
+
+    let text = await clone.text()
+
+    console.log(text)
+
+    const json = await res.json()
+
+    // console.log(json)
+    if (json.success) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.done,
+        message: 'Se ha realizado el registro',
+      })
+    }
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
+    return json
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener información',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
+const actualizarDirectivoData = async (info, id) => {
+  console.log(info)
+  showLoader()
+  try {
+    let res = await fetch(apiUrl, {
+      method: 'POST',
+      body: JSON.stringify({
+        tabla: 'personal_directivo',
+        accion: 'actualizar',
+        info,
+      }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    const clone = res.clone()
+
+    let text = await clone.text()
+
+    console.log(text)
+
+    const json = await res.json()
+
+    // console.log(json)
+    if (json.success) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.done,
+        message: 'Se ha actualizado el registro',
+      })
+    }
+
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
+    return json
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener información',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
+const eliminarDirectivoId = async (id) => {
+  showLoader()
+  try {
+    let res = await fetch(apiUrl, {
+      method: 'POST',
+      body: JSON.stringify({
+        tabla: 'personal_directivo',
+        accion: 'borrar',
         id: id,
       }),
     })
@@ -763,7 +892,10 @@ const getPersonalDirectivoId = async (id) => {
 
     // console.log(json)
     if (json.success) {
-      return json.success
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.done,
+        message: 'Registro eliminado',
+      })
     }
 
     if (json.error) {
@@ -798,4 +930,9 @@ export {
   registrarConsejoData,
   eliminarConsejoId,
   actualizarConsejoData,
+  getDirectivoData,
+  getDirectivoDataId,
+  registrarDirectivoData,
+  actualizarDirectivoData,
+  eliminarDirectivoId,
 }
