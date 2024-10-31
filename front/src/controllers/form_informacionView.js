@@ -1,6 +1,8 @@
 import {
+  eliminarConsejoId,
   eliminarContraloriaId,
   eliminarGobernacionId,
+  getConsejoDataId,
   getContraloriaDataId,
   getGobernacionDataId,
 } from '../api/form_informacion.js'
@@ -8,14 +10,17 @@ import {
   ejerciciosLista,
   validarEjercicioActual,
 } from '../components/form_ejerciciosLista.js'
+import { form_informacionConsejoForm } from '../components/form_informacion/form_informacionConsejoForm.js'
 import { form_informacionContraloriaForm } from '../components/form_informacion/form_informacionContraloriaForm.js'
 import { form_informacionGobernacionForm } from '../components/form_informacion/form_informacionGobernacionForm.js'
 import { confirmNotification, toastNotification } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 import {
+  deleteConsejoRow,
   deleteContraloriaRow,
   deleteGobernacionRow,
   loadGobernacionTable,
+  validateConsejoTable,
   validateContraloriaTable,
   validateGobernacionTable,
 } from './form_informacionTables.js'
@@ -92,6 +97,44 @@ export const validateContraloriaView = async () => {
         successFunction: async function () {
           deleteContraloriaRow({ row })
           eliminarContraloriaId(e.target.dataset.eliminarid)
+        },
+      })
+    }
+  })
+}
+
+export const validateConsejoView = async () => {
+  let btnNewElement = d.getElementById('consejo-registrar')
+
+  validateConsejoTable()
+
+  console.log('hola')
+
+  d.addEventListener('click', async (e) => {
+    if (e.target.id === 'consejo-registrar') {
+      scroll(0, 0)
+      form_informacionConsejoForm({ elementToInsert: 'consejo-view' })
+    }
+
+    if (e.target.dataset.editarid) {
+      scroll(0, 0)
+      let data = await getConsejoDataId(e.target.dataset.editarid)
+      console.log(data)
+
+      form_informacionConsejoForm({
+        elementToInsert: 'consejo-view',
+        data,
+      })
+    }
+
+    if (e.target.dataset.eliminarid) {
+      let row = e.target.closest('tr')
+      confirmNotification({
+        type: NOTIFICATIONS_TYPES.delete,
+        message: '¿Desea eliminar este registro?',
+        successFunction: async function () {
+          deleteConsejoRow({ row })
+          eliminarConsejoId(e.target.dataset.eliminarid)
         },
       })
     }

@@ -1,4 +1,5 @@
 import {
+  getConsejoData,
   getContraloriaData,
   getGobernacionData,
 } from '../api/form_informacion.js'
@@ -170,10 +171,84 @@ export const loadContraloriaTable = async () => {
   contraloriaTable.rows.add(data).draw()
 }
 
+let consejoTable
+export const validateConsejoTable = async () => {
+  consejoTable = new DataTable('#consejo-table', {
+    columns: [
+      { data: 'nombre_apellido_presidente' },
+      { data: 'nombre_apellido_secretario' },
+      { data: 'domicilio' },
+      { data: 'telefono' },
+      { data: 'pagina_web' },
+      { data: 'email' },
+      { data: 'consejo_local' },
+      { data: 'acciones' },
+    ],
+    responsive: true,
+    scrollY: 400,
+    language: tableLanguage,
+    layout: {
+      topStart: function () {
+        let toolbar = document.createElement('div')
+        toolbar.innerHTML = `
+            <h5 class="text-center">Lista de registros en la contraloria</h5>
+                      `
+        return toolbar
+      },
+      topEnd: { search: { placeholder: 'Buscar...' } },
+      bottomStart: 'info',
+      bottomEnd: 'paging',
+    },
+  })
+
+  loadConsejoTable()
+}
+
+export const loadConsejoTable = async () => {
+  let consejoData = await getConsejoData()
+
+  if (!Array.isArray(consejoData.fullInfo)) return
+
+  if (!consejoData.fullInfo || consejoData.error) return
+
+  console.log(consejoData)
+
+  let datosOrdenados = [...consejoData.fullInfo].sort((a, b) => a.id - b.id)
+  let data = datosOrdenados.map((el) => {
+    return {
+      nombre_apellido_presidente: el.nombre_apellido_presidente,
+      nombre_apellido_secretario: el.nombre_apellido_secretario,
+      domicilio: el.domicilio,
+      telefono: el.telefono || 'No asignado',
+      pagina_web: el.pagina_web || 'No asignado',
+      email: el.email || 'No asignado',
+      consejo_local: el.consejo_local || 'No asignado',
+      // sector_nombre: el.sector_informacion.nombre,
+      //   sector_cod: sector_codigo,
+      //   partida: el.partida,
+      //   descripcion: descripcion,
+      //   monto_inicial: `${separarMiles(el.monto_inicial)} Bs`,
+      //   monto_actual: `${separarMiles(el.monto_actual)} Bs`,
+      acciones: `
+      <button class="btn btn-sm bg-brand-color-2 text-white btn-update" data-editarid="${el.id}"></button>
+      <button class="btn btn-danger btn-sm btn-destroy" data-eliminarid="${el.id}"></button>
+      `,
+    }
+  })
+
+  consejoTable.clear().draw()
+
+  // console.log(datosOrdenados)
+  consejoTable.rows.add(data).draw()
+}
+
 export async function deleteGobernacionRow({ id, row }) {
   gobernacionTable.row(row).remove().draw()
 }
 
 export async function deleteContraloriaRow({ id, row }) {
   contraloriaTable.row(row).remove().draw()
+}
+export async function deleteConsejoRow({ id, row }) {
+  consejoTable.row(row).remove().draw()
 }
