@@ -25,21 +25,23 @@ function registrarInformacionPersona($info) {
 
 function actualizarInformacionPersona($info) {
     global $db;
+    $tabla_principal = 'informacion_personas'; // Definimos la tabla principal
 
     $valores = [
         ['nombres', $info['nombres'], 's'],
         ['cargo', $info['cargo'], 's']
     ];
 
-    $where = "id = " . intval($info['id']);
-
     try {
-        $resultado = $db->update('informacion_personas', $valores, $where);
+        $where = "id = " . intval($info['id']);
+        $resultado = $db->update($tabla_principal, $valores, $where);
         return json_encode($resultado);
     } catch (Exception $e) {
         throw new Exception("Error: " . $e->getMessage());
     }
 }
+
+
 
 function eliminarInformacionPersona($id) {
     global $db;
@@ -72,21 +74,22 @@ function registrarTitulo1($info) {
 
 function actualizarTitulo1($info) {
     global $db;
+    $tabla_principal = 'titulo_1'; // Definimos la tabla principal
 
     $valores = [
         ['articulo', $info['articulo'], 's'],
         ['descripcion', $info['descripcion'], 's']
     ];
 
-    $where = "id = " . intval($info['id']);
-
     try {
-        $resultado = $db->update('titulo_1', $valores, $where);
+        $where = "id = " . intval($info['id']);
+        $resultado = $db->update($tabla_principal, $valores, $where);
         return json_encode($resultado);
     } catch (Exception $e) {
         throw new Exception("Error: " . $e->getMessage());
     }
 }
+
 
 function eliminarTitulo1($id) {
     global $db;
@@ -135,6 +138,16 @@ function consultarInformacionTodos($tabla) {
         return json_encode(['error' => "Error: " . $e->getMessage()]);
     }
 }
+
+// PROCESAR SOLICITUDES
+$data = json_decode(file_get_contents("php://input"), true);
+if (!isset($data["accion"])) {
+    echo json_encode(["error" => "Acción no especificada."]);
+    exit;
+}
+
+$accion = $data["accion"];
+$response = null;
 
 // Procesar solicitud según tabla y acción especificada
 switch ($data["tabla"]) {

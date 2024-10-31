@@ -28,6 +28,7 @@ function registrarInformacionContraloria($info) {
 
 function actualizarInformacionContraloria($info) {
     global $db;
+    $tabla_principal = 'informacion_contraloria'; // Definimos la tabla principal
 
     $valores = [
         ['nombre_apellido_contralor', $info['nombre_apellido_contralor'], 's'],
@@ -36,16 +37,16 @@ function actualizarInformacionContraloria($info) {
         ['pagina_web', $info['pagina_web'], 's'],
         ['email', $info['email'], 's']
     ];
-    
-    $where = "id = " . intval($info['id']);
 
     try {
-        $resultado = $db->update('informacion_contraloria', $valores, $where);
+        $where = "id = " . intval($info['id']);
+        $resultado = $db->update($tabla_principal, $valores, $where);
         return json_encode($resultado);
     } catch (Exception $e) {
         throw new Exception("Error: " . $e->getMessage());
     }
 }
+
 
 function eliminarInformacionContraloria($id) {
     global $db;
@@ -85,6 +86,7 @@ function registrarInformacionGobernacion($info) {
 
 function actualizarInformacionGobernacion($info) {
     global $db;
+    $tabla_principal = 'informacion_gobernacion'; // Definimos la tabla principal
 
     $valores = [
         ['identificacion', $info['identificacion'], 's'],
@@ -95,16 +97,16 @@ function actualizarInformacionGobernacion($info) {
         ['codigo_postal', $info['codigo_postal'], 's'],
         ['nombre_apellido_gobernador', $info['nombre_apellido_gobernador'], 's']
     ];
-    
-    $where = "id = " . intval($info['id']);
 
     try {
-        $resultado = $db->update('informacion_gobernacion', $valores, $where);
+        $where = "id = " . intval($info['id']);
+        $resultado = $db->update($tabla_principal, $valores, $where);
         return json_encode($resultado);
     } catch (Exception $e) {
         throw new Exception("Error: " . $e->getMessage());
     }
 }
+
 
 function eliminarInformacionGobernacion($id) {
     global $db;
@@ -139,6 +141,7 @@ function registrarPersonalDirectivo($info) {
 
 function actualizarPersonalDirectivo($info) {
     global $db;
+    $tabla_principal = 'personal_directivo'; // Definimos la tabla principal
 
     $valores = [
         ['direccion', $info['direccion'], 's'],
@@ -146,11 +149,10 @@ function actualizarPersonalDirectivo($info) {
         ['email', $info['email'], 's'],
         ['telefono', $info['telefono'], 's']
     ];
-    
-    $where = "id = " . intval($info['id']);
 
     try {
-        $resultado = $db->update('personal_directivo', $valores, $where);
+        $where = "id = " . intval($info['id']);
+        $resultado = $db->update($tabla_principal, $valores, $where);
         return json_encode($resultado);
     } catch (Exception $e) {
         throw new Exception("Error: " . $e->getMessage());
@@ -191,9 +193,9 @@ function registrarInformacionConsejo($info) {
         throw new Exception("Error: " . $e->getMessage());
     }
 }
-
 function actualizarInformacionConsejo($info) {
     global $db;
+    $tabla_principal = 'informacion_consejo'; // Definimos la tabla principal
 
     $valores = [
         ['nombre_apellido_presidente', $info['nombre_apellido_presidente'], 's'],
@@ -204,16 +206,16 @@ function actualizarInformacionConsejo($info) {
         ['email', $info['email'], 's'],
         ['consejo_local', $info['consejo_local'], 's']
     ];
-    
-    $where = "id = " . intval($info['id']);
 
     try {
-        $resultado = $db->update('informacion_consejo', $valores, $where);
+        $where = "id = " . intval($info['id']);
+        $resultado = $db->update($tabla_principal, $valores, $where);
         return json_encode($resultado);
     } catch (Exception $e) {
         throw new Exception("Error: " . $e->getMessage());
     }
 }
+
 
 function eliminarInformacionConsejo($id) {
     global $db;

@@ -26,22 +26,23 @@ function registrarDescripcionPrograma($info) {
 
 function actualizarDescripcionPrograma($info) {
     global $db;
+    $tabla_principal = 'descripcion_programas'; // Definimos la tabla principal
 
     $valores = [
         ['id_sector', $info['id_sector'], 'i'],
         ['id_programa', $info['id_programa'], 'i'],
         ['descripcion', $info['descripcion'], 's']
     ];
-    
-    $where = "id = " . intval($info['id']);
 
     try {
-        $resultado = $db->update('descripcion_programas', $valores, $where);
+        $where = "id = " . intval($info['id']);
+        $resultado = $db->update($tabla_principal, $valores, $where);
         return json_encode($resultado);
     } catch (Exception $e) {
         throw new Exception("Error: " . $e->getMessage());
     }
 }
+
 
 function eliminarDescripcionPrograma($id) {
     global $db;
