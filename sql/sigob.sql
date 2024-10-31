@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 31-10-2024 a las 01:03:31
+-- Tiempo de generación: 31-10-2024 a las 18:58:16
 -- Versión del servidor: 10.4.16-MariaDB
 -- Versión de PHP: 7.4.12
 
@@ -5130,7 +5130,8 @@ INSERT INTO `menu` (`id`, `oficina`, `categoria`, `nombre`, `dir`, `icono`) VALU
 (28, 'pl_formulacion', 'Configuracion', 'Actividades', 'mod_pl_formulacion/form_actividades', NULL),
 (29, 'pl_formulacion', 'Configuracion', 'Unidades', 'mod_pl_formulacion/form_unidades', 'bx-buildings'),
 (30, 'pl_formulacion', 'Configuracion', 'Sectores', 'mod_pl_formulacion/form_sectores', 'bx-objects-horizontal-right'),
-(31, 'pl_formulacion', 'Configuracion', 'Programas', 'mod_pl_formulacion/form_programas', 'bx-objects-horizontal-right');
+(31, 'pl_formulacion', 'Configuracion', 'Programas', 'mod_pl_formulacion/form_programas', 'bx-objects-horizontal-right'),
+(34, 'pl_formulacion', 'Configuracion', 'Proyectos', 'mod_pl_formulacion/form_proyecto', 'bx-objects-horizontal-right');
 
 -- --------------------------------------------------------
 
@@ -11819,7 +11820,7 @@ CREATE TABLE `tasa` (
 --
 
 INSERT INTO `tasa` (`id`, `descripcion`, `simbolo`, `valor`) VALUES
-(1, 'Precio del Dólar Actual', '$', '42.2256');
+(1, 'Precio del Dólar Actual', '$', '42.5622');
 
 -- --------------------------------------------------------
 
@@ -11852,7 +11853,8 @@ INSERT INTO `tasa_historico` (`id`, `u_nombre`, `precio`, `descripcion`, `fecha`
 (10, 'sigob', '39.1813', 'actualizacion automática', '22-10-2024'),
 (11, 'sigob', '40.8803', 'actualizacion automática', '24-10-2024'),
 (12, 'sigob', '41.0429', 'actualizacion automática', '27-10-2024'),
-(13, 'sigob', '42.2256', 'actualizacion automática', '30-10-2024');
+(13, 'sigob', '42.2256', 'actualizacion automática', '30-10-2024'),
+(14, 'sigob', '42.5622', 'actualizacion automática', '31-10-2024');
 
 -- --------------------------------------------------------
 
@@ -16718,7 +16720,7 @@ ALTER TABLE `informacion_personas`
 -- AUTO_INCREMENT de la tabla `menu`
 --
 ALTER TABLE `menu`
-  MODIFY `id` int(1) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+  MODIFY `id` int(1) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 
 --
 -- AUTO_INCREMENT de la tabla `modificaciones_empleados`
@@ -16904,7 +16906,7 @@ ALTER TABLE `tasa`
 -- AUTO_INCREMENT de la tabla `tasa_historico`
 --
 ALTER TABLE `tasa_historico`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT de la tabla `traspasos`
