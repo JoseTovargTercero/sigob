@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 30-10-2024 a las 16:26:35
+-- Tiempo de generación: 31-10-2024 a las 06:14:29
 -- Versión del servidor: 10.4.27-MariaDB
 -- Versión de PHP: 7.4.33
 
@@ -60,7 +60,8 @@ INSERT INTO `titulo_1` (`id`, `articulo`, `descripcion`) VALUES
 (20, 'ARTÍCULO  21:', 'Los gastos causados y no pagados al treinta y uno (31) de diciembre de cada año se pagarán durante el año siguiente, con cargo a las disponibilidades en caja y banco existentes a la fecha señalada. \r\nLos gastos comprometidos y no causados al treinta y uno (31) de diciembre de cada año se imputarán automáticamente al ejercicio siguiente, afectando los mismos a los créditos disponibles para ese ejercicio. Terminado este periodo, los compromisos no pagados deberán pagarse con cargo a una partida del presupuesto que se preverá para cada ejercicio.\r\nLos compromisos originados en sentencia judicial firme con autoridad de cosa juzgada o reconocidos administrativamente de conformidad con los procedimientos establecidos en la Ley Orgánica de la Procuraduría General de la República, se pagarán con cargo al crédito presupuestario que, a tal efecto, se incluirá en el respectivo presupuesto de gastos. \r\nEl Reglamento de esta Ley establecerá los plazos y los mecanismos para la aplicación de estas disposiciones. \r\n'),
 (21, 'ARTÍCULO 22:', 'El Gobernador del Estado, a través de las Secretarías de Administración y de Planificación, Proyectos y Presupuesto dictará mediante resolución las medidas para incrementar las existencias del tesoro, con el monto de los créditos no comprometidos al 31 de diciembre del Ejercicio Fiscal fenecido. '),
 (22, 'ARTICULO 23:', 'El incumplimiento de los deberes contemplados en esta Ley por parte de los funcionarios o terceros responsables de los mismos dará lugar a la apertura de la averiguación correspondiente a fin de determinar la responsabilidad disciplinaria o administrativa a que hubiere lugar, sin perjuicio de la que adelante el Ministerio Público en lo que le concierne al ámbito civil y penal. '),
-(23, 'ARTÍCULO 24:', 'Para todo lo no previsto en estas Disposiciones Generales en materia de Ejecución y Control Presupuestario, regirá la normativa contenida en la Ley de Administración Financiera del Estado Amazonas, en cuanto sea aplicable.');
+(23, 'ARTÍCULO 24:', 'Para todo lo no previsto en estas Disposiciones Generales en materia de Ejecución y Control Presupuestario, regirá la normativa contenida en la Ley de Administración Financiera del Estado Amazonas, en cuanto sea aplicable.'),
+(24, 'ARTICULO 27:', 'Esta Ley entrará en vigencia a partir de su publicación en Gaceta Oficial del Estado Amazonas y/o en la Gaceta Oficial del Consejo Legislativo del Estado Amazonas. \r\n\r\nDada, firmada, sellada y refrendada en el salón de sesiones del Consejo Legislativo del Estado Amazonas. En Puerto Ayacucho a los 28 días del mes de diciembre del 2019. Año 209 de la Independencia y 160 de la Federación.');
 
 --
 -- Índices para tablas volcadas
@@ -80,7 +81,7 @@ ALTER TABLE `titulo_1`
 -- AUTO_INCREMENT de la tabla `titulo_1`
 --
 ALTER TABLE `titulo_1`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -15,32 +15,110 @@ try {
     $stmtEjercicio = $conexion->prepare($sqlEjercicio);
     $stmtEjercicio->bind_param("i", $id_ejercicio);
     $stmtEjercicio->execute();
-    $resultadoEjercicio = $stmtEjercicio->get_result()->fetch_assoc();
+    $datosEjercicio = $stmtEjercicio->get_result()->fetch_assoc();
 
     // Validar si se encontró el registro
-    if (!$resultadoEjercicio) {
+    if (!$datosEjercicio) {
         throw new Exception("No se encontró el ejercicio fiscal con el ID proporcionado.");
     }
 
-    $ano = $resultadoEjercicio['ano'];
-    $situado = $resultadoEjercicio['situado'];
+    $ano = $datosEjercicio['ano'];
+    $situado = $datosEjercicio['situado'];
 
     // Consultar a la tabla plan_inversion para obtener monto_total
     $sqlInversion = "SELECT monto_total FROM plan_inversion WHERE id_ejercicio = ?";
     $stmtInversion = $conexion->prepare($sqlInversion);
     $stmtInversion->bind_param("i", $id_ejercicio);
     $stmtInversion->execute();
-    $resultadoInversion = $stmtInversion->get_result()->fetch_assoc();
-    $monto_total = $resultadoInversion ? $resultadoInversion['monto_total'] : "No disponible";
+    $datosInversion = $stmtInversion->get_result()->fetch_assoc();
+    $monto_total = $datosInversion ? $datosInversion['monto_total'] : 0; // Cambiado a 0
     $total = $situado + $monto_total;
+
+    // Consultar sectores y programas agrupados por sector
+    $sqlSectores = "
+        SELECT s.id AS sector_id, s.sector, s.denominacion AS sector_denominacion, 
+               p.id AS programa_id, p.programa, p.denominacion AS programa_denominacion
+        FROM pl_sectores AS s
+        LEFT JOIN pl_programas AS p ON s.id = p.sector
+        ORDER BY s.sector, p.programa
+    ";
+    $resultadoSectores = $conexion->query($sqlSectores);
+    $sectoresData = [];
+    if ($resultadoSectores && $resultadoSectores->num_rows > 0) {
+        while ($row = $resultadoSectores->fetch_assoc()) {
+            $sector_id = $row['sector_id'];
+            $programa_id = $row['programa_id'];
+
+            if (!isset($sectoresData[$sector_id])) {
+                $sectoresData[$sector_id] = [
+                    'sector_id' => $sector_id,
+                    'sector' => $row['sector'],
+                    'sector_denominacion' => $row['sector_denominacion'],
+                    'programas' => []
+                ];
+            }
+
+            // Solo agregar el programa si no está ya en el array
+            if ($programa_id !== null && !isset($sectoresData[$sector_id]['programas'][$programa_id])) {
+                $sectoresData[$sector_id]['programas'][$programa_id] = [
+                    'programa_id' => $programa_id,
+                    'programa' => $row['programa'],
+                    'programa_denominacion' => $row['programa_denominacion'],
+                    'monto' => 0  // Inicializamos el monto en 0
+                ];
+            }
+        }
+    }
+
+    // Consultar montos en la tabla proyecto_inversion_partidas en una sola consulta
+    $sqlMontos = "
+        SELECT sector_id, programa_id, SUM(monto) AS total_monto 
+        FROM proyecto_inversion_partidas 
+        GROUP BY sector_id, programa_id
+    ";
+    $resultadoMontos = $conexion->query($sqlMontos);
+    $montosData = [];
+    if ($resultadoMontos && $resultadoMontos->num_rows > 0) {
+        while ($row = $resultadoMontos->fetch_assoc()) {
+            $montosData[$row['sector_id']][$row['programa_id']] = $row['total_monto'];
+        }
+    }
+
+    // Asociar los montos a los programas
+    foreach ($sectoresData as &$sector) {
+        foreach ($sector['programas'] as &$programa) {
+            if (isset($montosData[$sector['sector_id']][$programa['programa_id']])) {
+                $programa['monto'] = $montosData[$sector['sector_id']][$programa['programa_id']];
+            }
+        }
+    }
 
     // Consultar todos los registros de la tabla titulo_1 con articulo y descripcion
     $sqlTitulo = "SELECT articulo, descripcion FROM titulo_1";
     $resultadoTitulo = $conexion->query($sqlTitulo);
     $tituloData = [];
+    $articulo27 = null; // Inicializa la variable para almacenar el artículo 27
+
     if ($resultadoTitulo && $resultadoTitulo->num_rows > 0) {
         while ($row = $resultadoTitulo->fetch_assoc()) {
+            // Agrega todos los registros a la lista
             $tituloData[] = $row;
+            
+            // Verifica si el artículo es "ARTICULO 27" y lo guarda en la variable
+            if ($row['articulo'] === 'ARTICULO 27:') {
+                $articulo27 = $row;
+            }
+        }
+    }
+
+    // Nueva consulta para obtener todos los registros de la tabla informacion_personas
+    $sqlPersonas = "SELECT nombres, cargo FROM informacion_personas";
+    $resultadoPersonas = $conexion->query($sqlPersonas);
+    $personasData = [];
+    
+    if ($resultadoPersonas && $resultadoPersonas->num_rows > 0) {
+        while ($row = $resultadoPersonas->fetch_assoc()) {
+            $personasData[] = $row; // Guarda cada registro en el array
         }
     }
 
@@ -50,6 +128,12 @@ try {
     $conexion->rollback();
     die("Error en la consulta: " . $e->getMessage());
 }
+
+
+
+
+
+
 
 function convertirNumeroLetra2($numero) {
     $numero = number_format($numero, 2, '.', '');
@@ -522,76 +606,109 @@ function unidad2($numuero) {
 
     <!-- Sección para mostrar los artículos y descripciones de la tabla titulo_1 -->
     <?php foreach ($tituloData as $titulo): ?>
-        <p><strong><?= htmlspecialchars($titulo['articulo']) ?>:</strong> <?= htmlspecialchars($titulo['descripcion']) ?></p>
+    <?php if ($titulo['articulo'] !== 'ARTICULO 27:'): ?>
+        <p><strong><?= htmlspecialchars($titulo['articulo']) ?></strong> <?= htmlspecialchars($titulo['descripcion']) ?></p>
+    <?php endif; ?>
     <?php endforeach; ?>
+
     <p>TITULO II</p>
     <p>PRESUPUESTO DE INGRESOS</p>
-    <p><strong>ARTICULO 25:</strong> Apruébese la estimación de los Ingresos Públicos para el Ejercicio Fiscal  <?= $ano ?> la cantidad de <?php echo convertirNumeroLetra2($total); ?> (Bs. <?php echo number_format($total, 2) ?>), según la distribución siguiente:: </p>
-   <table>
-    <tr>
-        <th class="bl bt bb" colspan="4">CÓDIGO DE RECURSOS</th>
-        <th class="bl bt bb br" rowspan="2">DENOMINACIÓN</th>
-        <th class="bl bt bb br" rowspan="2">MONTO Bs.</th>
-    </tr>
-    <tr>
-        <th class="bl bt bb">RAMO</th>
-        <th class="bl bt bb br">GEN</th>
-        <th class="bl bt bb br">ESP</th>
-        <th class="bl bt bb br">SUB ESP</th>
-    </tr>
-    <tr>
-        <td class="bl bt bb">3.00</td>
-        <td class="bl bt bb br">00</td>
-        <td class="bl bt bb br">00</td>
-        <td class="bl bt bb br">00</td>
-        <td class="bl bt bb br" class="bold">RECURSOS</td>
-        <td class="bl bt bb br"><?= number_format($total, 2) ?></td>
-    </tr>
-    <tr>
-        <td class="bl bt bb">3.05</td>
-        <td class="bl bt bb br">00</td>
-        <td class="bl bt bb br">00</td>
-        <td class="bl bt bb br">00</td>
-        <td class="bl bt bb br">TRANSFERENCIAS Y DONACIONES</td>
-        <td class="bl bt bb br"><?= number_format($total, 2) ?></td>
-    </tr>
-    <tr>
-        <td class="bl bt bb">3.05</td>
-        <td class="bl bt bb br">03</td>
-        <td class="bl bt bb br">01</td>
-        <td class="bl bt bb br">01</td>
-        <td class="bl bt bb br">SITUADO ESTATAL</td>
-        <td class="bl bt bb br"><?= number_format($situado, 2) ?></td>
-    </tr>
-    <tr>
-        <td class="bl bt bb">3.05</td>
-        <td class="bl bt bb br">08</td>
-        <td class="bl bt bb br">01</td>
-        <td class="bl bt bb br">01</td>
-        <td class="bl bt bb br">FONDO DE COMPENSACIÓN INTERTERRITORIAL</td>
-        <td class="bl bt bb br"><?= number_format($monto_total, 2) ?></td>
-    </tr>
-    <tr>
-        <td colspan="5" class="bl bt bb">TOTAL</td>
-        <td class="bl bt bb br"><?= number_format($total, 2) ?></td>
-    </tr>
-</table>
-<p>TITULO III</p>
+    <p><strong>ARTICULO 25:</strong> Apruébese la estimación de los Ingresos Públicos para el Ejercicio Fiscal <?= $ano ?> la cantidad de <?php echo convertirNumeroLetra2($total); ?> (Bs. <?php echo number_format($total, 2) ?>), según la distribución siguiente:</p>
+    <table>
+        <tr>
+            <th class="bl bt bb" colspan="4">CÓDIGO DE RECURSOS</th>
+            <th class="bl bt bb br" rowspan="2">DENOMINACIÓN</th>
+            <th class="bl bt bb br" rowspan="2">MONTO Bs.</th>
+        </tr>
+        <tr>
+            <th class="bl bt bb">RAMO</th>
+            <th class="bl bt bb br">GEN</th>
+            <th class="bl bt bb br">ESP</th>
+            <th class="bl bt bb br">SUB ESP</th>
+        </tr>
+        <tr>
+            <td class="bl bt bb">3.00</td>
+            <td class="bl bt bb br">00</td>
+            <td class="bl bt bb br">00</td>
+            <td class="bl bt bb br">00</td>
+            <td class="bl bt bb br" class="bold">RECURSOS</td>
+            <td class="bl bt bb br"><?= number_format($total, 2) ?></td>
+        </tr>
+        <tr>
+            <td class="bl bt bb">3.05</td>
+            <td class="bl bt bb br">00</td>
+            <td class="bl bt bb br">00</td>
+            <td class="bl bt bb br">00</td>
+            <td class="bl bt bb">TRANSFERENCIAS Y DONACIONES</td>
+            <td class="bl bt bb br"><?= number_format($total, 2) ?></td>
+        </tr>
+        <tr>
+            <td class="bl bt bb">3.05</td>
+            <td class="bl bt bb br">03</td>
+            <td class="bl bt bb br">01</td>
+            <td class="bl bt bb br">01</td>
+            <td class="bl bt bb br">SITUADO ESTATAL</td>
+            <td class="bl bt bb br"><?= number_format($situado, 2) ?></td>
+        </tr>
+        <tr>
+            <td class="bl bt bb">3.05</td>
+            <td class="bl bt bb br">08</td>
+            <td class="bl bt bb br">01</td>
+            <td class="bl bt bb br">01</td>
+            <td class="bl bt bb br">FONDO DE COMPENSACIÓN INTERTERRITORIAL</td>
+            <td class="bl bt bb br"><?= number_format($monto_total, 2) ?></td>
+        </tr>
+        <tr>
+            <td colspan="5" class="bl bt bb">TOTAL</td>
+            <td class="bl bt bb br"><?= number_format($total, 2) ?></td>
+        </tr>
+    </table>
+    <p>TITULO III</p>
     <p>PRESUPUESTO DE GASTOS</p>
-    <p><strong>ARTÍCULO 26:</strong> Se acuerda la estimación de los Ingresos Públicos para el Ejercicio Fiscal  <?= $ano ?> en la cantidad de <?php echo convertirNumeroLetra2($total); ?> (Bs. <?php echo number_format($total, 2) ?>), según la distribución siguiente:</p>
-   <table>
-    <tr>
-        <th class="bl bt bb" colspan="2">PROGRAMA</th>
-        <th class="bl bt bb br" rowspan="1">MONTO Bs.</th>
-    </tr>
-    <tr>
-        <th class="bl bt bb">RAMO</th>
-        <th class="bl bt bb br">GEN</th>
-        <th class="bl bt bb br">ESP</th>
-    </tr>
-</table>
-</body>
-</html>
+    <p><strong>ARTÍCULO 26:</strong> Se acuerda la estimación de los Ingresos Públicos para el Ejercicio Fiscal <?= $ano ?> en la cantidad de <?php echo convertirNumeroLetra2($total); ?> (Bs. <?php echo number_format($total, 2) ?>), según la distribución siguiente:</p>
+    
+    <!-- Tabla HTML -->
+    <table>
+        <?php
+        $sectoresImprimidos = [];
+
+        foreach ($sectoresData as $sectorData) {
+            $sectorKey = $sectorData['sector'];
+
+            // Verificar si el sector ya ha sido impreso
+            if (!in_array($sectorKey, $sectoresImprimidos)) {
+                // Imprimir información del sector
+                echo "<tr><td colspan='3'><strong>Sector:</strong> " . htmlspecialchars($sectorData['sector']) . "</td></tr>";
+                echo "<tr><td colspan='3'>" . htmlspecialchars($sectorData['sector_denominacion']) . "</td></tr>";
+
+                // Si hay programas
+                if (!empty($sectorData['programas']) && is_array($sectorData['programas'])) {
+                    echo "<tr><th class='bl bt bb' colspan='2'>PROGRAMA</th><th class='bl bt bb br'>MONTO Bs.</th></tr>";
+                    foreach ($sectorData['programas'] as $programa2) {
+                        echo "<tr>";
+                        echo "<td class='bl bt bb'>" . htmlspecialchars($programa2['programa']) . "</td>";
+                        echo "<td class='bl bt bb br'>" . htmlspecialchars($programa2['programa_denominacion']) . "</td>";
+                        echo "<td class='bl bt bb br'>" . number_format($programa2['monto'], 2) . "</td>";
+                        echo "</tr>";
+                    }
+                } else {
+                    echo "<tr><td colspan='3'>No hay programas disponibles para este sector.</td></tr>";
+                }
+
+                // Agregar el sector a la lista de impresos
+                $sectoresImprimidos[] = $sectorKey;
+            }
+        }
+        ?>
+    </table>
+    <p><strong><?= htmlspecialchars($articulo27['articulo']) ?></strong> <?= htmlspecialchars($articulo27['descripcion']) ?></p>
+
+    <!-- Impresión de información de personas -->
+        <?php foreach ($personasData as $persona): ?>
+            <p><?= htmlspecialchars($persona['nombres']) ?></p>
+            <p><strong><?= htmlspecialchars($persona['cargo']) ?></strong></p>
+        <?php endforeach; ?>
+
 </body>
 
 </html>
