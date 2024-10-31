@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 31-10-2024 a las 00:45:04
+-- Tiempo de generación: 31-10-2024 a las 01:03:31
 -- Versión del servidor: 10.4.16-MariaDB
 -- Versión de PHP: 7.4.12
 
@@ -98,7 +98,9 @@ INSERT INTO `audit_logs` (`id`, `action_type`, `table_name`, `situation`, `affec
 (27, 'UPDATE', 'pl_programas', 'id = 38', 1, 35, '2024-10-30 19:37:58'),
 (28, 'DELETE', 'pl_programas', 'id= ?', 1, 35, '2024-10-30 19:44:00'),
 (29, 'DELETE', 'pl_programas', 'id= ?', 1, 35, '2024-10-30 19:44:04'),
-(30, 'DELETE', 'pl_programas', 'id= ?', 1, 35, '2024-10-30 19:44:07');
+(30, 'DELETE', 'pl_programas', 'id= ?', 1, 35, '2024-10-30 19:44:07'),
+(31, 'DELETE', 'pl_sectores', 'id= ?', 1, 35, '2024-10-30 20:00:29'),
+(32, 'UPDATE', 'pl_sectores', 'id = 12', 1, 35, '2024-10-30 20:02:16');
 
 -- --------------------------------------------------------
 
@@ -5124,10 +5126,10 @@ INSERT INTO `menu` (`id`, `oficina`, `categoria`, `nombre`, `dir`, `icono`) VALU
 (23, 'nomina', 'Movimientos', 'Bancos', 'mod_nomina/nom_bancos', 'bx-objects-vertical-bottom'),
 (24, 'nomina', 'Nómina', 'Registro de nominas', 'mod_nomina/nom_grupos', 'bx-wallet-alt'),
 (25, 'nomina', 'Nómina', 'Pagar nomina', 'mod_nomina/nom_peticiones_form', 'bx-wallet-alt'),
-(26, 'pl_formulacion', 'Configuracion', 'Sectores', 'mod_pl_formulacion/form_sectores', 'bx-objects-horizontal-right'),
 (27, 'pl_formulacion', NULL, 'Reportes', 'mod_pl_formulacion/form_reportes\r\n', 'bx-download'),
 (28, 'pl_formulacion', 'Configuracion', 'Actividades', 'mod_pl_formulacion/form_actividades', NULL),
 (29, 'pl_formulacion', 'Configuracion', 'Unidades', 'mod_pl_formulacion/form_unidades', 'bx-buildings'),
+(30, 'pl_formulacion', 'Configuracion', 'Sectores', 'mod_pl_formulacion/form_sectores', 'bx-objects-horizontal-right'),
 (31, 'pl_formulacion', 'Configuracion', 'Programas', 'mod_pl_formulacion/form_programas', 'bx-objects-horizontal-right');
 
 -- --------------------------------------------------------
@@ -6882,7 +6884,8 @@ INSERT INTO `pl_sectores` (`id`, `sector`, `denominacion`) VALUES
 (7, '12', 'SALUD'),
 (8, '13', 'DESARROLLO SOCIAL Y PARTICIPACIÓN'),
 (9, '14', 'SEGURIDAD SOCIAL'),
-(10, '15', 'GASTOS NO CLASIFICADOS SECTORIALMENTE');
+(10, '15', 'GASTOS NO CLASIFICADOS SECTORIALMENTE'),
+(12, '77', 'JOSE RICARDO');
 
 -- --------------------------------------------------------
 
@@ -16535,7 +16538,7 @@ ALTER TABLE `asignacion_ente`
 -- AUTO_INCREMENT de la tabla `audit_logs`
 --
 ALTER TABLE `audit_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT de la tabla `backups`
@@ -16715,7 +16718,7 @@ ALTER TABLE `informacion_personas`
 -- AUTO_INCREMENT de la tabla `menu`
 --
 ALTER TABLE `menu`
-  MODIFY `id` int(1) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `id` int(1) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT de la tabla `modificaciones_empleados`
@@ -16811,7 +16814,7 @@ ALTER TABLE `pl_proyectos`
 -- AUTO_INCREMENT de la tabla `pl_sectores`
 --
 ALTER TABLE `pl_sectores`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT de la tabla `pl_sectores_presupuestarios`
