@@ -575,16 +575,18 @@ function unidad2($numuero) {
 </head>
 
 <body>
+    <div style="text-align: center; font-size: 15px"><strong>
     <p>REPUBLICA BOLIVARIANA DE VENEZUELA</p>
-    <div class='text-left' style='width: 20px'>
-        <img src='../../img/logo_2_amazona.jpg' class='logo'>
+    <div style='width: 100%;  '>
+        <img style="margin-left: auto; margin-right: auto; width: 10%" src='../../img/logo_2_amazona.jpg' class='logo'>
     </div>
     <p>EL CONSEJO LEGISLATIVO DEL ESTADO AMAZONAS</p>
     <p>Decreta lo siguiente</p>
     <p>LEY DE PRESUPUESTO DE INGRESOS Y GASTOS</p>
     <p>DEL ESTADO AMAZONAS PARA EL EJERCICIO FISCAL</p>
     <p>TITULO I</p>
-    <p>DISPOSICIONES GENERALES</p>
+    <p>DISPOSICIONES GENERALES</p></strong></div>
+    <div style="font-size: 15px">
     <p><strong>ARTICULO 1:</strong> Se aprueba la estimación de los Ingresos y Gastos Públicos para el Ejercicio Fiscal <?= $ano ?> en la cantidad de <?php echo convertirNumeroLetra2($total); ?> (Bs. <?php echo number_format($total, 2) ?>), la cual está constituida por los siguientes rubros de ingresos: </p>
     
     <table>
@@ -605,14 +607,18 @@ function unidad2($numuero) {
     <p>Esta distribución se hace de acuerdo a lo que se prevé en el Título II de esta Ley, denominado “Presupuesto de Ingresos” por un monto de <?php echo convertirNumeroLetra2($total); ?> (Bs. <?php echo number_format($total, 2) ?>)</p>
 
     <!-- Sección para mostrar los artículos y descripciones de la tabla titulo_1 -->
+    <div style="text-align: justify;">
     <?php foreach ($tituloData as $titulo): ?>
     <?php if ($titulo['articulo'] !== 'ARTICULO 27:'): ?>
         <p><strong><?= htmlspecialchars($titulo['articulo']) ?></strong> <?= htmlspecialchars($titulo['descripcion']) ?></p>
     <?php endif; ?>
     <?php endforeach; ?>
-
+</div>
+    <div style="text-align: center;"><strong>
     <p>TITULO II</p>
     <p>PRESUPUESTO DE INGRESOS</p>
+</strong>
+    </div>
     <p><strong>ARTICULO 25:</strong> Apruébese la estimación de los Ingresos Públicos para el Ejercicio Fiscal <?= $ano ?> la cantidad de <?php echo convertirNumeroLetra2($total); ?> (Bs. <?php echo number_format($total, 2) ?>), según la distribución siguiente:</p>
     <table>
         <tr>
@@ -663,8 +669,12 @@ function unidad2($numuero) {
             <td class="bl bt bb br"><?= number_format($total, 2) ?></td>
         </tr>
     </table>
+    <div style="text-align: center;">
+        <strong>
     <p>TITULO III</p>
     <p>PRESUPUESTO DE GASTOS</p>
+</strong>
+</div>
     <p><strong>ARTÍCULO 26:</strong> Se acuerda la estimación de los Ingresos Públicos para el Ejercicio Fiscal <?= $ano ?> en la cantidad de <?php echo convertirNumeroLetra2($total); ?> (Bs. <?php echo number_format($total, 2) ?>), según la distribución siguiente:</p>
     
     <!-- Tabla HTML -->
@@ -692,7 +702,7 @@ function unidad2($numuero) {
                         echo "</tr>";
                     }
                 } else {
-                    echo "<tr><td colspan='3'>No hay programas disponibles para este sector.</td></tr>";
+                    echo "<tr><td class='bl bt bb' colspan='3'>No hay programas disponibles para este sector.</td></tr>";
                 }
 
                 // Agregar el sector a la lista de impresos
@@ -701,14 +711,16 @@ function unidad2($numuero) {
         }
         ?>
     </table>
-    <p><strong><?= htmlspecialchars($articulo27['articulo']) ?></strong> <?= htmlspecialchars($articulo27['descripcion']) ?></p>
 
+    <p><strong><?= htmlspecialchars($articulo27['articulo']) ?></strong> <?= htmlspecialchars($articulo27['descripcion']) ?></p>
+    <div style="text-align: center;">
     <!-- Impresión de información de personas -->
         <?php foreach ($personasData as $persona): ?>
             <p><?= htmlspecialchars($persona['nombres']) ?></p>
             <p><strong><?= htmlspecialchars($persona['cargo']) ?></strong></p>
         <?php endforeach; ?>
-
+    </div>
+        </div>
 </body>
 
 </html>

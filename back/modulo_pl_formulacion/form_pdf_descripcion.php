@@ -21,12 +21,13 @@ if (isset($id_sector) && isset($id_programa)) {
     $stmtSector->close();
 
     // Consulta a pl_programas para obtener sector, programa y denominacion de id_programa
-    $queryPrograma = "SELECT sector, programa, denominacion FROM pl_programas WHERE id = ?";
+    $queryPrograma = "SELECT id, sector, programa, denominacion FROM pl_programas WHERE id = ?";
     $stmtPrograma = $conexion->prepare($queryPrograma);
     $stmtPrograma->bind_param("i", $id_programa);
     $stmtPrograma->execute();
     $resultPrograma = $stmtPrograma->get_result();
     if ($rowPrograma = $resultPrograma->fetch_assoc()) {
+        $data['id_programa2'] = $rowPrograma['id'];
         $data['sector'] = $rowPrograma['sector'];
         $data['programa'] = $rowPrograma['programa'];
         $data['denominacion_programa'] = $rowPrograma['denominacion'];
@@ -36,7 +37,7 @@ if (isset($id_sector) && isset($id_programa)) {
     // Consulta a entes para obtener ente_nombre coincidente con sector y programa del programa
     $queryEnte = "SELECT ente_nombre FROM entes WHERE sector = ? AND programa = ?";
     $stmtEnte = $conexion->prepare($queryEnte);
-    $stmtEnte->bind_param("ii", $data['sector'], $data['programa']);
+    $stmtEnte->bind_param("ii", $data['sector'], $data['id_programa2']);
     $stmtEnte->execute();
     $resultEnte = $stmtEnte->get_result();
     if ($rowEnte = $resultEnte->fetch_assoc()) {

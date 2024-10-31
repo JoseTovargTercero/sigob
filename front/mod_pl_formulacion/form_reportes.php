@@ -182,6 +182,10 @@ $stmt->close();
                   <a class="list-group-item list-group-item-action pointer" data-tab-id="2006" data-bs-toggle="tab"><b>2006</b> RESUM. CRED. PRES. A NIVEL PARTIDAS DE SECTORES</a>
                   <a class="list-group-item list-group-item-action pointer" data-tab-id="2009" data-bs-toggle="tab"><b>2009</b> GASTOS DE INVERSIÓN ESTIMADO</a>
                   <a class="list-group-item list-group-item-action pointer" data-tab-id="2010" data-bs-toggle="tab"><b>2010</b> TRASFERENCIAS Y DONACIONES</a>
+                  <a class="list-group-item list-group-item-action pointer" data-tab-id="informacion" data-bs-toggle="tab"><b>informacion</b> INFORMACIÓN GENERAL DE LA ENTIDAD FEDERAL</a>
+                  <a class="list-group-item list-group-item-action pointer" data-tab-id="indice" data-bs-toggle="tab"><b>indice</b> ÍNDICE DE CATEGORÍAS PROGRAMÁTICAS</a>
+                  <a class="list-group-item list-group-item-action pointer" data-tab-id="descripcion" data-bs-toggle="tab"><b>descripcion</b> DESCRIPCION DEL PROGRAMA,  SUB - PROGRAMA Y PROYECTO</a>
+                  <a class="list-group-item list-group-item-action pointer" data-tab-id="presupuesto" data-bs-toggle="tab"><b>presupuesto</b> LEY DE PRESUPUESTO DE INGRESOS Y GASTOS DEL ESTADO AMAZONAS</a>
                 </div>
               </div>
             </div>
@@ -365,6 +369,34 @@ $stmt->close();
             'texto': texto_nr,
             'autorun': true,
             'nombre_archivo': 'FORMULARIO 2010 TRASFERENCIAS Y DONACIONES'
+          },
+          'informacion': {
+            'inputs': [],
+            'titulo': 'INFORMACIÓN GENERAL DE LA ENTIDAD FEDERAL',
+            'texto': texto_nr,
+            'autorun': true,
+            'nombre_archivo': 'INFORMACIÓN GENERAL DE LA ENTIDAD FEDERAL'
+          },
+          'indice': {
+            'inputs': [],
+            'titulo': 'ÍNDICE DE CATEGORÍAS PROGRAMÁTICAS',
+            'texto': texto_nr,
+            'autorun': true,
+            'nombre_archivo': 'ÍNDICE DE CATEGORÍAS PROGRAMÁTICAS'
+          },
+          'descripcion': {
+            'inputs': [],
+            'titulo': 'DESCRIPCION DEL PROGRAMA,  SUB - PROGRAMA Y PROYECTO',
+            'texto': texto_nr,
+            'autorun': true,
+            'nombre_archivo': 'DESCRIPCION DEL PROGRAMA,  SUB - PROGRAMA Y PROYECTO'
+          },
+          'presupuesto': {
+            'inputs': [],
+            'titulo': 'LEY DE PRESUPUESTO DE INGRESOS Y GASTOS DEL ESTADO AMAZONAS',
+            'texto': texto_nr,
+            'autorun': true,
+            'nombre_archivo': 'LEY DE PRESUPUESTO DE INGRESOS Y GASTOS DEL ESTADO AMAZONAS'
           }
         }
 

@@ -25,7 +25,7 @@ $queryEntesDependencias = "
         programa, 
         proyecto, 
         actividad, 
-        ente_nombre AS denominacion, 
+        ente_nombre AS denominacion2, 
         'entes_dependencias' AS tipo
     FROM entes_dependencias
 ";
@@ -35,20 +35,44 @@ if (!$resultEntesDependencias) {
     die("Error en la consulta de entes_dependencias: " . $conexion->error);
 }
 
-// Almacenar los resultados en un solo arreglo
+// Almacenar los resultados en un solo arreglo, agrupando por sector y programa
 $allData = [];
-while ($row = $resultEntes->fetch_assoc()) {
-    $allData[] = $row;
-}
-while ($row = $resultEntesDependencias->fetch_assoc()) {
-    $allData[] = $row;
+
+// Procesar los resultados de entes
+while ($rowEntes = $resultEntes->fetch_assoc()) {
+    // Buscar una dependencia asociada en entes_dependencias
+    $hasDependency = false;
+    $denominacion = $rowEntes['denominacion'];
+    $unidadEjecutora = $denominacion; // Inicialmente igual a denominacion
+    $actividad = $rowEntes['actividad'];
+
+    // Recorrer los resultados de entes_dependencias para buscar coincidencias
+    $resultEntesDependencias->data_seek(0); // Resetear puntero de entes_dependencias
+    while ($rowDependencias = $resultEntesDependencias->fetch_assoc()) {
+        if ($rowDependencias['sector'] == $rowEntes['sector'] && 
+            $rowDependencias['programa'] == $rowEntes['programa']){
+            $actividad = $rowDependencias['actividad'];
+            $unidadEjecutora = $rowDependencias['denominacion2'];
+            $hasDependency = true;
+            break;
+        }
+    }
+
+    // Guardar en $allData con denominacion y unidad ejecutora correctas
+    $allData[] = [
+        'sector' => $rowEntes['sector'],
+        'programa' => $rowEntes['programa'],
+        'proyecto' => $rowEntes['proyecto'],
+        'actividad' => $actividad,
+        'denominacion' => $denominacion,
+        'unidad_ejecutora' => $unidadEjecutora,
+    ];
 }
 
 // Ordenar el arreglo por sector y programa
 usort($allData, function($a, $b) {
     return $a['sector'] <=> $b['sector'] ?: $a['programa'] <=> $b['programa'];
 });
-
 ?>
 <!DOCTYPE html>
 <html>
@@ -240,46 +264,46 @@ usort($allData, function($a, $b) {
     ?>
 
     <!-- Tabla principal -->
-    <table>
-        <thead>
-            <tr>
-                <th class="bl bt bb" rowspan="2">Sector</th>
-                <th class="bl bt bb br">Programa</th>
-                <th class="bl bt bb br">Proyecto</th>
-                <th class="bl bt bb br">Actividad</th>
-                <th class="bl bt bb br">Denominación</th>
-                <th class="bl bt bb br">Unidad Ejecutora</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php
-            $currentSector = null;
-            $currentPrograma = null;
+<table>
+    <thead>
+        <tr>
+            <th class="bl bt bb">Sector</th>
+            <th class="bl bt bb br">Programa</th>
+            <th class="bl bt bb br">Proyecto</th>
+            <th class="bl bt bb br">Actividad</th>
+            <th class="bl bt bb br">Denominación</th>
+            <th class="bl bt bb br">Unidad Ejecutora</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+        $currentSector = null;
+        $currentPrograma = null;
 
-            // Iterar y agrupar datos en la tabla
-            foreach ($allData as $row) {
-                // Revisar si el sector o programa cambió
-                if ($currentSector !== $row['sector'] || $currentPrograma !== $row['programa']) {
-                    $currentSector = $row['sector'];
-                    $currentPrograma = $row['programa'];
-                }
-
-                echo "
-                    <tr>
-                        <td class='p-2 bl'>{$row['sector']}</td>
-                        <td class='p-2 bl'>{$row['programa']}</td>
-                        <td class='p-2 bl'>{$row['proyecto']}</td>
-                        <td class='p-2 bl'>{$row['actividad']}</td>
-                        <td class='p-2 bl'>{$row['denominacion']}</td>
-                        <td class='p-2 bl br'>{$row['denominacion']}</td>
-                    </tr>
-                ";
+        // Iterar y agrupar datos en la tabla
+        foreach ($allData as $row) {
+            // Revisar si el sector o programa cambió
+            if ($currentSector !== $row['sector'] || $currentPrograma !== $row['programa']) {
+                $currentSector = $row['sector'];
+                $currentPrograma = $row['programa'];
             }
-            $resultEntes->free();
-            $resultEntesDependencias->free();
-            $conexion->close();
-            ?>
-        </tbody>
-    </table>
+
+            echo "
+                <tr>
+                    <td class='bl bt bb'>{$row['sector']}</td>
+                    <td class='bl bt bb br'>{$row['programa']}</td>
+                    <td class='bl bt bb br'>{$row['proyecto']}</td>
+                    <td class='bl bt bb br'>{$row['actividad']}</td>
+                    <td class='bl bt bb br'>{$row['denominacion']}</td>
+                    <td class='bl bt bb br'>{$row['unidad_ejecutora']}</td>
+                </tr>
+            ";
+        }
+        $resultEntes->free();
+        $resultEntesDependencias->free();
+        $conexion->close();
+        ?>
+    </tbody>
+</table>
 </body>
 </html>

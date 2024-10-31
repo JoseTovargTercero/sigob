@@ -63,17 +63,21 @@ $reportes = [
     '2015' => [
         'nombre' => 'FORM. 2015 CRED. PRE. DEL SEC PRO. A NIVEL DE PAR.',
         'formato' => 'A4-L'
-    ]
+    ],
     'informacion' => [
-        'nombre' => 'INFORMACIÓN GENERAL DE LA ENTIDAD FEDERAL.',
+        'nombre' => 'INFORMACIÓN GENERAL DE LA ENTIDAD FEDERAL',
         'formato' => 'A4-L'
-    ]
+    ],
     'indice' => [
-        'nombre' => 'ÍNDICE DE CATEGORÍAS PROGRAMÁTICAS.',
+        'nombre' => 'ÍNDICE DE CATEGORÍAS PROGRAMÁTICAS',
         'formato' => 'A4-L'
-    ]
+    ],
     'descripcion' => [
-        'nombre' => 'DESCRIPCION DEL PROGRAMA,  SUB - PROGRAMA Y PROYECTO.',
+        'nombre' => 'DESCRIPCION DEL PROGRAMA,  SUB - PROGRAMA Y PROYECTO',
+        'formato' => 'A4-L'
+    ],
+    'presupuesto' => [
+        'nombre' => 'LEY DE PRESUPUESTO DE INGRESOS Y GASTOS DEL ESTADO AMAZONAS',
         'formato' => 'A4-L'
     ]
 ];
@@ -137,6 +141,24 @@ if ($tipo == '2015') { // Se generean
 
     $result->free();
     $stmt->close();
+}elseif ($tipo == 'descripcion') {
+
+    // Consulta a la tabla descripcion_programas
+    $queryDescripcionProgramas = "
+        SELECT id_sector, id_programa 
+        FROM descripcion_programas
+    ";
+    $resultDescripcionProgramas = $conexion->query($queryDescripcionProgramas);
+    
+
+    if ($resultDescripcionProgramas && $resultDescripcionProgramas->num_rows > 0) {
+        while ($rowDescripcion = $resultDescripcionProgramas->fetch_assoc()) {
+            $sector_descripcion = $rowDescripcion['id_sector'];
+            $programa_descripcion = $rowDescripcion['id_programa'];
+            $pdf_files["{$url_pdf}&id_sector=$sector_descripcion&id_programa=$programa_descripcion"] = "{$sector_descripcion}-{$programa_descripcion}_descripcion.pdf";
+            // Imprime id_sector y id_programa
+        }
+    }
 } else {
     $pdf_files["{$url_pdf}"] = $reportes[$tipo]['nombre'] . ".pdf";
 }
