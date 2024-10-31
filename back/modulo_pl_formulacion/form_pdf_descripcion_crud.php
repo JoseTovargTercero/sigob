@@ -26,7 +26,7 @@ function registrarDescripcionPrograma($info) {
 
 function actualizarDescripcionPrograma($info) {
     global $db;
-    $tabla_principal = 'descripcion_programas'; // Definimos la tabla principal
+    $tabla_principal = 'descripcion_programas';
 
     $valores = [
         ['id_sector', $info['id_sector'], 'i'],
@@ -43,7 +43,6 @@ function actualizarDescripcionPrograma($info) {
     }
 }
 
-
 function eliminarDescripcionPrograma($id) {
     global $db;
 
@@ -56,16 +55,24 @@ function eliminarDescripcionPrograma($id) {
         throw new Exception("Error: " . $e->getMessage());
     }
 }
-function consultarInformacionPorId($tabla, $id) {
+
+function consultarInformacionPorId($id) {
     global $db;
-    
-    $condicion = "id = " . intval($id);
+
+    $id = intval($id);
 
     try {
-        $resultado = $db->select("*", $tabla, $condicion);
-        
+        $query = "SELECT descripcion_programas.id, descripcion_programas.descripcion, 
+                         pl_sectores.denominacion AS sector_denominacion, 
+                         pl_programas.denominacion AS programa_denominacion
+                  FROM descripcion_programas
+                  JOIN pl_sectores ON descripcion_programas.id_sector = pl_sectores.id
+                  JOIN pl_programas ON descripcion_programas.id_programa = pl_programas.id
+                  WHERE descripcion_programas.id = $id";
+
+        $resultado = $db->query($query);
+
         if (!empty($resultado)) {
-            // Devolver el resultado directamente, ya que cada campo es dinámico
             return $resultado;
         } else {
             return json_encode(['error' => 'Registro no encontrado.']);
@@ -75,14 +82,20 @@ function consultarInformacionPorId($tabla, $id) {
     }
 }
 
-function consultarInformacionTodos($tabla) {
+function consultarInformacionTodos() {
     global $db;
 
     try {
-        $resultado = $db->select("*", $tabla);
-        
+        $query = "SELECT descripcion_programas.id, descripcion_programas.descripcion, 
+                         pl_sectores.denominacion AS sector_denominacion, 
+                         pl_programas.denominacion AS programa_denominacion
+                  FROM descripcion_programas
+                  JOIN pl_sectores ON descripcion_programas.id_sector = pl_sectores.id
+                  JOIN pl_programas ON descripcion_programas.id_programa = pl_programas.id";
+
+        $resultado = $db->query($query);
+
         if (!empty($resultado)) {
-            // Devolver todos los resultados directamente, sin especificar campos
             return $resultado;
         } else {
             return json_encode(['error' => 'No se encontraron registros.']);
@@ -92,7 +105,52 @@ function consultarInformacionTodos($tabla) {
     }
 }
 
-// Procesar solicitud según tabla y acción especificada
+// Nueva función para consultar la tabla pl_sectores
+function consultarPlSectores() {
+    global $db;
+
+    try {
+        $query = "SELECT * FROM pl_sectores";
+        $resultado = $db->query($query);
+
+        if (!empty($resultado)) {
+            return $resultado;
+        } else {
+            return json_encode(['error' => 'Sector no encontrado.']);
+        }
+    } catch (Exception $e) {
+        return json_encode(['error' => "Error: " . $e->getMessage()]);
+    }
+}
+
+// Nueva función para consultar la tabla pl_programas
+function consultarPlProgramas() {
+    global $db;
+
+    try {
+        $query = "SELECT * FROM pl_programas";
+        $resultado = $db->query($query);
+
+        if (!empty($resultado)) {
+            return $resultado;
+        } else {
+            return json_encode(['error' => 'Programa no encontrado.']);
+        }
+    } catch (Exception $e) {
+        return json_encode(['error' => "Error: " . $e->getMessage()]);
+    }
+}
+
+// PROCESAR SOLICITUDES
+$data = json_decode(file_get_contents("php://input"), true);
+if (!isset($data["accion"])) {
+    echo json_encode(["error" => "Acción no especificada."]);
+    exit;
+}
+
+$accion = $data["accion"];
+$response = null;
+
 switch ($data["tabla"]) {
     case 'descripcion_programas':
         switch ($accion) {
@@ -106,10 +164,16 @@ switch ($data["tabla"]) {
                 $response = isset($data['id']) ? eliminarDescripcionPrograma($data['id']) : ["error" => "ID faltante."];
                 break;
             case "consultar_por_id":
-                $response = isset($data['id']) ? consultarInformacionPorId('descripcion_programas', $data['id']) : ["error" => "ID faltante."];
+                $response = isset($data['id']) ? consultarInformacionPorId($data['id']) : ["error" => "ID faltante."];
                 break;
             case "consultar_todos":
-                $response = consultarInformacionTodos('descripcion_programas');
+                $response = consultarInformacionTodos();
+                break;
+            case "consultar_sector":
+                $response =  consultarPlSectores() ;
+                break;
+            case "consultar_programa":
+                $response = consultarPlProgramas();
                 break;
             default:
                 $response = ["error" => "Acción inválida."];
@@ -120,5 +184,5 @@ switch ($data["tabla"]) {
         $response = ["error" => "Tabla inválida."];
 }
 
-echo $response;
+echo json_encode($response);
 ?>
