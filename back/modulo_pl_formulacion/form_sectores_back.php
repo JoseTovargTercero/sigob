@@ -4,155 +4,125 @@ require_once '../sistema_global/conexion.php';
 header('Content-Type: application/json');
 require_once '../sistema_global/session.php';
 require_once '../sistema_global/errores.php';
+require_once '../sistema_global/DatabaseHandler.php';
+$db = new DatabaseHandler($conexion);
+$tabla_principal = 'pl_sectores';
 
-
-function guardarSector($sector_array) // todo: EN USO
+function registrar($info)
 {
-    global $conexion;
+    global $db;
+    global $tabla_principal;
 
+    $sector = $info['sector'];
+    $nombre = $info['nombre'];
+
+
+    // Definir los valores a insertar en el array asociativo
+    $campos_valores = [
+        ['sector', $sector, true],
+        ['denominacion', $nombre]
+    ];
+
+    // Intentar insertar el registro
     try {
-        // Verificar que el array de proyectos no esté vacío
-        if (empty($sector_array)) {
-            throw new Exception("El array de proyectos está vacío");
-        }
-        $nombre = $sector_array['nombre'];
-        $sector = $sector_array['sector'];
-        $programa = $sector_array['programa'];
-        $proyecto = $sector_array['proyecto'];
-
-        // verificar que no exista el sector
-
-        $stmt = mysqli_prepare($conexion, "SELECT * FROM `pl_sectores_presupuestarios` WHERE sector = ? AND programa  = ? AND proyecto = ?");
-        $stmt->bind_param('sss', $sector, $programa, $proyecto);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        if ($result->num_rows > 0) {
-            throw new Exception("El sector ya existe");
-        }
-        $stmt->close();
-
-
-        $sql = "INSERT INTO pl_sectores_presupuestarios (sector, programa, proyecto, nombre) VALUES (?, ?, ?, ?)";
-        $stmt = $conexion->prepare($sql);
-        $stmt->bind_param("ssss", $sector, $programa, $proyecto, $nombre);
-        $stmt->execute();
-
-        if ($stmt->affected_rows <= 0) {
-            $error = $stmt->error;
-            throw new Exception("Error al insertar en la tabla proyecto_inversion. $error");
-        }
-
-        $stmt->close();
-
-        return json_encode(["success" => "Datos guardados correctamente."]);
+        $resultado = $db->insert($tabla_principal, $campos_valores);
+        return json_encode($resultado);
     } catch (Exception $e) {
-        registrarError($e->getMessage());
-        return json_encode(['error' => $e->getMessage()]);
+        throw new Exception("Error: " . $e->getMessage());
     }
 }
 
 
-// Función para actualizar datos del sector
-function actualizarSector($sector_array) // todo: EN USO
+function actualizar($info)
 {
-    global $conexion;
+    global $db;
+    global $tabla_principal;
 
-    try {
+    $nombre = $info['nombre'];
+    $sector = $info['sector'];
+    $id = $info['id'];
 
-        $sector = $sector_array['sector'];
-        $programa = $sector_array['programa'];
-        $proyecto = $sector_array['proyecto'];
-        $nombre = $sector_array['nombre'];
-        $id = $sector_array['id'];
+    $condicion_consulta = "sector = '$sector' AND id != $id"; // Condición para buscar registros
+    $tablas = [['tabla' => $tabla_principal, 'condicion' => $condicion_consulta]];
 
-        $error = false;
-        // Actualizar los datos del proyecto
-        $sql = "UPDATE pl_sectores_presupuestarios SET sector = ?, programa = ?, proyecto = ?, nombre = ? WHERE id = ?";
-        $stmt = $conexion->prepare($sql);
-        $stmt->bind_param("sssss", $sector, $programa, $proyecto, $nombre, $id);
-        if (!$stmt->execute()) {
-            $error = true;
+    $totalCoincidencias = $db->comprobar_existencia($tablas);
+
+    if ($totalCoincidencias === 0) {
+
+        $valores = [
+            ['sector', $sector],
+            ['denominacion', $nombre]
+        ];
+
+        try {
+            $where = "id = $id";
+            $resultado = $db->update($tabla_principal, $valores, $where);
+            return json_encode($resultado);
+        } catch (Exception $e) {
+            throw new Exception("Error: " . $e->getMessage());
         }
-        $stmt->close();
-
-        if ($error) {
-            throw new Exception("Error al actualizar el sector.");
-        }
-
-        return json_encode(["success" => "Sector actualizado correctamente."]);
-    } catch (Exception $e) {
-        registrarError($e->getMessage());
-        return json_encode(['error' => $e->getMessage()]);
-    }
-}
-
-
-// Obtener lista de sectores
-function getSectores()  // todo: EN USO
-{
-    global $conexion;
-    $data = [];
-
-    $stmt = mysqli_prepare($conexion, "SELECT * FROM `pl_sectores_presupuestarios`");
-    $stmt->execute();
-    $result = $stmt->get_result();
-    if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            array_push($data, $row);
-        }
-    }
-    $stmt->close();
-    return json_encode(['success' => $data]);
-}
-
-
-
-function eliminarSector($id) // todo: EN USO
-{
-    global $conexion;
-
-    $stmt = mysqli_prepare($conexion, "SELECT * FROM `distribucion_presupuestaria` WHERE id_sector = ? ");
-    $stmt->bind_param('i', $id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    if ($result->num_rows > 0) {
-        throw new Exception("No se puede eliminar, el sector esta en uso.");
-    }
-    $stmt->close();
-
-
-
-    $stmt = $conexion->prepare("DELETE FROM `pl_sectores_presupuestarios` WHERE id = ?");
-    $stmt->bind_param("i", $id);
-
-    if ($stmt->execute()) {
-        echo json_encode(['success' => 'Sector eliminado']);
     } else {
-        echo json_encode(['error' => 'No se pudo eliminar el sector']);
+        return json_encode(['error' => 'Ya existe un registro con los mismos datos']);
     }
-    $stmt->close();
 }
 
-// Procesar la solicitud
+
+
+
+function eliminar($id)
+{
+    global $db;
+    global $tabla_principal;
+
+    $condicion_consulta = "sector = $id"; // Condición para buscar registros
+
+    $tablas = [
+        ['tabla' => 'entes', 'condicion' => $condicion_consulta],
+        ['tabla' => 'entes_dependencias', 'condicion' => $condicion_consulta],
+    ];
+
+    try {
+
+        $totalCoincidencias = $db->comprobar_existencia($tablas);
+        // Si hay coincidencias, no se puede eliminar
+        if ($totalCoincidencias > 0) {
+            return json_encode(['error' => 'No se puede eliminar el elemento, está en uso.']);
+        }
+
+        $resultado = $db->delete($tabla_principal, "id = $id");
+        return json_encode($resultado);
+    } catch (Exception $e) {
+        throw new Exception("Error: " . $e->getMessage());
+    }
+}
+
+
+
+
+
+
+// PROCESAR SOLICITUDES
 $data = json_decode(file_get_contents("php://input"), true);
-
-if (isset($data["accion"])) {
-    $accion = $data["accion"];
-
-    // Nuevos proyectos
-    if ($accion === "registrar_proyecto" && isset($data["data"])) {
-        echo guardarSector($data["data"]); // TODO: EN USO
-        // Actualizar plan de inversión
-    } elseif ($accion === "update_sector" && isset($data["data"])) {
-        echo actualizarSector($data["data"]); //TODO: EN USO
-        // Marcar proyecto como ejecutado
-    } elseif ($accion === 'eliminar_sector' && isset($data['id'])) {
-        echo eliminarSector($data['id']); // todo: EN USO
-    } elseif ($accion === "get_sectores") {
-        echo getSectores(); // TODO: EN USO
-    } else {
-        echo json_encode(["error" => "Acción inválida o datos faltantes."]);
-    }
-} else {
+if (!isset($data["accion"])) {
     echo json_encode(["error" => "Acción no especificada."]);
+    exit;
 }
+
+$accion = $data["accion"];
+$response = null;
+
+switch ($accion) {
+    case "registrar":
+        $response = isset($data["data"]) ? registrar($data["data"]) : json_encode(["error" => "Datos de faltantes."]);
+        break;
+    case "actualizar":
+        $response = isset($data["data"]) ? actualizar($data["data"]) : json_encode(["error" => "Datos faltantes."]);
+        break;
+    case "borrar":
+        $response = isset($data['id']) ? eliminar($data['id']) : json_encode(["error" => "ID faltante."]);
+        break;
+    default:
+        $response = json_encode(["error" => "Acción inválida."]);
+}
+
+echo $response;

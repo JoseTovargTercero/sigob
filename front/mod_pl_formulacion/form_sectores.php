@@ -2,8 +2,7 @@
 require_once '../../back/sistema_global/conexion.php';
 require_once '../../back/sistema_global/session.php';
 
-$titulo = 'Programas';
-
+$titulo = 'Sectores';
 
 ?>
 <!DOCTYPE html>
@@ -30,8 +29,6 @@ $titulo = 'Programas';
 
 </head>
 <?php require_once '../includes/header.php' ?>
-<script src="../../src/assets/js/chosen.jquery.min.js"></script>
-<link rel="stylesheet" href="../../src/assets/css/chosen.min.css">
 
 <body data-pc-preset="preset-1" data-pc-sidebar-caption="true" data-pc-direction="ltr" data-pc-theme="light">
   <div class="loader-bg">
@@ -39,73 +36,19 @@ $titulo = 'Programas';
       <div class="loader-fill"></div>
     </div>
   </div>
-
   <?php require_once '../includes/menu.php' ?>
   <!-- [ MENU ] -->
-
   <?php require_once '../includes/top-bar.php' ?>
   <!-- [ top bar ] -->
-
-
-
   <!-- [ Main Content ] start -->
   <div class="pc-container">
     <div class="pc-content">
-
-
-
-
       <div class=" d-flex justify-content-between">
         <h4 class="fw-bold py-3 mb-4">
           <span class="text-muted fw-light">Formulación /</span> <?php echo $titulo ?>
         </h4>
       </div>
-
-
-
-
-
       <div class="row ">
-        <div class="col-lg-12" id="vista_registro">
-          <div class="card">
-            <div class="card-body">
-              <div class="d-flex flex-column">
-                <div class="card-title mb-auto d-flex justify-content-between">
-                  <h5 class="mb-0">Nuevo programa</h5>
-
-                </div>
-
-
-                <div class="mt-2 card-body">
-
-                  <div class="mb-3">
-                    <label for="partida" class="form-label">Denominación</label>
-                    <input type="text" id="nombre" class="form-control" placeholder="Nombre del programa">
-                  </div>
-
-                  <div class="mb-4">
-                    <label for="sector" class="form-label">Sector</label>
-                    <select id="sector" name="sector" class="form-control chosen-select">
-                      <option value="">Seleccione</option>
-                    </select>
-                  </div>
-
-                  <div class="mb-3">
-                    <label for="programa" class="form-label">Programa</label>
-                    <input type="number" min="0" class="form-control" id="programa" name="programa" placeholder="Programa">
-                  </div>
-
-
-                  <div class="mb-3 d-flex justify-content-between">
-                    <button class="btn btn-secondary" id="btn-cancelar-registro">Cancelar</button>
-                    <button class="btn btn-primary" id="btn-registro">Guardar</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
 
         <div class="col-lg-12" id="vista-tabla">
           <div class="card">
@@ -127,7 +70,6 @@ $titulo = 'Programas';
                       <tr>
                         <th style="width: 5%;">#</th>
                         <th>Sector</th>
-                        <th>Programa</th>
                         <th>Nombre</th>
                         <th style="width: 5%;"></th>
                         <th style="width: 5%;"></th>
@@ -138,6 +80,33 @@ $titulo = 'Programas';
                   </table>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dialogs">
+        <div class="dialogs-content " style="width: 35%;">
+          <span class="close-button">×</span>
+          <h5 class="mb-1" id="titulo_form"></h5>
+          <hr>
+
+          <div class="mt-2 card-body">
+
+            <div class="mb-3">
+              <label for="partida" class="form-label">Denominación</label>
+              <input type="text" id="nombre" class="form-control" placeholder="Nombre del programa">
+            </div>
+
+            <div class="mb-3">
+              <label for="sector" class="form-label">Sector</label>
+              <input type="number" min="0" class="form-control" id="sector" name="sector" placeholder="Sector">
+            </div>
+
+
+
+            <div class="mb-3 text-end">
+              <button class="btn btn-primary" id="btn-registro">Guardar</button>
             </div>
           </div>
         </div>
@@ -161,23 +130,8 @@ $titulo = 'Programas';
 
 
       <script>
-        const url_back = '../../back/modulo_pl_formulacion/form_programas_back.php'
+        const url_back = '../../back/modulo_pl_formulacion/form_sectores_back.php'
         let datos = []
-
-
-
-
-        dbh_select('pl_sectores').then(response => {
-          if (response.success) {
-            response.success.forEach(item => {
-              $('#sector').append(`<option value="${item.id}">${item.sector}.${item.denominacion}</option>`)
-            });
-            $('.chosen-select').chosen().trigger("chosen:updated");
-          }
-        }).catch(error => {
-          console.error("Error al obtener la información:", error);
-        });
-
 
 
         // DATA TABLE
@@ -191,36 +145,22 @@ $titulo = 'Programas';
         // iniciar nuevo registro de sector
         function nuevoProyecto() {
           accion = 'registrar'
-          $('#vista_registro').removeClass('hide')
-          $('#vista-tabla').addClass('hide')
-          $('#vista_datalles').addClass('hide')
+          $('#titulo_form').html('Nuevo sector')
+          toggleDialogs()
         }
 
 
         var edt
         // Mostrar interfaz para editar proyecto existente
         function editarProyecto(id) {
-          $('#vista_datalles').addClass('hide')
           edt = id
           accion = 'actualizar'
+          $('#titulo_form').html('Editar sector')
           $('#nombre').val(datos[id]['0'])
-          $('#programa').val(datos[id]['2'])
-          $("#sector").eq(0).val(datos[id]['1']).trigger("chosen:updated");
-          $('#vista_registro').removeClass('hide')
-          $('#vista-tabla').addClass('hide')
+          $("#sector").val(datos[id]['1'])
+          toggleDialogs()
+
         }
-
-
-
-        function cancelarRegistro() {
-          $('#vista_registro').addClass('hide')
-          $('#vista-tabla').removeClass('hide')
-        }
-        document.getElementById('btn-cancelar-registro').addEventListener('click', cancelarRegistro)
-
-
-
-
 
 
         // GUARDAR REGISTRO
@@ -231,20 +171,14 @@ $titulo = 'Programas';
 
           const nombre = $("#nombre").val();
           const sector = $("#sector").val();
-          const programa = $("#programa").val();
 
           (!validarCampo('nombre') ? errors = true : '');
           (!validarCampo('sector') ? errors = true : '');
-          (!validarCampo('programa') ? errors = true : '');
 
 
-          if (sector == '') {
-            $('#sector').next('.chosen-container').addClass('border-danger');
-            errors = true;
 
-          }
-          if (programa < 0 || programa.length != 2) {
-            $('#programa').addClass('border-danger')
+          if (sector < 0 || sector.length != 2) {
+            $('#sector').addClass('border-danger')
             toast_s('error', 'El valor del campo es incorrecto')
             errors = true;
           }
@@ -257,11 +191,10 @@ $titulo = 'Programas';
           const data = {
             nombre: nombre.trim(),
             sector: sector,
-            programa: programa,
             id: null
           }
 
-          // enviar los datos al back con el nuevo formato
+          // enviar los datos a black con el nuevo formato
           if (accion == 'actualizar') {
             data.id = edt
           }
@@ -278,12 +211,9 @@ $titulo = 'Programas';
               if (response.success) {
                 toast_s('success', 'Sector ' + (accion == 'update_proyecto' ? 'actualizado' : 'registrado') + ' con éxito')
                 get_tabla()
-                cancelarRegistro()
-
+                toggleDialogs()
                 $("#nombre").val('');
-                $("#programa").val('');
-                $("#sector").eq(0).val('').trigger("chosen:updated");
-
+                $("#sector").val('');
               } else {
                 console.log(response)
                 toast_s('error', response.error)
@@ -362,8 +292,7 @@ $titulo = 'Programas';
             type: "json",
             contentTyrepe: 'application/json',
             data: JSON.stringify({
-              table: 'pl_programas',
-              config: '_lista_programas'
+              table: 'pl_sectores'
             }),
             success: function(response) {
               let data_tabla = [] // Informacion de la tabla
@@ -376,15 +305,12 @@ $titulo = 'Programas';
                   datos[item.id] = [
                     item.denominacion,
                     item.sector,
-                    item.programa,
-                    item.sector_n,
                     item.id
                   ]
 
                   data_tabla.push([
                     count++,
-                    item.sector_n,
-                    item.programa,
+                    item.sector,
                     item.denominacion,
                     `<button class="btn btn-edit btn-sm bg-brand-color-2 text-white " data-edit-id="${item.id}"><i class="bx bx-edit-alt"></i></button>`,
                     `<button class="btn btn-danger btn-sm btn-delete" data-delete-id="${item.id}"><i class="bx bx-trash"></i></button>`
@@ -405,15 +331,6 @@ $titulo = 'Programas';
           });
         }
         get_tabla()
-
-
-        // Cargar chosen y ocultar area de registro
-        $(document).ready(function() {
-          $('.chosen-select').chosen({}).change(function(obj, result) {
-            console.debug("changed: %o", arguments);
-          });
-          $('#vista_registro').addClass('hide')
-        })
       </script>
 
 </body>
