@@ -1,142 +1,79 @@
 <?php
 require_once '../sistema_global/conexion.php';
 
-// Suponemos que recibimos $id y $id_ejercicio de alguna manera, como parámetros GET
 
-//$id_ejercicio = $_GET['id_ejercicio'];
-$id_ejercicio = '1';
-
-
+$id_ejercicio = $_GET['id_ejercicio'];
 
 // Consultar datos del sector
-$query_sector = "SELECT * FROM ejercicio_fiscal WHERE id = ?";
+$query_sector = "SELECT ano, situado FROM ejercicio_fiscal WHERE id = ?";
 $stmt = $conexion->prepare($query_sector);
 $stmt->bind_param('i', $id_ejercicio);
 $stmt->execute();
 $result = $stmt->get_result();
-$data = $result->fetch_assoc();
-
-$ano = $data['ano'];
-$situado = $data['situado'];
+$data_sector = $result->fetch_assoc();
 $stmt->close();
 
+$ano = $data_sector['ano'];
+$situado = $data_sector['situado'];
 
 $data = [];
+$sectores = array_fill_keys(['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15'], 0);
 
+// Función para crear estructura base 
+function crearEstructuraPartida($denominacion = 'Sin denominación', $sectores)
+{
+    return [
+        'denominacion' => $denominacion ?: '<span style="color: red">Sin denominación</span>',
+    ] + $sectores;
+}
 
-//Cargar partidas
-$stmt = mysqli_prepare($conexion, "SELECT * FROM `pl_partidas`");
+// Cargar partidas
+$stmt = $conexion->prepare("SELECT partida, denominacion FROM pl_partidas");
 $stmt->execute();
 $result = $stmt->get_result();
-if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-
-        $denominacion = $row['denominacion'] == '' ? 'Sin denominación' : $row['denominacion'];
-
-        $data[$row['partida']] = [
-            'denominacion' => $denominacion,
-            '01' => 0,
-            '02' => 0,
-            '03' => 0,
-            '04' => 0,
-            '05' => 0,
-            '06' => 0,
-            '07' => 0,
-            '08' => 0,
-            '09' => 0,
-            '10' => 0,
-            '11' => 0,
-            '12' => 0,
-            '13' => 0,
-            '14' => 0,
-            '15' => 0
-        ];
-    }
+while ($row = $result->fetch_assoc()) {
+    $data[$row['partida']] = crearEstructuraPartida($row['denominacion'], $sectores);
 }
 $stmt->close();
 
+// Función para agregar o actualizar montos en `data`
+function actualizarMonto(&$data, $partida, $sector, $monto, $sectores)
+{
+    if (!isset($data[$partida])) {
+        $data[$partida] = crearEstructuraPartida(null, $sectores);
+    }
+    $data[$partida][$sector] += $monto;
+}
 
-
-
-
-$stmt = mysqli_prepare($conexion, "SELECT DP.monto_inicial, PP.partida, PSP.sector FROM `distribucion_presupuestaria` AS DP
-LEFT JOIN partidas_presupuestarias AS PP ON PP.id = DP.id_partida
-LEFT JOIN pl_sectores AS PSP ON PSP.id = DP.id_sector
-WHERE DP.id_ejercicio = ?");
-$stmt->bind_param('s', $id_ejercicio);
+// Distribución presupuestaria
+$stmt = $conexion->prepare("
+    SELECT DP.monto_inicial AS monto, LEFT(PP.partida, 3) AS partida, PSP.sector 
+    FROM distribucion_presupuestaria AS DP
+    LEFT JOIN partidas_presupuestarias AS PP ON PP.id = DP.id_partida
+    LEFT JOIN pl_sectores AS PSP ON PSP.id = DP.id_sector
+    WHERE DP.id_ejercicio = ?
+");
+$stmt->bind_param('i', $id_ejercicio);
 $stmt->execute();
 $result = $stmt->get_result();
-if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        $sector = $row['sector'];
-        $partida = substr($row['partida'], 0, 3);
-
-        if (!@$data[$partida]) {
-            $data[$partida] = [
-                'denominacion' => '<span style="color: red">Sin denominación</span>',
-                '01' => 0,
-                '02' => 0,
-                '03' => 0,
-                '04' => 0,
-                '05' => 0,
-                '06' => 0,
-                '07' => 0,
-                '08' => 0,
-                '09' => 0,
-                '10' => 0,
-                '11' => 0,
-                '12' => 0,
-                '13' => 0,
-                '14' => 0,
-                '15' => 0
-            ];
-        }
-
-        $data[$partida][$sector] += $row['monto_inicial'];
-    }
+while ($row = $result->fetch_assoc()) {
+    actualizarMonto($data, $row['partida'], $row['sector'], $row['monto'], $sectores);
 }
 $stmt->close();
 
-
-
-
-// VALORES ADICIONALES DEL FCI
-
-$stmt = mysqli_prepare($conexion, "SELECT DP.monto, PP.partida, PSP.sector FROM `proyecto_inversion_partidas` AS DP
-LEFT JOIN partidas_presupuestarias AS PP ON PP.id = DP.partida
-LEFT JOIN pl_sectores AS PSP ON PSP.id = DP.sector_id
+// Valores adicionales del FCI
+$stmt = $conexion->prepare("
+    SELECT DP.monto, LEFT(PP.partida, 3) AS partida, PSP.sector 
+    FROM proyecto_inversion_partidas AS DP
+    LEFT JOIN partidas_presupuestarias AS PP ON PP.id = DP.partida
+    LEFT JOIN pl_sectores AS PSP ON PSP.id = DP.sector_id
 ");
 $stmt->execute();
 $result = $stmt->get_result();
-if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        $sector = $row['sector'];
-        $partida = substr($row['partida'], 0, 3);
-        if (!@$data[$partida]) {
-            $data[$partida] = [
-                'denominacion' => '<span style="color: red">Sin denominación</span>',
-                '01' => 0,
-                '02' => 0,
-                '03' => 0,
-                '04' => 0,
-                '05' => 0,
-                '06' => 0,
-                '07' => 0,
-                '08' => 0,
-                '09' => 0,
-                '10' => 0,
-                '11' => 0,
-                '12' => 0,
-                '13' => 0,
-                '14' => 0,
-                '15' => 0
-            ];
-        }
-        $data[$partida][$sector] += $row['monto'];
-    }
+while ($row = $result->fetch_assoc()) {
+    actualizarMonto($data, $row['partida'], $row['sector'], $row['monto'], $sectores);
 }
 $stmt->close();
-
 ?>
 
 <!DOCTYPE html>
