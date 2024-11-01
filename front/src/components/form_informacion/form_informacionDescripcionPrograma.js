@@ -56,7 +56,7 @@ export const form_informacionDescripcionProgramaForm = async ({
   const oldCardElement = d.getElementById(`${nombreComponente}-form-card`)
   if (oldCardElement) oldCardElement.remove()
 
-  let card = `  <div class='card slide-up-animation' id='${nombreComponente}-form-card'>
+  let card = ` <div class='card slide-up-animation' id='${nombreComponente}-form-card'>
       <div class='card-header d-flex justify-content-between'>
         <div class=''>
           <h5 class='mb-0'>Formulario gobernación</h5>
@@ -75,16 +75,33 @@ export const form_informacionDescripcionProgramaForm = async ({
         <form id='${nombreComponente}-form'>
           <div class='row mb-3'>
             <div class='col'>
-              <label class='form-label' for='articulo'>
-                articulo
-              </label>
-              <input
-                type='text'
-                class='form-control ${nombreComponente}-input'
-                id='articulo'
-                name='articulo'
-                placeholder='Articulo...'
-              />
+              <div class='form-group'>
+                <label for='search-select-sector' class='form-label'>
+                  Seleccione el sector
+                </label>
+                <select
+                  class='form-select descripcion-programa-input chosen-sector'
+                  name='id_sector'
+                  id='search-select-sector'
+                >
+                  <option>Elegir...</option>${optionsProgramas}
+                </select>
+              </div>
+            </div>
+
+            <div class='col'>
+              <div class='form-group'>
+                <label for='search-select-programa' class='form-label'>
+                  Seleccione el prgorama
+                </label>
+                <select
+                  class='form-select descripcion-programa-input chosen-programa'
+                  name='id_sector'
+                  id='search-select-sector'
+                >
+                  <option>Elegir...</option>${optionsProgramas}
+                </select>
+              </div>
             </div>
           </div>
           <div class='row mb-3'>
@@ -97,7 +114,7 @@ export const form_informacionDescripcionProgramaForm = async ({
                 class='form-control ${nombreComponente}-input'
                 id='descripcion'
                 name='descripcion'
-                rows='10'
+                rows='8'
               ></textarea>
             </div>
           </div>
@@ -123,6 +140,20 @@ export const form_informacionDescripcionProgramaForm = async ({
 
   let cardElement = d.getElementById(`${nombreComponente}-form-card`)
   let formElement = d.getElementById(`${nombreComponente}-form`)
+
+  $('.chosen-sector')
+    .chosen()
+    .change(function (obj, result) {
+      fieldList.id_sector = result.selected
+      console.log('changed: %o', result)
+    })
+
+  $('.chosen-programa')
+    .chosen()
+    .change(function (obj, result) {
+      fieldList.id_programa = result.selected
+      console.log('changed: %o', result)
+    })
 
   const closeCard = () => {
     // validateEditButtons()

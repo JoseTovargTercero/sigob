@@ -7,7 +7,8 @@ require_once '../sistema_global/errores.php';
 require_once '../sistema_global/DatabaseHandler.php';
 $db = new DatabaseHandler($conexion);
 
-function registrarDescripcionPrograma($info) {
+function registrarDescripcionPrograma($info)
+{
     global $db;
 
     $campos_valores = [
@@ -24,7 +25,8 @@ function registrarDescripcionPrograma($info) {
     }
 }
 
-function actualizarDescripcionPrograma($info) {
+function actualizarDescripcionPrograma($info)
+{
     global $db;
     $tabla_principal = 'descripcion_programas';
 
@@ -43,7 +45,8 @@ function actualizarDescripcionPrograma($info) {
     }
 }
 
-function eliminarDescripcionPrograma($id) {
+function eliminarDescripcionPrograma($id)
+{
     global $db;
 
     $condicion = "id = " . intval($id);
@@ -57,7 +60,8 @@ function eliminarDescripcionPrograma($id) {
 }
 
 // Función para consultar la información de un programa por ID
-function consultarDescripcionProgramaPorId($id) {
+function consultarDescripcionProgramaPorId($id)
+{
     global $conexion;
 
     try {
@@ -91,13 +95,18 @@ function consultarDescripcionProgramaPorId($id) {
 }
 
 // Función para consultar todos los programas
-function consultarDescripcionProgramasTodos() {
+function consultarDescripcionProgramasTodos()
+{
     global $conexion;
 
     try {
         $sql = "SELECT descripcion_programas.id, descripcion_programas.descripcion, 
                        pl_sectores.denominacion AS sector_denominacion, 
-                       pl_programas.denominacion AS programa_denominacion
+                       pl_sectores.id as id_sector,
+                       pl_sectores.sector as sector,
+                       pl_programas.denominacion AS programa_denominacion,
+                       pl_programas.id AS id_programa,
+                       pl_programas.programa AS programa
                 FROM descripcion_programas
                 JOIN pl_sectores ON descripcion_programas.id_sector = pl_sectores.id
                 JOIN pl_programas ON descripcion_programas.id_programa = pl_programas.id";
@@ -117,7 +126,8 @@ function consultarDescripcionProgramasTodos() {
 }
 
 // Función para consultar todos los sectores
-function consultarPlSectores() {
+function consultarPlSectores()
+{
     global $conexion;
 
     try {
@@ -138,7 +148,8 @@ function consultarPlSectores() {
 }
 
 // Función para consultar todos los programas
-function consultarPlProgramas() {
+function consultarPlProgramas()
+{
     global $conexion;
 
     try {
@@ -188,7 +199,7 @@ switch ($data["tabla"]) {
                 $response = consultarDescripcionProgramasTodos();
                 break;
             case "consultar_sector":
-                $response =  consultarPlSectores() ;
+                $response = consultarPlSectores();
                 break;
             case "consultar_programa":
                 $response = consultarPlProgramas();

@@ -450,8 +450,8 @@ export const loadDescripcionProgramaTable = async () => {
   let data = datosOrdenados.map((el) => {
     let descripcion = recortarTexto(el.descripcion, 50)
     return {
-      sector: el.id_sector,
-      programa: el.id_programa,
+      sector: el.sector,
+      programa: el.programa,
       descripcion: descripcion || 'No asignado',
       acciones: `
       <button class="btn btn-sm bg-brand-color-2 text-white btn-update" data-editarid="${el.id}"></button>
