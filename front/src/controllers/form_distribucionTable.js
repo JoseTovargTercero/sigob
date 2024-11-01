@@ -32,7 +32,7 @@ export const validateDistribucionTable = async ({ partidas }) => {
   distribucionTable = new DataTable('#distribucion-table', {
     columns: [
       // { data: 'sector_nombre' },
-      { data: 'sector_cod' },
+      { data: 'sector_programa_proyecto' },
       { data: 'partida' },
       {
         data: 'descripcion',
@@ -75,16 +75,16 @@ export const loadDistribucionTable = async (partidas) => {
 
   let datosOrdenados = [...partidas].sort((a, b) => a.id - b.id)
   let data = datosOrdenados.map((el) => {
-    let sector_codigo = `${el.sector_informacion.sector}.${el.sector_informacion.programa}.${el.sector_informacion.proyecto}`
-
     let descripcion =
       el.descripcion.length < 40
         ? el.descripcion
         : `${el.descripcion.slice(0, 40)} ...`
 
     return {
-      // sector_nombre: el.sector_informacion.nombre,
-      sector_cod: sector_codigo,
+      // sector_nombre: el.sector_inf[1].sector_informacion.sectorormacion.nombre,
+      sector_programa_proyecto: `${
+        el.sector_informacion ? el.sector_informacion.sector : '0'
+      }.${el.programa_informacion ? el.programa_informacion.programa : '0'}.0`,
       partida: el.partida,
       descripcion: descripcion,
       monto_inicial: `${separarMiles(el.monto_inicial)} Bs`,

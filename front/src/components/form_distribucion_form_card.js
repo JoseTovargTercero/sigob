@@ -4,23 +4,24 @@
 // DIFERENTES MENSAJES DE ERROR AL MOMENTO DE ENVIAR
 // REALIZAR PRUEBAS
 
-import { getFormPartidas } from "../api/partidas.js";
+import { getProgramasData, getSectoresData } from '../api/form_informacion.js'
+import { getFormPartidas } from '../api/partidas.js'
 import {
   enviarDistribucionPresupuestaria,
   getEjecicio,
   getEjecicios,
-} from "../api/pre_distribucion.js";
-import { getSectores } from "../api/sectores.js";
-import { loadDistribucionTable } from "../controllers/form_distribucionTable.js";
+} from '../api/pre_distribucion.js'
+import { getSectores } from '../api/sectores.js'
+import { loadDistribucionTable } from '../controllers/form_distribucionTable.js'
 import {
   confirmNotification,
   hideLoader,
   insertOptions,
   toastNotification,
   validateInput,
-} from "../helpers/helpers.js";
-import { NOTIFICATIONS_TYPES } from "../helpers/types.js";
-const d = document;
+} from '../helpers/helpers.js'
+import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
+const d = document
 export const form_distribucion_form_card = async ({
   elementToInset,
   ejercicioFiscal,
@@ -29,12 +30,17 @@ export const form_distribucion_form_card = async ({
     total: ejercicioFiscal.situado,
     restante: ejercicioFiscal.restante,
     acumulado: 0,
-  };
-  let partidas = await getFormPartidas();
+  }
+  let partidas = await getFormPartidas()
 
-  let ejercicio;
+  let ejercicio
 
-  let fieldList = { id_ejercicio: ejercicioFiscal.id, id_sector: "" };
+  let fieldList = {
+    id_ejercicio: ejercicioFiscal.id,
+    id_sector: '',
+    id_programa: '',
+    id_proyecto: 0,
+  }
   let fieldListErrors = {
     // id_sector: {
     //   value: true,
@@ -46,21 +52,21 @@ export const form_distribucion_form_card = async ({
     //   message: 'Añada una descripción al plan operativo',
     //   type: 'text',
     // },
-  };
+  }
 
   // ESTOS ESTADOS SE ACTUALIZARAN DE FORMA AUTOMÁTICA SEGÚN SE VAYAN GENERANDO LAS PARTIDAS
-  let fieldListPartidas = {};
-  let fieldListErrorsPartidas = {};
+  let fieldListPartidas = {}
+  let fieldListErrorsPartidas = {}
 
-  const oldCardElement = d.getElementById("distribucion-form-card");
-  if (oldCardElement) oldCardElement.remove();
+  const oldCardElement = d.getElementById('distribucion-form-card')
+  if (oldCardElement) oldCardElement.remove()
 
-  let card = `<div class='card slide-up-animation' id='distribucion-form-card'>
+  let card = `  <div class='card slide-up-animation' id='distribucion-form-card'>
       <div class='card-header d-flex justify-content-between'>
         <div class=''>
           <h5 class='mb-0'>Realizar distribución presupuestaria</h5>
           <small class='mt-0 text-muted'>
-           Seleccione el sector y las partidas correspondientes
+            Seleccione el sector y las partidas correspondientes
           </small>
         </div>
         <button
@@ -95,24 +101,56 @@ export const form_distribucion_form_card = async ({
             </div>
           </div>
 
-          <div class='form-group'>
-            <label for='search-select-sector' class='form-label'>
-              Seleccione el sector 
-            </label>
-            <select
-              class='form-select distribucion-input chosen-select'
-              name='id_sector'
-              id='search-select-sector'
-            >
-              <option>Elegir...</option>
-            </select>
+          <div class='row'>
+            <div class='col'>
+              <div class='form-group'>
+                <label for='search-select-sector' class='form-label'>
+                  Seleccione el sector
+                </label>
+                <select
+                  class='form-select distribucion-input chosen-sector'
+                  name='id_sector'
+                  id='search-select-sector'
+                >
+                  <option>Elegir...</option>
+                </select>
+              </div>
+            </div>
+            <div class='col'>
+              <div class='form-group'>
+                <label for='search-select-programa' class='form-label'>
+                  Seleccione el programa
+                </label>
+                <select
+                  class='form-select distribucion-input chosen-programa'
+                  name='id_programa'
+                  id='search-select-programa'
+                >
+                  <option>Elegir...</option>
+                </select>
+              </div>
+             
+            </div>
+            <div class="col">
+             <div class='form-group'>
+                <label for='search-select-programa' class='form-label'>
+                  Seleccione el proyecto (opcional)
+                </label>
+                <select
+                  class='form-select distribucion-input chosen-proyecto'
+                  name='id_proyecto'
+                  id='search-select-proyecto'
+                >
+                  <option>Elegir...</option>
+                </select>
+              </div></div>
           </div>
 
           <h5 class='mb-0'>Distribución de presupuesto por partida</h5>
           <small class='text-muted'>
             Añada las partidas para realizar la distribución presupuestaria.
           </small>
-          <div id='lista-partidas' class="mt-4"></div>
+          <div id='lista-partidas' class='mt-4'></div>
 
           <div class='d-flex gap-2 justify-content-center'>
             <button class='btn btn-success' id='add-row'>
@@ -126,126 +164,138 @@ export const form_distribucion_form_card = async ({
           Guardar
         </button>
       </div>
-    </div>`;
+    </div>`
 
-  d.getElementById(elementToInset).insertAdjacentHTML("afterbegin", card);
+  d.getElementById(elementToInset).insertAdjacentHTML('afterbegin', card)
 
   // Cargar select de ejercicios
 
-  let numsRows = 0;
+  let numsRows = 0
 
-  console.log(ejercicioFiscal);
+  console.log(ejercicioFiscal)
 
-  let cardElement = d.getElementById("distribucion-form-card");
-  let montoTotalElement = d.getElementById("monto-total");
-  let montoRestanteElement = d.getElementById("monto-restante");
+  let cardElement = d.getElementById('distribucion-form-card')
+  let montoTotalElement = d.getElementById('monto-total')
+  let montoRestanteElement = d.getElementById('monto-restante')
 
-  montoTotalElement.textContent = ejercicioFiscal.situado;
+  montoTotalElement.textContent = ejercicioFiscal.situado
   montoRestanteElement.innerHTML = ejercicioFiscal.restante
     ? `<span class="text-success">${ejercicioFiscal.restante}</span>`
-    : `<span class="text-secondary">${ejercicioFiscal.restante}</span>`;
+    : `<span class="text-secondary">${ejercicioFiscal.restante}</span>`
 
-  let partidalist = d.getElementById("lista-partidas");
-  let formElement = d.getElementById("distribucion-form");
+  let partidalist = d.getElementById('lista-partidas')
+  let formElement = d.getElementById('distribucion-form')
 
-  cargarSelectSectores();
+  cargarSelectSectores()
 
   const closeCard = () => {
     // validateEditButtons()
-    cardElement.remove();
-    cardElement.removeEventListener("click", validateClick);
-    cardElement.removeEventListener("input", validateInputFunction);
+    cardElement.remove()
+    cardElement.removeEventListener('click', validateClick)
+    cardElement.removeEventListener('input', validateInputFunction)
 
-    return false;
-  };
+    return false
+  }
 
   function validateClick(e) {
     if (e.target.dataset.close) {
-      closeCard();
+      closeCard()
     }
 
     // AÑADIR NUEVA FILA DE PARTIDA
 
-    if (e.target.id === "add-row") {
+    if (e.target.id === 'add-row') {
       if (!montos.total || montos.total < 1) {
         return toastNotification({
           type: NOTIFICATIONS_TYPES.fail,
-          message: "Seleccione primero un ejercicio fiscal",
-        });
+          message: 'Seleccione primero un ejercicio fiscal',
+        })
       }
-      addRow();
+      addRow()
     }
 
     // VALIDAR DATOS ANTES DE ENVIAR
 
-    if (e.target.id === "distribucion-guardar") {
-      let sectorInput = d.querySelector(".distribucion-input");
+    if (e.target.id === 'distribucion-guardar') {
+      let sectorInput = d.getElementById('search-select-sector')
+      let programaInput = d.getElementById('search-select-programa')
 
-      if (sectorInput.value === "" || !sectorInput.value) {
-        console.log(sectorInput.value);
+      if (sectorInput.value === '' || !sectorInput.value) {
+        console.log(sectorInput.value)
         toastNotification({
           type: NOTIFICATIONS_TYPES.fail,
-          message: "Elija un sector",
-        });
-        return;
+          message: 'Elija un sector',
+        })
+        return
+      }
+
+      if (programaInput.value === '' || !programaInput.value) {
+        console.log(programaInput.value)
+        toastNotification({
+          type: NOTIFICATIONS_TYPES.fail,
+          message: 'Elija un programa',
+        })
+        return
       }
 
       if (Object.values(fieldListErrors).some((el) => el.value)) {
         return toastNotification({
           type: NOTIFICATIONS_TYPES.fail,
-          message: "Faltan campos por completar",
-        });
+          message: 'Faltan campos por completar',
+        })
       }
-      let partidasValidadas = validarPartidas();
-      console.log(partidasValidadas);
+      let partidasValidadas = validarPartidas()
+      console.log(partidasValidadas)
       if (!partidasValidadas) {
-        return;
+        return
       }
 
       if (validarInputIguales()) {
         toastNotification({
           type: NOTIFICATIONS_TYPES.fail,
           message:
-            "Está realizando una asignación a una partida 2 o más veces. Valide nuevamente por favor",
-        });
-        return;
+            'Está realizando una asignación a una partida 2 o más veces. Valide nuevamente por favor',
+        })
+        return
       }
 
       if (montos.restante - montos.acumulado < 0) {
         toastNotification({
           type: NOTIFICATIONS_TYPES.fail,
           message:
-            "Se ha consumido más allá del situado presupuestario. Valide las asignaciones nuevamente",
-        });
-        return;
+            'Se ha consumido más allá del situado presupuestario. Valide las asignaciones nuevamente',
+        })
+        return
       }
 
-      enviarInformacion(partidasValidadas, closeCard);
+      console.log(partidasValidadas)
+
+      enviarInformacion(partidasValidadas, closeCard)
     }
 
     // ELIMINAR FILA
 
     if (e.target.dataset.deleteRow) {
-      let id = e.target.dataset.deleteRow;
+      let id = e.target.dataset.deleteRow
       confirmNotification({
         type: NOTIFICATIONS_TYPES.send,
         message:
-          "Al eliminar esta fila se actualizará el monto restante ¿Desea continuar?",
+          'Al eliminar esta fila se actualizará el monto restante ¿Desea continuar?',
         successFunction: function () {
-          let row = d.querySelector(`[data-row="${id}"]`);
+          let row = d.querySelector(`[data-row="${id}"]`)
 
           // ELIMINAR ESTADO Y ERRORES DE INPUTS
-          delete fieldListPartidas[`partida-${id}`];
-          delete fieldListErrorsPartidas[`partida-${id}`];
+          delete fieldListPartidas[`partida-${id}`]
+          delete fieldListErrorsPartidas[`partida-${id}`]
 
-          delete fieldListPartidas[`partida-monto-${id}`];
-          delete fieldListErrorsPartidas[`partida-monto-${id}`];
+          delete fieldListPartidas[`partida-monto-${id}`]
+          delete fieldListErrorsPartidas[`partida-monto-${id}`]
 
-          if (row) numsRows--;
-          row.remove();
-          actualizarMontoRestante(montos.total);
+          if (row) numsRows--
+          row.remove()
+          actualizarMontoRestante(montos.total)
         },
-      });
+      })
     }
   }
 
@@ -280,17 +330,17 @@ export const form_distribucion_form_card = async ({
     //   actualizarMontoRestante(montos.restante)
     //   cargarPartidas()
     // }
-    if (e.target.classList.contains("partida-monto")) {
-      actualizarMontoRestante(montos.restante);
+    if (e.target.classList.contains('partida-monto')) {
+      actualizarMontoRestante(montos.restante)
     }
 
-    if (e.target.classList.contains("partida-input")) {
+    if (e.target.classList.contains('partida-input')) {
       fieldListPartidas = validateInput({
         target: e.target,
         fieldList: fieldListPartidas,
         fieldListErrors: fieldListErrorsPartidas,
         type: fieldListErrorsPartidas[e.target.name].type,
-      });
+      })
     } else {
       // fieldList = validateInput({
       //   target: e.target,
@@ -309,79 +359,79 @@ export const form_distribucion_form_card = async ({
   // AÑADIR FILA DE PARTIDA
 
   async function addRow() {
-    let newNumRow = numsRows + 1;
-    numsRows++;
+    let newNumRow = numsRows + 1
+    numsRows++
 
-    partidalist.insertAdjacentHTML("beforeend", partidaRow(newNumRow));
+    partidalist.insertAdjacentHTML('beforeend', partidaRow(newNumRow))
 
     // AÑADIR ESTADO Y ERRORES A INPUTS
 
-    fieldListPartidas[`partida-${newNumRow}`] = "";
+    fieldListPartidas[`partida-${newNumRow}`] = ''
     fieldListErrorsPartidas[`partida-${newNumRow}`] = {
       value: true,
-      message: "Partida inválida",
-      type: "partida",
-    };
-    fieldListPartidas[`partida-monto-${newNumRow}`] = "";
+      message: 'Partida inválida',
+      type: 'partida',
+    }
+    fieldListPartidas[`partida-monto-${newNumRow}`] = ''
     fieldListErrorsPartidas[`partida-monto-${newNumRow}`] = {
       value: true,
-      message: "Monto inválido",
-      type: "number",
-    };
+      message: 'Monto inválido',
+      type: 'number',
+    }
 
-    let options = [`<option value=''>Elegir partida...</option>`];
+    let options = [`<option value=''>Elegir partida...</option>`]
 
     partidas.fullInfo.forEach((option) => {
-      let opt = `<option value="${option.id}">${option.partida} ${option.descripcion}</option>`;
-      options.push(opt);
-    });
+      let opt = `<option value="${option.id}">${option.partida} ${option.descripcion}</option>`
+      options.push(opt)
+    })
 
-    let partidasList = d.getElementById(`partida-${newNumRow}`);
-    partidasList.innerHTML = "";
+    let partidasList = d.getElementById(`partida-${newNumRow}`)
+    partidasList.innerHTML = ''
 
-    partidasList.innerHTML = options.join("");
+    partidasList.innerHTML = options.join('')
 
-    $(".chosen-select")
+    $('.chosen-select')
       .chosen()
       .change(function (obj, result) {
-        console.log("changed: %o", arguments);
-      });
+        console.log('changed: %o', arguments)
+      })
 
-    return;
+    return
   }
 
   function actualizarMontoRestante() {
-    let montoRestanteElement = d.getElementById("monto-restante");
+    let montoRestanteElement = d.getElementById('monto-restante')
 
-    let inputsPartidasMontos = d.querySelectorAll(".partida-monto");
+    let inputsPartidasMontos = d.querySelectorAll('.partida-monto')
 
     // REINICIAR MONTO ACUMULADO
-    montos.acumulado = 0;
+    montos.acumulado = 0
 
     inputsPartidasMontos.forEach((input) => {
-      montos.acumulado += Number(input.value);
-    });
+      montos.acumulado += Number(input.value)
+    })
 
-    let montoRestante = montos.restante - montos.acumulado;
+    let montoRestante = montos.restante - montos.acumulado
 
     if (montoRestante < 0) {
-      montoRestanteElement.innerHTML = `<span class="text-danger">${montoRestante}</span>`;
-      return montoRestante;
+      montoRestanteElement.innerHTML = `<span class="text-danger">${montoRestante}</span>`
+      return montoRestante
     }
     if (montoRestante > 0) {
-      montoRestanteElement.innerHTML = `<span class="text-success">${montoRestante}</span>`;
-      return montoRestante;
+      montoRestanteElement.innerHTML = `<span class="text-success">${montoRestante}</span>`
+      return montoRestante
     }
 
-    montoRestanteElement.innerHTML = `<span class="text-secondary">${montoRestante}</span>`;
-    return montoRestante;
+    montoRestanteElement.innerHTML = `<span class="text-secondary">${montoRestante}</span>`
+    return montoRestante
   }
 
   function validarPartidas() {
-    let rows = d.querySelectorAll("[data-row]");
-    let rowsArray = Array.from(rows);
+    let rows = d.querySelectorAll('[data-row]')
+    let rowsArray = Array.from(rows)
 
-    let montoRestante = 0;
+    let montoRestante = 0
 
     // VALIDAR LOS INPUTS DE CADA FILA
     // rows.forEach((el) => {
@@ -415,23 +465,23 @@ export const form_distribucion_form_card = async ({
     if (rowsArray.length < 1) {
       toastNotification({
         type: NOTIFICATIONS_TYPES.fail,
-        message: "No se han añadido partidas",
-      });
-      return false;
+        message: 'No se han añadido partidas',
+      })
+      return false
     }
 
     let mappedPartidas = rowsArray.map((el) => {
-      let partidaInput = el.querySelector(`#partida-${el.dataset.row}`);
-      let montoInput = el.querySelector(`#partida-monto-${el.dataset.row}`);
+      let partidaInput = el.querySelector(`#partida-${el.dataset.row}`)
+      let montoInput = el.querySelector(`#partida-monto-${el.dataset.row}`)
 
       let partidaEncontrada = partidas.fullInfo.find(
         (partida) => partida.id === partidaInput.value
-      );
+      )
 
       // Verificar si la partida introducida existe
 
       if (!partidaEncontrada) {
-        return false;
+        return false
       }
 
       return [
@@ -439,81 +489,113 @@ export const form_distribucion_form_card = async ({
         montoInput.value,
         fieldList.id_ejercicio,
         fieldList.id_sector,
-      ];
-    });
+        fieldList.id_programa,
+      ]
+    })
 
-    console.log(mappedPartidas);
+    console.log(mappedPartidas)
 
     // Verificar si hay algun dato erróneo y cancelar envío
     if (mappedPartidas.some((el) => !el)) {
       toastNotification({
         type: NOTIFICATIONS_TYPES.fail,
-        message: "Una o más partidas inválidas",
-      });
-      return false;
+        message: 'Una o más partidas inválidas',
+      })
+      return false
     }
 
-    return mappedPartidas;
+    return mappedPartidas
   }
 
   function validarInputIguales() {
-    let inputs = Array.from(d.querySelectorAll("[data-row] .partida-partida"));
+    let inputs = Array.from(d.querySelectorAll('[data-row] .partida-partida'))
 
-    const valores = inputs.map((input) => input.value);
+    const valores = inputs.map((input) => input.value)
     const conteoValores = valores.reduce((conteo, valor) => {
-      conteo[valor] = (conteo[valor] || 0) + 1;
-      return conteo;
-    }, {});
+      conteo[valor] = (conteo[valor] || 0) + 1
+      return conteo
+    }, {})
 
     for (let valor in conteoValores) {
       if (conteoValores[valor] >= 2) {
-        return true;
+        return true
       }
     }
-    return false;
+    return false
   }
 
   async function cargarSelectSectores() {
-    let selectEjercicio = d.getElementById("search-select-sector");
-    let sectores = await getSectores();
-    let options = [`<option value=''>Elegir sector...</option>`];
+    let selectEjercicio = d.getElementById('search-select-sector')
+    let sectores = await getSectoresData()
+    let options = [`<option value=''>Elegir sector...</option>`]
 
     sectores.fullInfo.forEach((sector) => {
-      let option = `<option value='${sector.id}'>${sector.sector}.${sector.programa}.${sector.proyecto} - ${sector.nombre}</option>`;
-      options.push(option);
-    });
+      let option = `<option value='${sector.id}'>${sector.sector} - ${sector.denominacion}</option>`
+      options.push(option)
+    })
 
-    selectEjercicio.innerHTML = options.join("");
+    selectEjercicio.innerHTML = options.join('')
     // insertOptions({ input: 'ejercicio', data: ejercicios.mappedData })
 
-    $(".chosen-select")
+    $('.chosen-sector')
       .chosen()
       .change(function (obj, result) {
-        fieldList.id_sector = result.selected;
-        console.log("changed: %o", result);
-      });
+        fieldList.id_sector = result.selected
+        console.log('changed: %o', result)
+
+        getProgramasData().then((res) => {
+          let optionsPrograma = [`<option value=''>Elegir programa...</option>`]
+
+          res.fullInfo.forEach((programa) => {
+            console.log(programa.sector, fieldList.id_sector)
+
+            if (programa.sector === fieldList.id_sector) {
+              let option = `<option value='${programa.id}'>${programa.programa} - ${programa.denominacion}</option>`
+              optionsPrograma.push(option)
+            }
+          })
+
+          console.log(optionsPrograma)
+
+          d.getElementById('search-select-programa').innerHTML =
+            optionsPrograma.join('')
+          $('.chosen-programa').trigger('chosen:updated')
+        })
+      })
+
+    $('.chosen-programa')
+      .chosen()
+      .change(function (obj, result) {
+        fieldList.id_programa = result.selected
+      })
+
+    $('.chosen-proyecto')
+      .chosen()
+      .change(function (obj, result) {
+        fieldList.proyecto = result.selected
+      })
   }
 
   function enviarInformacion(data) {
     confirmNotification({
       type: NOTIFICATIONS_TYPES.send,
-      message: "¿Desea registrar esta distribución presupuestaria?",
+      message: '¿Desea registrar esta distribución presupuestaria?',
       successFunction: async function () {
-        let res = await enviarDistribucionPresupuestaria({ arrayDatos: data });
-        let ejericioActualizado = await getEjecicio(ejercicioFiscal.id);
+        let res = await enviarDistribucionPresupuestaria({ arrayDatos: data })
+        let ejericioActualizado = await getEjecicio(ejercicioFiscal.id)
         if (res.success) {
-          loadDistribucionTable(ejericioActualizado.distribucion_partidas);
-          closeCard();
+          loadDistribucionTable(ejericioActualizado.distribucion_partidas)
+          closeCard()
         }
       },
-    });
+    })
   }
 
-  formElement.addEventListener("submit", (e) => e.preventDefault());
+  formElement.addEventListener('submit', (e) => e.preventDefault())
 
-  cardElement.addEventListener("input", validateInputFunction);
-  cardElement.addEventListener("click", validateClick);
-};
+  cardElement.addEventListener('input', validateInputFunction)
+  cardElement.addEventListener('click', validateClick)
+}
 
 function partidaRow(partidaNum) {
   let row = `<div class='row slide-up-animation' data-row='${partidaNum}'>
@@ -554,9 +636,9 @@ function partidaRow(partidaNum) {
           </div>
         </div>
       </div>
-    </div>`;
+    </div>`
 
-  return row;
+  return row
 }
 
 {
