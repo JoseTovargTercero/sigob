@@ -183,7 +183,7 @@ function obtenerTodosEjerciciosFiscales()
                                 $programaInformacion = $resultPrograma->fetch_assoc();
                             }
 
-                            if ($rowDistribucion['id_proyecto'] == 0) {
+                            if ($sumRow['id_proyecto'] == 0) {
                                 $proyectoInformacion = 0;
                             }else{
                                 $sqlProyecto = "SELECT * FROM pl_proyectos WHERE id = ?";
