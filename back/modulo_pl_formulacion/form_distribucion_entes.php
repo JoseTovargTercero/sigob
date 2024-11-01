@@ -253,12 +253,14 @@ function consultarDistribucionPorId($id)
             $idsDistribuciones = array_column($distribucionArray, 'id_distribucion'); // Extraer solo los IDs de distribuciones
 
             // Buscar en la tabla distribucion_presupuestaria los id_partida y id_sector
-            $sqlDistribucionPresup = "SELECT id_partida, id_sector FROM distribucion_presupuestaria WHERE id IN (" . implode(",", $idsDistribuciones) . ")";
+            $sqlDistribucionPresup = "SELECT id_partida, id_sector, id_programa FROM distribucion_presupuestaria WHERE id IN (" . implode(",", $idsDistribuciones) . ")";
             $resultDistribucionPresup = $conexion->query($sqlDistribucionPresup);
 
             while ($distPresup = $resultDistribucionPresup->fetch_assoc()) {
                 $idPartida = $distPresup['id_partida'];
                 $idSector = $distPresup['id_sector'];
+                $idPrograma = $distPresup['id_programa'];
+
 
                 // Obtener los detalles de la partida desde partidas_presupuestarias
                 $sqlPartida = "SELECT id, partida, descripcion FROM partidas_presupuestarias WHERE id = ?";
@@ -288,7 +290,7 @@ function consultarDistribucionPorId($id)
                 }
 
                 // Obtener la información del sector desde pl_sectores_presupuestarios
-                $sqlSector = "SELECT * FROM pl_sectores_presupuestarios WHERE id = ?";
+                $sqlSector = "SELECT * FROM pl_sectores WHERE id = ?";
                 $stmtSector = $conexion->prepare($sqlSector);
                 $stmtSector->bind_param("i", $idSector);
                 $stmtSector->execute();
@@ -299,6 +301,19 @@ function consultarDistribucionPorId($id)
                     $distribucion['sector_informacion'] = $sectorInfo; // Agregar la información del sector
                 } else {
                     $distribucion['sector_informacion'] = null;
+                }
+
+                $sqlPrograma = "SELECT * FROM pl_programas WHERE id = ?";
+                $stmtPrograma = $conexion->prepare($sqlPrograma);
+                $stmtPrograma->bind_param("i", $idPrograma);
+                $stmtPrograma->execute();
+                $resultPrograma = $stmtPrograma->get_result();
+
+                if ($resultPrograma->num_rows > 0) {
+                    $programaInfo = $resultPrograma->fetch_assoc();
+                    $distribucion['programa_informacion'] = $programaInfo; // Agregar la información del sector
+                } else {
+                    $distribucion['programa_informacion'] = null;
                 }
             }
         }
@@ -377,12 +392,13 @@ function consultarTodasDistribuciones()
                 $idsDistribuciones = array_column($distribucionArray, 'id_distribucion'); // Extraer solo los IDs de distribuciones
 
                 // Buscar en la tabla distribucion_presupuestaria los id_partida y id_sector
-                $sqlDistribucionPresup = "SELECT id_partida, id_sector FROM distribucion_presupuestaria WHERE id IN (" . implode(",", $idsDistribuciones) . ")";
+                $sqlDistribucionPresup = "SELECT id_partida, id_sector, id_programa FROM distribucion_presupuestaria WHERE id IN (" . implode(",", $idsDistribuciones) . ")";
                 $resultDistribucionPresup = $conexion->query($sqlDistribucionPresup);
 
                 while ($distPresup = $resultDistribucionPresup->fetch_assoc()) {
                     $idPartida = $distPresup['id_partida'];
                     $idSector = $distPresup['id_sector'];
+                    $idPrograma = $distPresup['id_programa'];
 
                     // Obtener los detalles de la partida desde partidas_presupuestarias
                     $sqlPartida = "SELECT id, partida, descripcion FROM partidas_presupuestarias WHERE id = ?";
@@ -412,7 +428,7 @@ function consultarTodasDistribuciones()
                     }
 
                     // Obtener la información del sector desde pl_sectores_presupuestarios
-                    $sqlSector = "SELECT * FROM pl_sectores_presupuestarios WHERE id = ?";
+                    $sqlSector = "SELECT * FROM pl_sectores WHERE id = ?";
                     $stmtSector = $conexion->prepare($sqlSector);
                     $stmtSector->bind_param("i", $idSector);
                     $stmtSector->execute();
@@ -423,6 +439,19 @@ function consultarTodasDistribuciones()
                         $fila['sector_informacion'] = $sectorInfo; // Agregar la información del sector
                     } else {
                         $fila['sector_informacion'] = null;
+                    }
+
+                    $sqlPrograma = "SELECT * FROM pl_programas WHERE id = ?";
+                    $stmtPrograma = $conexion->prepare($sqlPrograma);
+                    $stmtPrograma->bind_param("i", $idPrograma);
+                    $stmtPrograma->execute();
+                    $resultPrograma = $stmtPrograma->get_result();
+
+                    if ($resultPrograma->num_rows > 0) {
+                        $programaInfo = $resultPrograma->fetch_assoc();
+                        $fila['programa_informacion'] = $programaInfo; // Agregar la información del sector
+                    } else {
+                        $fila['programa_informacion'] = null;
                     }
                 }
             }

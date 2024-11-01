@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.4
+-- version 5.2.0
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 31-10-2024 a las 18:58:16
--- Versión del servidor: 10.4.16-MariaDB
--- Versión de PHP: 7.4.12
+-- Tiempo de generación: 01-11-2024 a las 14:57:20
+-- Versión del servidor: 10.4.27-MariaDB
+-- Versión de PHP: 7.4.33
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -34,7 +34,7 @@ CREATE TABLE `asignacion_ente` (
   `id_ejercicio` int(255) NOT NULL,
   `fecha` varchar(255) DEFAULT NULL,
   `status` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `asignacion_ente`
@@ -62,7 +62,7 @@ CREATE TABLE `audit_logs` (
   `affected_rows` int(11) DEFAULT NULL,
   `user_id` int(11) DEFAULT NULL,
   `timestamp` datetime DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `audit_logs`
@@ -111,8 +111,8 @@ INSERT INTO `audit_logs` (`id`, `action_type`, `table_name`, `situation`, `affec
 CREATE TABLE `backups` (
   `id` int(11) NOT NULL,
   `user` int(11) NOT NULL,
-  `fecha` varchar(20) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `tablas` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL
+  `fecha` varchar(20) DEFAULT NULL,
+  `tablas` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 --
@@ -133,10 +133,10 @@ INSERT INTO `backups` (`id`, `user`, `fecha`, `tablas`) VALUES
 
 CREATE TABLE `bancos` (
   `id` int(11) NOT NULL,
-  `prefijo` varchar(50) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `nombre` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `matriz` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `afiliado` varchar(20) COLLATE latin1_spanish_ci DEFAULT NULL
+  `prefijo` varchar(50) DEFAULT NULL,
+  `nombre` varchar(255) DEFAULT NULL,
+  `matriz` varchar(255) DEFAULT NULL,
+  `afiliado` varchar(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 --
@@ -158,7 +158,7 @@ CREATE TABLE `cargos_grados` (
   `cargo` varchar(255) DEFAULT NULL,
   `cod_cargo` varchar(5) DEFAULT NULL,
   `grado` varchar(2) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
 -- Volcado de datos para la tabla `cargos_grados`
@@ -711,7 +711,7 @@ CREATE TABLE `categorias` (
   `id` int(11) NOT NULL,
   `categoria` varchar(255) DEFAULT NULL,
   `categoria_nombre` longtext DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `categorias`
@@ -816,7 +816,7 @@ CREATE TABLE `compromisos` (
   `correlativo` varchar(255) DEFAULT NULL,
   `tipo` varchar(255) DEFAULT NULL,
   `id_registro` int(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -835,7 +835,7 @@ CREATE TABLE `conceptos` (
   `maxval` int(1) NOT NULL DEFAULT 0,
   `tipo_calculo_origen` int(11) NOT NULL DEFAULT 0,
   `codigo_concepto` varchar(50) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
 -- Volcado de datos para la tabla `conceptos`
@@ -880,7 +880,7 @@ CREATE TABLE `conceptos_aplicados` (
   `nomina_restar` varchar(255) DEFAULT NULL,
   `multiplicador` varchar(255) DEFAULT NULL,
   `otra_nomina` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `conceptos_aplicados`
@@ -919,9 +919,9 @@ INSERT INTO `conceptos_aplicados` (`id`, `concepto_id`, `nom_concepto`, `fecha_a
 
 CREATE TABLE `conceptos_formulacion` (
   `id` int(11) NOT NULL,
-  `tipo_calculo` varchar(10) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `condicion` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `valor` varchar(50) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `tipo_calculo` varchar(10) DEFAULT NULL,
+  `condicion` varchar(255) DEFAULT NULL,
+  `valor` varchar(50) DEFAULT NULL,
   `concepto_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
@@ -946,7 +946,7 @@ CREATE TABLE `correcciones` (
   `fecha_correccion` date NOT NULL,
   `status` int(11) NOT NULL,
   `peticion_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `correcciones`
@@ -966,7 +966,7 @@ CREATE TABLE `dependencias` (
   `dependencia` varchar(255) DEFAULT NULL,
   `cod_dependencia` varchar(10) DEFAULT NULL,
   `id_categoria` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `dependencias`
@@ -1071,7 +1071,7 @@ CREATE TABLE `descripcion_programas` (
   `id_sector` int(255) NOT NULL,
   `id_programa` int(255) NOT NULL,
   `descripcion` longtext NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `descripcion_programas`
@@ -1087,7 +1087,6 @@ INSERT INTO `descripcion_programas` (`id`, `id_sector`, `id_programa`, `descripc
 (7, 1, 7, 'Asistir y asesorar al Gobernador del Estado, en todo lo concerniente a la Planificación y Administración Presupuestaria de la Gestión, e igualmente a las diferentes secretarías y oficinas dependientes del Ejecutivo Regional y demás poderes públicos, cuando estos lo soliciten. \r\n \r\nFormular en coordinación con la estructura del Ejecutivo Regional el proyecto de Ley de Presupuesto. \r\n \r\nEjercer la Secretaría Técnica del Comité de Planificación y Coordinación de Políticas Públicas e integrar las comisiones de trabajo a las cuales sea designado por el Gobernador para la elaboración del Plan Operativo Anual y Plan Estadal de Desarrollo Estadal.  \r\n'),
 (8, 1, 8, 'El programa Servicios de Administración, se encarga de ejecutar en el marco de la norma financiera el presupuesto del Estado.\r\n \r\n \r\nCoordinar los servicios de compras de bienes y servicios; el registro del patrimonio de la Gobernación y de reproducción e imprenta.\r\n \r\n \r\nAdelantar la contabilidad fiscal del Ejecutivo Regional, de acuerdo a las pautas establecidas en la Ley.\r\n'),
 (9, 1, 9, 'El objeto de este programa, es el registro, control y cancelación de los  compromisos adquiridos por la Gobernación del Estado, a través de sistemas que aseguren el adecuado manejo del Tesoro Público; así como también, el control de valores en custodia, la existencia del Tesoro y la recaudación de los fondos provenientes de la renta de diversas índoles, cumpliendo con lo dispuesto en la ley Orgánica de régimen Presupuestario, Ley General de Venta y  Gastos públicos del Estado, Ley Orgánica de Contraloría General del Estado y demás normativas vigentes de este Estado.\r\n \r\n \r\nRealiza además, todo los pagos ejecutado por Gobernación, a través de las diferentes cuentas habilitadas, Promueve actividades laborales para organizar todas las operaciones de recaudación,  custodia de valores y velar por el fiel cumplimiento de acuerdo a las disposiciones legales vigentes.\r\n'),
-(10, 1, 12, 'La Secretaría De Control y Seguimiento de Gestión Pública que Ejercerá el Control y La Fiscalización de La Gestión Pública Desarrollada por la Gobernación del Estado Amazonas con el fin de dar cumplimiento Efectivo y Eficiente de los objetivos y Metas de este Ente Gubernamental\r\nFUNCIONES DE LA SECRETARÍA DE CONTROL Y SEGUMIENTO DE GESTION PÚBLICA:\r\n\r\n\r\nVelar por el cumplimiento de las políticas y directrices dictadas por el ejecutivo regional.\r\n\r\nSupervisar las actividades de las Secretarías Ejecutivas y las distintas dependencias de la Gobernación del Estado Amazonas de acuerdo a las directrices impartidas por el ciudadano Gobernador del Estado.\r\n\r\n Dar seguimiento a los proyectos o programas a ejecutar por parte del ejecutivo regional.\r\n'),
 (11, 1, 10, 'Elaborar el programa anual de política indigenista, previa consulta con las comunidades, pueblos y grupos étnicos indígenas orientados al mejoramiento de las condiciones de vidas, trabajo y salud, así como su nivel educativo.\r\n \r\nSupervisar  y hacer cumplir las directrices de las políticas indigenistas.\r\n \r\nOrientar a la población indígena, sobre su organización y el establecimiento de cooperativa de producción y consumo.\r\n \r\nDefender y hacer respetar los derechos de los indígenas consagrados en la Constitución Nacional, Constitución Estadal, Leyes Nacionales y en tratados Internacionales ratificados por Venezuela.\r\n \r\nCoordinar los recursos y las acciones dirigidas a promover en las poblaciones indígenas del Estado Amazonas\r\n \r\nEstablecer nexos con los entes públicos, Nacionales  y Regionales, que hacen vida activa en el Estado Amazonas, a fin  de coordinar acciones a favor de las comunidades indígenas, a través de los diferentes Institutos Crediticios Nacionales y Estadales. \r\n\r\nDesarrollar acciones en las comunidades indígenas que contribuyan al desarrollo socio-económico y la autogestión\r\n'),
 (12, 1, 13, 'Funciones de la Secretaria Ejecutiva de bienes y servicios:\r\n Dirigir, coordinar y establecer estrategia de recepción, entrega y movilización de bienes muebles adquiridos por la Gobernación para el equipamiento de las unidades administrativas.\r\nRealizar y Ejecutar periódicamente programa de actualización de inventarios de bienes asignados a distintas oficinas, tanto en las unidades administrativas dependientes como en los entes coordinados.\r\nDiseñar, controlar y supervisar, la vigilancia y resguardo de los bienes e instalaciones que son propiedades patrimoniales de la Gobernación.\r\nLlevar registro y control de bienes muebles e inmuebles, así como rendir informe a la administración y tesorería sobre el registro contable para el ajuste periódico a la hacienda pública del estado.\r\nRealizar el control perceptivo, que permita captar la veracidad, exactitud y calidad de obras, bienes y servicios. Para así verificar la sinceridad y correcta realización de las operaciones administrativas, a través de comprobación in situ.\r\n'),
 (13, 1, 11, 'Los servicios de Control y Gestión comprenden el plan de organización, las políticas, normas, métodos y procedimientos adaptados dentro de un ente u organismo, sujeto a la Ley del Estatuto de la función pública, para  salvaguardar sus recursos, verificar su exactitud y veracidad de la información financiera y administrativa y promover la eficiencia económica y la calidad en sus operaciones. Estimular la observancia de las políticas, presentar y lograr el cumplimiento de misión, objetivos y metas.\r\n \r\nRealizar actividades de coordinar y dirigir los programas de auditoria a efectuarse en los organismos públicos, centralizados, dependientes financiera y presupuestariamente de la Gobernación del Estado Amazonas.\r\n \r\nEn materia de asuntos legales, el Auditor Interno de acuerdo a los casos presentados y a las situaciones que se origen en el ámbito administrativo y financiero, ordenará las aperturas, investigaciones y averiguaciones administrativas que amerite el caso.\r\n'),
@@ -1129,7 +1128,7 @@ CREATE TABLE `distribucion_entes` (
   `comentario` longtext NOT NULL,
   `fecha` varchar(255) DEFAULT NULL,
   `id_asignacion` int(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `distribucion_entes`
@@ -1152,18 +1151,20 @@ CREATE TABLE `distribucion_presupuestaria` (
   `id_ejercicio` int(255) NOT NULL,
   `monto_actual` varchar(255) DEFAULT NULL,
   `id_sector` int(255) NOT NULL,
+  `id_programa` int(255) NOT NULL,
+  `id_proyecto` int(255) NOT NULL,
   `status` int(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `distribucion_presupuestaria`
 --
 
-INSERT INTO `distribucion_presupuestaria` (`id`, `id_partida`, `monto_inicial`, `id_ejercicio`, `monto_actual`, `id_sector`, `status`) VALUES
-(9, 725, '2000', 1, '2000', 1, 1),
-(10, 725, '1000', 1, '1000', 2, 1),
-(11, 1436, '4000', 1, '4000', 15, 1),
-(12, 1009, '500', 1, '500', 1, 1);
+INSERT INTO `distribucion_presupuestaria` (`id`, `id_partida`, `monto_inicial`, `id_ejercicio`, `monto_actual`, `id_sector`, `id_programa`, `id_proyecto`, `status`) VALUES
+(9, 725, '2000', 1, '2000', 1, 1, 0, 1),
+(10, 725, '1000', 1, '1000', 2, 1, 0, 1),
+(11, 1436, '4000', 1, '4000', 15, 1, 0, 1),
+(12, 1009, '500', 1, '500', 1, 1, 0, 1);
 
 -- --------------------------------------------------------
 
@@ -1177,7 +1178,7 @@ CREATE TABLE `ejercicio_fiscal` (
   `situado` varchar(255) DEFAULT NULL,
   `divisor` varchar(255) DEFAULT NULL,
   `status` int(1) NOT NULL DEFAULT 1
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `ejercicio_fiscal`
@@ -1195,26 +1196,26 @@ INSERT INTO `ejercicio_fiscal` (`id`, `ano`, `situado`, `divisor`, `status`) VAL
 
 CREATE TABLE `empleados` (
   `id` int(11) NOT NULL,
-  `nacionalidad` varchar(2) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `cedula` varchar(20) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `nombres` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `nacionalidad` varchar(2) DEFAULT NULL,
+  `cedula` varchar(20) DEFAULT NULL,
+  `nombres` varchar(255) DEFAULT NULL,
   `otros_años` int(11) NOT NULL DEFAULT 0,
-  `status` varchar(5) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `observacion` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `cod_cargo` varchar(10) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `banco` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `cuenta_bancaria` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `status` varchar(5) DEFAULT NULL,
+  `observacion` varchar(255) DEFAULT NULL,
+  `cod_cargo` varchar(10) DEFAULT NULL,
+  `banco` varchar(255) DEFAULT NULL,
+  `cuenta_bancaria` varchar(255) DEFAULT NULL,
   `hijos` int(11) NOT NULL DEFAULT 0,
   `instruccion_academica` int(11) NOT NULL DEFAULT 0,
   `discapacidades` int(2) NOT NULL DEFAULT 0,
-  `tipo_nomina` varchar(10) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `tipo_nomina` varchar(10) DEFAULT NULL,
   `id_dependencia` int(255) NOT NULL,
   `verificado` int(1) NOT NULL DEFAULT 0,
-  `correcion` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `correcion` varchar(255) DEFAULT NULL,
   `beca` int(2) NOT NULL DEFAULT 0,
   `fecha_ingreso` date DEFAULT NULL,
   `id_categoria` int(11) NOT NULL,
-  `id_partida` longtext COLLATE latin1_spanish_ci DEFAULT NULL
+  `id_partida` longtext DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 --
@@ -2596,22 +2597,22 @@ INSERT INTO `empleados` (`id`, `nacionalidad`, `cedula`, `nombres`, `otros_años
 
 CREATE TABLE `empleados_pasados` (
   `id` int(11) NOT NULL,
-  `nacionalidad` varchar(2) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `cedula` varchar(20) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `nombres` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `nacionalidad` varchar(2) DEFAULT NULL,
+  `cedula` varchar(20) DEFAULT NULL,
+  `nombres` varchar(255) DEFAULT NULL,
   `otros_años` int(11) NOT NULL DEFAULT 0,
-  `status` varchar(5) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `observacion` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `cod_cargo` varchar(10) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `banco` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `cuenta_bancaria` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `status` varchar(5) DEFAULT NULL,
+  `observacion` varchar(255) DEFAULT NULL,
+  `cod_cargo` varchar(10) DEFAULT NULL,
+  `banco` varchar(255) DEFAULT NULL,
+  `cuenta_bancaria` varchar(255) DEFAULT NULL,
   `hijos` int(11) NOT NULL DEFAULT 0,
   `instruccion_academica` int(11) NOT NULL DEFAULT 0,
   `discapacidades` int(2) NOT NULL DEFAULT 0,
-  `tipo_nomina` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `tipo_nomina` varchar(255) DEFAULT NULL,
   `id_dependencia` int(255) NOT NULL,
   `verificado` int(1) NOT NULL DEFAULT 0,
-  `correcion` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `correcion` varchar(255) DEFAULT NULL,
   `beca` int(2) NOT NULL DEFAULT 0,
   `fecha_ingreso` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
@@ -4032,7 +4033,7 @@ CREATE TABLE `entes` (
   `actividad` varchar(10) NOT NULL,
   `ente_nombre` longtext NOT NULL,
   `tipo_ente` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `entes`
@@ -4121,7 +4122,7 @@ CREATE TABLE `entes_dependencias` (
   `actividad` varchar(10) NOT NULL,
   `ente_nombre` longtext NOT NULL,
   `tipo_ente` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `entes_dependencias`
@@ -4198,7 +4199,7 @@ CREATE TABLE `error_log` (
   `id` int(255) NOT NULL,
   `descripcion` longtext NOT NULL,
   `fecha` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `error_log`
@@ -4222,7 +4223,7 @@ CREATE TABLE `frecuencias_por_grupo` (
   `id` int(11) NOT NULL,
   `id_grupo` int(11) NOT NULL,
   `tipo` varchar(10) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `frecuencias_por_grupo`
@@ -4246,7 +4247,7 @@ CREATE TABLE `gastos` (
   `monto` varchar(255) DEFAULT NULL,
   `status` int(255) NOT NULL,
   `id_ejercicio` int(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -4259,7 +4260,7 @@ CREATE TABLE `historico_conceptos` (
   `identificador` varchar(255) NOT NULL,
   `valor` varchar(255) NOT NULL,
   `fecha` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `historico_conceptos`
@@ -4287,7 +4288,7 @@ CREATE TABLE `historico_reintegros` (
   `nombre_nomina` varchar(255) DEFAULT NULL,
   `fecha` varchar(255) DEFAULT NULL,
   `time` datetime NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `historico_reintegros`
@@ -4967,7 +4968,7 @@ CREATE TABLE `informacion_consejo` (
   `pagina_web` longtext NOT NULL,
   `email` longtext NOT NULL,
   `consejo_local` longtext NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `informacion_consejo`
@@ -4989,7 +4990,7 @@ CREATE TABLE `informacion_contraloria` (
   `telefono` longtext NOT NULL,
   `pagina_web` longtext NOT NULL,
   `email` longtext NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `informacion_contraloria`
@@ -5013,7 +5014,7 @@ CREATE TABLE `informacion_gobernacion` (
   `fax` longtext NOT NULL,
   `codigo_postal` longtext NOT NULL,
   `nombre_apellido_gobernador` longtext NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `informacion_gobernacion`
@@ -5035,7 +5036,7 @@ CREATE TABLE `informacion_pdf` (
   `correlativo` varchar(255) DEFAULT NULL,
   `identificador` varchar(255) DEFAULT NULL,
   `banco` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `informacion_pdf`
@@ -5069,7 +5070,7 @@ CREATE TABLE `informacion_personas` (
   `id` int(255) NOT NULL,
   `nombres` longtext NOT NULL,
   `cargo` longtext NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `informacion_personas`
@@ -5094,7 +5095,7 @@ CREATE TABLE `menu` (
   `nombre` varchar(255) DEFAULT NULL,
   `dir` varchar(255) DEFAULT NULL,
   `icono` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `menu`
@@ -5142,11 +5143,11 @@ INSERT INTO `menu` (`id`, `oficina`, `categoria`, `nombre`, `dir`, `icono`) VALU
 CREATE TABLE `modificaciones_empleados` (
   `id` int(11) NOT NULL,
   `empleado` int(11) NOT NULL,
-  `campo` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `valor` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `campo` varchar(255) DEFAULT NULL,
+  `valor` varchar(255) DEFAULT NULL,
   `timestamp` datetime NOT NULL DEFAULT current_timestamp(),
   `user_acepta` int(10) NOT NULL DEFAULT 0,
-  `fecha` varchar(50) COLLATE latin1_spanish_ci NOT NULL
+  `fecha` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 -- --------------------------------------------------------
@@ -5158,15 +5159,15 @@ CREATE TABLE `modificaciones_empleados` (
 CREATE TABLE `movimientos` (
   `id` int(11) NOT NULL,
   `id_empleado` int(10) NOT NULL,
-  `id_nomina` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `id_nomina` varchar(255) DEFAULT NULL,
   `fecha_movimiento` datetime NOT NULL DEFAULT current_timestamp(),
-  `accion` varchar(50) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `tabla` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `campo` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `descripcion` longtext COLLATE latin1_spanish_ci DEFAULT NULL,
-  `valor_anterior` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `valor_nuevo` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `usuario_id` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `accion` varchar(50) DEFAULT NULL,
+  `tabla` varchar(255) DEFAULT NULL,
+  `campo` varchar(255) DEFAULT NULL,
+  `descripcion` longtext DEFAULT NULL,
+  `valor_anterior` varchar(255) DEFAULT NULL,
+  `valor_nuevo` varchar(255) DEFAULT NULL,
+  `usuario_id` varchar(255) DEFAULT NULL,
   `status` int(11) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
@@ -5187,11 +5188,11 @@ INSERT INTO `movimientos` (`id`, `id_empleado`, `id_nomina`, `fecha_movimiento`,
 
 CREATE TABLE `nominas` (
   `id` int(11) NOT NULL,
-  `grupo_nomina` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `nombre` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `frecuencia` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `tipo` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `conceptos_aplicados` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL
+  `grupo_nomina` varchar(255) DEFAULT NULL,
+  `nombre` varchar(255) DEFAULT NULL,
+  `frecuencia` varchar(255) DEFAULT NULL,
+  `tipo` varchar(255) DEFAULT NULL,
+  `conceptos_aplicados` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 --
@@ -5226,7 +5227,7 @@ CREATE TABLE `nominas_conceptos` (
   `cod_nomina` varchar(10) DEFAULT NULL,
   `nom_nomina` varchar(255) DEFAULT NULL,
   `tipo_concepto` varchar(1) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
 -- Volcado de datos para la tabla `nominas_conceptos`
@@ -5257,8 +5258,8 @@ INSERT INTO `nominas_conceptos` (`id`, `contador_cod_con`, `cod_concepto`, `nom_
 
 CREATE TABLE `nominas_grupos` (
   `id` int(11) NOT NULL,
-  `codigo` varchar(20) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `nombre` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `codigo` varchar(20) DEFAULT NULL,
+  `nombre` varchar(255) DEFAULT NULL,
   `creado` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
@@ -5280,12 +5281,12 @@ INSERT INTO `nominas_grupos` (`id`, `codigo`, `nombre`, `creado`) VALUES
 CREATE TABLE `notificaciones` (
   `id` int(11) NOT NULL,
   `user_1` int(11) NOT NULL,
-  `user_2` varchar(150) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `user_2` varchar(150) DEFAULT NULL,
   `tipo` int(11) NOT NULL,
-  `guia` longtext COLLATE latin1_spanish_ci DEFAULT NULL,
+  `guia` longtext DEFAULT NULL,
   `date` datetime DEFAULT current_timestamp(),
   `visto` int(1) NOT NULL DEFAULT 0,
-  `comentario` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL
+  `comentario` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 --
@@ -5310,7 +5311,7 @@ CREATE TABLE `partidas_presupuestarias` (
   `nombre` longtext DEFAULT NULL,
   `descripcion` longtext DEFAULT NULL,
   `status` int(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `partidas_presupuestarias`
@@ -6660,9 +6661,9 @@ INSERT INTO `partidas_presupuestarias` (`id`, `partida`, `nombre`, `descripcion`
 
 CREATE TABLE `password_resets` (
   `id` int(11) NOT NULL,
-  `email` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `token` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `expires` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `token` varchar(255) DEFAULT NULL,
+  `expires` varchar(255) DEFAULT NULL,
   `attempts` int(11) DEFAULT 0,
   `last_attempt` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
@@ -6679,7 +6680,7 @@ CREATE TABLE `personal_directivo` (
   `nombre_apellido` longtext NOT NULL,
   `email` longtext NOT NULL,
   `telefono` longtext NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `personal_directivo`
@@ -6712,7 +6713,7 @@ CREATE TABLE `peticiones` (
   `identificador` varchar(255) DEFAULT NULL,
   `status_archivos` varchar(255) DEFAULT NULL,
   `correccion` longtext DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `peticiones`
@@ -6739,7 +6740,7 @@ CREATE TABLE `plan_inversion` (
   `id` int(255) NOT NULL,
   `id_ejercicio` int(255) NOT NULL,
   `monto_total` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `plan_inversion`
@@ -6759,7 +6760,7 @@ CREATE TABLE `pl_actividades` (
   `id` int(11) NOT NULL,
   `actividad` varchar(10) NOT NULL,
   `denominacion` longtext NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -6771,7 +6772,7 @@ CREATE TABLE `pl_partidas` (
   `id` int(11) NOT NULL,
   `partida` varchar(20) NOT NULL,
   `denominacion` longtext NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `pl_partidas`
@@ -6798,7 +6799,7 @@ CREATE TABLE `pl_programas` (
   `sector` varchar(10) NOT NULL,
   `programa` varchar(10) NOT NULL,
   `denominacion` longtext NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `pl_programas`
@@ -6850,7 +6851,7 @@ CREATE TABLE `pl_proyectos` (
   `id` int(11) NOT NULL,
   `proyecto_id` varchar(255) NOT NULL,
   `denominacion` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `pl_proyectos`
@@ -6869,7 +6870,7 @@ CREATE TABLE `pl_sectores` (
   `id` int(11) NOT NULL,
   `sector` varchar(11) NOT NULL,
   `denominacion` longtext NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `pl_sectores`
@@ -6900,7 +6901,7 @@ CREATE TABLE `pl_sectores_presupuestarios` (
   `programa` varchar(10) NOT NULL,
   `proyecto` varchar(10) NOT NULL,
   `nombre` longtext NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `pl_sectores_presupuestarios`
@@ -6957,7 +6958,7 @@ CREATE TABLE `poa_actividades` (
   `total` varchar(255) DEFAULT NULL,
   `id_ente` varchar(255) DEFAULT NULL,
   `fecha` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -6967,8 +6968,8 @@ CREATE TABLE `poa_actividades` (
 
 CREATE TABLE `primantiguedad` (
   `id` int(255) NOT NULL,
-  `porcentaje` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `tiempo` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL
+  `porcentaje` varchar(255) NOT NULL,
+  `tiempo` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -7009,8 +7010,8 @@ INSERT INTO `primantiguedad` (`id`, `porcentaje`, `tiempo`) VALUES
 
 CREATE TABLE `profesiones` (
   `id_profesion` int(255) NOT NULL,
-  `profesion` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `porcentaje` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL
+  `profesion` varchar(255) DEFAULT NULL,
+  `porcentaje` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -7039,7 +7040,7 @@ CREATE TABLE `proyecto_inversion` (
   `monto_proyecto` varchar(255) DEFAULT NULL,
   `status` int(255) NOT NULL DEFAULT 0,
   `comentario` longtext DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `proyecto_inversion`
@@ -7063,7 +7064,7 @@ CREATE TABLE `proyecto_inversion_partidas` (
   `programa_id` int(10) NOT NULL,
   `proyecto_id` int(10) NOT NULL,
   `actividad_id` int(10) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `proyecto_inversion_partidas`
@@ -7094,7 +7095,7 @@ CREATE TABLE `recibo_pago` (
   `nombre_nomina` varchar(255) DEFAULT NULL,
   `fecha_inicio` varchar(255) DEFAULT NULL,
   `fecha_fin` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `recibo_pago`
@@ -11243,14 +11244,14 @@ INSERT INTO `recibo_pago` (`id`, `id_empleado`, `sueldo_base`, `sueldo_integral`
 
 CREATE TABLE `reportes` (
   `id` int(11) NOT NULL,
-  `furmulacion` longtext COLLATE latin1_spanish_ci DEFAULT NULL,
-  `nominas` longtext COLLATE latin1_spanish_ci DEFAULT NULL,
-  `columnas` longtext COLLATE latin1_spanish_ci DEFAULT NULL,
-  `formato` varchar(10) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `nombre` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `furmulacion` longtext DEFAULT NULL,
+  `nominas` longtext DEFAULT NULL,
+  `columnas` longtext DEFAULT NULL,
+  `formato` varchar(10) DEFAULT NULL,
+  `nombre` varchar(255) DEFAULT NULL,
   `user` int(10) NOT NULL,
   `creacion` datetime NOT NULL DEFAULT current_timestamp(),
-  `tipoFiltro` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL
+  `tipoFiltro` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 --
@@ -11292,7 +11293,7 @@ CREATE TABLE `solicitud_dozavos` (
   `partidas` varchar(255) DEFAULT NULL,
   `id_ente` int(255) NOT NULL,
   `status` int(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `solicitud_dozavos`
@@ -11327,7 +11328,7 @@ CREATE TABLE `system_users` (
   `u_nivel` int(11) NOT NULL,
   `u_status` int(11) NOT NULL DEFAULT 1,
   `u_cedula` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
 -- Volcado de datos para la tabla `system_users`
@@ -11352,7 +11353,7 @@ CREATE TABLE `system_users_permisos` (
   `id` int(11) NOT NULL,
   `id_user` int(11) NOT NULL,
   `id_item_menu` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `system_users_permisos`
@@ -11383,7 +11384,7 @@ CREATE TABLE `tabuladores` (
   `pasos` varchar(255) DEFAULT NULL,
   `aniosPasos` varchar(255) DEFAULT NULL,
   `timestamp` date NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `tabuladores`
@@ -11404,7 +11405,7 @@ CREATE TABLE `tabuladores_estr` (
   `grado` varchar(255) DEFAULT NULL,
   `monto` varchar(255) DEFAULT NULL,
   `tabulador_id` int(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `tabuladores_estr`
@@ -11813,7 +11814,7 @@ CREATE TABLE `tasa` (
   `descripcion` varchar(255) DEFAULT NULL,
   `simbolo` varchar(255) DEFAULT NULL,
   `valor` varchar(2000) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `tasa`
@@ -11834,7 +11835,7 @@ CREATE TABLE `tasa_historico` (
   `precio` varchar(255) DEFAULT NULL,
   `descripcion` varchar(2000) DEFAULT NULL,
   `fecha` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `tasa_historico`
@@ -11866,7 +11867,49 @@ CREATE TABLE `tipo_gastos` (
   `id` int(255) NOT NULL,
   `nombre` longtext DEFAULT NULL,
   `id_partida` int(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `titulo_1`
+--
+
+CREATE TABLE `titulo_1` (
+  `id` int(255) NOT NULL,
+  `articulo` longtext NOT NULL,
+  `descripcion` longtext NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `titulo_1`
+--
+
+INSERT INTO `titulo_1` (`id`, `articulo`, `descripcion`) VALUES
+(1, 'ARTÍCULO 2:', 'Se acuerdan los Créditos Presupuestarios, para el Ejercicio Fiscal 2024, asignados a los diferentes sectores, programas, sub-programas, proyectos  y partidas, y  los  acordados a los \"Créditos no Asignables a Programas\" de conformidad con el Título III \"Presupuesto de Gastos\". '),
+(2, 'ARTÍCULO 3:', 'La Distribución Institucional del Presupuesto de Gastos para el Ejercicio Fiscal 2024, será aprobada mediante Decreto dictado por el Gobernador del Estado, en el cual precisará su Distribución Institucional condicionada de conformidad con lo dispuesto en el Parágrafo Único de este Artículo y consiste en el detalle de los créditos presupuestarios acordados a las diferentes categorías presupuestarias a nivel de actividades y sub-partidas genéricas y específicas, sub- específicas y otras desagregaciones de menor nivel que solo tendrán carácter informativo para fines administrativos y de control interno, tal como lo establece el artículo 34 de la Ley Orgánica de Administración Financiera del Estado Amazonas, publicada en Gaceta Oficial Año 16 Nº 17 de fecha 02 de Julio del año 2008 extraordinaria. \r\nEl Decreto mencionado en este artículo deberá reflejar fielmente las modificaciones o alteraciones introducidas por el Consejo Legislativo en el curso de la discusión y aprobación de esta Ley. \r\n'),
+(3, 'ARTÍCULO 4:', 'La Secretaría de Planificación, Proyectos y Presupuesto deberá implementar un sistema de seguimiento sobre la programación de la ejecución física y financiera del presupuesto, conforme a lo dispuesto en el artículo 46 de la Ley Orgánica de Administración Financiera del Estado Amazonas, publicada en Gaceta Oficial Año 16 Nº 17 de fecha 02 de Julio del año 2008 extraordinaria.'),
+(4, 'ARTÍCULO 5', 'Los Créditos Presupuestarios del Presupuesto de Gastos, por Programas, Proyectos y Partidas, constituyen el límite máximo de las autorizaciones disponibles para gastos. '),
+(5, 'ARTÍCULO 6:', 'Las modificaciones a los Créditos correspondientes a las categorías presupuestarias que integran el Consejo Legislativo, la Procuraduría Estatal y la Contraloría General del Estado Amazonas, se ejecutarán de acuerdo a lo dispuesto en las Leyes, debiendo comunicar sus decisiones a las Secretaría de Administración y de Planificación Proyectos y Presupuesto de la Gobernación a fin de conservar la unidad de registrar tanto en la Ejecución Presupuestaria como en la elaboración del Balance Consolidado de la Hacienda Pública Estatal. '),
+(6, 'ARTICULO 7:', 'Los Presupuestos de los Entes descentralizados aprobados por el Consejo Legislativo deberán ser remitidos a la Secretaría de Planificación, Proyectos y Presupuesto para su revisión y publicación en la Gaceta Oficial del Estado, a fin de que se le puedan otorgar los aportes respectivos por el Ejecutivo Estatal.\r\nLa Secretaría de Administración de la Gobernación Indígena del Estado Amazonas no autorizarán los pagos por conceptos de los aportes aprobados en esta Ley a los organismos referidos en este artículo, hasta tanto los mismos den cumplimiento a las exigencias aquí establecidas. \r\n'),
+(7, 'ARTICULO 8:', 'No se podrán ordenar pagos con cargo al Tesoro si no para cancelar obligaciones válidamente adquiridas, con excepción de los avances o adelantos que autorice el Ejecutivo Estatal.'),
+(8, 'ARTICULO 9:', 'Los Resultados de la Ejecución Física y Financiera del Presupuesto de Ingresos y Gastos serán informados al Ejecutivo Estatal por medio de la Secretaría de Planificación, Proyectos y Presupuesto, de acuerdo a la periodicidad que se prevea en el Decreto Reglamentario de esta Ley. Dicha Secretaría analizará la información para conocimiento del Gobernador, quien deberá informar trimestralmente de ello al Consejo Legislativo, dentro de los cuarenta y cinco (45) días siguientes al vencimiento del Período de que se trate. \r\nLos funcionarios públicos que no cumplan con la obligación establecida en este artículo, se harán acreedores de las sanciones civiles, penales, administrativas y disciplinarias previstas en el ordenamiento jurídico. \r\n'),
+(9, 'ARTICULO 10:', 'Las Fundaciones, Entes descentralizados con fines Empresariales  y Asociaciones Civiles están obligadas a presentar, junto con la solicitud de recursos, un Balance certificado por un contador público y un informe de sus actividades para poder obtener los aportes presupuestarios del Gobierno Estatal. La entrega de los Dozavos que le correspondan se realizará previa la presentación ante la Secretaría de Planificación, Proyectos y Presupuesto de los informes de Ejecución de los programas respectivos. Las Instituciones particulares que reciban Recursos Fiscales deberán enviar a dicha Secretaría un informe trimestral de su gestión física y financiera. La Secretaría de Planificación, Proyectos y Presupuesto hará las evaluaciones correspondientes, cuyo resultado deberá presentar al Gobernador del Estado.  Una copia de esta evaluación será remitida al Consejo Legislativo. \r\nCuando los Entes e Instituciones beneficiarios de las asignaciones no cumplan con las obligaciones establecidas en este artículo,  cuando la evaluación sea insatisfactoria, cuando se detecten irregularidades o falsedades en los documentos entregados, o cuando así lo solicite el Consejo Legislativo o su Comisión Delegada, la Gobernación del Estado suspenderá a los beneficiarios los pagos correspondientes, obligándose en caso de irregularidades a hacer las denuncias ante los organismos competentes del Estado, a fin de fijar las responsabilidades a que hubiere lugar. \r\n'),
+(10, 'ARTÍCULO 11:', 'Una vez aprobado el Plan de Inversión en Obras y Servicios, el Consejo Estatal de Planificación y Coordinación de Políticas Públicas del Estado Amazonas, conforme a lo dispuesto en la Ley de los Consejos Estatales de Planificación de Políticas Públicas; El Gobernador del Estado, por si o mediante delegación del Secretario correspondiente lo presentará al Consejo Legislativo para su aprobación dentro de los tres (03) meses siguientes a la publicación de la presente Ley. De incumplirse con este procedimiento legal, toda erogación presupuestaria sobre el particular estará viciada de nulidad absoluta, acarreando las sanciones correspondientes para los funcionarios responsables. '),
+(11, 'ARTÍCULO 12:', 'A los fines de la Ejecución presupuestaria. \r\na)	El Ejecutivo Estatal, a través de la Secretaría de Planificación Proyectos y Presupuesto, podrá ordenar Traspasos de Créditos Presupuestarios que modifiquen la Distribución Institucional del Presupuesto de Gastos, dentro de una misma partida. Estos traspasos deberán ser informados al Consejo Legislativo, a la Contraloría Estatal, y a la Oficina Nacional de Presupuesto (ONAPRE), dentro de los siguientes veinte (30) días de haberse producido. Igualmente remitirá copia de ello a la Oficina de Auditoría Interna de la Gobernación y a la Secretaría de Administración, estas modificaciones se harán mediante traslados internos. \r\nb)	El Ejecutivo Estatal, a través de la Secretaría de Planificación, Proyectos y Presupuesto, podrá ordenar traspasos de créditos presupuestarios entre partidas de un mismo programa o de diferentes programas, o entre una misma partida de diferentes programas, dentro de un mismo sector o diferentes sectores hasta un límite del veinte por ciento (20%) de los respectivos créditos originales, en concordancia con el artículo 39  de la Ley Orgánica de Administración Financiera del Estado Amazonas, publicada en Gaceta Oficial Año 16 Nº 17 de fecha 02 de Julio del año 2008 extraordinaria y del artículo 86 del Reglamento Nº 1 de la Ley Orgánica de Administración Financiera del Sector Publico, según decreto Nº 3776, publicado en Gaceta Oficial Nº 5781 Extraordinario de fecha 12 de agosto del 2005. Estos traspasos de créditos deberán ser fundamentados mediante resoluciones publicadas en la Gaceta Oficial del Estado Amazonas; de los mismos se remitirán copias al Consejo Legislativo Regional, Contraloría General del Estado, ONAPRE, dentro de los (30) días siguientes de haberse producido. \r\nc)	El Ejecutivo Estatal podrá disponer del Crédito asignado a la partida\" \"Rectificaciones al Presupuesto\" para atender gastos imprevistos que se presenten en el Transcurso del Ejercicio fiscal o para incrementar los créditos presupuestarios que resultaren insuficientes. Esta modificación presupuestaria se hará mediante Resolución que deberá publicarse en la Gaceta Oficial del Estado Amazonas. Dentro de los diez (10) días siguientes de haberse producido, el Ejecutivo Estatal notificará de estas decisiones al Consejo Legislativo, a la Contraloría Estatal, y a la Oficina Nacional de Presupuesto (ONAPRE). El monto original de la partida \"Rectificaciones al Presupuesto\" no podrá ser menor al 0,5% ni exceder del uno por cierto (1%) del monto de los ingresos ordinarios, ni podrá aumentarse durante el ejercicio fiscal. \r\nd)	Los traspasos de créditos presupuestarios entre partidas de un mismo programa o de diferentes programas, o entre una misma partida de diferentes programas, dentro de un mismo sector o de diferentes sectores superiores al veinte por ciento (20%) deberán ser remitidos debidamente fundamentados al Consejo Legislativo para su aprobación. Después de haber sido aprobados se remitirán al Ejecutivo Estatal a través de la Secretaría de Planificación Proyectos y Presupuesto para ser publicados mediante Resolución en la Gaceta Oficial del Estado, enviándose una copia de las mismas a todos los organismos involucrados en el proceso. \r\ne)	El Ejecutivo Estatal podrá decretar Créditos Adicionales al Presupuesto de Gastos, previa aprobación del Consejo Legislativo, para cubrir gastos necesarios, pero no previstos en esta Ley, o crédito presupuestario insuficiente y solo se exigirá como anexo para su aprobación, la distribución presupuestaria del crédito y copia de la gaceta oficial donde se aprobó dicho crédito adicional para el Estado. Los créditos adicionales podrán ser financiados con: \r\na)	Existencias no comprometidas del Tesoro. \r\nb)	Economías de Cargos vacantes, las cuales deberán acordarse insubsistentes previamente, o con anulaciones de créditos adicionales, mediante Decreto publicado en la Gaceta oficial del Estado. \r\nc)	Otras fuentes de financiamiento aprobadas por la Asamblea Nacional. \r\nd)	Aportes o donaciones de otros organismos públicos o privados. \r\ne)	Ingresos extraordinarios del Estado.\r\nf)	Cuando se utilice el crédito presupuestario de la partida \"Rectificaciones al Presupuesto\" y cuando se decreten Créditos Adicionales, se deberán señalar las categorías presupuestarias, partida, unidad administrativa y cualquier otro concepto que sea necesario para identificar el destino de la modificación, así como el efecto sobre las metas programadas; estas últimas deberán establecerse en cualquier modificación presupuestaria. \r\ng)	Salvo para casos de emergencia el monto de las modificaciones presupuestarias, no podrá destinarse para cubrir gastos cuyas asignaciones en el presupuesto de Gastos hayan sido previamente disminuidas en el mismo ejercicio presupuestario, mediante otras operaciones de traspaso de créditos, declaraciones de insubsistencia o creación de nuevas partidas. \r\nh)	Los montos de los Créditos Presupuestarios de las sub-partidas (4.01.01.01.00) “Sueldos básicos personal fijo a tiempo completo\"; (4.01.01.29.00) \"Dietas\"; (4.01.01.10.00) \"Salarios a Obreros en puestos permanentes, y ( 4.01.02.01.00) \"Compensaciones previstas en las escalas de sueldos al personal fijo a tiempo completo\", no podrán ser modificadas sin la previa autorización del Consejo Legislativo, excepto en el último trimestre del ejercicio fiscal de que se trate, cuando ya se hayan cubierto y estimado en su totalidad el monto correspondiente para la cancelación de tales obligaciones, en concordancia con el artículo 39  de la Ley Orgánica de Administración Financiera del Estado Amazonas, publicada en Gaceta Oficial Año 16 Nº 17 de fecha 02 de Julio del año 2008 extraordinaria. \r\n'),
+(12, 'ARTICULO 13:', 'El Gobernador podrá delegar en él o la Secretaría de Planificación, Proyectos y Presupuesto, mediante decreto que será publicado en la Gaceta Oficial del Estado, la atribución de tramitar las modificaciones presupuestarias en el proceso de Ejecución Presupuestaria del Ejercicio Fiscal 2024. '),
+(13, 'ARTICULO 14:', 'La Gobernación del Estado Amazonas dará estricto cumplimiento a lo establecido en la Ley de Presupuesto de Ingresos y Gastos para el Ejercicio fiscal 2024, sancionada y promulgada por el Poder Nacional, en todo lo relativo a la administración de los créditos que le son transferidos en dicha Ley, a través del Ministerio de Infraestructura, con el fin de alcanzar las metas y objetivos dispuestos en los artículos 8 y 14 de la ley de Política Habitacional. '),
+(14, 'ARTÍCULO 15:', 'Para que los Institutos Autónomos, Entes Descentralizados con fines empresariales y Fundaciones del Estado puedan llevar a cabo modificaciones en la ejecución de sus Presupuestos, deberán solicitar la aprobación previa de la Secretaría de Planificación, Proyectos y Presupuestos del Ejecutivo Estatal; dependencia que de inmediato las comunicará al Consejo Legislativo y a la Contraloría General del Estado. Estas modificaciones estarán sometidas a las siguientes consideraciones: \r\n\r\nLos traspasos de Créditos Presupuestarios entre partidas de un mismo programa o de distintos programas superiores al veinte por ciento (20%) de los respectivos créditos originales. Los traspasos inferiores a ese porcentaje serán aprobados por el Directorio del Organismo, debiendo ser informados a la Secretaría de Planificación, Proyectos y Presupuesto. \r\nLos incrementos de Créditos Presupuestarios que surjan como productos de nuevas fuentes de financiamiento y que repercutan favorablemente, aumentando el monto total del presupuesto vigente. \r\nLa disminución de los ingresos propios, corrientes o de capital, que superen el veinte por ciento (20%) de la estimación inicial, o en aquellos casos en los que no se concrete la percepción de otros ingresos. La Secretaría de Planificación, Proyectos y presupuesto actuará en cada caso, según la normativa establecida en esta Ley. \r\n'),
+(15, 'ARTÍCULO 16:', 'El Gobernador del Estado, mediante Decreto que prevea las normas y procedimientos al respecto, podrá delegar a cada organismo sus funciones como ordenador de compromisos y pagos de la Hacienda Pública Estatal; debiendo identificar plenamente en el mismo a los funcionarios y funcionarias que tendrán autorización para comprometer con cargo al Tesorero Estatal. Así mismo, en dicho Decreto se determinarán las partidas de cada programa que serán controladas y ejecutadas por la Administración Central del Estado. El Gobernador está obligado a remitir al Consejo Legislativo una copia de la Gaceta Oficial, dentro de los cinco (5) días siguientes a la publicación de dicho Decreto. '),
+(16, 'ARTÍCULO 17:', 'Los Créditos Presupuestarios que se encuentran sujetos a convenios, no podrán ser objeto de modificaciones, sin la correspondiente acta que justifique el acuerdo entre las partes firmantes del mismo. '),
+(17, 'ARTÍCULO 18:', 'Los Créditos asignados para los Planes Coordinados de inversión a que se refiere la Ley Orgánica de Descentralización, Delimitación y Transferencias de Competencias del Poder Público que no fueron comprometidos al finalizar el Ejercicio Fiscal 2019, deberán incorporarse al Presupuesto por la vía del Crédito Adicional, para ser utilizados en los programas señalados en el Artículo 17 de dicha Ley. '),
+(18, 'ARTÍCULO 19:', 'El Ejecutivo del Estado Amazonas no podrá proceder a la contratación de obra alguna en los sectores de Salud, Educación, Desarrollo Urbano y Servicios Conexos, sin la aprobación previa del respectivo Plan de Obras por el Consejo Legislativo. Dicho Plan deberá contener al menos la siguiente información: Discriminación de las partidas afectadas, formación de capital, conservación y mantenimiento, identificación geográfica, control, fiscalización y cronograma de ejecución. '),
+(19, 'ARTÍCULO 20:', 'En los registros contables que serán llevados por la Secretaría de Planificación, Proyectos y Presupuesto no se podrán imputar gastos que no correspondan a un determinado programa sin que se notifique previamente al responsable de la ejecución del mismo, a fin de obtener su autorización. '),
+(20, 'ARTÍCULO  21:', 'Los gastos causados y no pagados al treinta y uno (31) de diciembre de cada año se pagarán durante el año siguiente, con cargo a las disponibilidades en caja y banco existentes a la fecha señalada. \r\nLos gastos comprometidos y no causados al treinta y uno (31) de diciembre de cada año se imputarán automáticamente al ejercicio siguiente, afectando los mismos a los créditos disponibles para ese ejercicio. Terminado este periodo, los compromisos no pagados deberán pagarse con cargo a una partida del presupuesto que se preverá para cada ejercicio.\r\nLos compromisos originados en sentencia judicial firme con autoridad de cosa juzgada o reconocidos administrativamente de conformidad con los procedimientos establecidos en la Ley Orgánica de la Procuraduría General de la República, se pagarán con cargo al crédito presupuestario que, a tal efecto, se incluirá en el respectivo presupuesto de gastos. \r\nEl Reglamento de esta Ley establecerá los plazos y los mecanismos para la aplicación de estas disposiciones. \r\n'),
+(21, 'ARTÍCULO 22:', 'El Gobernador del Estado, a través de las Secretarías de Administración y de Planificación, Proyectos y Presupuesto dictará mediante resolución las medidas para incrementar las existencias del tesoro, con el monto de los créditos no comprometidos al 31 de diciembre del Ejercicio Fiscal fenecido. '),
+(22, 'ARTICULO 23:', 'El incumplimiento de los deberes contemplados en esta Ley por parte de los funcionarios o terceros responsables de los mismos dará lugar a la apertura de la averiguación correspondiente a fin de determinar la responsabilidad disciplinaria o administrativa a que hubiere lugar, sin perjuicio de la que adelante el Ministerio Público en lo que le concierne al ámbito civil y penal. '),
+(23, 'ARTÍCULO 24:', 'Para todo lo no previsto en estas Disposiciones Generales en materia de Ejecución y Control Presupuestario, regirá la normativa contenida en la Ley de Administración Financiera del Estado Amazonas, en cuanto sea aplicable.'),
+(24, 'ARTICULO 27:', 'Esta Ley entrará en vigencia a partir de su publicación en Gaceta Oficial del Estado Amazonas y/o en la Gaceta Oficial del Consejo Legislativo del Estado Amazonas. \r\n\r\nDada, firmada, sellada y refrendada en el salón de sesiones del Consejo Legislativo del Estado Amazonas. En Puerto Ayacucho a los 28 días del mes de diciembre del 2019. Año 209 de la Independencia y 160 de la Federación.');
 
 -- --------------------------------------------------------
 
@@ -11883,7 +11926,7 @@ CREATE TABLE `traspasos` (
   `fecha` varchar(255) DEFAULT NULL,
   `monto_anterior` varchar(255) DEFAULT NULL,
   `monto_actual` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -11899,7 +11942,7 @@ CREATE TABLE `txt` (
   `identificador` varchar(255) DEFAULT NULL,
   `fecha_pagar` varchar(255) DEFAULT NULL,
   `correlativo` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `txt`
@@ -16515,6 +16558,12 @@ ALTER TABLE `tasa_historico`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indices de la tabla `titulo_1`
+--
+ALTER TABLE `titulo_1`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indices de la tabla `traspasos`
 --
 ALTER TABLE `traspasos`
@@ -16907,6 +16956,12 @@ ALTER TABLE `tasa`
 --
 ALTER TABLE `tasa_historico`
   MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+
+--
+-- AUTO_INCREMENT de la tabla `titulo_1`
+--
+ALTER TABLE `titulo_1`
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT de la tabla `traspasos`
