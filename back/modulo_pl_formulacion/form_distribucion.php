@@ -59,8 +59,8 @@ function guardarDistribucionPresupuestaria($dataArray)
             // Inicializar monto_actual con el mismo valor que monto_inicial
             $monto_actual = $monto_inicial;
 
-            if (empty($id_partida) || empty($monto_inicial) || empty($id_ejercicio) || empty($id_sector) || empty($id_programa) || empty($id_proyecto)) {
-                throw new Exception("Faltan datos en uno de los registros (id_partida, monto_inicial, id_ejercicio, id_sector, id_programa, id_proyecto)");
+            if (empty($id_partida) || empty($monto_inicial) || empty($id_ejercicio) || empty($id_sector) || empty($id_programa)) {
+                throw new Exception("Faltan datos en uno de los registros (id_partida, monto_inicial, id_ejercicio, id_sector, id_programa)");
             }
 
             // Insertar los datos en la tabla
