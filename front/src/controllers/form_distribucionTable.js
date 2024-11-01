@@ -84,17 +84,19 @@ export const loadDistribucionTable = async (partidas) => {
       // sector_nombre: el.sector_inf[1].sector_informacion.sectorormacion.nombre,
       sector_programa_proyecto: `${
         el.sector_informacion ? el.sector_informacion.sector : '0'
-      }.${el.programa_informacion ? el.programa_informacion.programa : '0'}.0`,
+      }.${el.programa_informacion ? el.programa_informacion.programa : '0'}.${
+        el.proyecto_informacion || '00'
+      }`,
       partida: el.partida,
       descripcion: descripcion,
       monto_inicial: `${separarMiles(el.monto_inicial)} Bs`,
       monto_actual: `${separarMiles(el.monto_actual)} Bs`,
       acciones: `
-      <button class="btn btn-sm bg-brand-color-2 text-white btn-update" data-editarid="${el.id}"></button>
       <button class="btn btn-danger btn-sm btn-destroy" data-eliminarid="${el.id}"></button>
       `,
     }
   })
+  // <button class="btn btn-sm bg-brand-color-2 text-white btn-update" data-editarid="${el.id}"></button>
 
   distribucionTable.clear().draw()
 
