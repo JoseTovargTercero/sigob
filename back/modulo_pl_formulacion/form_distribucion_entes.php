@@ -37,7 +37,7 @@ function insertarDistribuciones($distribuciones)
 
             $num_distribuciones = count($distribucion);
             if ($tipo_ente === 'D' && $num_distribuciones > 1) {
-                throw new Exception("El tipo de ente Descentralizado solo permite una distribución.");
+                throw new Exception("El tipo de ente Descentralizado solo permite una distribución." . json_encode($distribucion));
             } elseif (!in_array($tipo_ente, ['J', 'D'])) {
                 throw new Exception("Tipo de ente no válido.");
             }

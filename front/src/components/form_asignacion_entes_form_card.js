@@ -144,16 +144,31 @@ export const form_asignacion_entes_form_card = async ({
     }
 
     let liItems = partidasList.map((distribucion) => {
-      let sector_codigo = `${distribucion.sector_informacion.sector}.${distribucion.sector_informacion.programa}.${distribucion.sector_informacion.proyecto}`
+      let sector = `${
+        distribucion.sector_informacion
+          ? distribucion.sector_informacion.sector
+          : 'Sector no disponible'
+      }`
+      let programa = `${
+        distribucion.programa_informacion
+          ? distribucion.programa_informacion.programa
+          : 'Programa no disponible'
+      }`
+      let proyecto = `${
+        distribucion.proyecto_informacion == 0
+          ? '00'
+          : distribucion.proyecto_informacion.proyecto_id
+      }`
 
       let descripcion = recortarTexto(distribucion.descripcion, 40)
 
       return ` <tr class=''>
     <td><input type="checkbox" class="form-check-input input-check" value="${distribucion.id}" name="ente-partida-${distribucion.id}"/></td>
-    <td>${distribucion.sector_informacion.nombre}</td>
-    <td>${sector_codigo}</td>
+    <td>${sector}</td>
+    <td>${programa}</td>
+    <td>${proyecto}</td>
     <td>${distribucion.partida}</td>
-    <td title="${distribucion.descripcion}">${descripcion}</td>
+    
   </tr>`
     })
 
@@ -163,10 +178,15 @@ export const form_asignacion_entes_form_card = async ({
   const distribucionPartidasEnteList = ({ info }) => {
     let data = info
 
-    let tablas = data.map((actividad) => {
+    let montoTotalDistribuido = 0
+
+    let filas = data.map((actividad) => {
       let actividad_codigo = actividad.actividad,
-        actividad_nombre = actividad.ente_nombre,
-        status
+        actividad_nombre = recortarTexto(actividad.ente_nombre, 35),
+        status,
+        eliminar = `<button class="btn btn-danger btn-sm btn-destroy" data-eliminaractividadid="${
+          actividad.actividad_id
+        }" ${Number(asignacion.status) === 1 ? 'disabled' : ''}></button>`
 
       if (actividad.status) {
         if (actividad.status === 0) {
@@ -184,67 +204,66 @@ export const form_asignacion_entes_form_card = async ({
 
       let montoTotalActividad = 0
 
-      let rows = actividad.distribucion_partidas.map((partida) => {
-        let sector_codigo = `${partida.sector_informacion.sector}.${partida.sector_informacion.programa}.${partida.sector_informacion.proyecto}`,
-          sector_nombre = partida.sector_informacion.nombre,
-          partida_codigo = partida.partida,
-          nombre = partida.nombre || 'No asignado',
-          descripcion = partida.descripcion,
-          monto = partida.monto
+      actividad.distribucion_partidas.forEach((partida) => {
+        // let sector_codigo = `${partida.sector_informacion.sector}.${partida.sector_informacion.programa}.${partida.sector_informacion.proyecto}`,
+        //   sector_nombre = partida.sector_informacion.nombre,
+        //   partida_codigo = partida.partida,
+        //   nombre = partida.nombre || 'No asignado',
+        //   descripcion = partida.descripcion,
+        let monto = partida.monto
 
         montoTotalActividad += Number(monto)
 
-        return `<tr class=''>
-                    <td>${sector_nombre}</td>
-                    <td>${sector_codigo}</td>
-                    <td>${partida_codigo}</td>
-                    <td>${actividad_codigo}</td>
-                    <td>${monto}</td>
-                </tr>`
+        // return `<tr class=''>
+        //             <td>${sector_nombre}</td>
+        //             <td>${sector_codigo}</td>
+        //             <td>${partida_codigo}</td>
+        //             <td>${actividad_codigo}</td>
+        //             <td>${monto}</td>
+        //         </tr>`
       })
 
-      let tabla = ` <div class='row p-4 border bg-gray-100 rounded'>
-      <div class='col'>
-              <div class="d-flex justify-content-between mb-4">
-            <h4 class='text-green-800 text-center'>Distribución de partidas para actividad:</h4>
-            ${
-              // COLOCAR BOTÓN PARA ELIMINAR SI ESTÁ EN PROCESO DE DISTRIBUCIÓN
-              Number(asignacion.status) === 1
-                ? ''
-                : `<button class="btn btn-danger btn-sm btn-destroy" data-eliminaractividadid="${actividad.actividad_id}"></button>`
-            }
-            </div>
-        <h6>
-          Actividad: ${actividad_codigo} - ${actividad_nombre}
-        </h6>
-        <h6>
-          Monto total asignado: ${montoTotalActividad}
-        </h6>
-        <h6>
-          Estado: ${status}
-        </h6>
-      </div>
+      montoTotalDistribuido += montoTotalActividad
 
-      <table
-        id='distribucion-partidas-tabla-${actividad.actividad_id}'
-        class='table table-striped table-sm'
-        style='width:100%'
-      >
-        <thead class='w-100'>
-          <th>SECTOR NOMBRE</th>
-          <th>SECTOR CODIGO</th>
-          <th>PARTIDA</th>
-          <th>ACTIVIDAD</th>
-          <th>MONTO</th>
-        </thead>
+      return `<tr class=''>
+      <td>${actividad_nombre}</td>
+      <td>${actividad_codigo}</td>
 
-        <tbody>${rows.join('')}</tbody>
-      </table>
-    </div>`
-      return tabla
+      <td>${montoTotalActividad}</td>
+      <td>${status}</td>
+      <td>${eliminar}</td>
+  </tr>`
     })
 
-    return tablas
+    let tabla = `<div class='row'>
+        <div class='col'>
+          <div class='d-flex justify-content-between mb-4'>
+            <h4 class='text-green-800 text-center'>
+              Asignaciones a las actividades del ente:
+            </h4>
+          </div>
+          <h6>Monto total asignado: ${montoTotalDistribuido}</h6>
+        </div>
+
+        <table
+          id='asignacion-part1-table'
+          class='table table-striped table-sm'
+          style='width:100%'
+        >
+          <thead class='w-100'>
+            <th>NOMBRE</th>
+            <th>ACTIVIDAD</th>
+            
+            <th>MONTO</th>
+            <th>ESTATUS</th>
+            <th>ACCIONES</th>
+          </thead>
+
+          <tbody>${filas.join('')}</tbody>
+        </table>
+      </div>`
+
+    return tabla
   }
 
   // GENERAR TABLAS DINÁMICAS SEGÚN SE REQUIERA PARA QUE EL USUARIO PUEDA VISUALIZAR LO QUE EST´HACIENDO CON LAS ACTIVIDADES
@@ -333,29 +352,29 @@ export const form_asignacion_entes_form_card = async ({
     return tablas
   }
 
-  function validarTablas(tablas) {
-    tablas.forEach((el, index) => {
-      let planesTable = new DataTable(
-        `#distribucion-partidas-tabla-${el.actividad_id}`,
-        {
-          scrollY: 100,
-          language: tableLanguage,
-          layout: {
-            topStart: function () {
-              let toolbar = document.createElement('div')
-              toolbar.innerHTML = `
-                <h5 class="text-center mb-0">Partidas seleccionadas:</h5>
-                          `
-              return toolbar
-            },
-            topEnd: { search: { placeholder: 'Buscar...' } },
-            bottomStart: 'info',
-            bottomEnd: 'paging',
-          },
-        }
-      )
-    })
-  }
+  // function validarTablas(tablas) {
+  //   tablas.forEach((el, index) => {
+  //     let planesTable = new DataTable(
+  //       `#distribucion-partidas-tabla-${el.actividad_id}`,
+  //       {
+  //         scrollY: 100,
+  //         language: tableLanguage,
+  //         layout: {
+  //           topStart: function () {
+  //             let toolbar = document.createElement('div')
+  //             toolbar.innerHTML = `
+  //               <h5 class="text-center mb-0">Partidas seleccionadas:</h5>
+  //                         `
+  //             return toolbar
+  //           },
+  //           topEnd: { search: { placeholder: 'Buscar...' } },
+  //           bottomStart: 'info',
+  //           bottomEnd: 'paging',
+  //         },
+  //       }
+  //     )
+  //   })
+  // }
 
   // GENERAR LISTA DE CHECKBOX DE LAS ACTIVIDADES LIGADAS AL ENTE
 
@@ -411,7 +430,7 @@ export const form_asignacion_entes_form_card = async ({
         })
       }
 
-      return `<h4 class='text-blue-800'>Dependendias de ente:</h4> ${liItems.join(
+      return `<h4 class='text-blue-800'>Actividades de ente:</h4> ${liItems.join(
         ''
       )}`
     } else {
@@ -444,12 +463,13 @@ export const form_asignacion_entes_form_card = async ({
            
           </div>
           ${
-            tipo === 'J'
+            asignacion.dependencias.length > 0
               ? `<div class='col'>${dependenciasEnteList()}</div>`
               : ''
           }
           
         </div>
+        <hr/>
         ${
           asignacion.actividades_entes.length > 0
             ? distribucionPartidasEnteList({
@@ -514,11 +534,11 @@ export const form_asignacion_entes_form_card = async ({
             >
               <thead class='w-100'>
                 <th>ELEGIR</th>
-                <th>SECTOR NOMBRE</th>
-                <th>SECTOR CODIGO</th>
+                <th>SECTOR</th>
+                <th>PROGRAMA</th>
+                <th>PROYECTO</th>
                 <th>PARTIDA</th>
                 
-                <th>DESCRIPCION</th>
               </thead>
               ${
                 ejercicioFiscal.distribucion_partidas
@@ -549,13 +569,13 @@ export const form_asignacion_entes_form_card = async ({
         type: 'number',
       }
 
+      console.log(distribucion)
+
       return `  <tr>
-          <td>${distribucion.sector_nombre}</td>
-          <td>${distribucion.sector_codigo}</td>
-          <td>${distribucion.partida}</td>
+          <td>${distribucion.sector}</td>
+          <td>${distribucion.programa}</td>
+          <td>${distribucion.proyecto}</td>
           <td>${distribucion.actividad}</td>
-          <td>${distribucion.actividad_nombre}</td>
-          <td>${distribucion.monto_solicitado || 'Sin solicitar'}</td>
           <td>
           <input
           class='form-control partida-input partida-monto-disponible'
@@ -603,13 +623,28 @@ export const form_asignacion_entes_form_card = async ({
         (partida) => partida.id == id
       )
 
-      let sector_codigo = `${partidaEncontrada.sector_informacion.sector}.${partidaEncontrada.sector_informacion.programa}.${partidaEncontrada.sector_informacion.proyecto}`
+      let sector = `${
+        partidaEncontrada.sector_informacion
+          ? partidaEncontrada.sector_informacion.sector
+          : 'Sector no disponible'
+      }`
+      let programa = `${
+        partidaEncontrada.programa_informacion
+          ? partidaEncontrada.programa_informacion.programa
+          : 'Programa no disponible'
+      }`
+      let proyecto = `${
+        partidaEncontrada.proyecto_informacion == 0
+          ? '00'
+          : partidaEncontrada.proyecto_informacion.proyecto_id
+      }`
 
       return {
         id: id,
         actividad_id,
-        sector_nombre: partidaEncontrada.sector_informacion.nombre,
-        sector_codigo,
+        sector,
+        programa,
+        proyecto,
         actividad: dependenciaActividad,
         actividad_nombre: dependenciaNombre,
         partida: partidaEncontrada.partida,
@@ -635,26 +670,17 @@ export const form_asignacion_entes_form_card = async ({
         id_ejercicio,
         id_asignacion,
       } = data
-
       let actividadEncontrada = asignacion.dependencias.find(
         (dependencia) => Number(dependencia.id) === Number(actividad_id)
       )
 
-      let monto_asignado = 0
+      // let monto_asignado = 0
 
-      let distribucion = distribuciones.map((distribucionPartida) => {
-        let distribucionPartidaEncontrada =
-          ejercicioFiscal.distribucion_partidas.find(
-            (partida) =>
-              Number(partida.id) === Number(distribucionPartida.id_distribucion)
-          )
+      // distribuciones.forEach((distribucionPartida) => {
+      //   monto_asignado += Number(distribucionPartida.monto)
+      // })
 
-        distribucionPartidaEncontrada.monto = distribucionPartida.monto
-
-        monto_asignado += Number(distribucionPartida.monto)
-
-        return distribucionPartidaEncontrada
-      })
+      // console.log(monto_asignado)
 
       return {
         id_ejercicio,
@@ -666,7 +692,7 @@ export const form_asignacion_entes_form_card = async ({
         ente_nombre: actividadEncontrada
           ? actividadEncontrada.ente_nombre
           : '-',
-        distribucion_partidas: distribucion,
+        distribucion_partidas: distribuciones,
       }
     })
 
@@ -714,13 +740,11 @@ export const form_asignacion_entes_form_card = async ({
           style='width:100%'
         >
           <thead class='w-100'>
-            <th>SECTOR NOMBRE</th>
-            <th>SECTOR CODIGO</th>
-            <th>PARTIDA</th>
+            <th>SECTOR</th>
+            <th>PROGRAMA</th>
+            <th>PROYECTO</th>
             <th>ACTIVIDAD</th>
-            <th>NOMBRE</th>
-            <th>MONTO SOLICITADO</th>
-            <th>MONTO DISPONIBLE</th>
+            <th>DISPONIBILIDAD</th>
             <th>ASIGNACION</th>
           </thead>
 
@@ -730,7 +754,7 @@ export const form_asignacion_entes_form_card = async ({
   }
 
   const validarFooter = () => {
-    if (asignacion.actividades_entes.length > 1) {
+    if (asignacion.actividades_entes.length > 0) {
       let distribucionesEstanPendientes = asignacion.actividades_entes.every(
         (distribucion) => Number(distribucion.status) === 0
       )
@@ -757,7 +781,7 @@ export const form_asignacion_entes_form_card = async ({
       </button>`
       }
     } else {
-      return ` <button class='btn btn-secondary' id='btn-previus'>
+      return ` <button class='btn btn-secondary' id='btn-previus' disabled>
       Atrás
     </button>
     <button class='btn btn-primary' id='btn-next'>
@@ -806,10 +830,8 @@ export const form_asignacion_entes_form_card = async ({
   // INICIALIZAR CARD
 
   cardBody.innerHTML = await planEnte()
-  if (asignacion.actividades_entes.length > 0) {
-    validarTablas(asignacion.actividades_entes)
-  }
-  // validarPartidasEntesTable()
+
+  validarPartidasEntesTable()
 
   let cardElement = d.getElementById('asignacion-entes-form-card')
   // let formElement = d.getElementById('asignacion-entes-form')
@@ -835,9 +857,10 @@ export const form_asignacion_entes_form_card = async ({
 
       let montoRestar = datosDistribucionActividades.find(
         (el) =>
-          Number(el.actividad_id) !==
+          Number(el.actividad_id) ===
           Number(e.target.dataset.eliminaractividadid)
       ).monto_total_asignado
+      console.log(montoRestar)
 
       montos.distribuido_total -= montoRestar
 
@@ -859,6 +882,7 @@ export const form_asignacion_entes_form_card = async ({
       // ELIMINAR TABLA Y ACTUALIZAR CARD
 
       cardBody.innerHTML = await planEnte()
+      validarPartidasEntesTable()
     }
 
     if (e.target.id === 'btn-send') {
@@ -989,7 +1013,6 @@ export const form_asignacion_entes_form_card = async ({
       successFunction: async function () {
         let res = await enviarDistribucionPresupuestariaEntes({
           data: data,
-          tipo: 0,
         })
         if (res.success) {
           closeCard()
@@ -1125,11 +1148,11 @@ export const form_asignacion_entes_form_card = async ({
 
         // distribucionEntesActividadList(datosDistribucionActividades)
         cardBody.innerHTML = await planEnte()
-        validarTablas(datosDistribucionActividades)
+        // validarTablas(datosDistribucionActividades)
 
         dependenciaEnteSeleccionada = null
         formFocus = 1
-        btnSend.classList.remove('d-none')
+        // btnSend.classList.remove('d-none')
 
         toastNotification({
           type: NOTIFICATIONS_TYPES.done,
@@ -1171,7 +1194,7 @@ export const form_asignacion_entes_form_card = async ({
         cardBodyPart2.remove()
 
         cardBodyPart1.classList.remove('d-none')
-
+        dependenciaEnteSeleccionada = null
         formFocus--
         return
       }

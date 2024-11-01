@@ -1,12 +1,19 @@
-const apiUrl = '../../../back/sistema_global/_DBH-select.php'
+import {
+  confirmNotification,
+  hideLoader,
+  showLoader,
+  toastNotification,
+} from '../helpers/helpers.js'
 
-const selectTables = async (tabla, config = null) => {
+const apiUrl = '../../../sigob/back/sistema_global/_DBH-select.php'
+
+const selectTables = async (table, config = null) => {
   showLoader()
   try {
     let res = await fetch(apiUrl, {
       method: 'POST',
       body: JSON.stringify({
-        tabla,
+        table,
         config,
       }),
     })
@@ -18,13 +25,7 @@ const selectTables = async (tabla, config = null) => {
     console.log(json)
 
     if (json.success) {
-      let mappedData = mapData({
-        obj: json.success,
-        name: 'nombre',
-        id: 'id',
-      })
-
-      return { mappedData, fullInfo: json.success }
+      return json.success
     }
 
     if (json.error) {
@@ -35,7 +36,7 @@ const selectTables = async (tabla, config = null) => {
 
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
-      message: 'Error al obtener información',
+      message: `Error al obtener información de ${table}`,
     })
   } finally {
     hideLoader()
@@ -61,3 +62,5 @@ function dbh_select(tabla, config = null) {
     })
   })
 }
+
+export { selectTables }

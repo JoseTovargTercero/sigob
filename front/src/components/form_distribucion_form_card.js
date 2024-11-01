@@ -5,6 +5,7 @@
 // REALIZAR PRUEBAS
 
 import { getProgramasData, getSectoresData } from '../api/form_informacion.js'
+import { selectTables } from '../api/globalApi.js'
 import { getFormPartidas } from '../api/partidas.js'
 import {
   enviarDistribucionPresupuestaria,
@@ -490,6 +491,7 @@ export const form_distribucion_form_card = async ({
         fieldList.id_ejercicio,
         fieldList.id_sector,
         fieldList.id_programa,
+        fieldList.id_proyecto,
       ]
     })
 
@@ -525,17 +527,31 @@ export const form_distribucion_form_card = async ({
   }
 
   async function cargarSelectSectores() {
-    let selectEjercicio = d.getElementById('search-select-sector')
-    let sectores = await getSectoresData()
+    let selectSector = d.getElementById('search-select-sector')
+    let selectPrograma = d.getElementById('search-select-programa')
+    let selectProyecto = d.getElementById('search-select-proyecto')
+
+    let sectores = await selectTables('pl_sectores')
+    let proyectos = await selectTables('pl_proyectos')
+
+    console.log(proyectos)
+
     let options = [`<option value=''>Elegir sector...</option>`]
 
-    sectores.fullInfo.forEach((sector) => {
+    sectores.forEach((sector) => {
       let option = `<option value='${sector.id}'>${sector.sector} - ${sector.denominacion}</option>`
       options.push(option)
     })
 
-    selectEjercicio.innerHTML = options.join('')
-    // insertOptions({ input: 'ejercicio', data: ejercicios.mappedData })
+    let optionsProyectos = [`<option value='0'>Elegir proyecto...</option>`]
+
+    proyectos.forEach((proyecto) => {
+      let option = `<option value='${proyecto.id}'>${proyecto.proyecto_id} - ${proyecto.denominacion}</option>`
+      optionsProyectos.push(option)
+    })
+
+    selectSector.innerHTML = options.join('')
+    selectProyecto.innerHTML = optionsProyectos.join('')
 
     $('.chosen-sector')
       .chosen()
@@ -543,19 +559,15 @@ export const form_distribucion_form_card = async ({
         fieldList.id_sector = result.selected
         console.log('changed: %o', result)
 
-        getProgramasData().then((res) => {
+        selectTables('pl_programas').then((res) => {
           let optionsPrograma = [`<option value=''>Elegir programa...</option>`]
 
-          res.fullInfo.forEach((programa) => {
-            console.log(programa.sector, fieldList.id_sector)
-
+          res.forEach((programa) => {
             if (programa.sector === fieldList.id_sector) {
               let option = `<option value='${programa.id}'>${programa.programa} - ${programa.denominacion}</option>`
               optionsPrograma.push(option)
             }
           })
-
-          console.log(optionsPrograma)
 
           d.getElementById('search-select-programa').innerHTML =
             optionsPrograma.join('')
