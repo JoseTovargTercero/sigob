@@ -7,6 +7,7 @@ const regularExpressions = {
   CATEGORY: /^\d{1,2}-\d{1,2}-\d{1,2}-\d{1,2}$/,
   TASA: /^(?=.*[^0]\d*)(0\.(0*[1-9]\d*)?|[1-9]\d*(\.\d+)?)$/,
   PARTIDA: /^\d{3}\.\d{2}\.\d{2}\.\d{2}\.\d{4}$/,
+  TEXTAREA: /^[A-Za-z0-9\sáéíóúÁÉÍÓÚüñÑ_\-.,;:"'()!?¡¿]+$/u, // Nueva expresión para textarea
 }
 
 export { regularExpressions }

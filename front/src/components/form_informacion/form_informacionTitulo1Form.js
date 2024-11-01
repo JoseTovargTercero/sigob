@@ -1,8 +1,13 @@
 import {
-  actualizarDirectivoData,
-  registrarDirectivoData,
+  actualizarGobernacionData,
+  actualizarTitulo1Data,
+  registrarGobernacionData,
+  registrarTitulo1Data,
 } from '../../api/form_informacion.js'
-import { loadDirectivoTable } from '../../controllers/form_informacionTables.js'
+import {
+  loadGobernacionTable,
+  loadTitulo1Table,
+} from '../../controllers/form_informacionTables.js'
 import {
   confirmNotification,
   hideLoader,
@@ -13,42 +18,33 @@ import {
 import { NOTIFICATIONS_TYPES } from '../../helpers/types.js'
 const d = document
 
-export const form_informacionDirectivoForm = ({ elementToInsert, data }) => {
+export const form_informacionTitulo1Form = ({ elementToInsert, data }) => {
   let fieldList = {
-    nombre_apellido: '',
-    direccion: '',
-    telefono: '',
-    email: '',
+    articulo: '',
+    descripcion: '',
   }
+
+  let nombreComponente = 'titulo-1'
+
   let fieldListErrors = {
-    nombre_apellido: {
+    articulo: {
       value: true,
       message: 'mensaje de error',
       type: 'text',
     },
-    direccion: {
+    descripcion: {
       value: true,
       message: 'mensaje de error',
-      type: 'text',
-    },
-    telefono: {
-      value: 'number',
-      message: 'mensaje de error',
-      type: 'text',
-    },
-    email: {
-      value: true,
-      message: 'mensaje de error',
-      type: 'text',
+      type: 'textarea',
     },
   }
-  const oldCardElement = d.getElementById('directivo-form-card')
+  const oldCardElement = d.getElementById(`${nombreComponente}-form-card`)
   if (oldCardElement) oldCardElement.remove()
 
-  let card = `    <div class='card slide-up-animation' id='directivo-form-card'>
+  let card = `  <div class='card slide-up-animation' id='${nombreComponente}-form-card'>
       <div class='card-header d-flex justify-content-between'>
         <div class=''>
-          <h5 class='mb-0'>Formulario directivo</h5>
+          <h5 class='mb-0'>Formulario gobernación</h5>
           <small class='mt-0 text-muted'>Introduzca los datos requeridos</small>
         </div>
         <button
@@ -61,63 +57,37 @@ export const form_informacionDirectivoForm = ({ elementToInsert, data }) => {
         </button>
       </div>
       <div class='card-body'>
-        <form id='directivo-form'>
+        <form id='${nombreComponente}-form'>
           <div class='row mb-3'>
             <div class='col'>
-              <label class='form-label' for='nombre_apellido'>
-                Nombre y Apellido
+              <label class='form-label' for='articulo'>
+                articulo
               </label>
               <input
                 type='text'
-                class='form-control directivo-input'
-                id='nombre_apellido'
-                name='nombre_apellido'
-                placeholder='Ingrese su nombre y apellido'
+                class='form-control ${nombreComponente}-input'
+                id='articulo'
+                name='articulo'
+                placeholder='Articulo...'
               />
             </div>
           </div>
           <div class='row mb-3'>
             <div class='col'>
-              <label class='form-label' for='direccion'>
-                Dirección
+              <label class='form-label' for='descripcion'>
+                Descripción
               </label>
-              <input
-                type='text'
-                class='form-control directivo-input'
-                id='direccion'
-                name='direccion'
-                placeholder='Ingrese su dirección completa'
-              />
-            </div>
-            <div class='col'>
-              <label class='form-label' for='telefono'>
-                Teléfono
-              </label>
-              <input
-                type='tel'
-                class='form-control directivo-input'
-                id='telefono'
-                name='telefono'
-                placeholder='Ingrese su número de teléfono'
-              />
-            </div>
-            <div class='col'>
-              <label class='form-label' for='email'>
-                Correo Electrónico
-              </label>
-              <input
-                type='email'
-                class='form-control directivo-input'
-                id='email'
-                name='email'
-                placeholder='Ingrese su correo electrónico'
-              />
+
+              <textarea  class='form-control ${nombreComponente}-input'
+              id='descripcion'
+              name='descripcion' rows="10"></textarea>
+              
             </div>
           </div>
         </form>
       </div>
       <div class='card-footer'>
-        <button class='btn btn-primary' id='directivo-guardar'>
+        <button class='btn btn-primary' id='${nombreComponente}-guardar'>
           Guardar
         </button>
       </div>
@@ -126,7 +96,7 @@ export const form_informacionDirectivoForm = ({ elementToInsert, data }) => {
   d.getElementById(elementToInsert).insertAdjacentHTML('afterbegin', card)
 
   if (data) {
-    let inputs = d.querySelectorAll('.directivo-input')
+    let inputs = d.querySelectorAll(`.${nombreComponente}-input`)
     inputs.forEach((input) => {
       input.value = data[input.name]
     })
@@ -134,8 +104,8 @@ export const form_informacionDirectivoForm = ({ elementToInsert, data }) => {
     fieldList.id = data.id
   }
 
-  let cardElement = d.getElementById('directivo-form-card')
-  let formElement = d.getElementById('directivo-form')
+  let cardElement = d.getElementById(`${nombreComponente}-form-card`)
+  let formElement = d.getElementById(`${nombreComponente}-form`)
 
   const closeCard = () => {
     // validateEditButtons()
@@ -151,8 +121,8 @@ export const form_informacionDirectivoForm = ({ elementToInsert, data }) => {
       closeCard()
     }
 
-    if (e.target.id === 'directivo-guardar') {
-      let inputs = d.querySelectorAll('.directivo-input')
+    if (e.target.id === `${nombreComponente}-guardar`) {
+      let inputs = d.querySelectorAll(`.${nombreComponente}-input`)
 
       inputs.forEach((input) => {
         fieldList = validateInput({
@@ -193,11 +163,10 @@ export const form_informacionDirectivoForm = ({ elementToInsert, data }) => {
         type: NOTIFICATIONS_TYPES.send,
         message: '¿Desea actualizar este registro?',
         successFunction: async function () {
-          let res = await actualizarDirectivoData({ info: fieldList })
-
+          let res = await await actualizarTitulo1Data({ info: fieldList })
           if (res.success) {
+            loadTitulo1Table()
             closeCard()
-            loadDirectivoTable()
           }
         },
       })
@@ -206,10 +175,10 @@ export const form_informacionDirectivoForm = ({ elementToInsert, data }) => {
         type: NOTIFICATIONS_TYPES.send,
         message: '¿Desea realizar este registro?',
         successFunction: async function () {
-          let res = await registrarDirectivoData({ info: fieldList })
+          let res = await registrarTitulo1Data({ info: fieldList })
           if (res.success) {
             closeCard()
-            loadDirectivoTable()
+            loadTitulo1Table()
           }
         },
       })

@@ -1,12 +1,20 @@
 import {
   eliminarConsejoId,
   eliminarContraloriaId,
+  eliminarDescripcionProgramaId,
+  eliminarDirectivoId,
   eliminarGobernacionId,
+  eliminarPersonaId,
+  eliminarTitulo1Id,
   getConsejoDataId,
   getContraloriaDataId,
+  getDescripcionProgramaDataId,
   getDirectivoDataId,
   getGobernacionDataId,
+  getPersonaDataId,
+  getTitulo1DataId,
 } from '../api/form_informacion.js'
+
 import {
   ejerciciosLista,
   validarEjercicioActual,
@@ -19,14 +27,22 @@ import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 import {
   deleteConsejoRow,
   deleteContraloriaRow,
+  deleteDescripcionProgramaRow,
   deleteDirectivoRow,
   deleteGobernacionRow,
+  deleteTitulo1Row,
   loadGobernacionTable,
   validateConsejoTable,
   validateContraloriaTable,
+  validateDescripcionProgramaTable,
   validateDirectivoTable,
   validateGobernacionTable,
+  validatePersonaTable,
+  validateTitulo1Table,
 } from './form_informacionTables.js'
+import { form_informacionPersonaForm } from '../components/form_informacion/form_informacionPersonaForm.js'
+import { form_informacionTitulo1Form } from '../components/form_informacion/form_informacionTitulo1Form.js'
+import { form_informacionDescripcionProgramaForm } from '../components/form_informacion/form_informacionDescripcionPrograma.js'
 
 const d = document
 
@@ -176,7 +192,125 @@ export const validateDirectivoView = async () => {
         message: '¿Desea eliminar este registro?',
         successFunction: async function () {
           deleteDirectivoRow({ row })
-          eliminarConsejoId(e.target.dataset.eliminarid)
+          eliminarDirectivoId(e.target.dataset.eliminarid)
+        },
+      })
+    }
+  })
+}
+
+export const validatePersonaView = async () => {
+  let btnNewElement = d.getElementById('persona-registrar')
+
+  validatePersonaTable()
+
+  console.log('hola')
+
+  d.addEventListener('click', async (e) => {
+    if (e.target.id === 'persona-registrar') {
+      scroll(0, 0)
+      form_informacionPersonaForm({ elementToInsert: 'persona-view' })
+    }
+
+    if (e.target.dataset.editarid) {
+      scroll(0, 0)
+      let data = await getPersonaDataId(e.target.dataset.editarid)
+      console.log(data)
+
+      form_informacionPersonaForm({
+        elementToInsert: 'persona-view',
+        data,
+      })
+    }
+
+    if (e.target.dataset.eliminarid) {
+      let row = e.target.closest('tr')
+
+      confirmNotification({
+        type: NOTIFICATIONS_TYPES.delete,
+        message: '¿Desea eliminar este registro?',
+        successFunction: async function () {
+          deleteTitulo1Row({ row })
+          eliminarPersonaId(e.target.dataset.eliminarid)
+        },
+      })
+    }
+  })
+}
+
+export const validateTitulo1View = async () => {
+  let btnNewElement = d.getElementById('titulo-1-registrar')
+
+  validateTitulo1Table()
+
+  console.log('hola')
+
+  d.addEventListener('click', async (e) => {
+    if (e.target.id === 'titulo-1-registrar') {
+      scroll(0, 0)
+      form_informacionTitulo1Form({ elementToInsert: 'titulo-1-view' })
+    }
+
+    if (e.target.dataset.editarid) {
+      scroll(0, 0)
+      let data = await getTitulo1DataId(e.target.dataset.editarid)
+      console.log(data)
+
+      form_informacionTitulo1Form({
+        elementToInsert: 'titulo-1-view',
+        data,
+      })
+    }
+
+    if (e.target.dataset.eliminarid) {
+      let row = e.target.closest('tr')
+
+      confirmNotification({
+        type: NOTIFICATIONS_TYPES.delete,
+        message: '¿Desea eliminar este registro?',
+        successFunction: async function () {
+          deleteTitulo1Row({ row })
+          eliminarTitulo1Id(e.target.dataset.eliminarid)
+        },
+      })
+    }
+  })
+}
+export const validateDescripcionProgramaView = async () => {
+  let btnNewElement = d.getElementById('descripcion-programa-registrar')
+
+  validateDescripcionProgramaTable()
+
+  console.log('hola')
+
+  d.addEventListener('click', async (e) => {
+    if (e.target.id === 'descripcion-programa-registrar') {
+      scroll(0, 0)
+      form_informacionDescripcionProgramaForm({
+        elementToInsert: 'descripcion-programa-view',
+      })
+    }
+
+    if (e.target.dataset.editarid) {
+      scroll(0, 0)
+      let data = await getDescripcionProgramaDataId(e.target.dataset.editarid)
+      console.log(data)
+
+      form_informacionDescripcionProgramaForm({
+        elementToInsert: 'descripcion-programa-view',
+        data,
+      })
+    }
+
+    if (e.target.dataset.eliminarid) {
+      let row = e.target.closest('tr')
+
+      confirmNotification({
+        type: NOTIFICATIONS_TYPES.delete,
+        message: '¿Desea eliminar este registro?',
+        successFunction: async function () {
+          deleteDescripcionProgramaRow({ row })
+          eliminarDescripcionProgramaId(e.target.dataset.eliminarid)
         },
       })
     }

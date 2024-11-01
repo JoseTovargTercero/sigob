@@ -8,13 +8,17 @@ import { validateAsignacionEntesView } from './src/controllers/form_asignacionEn
 import { validateDistribucionView } from './src/controllers/form_distribucionView.js'
 import {
   validateContraloriaTable,
+  validateDescripcionProgramaTable,
   validateGobernacionTable,
 } from './src/controllers/form_informacionTables.js'
 import {
   validateConsejoView,
   validateContraloriaView,
+  validateDescripcionProgramaView,
   validateDirectivoView,
   validateGobernacionView,
+  validatePersonaView,
+  validateTitulo1View,
 } from './src/controllers/form_informacionView.js'
 import { validatePartidasView } from './src/controllers/form_partidasView.js'
 import { validateEmployeeView } from './src/controllers/nom_employeeView.js'
@@ -57,6 +61,9 @@ d.addEventListener('DOMContentLoaded', (e) => {
   const contraloriaView = d.getElementById('contraloria-view')
   const consejoView = d.getElementById('consejo-view')
   const directivoView = d.getElementById('directivo-view')
+  const personaView = d.getElementById('persona-view')
+  const titulo1View = d.getElementById('titulo-1-view')
+  const descripcionProgramaView = d.getElementById('descripcion-programa-view')
 
   if (tabulatorForm) {
     validateTabulatorForm({
@@ -199,6 +206,16 @@ d.addEventListener('DOMContentLoaded', (e) => {
   }
   if (directivoView) {
     validateDirectivoView()
+  }
+
+  if (personaView) {
+    validatePersonaView()
+  }
+  if (titulo1View) {
+    validateTitulo1View()
+  }
+  if (descripcionProgramaView) {
+    validateDescripcionProgramaView()
   }
 
   // if (payNomForm) {

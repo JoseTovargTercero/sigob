@@ -10,6 +10,12 @@ import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 const apiUrl =
   '../../../../sigob/back/modulo_pl_formulacion/form_pdf_informacion_crud.php'
 
+const apiPresupuestoUrl =
+  '../../../../sigob/back/modulo_pl_formulacion/form_pdf_presupuesto_crud.php'
+
+const apiDescripcionProgramaUrl =
+  '../../../../sigob/back/modulo_pl_formulacion/form_pdf_descripcion_crud.php'
+
 const getGobernacionData = async () => {
   showLoader()
   try {
@@ -140,7 +146,7 @@ const registrarGobernacionData = async ({ info }) => {
   }
 }
 
-const actualizarGobernacionData = async (info, id) => {
+const actualizarGobernacionData = async ({ info }) => {
   console.log(info)
   showLoader()
   try {
@@ -367,7 +373,7 @@ const registrarContraloriaData = async ({ info }) => {
   }
 }
 
-const actualizarContraloriaData = async (info, id) => {
+const actualizarContraloriaData = async ({ info }) => {
   console.log(info)
   showLoader()
   try {
@@ -594,7 +600,7 @@ const registrarConsejoData = async ({ info }) => {
   }
 }
 
-const actualizarConsejoData = async (info, id) => {
+const actualizarConsejoData = async ({ info }) => {
   console.log(info)
   showLoader()
   try {
@@ -821,7 +827,7 @@ const registrarDirectivoData = async ({ info }) => {
   }
 }
 
-const actualizarDirectivoData = async (info, id) => {
+const actualizarDirectivoData = async ({ info }) => {
   console.log(info)
   showLoader()
   try {
@@ -914,6 +920,775 @@ const eliminarDirectivoId = async (id) => {
   }
 }
 
+const getPersonaData = async () => {
+  showLoader()
+  try {
+    let res = await fetch(apiPresupuestoUrl, {
+      method: 'POST',
+      body: JSON.stringify({
+        tabla: 'informacion_personas',
+        accion: 'consultar_todos',
+      }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+    console.log(res)
+
+    const clone = res.clone()
+
+    let text = await clone.text()
+
+    console.log(text)
+    const json = await res.json()
+
+    console.log(json)
+
+    if (json.success) {
+      let mappedData = mapData({
+        obj: json.success,
+        name: 'nombre',
+        id: 'id',
+      })
+
+      return { mappedData, fullInfo: json.success }
+    }
+
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener información',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
+const getPersonaDataId = async (id) => {
+  showLoader()
+  try {
+    let res = await fetch(apiPresupuestoUrl, {
+      method: 'POST',
+      body: JSON.stringify({
+        tabla: 'informacion_personas',
+        accion: 'consultar_por_id',
+        id: id,
+      }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    const clone = res.clone()
+
+    // let text = await clone.text()
+
+    // console.log(text)
+
+    const json = await res.json()
+
+    // console.log(json)
+    if (json.success) {
+      return json.success[0]
+    }
+
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
+    return json
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener información',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
+const registrarPersonaData = async ({ info }) => {
+  showLoader()
+  try {
+    let res = await fetch(apiPresupuestoUrl, {
+      method: 'POST',
+      body: JSON.stringify({
+        tabla: 'informacion_personas',
+        accion: 'registrar',
+        info,
+      }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    const clone = res.clone()
+
+    let text = await clone.text()
+
+    console.log(text)
+
+    const json = await res.json()
+
+    // console.log(json)
+    if (json.success) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.done,
+        message: 'Se ha realizado el registro',
+      })
+    }
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
+    return json
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener información',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
+const actualizarPersonaData = async ({ info }) => {
+  console.log(info)
+  showLoader()
+  try {
+    let res = await fetch(apiPresupuestoUrl, {
+      method: 'POST',
+      body: JSON.stringify({
+        tabla: 'informacion_personas',
+        accion: 'actualizar',
+        info,
+      }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    const clone = res.clone()
+
+    let text = await clone.text()
+
+    console.log(text)
+
+    const json = await res.json()
+
+    // console.log(json)
+    if (json.success) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.done,
+        message: 'Se ha actualizado el registro',
+      })
+    }
+
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
+    return json
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener información',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
+const eliminarPersonaId = async (id) => {
+  showLoader()
+  try {
+    let res = await fetch(apiPresupuestoUrl, {
+      method: 'POST',
+      body: JSON.stringify({
+        tabla: 'informacion_personas',
+        accion: 'borrar',
+        id: id,
+      }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    const clone = res.clone()
+
+    let text = await clone.text()
+
+    console.log(text)
+
+    const json = await res.json()
+
+    // console.log(json)
+    if (json.success) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.done,
+        message: 'Registro eliminado',
+      })
+    }
+
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
+    return json
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener información',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
+const getTitulo1Data = async () => {
+  showLoader()
+  try {
+    let res = await fetch(apiPresupuestoUrl, {
+      method: 'POST',
+      body: JSON.stringify({
+        tabla: 'titulo_1',
+        accion: 'consultar_todos',
+      }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+    console.log(res)
+    const json = await res.json()
+
+    console.log(json)
+
+    if (json.success) {
+      let mappedData = mapData({
+        obj: json.success,
+        name: 'nombre',
+        id: 'id',
+      })
+
+      return { mappedData, fullInfo: json.success }
+    }
+
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener información',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
+const getTitulo1DataId = async (id) => {
+  showLoader()
+  try {
+    let res = await fetch(apiPresupuestoUrl, {
+      method: 'POST',
+      body: JSON.stringify({
+        tabla: 'titulo_1',
+        accion: 'consultar_por_id',
+        id: id,
+      }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    const clone = res.clone()
+
+    // let text = await clone.text()
+
+    // console.log(text)
+
+    const json = await res.json()
+
+    // console.log(json)
+    if (json.success) {
+      return json.success[0]
+    }
+
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
+    return json
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener información',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
+const registrarTitulo1Data = async ({ info }) => {
+  showLoader()
+  try {
+    let res = await fetch(apiPresupuestoUrl, {
+      method: 'POST',
+      body: JSON.stringify({
+        tabla: 'titulo_1',
+        accion: 'registrar',
+        info,
+      }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    const clone = res.clone()
+
+    let text = await clone.text()
+
+    console.log(text)
+
+    const json = await res.json()
+
+    // console.log(json)
+    if (json.success) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.done,
+        message: 'Se ha realizado el registro',
+      })
+    }
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
+    return json
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener información',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
+const actualizarTitulo1Data = async ({ info }) => {
+  console.log(info)
+  showLoader()
+  try {
+    let res = await fetch(apiPresupuestoUrl, {
+      method: 'POST',
+      body: JSON.stringify({
+        tabla: 'titulo_1',
+        accion: 'actualizar',
+        info,
+      }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    const clone = res.clone()
+
+    let text = await clone.text()
+
+    console.log(text)
+
+    const json = await res.json()
+
+    // console.log(json)
+    if (json.success) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.done,
+        message: 'Se ha actualizado el registro',
+      })
+    }
+
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
+    return json
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener información',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
+const eliminarTitulo1Id = async (id) => {
+  showLoader()
+  try {
+    let res = await fetch(apiPresupuestoUrl, {
+      method: 'POST',
+      body: JSON.stringify({
+        tabla: 'titulo_1',
+        accion: 'borrar',
+        id: id,
+      }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    const clone = res.clone()
+
+    let text = await clone.text()
+
+    console.log(text)
+
+    const json = await res.json()
+
+    // console.log(json)
+    if (json.success) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.done,
+        message: 'Registro eliminado',
+      })
+    }
+
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
+    return json
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener información',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+const getDescripcionProgramaData = async () => {
+  showLoader()
+  try {
+    let res = await fetch(apiDescripcionProgramaUrl, {
+      method: 'POST',
+      body: JSON.stringify({
+        tabla: 'descripcion_programas',
+        accion: 'consultar_todos',
+      }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    const clone = res.clone()
+
+    let text = await clone.text()
+
+    console.log(text)
+    const json = await res.json()
+    console.log(json)
+
+    if (json.success) {
+      let mappedData = mapData({
+        obj: json.success,
+        name: 'nombre',
+        id: 'id',
+      })
+
+      return { mappedData, fullInfo: json.success }
+    }
+
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener información',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
+const getSectoresData = async () => {
+  showLoader()
+  try {
+    let res = await fetch(apiDescripcionProgramaUrl, {
+      method: 'POST',
+      body: JSON.stringify({
+        tabla: 'descripcion_programas',
+        accion: 'consultar_sector',
+      }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    const clone = res.clone()
+
+    let text = await clone.text()
+
+    console.log(text)
+    const json = await res.json()
+    console.log(json)
+
+    if (json.success) {
+      let mappedData = mapData({
+        obj: json.success,
+        name: 'nombre',
+        id: 'id',
+      })
+
+      return { mappedData, fullInfo: json.success }
+    }
+
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener información',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+const getProgramasData = async () => {
+  showLoader()
+  try {
+    let res = await fetch(apiDescripcionProgramaUrl, {
+      method: 'POST',
+      body: JSON.stringify({
+        tabla: 'descripcion_programas',
+        accion: 'consultar_programa',
+      }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    const clone = res.clone()
+
+    let text = await clone.text()
+
+    console.log(text)
+    const json = await res.json()
+    console.log(json)
+
+    if (json.success) {
+      let mappedData = mapData({
+        obj: json.success,
+        name: 'nombre',
+        id: 'id',
+      })
+
+      return { mappedData, fullInfo: json.success }
+    }
+
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener información',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
+const getDescripcionProgramaDataId = async (id) => {
+  showLoader()
+  try {
+    let res = await fetch(apiDescripcionProgramaUrl, {
+      method: 'POST',
+      body: JSON.stringify({
+        tabla: 'descripcion_programas',
+        accion: 'consultar_por_id',
+        id: id,
+      }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    const clone = res.clone()
+
+    // let text = await clone.text()
+
+    // console.log(text)
+
+    const json = await res.json()
+
+    // console.log(json)
+    if (json.success) {
+      return json.success[0]
+    }
+
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
+    return json
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener información',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
+const registrarDescripcionProgramaData = async ({ info }) => {
+  showLoader()
+  try {
+    let res = await fetch(apiDescripcionProgramaUrl, {
+      method: 'POST',
+      body: JSON.stringify({
+        tabla: 'descripcion_programas',
+        accion: 'registrar',
+        info,
+      }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    const clone = res.clone()
+
+    let text = await clone.text()
+
+    console.log(text)
+
+    const json = await res.json()
+
+    // console.log(json)
+    if (json.success) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.done,
+        message: 'Se ha realizado el registro',
+      })
+    }
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
+    return json
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener información',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
+const actualizarDescripcionProgramaData = async ({ info }) => {
+  console.log(info)
+  showLoader()
+  try {
+    let res = await fetch(apiDescripcionProgramaUrl, {
+      method: 'POST',
+      body: JSON.stringify({
+        tabla: 'descripcion_programas',
+        accion: 'actualizar',
+        info,
+      }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    const clone = res.clone()
+
+    let text = await clone.text()
+
+    console.log(text)
+
+    const json = await res.json()
+
+    // console.log(json)
+    if (json.success) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.done,
+        message: 'Se ha actualizado el registro',
+      })
+    }
+
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
+    return json
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener información',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
+const eliminarDescripcionProgramaId = async (id) => {
+  showLoader()
+  try {
+    let res = await fetch(apiDescripcionProgramaUrl, {
+      method: 'POST',
+      body: JSON.stringify({
+        tabla: 'descripcion_programas',
+        accion: 'borrar',
+        id: id,
+      }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    const clone = res.clone()
+
+    let text = await clone.text()
+
+    console.log(text)
+
+    const json = await res.json()
+
+    // console.log(json)
+    if (json.success) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.done,
+        message: 'Registro eliminado',
+      })
+    }
+
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
+    return json
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener información',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
 export {
   getGobernacionData,
   getGobernacionDataId,
@@ -935,4 +1710,21 @@ export {
   registrarDirectivoData,
   actualizarDirectivoData,
   eliminarDirectivoId,
+  getPersonaData,
+  getPersonaDataId,
+  registrarPersonaData,
+  actualizarPersonaData,
+  eliminarPersonaId,
+  getTitulo1Data,
+  getTitulo1DataId,
+  registrarTitulo1Data,
+  actualizarTitulo1Data,
+  eliminarTitulo1Id,
+  getDescripcionProgramaData,
+  getProgramasData,
+  getSectoresData,
+  getDescripcionProgramaDataId,
+  registrarDescripcionProgramaData,
+  actualizarDescripcionProgramaData,
+  eliminarDescripcionProgramaId,
 }

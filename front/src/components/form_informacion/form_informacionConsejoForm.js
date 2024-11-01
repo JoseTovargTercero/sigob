@@ -251,18 +251,25 @@ export const form_informacionConsejoForm = ({ elementToInsert, data }) => {
       confirmNotification({
         type: NOTIFICATIONS_TYPES.send,
         message: '¿Desea actualizar este registro?',
-        successFunction: function () {
-          actualizarConsejoData({ info: fieldList })
-          loadConsejoTable()
-          closeCard()
+        successFunction: async function () {
+          let res = await actualizarConsejoData({ info: fieldList })
+          if (res.success) {
+            loadConsejoTable()
+            closeCard()
+          }
         },
       })
     } else {
       confirmNotification({
         type: NOTIFICATIONS_TYPES.send,
         message: '¿Desea realizar este registro?',
-        successFunction: function () {
-          registrarConsejoData({ info: fieldList })
+        successFunction: async function () {
+          let res = await registrarConsejoData({ info: fieldList })
+          if (res.success) {
+            loadConsejoTable()
+            closeCard()
+          }
+
           closeCard()
           loadConsejoTable()
         },
