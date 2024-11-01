@@ -42,11 +42,6 @@ $denominacion_programa = $programa_data['denominacion'];
 $programa = $programa_data['programa'];
 
 
-echo $denominacion_sector;
-echo $sector;
-echo $denominacion_programa;
-echo $programa;
-
 // Consultar distribuciones presupuestarias
 $query_distribucion = "SELECT monto_inicial, id_partida FROM distribucion_presupuestaria WHERE id_sector = ? AND id_programa = ? AND id_ejercicio = ?";
 $stmt_distribucion = $conexion->prepare($query_distribucion);
