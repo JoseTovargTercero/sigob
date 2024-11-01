@@ -182,10 +182,10 @@ switch ($data["tabla"]) {
                 $response = isset($data['id']) ? eliminarDescripcionPrograma($data['id']) : ["error" => "ID faltante."];
                 break;
             case "consultar_por_id":
-                $response = isset($data['id']) ? consultarInformacionPorId($data['id']) : ["error" => "ID faltante."];
+                $response = isset($data['id']) ? consultarDescripcionProgramaPorId($data['id']) : ["error" => "ID faltante."];
                 break;
             case "consultar_todos":
-                $response = consultarInformacionTodos();
+                $response = consultarDescripcionProgramasTodos();
                 break;
             case "consultar_sector":
                 $response =  consultarPlSectores() ;
@@ -202,5 +202,5 @@ switch ($data["tabla"]) {
         $response = ["error" => "Tabla inválida."];
 }
 
-echo json_encode($response);
+echo $response;
 ?>
