@@ -551,6 +551,25 @@ $stmt->close();
         });
 
 
+
+        dbh_select('partidas_presupuestarias').then(response => {
+          if (response.success) {
+            response.success.forEach(item => {
+              partidas_options.push([item.partida, item.descripcion, item.id]);
+              $('.c_partida.chosen-select').append(`<option value="${item.id}">${item.partida} - ${item.descripcion}</option>`)
+            });
+            $('.c_partida.chosen-select').chosen().trigger("chosen:updated");
+          }
+        }).catch(error => {
+          console.error("Error al obtener la información:", error);
+        });
+
+
+
+
+
+
+
         let monto_total_proyectos = 0;
         let proyectos = []
 

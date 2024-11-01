@@ -3,7 +3,8 @@ require_once '../sistema_global/conexion.php';
 
 // Suponemos que recibimos $id y $id_ejercicio de alguna manera, como parámetros GET
 
-$id_ejercicio = $_GET['id_ejercicio'];
+//$id_ejercicio = $_GET['id_ejercicio'];
+$id_ejercicio = '1';
 
 
 
@@ -29,8 +30,11 @@ $stmt->execute();
 $result = $stmt->get_result();
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
+
+        $denominacion = $row['denominacion'] == '' ? 'Sin denominación' : $row['denominacion'];
+
         $data[$row['partida']] = [
-            'denominacion' => $row['denominacion'],
+            'denominacion' => $denominacion,
             '01' => 0,
             '02' => 0,
             '03' => 0,
@@ -57,7 +61,7 @@ $stmt->close();
 
 $stmt = mysqli_prepare($conexion, "SELECT DP.monto_inicial, PP.partida, PSP.sector FROM `distribucion_presupuestaria` AS DP
 LEFT JOIN partidas_presupuestarias AS PP ON PP.id = DP.id_partida
-LEFT JOIN pl_sectores_presupuestarios AS PSP ON PSP.id = DP.id_sector
+LEFT JOIN pl_sectores AS PSP ON PSP.id = DP.id_sector
 WHERE DP.id_ejercicio = ?");
 $stmt->bind_param('s', $id_ejercicio);
 $stmt->execute();
@@ -66,7 +70,69 @@ if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
         $sector = $row['sector'];
         $partida = substr($row['partida'], 0, 3);
+
+        if (!@$data[$partida]) {
+            $data[$partida] = [
+                'denominacion' => '<span style="color: red">Sin denominación</span>',
+                '01' => 0,
+                '02' => 0,
+                '03' => 0,
+                '04' => 0,
+                '05' => 0,
+                '06' => 0,
+                '07' => 0,
+                '08' => 0,
+                '09' => 0,
+                '10' => 0,
+                '11' => 0,
+                '12' => 0,
+                '13' => 0,
+                '14' => 0,
+                '15' => 0
+            ];
+        }
+
         $data[$partida][$sector] += $row['monto_inicial'];
+    }
+}
+$stmt->close();
+
+
+
+
+// VALORES ADICIONALES DEL FCI
+
+$stmt = mysqli_prepare($conexion, "SELECT DP.monto, PP.partida, PSP.sector FROM `proyecto_inversion_partidas` AS DP
+LEFT JOIN partidas_presupuestarias AS PP ON PP.id = DP.partida
+LEFT JOIN pl_sectores AS PSP ON PSP.id = DP.sector_id
+");
+$stmt->execute();
+$result = $stmt->get_result();
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $sector = $row['sector'];
+        $partida = substr($row['partida'], 0, 3);
+        if (!@$data[$partida]) {
+            $data[$partida] = [
+                'denominacion' => '<span style="color: red">Sin denominación</span>',
+                '01' => 0,
+                '02' => 0,
+                '03' => 0,
+                '04' => 0,
+                '05' => 0,
+                '06' => 0,
+                '07' => 0,
+                '08' => 0,
+                '09' => 0,
+                '10' => 0,
+                '11' => 0,
+                '12' => 0,
+                '13' => 0,
+                '14' => 0,
+                '15' => 0
+            ];
+        }
+        $data[$partida][$sector] += $row['monto'];
     }
 }
 $stmt->close();

@@ -900,7 +900,7 @@ $stmt->close();
           });
 
 
-          var series1 = chart.series.push(am5xy.ColumnSeries.new(root, {
+          /*   var series1 = chart.series.push(am5xy.ColumnSeries.new(root, {
             name: "Income",
             xAxis: xAxis,
             yAxis: yAxis,
@@ -917,7 +917,7 @@ $stmt->close();
             tooltipY: 0,
             strokeOpacity: 0
           });
-
+*/
 
           var cursor = chart.set("cursor", am5xy.XYCursor.new(root, {}));
 
@@ -945,6 +945,7 @@ $stmt->close();
                 }),
               })
               .done(function(resultado) {
+                console.log(resultado)
                 try {
 
                   var data = [];
@@ -960,7 +961,7 @@ $stmt->close();
                     data.push({
                       "country": value,
                       "incial": total_inicial,
-                      "restante": restante
+                      // "restante": restante
                     });
 
                     let porcentaje_restante = restante * 100 / total_inicial
@@ -981,11 +982,11 @@ $stmt->close();
 
                   series0.data.setAll([]);
                   series0.data.setAll(data);
-                  series1.data.setAll(data);
-                  series1.data.setAll(data);
+                  //  series1.data.setAll(data);
+                  //  series1.data.setAll(data);
 
                   series0.appear();
-                  series1.appear();
+                  //  series1.appear();
 
 
 
