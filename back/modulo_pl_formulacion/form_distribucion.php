@@ -16,21 +16,23 @@ function guardarDistribucionPresupuestaria($dataArray)
         }
 
         foreach ($dataArray as $registro) {
-            if (count($registro) !== 4) { // Actualizado para incluir id_sector
+            if (count($registro) !== 5) { // Actualizado para incluir id_sector, id_programa, id_proyecto
                 throw new Exception("El formato del array no es válido");
             }
 
             $id_partida = $registro[0];
             $monto_inicial = $registro[1];
             $id_ejercicio = $registro[2];
-            $id_sector = $registro[3]; // Nuevo campo
+            $id_sector = $registro[3];
+            $id_programa = $registro[4]; // Nuevo campo
+            $id_proyecto = 0; // Nuevo campo
 
-            // Validar que no existan duplicados con el mismo id_partida e id_ejercicio
+            // Validar que no existan duplicados con el mismo id_partida, id_ejercicio, id_sector, id_programa, id_proyecto
             $verificarSql = "SELECT PP.partida FROM distribucion_presupuestaria AS DP 
             LEFT JOIN partidas_presupuestarias AS PP ON PP.id=DP.id_partida
-            WHERE id_partida = ? AND id_ejercicio = ? AND id_sector = ?";
+            WHERE id_partida = ? AND id_ejercicio = ? AND id_sector = ? AND id_programa = ? AND id_proyecto = ?";
             $stmtVerificar = $conexion->prepare($verificarSql);
-            $stmtVerificar->bind_param("iii", $id_partida, $id_ejercicio, $id_sector);
+            $stmtVerificar->bind_param("iiiii", $id_partida, $id_ejercicio, $id_sector, $id_programa, $id_proyecto);
             $stmtVerificar->execute();
             $resultadoVerificar = $stmtVerificar->get_result();
 
@@ -39,7 +41,7 @@ function guardarDistribucionPresupuestaria($dataArray)
                     $partida_repetida = $row['partida'];
                 }
 
-                throw new Exception("Una partida ya esta en uso en el mismo sector: " . $partida_repetida);
+                throw new Exception("Una partida ya está en uso en el mismo sector, programa y proyecto: " . $partida_repetida);
             }
 
             // Verificar que el ejercicio fiscal esté abierto (status = 1)
@@ -57,14 +59,14 @@ function guardarDistribucionPresupuestaria($dataArray)
             // Inicializar monto_actual con el mismo valor que monto_inicial
             $monto_actual = $monto_inicial;
 
-            if (empty($id_partida) || empty($monto_inicial) || empty($id_ejercicio) || empty($id_sector)) {
-                throw new Exception("Faltan datos en uno de los registros (id_partida, monto_inicial, id_ejercicio, id_sector)");
+            if (empty($id_partida) || empty($monto_inicial) || empty($id_ejercicio) || empty($id_sector) || empty($id_programa) || empty($id_proyecto)) {
+                throw new Exception("Faltan datos en uno de los registros (id_partida, monto_inicial, id_ejercicio, id_sector, id_programa, id_proyecto)");
             }
 
             // Insertar los datos en la tabla
-            $sql = "INSERT INTO distribucion_presupuestaria (id_partida, monto_inicial, id_ejercicio, monto_actual, id_sector, status) VALUES (?, ?, ?, ?, ?, 1)";
+            $sql = "INSERT INTO distribucion_presupuestaria (id_partida, monto_inicial, id_ejercicio, monto_actual, id_sector, id_programa, id_proyecto, status) VALUES (?, ?, ?, ?, ?, ?, ?, 1)";
             $stmt = $conexion->prepare($sql);
-            $stmt->bind_param("isisi", $id_partida, $monto_inicial, $id_ejercicio, $monto_actual, $id_sector);
+            $stmt->bind_param("isiiiii", $id_partida, $monto_inicial, $id_ejercicio, $monto_actual, $id_sector, $id_programa, $id_proyecto);
             $stmt->execute();
 
             if ($stmt->affected_rows <= 0) {
@@ -86,8 +88,15 @@ function obtenerDistribuciones()
 {
     global $conexion;
 
-    $sql = "SELECT dp.*, s.sector, s.programa, s.proyecto, s.nombre FROM distribucion_presupuestaria dp 
-            JOIN pl_sectores_presupuestarios s ON dp.id_sector = s.id";
+    $sql = "SELECT dp.*, 
+                   ps.sector AS sector_nombre, 
+                   ps.nombre AS sector_nombre_completo, 
+                   pp.programa AS programa_nombre, 
+                   pp.nombre AS programa_nombre_completo
+            FROM distribucion_presupuestaria dp
+            JOIN pl_sectores ps ON dp.id_sector = ps.id
+            JOIN pl_programas pp ON dp.id_programa = pp.id";
+            
     $result = $conexion->query($sql);
 
     $distribuciones = [];
@@ -99,13 +108,22 @@ function obtenerDistribuciones()
     return json_encode($distribuciones);
 }
 
+
 // Función para obtener un solo registro por ID, incluyendo el sector
 function obtenerDistribucionPorId($id)
 {
     global $conexion;
 
-    $sql = "SELECT dp.*, s.sector, s.programa, s.proyecto, s.nombre FROM distribucion_presupuestaria dp 
-            JOIN pl_sectores_presupuestarios s ON dp.id_sector = s.id WHERE dp.id = ?";
+    $sql = "SELECT dp.*, 
+                   ps.sector AS sector_nombre, 
+                   ps.nombre AS sector_nombre_completo, 
+                   pp.programa AS programa_nombre, 
+                   pp.nombre AS programa_nombre_completo
+            FROM distribucion_presupuestaria dp
+            JOIN pl_sectores ps ON dp.id_sector = ps.id
+            JOIN pl_programas pp ON dp.id_programa = pp.id
+            WHERE dp.id = ?";
+            
     $stmt = $conexion->prepare($sql);
     $stmt->bind_param("i", $id);
     $stmt->execute();
@@ -119,12 +137,13 @@ function obtenerDistribucionPorId($id)
     }
 }
 
-// Función para actualizar un registro, incluyendo id_sector
-function actualizarDistribucion($id, $id_partida, $monto_inicial, $id_ejercicio, $id_sector)
+// Función para actualizar un registro, incluyendo id_sector, id_programa e id_proyecto
+function actualizarDistribucion($id, $id_partida, $monto_inicial, $id_ejercicio, $id_sector, $id_programa, $id_proyecto)
 {
     global $conexion;
 
     try {
+        // Verificar si el registro existe y su status
         $sql = "SELECT status FROM distribucion_presupuestaria WHERE id = ?";
         $stmt = $conexion->prepare($sql);
         $stmt->bind_param("i", $id);
@@ -140,6 +159,7 @@ function actualizarDistribucion($id, $id_partida, $monto_inicial, $id_ejercicio,
             throw new Exception("No se puede actualizar un registro cerrado.");
         }
 
+        // Verificar si el ejercicio fiscal está abierto
         $sqlEjercicio = "SELECT status FROM ejercicio_fiscal WHERE id = ?";
         $stmtEjercicio = $conexion->prepare($sqlEjercicio);
         $stmtEjercicio->bind_param("i", $id_ejercicio);
@@ -151,9 +171,12 @@ function actualizarDistribucion($id, $id_partida, $monto_inicial, $id_ejercicio,
             throw new Exception("El ejercicio fiscal seleccionado ya fue cerrado.");
         }
 
-        $sql = "UPDATE distribucion_presupuestaria SET id_partida = ?, monto_inicial = ?, id_ejercicio = ?, id_sector = ? WHERE id = ?";
+        // Actualizar el registro en la tabla distribucion_presupuestaria
+        $sql = "UPDATE distribucion_presupuestaria 
+                SET id_partida = ?, monto_inicial = ?, id_ejercicio = ?, id_sector = ?, id_programa = ?, id_proyecto = ? 
+                WHERE id = ?";
         $stmt = $conexion->prepare($sql);
-        $stmt->bind_param("isiii", $id_partida, $monto_inicial, $id_ejercicio, $id_sector, $id);
+        $stmt->bind_param("isiiiii", $id_partida, $monto_inicial, $id_ejercicio, $id_sector, $id_programa, $id_proyecto, $id);
         $stmt->execute();
 
         if ($stmt->affected_rows > 0) {
@@ -165,6 +188,7 @@ function actualizarDistribucion($id, $id_partida, $monto_inicial, $id_ejercicio,
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 
 function actualizarMontoDistribucion($id_sector, $id_ejercicio, $id_distribucion1, $id_distribucion2 = null, $id_partida = null, $monto) {
@@ -286,7 +310,16 @@ if (isset($data["accion"])) {
             break;
 
         case 'actualizar':
-            echo actualizarDistribucion($data["id"], $data["id_partida"], $data["monto_inicial"], $data["id_ejercicio"], $data["id_sector"]);
+            // Adaptación para incluir id_programa e id_proyecto
+            echo actualizarDistribucion(
+                $data["id"], 
+                $data["id_partida"], 
+                $data["monto_inicial"], 
+                $data["id_ejercicio"], 
+                $data["id_sector"], 
+                $data["id_programa"], 
+                $data["id_proyecto"]
+            );
             break;
 
         case 'eliminar':
@@ -311,3 +344,4 @@ if (isset($data["accion"])) {
 } else {
     echo json_encode(['error' => 'No se especificó ninguna acción']);
 }
+

@@ -122,7 +122,7 @@ function consultarAsignacionPorId($id)
                         $idDistribucion = $distribucionItem['id_distribucion'];
 
                         // Consulta para obtener el id_partida y id_sector de distribucion_presupuestaria
-                        $sqlDistribucionDetalles = "SELECT id_partida, id_sector FROM distribucion_presupuestaria WHERE id = ?";
+                        $sqlDistribucionDetalles = "SELECT id_partida, id_sector, id_programa FROM distribucion_presupuestaria WHERE id = ?";
                         $stmtDistribucionDetalles = $conexion->prepare($sqlDistribucionDetalles);
                         $stmtDistribucionDetalles->bind_param("i", $idDistribucion);
                         $stmtDistribucionDetalles->execute();
@@ -132,15 +132,25 @@ function consultarAsignacionPorId($id)
                             $distribucionDetalles = $resultDistribucionDetalles->fetch_assoc();
                             $distribucionItem['id_partida'] = $distribucionDetalles['id_partida'];
                             $distribucionItem['id_sector'] = $distribucionDetalles['id_sector'];
+                            $distribucionItem['id_programa'] = $distribucionDetalles['id_programa'];
 
                             // Obtener detalles del sector
-                            $sqlSector = "SELECT * FROM pl_sectores_presupuestarios WHERE id = ?";
+                            $sqlSector = "SELECT * FROM pl_sectores WHERE id = ?";
                             $stmtSector = $conexion->prepare($sqlSector);
                             $stmtSector->bind_param("i", $distribucionDetalles['id_sector']);
                             $stmtSector->execute();
                             $resultSector = $stmtSector->get_result();
 
                             $distribucionItem['sector_informacion'] = $resultSector->num_rows > 0 ? $resultSector->fetch_assoc() : null;
+
+                            // Obtener detalles del sector
+                            $sqlPrograma = "SELECT * FROM pl_programas WHERE id = ?";
+                            $stmtPrograma = $conexion->prepare($sqlPrograma);
+                            $stmtPrograma->bind_param("i", $distribucionDetalles['id_programa']);
+                            $stmtPrograma->execute();
+                            $resultPrograma = $stmtPrograma->get_result();
+
+                            $distribucionItem['programa_informacion'] = $resultPrograma->num_rows > 0 ? $resultPrograma->fetch_assoc() : null;
 
                             // Consulta para obtener los detalles de la partida
                             $sqlPartida = "SELECT * FROM partidas_presupuestarias WHERE id = ?";
