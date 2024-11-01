@@ -16,7 +16,7 @@ function guardarDistribucionPresupuestaria($dataArray)
         }
 
         foreach ($dataArray as $registro) {
-            if (count($registro) !== 5) { // Actualizado para incluir id_sector, id_programa, id_proyecto
+            if (count($registro) !== 6) { // Actualizado para incluir id_sector, id_programa, id_proyecto
                 throw new Exception("El formato del array no es válido");
             }
 
@@ -25,7 +25,7 @@ function guardarDistribucionPresupuestaria($dataArray)
             $id_ejercicio = $registro[2];
             $id_sector = $registro[3];
             $id_programa = $registro[4]; // Nuevo campo
-            $id_proyecto = 0; // Nuevo campo
+            $id_proyecto = $registro[5]; // Nuevo campo
 
             // Validar que no existan duplicados con el mismo id_partida, id_ejercicio, id_sector, id_programa, id_proyecto
             $verificarSql = "SELECT PP.partida FROM distribucion_presupuestaria AS DP 
@@ -96,7 +96,7 @@ function obtenerDistribuciones()
             FROM distribucion_presupuestaria dp
             JOIN pl_sectores ps ON dp.id_sector = ps.id
             JOIN pl_programas pp ON dp.id_programa = pp.id";
-            
+
     $result = $conexion->query($sql);
 
     $distribuciones = [];
@@ -123,7 +123,7 @@ function obtenerDistribucionPorId($id)
             JOIN pl_sectores ps ON dp.id_sector = ps.id
             JOIN pl_programas pp ON dp.id_programa = pp.id
             WHERE dp.id = ?";
-            
+
     $stmt = $conexion->prepare($sql);
     $stmt->bind_param("i", $id);
     $stmt->execute();
@@ -191,7 +191,8 @@ function actualizarDistribucion($id, $id_partida, $monto_inicial, $id_ejercicio,
 
 
 
-function actualizarMontoDistribucion($id_sector, $id_ejercicio, $id_distribucion1, $id_distribucion2 = null, $id_partida = null, $monto) {
+function actualizarMontoDistribucion($id_sector, $id_ejercicio, $id_distribucion1, $id_distribucion2 = null, $id_partida = null, $monto)
+{
     global $conexion;
 
     try {
@@ -312,12 +313,12 @@ if (isset($data["accion"])) {
         case 'actualizar':
             // Adaptación para incluir id_programa e id_proyecto
             echo actualizarDistribucion(
-                $data["id"], 
-                $data["id_partida"], 
-                $data["monto_inicial"], 
-                $data["id_ejercicio"], 
-                $data["id_sector"], 
-                $data["id_programa"], 
+                $data["id"],
+                $data["id_partida"],
+                $data["monto_inicial"],
+                $data["id_ejercicio"],
+                $data["id_sector"],
+                $data["id_programa"],
                 $data["id_proyecto"]
             );
             break;
