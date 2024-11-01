@@ -146,6 +146,27 @@ function consultarPlSectores()
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+// Función para consultar todos los proyectos
+function consultarPlProyectos()
+{
+    global $conexion;
+
+    try {
+        $sql = "SELECT * FROM pl_proyectos";
+        $result = $conexion->query($sql);
+
+        if ($result->num_rows > 0) {
+            $proyectos = $result->fetch_all(MYSQLI_ASSOC);
+            return json_encode(["success" => $proyectos]);
+        } else {
+            return json_encode(["success" => "No se encontraron registros en pl_sectores."]);
+        }
+
+    } catch (Exception $e) {
+        registrarError($e->getMessage());
+        return json_encode(['error' => $e->getMessage()]);
+    }
+}
 
 // Función para consultar todos los programas
 function consultarPlProgramas()
@@ -200,6 +221,9 @@ switch ($data["tabla"]) {
                 break;
             case "consultar_sector":
                 $response = consultarPlSectores();
+                break;
+            case "consultar_proyecto":
+                $response = consultarPlProyectos();
                 break;
             case "consultar_programa":
                 $response = consultarPlProgramas();

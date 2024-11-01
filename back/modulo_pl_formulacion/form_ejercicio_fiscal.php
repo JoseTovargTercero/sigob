@@ -132,7 +132,7 @@ function obtenerTodosEjerciciosFiscales()
                 $situado = $row['situado'];
 
                 // Calcular la sumatoria de los montos iniciales en distribucion_presupuestaria para este id_ejercicio
-                $sqlSum = "SELECT id, id_partida, monto_inicial, monto_actual, id_sector FROM distribucion_presupuestaria WHERE id_ejercicio = ?";
+                $sqlSum = "SELECT id, id_partida, monto_inicial, monto_actual, id_sector, id_programa FROM distribucion_presupuestaria WHERE id_ejercicio = ?";
                 $stmtSum = $conexion->prepare($sqlSum);
                 $stmtSum->bind_param("i", $id_ejercicio);
                 $stmtSum->execute();
@@ -161,7 +161,7 @@ function obtenerTodosEjerciciosFiscales()
                             $partidaId = $partidaRow['id'];
 
                             // Realizar la consulta en pl_sectores_presupuestarios utilizando id_sector
-                            $sqlSector = "SELECT * FROM pl_sectores_presupuestarios WHERE id = ?";
+                            $sqlSector = "SELECT * FROM pl_sectores WHERE id = ?";
                             $stmtSector = $conexion->prepare($sqlSector);
                             $stmtSector->bind_param("i", $sumRow['id_sector']);
                             $stmtSector->execute();
@@ -170,6 +170,17 @@ function obtenerTodosEjerciciosFiscales()
                             $sectorInformacion = null;
                             if ($resultSector->num_rows > 0) {
                                 $sectorInformacion = $resultSector->fetch_assoc();
+                            }
+                            // Realizar la consulta en pl_sectores_presupuestarios utilizando id_sector
+                            $sqlPrograma = "SELECT * FROM pl_programas WHERE id = ?";
+                            $stmtPrograma = $conexion->prepare($sqlPrograma);
+                            $stmtPrograma->bind_param("i", $sumRow['id_programa']);
+                            $stmtPrograma->execute();
+                            $resultPrograma = $stmtPrograma->get_result();
+
+                            $programaInformacion = null;
+                            if ($resultPrograma->num_rows > 0) {
+                                $programaInformacion = $resultPrograma->fetch_assoc();
                             }
 
                             // Asignar las propiedades a distribucion_partidas incluyendo sector_informacion
@@ -181,10 +192,12 @@ function obtenerTodosEjerciciosFiscales()
                                 'descripcion' => $partidaDescripcion,
                                 'monto_inicial' => $sumRow['monto_inicial'],
                                 'monto_actual' => $sumRow['monto_actual'],
-                                'sector_informacion' => $sectorInformacion
+                                'sector_informacion' => $sectorInformacion,
+                                'programa_informacion' => $programaInformacion,
                             ];
 
                             $stmtSector->close();
+                            $stmtPrograma->close();
                         }
 
                         $stmtPartida->close();
@@ -238,7 +251,7 @@ function obtenerEjercicioFiscalPorId($id)
             $ejercicio = $result->fetch_assoc();
 
             // Consulta para obtener los registros de distribucion_presupuestaria y sumar los montos iniciales
-            $sqlDistribucion = "SELECT id, id_partida, monto_inicial, monto_actual, id_sector 
+            $sqlDistribucion = "SELECT id, id_partida, monto_inicial, monto_actual, id_sector, id_programa 
                                 FROM distribucion_presupuestaria 
                                 WHERE id_ejercicio = ?";
             $stmtDistribucion = $conexion->prepare($sqlDistribucion);
@@ -268,7 +281,7 @@ function obtenerEjercicioFiscalPorId($id)
                         $partidaId = $partidaRow['id'];
 
                         // Realizar la consulta en pl_sectores_presupuestarios utilizando id_sector
-                        $sqlSector = "SELECT * FROM pl_sectores_presupuestarios WHERE id = ?";
+                        $sqlSector = "SELECT * FROM pl_sectores WHERE id = ?";
                         $stmtSector = $conexion->prepare($sqlSector);
                         $stmtSector->bind_param("i", $rowDistribucion['id_sector']);
                         $stmtSector->execute();
@@ -277,6 +290,17 @@ function obtenerEjercicioFiscalPorId($id)
                         $sectorInformacion = null;
                         if ($resultSector->num_rows > 0) {
                             $sectorInformacion = $resultSector->fetch_assoc();
+                        }
+                         // Realizar la consulta en pl_sectores_presupuestarios utilizando id_sector
+                        $sqlPrograma = "SELECT * FROM pl_programas WHERE id = ?";
+                        $stmtPrograma = $conexion->prepare($sqlPrograma);
+                        $stmtPrograma->bind_param("i", $rowDistribucion['id_programa']);
+                        $stmtPrograma->execute();
+                        $resultPrograma = $stmtPrograma->get_result();
+
+                        $programaInformacion = null;
+                        if ($resultPrograma->num_rows > 0) {
+                            $programaInformacion = $resultPrograma->fetch_assoc();
                         }
 
                         // Asignar las propiedades a distribucion_partidas incluyendo sector_informacion
@@ -288,10 +312,12 @@ function obtenerEjercicioFiscalPorId($id)
                             'descripcion' => $partidaDescripcion,
                             'monto_inicial' => $rowDistribucion['monto_inicial'],
                             'monto_actual' => $rowDistribucion['monto_actual'],
-                            'sector_informacion' => $sectorInformacion
+                            'sector_informacion' => $sectorInformacion,
+                            'programa_informacion' => $programaInformacion,
                         ];
 
                         $stmtSector->close();
+                        $stmtPrograma->close();
                     }
 
                     $stmtPartida->close();
