@@ -209,6 +209,7 @@ function obtenerTodosEjerciciosFiscales()
                                 'monto_actual' => $sumRow['monto_actual'],
                                 'sector_informacion' => $sectorInformacion,
                                 'programa_informacion' => $programaInformacion,
+                                'proyecto_informacion' => $proyectoInformacion,
                             ];
 
                             $stmtSector->close();
