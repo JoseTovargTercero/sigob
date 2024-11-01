@@ -41,7 +41,7 @@ require_once '../../back/sistema_global/session.php';
                                 <h5 class="mb-0">Lista de partidas presupuestarias registradas</h5>
                                 <small class="mt-0 text-muted">Administre las partidas</small>
                             </div>
-                            <button class="btn btn-primary" id="partida-registrar">REGISTRAR</button>
+                            <button class="btn btn-info btn-sm" id="partida-registrar"><i class="bx bx-plus"></i> Nueva Partida</button>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive p-1">
