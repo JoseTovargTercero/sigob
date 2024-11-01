@@ -55,7 +55,7 @@ $reportes = [
     ],
     'presupuesto' => [
         'nombre' => 'LEY DE PRESUPUESTO DE INGRESOS Y GASTOS DEL ESTADO AMAZONAS',
-        'formato' => 'A4-L'
+        'formato' => 'A4'
     ]
 ];
 
@@ -122,7 +122,7 @@ $stmt->close();
 } elseif ($tipo == 'descripcion') {
     $queryDescripcionProgramas = "SELECT id_sector, id_programa FROM descripcion_programas";
     $resultDescripcionProgramas = $conexion->query($queryDescripcionProgramas);
-    
+
     if ($resultDescripcionProgramas && $resultDescripcionProgramas->num_rows > 0) {
         while ($rowDescripcion = $resultDescripcionProgramas->fetch_assoc()) {
             $sector_descripcion = $rowDescripcion['id_sector'];
