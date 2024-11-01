@@ -56,90 +56,108 @@ function eliminarDescripcionPrograma($id) {
     }
 }
 
-function consultarInformacionPorId($id) {
-    global $db;
-
-    $id = intval($id);
+// Función para consultar la información de un programa por ID
+function consultarDescripcionProgramaPorId($id) {
+    global $conexion;
 
     try {
-        $query = "SELECT descripcion_programas.id, descripcion_programas.descripcion, 
-                         pl_sectores.denominacion AS sector_denominacion, 
-                         pl_programas.denominacion AS programa_denominacion
-                  FROM descripcion_programas
-                  JOIN pl_sectores ON descripcion_programas.id_sector = pl_sectores.id
-                  JOIN pl_programas ON descripcion_programas.id_programa = pl_programas.id
-                  WHERE descripcion_programas.id = $id";
-
-        $resultado = $db->query($query);
-
-        if (!empty($resultado)) {
-            return $resultado;
-        } else {
-            return json_encode(['error' => 'Registro no encontrado.']);
+        if (empty($id)) {
+            throw new Exception("Debe proporcionar un ID para la consulta.");
         }
+
+        $sql = "SELECT descripcion_programas.id, descripcion_programas.descripcion, 
+                       pl_sectores.denominacion AS sector_denominacion, 
+                       pl_programas.denominacion AS programa_denominacion
+                FROM descripcion_programas
+                JOIN pl_sectores ON descripcion_programas.id_sector = pl_sectores.id
+                JOIN pl_programas ON descripcion_programas.id_programa = pl_programas.id
+                WHERE descripcion_programas.id = ?";
+        $stmt = $conexion->prepare($sql);
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            $programa = $result->fetch_assoc();
+            return json_encode(["success" => $programa]);
+        } else {
+            return json_encode(["error" => "Registro no encontrado."]);
+        }
+
     } catch (Exception $e) {
-        return json_encode(['error' => "Error: " . $e->getMessage()]);
+        registrarError($e->getMessage());
+        return json_encode(['error' => $e->getMessage()]);
     }
 }
 
-function consultarInformacionTodos() {
-    global $db;
+// Función para consultar todos los programas
+function consultarDescripcionProgramasTodos() {
+    global $conexion;
 
     try {
-        $query = "SELECT descripcion_programas.id, descripcion_programas.descripcion, 
-                         pl_sectores.denominacion AS sector_denominacion, 
-                         pl_programas.denominacion AS programa_denominacion
-                  FROM descripcion_programas
-                  JOIN pl_sectores ON descripcion_programas.id_sector = pl_sectores.id
-                  JOIN pl_programas ON descripcion_programas.id_programa = pl_programas.id";
+        $sql = "SELECT descripcion_programas.id, descripcion_programas.descripcion, 
+                       pl_sectores.denominacion AS sector_denominacion, 
+                       pl_programas.denominacion AS programa_denominacion
+                FROM descripcion_programas
+                JOIN pl_sectores ON descripcion_programas.id_sector = pl_sectores.id
+                JOIN pl_programas ON descripcion_programas.id_programa = pl_programas.id";
+        $result = $conexion->query($sql);
 
-        $resultado = $db->query($query);
-
-        if (!empty($resultado)) {
-            return $resultado;
+        if ($result->num_rows > 0) {
+            $programas = $result->fetch_all(MYSQLI_ASSOC);
+            return json_encode(["success" => $programas]);
         } else {
-            return json_encode(['error' => 'No se encontraron registros.']);
+            return json_encode(["success" => "No se encontraron registros en descripcion_programas."]);
         }
+
     } catch (Exception $e) {
-        return json_encode(['error' => "Error: " . $e->getMessage()]);
+        registrarError($e->getMessage());
+        return json_encode(['error' => $e->getMessage()]);
     }
 }
 
-// Nueva función para consultar la tabla pl_sectores
+// Función para consultar todos los sectores
 function consultarPlSectores() {
-    global $db;
+    global $conexion;
 
     try {
-        $query = "SELECT * FROM pl_sectores";
-        $resultado = $db->query($query);
+        $sql = "SELECT * FROM pl_sectores";
+        $result = $conexion->query($sql);
 
-        if (!empty($resultado)) {
-            return $resultado;
+        if ($result->num_rows > 0) {
+            $sectores = $result->fetch_all(MYSQLI_ASSOC);
+            return json_encode(["success" => $sectores]);
         } else {
-            return json_encode(['error' => 'Sector no encontrado.']);
+            return json_encode(["success" => "No se encontraron registros en pl_sectores."]);
         }
+
     } catch (Exception $e) {
-        return json_encode(['error' => "Error: " . $e->getMessage()]);
+        registrarError($e->getMessage());
+        return json_encode(['error' => $e->getMessage()]);
     }
 }
 
-// Nueva función para consultar la tabla pl_programas
+// Función para consultar todos los programas
 function consultarPlProgramas() {
-    global $db;
+    global $conexion;
 
     try {
-        $query = "SELECT * FROM pl_programas";
-        $resultado = $db->query($query);
+        $sql = "SELECT * FROM pl_programas";
+        $result = $conexion->query($sql);
 
-        if (!empty($resultado)) {
-            return $resultado;
+        if ($result->num_rows > 0) {
+            $programas = $result->fetch_all(MYSQLI_ASSOC);
+            return json_encode(["success" => $programas]);
         } else {
-            return json_encode(['error' => 'Programa no encontrado.']);
+            return json_encode(["success" => "No se encontraron registros en pl_programas."]);
         }
+
     } catch (Exception $e) {
-        return json_encode(['error' => "Error: " . $e->getMessage()]);
+        registrarError($e->getMessage());
+        return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 // PROCESAR SOLICITUDES
 $data = json_decode(file_get_contents("php://input"), true);
