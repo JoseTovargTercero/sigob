@@ -3,11 +3,9 @@ require_once '../sistema_global/conexion.php';
 
 $id_ejercicio = $_GET['id_ejercicio'];
 
-// Inicializar array para almacenar los datos por sector y programa
-
-
-$query_sector = "SELECT * FROM ejercicio_fiscal WHERE id = ?";
-$stmt = $conexion->prepare($query_sector);
+// Consulta a la tabla ejercicio_fiscal para obtener año y situado
+$query_ejercicio = "SELECT ano, situado FROM ejercicio_fiscal WHERE id = ?";
+$stmt = $conexion->prepare($query_ejercicio);
 $stmt->bind_param('i', $id_ejercicio);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -17,39 +15,38 @@ $ano = $data['ano'];
 $situado = $data['situado'];
 $stmt->close();
 
+// Inicializar array para almacenar los datos por sector y programa
 $data = [];
 
-// Consultar datos del sector y programa
-$query_programa = "SELECT p.id AS id_programa, p.programa, p.sector, p.denominacion 
+// Consultar datos del sector, programa y denominación en la tabla pl_programas con un JOIN a pl_sectores
+$query_programa = "SELECT p.id AS id_programa, p.programa, p.sector, p.denominacion, s.sector AS sector_numero 
                    FROM pl_programas p
-                   JOIN pl_sectores_presupuestarios s ON p.sector = s.sector AND p.programa = s.programa";
-
+                   JOIN pl_sectores s ON p.sector = s.id";
 $stmt_programa = $conexion->prepare($query_programa);
 if ($stmt_programa === false) {
     die('Error en la consulta SQL (pl_programas): ' . $conexion->error);
 }
-
 $stmt_programa->execute();
 $result_programa = $stmt_programa->get_result();
 
 // Agrupar los programas por sector y programa
 $programas = []; // Array para agrupar programas
 while ($programa_data = $result_programa->fetch_assoc()) {
-    $sector = $programa_data['sector'];
+    $sector_numero = $programa_data['sector_numero']; // Nuevo valor de sector
     $programa = $programa_data['programa'];
     $denominacion = $programa_data['denominacion'];
     $id_programa = $programa_data['id_programa'];
 
     // Asegurarse de que el sector y programa existen en el array
-    if (!isset($programas[$sector][$programa])) {
-        $programas[$sector][$programa] = [
+    if (!isset($programas[$sector_numero][$programa])) {
+        $programas[$sector_numero][$programa] = [
             'denominacion' => $denominacion,
             'ids' => [],
         ];
     }
 
     // Agregar el ID del programa al sector y programa correspondiente
-    $programas[$sector][$programa]['ids'][] = $id_programa;
+    $programas[$sector_numero][$programa]['ids'][] = $id_programa;
 }
 
 // Verificamos si hay programas disponibles
@@ -58,7 +55,7 @@ if (empty($programas)) {
 }
 
 // Iterar sobre los sectores y programas
-foreach ($programas as $sector => $programas_info) {
+foreach ($programas as $sector_numero => $programas_info) {
     foreach ($programas_info as $programa => $info) {
         $id_list = implode(',', $info['ids']); // Convertimos el array de IDs a una lista separada por comas
 
@@ -96,11 +93,13 @@ foreach ($programas as $sector => $programas_info) {
         $total = $ingresos_propios + $situado_estadal + $fci + $otras_fuentes;
 
         // Organizar datos para la tabla final
-        $data[] = [$sector, $programa, $info['denominacion'], $ingresos_propios, $situado_estadal, $fci, $otras_fuentes, $total];
+        $data[] = [$sector_numero, $programa, $info['denominacion'], $ingresos_propios, $situado_estadal, $fci, $otras_fuentes, $total];
     }
 }
 
 ?>
+
+
 
 
 <!DOCTYPE html>

@@ -2,10 +2,11 @@
 require_once '../sistema_global/conexion.php';
 
 // Suponemos que recibimos $id y $id_ejercicio de alguna manera, como parámetros GET
-$id = $_GET['id'];
+$id_sector = $_GET['id_sector'];
+$id_programa = $_GET['id_programa'];
 $id_ejercicio = $_GET['id_ejercicio'];
 
-
+// Consultar datos del ejercicio fiscal
 $query_sector = "SELECT * FROM ejercicio_fiscal WHERE id = ?";
 $stmt = $conexion->prepare($query_sector);
 $stmt->bind_param('i', $id_ejercicio);
@@ -18,37 +19,33 @@ $situado = $data['situado'];
 $stmt->close();
 
 
-// Consultar datos del sector
-$query_sector = "SELECT sector, programa, nombre FROM pl_sectores_presupuestarios WHERE id = ?";
-$stmt_sector = $conexion->prepare($query_sector);
-$stmt_sector->bind_param('i', $id);
-$stmt_sector->execute();
-$result_sector = $stmt_sector->get_result();
-$sector_data = $result_sector->fetch_assoc();
-
-$sector = $sector_data['sector'];
-$programa = $sector_data['programa'];
-
-// Consultar denominación del sector
-$query_denominacion_sector = "SELECT denominacion FROM pl_sectores WHERE sector = ?";
+// Consultar denominación del sector y valor de sector desde pl_sectores
+$query_denominacion_sector = "SELECT denominacion, sector FROM pl_sectores WHERE id = ?";
 $stmt_denominacion_sector = $conexion->prepare($query_denominacion_sector);
-$stmt_denominacion_sector->bind_param('s', $sector);
+$stmt_denominacion_sector->bind_param('s', $id_sector);
 $stmt_denominacion_sector->execute();
 $result_denominacion_sector = $stmt_denominacion_sector->get_result();
-$denominacion_sector = $result_denominacion_sector->fetch_assoc()['denominacion'];
+$sector_data = $result_denominacion_sector->fetch_assoc();
 
-// Consultar denominación del programa
-$query_denominacion_programa = "SELECT denominacion FROM pl_programas WHERE sector = ? AND programa = ?";
+$denominacion_sector = $sector_data['denominacion'];
+$sector = $sector_data['sector'];
+
+// Consultar denominación del programa y valor de programa desde pl_programas
+$query_denominacion_programa = "SELECT denominacion, programa FROM pl_programas WHERE sector = ?";
 $stmt_denominacion_programa = $conexion->prepare($query_denominacion_programa);
-$stmt_denominacion_programa->bind_param('ss', $sector, $programa);
+$stmt_denominacion_programa->bind_param('s', $id_sector);
 $stmt_denominacion_programa->execute();
 $result_denominacion_programa = $stmt_denominacion_programa->get_result();
-$denominacion_programa = $result_denominacion_programa->fetch_assoc()['denominacion'];
+$programa_data = $result_denominacion_programa->fetch_assoc();
+
+$denominacion_programa = $programa_data['denominacion'];
+$programa = $programa_data['programa'];
+
 
 // Consultar distribuciones presupuestarias
-$query_distribucion = "SELECT monto_inicial, id_partida FROM distribucion_presupuestaria WHERE id_sector = ? AND id_ejercicio = ?";
+$query_distribucion = "SELECT monto_inicial, id_partida FROM distribucion_presupuestaria WHERE id_sector = ? AND id_programa = ? AND id_ejercicio = ?";
 $stmt_distribucion = $conexion->prepare($query_distribucion);
-$stmt_distribucion->bind_param('ii', $id, $id_ejercicio);
+$stmt_distribucion->bind_param('iii', $id_sector, $id_programa, $id_ejercicio);
 $stmt_distribucion->execute();
 $result_distribucion = $stmt_distribucion->get_result();
 $distribuciones = $result_distribucion->fetch_all(MYSQLI_ASSOC);
@@ -56,8 +53,6 @@ $distribuciones = $result_distribucion->fetch_all(MYSQLI_ASSOC);
 $data = [];
 $totales_por_partida = [];
 $partidas_a_agrupadas = ['301', '302', '303', '304', '305', '306', '307', '308', '309', '310', '311', '312', '313', '400', '401', '402', '403', '404', '405', '406', '407', '408', '409', '410', '411', '412', '498'];
-
-
 
 foreach ($distribuciones as $distribucion) {
     $monto_inicial = $distribucion['monto_inicial'];
@@ -71,7 +66,6 @@ foreach ($distribuciones as $distribucion) {
     $result_partida = $stmt_partida->get_result();
     $partida_data = $result_partida->fetch_assoc();
 
-
     if (!$partida_data) {
         echo 'No se encontraron registros en partidas_presupuestarias para el id_partida: ' . $id_partida . "<br>";
         continue; // Continúa al siguiente registro
@@ -79,8 +73,6 @@ foreach ($distribuciones as $distribucion) {
 
     $partida = $partida_data['partida'] ?? 'N/A';
     $descripcion = $partida_data['descripcion'] ?? 'N/A';
-
-
 
     // Extraer el código de partida (los primeros 3 caracteres)
     $codigo_partida = substr($partida, 0, 3);

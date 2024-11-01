@@ -1417,97 +1417,6 @@ const getDescripcionProgramaData = async () => {
   }
 }
 
-const getSectoresData = async () => {
-  showLoader()
-  try {
-    let res = await fetch(apiDescripcionProgramaUrl, {
-      method: 'POST',
-      body: JSON.stringify({
-        tabla: 'descripcion_programas',
-        accion: 'consultar_sector',
-      }),
-    })
-
-    if (!res.ok) throw { status: res.status, statusText: res.statusText }
-
-    // const clone = res.clone()
-
-    // let text = await clone.text()
-
-    // console.log(text)
-    const json = await res.json()
-    console.log(json)
-
-    if (json.success) {
-      let mappedData = mapData({
-        obj: json.success,
-        name: 'nombre',
-        id: 'id',
-      })
-
-      return { mappedData, fullInfo: json.success }
-    }
-
-    if (json.error) {
-      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
-    }
-  } catch (e) {
-    console.log(e)
-
-    return confirmNotification({
-      type: NOTIFICATIONS_TYPES.fail,
-      message: 'Error al obtener información',
-    })
-  } finally {
-    hideLoader()
-  }
-}
-const getProgramasData = async () => {
-  showLoader()
-  try {
-    let res = await fetch(apiDescripcionProgramaUrl, {
-      method: 'POST',
-      body: JSON.stringify({
-        tabla: 'descripcion_programas',
-        accion: 'consultar_programa',
-      }),
-    })
-
-    if (!res.ok) throw { status: res.status, statusText: res.statusText }
-
-    // const clone = res.clone()
-
-    // let text = await clone.text()
-
-    // console.log(text)
-    const json = await res.json()
-    console.log(json)
-
-    if (json.success) {
-      let mappedData = mapData({
-        obj: json.success,
-        name: 'nombre',
-        id: 'id',
-      })
-
-      return { mappedData, fullInfo: json.success }
-    }
-
-    if (json.error) {
-      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
-    }
-  } catch (e) {
-    console.log(e)
-
-    return confirmNotification({
-      type: NOTIFICATIONS_TYPES.fail,
-      message: 'Error al obtener información',
-    })
-  } finally {
-    hideLoader()
-  }
-}
-
 const getDescripcionProgramaDataId = async (id) => {
   showLoader()
   try {
@@ -1677,6 +1586,97 @@ const eliminarDescripcionProgramaId = async (id) => {
       toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
     }
     return json
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener información',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
+const getSectoresData = async () => {
+  showLoader()
+  try {
+    let res = await fetch(apiDescripcionProgramaUrl, {
+      method: 'POST',
+      body: JSON.stringify({
+        tabla: 'descripcion_programas',
+        accion: 'consultar_sector',
+      }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    // const clone = res.clone()
+
+    // let text = await clone.text()
+
+    // console.log(text)
+    const json = await res.json()
+    console.log(json)
+
+    if (json.success) {
+      let mappedData = mapData({
+        obj: json.success,
+        name: 'nombre',
+        id: 'id',
+      })
+
+      return { mappedData, fullInfo: json.success }
+    }
+
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener información',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+const getProgramasData = async () => {
+  showLoader()
+  try {
+    let res = await fetch(apiDescripcionProgramaUrl, {
+      method: 'POST',
+      body: JSON.stringify({
+        tabla: 'descripcion_programas',
+        accion: 'consultar_programa',
+      }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    // const clone = res.clone()
+
+    // let text = await clone.text()
+
+    // console.log(text)
+    const json = await res.json()
+    console.log(json)
+
+    if (json.success) {
+      let mappedData = mapData({
+        obj: json.success,
+        name: 'nombre',
+        id: 'id',
+      })
+
+      return { mappedData, fullInfo: json.success }
+    }
+
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
   } catch (e) {
     console.log(e)
 

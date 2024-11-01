@@ -3,11 +3,9 @@ require_once '../sistema_global/conexion.php';
 
 $id_ejercicio = $_GET['id_ejercicio'];
 
-
-
-
-$query_sector = "SELECT * FROM ejercicio_fiscal WHERE id = ?";
-$stmt = $conexion->prepare($query_sector);
+// Consulta a la tabla ejercicio_fiscal para obtener año y situado
+$query_ejercicio = "SELECT ano, situado FROM ejercicio_fiscal WHERE id = ?";
+$stmt = $conexion->prepare($query_ejercicio);
 $stmt->bind_param('i', $id_ejercicio);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -17,17 +15,11 @@ $ano = $data['ano'];
 $situado = $data['situado'];
 $stmt->close();
 
-
-
-
 // Inicializar array para almacenar los datos por sector
 $data = [];
 
-// Consultar datos del sector y su denominación junto con los IDs de pl_sectores_presupuestarios
-$query_sector = "SELECT s.id, s.sector, s.denominacion 
-                 FROM pl_sectores s
-                 JOIN pl_sectores_presupuestarios ps ON s.sector = ps.sector";
-
+// Consultar datos del sector y su denominación en la tabla pl_sectores
+$query_sector = "SELECT id, sector, denominacion FROM pl_sectores";
 $stmt_sector = $conexion->prepare($query_sector);
 if ($stmt_sector === false) {
     die('Error en la consulta SQL (pl_sectores): ' . $conexion->error);
@@ -35,7 +27,7 @@ if ($stmt_sector === false) {
 $stmt_sector->execute();
 $result_sector = $stmt_sector->get_result();
 
-// Agrupar los IDs por sector
+// Agrupar los sectores y sus denominaciones
 $sectores = []; // Array para agrupar IDs por sector
 while ($sector_data = $result_sector->fetch_assoc()) {
     $sector = $sector_data['sector'];
@@ -58,14 +50,14 @@ while ($sector_data = $result_sector->fetch_assoc()) {
     ];
 }
 
-// Tomemos un ejemplo para procesar los sectores 01, 02, 06, 08, 09, 11, 12, 13, 14, 15
+// Sectores a procesar
 $sectores_a_procesar = ['01', '02', '06', '08', '09', '11', '12', '13', '14', '15'];
 
 foreach ($sectores_a_procesar as $sector) {
     if (isset($sectores[$sector])) {
         $id_list = implode(',', $sectores[$sector]); // Convertimos el array en una lista separada por comas
 
-        // Hacer la consulta a distribucion_presupuestaria para el monto ordinario
+        // Consulta para obtener el monto ordinario de distribucion_presupuestaria
         if (!empty($id_list)) {
             $query_distribucion = "SELECT 
                                         SUM(monto_inicial) AS total_monto_inicial, 
@@ -83,7 +75,7 @@ foreach ($sectores_a_procesar as $sector) {
             $monto_inicial_total = $distribucion_data['total_monto_inicial'] ?? 0;
             $data[$sector]['monto_ordinario'] = $monto_inicial_total;
 
-            // Segunda consulta: Obtener la sumatoria de la tabla proyecto_inversion_partidas (para el monto de proyectos)
+            // Consulta para obtener el monto de proyectos en proyecto_inversion_partidas
             $query_proyecto = "SELECT SUM(monto) AS total_monto_proyecto FROM proyecto_inversion_partidas WHERE sector_id IN ($id_list)";
             $stmt_proyecto = $conexion->prepare($query_proyecto);
             if ($stmt_proyecto === false) {
@@ -100,6 +92,7 @@ foreach ($sectores_a_procesar as $sector) {
 
 // Puedes continuar procesando o mostrando los datos almacenados en $data aquí
 ?>
+
 
 
 <!DOCTYPE html>
