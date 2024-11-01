@@ -2,7 +2,6 @@
 require_once '../sistema_global/session.php';
 require_once '../../vendor/autoload.php'; // Ajusta la ruta según la ubicación de mpdf
 require_once 'pdf_files_config.php'; // Incluir el archivo de configuración
-require_once 'lib/TCPDF/tcpdf.php';
 require 'lib/FPDI-2.6.0/src/autoload.php';
 require_once '../sistema_global/conexion.php'; // Archivo de conexión con $conexion
 
@@ -140,6 +139,7 @@ foreach ($pdf_files as $url => $pdf_filename) {
     $mpdf = new \Mpdf\Mpdf([
         'mode' => 'utf-8',
         'format' => $reportes[$tipo]['formato'],
+        'tempDir' => __DIR__ . '/temp/mpdf',
         'margin_left' => 8,
         'margin_right' => 8
     ]);
