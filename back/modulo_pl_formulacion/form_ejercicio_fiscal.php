@@ -132,7 +132,7 @@ function obtenerTodosEjerciciosFiscales()
                 $situado = $row['situado'];
 
                 // Calcular la sumatoria de los montos iniciales en distribucion_presupuestaria para este id_ejercicio
-                $sqlSum = "SELECT id, id_partida, monto_inicial, monto_actual, id_sector, id_programa FROM distribucion_presupuestaria WHERE id_ejercicio = ?";
+                $sqlSum = "SELECT id, id_partida, monto_inicial, monto_actual, id_sector, id_programa, id_proyecto FROM distribucion_presupuestaria WHERE id_ejercicio = ?";
                 $stmtSum = $conexion->prepare($sqlSum);
                 $stmtSum->bind_param("i", $id_ejercicio);
                 $stmtSum->execute();
@@ -181,6 +181,21 @@ function obtenerTodosEjerciciosFiscales()
                             $programaInformacion = null;
                             if ($resultPrograma->num_rows > 0) {
                                 $programaInformacion = $resultPrograma->fetch_assoc();
+                            }
+
+                            if ($rowDistribucion['id_proyecto'] == 0) {
+                                $proyectoInformacion = 0;
+                            }else{
+                                $sqlProyecto = "SELECT * FROM pl_proyectos WHERE id = ?";
+                                $stmtProyecto = $conexion->prepare($sqlProyecto);
+                                $stmtProyecto->bind_param("i", $sumRow['id_proyecto']);
+                                $stmtProyecto->execute();
+                                $resultProyecto = $stmtProyecto->get_result();
+
+                        
+                                if ($resultProyecto->num_rows > 0) {
+                                    $proyectoInformacion = $resultProyecto->fetch_assoc();
+                                }
                             }
 
                             // Asignar las propiedades a distribucion_partidas incluyendo sector_informacion
@@ -251,7 +266,7 @@ function obtenerEjercicioFiscalPorId($id)
             $ejercicio = $result->fetch_assoc();
 
             // Consulta para obtener los registros de distribucion_presupuestaria y sumar los montos iniciales
-            $sqlDistribucion = "SELECT id, id_partida, monto_inicial, monto_actual, id_sector, id_programa 
+            $sqlDistribucion = "SELECT id, id_partida, monto_inicial, monto_actual, id_sector, id_programa, id_proyecto 
                                 FROM distribucion_presupuestaria 
                                 WHERE id_ejercicio = ?";
             $stmtDistribucion = $conexion->prepare($sqlDistribucion);
@@ -303,6 +318,22 @@ function obtenerEjercicioFiscalPorId($id)
                             $programaInformacion = $resultPrograma->fetch_assoc();
                         }
 
+                        if ($rowDistribucion['id_proyecto'] == 0) {
+                            $proyectoInformacion = 0;
+                        }else{
+                          $sqlProyecto = "SELECT * FROM pl_proyectos WHERE id = ?";
+                        $stmtProyecto = $conexion->prepare($sqlProyecto);
+                        $stmtProyecto->bind_param("i", $rowDistribucion['id_proyecto']);
+                        $stmtProyecto->execute();
+                        $resultProyecto = $stmtProyecto->get_result();
+
+                        
+                        if ($resultProyecto->num_rows > 0) {
+                            $proyectoInformacion = $resultProyecto->fetch_assoc();
+                        }
+                        }
+                        
+
                         // Asignar las propiedades a distribucion_partidas incluyendo sector_informacion
                         $distribucionPartidas[] = [
                             'id' => $rowDistribucion['id'], // ID de distribucion_presupuestaria
@@ -314,6 +345,7 @@ function obtenerEjercicioFiscalPorId($id)
                             'monto_actual' => $rowDistribucion['monto_actual'],
                             'sector_informacion' => $sectorInformacion,
                             'programa_informacion' => $programaInformacion,
+                            'proyecto_informacion' => $proyectoInformacion,
                         ];
 
                         $stmtSector->close();
