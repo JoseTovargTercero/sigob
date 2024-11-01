@@ -85,7 +85,7 @@ export const loadDistribucionTable = async (partidas) => {
       sector_programa_proyecto: `${
         el.sector_informacion ? el.sector_informacion.sector : '0'
       }.${el.programa_informacion ? el.programa_informacion.programa : '0'}.${
-        el.proyecto_informacion || '00'
+        el.proyecto_informacion == 0 ? '00' : el.proyecto_informacion.proyecto
       }`,
       partida: el.partida,
       descripcion: descripcion,
