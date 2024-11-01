@@ -209,18 +209,25 @@ export const form_informacionContraloriaForm = ({ elementToInsert, data }) => {
       confirmNotification({
         type: NOTIFICATIONS_TYPES.send,
         message: '¿Desea actualizar este registro?',
-        successFunction: function () {
-          actualizarContraloriaData({ info: fieldList })
-          loadContraloriaTable()
-          closeCard()
+        successFunction: async function () {
+          let res = await actualizarContraloriaData({ info: fieldList })
+          if (res.success) {
+            loadContraloriaTable()
+            closeCard()
+          }
         },
       })
     } else {
       confirmNotification({
         type: NOTIFICATIONS_TYPES.send,
         message: '¿Desea realizar este registro?',
-        successFunction: function () {
-          registrarContraloriaData({ info: fieldList })
+        successFunction: async function () {
+          let res = await registrarContraloriaData({ info: fieldList })
+          if (res.success) {
+            loadContraloriaTable()
+            closeCard()
+          }
+
           closeCard()
           loadContraloriaTable()
         },

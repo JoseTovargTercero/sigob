@@ -228,6 +228,27 @@ function validateInput({ target, fieldList = {}, fieldListErrors = {}, type }) {
       }
     }
 
+    if (type === 'textarea') {
+      let isText = regularExpressions.TEXTAREA.test(value)
+      if (!isText) {
+        target.classList.add('input-error')
+        fieldListErrors[target.name].value = true
+        errorMessage(target, message)
+        fieldList = {
+          ...fieldList,
+          [target.name]: target.value,
+        }
+      } else {
+        fieldListErrors[target.name].value = false
+        target.classList.remove('input-error')
+        errorMessage(target, message)
+        fieldList = {
+          ...fieldList,
+          [target.name]: target.value,
+        }
+      }
+    }
+
     if (type === 'partida') {
       let isPartida = regularExpressions.PARTIDA.test(value)
 
@@ -649,6 +670,12 @@ export function validarIdentificador(identificador) {
   return identificador
 }
 
+function recortarTexto(str, length) {
+  let texto = str.length < length ? str : `${str.slice(0, length)} ...`
+
+  return texto
+}
+
 export {
   validateInput,
   validateModal,
@@ -665,4 +692,5 @@ export {
   mapDataManual,
   separarMiles,
   insertOptions,
+  recortarTexto,
 }

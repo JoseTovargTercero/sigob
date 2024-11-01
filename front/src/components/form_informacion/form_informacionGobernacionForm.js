@@ -240,20 +240,25 @@ export const form_informacionGobernacionForm = ({ elementToInsert, data }) => {
       confirmNotification({
         type: NOTIFICATIONS_TYPES.send,
         message: '¿Desea actualizar este registro?',
-        successFunction: function () {
-          actualizarGobernacionData({ info: fieldList })
-          loadGobernacionTable()
-          closeCard()
+        successFunction: async function () {
+          let res = await actualizarGobernacionData({ info: fieldList })
+
+          if (res.success) {
+            loadGobernacionTable()
+            closeCard()
+          }
         },
       })
     } else {
       confirmNotification({
         type: NOTIFICATIONS_TYPES.send,
         message: '¿Desea realizar este registro?',
-        successFunction: function () {
-          registrarGobernacionData({ info: fieldList })
-          closeCard()
-          loadGobernacionTable()
+        successFunction: async function () {
+          let res = await registrarGobernacionData({ info: fieldList })
+          if (res.success) {
+            loadGobernacionTable()
+            closeCard()
+          }
         },
       })
     }

@@ -1,11 +1,14 @@
 import {
   getConsejoData,
   getContraloriaData,
+  getDescripcionProgramaData,
   getDirectivoData,
   getGobernacionData,
+  getPersonaData,
+  getTitulo1Data,
 } from '../api/form_informacion.js'
 import { getFormPartidas } from '../api/partidas.js'
-import { separarMiles } from '../helpers/helpers.js'
+import { recortarTexto, separarMiles } from '../helpers/helpers.js'
 
 const tableLanguage = {
   decimal: '',
@@ -301,6 +304,167 @@ export const loadDirectivoTable = async () => {
   // console.log(datosOrdenados)
   directivoTable.rows.add(data).draw()
 }
+let personaTable
+export const validatePersonaTable = async () => {
+  personaTable = new DataTable('#persona-table', {
+    columns: [{ data: 'nombres' }, { data: 'cargo' }, { data: 'acciones' }],
+    responsive: true,
+    scrollY: 400,
+    language: tableLanguage,
+    layout: {
+      topStart: function () {
+        let toolbar = document.createElement('div')
+        toolbar.innerHTML = `
+            <h5 class="text-center">Lista de registros en la contraloria</h5>
+                      `
+        return toolbar
+      },
+      topEnd: { search: { placeholder: 'Buscar...' } },
+      bottomStart: 'info',
+      bottomEnd: 'paging',
+    },
+  })
+
+  loadPersonaTable()
+}
+
+export const loadPersonaTable = async () => {
+  let personaData = await getPersonaData()
+
+  if (!Array.isArray(personaData.fullInfo)) return
+
+  if (!personaData.fullInfo || personaData.error) return
+
+  console.log(personaData)
+
+  let datosOrdenados = [...personaData.fullInfo].sort((a, b) => a.id - b.id)
+  let data = datosOrdenados.map((el) => {
+    return {
+      nombres: el.nombres,
+      cargo: el.cargo,
+      acciones: `
+      <button class="btn btn-sm bg-brand-color-2 text-white btn-update" data-editarid="${el.id}"></button>
+      <button class="btn btn-danger btn-sm btn-destroy" data-eliminarid="${el.id}"></button>
+      `,
+    }
+  })
+
+  personaTable.clear().draw()
+
+  // console.log(datosOrdenados)
+  personaTable.rows.add(data).draw()
+}
+
+let titulo1Table
+export const validateTitulo1Table = async () => {
+  titulo1Table = new DataTable('#titulo-1-table', {
+    columns: [
+      { data: 'articulo' },
+      { data: 'descripcion' },
+      { data: 'acciones' },
+    ],
+    responsive: true,
+    scrollY: 400,
+    language: tableLanguage,
+    layout: {
+      topStart: function () {
+        let toolbar = document.createElement('div')
+        toolbar.innerHTML = `
+            <h5 class="text-center">Lista de registros en la contraloria</h5>
+                      `
+        return toolbar
+      },
+      topEnd: { search: { placeholder: 'Buscar...' } },
+      bottomStart: 'info',
+      bottomEnd: 'paging',
+    },
+  })
+
+  loadTitulo1Table()
+}
+
+export const loadTitulo1Table = async () => {
+  let titutlo1Data = await getTitulo1Data()
+
+  if (!Array.isArray(titutlo1Data.fullInfo)) return
+
+  if (!titutlo1Data.fullInfo || titutlo1Data.error) return
+
+  let datosOrdenados = [...titutlo1Data.fullInfo].sort((a, b) => a.id - b.id)
+  let data = datosOrdenados.map((el) => {
+    let descripcion = recortarTexto(el.descripcion, 50)
+    return {
+      articulo: el.articulo,
+      descripcion: descripcion || 'No asignado',
+      acciones: `
+      <button class="btn btn-sm bg-brand-color-2 text-white btn-update" data-editarid="${el.id}"></button>
+      <button class="btn btn-danger btn-sm btn-destroy" data-eliminarid="${el.id}"></button>
+      `,
+    }
+  })
+
+  titulo1Table.clear().draw()
+
+  // console.log(datosOrdenados)
+  titulo1Table.rows.add(data).draw()
+}
+let descripcionProgramaTable
+export const validateDescripcionProgramaTable = async () => {
+  descripcionProgramaTable = new DataTable('#descripcion-programa-table', {
+    columns: [
+      { data: 'sector' },
+      { data: 'programa' },
+      { data: 'descripcion' },
+      { data: 'acciones' },
+    ],
+    responsive: true,
+    scrollY: 400,
+    language: tableLanguage,
+    layout: {
+      topStart: function () {
+        let toolbar = document.createElement('div')
+        toolbar.innerHTML = `
+            <h5 class="text-center">Lista de registros en la contraloria</h5>
+                      `
+        return toolbar
+      },
+      topEnd: { search: { placeholder: 'Buscar...' } },
+      bottomStart: 'info',
+      bottomEnd: 'paging',
+    },
+  })
+
+  loadDescripcionProgramaTable()
+}
+
+export const loadDescripcionProgramaTable = async () => {
+  let descripcionPorgramaData = await getDescripcionProgramaData()
+
+  if (!Array.isArray(descripcionPorgramaData.fullInfo)) return
+
+  if (!descripcionPorgramaData.fullInfo || descripcionPorgramaData.error) return
+
+  let datosOrdenados = [...descripcionPorgramaData.fullInfo].sort(
+    (a, b) => a.id - b.id
+  )
+  let data = datosOrdenados.map((el) => {
+    let descripcion = recortarTexto(el.descripcion, 50)
+    return {
+      sector: el.id_sector,
+      programa: el.id_programa,
+      descripcion: descripcion || 'No asignado',
+      acciones: `
+      <button class="btn btn-sm bg-brand-color-2 text-white btn-update" data-editarid="${el.id}"></button>
+      <button class="btn btn-danger btn-sm btn-destroy" data-eliminarid="${el.id}"></button>
+      `,
+    }
+  })
+
+  descripcionProgramaTable.clear().draw()
+
+  // console.log(datosOrdenados)
+  descripcionProgramaTable.rows.add(data).draw()
+}
 
 export async function deleteGobernacionRow({ id, row }) {
   gobernacionTable.row(row).remove().draw()
@@ -314,4 +478,15 @@ export async function deleteConsejoRow({ id, row }) {
 }
 export async function deleteDirectivoRow({ id, row }) {
   directivoTable.row(row).remove().draw()
+}
+export async function deletePersonaRow({ id, row }) {
+  personaTable.row(row).remove().draw()
+}
+
+export async function deleteTitulo1Row({ id, row }) {
+  titulo1Table.row(row).remove().draw()
+}
+
+export async function deleteDescripcionProgramaRow({ id, row }) {
+  descripcionProgramaTable.row(row).remove().draw()
 }
