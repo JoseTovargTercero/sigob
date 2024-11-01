@@ -497,11 +497,9 @@ $stmt->close();
 
         const url_back = '../../back/modulo_pl_formulacion/form_plan_inversion.php'
         const planData = <?php echo json_encode([
-                            'id' => $id_plan_inversion,
-                            'monto' => $plan_inversion_monto
+                            'id' => @$id_plan_inversion,
+                            'monto' => @$plan_inversion_monto
                           ]); ?>;
-
-
 
 
         // Llamadas a `dbh_select` para cada tabla
@@ -825,6 +823,12 @@ $stmt->close();
 
         // verificar si hay dinero antes de mostrar el formulario
         function nuevoProyecto() {
+
+          if (planData.id == '0') {
+            toast_s("error", "No hay asignación para el plan de inversion seleccionado");
+            return
+          }
+
           if (planData.monto == monto_total_proyectos) {
             toast_s("error", "No se puede crear un proyecto sin disponibilidad presupuestaria");
           } else {
