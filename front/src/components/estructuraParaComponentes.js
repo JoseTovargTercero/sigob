@@ -17,11 +17,13 @@ const nombre_componente = ({ elementToInsert }) => {
       type: 'text',
     },
   }
-  const oldCardElement = d.getElementById('{nombre}-form-card')
+
+  let nombreCard = '${nombreCard}'
+
+  const oldCardElement = d.getElementById(`${nombreCard}-form-card`)
   if (oldCardElement) oldCardElement.remove()
 
-  let card = (
-    <div class='card slide-up-animation' id='{nombre}-form-card'>
+  let card = `<div class='card slide-up-animation' id='${nombreCard}-form-card'>
       <div class='card-header d-flex justify-content-between'>
         <div class=''>
           <h5 class='mb-0'>CAMBIAR TEXTO</h5>
@@ -38,17 +40,16 @@ const nombre_componente = ({ elementToInsert }) => {
       </div>
       <div class='card-body'></div>
       <div class='card-footer'>
-        <button class='btn btn-primary' id='{nombre}-guardar'>
+        <button class='btn btn-primary' id='${nombreCard}-guardar'>
           Guardar
         </button>
       </div>
-    </div>
-  )
+    </div>`
 
   d.getElementById(elementToInsert).insertAdjacentHTML('afterbegin', card)
 
-  let cardElement = d.getElementById('{nombre}-form-card')
-  let formElement = d.getElementById('{nombre}-form')
+  let cardElement = d.getElementById(`${nombreCard}-form-card`)
+  let formElement = d.getElementById(`${nombreCard}-form`)
 
   const closeCard = () => {
     // validateEditButtons()
@@ -86,13 +87,13 @@ const nombre_componente = ({ elementToInsert }) => {
 
 function chosenSelect() {
   let select = ` <div class='form-group'>
-      <label for='search-select-{nombre}' class='form-label'>
+      <label for='search-select-${nombreCard}' class='form-label'>
         Seleccione el sector
       </label>
       <select
-        class='form-select {nombre}-input chosen-select'
+        class='form-select ${nombreCard}-input chosen-select'
         name='id_sector'
-        id='search-select-{nombre}'
+        id='search-select-${nombreCard}'
       >
         <option>Elegir...</option>
       </select>

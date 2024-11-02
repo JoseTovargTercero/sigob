@@ -25,6 +25,7 @@ import {
   validateInput,
 } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
+import { form_distribucion_entes_card } from './form_distribucion_entes_card.js'
 const d = document
 
 const tableLanguage = {
@@ -192,7 +193,11 @@ export const form_asignacion_entes_form_card = async ({
         status,
         eliminar = `<button class="btn btn-danger btn-sm btn-destroy" data-eliminaractividadid="${
           actividad.actividad_id
-        }" ${Number(asignacion.status) === 1 ? 'disabled' : ''}></button>`
+        }" ${Number(asignacion.status) === 1 ? 'disabled' : ''}></button>`,
+        detalle = `<button data-distribuciondetalleid="${actividad.actividad_id}" type="button" class="btn avtar avtar-xs btn-success" data-toggle="
+      tooltip" title="Ver distribucion">
+      <i class="bx bx-detail"></i>
+      </button>`
 
       if (actividad.status) {
         if (actividad.status === 0) {
@@ -237,7 +242,10 @@ export const form_asignacion_entes_form_card = async ({
 
       <td>${montoTotalActividad}</td>
       <td>${status}</td>
-      <td>${eliminar}</td>
+      <td>
+     ${detalle}
+      ${eliminar}
+      </td>
   </tr>`
     })
 
@@ -853,6 +861,64 @@ export const form_asignacion_entes_form_card = async ({
   async function validateClick(e) {
     if (e.target.dataset.close) {
       closeCard()
+    }
+
+    if (e.target.closest('[data-distribuciondetalleid]')) {
+      console.log()
+
+      let id = Number(e.target.closest('button').dataset.distribuciondetalleid)
+
+      let distribucionEncontrada = datosDistribucionActividades.find(
+        (el) => Number(el.actividad_id) === id
+      )
+
+      let dependenciaEnteEncontrada = asignacion.dependencias.find(
+        (el) => Number(el.id) === id
+      )
+      console.log(dependenciaEnteEncontrada)
+
+      let detallesDatos = distribucionEncontrada.distribuciones.map((el) => {
+        let partidaEncontrada = ejercicioFiscal.distribucion_partidas.find(
+          (partida) => Number(partida.id) === Number(el.id_distribucion)
+        )
+
+        let sector = `${
+          partidaEncontrada.sector_informacion
+            ? partidaEncontrada.sector_informacion.sector
+            : 'Sector no disponible'
+        }`
+        let programa = `${
+          partidaEncontrada.programa_informacion
+            ? partidaEncontrada.programa_informacion.programa
+            : 'Programa no disponible'
+        }`
+        let proyecto = `${
+          partidaEncontrada.proyecto_informacion == 0
+            ? '00'
+            : partidaEncontrada.proyecto_informacion.proyecto_id
+        }`
+
+        let partida = partidaEncontrada.partida
+
+        return { sector, programa, proyecto, partida, monto: el.monto }
+      })
+
+      let informacion = {
+        ente_nombre: dependenciaEnteEncontrada.ente_nombre,
+        sectorActividad: dependenciaEnteEncontrada.sector,
+        programaActividad: dependenciaEnteEncontrada.programa,
+        proyectoActividad: dependenciaEnteEncontrada.proyecto,
+        actividad: dependenciaEnteEncontrada.actividad,
+        distribuciones: detallesDatos,
+        monto_total: distribucionEncontrada.monto_total_asignado,
+      }
+
+      console.log(informacion)
+
+      form_distribucion_entes_card({
+        elementToInsert: 'asignacion-entes-view',
+        informacion: informacion,
+      })
     }
 
     if (e.target.dataset.eliminaractividadid) {
