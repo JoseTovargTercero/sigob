@@ -191,13 +191,38 @@ export const form_asignacion_entes_form_card = async ({
       let actividad_codigo = actividad.actividad,
         actividad_nombre = recortarTexto(actividad.ente_nombre, 35),
         status,
-        eliminar = `<button class="btn btn-danger btn-sm btn-destroy" data-eliminaractividadid="${
+        acciones
+
+      if (asignacion.actividades_entes.length > 0) {
+        let distribucionesEstanAprobadas = asignacion.actividades_entes.every(
+          (distribucion) => Number(distribucion.status) === 1
+        )
+        console.log(distribucionesEstanAprobadas)
+
+        if (distribucionesEstanAprobadas) {
+          acciones = ` <a
+              href='../../../../sigob/back/modulo_pl_formulacion/form_distribucion_detalles.php?id="${actividad.actividad_id}"'
+              target='_blank'
+              class='btn btn-sm bg-brand-color-2 text-white'
+            >
+              <i class='bx bx-detail'></i>
+            </a>`
+        }
+      } else {
+        acciones = `<button class="btn btn-danger btn-sm btn-destroy" data-eliminaractividadid="${
           actividad.actividad_id
-        }" ${Number(asignacion.status) === 1 ? 'disabled' : ''}></button>`,
-        detalle = `<button data-distribuciondetalleid="${actividad.actividad_id}" type="button" class="btn avtar avtar-xs btn-success" data-toggle="
-      tooltip" title="Ver distribucion">
-      <i class="bx bx-detail"></i>
-      </button>`
+        }" ${Number(asignacion.status) === 1 ? 'disabled' : ''}></button>
+         <button
+            data-distribuciondetalleid='${actividad.actividad_id}'
+            type='button'
+            class='btn btn-sm btn-success'
+            data-toggle='tooltip'
+            title='Ver distribucion'
+            ${asignacion.status === 1 ? 'disabled' : ''}
+          >
+            <i class='bx bx-detail'></i>
+          </button>`
+      }
 
       if (actividad.status) {
         if (actividad.status === 0) {
@@ -243,8 +268,8 @@ export const form_asignacion_entes_form_card = async ({
       <td>${montoTotalActividad}</td>
       <td>${status}</td>
       <td>
-     ${detalle}
-      ${eliminar}
+     ${acciones}
+      
       </td>
   </tr>`
     })
