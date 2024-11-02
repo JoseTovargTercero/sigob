@@ -25,73 +25,95 @@ try {
     $ano = $datosEjercicio['ano'];
     $situado = $datosEjercicio['situado'];
 
-    // Consultar a la tabla plan_inversion para obtener monto_total
-    $sqlInversion = "SELECT monto_total FROM plan_inversion WHERE id_ejercicio = ?";
-    $stmtInversion = $conexion->prepare($sqlInversion);
-    $stmtInversion->bind_param("i", $id_ejercicio);
-    $stmtInversion->execute();
-    $datosInversion = $stmtInversion->get_result()->fetch_assoc();
-    $monto_total = $datosInversion ? $datosInversion['monto_total'] : 0; // Cambiado a 0
-    $total = $situado + $monto_total;
 
-    // Consultar sectores y programas agrupados por sector
-    $sqlSectores = "
-        SELECT s.id AS sector_id, s.sector, s.denominacion AS sector_denominacion, 
-               p.id AS programa_id, p.programa, p.denominacion AS programa_denominacion
-        FROM pl_sectores AS s
-        LEFT JOIN pl_programas AS p ON s.id = p.sector
-        ORDER BY s.sector, p.programa
-    ";
-    $resultadoSectores = $conexion->query($sqlSectores);
-    $sectoresData = [];
-    if ($resultadoSectores && $resultadoSectores->num_rows > 0) {
-        while ($row = $resultadoSectores->fetch_assoc()) {
-            $sector_id = $row['sector_id'];
-            $programa_id = $row['programa_id'];
+// Consulta a la tabla plan_inversion para obtener monto_total
+$sqlInversion = "SELECT monto_total FROM plan_inversion WHERE id_ejercicio = ?";
+$stmtInversion = $conexion->prepare($sqlInversion);
+$stmtInversion->bind_param("i", $id_ejercicio);
+$stmtInversion->execute();
+$datosInversion = $stmtInversion->get_result()->fetch_assoc();
+$monto_total = $datosInversion ? $datosInversion['monto_total'] : 0;
+$total = $situado + $monto_total;
 
-            if (!isset($sectoresData[$sector_id])) {
-                $sectoresData[$sector_id] = [
-                    'sector_id' => $sector_id,
-                    'sector' => $row['sector'],
-                    'sector_denominacion' => $row['sector_denominacion'],
-                    'programas' => []
-                ];
-            }
+// Consulta de sectores y programas agrupados por sector
+$sqlSectores = "
+    SELECT s.id AS sector_id, s.sector, s.denominacion AS sector_denominacion, 
+           p.id AS programa_id, p.programa, p.denominacion AS programa_denominacion
+    FROM pl_sectores AS s
+    LEFT JOIN pl_programas AS p ON s.id = p.sector
+    ORDER BY s.sector, p.programa
+";
+$resultadoSectores = $conexion->query($sqlSectores);
+$sectoresData = [];
+if ($resultadoSectores && $resultadoSectores->num_rows > 0) {
+    while ($row = $resultadoSectores->fetch_assoc()) {
+        $sector_id = $row['sector_id'];
+        $programa_id = $row['programa_id'];
 
-            // Solo agregar el programa si no está ya en el array
-            if ($programa_id !== null && !isset($sectoresData[$sector_id]['programas'][$programa_id])) {
-                $sectoresData[$sector_id]['programas'][$programa_id] = [
-                    'programa_id' => $programa_id,
-                    'programa' => $row['programa'],
-                    'programa_denominacion' => $row['programa_denominacion'],
-                    'monto' => 0  // Inicializamos el monto en 0
-                ];
-            }
+        if (!isset($sectoresData[$sector_id])) {
+            $sectoresData[$sector_id] = [
+                'sector_id' => $sector_id,
+                'sector' => $row['sector'],
+                'sector_denominacion' => $row['sector_denominacion'],
+                'programas' => []
+            ];
+        }
+
+        // Solo agregar el programa si no está ya en el array
+        if ($programa_id !== null && !isset($sectoresData[$sector_id]['programas'][$programa_id])) {
+            $sectoresData[$sector_id]['programas'][$programa_id] = [
+                'programa_id' => $programa_id,
+                'programa' => $row['programa'],
+                'programa_denominacion' => $row['programa_denominacion'],
+                'monto' => 0  // Inicializamos el monto en 0
+            ];
         }
     }
+}
 
-    // Consultar montos en la tabla proyecto_inversion_partidas en una sola consulta
-    $sqlMontos = "
-        SELECT sector_id, programa_id, SUM(monto) AS total_monto 
-        FROM proyecto_inversion_partidas 
-        GROUP BY sector_id, programa_id
-    ";
-    $resultadoMontos = $conexion->query($sqlMontos);
-    $montosData = [];
-    if ($resultadoMontos && $resultadoMontos->num_rows > 0) {
-        while ($row = $resultadoMontos->fetch_assoc()) {
-            $montosData[$row['sector_id']][$row['programa_id']] = $row['total_monto'];
+// Consultar montos en la tabla proyecto_inversion_partidas en una sola consulta
+$sqlMontos = "
+    SELECT sector_id, programa_id, SUM(monto) AS total_monto 
+    FROM proyecto_inversion_partidas 
+    GROUP BY sector_id, programa_id
+";
+$resultadoMontos = $conexion->query($sqlMontos);
+$montosData = [];
+if ($resultadoMontos && $resultadoMontos->num_rows > 0) {
+    while ($row = $resultadoMontos->fetch_assoc()) {
+        $montosData[$row['sector_id']][$row['programa_id']] = $row['total_monto'];
+    }
+}
+
+// Consultar montos actuales en la tabla distribucion_presupuestaria
+$sqlDistribucion = "
+    SELECT id_sector, id_programa, SUM(monto_actual) AS total_monto_actual
+    FROM distribucion_presupuestaria
+    GROUP BY id_sector, id_programa
+";
+$resultadoDistribucion = $conexion->query($sqlDistribucion);
+$distribucionData = [];
+if ($resultadoDistribucion && $resultadoDistribucion->num_rows > 0) {
+    while ($row = $resultadoDistribucion->fetch_assoc()) {
+        $distribucionData[$row['id_sector']][$row['id_programa']] = $row['total_monto_actual'];
+    }
+}
+
+// Asociar los montos de proyecto_inversion_partidas y distribucion_presupuestaria a los programas
+foreach ($sectoresData as &$sector) {
+    foreach ($sector['programas'] as &$programa) {
+        // Agregar monto de proyecto_inversion_partidas si existe
+        if (isset($montosData[$sector['sector_id']][$programa['programa_id']])) {
+            $programa['monto'] = $montosData[$sector['sector_id']][$programa['programa_id']];
+        }
+        // Agregar monto_actual de distribucion_presupuestaria si existe
+        if (isset($distribucionData[$sector['sector_id']][$programa['programa_id']])) {
+            $programa['monto'] += $distribucionData[$sector['sector_id']][$programa['programa_id']];
         }
     }
+}
 
-    // Asociar los montos a los programas
-    foreach ($sectoresData as &$sector) {
-        foreach ($sector['programas'] as &$programa) {
-            if (isset($montosData[$sector['sector_id']][$programa['programa_id']])) {
-                $programa['monto'] = $montosData[$sector['sector_id']][$programa['programa_id']];
-            }
-        }
-    }
+
 
     // Consultar todos los registros de la tabla titulo_1 con articulo y descripcion
     $sqlTitulo = "SELECT articulo, descripcion FROM titulo_1";
