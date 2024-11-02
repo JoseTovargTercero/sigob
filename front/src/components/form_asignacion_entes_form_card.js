@@ -80,8 +80,14 @@ export const form_asignacion_entes_form_card = async ({
 
   let datosDistribucionActividades = []
 
-  // DATOS PARA GENERAR TABLA EN PLAN ENTE
-  let datosDistribucionTabla = []
+  // DATOS PARA GUARDAR ESTADO DE LAS PARTIDAS (MONTO ASIGNADO Y/O DISPONIBLE)
+  let disponibilidadPartida = {}
+
+  ejercicioFiscal.distribucion_partidas.forEach((distribucion) => {
+    disponibilidadPartida[`distribucion-${distribucion.id}`] = Number(
+      distribucion.monto_actual
+    )
+  })
 
   // CONTROLAR FOCUS DEL FORMUALRIO
   let formFocus = 1
@@ -623,6 +629,8 @@ export const form_asignacion_entes_form_card = async ({
         (partida) => partida.id == id
       )
 
+      console.log(datosDistribucionActividades)
+
       let sector = `${
         partidaEncontrada.sector_informacion
           ? partidaEncontrada.sector_informacion.sector
@@ -650,9 +658,7 @@ export const form_asignacion_entes_form_card = async ({
         partida: partidaEncontrada.partida,
         nombre: partidaEncontrada.nombre || 'No asignado',
         descripcion: partidaEncontrada.descripcion,
-        monto_disponible: partidaEncontrada
-          ? partidaEncontrada.monto_inicial
-          : 0,
+        monto_disponible: disponibilidadPartida[`distribucion-${id}`],
       }
     })
 
@@ -830,7 +836,6 @@ export const form_asignacion_entes_form_card = async ({
   // INICIALIZAR CARD
 
   cardBody.innerHTML = await planEnte()
-
   validarPartidasEntesTable()
 
   let cardElement = d.getElementById('asignacion-entes-form-card')
@@ -855,14 +860,21 @@ export const form_asignacion_entes_form_card = async ({
 
       // ACTUALIZAR TOTAL DISTRIBUIDO
 
-      let montoRestar = datosDistribucionActividades.find(
+      let distribucionRestar = datosDistribucionActividades.find(
         (el) =>
           Number(el.actividad_id) ===
           Number(e.target.dataset.eliminaractividadid)
-      ).monto_total_asignado
-      console.log(montoRestar)
+      )
+      console.log(distribucionRestar)
 
-      montos.distribuido_total -= montoRestar
+      montos.distribuido_total -= distribucionRestar.monto_total_asignado
+
+      // ACTUALIZAR MONTO DISPONIBLE DE DISTRIBUCIONES
+      distribucionRestar.distribuciones.forEach((el) => {
+        disponibilidadPartida[`distribucion-${el.id_distribucion}`] += Number(
+          el.monto
+        )
+      })
 
       if (asignacion.tipo_ente === 'D') {
         datosDistribucionActividades = []
@@ -1121,8 +1133,19 @@ export const form_asignacion_entes_form_card = async ({
           let id_distribucion = input.dataset.id
           let monto = Number(input.value)
           monto_total_asignado += monto
+
+          if (
+            disponibilidadPartida.hasOwnProperty(
+              `distribucion-${id_distribucion}`
+            )
+          ) {
+            disponibilidadPartida[`distribucion-${id_distribucion}`] -= monto
+          }
+
           return { id_distribucion, monto }
         })
+
+        console.log(disponibilidadPartida)
 
         let data = {
           id_ente: asignacion.id_ente,
