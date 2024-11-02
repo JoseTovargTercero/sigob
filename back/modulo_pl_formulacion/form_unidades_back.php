@@ -24,14 +24,15 @@ function guardarEnte($proyectosArray)
         $tipo_ente = $proyectosArray['tipo_ente'];
 
         // verificar nombre
-        $stmt = mysqli_prepare($conexion, "SELECT * FROM `entes` WHERE ente_nombre = ?");
-        $stmt->bind_param('s', $nombre);
+        $stmt = mysqli_prepare($conexion, "SELECT * FROM `entes` WHERE sector = ? AND programa = ? AND proyecto = ?");
+        $stmt->bind_param('sss', $sector, $programa, $proyecto);
         $stmt->execute();
         $result = $stmt->get_result();
         if ($result->num_rows > 0) {
             throw new Exception("Ya existe un ente con el mismo nombre");
         }
         $stmt->close();
+        // Verificar que no exista una actividad para el sector y programa seleccionado
 
 
 
@@ -51,10 +52,21 @@ function guardarEnte($proyectosArray)
             $error = $stmt->error;
             throw new Exception("Error al insertar en la tabla proyecto_inversion. $error");
         }
+        $id_ente = $conexion->insert_id;
 
-
-
+        // Registrar en actividades (entes_dependencias)
+        $info = [
+            'id_ente' => $id_ente,
+            'sector' => $sector,
+            'programa' => $programa,
+            'proyecto' => $proyecto,
+            'actividad_suu' => '51',
+            'denominacion_suu' => $nombre
+        ];
         $stmt->close();
+
+        guardar_suu($info, $tipo_ente);
+
 
         return json_encode(["success" => "Datos guardados correctamente."]);
     } catch (Exception $e) {
@@ -63,7 +75,7 @@ function guardarEnte($proyectosArray)
     }
 }
 // Función para insertar datos en plan_inversion y proyecto_inversion
-function guardar_suu($info)
+function guardar_suu($info, $tipo_ente = 'J')
 {
     global $conexion;
 
@@ -79,7 +91,6 @@ function guardar_suu($info)
         $proyecto = $info['proyecto'];
         $actividad_suu = $info['actividad_suu'];
         $denominacion_suu = $info['denominacion_suu'];
-        $tipo_ente = 'J';
 
         // verificar nombre
         $stmt = mysqli_prepare($conexion, "SELECT * FROM `entes_dependencias` WHERE ente_nombre = ?");
@@ -215,6 +226,7 @@ function get_sub_unidades()
     LEFT JOIN pl_sectores ON entes_dependencias.sector = pl_sectores.id
     LEFT JOIN pl_programas ON entes_dependencias.programa = pl_programas.id
     LEFT JOIN pl_proyectos ON entes_dependencias.proyecto = pl_proyectos.id
+    WHERE entes_dependencias.actividad != '51'
      ORDER BY entes_dependencias.ue ASC, entes_dependencias.ente_nombre ASC ");
     $stmt->execute();
     $result = $stmt->get_result();
