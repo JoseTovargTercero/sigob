@@ -1,71 +1,46 @@
 <?php
 require_once '../sistema_global/conexion.php';
 
-// Consulta para obtener datos de la tabla entes
+// Consulta para obtener datos de entes y entes_dependencias con denominaciones de sector y programa
 $queryEntes = "
     SELECT 
-        sector, 
-        programa, 
-        proyecto, 
-        actividad, 
-        ente_nombre AS denominacion, 
-        'entes' AS tipo
-    FROM entes
+        e.sector, 
+        e.programa, 
+        e.proyecto, 
+        e.actividad,
+        ps.sector as sector_sectores,
+        pp.programa as programa_programas, 
+        e.ente_nombre AS denominacion, 
+        ed.ente_nombre AS denominacion_dependencia,
+        IFNULL(ed.actividad, e.actividad) AS actividad_final,
+        ps.denominacion AS sector_denominacion,
+        pp.denominacion AS programa_denominacion
+    FROM entes e
+    LEFT JOIN entes_dependencias ed ON ed.sector = e.sector AND ed.programa = e.programa
+    LEFT JOIN pl_sectores ps ON ps.id = e.sector
+    LEFT JOIN pl_programas pp ON pp.id = e.programa AND pp.sector = ps.id
 ";
+
 $resultEntes = $conexion->query($queryEntes);
 
 if (!$resultEntes) {
     die("Error en la consulta de entes: " . $conexion->error);
 }
 
-// Consulta para obtener datos de la tabla entes_dependencias
-$queryEntesDependencias = "
-    SELECT 
-        sector, 
-        programa, 
-        proyecto, 
-        actividad, 
-        ente_nombre AS denominacion2, 
-        'entes_dependencias' AS tipo
-    FROM entes_dependencias
-";
-$resultEntesDependencias = $conexion->query($queryEntesDependencias);
-
-if (!$resultEntesDependencias) {
-    die("Error en la consulta de entes_dependencias: " . $conexion->error);
-}
-
 // Almacenar los resultados en un solo arreglo, agrupando por sector y programa
 $allData = [];
 
-// Procesar los resultados de entes
-while ($rowEntes = $resultEntes->fetch_assoc()) {
-    // Buscar una dependencia asociada en entes_dependencias
-    $hasDependency = false;
-    $denominacion = $rowEntes['denominacion'];
-    $unidadEjecutora = $denominacion; // Inicialmente igual a denominacion
-    $actividad = $rowEntes['actividad'];
-
-    // Recorrer los resultados de entes_dependencias para buscar coincidencias
-    $resultEntesDependencias->data_seek(0); // Resetear puntero de entes_dependencias
-    while ($rowDependencias = $resultEntesDependencias->fetch_assoc()) {
-        if ($rowDependencias['sector'] == $rowEntes['sector'] && 
-            $rowDependencias['programa'] == $rowEntes['programa']){
-            $actividad = $rowDependencias['actividad'];
-            $unidadEjecutora = $rowDependencias['denominacion2'];
-            $hasDependency = true;
-            break;
-        }
-    }
-
-    // Guardar en $allData con denominacion y unidad ejecutora correctas
+// Procesar los resultados de la consulta
+while ($row = $resultEntes->fetch_assoc()) {
     $allData[] = [
-        'sector' => $rowEntes['sector'],
-        'programa' => $rowEntes['programa'],
-        'proyecto' => $rowEntes['proyecto'],
-        'actividad' => $actividad,
-        'denominacion' => $denominacion,
-        'unidad_ejecutora' => $unidadEjecutora,
+        'sector' => $row['sector_sectores'],
+        'programa' => $row['programa_programas'],
+        'proyecto' => $row['proyecto'],
+        'actividad' => $row['actividad_final'],
+        'denominacion' => $row['denominacion'],
+        'unidad_ejecutora' => $row['denominacion_dependencia'] ?? $row['denominacion'],
+        'sector_denominacion' => $row['sector_denominacion'],
+        'programa_denominacion' => $row['programa_denominacion']
     ];
 }
 
@@ -74,6 +49,7 @@ usort($allData, function($a, $b) {
     return $a['sector'] <=> $b['sector'] ?: $a['programa'] <=> $b['programa'];
 });
 ?>
+
 <!DOCTYPE html>
 <html>
 
@@ -300,7 +276,7 @@ usort($allData, function($a, $b) {
             ";
         }
         $resultEntes->free();
-        $resultEntesDependencias->free();
+
         $conexion->close();
         ?>
     </tbody>
