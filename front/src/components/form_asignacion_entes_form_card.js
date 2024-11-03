@@ -197,7 +197,6 @@ export const form_asignacion_entes_form_card = async ({
         let distribucionesEstanAprobadas = asignacion.actividades_entes.every(
           (distribucion) => Number(distribucion.status) === 1
         )
-        console.log(distribucionesEstanAprobadas)
 
         if (distribucionesEstanAprobadas) {
           acciones = ` <a
@@ -207,6 +206,15 @@ export const form_asignacion_entes_form_card = async ({
             >
               <i class='bx bx-detail'></i>
             </a>`
+        } else {
+          acciones = ` <button
+          
+          
+          class='btn btn-sm bg-brand-color-2 text-white'
+          disabled
+        >
+          <i class='bx bx-detail'></i>
+        </button>`
         }
       } else {
         acciones = `<button class="btn btn-danger btn-sm btn-destroy" data-eliminaractividadid="${
@@ -425,8 +433,41 @@ export const form_asignacion_entes_form_card = async ({
         )
     )
 
+    let liItems
+    // SI YA HAY DISTRIBUCIONES REGISTRADAS, ENTONCES CARGAR LAS ACTIVIDADES LAS CUALES TIENEN UNA DISTRIBUCION
+
+    if (asignacion.actividades_entes.length > 0) {
+      liItems = asignacion.actividades_entes.map((dependencia) => {
+        return `  <div class='form-check'>
+        <input
+          class='form-check-input'
+          type='checkbox'
+          value='${dependencia.actividad_id}'
+          data-dependencia="${dependencia.actividad_id}"
+          name='ente-dependencia'
+          id='ente-dependencia-check-${dependencia.actividad_id}'
+          checked
+          disabled
+        />
+        <label
+          class='form-check-label'
+          for='ente-dependencia-check-${dependencia.actividad_id}'
+        >
+          ${dependencia.actividad} - ${dependencia.ente_nombre}
+        </label>
+      </div>`
+      })
+
+      console.log(liItems)
+
+      return `<h4 class='text-blue-800'>Actividades de ente:</h4> ${liItems.join(
+        ''
+      )}`
+    }
+
+    // PARA ACTUALIZAR A MEDIDA DE QUE SE VAYA REALIZANDO LA DISTRIBUCION
+
     if (dependenciasList && dependenciasList.length > 0) {
-      let liItems
       if (Number(asignacion.status) === 1) {
         liItems = dependenciasList.map((dependencia) => {
           return `  <div class='form-check'>
@@ -989,8 +1030,13 @@ export const form_asignacion_entes_form_card = async ({
     }
 
     if (e.target.id === 'btn-send') {
-      if (datosDistribucionActividades.length > 1) {
+      if (datosDistribucionActividades.length > 0) {
         enviarInformacion(datosDistribucionActividades)
+      } else {
+        toastNotification({
+          type: NOTIFICATIONS_TYPES.fail,
+          message: 'Tienes que realizar al menos una distribución en este ente',
+        })
       }
     }
     if (e.target.id === 'distribucion-ente-aceptar') {
@@ -1266,7 +1312,7 @@ export const form_asignacion_entes_form_card = async ({
 
         dependenciaEnteSeleccionada = null
         formFocus = 1
-        // btnSend.classList.remove('d-none')
+        btnSend.classList.remove('d-none')
 
         toastNotification({
           type: NOTIFICATIONS_TYPES.done,
