@@ -90,9 +90,9 @@ function obtenerDistribuciones()
 
     $sql = "SELECT dp.*, 
                    ps.sector AS sector_nombre, 
-                   ps.nombre AS sector_nombre_completo, 
+                   ps.denominacion AS sector_nombre_completo, 
                    pp.programa AS programa_nombre, 
-                   pp.nombre AS programa_nombre_completo
+                   pp.denominacion AS programa_nombre_completo
             FROM distribucion_presupuestaria dp
             JOIN pl_sectores ps ON dp.id_sector = ps.id
             JOIN pl_programas pp ON dp.id_programa = pp.id";
@@ -116,9 +116,9 @@ function obtenerDistribucionPorId($id)
 
     $sql = "SELECT dp.*, 
                    ps.sector AS sector_nombre, 
-                   ps.nombre AS sector_nombre_completo, 
+                   ps.denominacion AS sector_nombre_completo, 
                    pp.programa AS programa_nombre, 
-                   pp.nombre AS programa_nombre_completo
+                   pp.denominacion AS programa_nombre_completo
             FROM distribucion_presupuestaria dp
             JOIN pl_sectores ps ON dp.id_sector = ps.id
             JOIN pl_programas pp ON dp.id_programa = pp.id
@@ -345,4 +345,3 @@ if (isset($data["accion"])) {
 } else {
     echo json_encode(['error' => 'No se especificó ninguna acción']);
 }
-

@@ -184,7 +184,7 @@ $stmt->close();
                   <a class="list-group-item list-group-item-action pointer" data-tab-id="2010" data-bs-toggle="tab"><b>2010</b> TRASFERENCIAS Y DONACIONES</a>
                   <a class="list-group-item list-group-item-action pointer" data-tab-id="informacion" data-bs-toggle="tab"><b>informacion</b> INFORMACIÓN GENERAL DE LA ENTIDAD FEDERAL</a>
                   <a class="list-group-item list-group-item-action pointer" data-tab-id="indice" data-bs-toggle="tab"><b>indice</b> ÍNDICE DE CATEGORÍAS PROGRAMÁTICAS</a>
-                  <a class="list-group-item list-group-item-action pointer" data-tab-id="descripcion" data-bs-toggle="tab"><b>descripcion</b> DESCRIPCION DEL PROGRAMA,  SUB - PROGRAMA Y PROYECTO</a>
+                  <a class="list-group-item list-group-item-action pointer" data-tab-id="descripcion" data-bs-toggle="tab"><b>descripcion</b> DESCRIPCION DEL PROGRAMA, SUB - PROGRAMA Y PROYECTO</a>
                   <a class="list-group-item list-group-item-action pointer" data-tab-id="presupuesto" data-bs-toggle="tab"><b>presupuesto</b> LEY DE PRESUPUESTO DE INGRESOS Y GASTOS DEL ESTADO AMAZONAS</a>
                 </div>
               </div>
@@ -237,9 +237,10 @@ $stmt->close();
                         $result = $stmt->get_result();
                         if ($result->num_rows > 0) {
                           while ($row = $result->fetch_assoc()) {
+                            $id = $row['id'];
                             $sector = $row['sector'];
                             $denominacion = $row['denominacion'];
-                            echo ' <option value="' . $sector . '">' . $sector . ' - ' . $denominacion . '</option>;';
+                            echo ' <option value="' . $id . '">' . $sector . ' - ' . $denominacion . '</option>;';
                           }
                         }
                         $stmt->close();

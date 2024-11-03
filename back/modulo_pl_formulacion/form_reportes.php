@@ -63,62 +63,62 @@ $pdf_files = [];
 $url_pdf = "{$base_url}form_pdf_$tipo.php?id_ejercicio=" . $id_ejercicio;
 
 if ($tipo == '2015') {
-// Datos de sector y programa
-$sector = $data['sector'];
-$programa = $data['programa'];
+    // Datos de sector y programa
+    $sector = $data['sector'];
+    $programa = $data['programa'];
 
-// Consulta base con JOIN para pl_sectores y pl_programas
-$query = "
+    // Consulta base con JOIN para pl_sectores y pl_programas
+    $query = "
     SELECT p.id AS id_programa, s.id AS id_sector, s.sector AS sector, p.programa AS programa 
     FROM pl_sectores s
     JOIN pl_programas p ON s.id = p.sector
     WHERE 1=1";
-$params = [];
-$types = "";
+    $params = [];
+    $types = "";
 
-// Condiciones dinámicas para sector y programa
-if ($sector != '') {
-    $query .= " AND s.sector = ?";
-    $params[] = $sector;
-    $types .= "s";
-}
+    // Condiciones dinámicas para sector y programa
+    if ($sector != '') {
+        $query .= " AND s.id = ?";
+        $params[] = $sector;
+        $types .= "s";
+    }
 
-if ($programa != '') {
-    $query .= " AND p.programa = ?";
-    $params[] = $programa;
-    $types .= "s";
-}
+    if ($programa != '') {
+        $query .= " AND p.id = ?";
+        $params[] = $programa;
+        $types .= "s";
+    }
 
-$stmt = $conexion->prepare($query);
+    $stmt = $conexion->prepare($query);
 
-if ($stmt === false) {
-    die("Error en la preparación de la consulta: " . $conexion->error);
-}
+    if ($stmt === false) {
+        die("Error en la preparación de la consulta: " . $conexion->error);
+    }
 
-if (!empty($params)) {
-    $stmt->bind_param($types, ...$params);
-}
+    if (!empty($params)) {
+        $stmt->bind_param($types, ...$params);
+    }
 
-$stmt->execute();
-$result = $stmt->get_result();
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-if ($result === false) {
-    die("Error en la consulta: " . $stmt->error);
-}
+    if ($result === false) {
+        die("Error en la consulta: " . $stmt->error);
+    }
 
-$pdf_files = [];
+    $pdf_files = [];
 
-while ($row = $result->fetch_assoc()) {
-    $id_sector = $row['id_sector'];
-    $id_programa = $row['id_programa'];
-    $sector_formatted = str_pad($row['sector'], 2, '0', STR_PAD_LEFT);
-    $programa_formatted = str_pad($row['programa'], 2, '0', STR_PAD_LEFT);
+    while ($row = $result->fetch_assoc()) {
+        $id_sector = $row['id_sector'];
+        $id_programa = $row['id_programa'];
+        $sector_formatted = str_pad($row['sector'], 2, '0', STR_PAD_LEFT);
+        $programa_formatted = str_pad($row['programa'], 2, '0', STR_PAD_LEFT);
 
-    $pdf_files["{$url_pdf}&id_sector=$id_sector&id_programa=$id_programa"] = "{$sector_formatted}-{$programa_formatted}_CREDITOS.pdf";
-}
+        $pdf_files["{$url_pdf}&id_sector=$id_sector&id_programa=$id_programa"] = "{$sector_formatted}-{$programa_formatted}_CREDITOS.pdf";
+    }
 
-$result->free();
-$stmt->close();
+    $result->free();
+    $stmt->close();
 } elseif ($tipo == 'descripcion') {
     $queryDescripcionProgramas = "SELECT id_sector, id_programa FROM descripcion_programas";
     $resultDescripcionProgramas = $conexion->query($queryDescripcionProgramas);
