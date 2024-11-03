@@ -3635,7 +3635,8 @@ hr.hr-text::before {
 
 
 .btn-update,
-.btn-destroy {
+.btn-destroy,
+.btn-detail {
   position: relative;
   /* Necesario para usar el ::before correctamente */
   height: 33px !important;
@@ -3667,6 +3668,21 @@ hr.hr-text::before {
   color: white !important;
 }
 
+.btn-detail {
+  content: "\ea97" !important;
+  font-family: "boxicons" !important;
+  font-weight: normal !important;
+  position: absolute !important;
+  left: 7px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  font-size: 16px !important;
+  color: white !important;
+}
+
+.no-br {
+  border-radius: 0 !important;
+}
 
 select {
   background-image: none !important;
