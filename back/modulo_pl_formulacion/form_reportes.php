@@ -60,11 +60,11 @@ $reportes = [
     ],
     'indice' => [
         'nombre' => 'ÍNDICE DE CATEGORÍAS PROGRAMÁTICAS',
-        'formato' => 'A4-L'
+        'formato' => 'A4'
     ],
     'descripcion' => [
         'nombre' => 'DESCRIPCION DEL PROGRAMA,  SUB - PROGRAMA Y PROYECTO',
-        'formato' => 'A4-L'
+        'formato' => 'A4'
     ],
     'presupuesto' => [
         'nombre' => 'LEY DE PRESUPUESTO DE INGRESOS Y GASTOS DEL ESTADO AMAZONAS',
@@ -137,14 +137,20 @@ if ($tipo == '2015') {
     $result->free();
     $stmt->close();
 } elseif ($tipo == 'descripcion') {
-    $queryDescripcionProgramas = "SELECT id_sector, id_programa FROM descripcion_programas";
+    $queryDescripcionProgramas = "SELECT ps.sector, pp.programa, DP.id_sector, DP.id_programa FROM descripcion_programas DP
+    JOIN pl_sectores ps ON DP.id_sector = ps.id
+    JOIN pl_programas pp ON DP.id_programa = pp.id
+    ";
     $resultDescripcionProgramas = $conexion->query($queryDescripcionProgramas);
 
     if ($resultDescripcionProgramas && $resultDescripcionProgramas->num_rows > 0) {
         while ($rowDescripcion = $resultDescripcionProgramas->fetch_assoc()) {
             $sector_descripcion = $rowDescripcion['id_sector'];
             $programa_descripcion = $rowDescripcion['id_programa'];
-            $pdf_files["{$url_pdf}&id_sector=$sector_descripcion&id_programa=$programa_descripcion"] = "{$sector_descripcion}-{$programa_descripcion}_descripcion.pdf";
+
+            $sector = $rowDescripcion['sector'];
+            $programa = $rowDescripcion['programa'];
+            $pdf_files["{$url_pdf}&id_sector=$sector_descripcion&id_programa=$programa_descripcion"] = "{$sector}-{$programa}.pdf";
         }
     }
 } elseif ($tipo == 'distribucion') {
