@@ -190,7 +190,7 @@ const guardarPartidaOrdinaria = async ({
     if (json.success) {
       toastNotification({
         type: NOTIFICATIONS_TYPES.done,
-        message: json.success,
+        message: `Partida creada`,
       })
       return json
     }
