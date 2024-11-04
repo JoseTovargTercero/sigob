@@ -192,6 +192,7 @@ const guardarPartidaOrdinaria = async ({
         type: NOTIFICATIONS_TYPES.done,
         message: json.success,
       })
+      return json
     }
     if (json.error) {
       toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
