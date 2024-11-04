@@ -185,7 +185,7 @@ $stmt->close();
                   <a class="list-group-item list-group-item-action pointer" data-tab-id="informacion" data-bs-toggle="tab">INFORMACIÓN GENERAL DE LA ENTIDAD FEDERAL</a>
                   <a class="list-group-item list-group-item-action pointer" data-tab-id="indice" data-bs-toggle="tab">ÍNDICE DE CATEGORÍAS PROGRAMÁTICAS</a>
                   <a class="list-group-item list-group-item-action pointer" data-tab-id="descripcion" data-bs-toggle="tab">DESCRIPCIÓN DEL PROGRAMA, SUB - PROGRAMA Y PROYECTO</a>
-                  <a class="list-group-item list-group-item-action pointer" data-tab-id="presuuesto" data-bs-toggle="tab">LEY DE PRESUPUESTO DE INGRESOS Y GASTOS DEL ESTADO AMAZONAS</a>
+                  <a class="list-group-item list-group-item-action pointer" data-tab-id="presupuesto" data-bs-toggle="tab">LEY DE PRESUPUESTO DE INGRESOS Y GASTOS DEL ESTADO AMAZONAS</a>
                   <a class="list-group-item list-group-item-action pointer" data-tab-id="distribucion" data-bs-toggle="tab">DISTRIBUCIÓN INSTITUCIONAL</a>
                 </div>
               </div>
@@ -399,6 +399,13 @@ $stmt->close();
             'texto': '<div class="text-center text-info">En caso de querer exportar todos los sectores deje los campos vacíos.</div>',
             'autorun': false,
             'nombre_archivo': 'DISTRIBUCIÓN INSTITUCIONAL'
+          },
+          'presupuesto': {
+            'inputs': [],
+            'titulo': 'LEY DE PRESUPUESTO DE INGRESOS Y GASTOS DEL ESTADO AMAZONAS',
+            'texto': texto_nr,
+            'autorun': true,
+            'nombre_archivo': 'LEY DE PRESUPUESTO'
           },
 
         }
