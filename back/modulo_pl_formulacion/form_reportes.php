@@ -137,22 +137,32 @@ if ($tipo == '2015') {
     $result->free();
     $stmt->close();
 } elseif ($tipo == 'descripcion') {
-    $queryDescripcionProgramas = "SELECT ps.sector, pp.programa, DP.id_sector, DP.id_programa FROM descripcion_programas DP
+    $queryDescripcionProgramas = "SELECT ps.sector, pp.programa, DP.id_sector, DP.id_programa 
+    FROM descripcion_programas DP
     JOIN pl_sectores ps ON DP.id_sector = ps.id
-    JOIN pl_programas pp ON DP.id_programa = pp.id
-    ";
-    $resultDescripcionProgramas = $conexion->query($queryDescripcionProgramas);
+    JOIN pl_programas pp ON DP.id_programa = pp.id";
 
-    if ($resultDescripcionProgramas && $resultDescripcionProgramas->num_rows > 0) {
-        while ($rowDescripcion = $resultDescripcionProgramas->fetch_assoc()) {
-            $sector_descripcion = $rowDescripcion['id_sector'];
-            $programa_descripcion = $rowDescripcion['id_programa'];
+$resultDescripcionProgramas = $conexion->query($queryDescripcionProgramas);
 
+if ($resultDescripcionProgramas && $resultDescripcionProgramas->num_rows > 0) {
+    while ($rowDescripcion = $resultDescripcionProgramas->fetch_assoc()) {
+        $sector_descripcion = $rowDescripcion['id_sector'];
+        $programa_descripcion = $rowDescripcion['id_programa'];
+
+        // Verificar existencia en la tabla `entes`
+        $queryVerificarEnte = "SELECT 1 FROM entes 
+            WHERE sector = $sector_descripcion AND programa = $programa_descripcion
+            LIMIT 1";
+        $resultVerificarEnte = $conexion->query($queryVerificarEnte);
+
+        if ($resultVerificarEnte && $resultVerificarEnte->num_rows > 0) {
             $sector = $rowDescripcion['sector'];
             $programa = $rowDescripcion['programa'];
             $pdf_files["{$url_pdf}&id_sector=$sector_descripcion&id_programa=$programa_descripcion"] = "{$sector}-{$programa}.pdf";
         }
     }
+}
+
 } elseif ($tipo == 'distribucion') {
 
     function obtenerActividades($ue)

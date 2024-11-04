@@ -170,9 +170,6 @@ foreach ($partidasData as $partida) {
     }
 }
 
-echo '<pre>';
-var_dump($partidasAgrupadas);
-echo '</pre>';
 
 
 
@@ -462,9 +459,29 @@ $stmt->close();
     </tr>
 
     <?php
-    $totalGeneral = 0;
-    foreach ($partidasAgrupadas as $partida):
-        $totalGeneral += $partida['total_programa'];
+    $totalPartida = 0;
+    $partAnterior = null;
+    foreach ($partidasAgrupadas as $partidaKey => $partida):
+        // Verificar si la partida ha cambiado para mostrar el total del grupo anterior
+        if ($partAnterior !== null && $partAnterior !== $partida['part']) {
+            ?>
+            <!-- Fila de total por PART -->
+            <tr>
+                <td colspan="6" class="crim br">TOTAL POR PARTIDA <?= $partAnterior ?></td>
+                <td class="crim br"><?= number_format($totalPartida, 2) ?></td>
+                <?php for ($actividad = $inicioActividad; $actividad <= $finActividad; $actividad++): ?>
+                    <td class="crim br"></td>
+                <?php endfor; ?>
+                <td class="crim br"><?= number_format($totalPartida, 2) ?></td>
+            </tr>
+            <?php
+            // Reiniciar el total para la nueva partida
+            $totalPartida = 0;
+        }
+
+        // Acumular el total de la partida actual
+        $totalPartida += $partida['total_programa'];
+        $partAnterior = $partida['part'];
         ?>
         <!-- Fila de datos consolidada por partida -->
         <tr>
@@ -486,14 +503,14 @@ $stmt->close();
         </tr>
     <?php endforeach; ?>
 
-    <!-- Fila de total general -->
+    <!-- Fila de total de la última partida -->
     <tr>
-        <td colspan="6" class="crim br">TOTAL GENERAL</td>
-        <td class="crim br"><?= number_format($totalGeneral, 2) ?></td>
+        <td colspan="6" class="crim br">TOTAL POR PARTIDA <?= $partAnterior ?></td>
+        <td class="crim br"><?= number_format($totalPartida, 2) ?></td>
         <?php for ($actividad = $inicioActividad; $actividad <= $finActividad; $actividad++): ?>
-            <td class="crim br"></td> <!-- Aquí podrías sumar los totales de actividades si es necesario -->
+            <td class="crim br"></td>
         <?php endfor; ?>
-        <td class="crim br"><?= number_format($totalGeneral, 2) ?></td>
+        <td class="crim br"><?= number_format($totalPartida, 2) ?></td>
     </tr>
 </table>
 
