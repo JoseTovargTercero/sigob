@@ -1,6 +1,22 @@
 <?php
 require_once '../sistema_global/conexion.php';
 
+
+$id_ejercicio = $_GET["id_ejercicio"];
+
+// Consultar datos del sector
+$query_sector = "SELECT ano, situado FROM ejercicio_fiscal WHERE id = ?";
+$stmt = $conexion->prepare($query_sector);
+$stmt->bind_param('i', $id_ejercicio);
+$stmt->execute();
+$result = $stmt->get_result();
+$data_sector = $result->fetch_assoc();
+$stmt->close();
+
+$ano = $data_sector['ano'];
+
+
+
 // Consulta para obtener datos de entes y entes_dependencias con denominaciones de sector y programa
 $queryEntes = "
     SELECT 
@@ -8,9 +24,9 @@ $queryEntes = "
         e.programa, 
         e.proyecto, 
         e.actividad,
+        e.ente_nombre AS denominacion, 
         ps.sector as sector_sectores,
         pp.programa as programa_programas, 
-        e.ente_nombre AS denominacion, 
         ed.ente_nombre AS denominacion_dependencia,
         IFNULL(ed.actividad, e.actividad) AS actividad_final,
         ps.denominacion AS sector_denominacion,
@@ -19,6 +35,7 @@ $queryEntes = "
     LEFT JOIN entes_dependencias ed ON ed.sector = e.sector AND ed.programa = e.programa
     LEFT JOIN pl_sectores ps ON ps.id = e.sector
     LEFT JOIN pl_programas pp ON pp.id = e.programa AND pp.sector = ps.id
+    ORDER BY ps.sector, pp.programa, e.actividad, ed.actividad
 ";
 
 $resultEntes = $conexion->query($queryEntes);
@@ -44,10 +61,7 @@ while ($row = $resultEntes->fetch_assoc()) {
     ];
 }
 
-// Ordenar el arreglo por sector y programa
-usort($allData, function($a, $b) {
-    return $a['sector'] <=> $b['sector'] ?: $a['programa'] <=> $b['programa'];
-});
+
 ?>
 
 <!DOCTYPE html>
@@ -213,19 +227,24 @@ usort($allData, function($a, $b) {
     <div style='font-size: 9px;'>
         <table class='header-table bt br bb bl bc-lightgray'>
             <tr>
-                <td class='text-left' style='width: 20px'>
-                    <img src='../../img/logo.jpg' class='logo'>
-                </td>
+           
                 <td class='text-left' style='vertical-align: top; padding-top: 13px;'>
                     <b>
                     REPÚBLICA BOLIVARIANA DE VENEZUELA <br>
-                    GOBERNACIÓN DEL ESTADO AMAZONAS 
+                    GOBERNACIÓN DEL ESTADO AMAZONAS  <br>
+                    CÓDIGO PRESUPUESTARIO: E5100
+                    <br>
+                    <br>
+                    PRESUPUESTO: $ano
                     </b>
                 </td>
                 <td class='text-right' style='vertical-align: top; padding: 13px 10px 0 0;'>
                     <b>
                     Fecha: " . date('d/m/Y') . " 
                     </b>
+                    <br>
+                    <img src='../../img/logo.jpg' class='logo'>
+
                 </td>
             </tr>
             <tr>
@@ -235,50 +254,51 @@ usort($allData, function($a, $b) {
             </tr>
   
         </table>
-    "; 
+    ";
     ?>
 
     <!-- Tabla principal -->
-<table>
-    <thead>
-        <tr>
-            <th class="bl bt bb">Sector</th>
-            <th class="bl bt bb br">Programa</th>
-            <th class="bl bt bb br">Proyecto</th>
-            <th class="bl bt bb br">Actividad</th>
-            <th class="bl bt bb br">Denominación</th>
-            <th class="bl bt bb br">Unidad Ejecutora</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php
-        $currentSector = null;
-        $currentPrograma = null;
+    <table>
+        <thead>
+            <tr>
+                <th class="bl bt bb">Sector</th>
+                <th class="bl bt bb br">Programa</th>
+                <th class="bl bt bb br">Proyecto</th>
+                <th class="bl bt bb br">Actividad</th>
+                <th class="bl bt bb br">Denominación</th>
+                <th class="bl bt bb br">Unidad Ejecutora</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            $currentSector = null;
+            $currentPrograma = null;
 
-        // Iterar y agrupar datos en la tabla
-        foreach ($allData as $row) {
-            // Revisar si el sector o programa cambió
-            if ($currentSector !== $row['sector'] || $currentPrograma !== $row['programa']) {
-                $currentSector = $row['sector'];
-                $currentPrograma = $row['programa'];
-            }
+            // Iterar y agrupar datos en la tabla
+            foreach ($allData as $row) {
+                // Revisar si el sector o programa cambió
+                if ($currentSector !== $row['sector'] || $currentPrograma !== $row['programa']) {
+                    $currentSector = $row['sector'];
+                    $currentPrograma = $row['programa'];
+                }
 
-            echo "
+                echo "
                 <tr>
                     <td class='bl bt bb'>{$row['sector']}</td>
                     <td class='bl bt bb br'>{$row['programa']}</td>
-                    <td class='bl bt bb br'>{$row['proyecto']}</td>
+                    <td class='bl bt bb br'>" . ($row['proyecto'] == '0' ? '00' : $row['proyecto']) . "</td>
                     <td class='bl bt bb br'>{$row['actividad']}</td>
                     <td class='bl bt bb br'>{$row['denominacion']}</td>
                     <td class='bl bt bb br'>{$row['unidad_ejecutora']}</td>
                 </tr>
             ";
-        }
-        $resultEntes->free();
+            }
+            $resultEntes->free();
 
-        $conexion->close();
-        ?>
-    </tbody>
-</table>
+            $conexion->close();
+            ?>
+        </tbody>
+    </table>
 </body>
+
 </html>

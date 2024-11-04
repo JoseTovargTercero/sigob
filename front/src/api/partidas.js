@@ -10,6 +10,9 @@ import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 const partidasUrl =
   '../../../../sigob/back/modulo_nomina/nom_partidas_datos.php'
 
+const partidasOrdinariasUrl =
+  '../../../../sigob/back/modulo_pl_formulacion/form_registro_ordinarias.php'
+
 const partidasFormUrl =
   '../../../../sigob/back/modulo_pl_formulacion/form_partidas.php'
 
@@ -156,6 +159,56 @@ const guardarPartida = async ({ partida, nombre, descripcion }) => {
   }
 }
 
+const guardarPartidaOrdinaria = async ({
+  partida,
+  ordinaria,
+  denominacion,
+}) => {
+  showLoader()
+  try {
+    let res = await fetch(partidasOrdinariasUrl, {
+      method: 'POST',
+      body: JSON.stringify({
+        partida,
+        ordinaria,
+        denominacion,
+      }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    const clone = res.clone()
+
+    let text = await clone.text()
+
+    console.log(text)
+
+    const json = await res.json()
+
+    console.log(json)
+
+    if (json.success) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.done,
+        message: `Partida creada`,
+      })
+      return json
+    }
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener partidas',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
 const actualizarPartida = async ({ partida, nombre, descripcion, id }) => {
   console.log({ partida, nombre, descripcion, id })
   showLoader()
@@ -253,6 +306,7 @@ export {
   consultarPartida,
   getFormPartidas,
   guardarPartida,
+  guardarPartidaOrdinaria,
   actualizarPartida,
   eliminarPartida,
 }

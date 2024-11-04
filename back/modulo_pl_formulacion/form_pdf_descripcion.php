@@ -21,7 +21,9 @@ if (isset($id_sector) && isset($id_programa)) {
     $stmtSector->close();
 
     // Consulta a pl_programas para obtener sector, programa y denominacion de id_programa
-    $queryPrograma = "SELECT id, sector, programa, denominacion FROM pl_programas WHERE id = ?";
+    $queryPrograma = "SELECT pp.id, pp.sector, pp.programa, pp.denominacion, ps.sector as sector_n  FROM pl_programas pp
+    LEFT JOIN pl_sectores ps ON ps.id=pp.sector
+     WHERE pp.id = ?";
     $stmtPrograma = $conexion->prepare($queryPrograma);
     $stmtPrograma->bind_param("i", $id_programa);
     $stmtPrograma->execute();
@@ -31,6 +33,7 @@ if (isset($id_sector) && isset($id_programa)) {
         $data['sector'] = $rowPrograma['sector'];
         $data['programa'] = $rowPrograma['programa'];
         $data['denominacion_programa'] = $rowPrograma['denominacion'];
+        $data['sector_n'] = $rowPrograma['sector_n'];
     }
     $stmtPrograma->close();
 
@@ -156,7 +159,7 @@ if (isset($id_sector) && isset($id_programa)) {
         }
 
         .logo {
-            width: 120px;
+            width: 90px;
         }
 
         .t-border-0>tr>td {
@@ -222,25 +225,25 @@ if (isset($id_sector) && isset($id_programa)) {
     <div style='font-size: 9px;'>
         <table class='header-table bt br bb bl bc-lightgray'>
             <tr>
-                <td class='text-left' style='width: 20px'>
-                    <img src='../../img/logo.jpg' class='logo'>
-                </td>
                 <td class='text-left' style='vertical-align: top; padding-top: 13px;'>
                     <b>
-                    REPÚBLICA BOLIVARIANA DE VENEZUELA <br>
-                    GOBERNACIÓN DEL ESTADO AMAZONAS 
-                    </b>
+                   GOBERNACIÓN DEL ESTADO AMAZONAS 
+                   <br>
+                          CÓDIGO PRESUPUESTARIO: E5100
+                   </b>
                 </td>
-                <td class='text-right' style='vertical-align: top; padding: 13px 10px 0 0;'>
-                    <b>
-                    Fecha: " . date('d/m/Y') . " 
-                    </b>
+                <td class='text-right'>
+                    <img src='../../img/logo.jpg' class='logo'>
                 </td>
             </tr>
-            <tr>
-                <td colspan='3'>
-                    <h2 align='center'>DESCRIPCION DEL PROGRAMA,  SUB - PROGRAMA Y PROYECTO</h2>
-                </td>
+            <tr >
+            <td colspan='3' class='text-center'>
+            <h3>
+        
+            DESCRIPCIÓN DEL PROGRAMA,  SUB - PROGRAMA Y PROYECTO
+        
+            </h3>
+            </td>
             </tr>
 
         </table>
@@ -251,39 +254,40 @@ if (isset($id_sector) && isset($id_programa)) {
     <table>
         <tr>
             <th class="bl bt bb"></th>
-            <th class="bl bt bb br">Codigo</th>
-            <th class="bl bt bb br">Denominacion</th>
+            <th class="bl bt bb br">CÓDIGO</th>
+            <th class="bl bt bb br">DENOMINACIÓN</th>
         </tr>
         <tr>
-            <th class="bl bt bb">Sector</th>
-            <th class="bl bt bb br"><?php echo $data['sector']; ?></th>
+            <th class="bl bt bb">SECTOR</th>
+            <th class="bl bt bb br"><?php echo $data['sector_n']; ?></th>
             <th class="bl bt bb br"><?php echo $data['denominacion_sector']; ?></th>
         </tr>
         <tr>
-            <th class="bl bt bb">Programa</th>
+            <th class="bl bt bb">PROGRAMA</th>
             <th class="bl bt bb br"><?php echo $data['programa']; ?></th>
             <th class="bl bt bb br"><?php echo $data['denominacion_programa']; ?></th>
         </tr>
         <tr>
-            <th class="bl bt bb">Sub-Programa</th>
+            <th class="bl bt bb">SUB-PROGRAMA</th>
             <th class="bl bt bb br"></th>
             <th class="bl bt bb br"></th>
         </tr>
         <tr>
-            <th class="bl bt bb">Proyecto</th>
+            <th class="bl bt bb">PROYECTO</th>
             <th class="bl bt bb br"></th>
-            <th class="bl bt bb br" rowspan="2"><?php echo $data['ente_nombre']; ?></th>
-        </tr>
-        <tr>
-            <th class="bl bt bb">Unidad Ejecutora</th>
             <th class="bl bt bb br"></th>
         </tr>
         <tr>
-            <th class="bl bt bb" colspan="3">Descripcion</th>
+            <th class="bl bt bb">UNIDAD EJECUTORA</th>
+            <th class="bl bt bb br"></th>
+            <th class="bl bt bb br"><?php echo $data['ente_nombre']; ?></th>
+        </tr>
+        <tr>
+            <th class="bl bt bb" colspan="3">DESCRIPCIÓN</th>
         </tr>
         <tr>
             <td class='bl bt bb br' colspan="3">
-                <?php echo $data['descripcion']; ?>
+                <em> <?php echo $data['descripcion']; ?></em>
             </td>
         </tr>
     </table>
