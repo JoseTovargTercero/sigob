@@ -7,10 +7,23 @@ require_once '../sistema_global/conexion.php'; // Archivo de conexión con $cone
 
 use Mpdf\Mpdf;
 
+
 $data = json_decode(file_get_contents('php://input'), true)['data'];
 $id_ejercicio = $data['ejercicio_fiscal'];
 $tipo = $data['tipo'];
+
+if ($tipo == '' || !isset($data['tipo'])) {
+    throw new Exception("No se ha recibido una solicitud valida.", 1);
+    exit;
+}
+
+
 $fecha = date('d-m-y');
+
+/*
+$id_ejercicio = '1';
+
+$tipo = 'distribucion';*/
 
 $reportes = [
     '2002' => [
@@ -56,7 +69,11 @@ $reportes = [
     'presupuesto' => [
         'nombre' => 'LEY DE PRESUPUESTO DE INGRESOS Y GASTOS DEL ESTADO AMAZONAS',
         'formato' => 'A4'
-    ]
+    ],
+    'distribucion' => [
+        'nombre' => 'DISTRIBUCIÓN INSTITUCIONAL',
+        'formato' => 'A4-L'
+    ],
 ];
 
 $pdf_files = [];
@@ -130,6 +147,52 @@ if ($tipo == '2015') {
             $pdf_files["{$url_pdf}&id_sector=$sector_descripcion&id_programa=$programa_descripcion"] = "{$sector_descripcion}-{$programa_descripcion}_descripcion.pdf";
         }
     }
+} elseif ($tipo == 'distribucion') {
+
+    function obtenerActividades($ue)
+    {
+        global $conexion;
+
+        $actividades = [];
+
+        $stmt = mysqli_prepare($conexion, "SELECT * FROM `entes_dependencias` WHERE ue = ? ORDER BY actividad ASC");
+        $stmt->bind_param('i', $ue);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                array_push($actividades, $row['actividad']);
+            }
+        }
+        $stmt->close();
+        // retorna el primer y ultimo elemento del array
+
+        return [$actividades[0], $actividades[count($actividades) - 1]];
+    }
+
+
+    $stmt = mysqli_prepare($conexion, "SELECT entes.id, ps.sector, pp.programa, entes.sector AS sec_id, entes.programa AS pro_id FROM `entes`
+    JOIN pl_sectores ps ON entes.sector = ps.id
+    JOIN pl_programas pp ON entes.programa = pp.id");
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $id_sector = $row['sec_id'];
+            $id_programa = $row['pro_id'];
+            $sector = $row['sector'];
+            $programa = $row['programa'];
+            $id = $row['id'];
+
+            $actividades = obtenerActividades($row['id']);
+            $actividad_1 = $actividades[0];
+            $actividad_2 = $actividades[1];
+
+
+            $pdf_files["{$url_pdf}&ente=$id"] = "{$sector}-{$programa}-{$actividad_1}-{$actividad_2}.pdf";
+        }
+    }
+    $stmt->close();
 } else {
     $pdf_files["{$url_pdf}"] = $reportes[$tipo]['nombre'] . ".pdf";
 }
@@ -139,6 +202,9 @@ $zip = new ZipArchive();
 if ($zip->open($zip_filename, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== TRUE) {
     exit("No se puede abrir el archivo ZIP");
 }
+
+
+
 
 foreach ($pdf_files as $url => $pdf_filename) {
     $html = file_get_contents($url);
@@ -150,7 +216,7 @@ foreach ($pdf_files as $url => $pdf_filename) {
         'margin_left' => 8,
         'margin_right' => 8
     ]);
-
+    $mpdf->SetHTMLHeader('<div style="text-align: right;">Página {PAGENO} de {nb}</div>');
     $mpdf->WriteHTML($html);
     $mpdf->Output($pdf_filename, 'F');
     $zip->addFile($pdf_filename);

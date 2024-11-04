@@ -182,10 +182,11 @@ $stmt->close();
                   <a class="list-group-item list-group-item-action pointer" data-tab-id="2006" data-bs-toggle="tab"><b>2006</b> RESUM. CRED. PRES. A NIVEL PARTIDAS DE SECTORES</a>
                   <a class="list-group-item list-group-item-action pointer" data-tab-id="2009" data-bs-toggle="tab"><b>2009</b> GASTOS DE INVERSIÓN ESTIMADO</a>
                   <a class="list-group-item list-group-item-action pointer" data-tab-id="2010" data-bs-toggle="tab"><b>2010</b> TRASFERENCIAS Y DONACIONES</a>
-                  <a class="list-group-item list-group-item-action pointer" data-tab-id="informacion" data-bs-toggle="tab"><b>informacion</b> INFORMACIÓN GENERAL DE LA ENTIDAD FEDERAL</a>
-                  <a class="list-group-item list-group-item-action pointer" data-tab-id="indice" data-bs-toggle="tab"><b>indice</b> ÍNDICE DE CATEGORÍAS PROGRAMÁTICAS</a>
-                  <a class="list-group-item list-group-item-action pointer" data-tab-id="descripcion" data-bs-toggle="tab"><b>descripcion</b> DESCRIPCION DEL PROGRAMA, SUB - PROGRAMA Y PROYECTO</a>
-                  <a class="list-group-item list-group-item-action pointer" data-tab-id="presupuesto" data-bs-toggle="tab"><b>presupuesto</b> LEY DE PRESUPUESTO DE INGRESOS Y GASTOS DEL ESTADO AMAZONAS</a>
+                  <a class="list-group-item list-group-item-action pointer" data-tab-id="informacion" data-bs-toggle="tab">INFORMACIÓN GENERAL DE LA ENTIDAD FEDERAL</a>
+                  <a class="list-group-item list-group-item-action pointer" data-tab-id="indice" data-bs-toggle="tab">ÍNDICE DE CATEGORÍAS PROGRAMÁTICAS</a>
+                  <a class="list-group-item list-group-item-action pointer" data-tab-id="descripcion" data-bs-toggle="tab">DESCRIPCIÓN DEL PROGRAMA, SUB - PROGRAMA Y PROYECTO</a>
+                  <a class="list-group-item list-group-item-action pointer" data-tab-id="presuuesto" data-bs-toggle="tab">LEY DE PRESUPUESTO DE INGRESOS Y GASTOS DEL ESTADO AMAZONAS</a>
+                  <a class="list-group-item list-group-item-action pointer" data-tab-id="distribucion" data-bs-toggle="tab">DISTRIBUCIÓN INSTITUCIONAL</a>
                 </div>
               </div>
             </div>
@@ -392,13 +393,14 @@ $stmt->close();
             'autorun': true,
             'nombre_archivo': 'DESCRIPCION DEL PROGRAMA,  SUB - PROGRAMA Y PROYECTO'
           },
-          'presupuesto': {
-            'inputs': [],
-            'titulo': 'LEY DE PRESUPUESTO DE INGRESOS Y GASTOS DEL ESTADO AMAZONAS',
-            'texto': texto_nr,
-            'autorun': true,
-            'nombre_archivo': 'LEY DE PRESUPUESTO DE INGRESOS Y GASTOS DEL ESTADO AMAZONAS'
-          }
+          'distribucion': {
+            'inputs': ['sect-sector', 'sect-programa'],
+            'titulo': 'DISTRIBUCIÓN INSTITUCIONAL',
+            'texto': '<div class="text-center text-info">En caso de querer exportar todos los sectores deje los campos vacíos.</div>',
+            'autorun': false,
+            'nombre_archivo': 'DISTRIBUCIÓN INSTITUCIONAL'
+          },
+
         }
 
         function gestionarVista(vista) {
@@ -445,23 +447,8 @@ $stmt->close();
                 'tipo': tabId,
               }
               if (tabId == '2015') {
-                /*if ($('#sector').val() == '' || $('#programa').val() == '') {
-
-                  if ($('#sector').val() == '') {
-                    $('#sector').addClass('border-danger')
-                  }
-
-
-                  if ($('#programa').val() == '') {
-                    $('#programa').addClass('border-danger')
-                  }
-
-                  toast_s('error', 'Indique el sector y programa')
-                  return
-                } else {*/
                 data['sector'] = $('#sector').val()
                 data['programa'] = $('#programa').val()
-                // }
               }
 
               sendData(data, tabId)

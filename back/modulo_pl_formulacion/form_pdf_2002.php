@@ -270,7 +270,6 @@ foreach ($sectores_a_procesar as $sector) {
                     </div>
                     <td class='text-right' style='vertical-align: top;padding: 13px 10px 0 0; '>
                     <b>
-                    Página: 1 de 1 <br>
                     Fecha: " . date('d/m/Y') . " 
                     </b>
                 </td>

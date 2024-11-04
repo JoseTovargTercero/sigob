@@ -67,22 +67,25 @@ export const loadPartidasTable = async () => {
 
   let datosOrdenados = [...partidas.fullInfo].sort((a, b) => a.id - b.id);
   let data = datosOrdenados.map((el) => {
+    // Verificar si la partida termina en ".0000"
+    const mostrarPrimerBoton = el.partida.endsWith(".0000");
+
     return {
       partida: el.partida,
       nombre: el.nombre,
       descripcion: el.descripcion,
       acciones: `
-      <button class="btn btn-sm bg-brand-color-2 text-white btn-update" data-editarid="${el.id}"></button>
-      <button class="btn btn-danger btn-sm btn-destroy" data-eliminarid="${el.id}"></button>
+        ${mostrarPrimerBoton ? `<button class="btn btn-sm bg-brand-color-1 text-white btn-add" data-editarid="${el.id}"></button>` : ""}
+        <button class="btn btn-sm bg-brand-color-2 text-white btn-update" data-editarid="${el.id}"></button>
+        <button class="btn btn-danger btn-sm btn-destroy" data-eliminarid="${el.id}"></button>
       `,
     };
   });
 
   partidasTable.clear().draw();
-
-  // console.log(datosOrdenados)
   partidasTable.rows.add(data).draw();
 };
+
 
 export async function deletePartidaRow({ id, row }) {
   partidasTable.row(row).remove().draw();

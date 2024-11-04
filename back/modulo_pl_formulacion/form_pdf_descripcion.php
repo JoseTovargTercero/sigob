@@ -233,7 +233,6 @@ if (isset($id_sector) && isset($id_programa)) {
                 </td>
                 <td class='text-right' style='vertical-align: top; padding: 13px 10px 0 0;'>
                     <b>
-                    Página: 1 de 1 <br>
                     Fecha: " . date('d/m/Y') . " 
                     </b>
                 </td>
@@ -245,48 +244,49 @@ if (isset($id_sector) && isset($id_programa)) {
             </tr>
 
         </table>
-    "; 
+    ";
     ?>
 
     <!-- Tabla principal -->
     <table>
-            <tr>
-                <th class="bl bt bb"></th>
-                <th class="bl bt bb br">Codigo</th>
-                <th class="bl bt bb br">Denominacion</th>
-            </tr>
-             <tr>
-                <th class="bl bt bb">Sector</th>
-                <th class="bl bt bb br"><?php echo $data['sector']; ?></th>
-                <th class="bl bt bb br"><?php echo $data['denominacion_sector']; ?></th>
-            </tr>
-            <tr>
-                <th class="bl bt bb">Programa</th>
-                <th class="bl bt bb br"><?php echo $data['programa']; ?></th>
-                <th class="bl bt bb br"><?php echo $data['denominacion_programa']; ?></th>
-            </tr>
-            <tr>
-                <th class="bl bt bb">Sub-Programa</th>
-                <th class="bl bt bb br"></th>
-                <th class="bl bt bb br"></th>
-            </tr>
-            <tr>
-                <th class="bl bt bb">Proyecto</th>
-                <th class="bl bt bb br"></th>
-                <th class="bl bt bb br" rowspan="2"><?php echo $data['ente_nombre']; ?></th>
-            </tr>
-            <tr>
-                <th class="bl bt bb">Unidad Ejecutora</th>
-                <th class="bl bt bb br"></th>
-            </tr>
-            <tr>
-                <th class="bl bt bb" colspan="3">Descripcion</th>
-            </tr>
-                    <tr>
-                        <td class='bl bt bb br' colspan="3">
-                            <?php echo $data['descripcion']; ?>
-                        </td>
-                    </tr>
+        <tr>
+            <th class="bl bt bb"></th>
+            <th class="bl bt bb br">Codigo</th>
+            <th class="bl bt bb br">Denominacion</th>
+        </tr>
+        <tr>
+            <th class="bl bt bb">Sector</th>
+            <th class="bl bt bb br"><?php echo $data['sector']; ?></th>
+            <th class="bl bt bb br"><?php echo $data['denominacion_sector']; ?></th>
+        </tr>
+        <tr>
+            <th class="bl bt bb">Programa</th>
+            <th class="bl bt bb br"><?php echo $data['programa']; ?></th>
+            <th class="bl bt bb br"><?php echo $data['denominacion_programa']; ?></th>
+        </tr>
+        <tr>
+            <th class="bl bt bb">Sub-Programa</th>
+            <th class="bl bt bb br"></th>
+            <th class="bl bt bb br"></th>
+        </tr>
+        <tr>
+            <th class="bl bt bb">Proyecto</th>
+            <th class="bl bt bb br"></th>
+            <th class="bl bt bb br" rowspan="2"><?php echo $data['ente_nombre']; ?></th>
+        </tr>
+        <tr>
+            <th class="bl bt bb">Unidad Ejecutora</th>
+            <th class="bl bt bb br"></th>
+        </tr>
+        <tr>
+            <th class="bl bt bb" colspan="3">Descripcion</th>
+        </tr>
+        <tr>
+            <td class='bl bt bb br' colspan="3">
+                <?php echo $data['descripcion']; ?>
+            </td>
+        </tr>
     </table>
 </body>
+
 </html>
