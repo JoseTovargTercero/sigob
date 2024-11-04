@@ -4,6 +4,7 @@ import {
   showLoader,
   toastNotification,
 } from '../helpers/helpers.js'
+import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 
 const apiUrl = '../../../sigob/back/sistema_global/_DBH-select.php'
 
@@ -20,6 +21,11 @@ const selectTables = async (table, config = null) => {
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
     console.log(res)
+
+    let clone = res.clone()
+    let text = await clone.text()
+    console.log(text)
+
     const json = await res.json()
 
     console.log(json)

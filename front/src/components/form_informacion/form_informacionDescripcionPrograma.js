@@ -4,6 +4,7 @@ import {
   getSectoresData,
   registrarDescripcionProgramaData,
 } from '../../api/form_informacion.js'
+import { selectTables } from '../../api/globalApi.js'
 import { loadDescripcionProgramaTable } from '../../controllers/form_informacionTables.js'
 import {
   confirmNotification,
@@ -24,18 +25,11 @@ export const form_informacionDescripcionProgramaForm = async ({
     descripcion: '',
   }
 
-  let sectores = await getSectoresData()
-  let programas = await getProgramasData()
+  let sectores = await selectTables('pl_sectores')
 
-  let optionsSectores = sectores.fullInfo
+  let optionsSectores = sectores
     .map((option) => {
-      return `<option value="${option.id}">opcion</option>`
-    })
-    .join('')
-
-  let optionsProgramas = programas.fullInfo
-    .map((option) => {
-      return `<option value="${option.id}">opcion</option>`
+      return `<option value="${option.id}">${option.sector} - ${option.denominacion}</option>`
     })
     .join('')
 
@@ -84,7 +78,7 @@ export const form_informacionDescripcionProgramaForm = async ({
                   name='id_sector'
                   id='search-select-sector'
                 >
-                  <option>Elegir...</option>${optionsProgramas}
+                  <option>Elegir...</option>${optionsSectores}
                 </select>
               </div>
             </div>
@@ -96,10 +90,10 @@ export const form_informacionDescripcionProgramaForm = async ({
                 </label>
                 <select
                   class='form-select descripcion-programa-input chosen-programa'
-                  name='id_sector'
-                  id='search-select-sector'
+                  name='id_programa'
+                  id='search-select-programa'
                 >
-                  <option>Elegir...</option>${optionsProgramas}
+                  <option>Elegir...</option>
                 </select>
               </div>
             </div>
@@ -146,13 +140,28 @@ export const form_informacionDescripcionProgramaForm = async ({
     .change(function (obj, result) {
       fieldList.id_sector = result.selected
       console.log('changed: %o', result)
+
+      selectTables('pl_programas').then((res) => {
+        let optionsPrograma = [`<option value=''>Elegir programa...</option>`]
+
+        res.forEach((programa) => {
+          if (programa.sector === fieldList.id_sector) {
+            let option = `<option value='${programa.id}'>${programa.programa} - ${programa.denominacion}</option>`
+            optionsPrograma.push(option)
+          }
+        })
+
+        d.getElementById('search-select-programa').innerHTML =
+          optionsPrograma.join('')
+        $('.chosen-programa').trigger('chosen:updated')
+      })
     })
 
   $('.chosen-programa')
     .chosen()
     .change(function (obj, result) {
       fieldList.id_programa = result.selected
-      console.log('changed: %o', result)
+      console.log(fieldList.id_programa)
     })
 
   const closeCard = () => {
@@ -170,27 +179,7 @@ export const form_informacionDescripcionProgramaForm = async ({
     }
 
     if (e.target.id === `${nombreComponente}-guardar`) {
-      let inputs = d.querySelectorAll(`.${nombreComponente}-input`)
-
-      inputs.forEach((input) => {
-        fieldList = validateInput({
-          target: input,
-          fieldList,
-          fieldListErrors,
-          type: fieldListErrors[input.name].type,
-        })
-      })
-
-      let validaciones = Object.values(fieldListErrors)
-
-      if (validaciones.some((el) => el.value)) {
-        toastNotification({
-          type: NOTIFICATIONS_TYPES.fail,
-          message: 'Rellene los campos requeridos',
-        })
-      } else {
-        enviarInformacion()
-      }
+      enviarInformacion()
     }
   }
 
