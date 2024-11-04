@@ -141,20 +141,38 @@ $stmtMaxActividad->close();
 $inicioActividad = 51;
 $finActividad = $maxActividad;
 
-// Agrupar los datos por 'part' para generar columnas de actividad dinámicamente
+// Paso 1: Consolidar datos en una sola entrada por denominación y actividad
 $partidasAgrupadas = [];
 foreach ($partidasData as $partida) {
-    $part = $partida['part'];
+    $partKey = $partida['part'] . '-' . $partida['denominacion'];
     $actividad = $partida['actividad'];
-    if (!isset($partidasAgrupadas[$part])) {
-        $partidasAgrupadas[$part] = [];
+    
+    // Si la partida no existe en el array, inicializarla
+    if (!isset($partidasAgrupadas[$partKey])) {
+        $partidasAgrupadas[$partKey] = [
+            'part' => $partida['part'],
+            'gen' => $partida['gen'],
+            'esp' => $partida['esp'],
+            'sub_esp' => $partida['sub_esp'],
+            'cod_ordi' => $partida['cod_ordi'],
+            'denominacion' => $partida['denominacion'],
+            'total_programa' => 0,
+            'actividades' => array_fill($inicioActividad, $finActividad - $inicioActividad + 1, 0)
+        ];
     }
-    $partidasAgrupadas[$part][] = [
-        'actividad' => $actividad,
-        'denominacion' => $partida['denominacion'],
-        'monto' => $partida['monto'],
-    ];
+
+    // Acumular el monto en el total del programa
+    $partidasAgrupadas[$partKey]['total_programa'] += $partida['monto'];
+    
+    // Acumular el monto en la actividad correspondiente
+    if (isset($partidasAgrupadas[$partKey]['actividades'][$actividad])) {
+        $partidasAgrupadas[$partKey]['actividades'][$actividad] += $partida['monto'];
+    }
 }
+
+echo '<pre>';
+var_dump($partidasAgrupadas);
+echo '</pre>';
 
 
 
@@ -444,41 +462,11 @@ $stmt->close();
     </tr>
 
     <?php
-    $currentPart = null;
-    $totalPorPartida = 0;
-    $totalesActividades = array_fill($inicioActividad, $finActividad - $inicioActividad + 1, 0);
-
-    foreach ($partidasData as $partida):
-        // Comprobamos si el PART ha cambiado para imprimir el total anterior si existe
-        if ($currentPart !== null && $currentPart !== $partida['part']) {
-            ?>
-            <!-- Fila total por partida -->
-            <tr>
-                <td colspan="6" class="crim br">TOTAL POR PARTIDA <?= $currentPart ?></td>
-                <td class="crim br"><?= number_format($totalPorPartida, 2) ?></td>
-                <?php foreach ($totalesActividades as $montoActividad): ?>
-                    <td class="crim br"><?= ($montoActividad > 0 ? number_format($montoActividad, 2) : '') ?></td>
-                <?php endforeach; ?>
-                <td class="crim br"><?= number_format($totalPorPartida, 2) ?></td>
-            </tr>
-            <?php
-            // Reiniciar los totales después de imprimir
-            $totalPorPartida = 0;
-            $totalesActividades = array_fill($inicioActividad, $finActividad - $inicioActividad + 1, 0);
-        }
-
-        // Actualizar el PART actual
-        $currentPart = $partida['part'];
-        
-        // Acumular el monto actual en el total por partida
-        $totalPorPartida += $partida['monto'];
-
-        // Acumular el monto en la actividad correspondiente
-        if (isset($totalesActividades[$partida['actividad']])) {
-            $totalesActividades[$partida['actividad']] += $partida['monto'];
-        }
+    $totalGeneral = 0;
+    foreach ($partidasAgrupadas as $partida):
+        $totalGeneral += $partida['total_programa'];
         ?>
-        <!-- Fila de datos por partida -->
+        <!-- Fila de datos consolidada por partida -->
         <tr>
             <td class="br"><?= $partida['part'] ?></td>
             <td class="br"><?= $partida['gen'] ?></td>
@@ -486,26 +474,26 @@ $stmt->close();
             <td class="br"><?= $partida['sub_esp'] ?></td>
             <td class="br"><?= $partida['cod_ordi'] ?></td>
             <td class="br subtitle"><?= $partida['denominacion'] ?></td>
-            <td class="br"><?= number_format($partida['monto'], 2) ?></td>
+            <td class="br"><?= number_format($partida['total_programa'], 2) ?></td>
 
             <!-- Actividades dinámicas -->
             <?php for ($actividad = $inicioActividad; $actividad <= $finActividad; $actividad++): ?>
-                <td class="br"><?= ($partida['actividad'] == $actividad ? number_format($partida['monto'], 2) : '') ?></td>
+                <td class="br"><?= ($partida['actividades'][$actividad] > 0 ? number_format($partida['actividades'][$actividad], 2) : '') ?></td>
             <?php endfor; ?>
 
             <!-- Monto de la obra -->
-            <td class="br"><?= number_format($partida['monto'], 2) ?></td>
+            <td class="br"><?= number_format($partida['total_programa'], 2) ?></td>
         </tr>
     <?php endforeach; ?>
 
-    <!-- Fila total por partida para el último grupo -->
+    <!-- Fila de total general -->
     <tr>
-        <td colspan="6" class="crim br">TOTAL POR PARTIDA <?= $currentPart ?></td>
-        <td class="crim br"><?= number_format($totalPorPartida, 2) ?></td>
-        <?php foreach ($totalesActividades as $montoActividad): ?>
-            <td class="crim br"><?= ($montoActividad > 0 ? number_format($montoActividad, 2) : '') ?></td>
-        <?php endforeach; ?>
-        <td class="crim br"><?= number_format($totalPorPartida, 2) ?></td>
+        <td colspan="6" class="crim br">TOTAL GENERAL</td>
+        <td class="crim br"><?= number_format($totalGeneral, 2) ?></td>
+        <?php for ($actividad = $inicioActividad; $actividad <= $finActividad; $actividad++): ?>
+            <td class="crim br"></td> <!-- Aquí podrías sumar los totales de actividades si es necesario -->
+        <?php endfor; ?>
+        <td class="crim br"><?= number_format($totalGeneral, 2) ?></td>
     </tr>
 </table>
 
