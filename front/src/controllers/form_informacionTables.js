@@ -195,7 +195,7 @@ export const validateConsejoTable = async () => {
       topStart: function () {
         let toolbar = document.createElement('div')
         toolbar.innerHTML = `
-            <h5 class="text-center">Lista de registros en la contraloria</h5>
+            <h5 class="text-center">Lista de registros del consejo</h5>
                       `
         return toolbar
       },
@@ -263,7 +263,7 @@ export const validateDirectivoTable = async () => {
       topStart: function () {
         let toolbar = document.createElement('div')
         toolbar.innerHTML = `
-            <h5 class="text-center">Lista de registros en la contraloria</h5>
+            <h5 class="text-center">Lista de registros en los directivos</h5>
                       `
         return toolbar
       },
@@ -315,7 +315,7 @@ export const validatePersonaTable = async () => {
       topStart: function () {
         let toolbar = document.createElement('div')
         toolbar.innerHTML = `
-            <h5 class="text-center">Lista de registros en la contraloria</h5>
+            <h5 class="text-center">Lista de registros de personas</h5>
                       `
         return toolbar
       },
@@ -370,7 +370,7 @@ export const validateTitulo1Table = async () => {
       topStart: function () {
         let toolbar = document.createElement('div')
         toolbar.innerHTML = `
-            <h5 class="text-center">Lista de registros en la contraloria</h5>
+            <h5 class="text-center">Lista de registros el título 1</h5>
                       `
         return toolbar
       },
@@ -424,7 +424,7 @@ export const validateDescripcionProgramaTable = async () => {
       topStart: function () {
         let toolbar = document.createElement('div')
         toolbar.innerHTML = `
-            <h5 class="text-center">Lista de registros en la contraloria</h5>
+            <h5 class="text-center">Lista de registros en descripcion de programas</h5>
                       `
         return toolbar
       },

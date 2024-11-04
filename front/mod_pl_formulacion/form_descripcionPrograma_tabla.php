@@ -36,7 +36,7 @@ require_once '../../back/sistema_global/session.php';
                             <div class=" d-flex justify-content-between">
                                 <h4 class="fw-bold py-3 mb-4">
                                     <span class="text-muted fw-light">Formulación / </span>
-                                    <span class="text-muted fw-light">Informacion /</span> Título 1
+                                    <span class="text-muted fw-light">Configuracion /</span> Descripcion de programas
                                 </h4>
                                 <!-- <div class="row" id="ejercicios-fiscales">
                                 </div> -->

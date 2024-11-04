@@ -26,92 +26,92 @@ try {
     $situado = $datosEjercicio['situado'];
 
 
-// Consulta a la tabla plan_inversion para obtener monto_total
-$sqlInversion = "SELECT monto_total FROM plan_inversion WHERE id_ejercicio = ?";
-$stmtInversion = $conexion->prepare($sqlInversion);
-$stmtInversion->bind_param("i", $id_ejercicio);
-$stmtInversion->execute();
-$datosInversion = $stmtInversion->get_result()->fetch_assoc();
-$monto_total = $datosInversion ? $datosInversion['monto_total'] : 0;
-$total = $situado + $monto_total;
+    // Consulta a la tabla plan_inversion para obtener monto_total
+    $sqlInversion = "SELECT monto_total FROM plan_inversion WHERE id_ejercicio = ?";
+    $stmtInversion = $conexion->prepare($sqlInversion);
+    $stmtInversion->bind_param("i", $id_ejercicio);
+    $stmtInversion->execute();
+    $datosInversion = $stmtInversion->get_result()->fetch_assoc();
+    $monto_total = $datosInversion ? $datosInversion['monto_total'] : 0;
+    $total = $situado + $monto_total;
 
-// Consulta de sectores y programas agrupados por sector
-$sqlSectores = "
+    // Consulta de sectores y programas agrupados por sector
+    $sqlSectores = "
     SELECT s.id AS sector_id, s.sector, s.denominacion AS sector_denominacion, 
            p.id AS programa_id, p.programa, p.denominacion AS programa_denominacion
     FROM pl_sectores AS s
     LEFT JOIN pl_programas AS p ON s.id = p.sector
     ORDER BY s.sector, p.programa
 ";
-$resultadoSectores = $conexion->query($sqlSectores);
-$sectoresData = [];
-if ($resultadoSectores && $resultadoSectores->num_rows > 0) {
-    while ($row = $resultadoSectores->fetch_assoc()) {
-        $sector_id = $row['sector_id'];
-        $programa_id = $row['programa_id'];
+    $resultadoSectores = $conexion->query($sqlSectores);
+    $sectoresData = [];
+    if ($resultadoSectores && $resultadoSectores->num_rows > 0) {
+        while ($row = $resultadoSectores->fetch_assoc()) {
+            $sector_id = $row['sector_id'];
+            $programa_id = $row['programa_id'];
 
-        if (!isset($sectoresData[$sector_id])) {
-            $sectoresData[$sector_id] = [
-                'sector_id' => $sector_id,
-                'sector' => $row['sector'],
-                'sector_denominacion' => $row['sector_denominacion'],
-                'programas' => []
-            ];
-        }
+            if (!isset($sectoresData[$sector_id])) {
+                $sectoresData[$sector_id] = [
+                    'sector_id' => $sector_id,
+                    'sector' => $row['sector'],
+                    'sector_denominacion' => $row['sector_denominacion'],
+                    'programas' => []
+                ];
+            }
 
-        // Solo agregar el programa si no está ya en el array
-        if ($programa_id !== null && !isset($sectoresData[$sector_id]['programas'][$programa_id])) {
-            $sectoresData[$sector_id]['programas'][$programa_id] = [
-                'programa_id' => $programa_id,
-                'programa' => $row['programa'],
-                'programa_denominacion' => $row['programa_denominacion'],
-                'monto' => 0  // Inicializamos el monto en 0
-            ];
+            // Solo agregar el programa si no está ya en el array
+            if ($programa_id !== null && !isset($sectoresData[$sector_id]['programas'][$programa_id])) {
+                $sectoresData[$sector_id]['programas'][$programa_id] = [
+                    'programa_id' => $programa_id,
+                    'programa' => $row['programa'],
+                    'programa_denominacion' => $row['programa_denominacion'],
+                    'monto' => 0  // Inicializamos el monto en 0
+                ];
+            }
         }
     }
-}
 
-// Consultar montos en la tabla proyecto_inversion_partidas en una sola consulta
-$sqlMontos = "
+    // Consultar montos en la tabla proyecto_inversion_partidas en una sola consulta
+    $sqlMontos = "
     SELECT sector_id, programa_id, SUM(monto) AS total_monto 
     FROM proyecto_inversion_partidas 
     GROUP BY sector_id, programa_id
 ";
-$resultadoMontos = $conexion->query($sqlMontos);
-$montosData = [];
-if ($resultadoMontos && $resultadoMontos->num_rows > 0) {
-    while ($row = $resultadoMontos->fetch_assoc()) {
-        $montosData[$row['sector_id']][$row['programa_id']] = $row['total_monto'];
+    $resultadoMontos = $conexion->query($sqlMontos);
+    $montosData = [];
+    if ($resultadoMontos && $resultadoMontos->num_rows > 0) {
+        while ($row = $resultadoMontos->fetch_assoc()) {
+            $montosData[$row['sector_id']][$row['programa_id']] = $row['total_monto'];
+        }
     }
-}
 
-// Consultar montos actuales en la tabla distribucion_presupuestaria
-$sqlDistribucion = "
+    // Consultar montos actuales en la tabla distribucion_presupuestaria
+    $sqlDistribucion = "
     SELECT id_sector, id_programa, SUM(monto_actual) AS total_monto_actual
     FROM distribucion_presupuestaria
     GROUP BY id_sector, id_programa
 ";
-$resultadoDistribucion = $conexion->query($sqlDistribucion);
-$distribucionData = [];
-if ($resultadoDistribucion && $resultadoDistribucion->num_rows > 0) {
-    while ($row = $resultadoDistribucion->fetch_assoc()) {
-        $distribucionData[$row['id_sector']][$row['id_programa']] = $row['total_monto_actual'];
+    $resultadoDistribucion = $conexion->query($sqlDistribucion);
+    $distribucionData = [];
+    if ($resultadoDistribucion && $resultadoDistribucion->num_rows > 0) {
+        while ($row = $resultadoDistribucion->fetch_assoc()) {
+            $distribucionData[$row['id_sector']][$row['id_programa']] = $row['total_monto_actual'];
+        }
     }
-}
 
-// Asociar los montos de proyecto_inversion_partidas y distribucion_presupuestaria a los programas
-foreach ($sectoresData as &$sector) {
-    foreach ($sector['programas'] as &$programa) {
-        // Agregar monto de proyecto_inversion_partidas si existe
-        if (isset($montosData[$sector['sector_id']][$programa['programa_id']])) {
-            $programa['monto'] = $montosData[$sector['sector_id']][$programa['programa_id']];
-        }
-        // Agregar monto_actual de distribucion_presupuestaria si existe
-        if (isset($distribucionData[$sector['sector_id']][$programa['programa_id']])) {
-            $programa['monto'] += $distribucionData[$sector['sector_id']][$programa['programa_id']];
+    // Asociar los montos de proyecto_inversion_partidas y distribucion_presupuestaria a los programas
+    foreach ($sectoresData as &$sector) {
+        foreach ($sector['programas'] as &$programa) {
+            // Agregar monto de proyecto_inversion_partidas si existe
+            if (isset($montosData[$sector['sector_id']][$programa['programa_id']])) {
+                $programa['monto'] = $montosData[$sector['sector_id']][$programa['programa_id']];
+            }
+            // Agregar monto_actual de distribucion_presupuestaria si existe
+            if (isset($distribucionData[$sector['sector_id']][$programa['programa_id']])) {
+                $programa['monto'] += $distribucionData[$sector['sector_id']][$programa['programa_id']];
+            }
         }
     }
-}
 
 
 
@@ -125,7 +125,7 @@ foreach ($sectoresData as &$sector) {
         while ($row = $resultadoTitulo->fetch_assoc()) {
             // Agrega todos los registros a la lista
             $tituloData[] = $row;
-            
+
             // Verifica si el artículo es "ARTICULO 27" y lo guarda en la variable
             if ($row['articulo'] === 'ARTICULO 27:') {
                 $articulo27 = $row;
@@ -137,7 +137,7 @@ foreach ($sectoresData as &$sector) {
     $sqlPersonas = "SELECT nombres, cargo FROM informacion_personas";
     $resultadoPersonas = $conexion->query($sqlPersonas);
     $personasData = [];
-    
+
     if ($resultadoPersonas && $resultadoPersonas->num_rows > 0) {
         while ($row = $resultadoPersonas->fetch_assoc()) {
             $personasData[] = $row; // Guarda cada registro en el array
@@ -157,11 +157,12 @@ foreach ($sectoresData as &$sector) {
 
 
 
-function convertirNumeroLetra2($numero) {
+function convertirNumeroLetra2($numero)
+{
     $numero = number_format($numero, 2, '.', '');
     list($entero, $decimal) = explode('.', $numero);
     $numf = milmillon2($entero);
-    
+
     if ($decimal == "00") {
         return strtoupper($numf) . " BOLÍVARES EXACTOS";
     } else {
@@ -170,7 +171,8 @@ function convertirNumeroLetra2($numero) {
     }
 }
 
-function milmillon2($nummierod) {
+function milmillon2($nummierod)
+{
     if ($nummierod >= 1000000000 && $nummierod < 2000000000) {
         $num_letrammd = "MIL " . cienmillon2($nummierod % 1000000000);
     }
@@ -183,7 +185,8 @@ function milmillon2($nummierod) {
     return $num_letrammd;
 }
 
-function cienmillon2($numcmeros) {
+function cienmillon2($numcmeros)
+{
     if ($numcmeros == 100000000) {
         $num_letracms = "CIEN MILLONES";
     }
@@ -196,7 +199,8 @@ function cienmillon2($numcmeros) {
     return $num_letracms;
 }
 
-function decmillon2($numerodm) {
+function decmillon2($numerodm)
+{
     if ($numerodm == 10000000) {
         $num_letradmm = "DIEZ MILLONES";
     }
@@ -212,7 +216,8 @@ function decmillon2($numerodm) {
     return $num_letradmm;
 }
 
-function millon2($nummiero) {
+function millon2($nummiero)
+{
     if ($nummiero >= 1000000 && $nummiero < 2000000) {
         $num_letramm = "UN MILLÓN " . cienmiles2($nummiero % 1000000);
     }
@@ -225,7 +230,8 @@ function millon2($nummiero) {
     return $num_letramm;
 }
 
-function cienmiles2($numcmero) {
+function cienmiles2($numcmero)
+{
     if ($numcmero == 100000) {
         $num_letracm = "CIEN MIL";
     }
@@ -238,7 +244,8 @@ function cienmiles2($numcmero) {
     return $num_letracm;
 }
 
-function decmiles2($numdmero) {
+function decmiles2($numdmero)
+{
     if ($numdmero == 10000) {
         $numde = "DIEZ MIL";
     }
@@ -254,7 +261,8 @@ function decmiles2($numdmero) {
     return $numde;
 }
 
-function miles2($nummero) {
+function miles2($nummero)
+{
     if ($nummero >= 1000 && $nummero < 2000) {
         $numm = "MIL " . centena2($nummero % 1000);
     }
@@ -267,7 +275,8 @@ function miles2($nummero) {
     return $numm;
 }
 
-function centena2($numc) {
+function centena2($numc)
+{
     if ($numc >= 100) {
         if ($numc >= 900 && $numc <= 999) {
             $numce = "NOVECIENTOS ";
@@ -322,7 +331,8 @@ function centena2($numc) {
     return $numce;
 }
 
-function decena2($numdero) {
+function decena2($numdero)
+{
     if ($numdero >= 90 && $numdero <= 99) {
         $numd = "NOVENTA ";
         if ($numdero > 90) {
@@ -403,7 +413,8 @@ function decena2($numdero) {
     return $numd;
 }
 
-function unidad2($numuero) {
+function unidad2($numuero)
+{
     switch ($numuero) {
         case 9:
             $numu = "NUEVE";
@@ -453,8 +464,13 @@ function unidad2($numuero) {
         body {
             margin: 10px;
             padding: 0;
-            font-family: Arial, sans-serif;
+            font-family: Calibri, sans-serif;
             font-size: 9px;
+            font-style: italic;
+        }
+
+        .font-arial {
+            font-family: Arial, sans-serif;
         }
 
         table {
@@ -463,6 +479,8 @@ function unidad2($numuero) {
             margin-bottom: 10px;
             text-align: center;
         }
+
+
 
         td {
             padding: 5px;
@@ -572,6 +590,10 @@ function unidad2($numuero) {
             border-bottom: 1px solid;
         }
 
+        .bb-light-blue {
+            border-bottom: 1px solid darkcyan;
+        }
+
         .bt {
             border-top: 1px solid;
         }
@@ -598,151 +620,173 @@ function unidad2($numuero) {
 
 <body>
     <div style="text-align: center; font-size: 15px"><strong>
-    <p>REPUBLICA BOLIVARIANA DE VENEZUELA</p>
-    <div style='width: 100%;  '>
-        <img style="margin-left: auto; margin-right: auto; width: 10%" src='../../img/logo_2_amazona.jpg' class='logo'>
-    </div>
-    <p>EL CONSEJO LEGISLATIVO DEL ESTADO AMAZONAS</p>
-    <p>Decreta lo siguiente</p>
-    <p>LEY DE PRESUPUESTO DE INGRESOS Y GASTOS</p>
-    <p>DEL ESTADO AMAZONAS PARA EL EJERCICIO FISCAL</p>
-    <p>TITULO I</p>
-    <p>DISPOSICIONES GENERALES</p></strong></div>
+            <p>REPUBLICA BOLIVARIANA DE VENEZUELA</p>
+            <div style='width: 100%;  '>
+                <img style="margin-left: auto; margin-right: auto; width: 10%" src='../../img/logo_2_amazona.jpg'
+                    class='logo'>
+            </div>
+            <p>EL CONSEJO LEGISLATIVO DEL ESTADO AMAZONAS</p>
+            <p>Decreta lo siguiente</p>
+            <p>LEY DE PRESUPUESTO DE INGRESOS Y GASTOS</p>
+            <p>DEL ESTADO AMAZONAS PARA EL EJERCICIO FISCAL</p>
+            <p>TITULO I</p>
+            <p>DISPOSICIONES GENERALES</p>
+        </strong></div>
     <div style="font-size: 15px">
-    <p><strong>ARTICULO 1:</strong> Se aprueba la estimación de los Ingresos y Gastos Públicos para el Ejercicio Fiscal <?= $ano ?> en la cantidad de <?php echo convertirNumeroLetra2($total); ?> (Bs. <?php echo number_format($total, 2) ?>), la cual está constituida por los siguientes rubros de ingresos: </p>
-    
-    <table>
-        <tr>
-            <th class="bl bt bb">SITUADO CONSTITUCIONAL</th>
-            <th class="bl bt bb br"><?= number_format($situado, 2) ?></th>
-        </tr>
-        <tr>
-            <th class="bl bt bb">FONDO DE COMPENSACIÓN INTERTERRITORIAL</th>
-            <th class="bl bt bb br"><?= number_format($monto_total, 2) ?></th>
-        </tr>
-        <tr>
-            <th class="bl bt bb">TOTAL Bs.</th>
-            <th class="bl bt bb br"><?= number_format($total, 2) ?></th>
-        </tr>
-    </table>
+        <p><strong>Artículo 1:</strong> Se aprueba la estimación de los Ingresos y Gastos Públicos para el Ejercicio
+            Fiscal <?= $ano ?> en la cantidad de <span
+                class="font-arial fw-bold"><?php echo convertirNumeroLetra2($total); ?>
+                (Bs.
+                <?php echo number_format($total, 2) ?>),</span> la cual está constituida por los siguientes rubros de
+            ingresos:
+        </p>
 
-    <p>Esta distribución se hace de acuerdo a lo que se prevé en el Título II de esta Ley, denominado “Presupuesto de Ingresos” por un monto de <?php echo convertirNumeroLetra2($total); ?> (Bs. <?php echo number_format($total, 2) ?>)</p>
+        <table>
+            <tr class="bb-light-blue">
+                <td class="text-left">SITUADO CONSTITUCIONAL</td>
+                <td>Bs.</td>
+                <td class="text-right"><?= number_format($situado, 2) ?></td>
+            </tr>
+            <tr class="bb-light-blue">
+                <td class="text-left">FONDO DE COMPENSACIÓN INTERTERRITORIAL</td>
+                <td>Bs.</td>
+                <td class="text-right"><?= number_format($monto_total, 2) ?></td>
+            </tr>
+            <tr class="bb-light-blue fw-bold">
+                <td class="text-left">TOTAL Bs.</td>
+                <td>Bs.</td>
+                <td class="text-right"><?= number_format($total, 2) ?></td>
+            </tr>
+        </table>
 
-    <!-- Sección para mostrar los artículos y descripciones de la tabla titulo_1 -->
-    <div style="text-align: justify;">
-    <?php foreach ($tituloData as $titulo): ?>
-    <?php if ($titulo['articulo'] !== 'ARTICULO 27:'): ?>
-        <p><strong><?= htmlspecialchars($titulo['articulo']) ?></strong> <?= htmlspecialchars($titulo['descripcion']) ?></p>
-    <?php endif; ?>
-    <?php endforeach; ?>
-</div>
-    <div style="text-align: center;"><strong>
-    <p>TITULO II</p>
-    <p>PRESUPUESTO DE INGRESOS</p>
-</strong>
-    </div>
-    <p><strong>ARTICULO 25:</strong> Apruébese la estimación de los Ingresos Públicos para el Ejercicio Fiscal <?= $ano ?> la cantidad de <?php echo convertirNumeroLetra2($total); ?> (Bs. <?php echo number_format($total, 2) ?>), según la distribución siguiente:</p>
-    <table>
-        <tr>
-            <th class="bl bt bb" colspan="4">CÓDIGO DE RECURSOS</th>
-            <th class="bl bt bb br" rowspan="2">DENOMINACIÓN</th>
-            <th class="bl bt bb br" rowspan="2">MONTO Bs.</th>
-        </tr>
-        <tr>
-            <th class="bl bt bb">RAMO</th>
-            <th class="bl bt bb br">GEN</th>
-            <th class="bl bt bb br">ESP</th>
-            <th class="bl bt bb br">SUB ESP</th>
-        </tr>
-        <tr>
-            <td class="bl bt bb">3.00</td>
-            <td class="bl bt bb br">00</td>
-            <td class="bl bt bb br">00</td>
-            <td class="bl bt bb br">00</td>
-            <td class="bl bt bb br" class="bold">RECURSOS</td>
-            <td class="bl bt bb br"><?= number_format($total, 2) ?></td>
-        </tr>
-        <tr>
-            <td class="bl bt bb">3.05</td>
-            <td class="bl bt bb br">00</td>
-            <td class="bl bt bb br">00</td>
-            <td class="bl bt bb br">00</td>
-            <td class="bl bt bb">TRANSFERENCIAS Y DONACIONES</td>
-            <td class="bl bt bb br"><?= number_format($total, 2) ?></td>
-        </tr>
-        <tr>
-            <td class="bl bt bb">3.05</td>
-            <td class="bl bt bb br">03</td>
-            <td class="bl bt bb br">01</td>
-            <td class="bl bt bb br">01</td>
-            <td class="bl bt bb br">SITUADO ESTATAL</td>
-            <td class="bl bt bb br"><?= number_format($situado, 2) ?></td>
-        </tr>
-        <tr>
-            <td class="bl bt bb">3.05</td>
-            <td class="bl bt bb br">08</td>
-            <td class="bl bt bb br">01</td>
-            <td class="bl bt bb br">01</td>
-            <td class="bl bt bb br">FONDO DE COMPENSACIÓN INTERTERRITORIAL</td>
-            <td class="bl bt bb br"><?= number_format($monto_total, 2) ?></td>
-        </tr>
-        <tr>
-            <td colspan="5" class="bl bt bb">TOTAL</td>
-            <td class="bl bt bb br"><?= number_format($total, 2) ?></td>
-        </tr>
-    </table>
-    <div style="text-align: center;">
-        <strong>
-    <p>TITULO III</p>
-    <p>PRESUPUESTO DE GASTOS</p>
-</strong>
-</div>
-    <p><strong>ARTÍCULO 26:</strong> Se acuerda la estimación de los Ingresos Públicos para el Ejercicio Fiscal <?= $ano ?> en la cantidad de <?php echo convertirNumeroLetra2($total); ?> (Bs. <?php echo number_format($total, 2) ?>), según la distribución siguiente:</p>
-    
-    <!-- Tabla HTML -->
-    <table>
-        <?php
-        $sectoresImprimidos = [];
+        <p>Esta distribución se hace de acuerdo a lo que se prevé en el Título II de esta Ley, denominado “Presupuesto
+            de Ingresos” por un monto de <span class="font-arial"><?php echo convertirNumeroLetra2($total); ?> (Bs.
+                <?php echo number_format($total, 2) ?>)</span>
+        </p>
 
-        foreach ($sectoresData as $sectorData) {
-            $sectorKey = $sectorData['sector'];
-
-            // Verificar si el sector ya ha sido impreso
-            if (!in_array($sectorKey, $sectoresImprimidos)) {
-                // Imprimir información del sector
-                echo "<tr><td colspan='3'><strong>Sector:</strong> " . htmlspecialchars($sectorData['sector']) . "</td></tr>";
-                echo "<tr><td colspan='3'>" . htmlspecialchars($sectorData['sector_denominacion']) . "</td></tr>";
-
-                // Si hay programas
-                if (!empty($sectorData['programas']) && is_array($sectorData['programas'])) {
-                    echo "<tr><th class='bl bt bb' colspan='2'>PROGRAMA</th><th class='bl bt bb br'>MONTO Bs.</th></tr>";
-                    foreach ($sectorData['programas'] as $programa2) {
-                        echo "<tr>";
-                        echo "<td class='bl bt bb'>" . htmlspecialchars($programa2['programa']) . "</td>";
-                        echo "<td class='bl bt bb br'>" . htmlspecialchars($programa2['programa_denominacion']) . "</td>";
-                        echo "<td class='bl bt bb br'>" . number_format($programa2['monto'], 2) . "</td>";
-                        echo "</tr>";
-                    }
-                } else {
-                    echo "<tr><td class='bl bt bb' colspan='3'>No hay programas disponibles para este sector.</td></tr>";
-                }
-
-                // Agregar el sector a la lista de impresos
-                $sectoresImprimidos[] = $sectorKey;
-            }
-        }
-        ?>
-    </table>
-
-    <p><strong><?= htmlspecialchars($articulo27['articulo']) ?></strong> <?= htmlspecialchars($articulo27['descripcion']) ?></p>
-    <div style="text-align: center;">
-    <!-- Impresión de información de personas -->
-        <?php foreach ($personasData as $persona): ?>
-            <p><?= htmlspecialchars($persona['nombres']) ?></p>
-            <p><strong><?= htmlspecialchars($persona['cargo']) ?></strong></p>
-        <?php endforeach; ?>
-    </div>
+        <!-- Sección para mostrar los artículos y descripciones de la tabla titulo_1 -->
+        <div style="text-align: justify;">
+            <?php foreach ($tituloData as $titulo): ?>
+                <?php if ($titulo['articulo'] !== 'ARTICULO 27:'): ?>
+                    <p><strong><?= htmlspecialchars($titulo['articulo']) ?></strong>
+                        <?= htmlspecialchars($titulo['descripcion']) ?></p>
+                <?php endif; ?>
+            <?php endforeach; ?>
         </div>
+        <div style="text-align: center;"><strong>
+                <p>TITULO II</p>
+                <p>PRESUPUESTO DE INGRESOS</p>
+            </strong>
+        </div>
+        <p><strong>ARTICULO 25:</strong> Apruébese la estimación de los Ingresos Públicos para el Ejercicio Fiscal
+            <?= $ano ?> la cantidad de <?php echo convertirNumeroLetra2($total); ?> (Bs.
+            <?php echo number_format($total, 2) ?>), según la distribución siguiente:
+        </p>
+        <table>
+            <tr>
+                <th class="bl bt bb" colspan="4">CÓDIGO DE RECURSOS</th>
+                <th class="bl bt bb br" rowspan="2">DENOMINACIÓN</th>
+                <th class="bl bt bb br" rowspan="2">MONTO Bs.</th>
+            </tr>
+            <tr>
+                <th class="bl bt bb">RAMO</th>
+                <th class="bl bt bb br">GEN</th>
+                <th class="bl bt bb br">ESP</th>
+                <th class="bl bt bb br">SUB ESP</th>
+            </tr>
+            <tr>
+                <td class="bl bt bb">3.00</td>
+                <td class="bl bt bb br">00</td>
+                <td class="bl bt bb br">00</td>
+                <td class="bl bt bb br">00</td>
+                <td class="bl bt bb br" class="bold">RECURSOS</td>
+                <td class="bl bt bb br"><?= number_format($total, 2) ?></td>
+            </tr>
+            <tr>
+                <td class="bl bt bb">3.05</td>
+                <td class="bl bt bb br">00</td>
+                <td class="bl bt bb br">00</td>
+                <td class="bl bt bb br">00</td>
+                <td class="bl bt bb">TRANSFERENCIAS Y DONACIONES</td>
+                <td class="bl bt bb br"><?= number_format($total, 2) ?></td>
+            </tr>
+            <tr>
+                <td class="bl bt bb">3.05</td>
+                <td class="bl bt bb br">03</td>
+                <td class="bl bt bb br">01</td>
+                <td class="bl bt bb br">01</td>
+                <td class="bl bt bb br">SITUADO ESTATAL</td>
+                <td class="bl bt bb br"><?= number_format($situado, 2) ?></td>
+            </tr>
+            <tr>
+                <td class="bl bt bb">3.05</td>
+                <td class="bl bt bb br">08</td>
+                <td class="bl bt bb br">01</td>
+                <td class="bl bt bb br">01</td>
+                <td class="bl bt bb br">FONDO DE COMPENSACIÓN INTERTERRITORIAL</td>
+                <td class="bl bt bb br"><?= number_format($monto_total, 2) ?></td>
+            </tr>
+            <tr>
+                <td colspan="5" class="bl bt bb">TOTAL</td>
+                <td class="bl bt bb br"><?= number_format($total, 2) ?></td>
+            </tr>
+        </table>
+        <div style="text-align: center;">
+            <strong>
+                <p>TITULO III</p>
+                <p>PRESUPUESTO DE GASTOS</p>
+            </strong>
+        </div>
+        <p><strong>ARTÍCULO 26:</strong> Se acuerda la estimación de los Ingresos Públicos para el Ejercicio Fiscal
+            <?= $ano ?> en la cantidad de <?php echo convertirNumeroLetra2($total); ?> (Bs.
+            <?php echo number_format($total, 2) ?>), según la distribución siguiente:
+        </p>
+
+        <!-- Tabla HTML -->
+        <table>
+            <?php
+            $sectoresImprimidos = [];
+
+            foreach ($sectoresData as $sectorData) {
+                $sectorKey = $sectorData['sector'];
+
+                // Verificar si el sector ya ha sido impreso
+                if (!in_array($sectorKey, $sectoresImprimidos)) {
+                    // Imprimir información del sector
+                    echo "<tr><td colspan='3'><strong>Sector:</strong> " . htmlspecialchars($sectorData['sector']) . "</td></tr>";
+                    echo "<tr><td colspan='3'>" . htmlspecialchars($sectorData['sector_denominacion']) . "</td></tr>";
+
+                    // Si hay programas
+                    if (!empty($sectorData['programas']) && is_array($sectorData['programas'])) {
+                        echo "<tr><th class='bl bt bb' colspan='2'>PROGRAMA</th><th class='bl bt bb br'>MONTO Bs.</th></tr>";
+                        foreach ($sectorData['programas'] as $programa2) {
+                            echo "<tr>";
+                            echo "<td class='bl bt bb'>" . htmlspecialchars($programa2['programa']) . "</td>";
+                            echo "<td class='bl bt bb br'>" . htmlspecialchars($programa2['programa_denominacion']) . "</td>";
+                            echo "<td class='bl bt bb br'>" . number_format($programa2['monto'], 2) . "</td>";
+                            echo "</tr>";
+                        }
+                    } else {
+                        echo "<tr><td class='bl bt bb' colspan='3'>No hay programas disponibles para este sector.</td></tr>";
+                    }
+
+                    // Agregar el sector a la lista de impresos
+                    $sectoresImprimidos[] = $sectorKey;
+                }
+            }
+            ?>
+        </table>
+
+        <p><strong><?= htmlspecialchars($articulo27['articulo']) ?></strong>
+            <?= htmlspecialchars($articulo27['descripcion']) ?></p>
+        <div style="text-align: center;">
+            <!-- Impresión de información de personas -->
+            <?php foreach ($personasData as $persona): ?>
+                <p><?= htmlspecialchars($persona['nombres']) ?></p>
+                <p><strong><?= htmlspecialchars($persona['cargo']) ?></strong></p>
+            <?php endforeach; ?>
+        </div>
+    </div>
 </body>
 
 </html>
