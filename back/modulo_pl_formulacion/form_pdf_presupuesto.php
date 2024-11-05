@@ -476,7 +476,8 @@ function unidad2($numuero)
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 10px;
+
+            margin-top: 15px;
             text-align: center;
         }
 
@@ -599,7 +600,11 @@ function unidad2($numuero)
         }
 
         .dw-nw {
-            white-space: nowrap !important
+            white-space: nowrap !important;
+        }
+
+        .mt-0 {
+            margin-top: 0px !important;
         }
 
         @media print {
@@ -661,7 +666,7 @@ function unidad2($numuero)
 
         <p>Esta distribución se hace de acuerdo a lo que se prevé en el Título II de esta Ley, denominado “Presupuesto
             de Ingresos” por un monto de <span class="font-arial"><?php echo convertirNumeroLetra2($total); ?> (Bs.
-                <?php echo number_format($total, 2) ?>)</span>
+                <?php echo number_format($total, 2) ?>)</span>.
         </p>
 
         <!-- Sección para mostrar los artículos y descripciones de la tabla titulo_1 -->
@@ -678,9 +683,10 @@ function unidad2($numuero)
                 <p>PRESUPUESTO DE INGRESOS</p>
             </strong>
         </div>
-        <p><strong>ARTICULO 25:</strong> Apruébese la estimación de los Ingresos Públicos para el Ejercicio Fiscal
-            <?= $ano ?> la cantidad de <?php echo convertirNumeroLetra2($total); ?> (Bs.
-            <?php echo number_format($total, 2) ?>), según la distribución siguiente:
+        <p><strong>ARTICULO 25:</strong> <span class="font-arial">Apruébese la estimación de los Ingresos Públicos para
+                el Ejercicio Fiscal
+                <?= $ano ?> la cantidad de <?php echo convertirNumeroLetra2($total); ?> (Bs.
+                <?php echo number_format($total, 2) ?>)</span>, según la distribución siguiente:
         </p>
         <table>
             <tr>
@@ -699,36 +705,36 @@ function unidad2($numuero)
                 <td class="bl bt bb br">00</td>
                 <td class="bl bt bb br">00</td>
                 <td class="bl bt bb br">00</td>
-                <td class="bl bt bb br" class="bold">RECURSOS</td>
-                <td class="bl bt bb br"><?= number_format($total, 2) ?></td>
+                <td class="bl bt bb br text-left">RECURSOS</td>
+                <td class="bl bt bb br text-right"><?= number_format($total, 2) ?></td>
             </tr>
             <tr>
                 <td class="bl bt bb">3.05</td>
                 <td class="bl bt bb br">00</td>
                 <td class="bl bt bb br">00</td>
                 <td class="bl bt bb br">00</td>
-                <td class="bl bt bb">TRANSFERENCIAS Y DONACIONES</td>
-                <td class="bl bt bb br"><?= number_format($total, 2) ?></td>
+                <td class="bl bt bb text-left">TRANSFERENCIAS Y DONACIONES</td>
+                <td class="bl bt bb br text-right"><?= number_format($total, 2) ?></td>
             </tr>
             <tr>
                 <td class="bl bt bb">3.05</td>
                 <td class="bl bt bb br">03</td>
                 <td class="bl bt bb br">01</td>
                 <td class="bl bt bb br">01</td>
-                <td class="bl bt bb br">SITUADO ESTATAL</td>
-                <td class="bl bt bb br"><?= number_format($situado, 2) ?></td>
+                <td class="bl bt bb br text-left">SITUADO ESTATAL</td>
+                <td class="bl bt bb br text-right"><?= number_format($situado, 2) ?></td>
             </tr>
             <tr>
                 <td class="bl bt bb">3.05</td>
                 <td class="bl bt bb br">08</td>
                 <td class="bl bt bb br">01</td>
                 <td class="bl bt bb br">01</td>
-                <td class="bl bt bb br">FONDO DE COMPENSACIÓN INTERTERRITORIAL</td>
-                <td class="bl bt bb br"><?= number_format($monto_total, 2) ?></td>
+                <td class="bl bt bb br text-left">FONDO DE COMPENSACIÓN INTERTERRITORIAL</td>
+                <td class="bl bt bb br text-right"><?= number_format($monto_total, 2) ?></td>
             </tr>
             <tr>
-                <td colspan="5" class="bl bt bb">TOTAL</td>
-                <td class="bl bt bb br"><?= number_format($total, 2) ?></td>
+                <td colspan="5" class="bl bt bb text-right">TOTAL</td>
+                <td class="bl bt bb br text-right"><?= number_format($total, 2) ?></td>
             </tr>
         </table>
         <div style="text-align: center;">
@@ -738,53 +744,84 @@ function unidad2($numuero)
             </strong>
         </div>
         <p><strong>ARTÍCULO 26:</strong> Se acuerda la estimación de los Ingresos Públicos para el Ejercicio Fiscal
-            <?= $ano ?> en la cantidad de <?php echo convertirNumeroLetra2($total); ?> (Bs.
-            <?php echo number_format($total, 2) ?>), según la distribución siguiente:
+            <?= $ano ?> en la cantidad de <span class="font-arial"><?php echo convertirNumeroLetra2($total); ?> (Bs.
+                <?php echo number_format($total, 2) ?>)</span>, según la distribución siguiente:
         </p>
 
         <!-- Tabla HTML -->
+
         <table>
-            <?php
-            $sectoresImprimidos = [];
-
-            foreach ($sectoresData as $sectorData) {
-                $sectorKey = $sectorData['sector'];
-
-                // Verificar si el sector ya ha sido impreso
-                if (!in_array($sectorKey, $sectoresImprimidos)) {
-                    // Imprimir información del sector
-                    echo "<tr><td colspan='3'><strong>Sector:</strong> " . htmlspecialchars($sectorData['sector']) . "</td></tr>";
-                    echo "<tr><td colspan='3'>" . htmlspecialchars($sectorData['sector_denominacion']) . "</td></tr>";
-
-                    // Si hay programas
-                    if (!empty($sectorData['programas']) && is_array($sectorData['programas'])) {
-                        echo "<tr><th class='bl bt bb' colspan='2'>PROGRAMA</th><th class='bl bt bb br'>MONTO Bs.</th></tr>";
-                        foreach ($sectorData['programas'] as $programa2) {
-                            echo "<tr>";
-                            echo "<td class='bl bt bb'>" . htmlspecialchars($programa2['programa']) . "</td>";
-                            echo "<td class='bl bt bb br'>" . htmlspecialchars($programa2['programa_denominacion']) . "</td>";
-                            echo "<td class='bl bt bb br'>" . number_format($programa2['monto'], 2) . "</td>";
-                            echo "</tr>";
-                        }
-                    } else {
-                        echo "<tr><td class='bl bt bb' colspan='3'>No hay programas disponibles para este sector.</td></tr>";
-                    }
-
-                    // Agregar el sector a la lista de impresos
-                    $sectoresImprimidos[] = $sectorKey;
-                }
-            }
-            ?>
         </table>
+        <?php
+        $sectoresImprimidos = [];
+
+        foreach ($sectoresData as $sectorData) {
+            $sectorKey = $sectorData['sector'];
+
+            // .pb-0 {
+            //     padding-bottom: 0 !important;
+            // }
+        
+            // .pt-0 {
+            //     padding-top: 0 !important;
+            // }
+        
+            // Verificar si el sector ya ha sido impreso
+            if (!in_array($sectorKey, $sectoresImprimidos)) {
+                // Imprimir información del sector
+                echo "<table ><tr><td colspan='3' class='text-left pb-0 pt-0'><strong>Sector:</strong> " . htmlspecialchars($sectorData['sector']) . "</td></tr>";
+                echo "<tr><td class='fw-bold text-left  pt-0'>" . htmlspecialchars($sectorData['sector_denominacion']) . "</td> <td colspan='2' class='fw-bold  pt-0 text-right'>TOTAL (PENDIENTE)</td></tr> </table>";
+
+                // Si hay programas
+                if (!empty($sectorData['programas']) && is_array($sectorData['programas'])) {
+                    echo "<table class='mt-0'><tr><th class='bl bt bb' colspan='2'>PROGRAMA</th><th class='bl bt bb br'>MONTO Bs.</th></tr>";
+                    foreach ($sectorData['programas'] as $programa2) {
+                        echo "<tr>";
+                        echo "<td class='bl bt bb fw-bold'>" . htmlspecialchars($programa2['programa']) . "</td>";
+                        echo "<td class='bl bt bb br text-left'>" . htmlspecialchars($programa2['programa_denominacion']) . "</td>";
+                        echo "<td class='bl bt bb br text-right'>" . number_format($programa2['monto'], 2) . "</td>";
+                        echo "</tr>";
+                    }
+                    echo "</table>";
+                } else {
+                    echo "<table class='mt-0'><tr><td class='bl bt bb br' colspan='3'>No hay programas disponibles para este sector.</td></tr></table>";
+                }
+
+                // Agregar el sector a la lista de impresos
+                $sectoresImprimidos[] = $sectorKey;
+            }
+        }
+        ?>
+
 
         <p><strong><?= htmlspecialchars($articulo27['articulo']) ?></strong>
             <?= htmlspecialchars($articulo27['descripcion']) ?></p>
-        <div style="text-align: center;">
+        <div style="">
             <!-- Impresión de información de personas -->
-            <?php foreach ($personasData as $persona): ?>
-                <p><?= htmlspecialchars($persona['nombres']) ?></p>
-                <p><strong><?= htmlspecialchars($persona['cargo']) ?></strong></p>
-            <?php endforeach; ?>
+            <?php
+            $cantidadPersonas = 0;
+            $alineacionDerecha = true; // Variable para determinar la alineación
+            
+            foreach ($personasData as $persona):
+                if ($cantidadPersonas < 2) {
+                    // Mostrar persona
+                    ?>
+                    <div class="<?= $alineacionDerecha ? 'text-right' : 'text-left'; ?>" style="margin-bottom: 80px;">
+                        <p><?= htmlspecialchars($persona['nombres']); ?></p>
+                        <p><strong><?= htmlspecialchars($persona['cargo']) ?></strong></p>
+                    </div>
+                    <?php
+                    $cantidadPersonas++;
+                }
+
+                // Cada 2 personas, cambia la alineación y resetea el contador
+                if ($cantidadPersonas == 2) {
+                    $cantidadPersonas = 0;
+                    $alineacionDerecha = !$alineacionDerecha; // Alterna la alineación
+                }
+
+            endforeach;
+            ?>
         </div>
     </div>
 </body>
