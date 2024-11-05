@@ -227,15 +227,13 @@ const getEntes = async () => {
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
 
-    const clone = res.clone()
+    // const clone = res.clone()
 
-    let text = await clone.text()
-
-    console.log(text)
+    // let text = await clone.text()
 
     const json = await res.json()
 
-    console.log(json)
+    // console.log(json)
     if (json.success) {
       let mappedData = mapData({
         obj: json.success,

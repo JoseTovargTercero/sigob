@@ -26,13 +26,23 @@ export const validateDistribucionView = async () => {
 
   console.log(ejercicioFiscal)
 
-  validateDistribucionTable({ partidas: ejercicioFiscal.distribucion_partidas })
+  validateDistribucionTable({
+    partidas: ejercicioFiscal ? ejercicioFiscal.distribucion_partidas : [],
+  })
 
   d.addEventListener('click', async (e) => {
     if (e.target.id === 'distribucion-registrar') {
       form_distribucion_form_card({
         elementToInset: 'distribucion-view',
         ejercicioFiscal,
+        recargarEjercicio: async function () {
+          let ejercicioFiscalElement = d.querySelector(
+            `[data-ejercicioid="${ejercicioFiscal.id}"]`
+          )
+          ejercicioFiscal = await validarEjercicioActual({
+            ejercicioTarget: ejercicioFiscalElement,
+          })
+        },
       })
     }
 

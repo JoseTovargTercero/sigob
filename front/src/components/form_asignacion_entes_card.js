@@ -31,6 +31,7 @@ const tableLanguage = {
 export const form_asignacion_entes_card = async ({
   elementToInset,
   ejercicioFiscal,
+  actualizar,
 }) => {
   let fieldList = { ejemplo: '' }
   let fieldListErrors = {
@@ -49,13 +50,23 @@ export const form_asignacion_entes_card = async ({
   console.log(asignacionesEntes)
 
   const crearFilas = () => {
+    // console.log(entes.fullInfo)
+
     let fila = entes.fullInfo
       .filter(
         (ente) =>
           !asignacionesEntes.fullInfo.some(
-            (asignaciones) => Number(ente.id) === Number(asignaciones.id_ente)
+            (asignaciones) =>
+              Number(ente.id) === Number(asignaciones.id_ente) &&
+              Number(asignaciones.id_ejercicio) === Number(ejercicioFiscal.id)
           )
       )
+      // .filter(
+      //   (ente) =>
+      //     !asignacionesEntes.fullInfo.some(
+      //       (asignaciones) => Number(ente.id) === Number(asignaciones.id_ente)
+      //     )
+      // )
       .map((ente) => {
         return `  <tr>
               <td>${ente.ente_nombre}</td>
@@ -69,8 +80,9 @@ export const form_asignacion_entes_card = async ({
               </td>
             </tr>`
       })
+    // console.log(fila)
 
-    return fila
+    return fila.join('')
   }
 
   let card = `<div class='card slide-up-animation' id='asignacion-entes-form-card'>
@@ -134,6 +146,7 @@ export const form_asignacion_entes_card = async ({
         elementToInset: 'asignacion-entes-view',
         enteId: e.target.dataset.asignarid,
         ejercicioFiscal,
+        actualizar,
       })
       closeCard()
     }

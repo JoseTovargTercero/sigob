@@ -1384,11 +1384,11 @@ const getDescripcionProgramaData = async () => {
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
 
-    const clone = res.clone()
+    // const clone = res.clone()
 
-    let text = await clone.text()
+    // let text = await clone.text()
 
-    console.log(text)
+    // console.log(text)
     const json = await res.json()
     console.log(json)
 
@@ -1441,7 +1441,7 @@ const getDescripcionProgramaDataId = async (id) => {
 
     // console.log(json)
     if (json.success) {
-      return json.success[0]
+      return json.success
     }
 
     if (json.error) {

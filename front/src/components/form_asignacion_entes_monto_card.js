@@ -16,6 +16,7 @@ export const form_asignacion_entes_monto_card = async ({
   elementToInset,
   enteId,
   ejercicioFiscal,
+  actualizar,
 }) => {
   let fieldList = { monto: '' }
   let fieldListErrors = {
@@ -34,7 +35,6 @@ export const form_asignacion_entes_monto_card = async ({
   }
 
   let ente = await getEnte(enteId)
-  console.log(ejercicioFiscal)
 
   const oldCardElement = d.getElementById('asignacion-ente-monto-form-card')
   if (oldCardElement) oldCardElement.remove()
@@ -65,7 +65,7 @@ export const form_asignacion_entes_monto_card = async ({
         <div class='d-flex gap-2 justify-content-between'>
           <h6>
             Monto disponible ejercicio fiscal: ${separarMiles(
-              ejercicioFiscal.situado
+              ejercicioFiscal.restante_situado_asignacion
             )}
           </h6>
           <h6>
@@ -114,6 +114,15 @@ export const form_asignacion_entes_monto_card = async ({
     }
 
     if (e.target.id === 'asignacion-ente-monto-guardar') {
+      console.log(fieldList)
+      if (!Number(fieldList.monto)) {
+        toastNotification({
+          type: NOTIFICATIONS_TYPES.fail,
+          message: 'Monto inválido',
+        })
+        return
+      }
+
       enviarInformacion()
     }
   }
@@ -129,15 +138,23 @@ export const form_asignacion_entes_monto_card = async ({
 
       //   actualizarMontoRestante()
 
-      if (Number(e.target.value) > Number(ejercicioFiscal.situado)) {
-        e.target.value = ejercicioFiscal.situado
+      if (
+        Number(e.target.value) >
+        Number(ejercicioFiscal.restante_situado_asignacion)
+      ) {
+        e.target.value = ejercicioFiscal.restante_situado_asignacion
+        fieldList.monto = e.target.value
+        d.getElementById('monto-total-asignado').textContent = e.target.value
+
         toastNotification({
           type: NOTIFICATIONS_TYPES.fail,
           message:
             'No se puede superar el monto disponible del ejercicio fiscal',
         })
+        return
       }
       d.getElementById('monto-total-asignado').textContent = e.target.value
+
       if (!e.target.value) {
         d.getElementById('monto-total-asignado').textContent = 0
       }
@@ -162,7 +179,8 @@ export const form_asignacion_entes_monto_card = async ({
           //   elementToInset: 'asignacion-entes-view',
           //   ejercicioFiscal,
           // })
-          loadAsignacionEntesTable(ejercicioFiscal.id)
+          actualizar()
+
           closeCard()
         }
       },

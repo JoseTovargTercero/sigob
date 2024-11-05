@@ -24,7 +24,7 @@ export const validateAsignacionEntesView = async () => {
     elementToInsert: 'ejercicios-fiscales',
   })
 
-  validateAsignacionEntesTable(ejercicioFiscal.id)
+  validateAsignacionEntesTable(ejercicioFiscal ? ejercicioFiscal.id : null)
 
   d.addEventListener('click', async (e) => {
     if (e.target.dataset.validarid) {
@@ -35,11 +35,24 @@ export const validateAsignacionEntesView = async () => {
         elementToInset: 'asignacion-entes-view',
         asignacion: asignacion,
         ejercicioFiscal,
+        actualizar: async function () {
+          let res = await actualizarEjercicioFiscal()
+        },
       })
     }
     if (e.target.dataset.ejercicioid) {
       // QUITAR CARD SI SE CAMBIA EL AÑO FISCAL
       let formCard = d.getElementById('asignacion-entes-form-card')
+      let cards = [
+        'asignacion-entes-form-card',
+        'asignacion-ente-monto-form-card',
+      ]
+
+      cards.forEach((el) => {
+        if (d.getElementById(el)) {
+          d.getElementById(el).remove()
+        }
+      })
       if (formCard) formCard.remove()
 
       ejercicioFiscal = await validarEjercicioActual({
@@ -51,9 +64,14 @@ export const validateAsignacionEntesView = async () => {
 
     // REGISTRAR NUEVA ASIGNACIÓN A ENTE
     if (e.target.id === 'entes-asignar') {
+      console.log(ejercicioFiscal)
+
       form_asignacion_entes_card({
         elementToInset: 'asignacion-entes-view',
         ejercicioFiscal,
+        actualizar: async function () {
+          let res = await actualizarEjercicioFiscal()
+        },
       })
     }
 
@@ -90,6 +108,14 @@ export const validateAsignacionEntesView = async () => {
     //   })
     // }
   })
+
+  async function actualizarEjercicioFiscal() {
+    ejercicioFiscal = await ejerciciosLista({
+      elementToInsert: 'ejercicios-fiscales',
+    })
+
+    loadAsignacionEntesTable(ejercicioFiscal.id)
+  }
 }
 
 function validateEditButtons() {

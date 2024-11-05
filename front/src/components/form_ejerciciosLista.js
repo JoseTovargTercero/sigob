@@ -8,6 +8,11 @@ export const ejerciciosLista = async ({ elementToInsert, ejercicioFiscal }) => {
 
   let fechaActual = new Date().getFullYear()
 
+  const ejercicioGuardado = localStorage.getItem('ejercicioSeleccionado')
+
+  // Si hay un ejercicio almacenado, usamos ese; de lo contrario, usamos el año actual
+  const ejercicioSeleccionado = ejercicioGuardado || fechaActual
+
   let ejercicioActual
 
   if (!ejerciciosFiscales || ejerciciosFiscales.length === 0) {
@@ -29,7 +34,7 @@ export const ejerciciosLista = async ({ elementToInsert, ejercicioFiscal }) => {
     .map((ejercicio) => {
       let ano = Number(ejercicio.ano)
 
-      if (ano === fechaActual) {
+      if (ano === Number(ejercicioSeleccionado)) {
         ejercicioActual = ejercicio
         return `  <div class='col-sm-4'>
             <p>
@@ -61,6 +66,10 @@ export const ejerciciosLista = async ({ elementToInsert, ejercicioFiscal }) => {
   d.getElementById(elementToInsert).innerHTML = ejerciciosMapeados
 
   return ejercicioActual
+    ? ejercicioActual
+    : ejerciciosFiscales.fullInfo.length > 0
+    ? ejerciciosFiscales.fullInfo[0]
+    : null
 }
 
 export const validarEjercicioActual = async ({ ejercicioTarget }) => {
@@ -79,6 +88,7 @@ export const validarEjercicioActual = async ({ ejercicioTarget }) => {
   ejercicioTarget.classList.add('text-primary')
 
   let ejercicioFiscal = await getEjecicio(ejercicioTarget.dataset.ejercicioid)
+  localStorage.setItem('ejercicioSeleccionado', Number(ejercicioFiscal.ano))
 
   return ejercicioFiscal
 }

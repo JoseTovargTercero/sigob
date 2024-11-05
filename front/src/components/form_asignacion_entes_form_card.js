@@ -55,9 +55,9 @@ const tableLanguage = {
 
 export const form_asignacion_entes_form_card = async ({
   elementToInset,
-
   asignacion,
   ejercicioFiscal,
+  actualizar,
 }) => {
   let fieldList = { ejemplo: '' }
   let fieldListErrors = {
@@ -1165,7 +1165,7 @@ export const form_asignacion_entes_form_card = async ({
         })
         if (res.success) {
           closeCard()
-          loadAsignacionEntesTable(ejercicioFiscal.id)
+          actualizar()
         }
       },
     })

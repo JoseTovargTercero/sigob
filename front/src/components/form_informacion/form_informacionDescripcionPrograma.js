@@ -21,36 +21,49 @@ export const form_informacionDescripcionProgramaForm = async ({
   data,
 }) => {
   let fieldList = {
-    articulo: '',
+    id_sector: '',
+    id_programa: '',
     descripcion: '',
+  }
+  let nombreComponente = 'descripcion-programa'
+
+  if (data) {
+    fieldList.id = data.id
+    fieldList.id_sector = data.id_sector
+    fieldList.id_programa = data.id_programa
+    fieldList.descripcion = data.descripcion
+
+    // let inputs = d.querySelectorAll(`.${nombreComponente}-input`)
+
+    // inputs.forEach((input) => {
+    //   input.value = data[input.name]
+    // })
   }
 
   let sectores = await selectTables('pl_sectores')
 
+  console.log(fieldList)
   let optionsSectores = sectores
     .map((option) => {
-      return `<option value="${option.id}">${option.sector} - ${option.denominacion}</option>`
+      if (Number(option.id) === Number(fieldList.id_sector)) {
+        return `<option value="${option.id}" selected>${option.sector} - ${option.denominacion}</option>`
+      } else {
+        return `<option value="${option.id}">${option.sector} - ${option.denominacion}</option>`
+      }
     })
     .join('')
 
-  let nombreComponente = 'descripcion-programa'
-
   let fieldListErrors = {
-    articulo: {
-      value: true,
-      message: 'mensaje de error',
-      type: 'text',
-    },
     descripcion: {
       value: true,
-      message: 'mensaje de error',
+      message: 'Descripcion vacía',
       type: 'textarea',
     },
   }
   const oldCardElement = d.getElementById(`${nombreComponente}-form-card`)
   if (oldCardElement) oldCardElement.remove()
 
-  let card = ` <div class='card slide-up-animation' id='${nombreComponente}-form-card'>
+  let card = `<div class='card slide-up-animation' id='${nombreComponente}-form-card'>
       <div class='card-header d-flex justify-content-between'>
         <div class=''>
           <h5 class='mb-0'>Formulario gobernación</h5>
@@ -74,7 +87,7 @@ export const form_informacionDescripcionProgramaForm = async ({
                   Seleccione el sector
                 </label>
                 <select
-                  class='form-select descripcion-programa-input chosen-sector'
+                  class='form-select t chosen-sector'
                   name='id_sector'
                   id='search-select-sector'
                 >
@@ -89,7 +102,7 @@ export const form_informacionDescripcionProgramaForm = async ({
                   Seleccione el prgorama
                 </label>
                 <select
-                  class='form-select descripcion-programa-input chosen-programa'
+                  class='form-select t chosen-programa'
                   name='id_programa'
                   id='search-select-programa'
                 >
@@ -122,15 +135,6 @@ export const form_informacionDescripcionProgramaForm = async ({
     </div>`
 
   d.getElementById(elementToInsert).insertAdjacentHTML('afterbegin', card)
-
-  if (data) {
-    let inputs = d.querySelectorAll(`.${nombreComponente}-input`)
-    inputs.forEach((input) => {
-      input.value = data[input.name]
-    })
-
-    fieldList.id = data.id
-  }
 
   let cardElement = d.getElementById(`${nombreComponente}-form-card`)
   let formElement = d.getElementById(`${nombreComponente}-form`)
@@ -179,6 +183,29 @@ export const form_informacionDescripcionProgramaForm = async ({
     }
 
     if (e.target.id === `${nombreComponente}-guardar`) {
+      console.log(fieldList)
+
+      let inputs = d.querySelectorAll(`.${nombreComponente}-input`)
+
+      inputs.forEach((input) => {
+        fieldList = validateInput({
+          target: input,
+          fieldList,
+          fieldListErrors,
+          type: fieldListErrors[input.name].type,
+        })
+      })
+
+      if (Object.values(fieldList).some((values) => !values)) {
+        toastNotification({
+          type: NOTIFICATIONS_TYPES.fail,
+          message: 'Llene los campos',
+        })
+        return
+      } else {
+        enviarInformacion()
+      }
+
       enviarInformacion()
     }
   }
