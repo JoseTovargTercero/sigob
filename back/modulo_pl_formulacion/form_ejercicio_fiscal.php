@@ -171,7 +171,7 @@ function obtenerTodosEjerciciosFiscales()
                             if ($resultSector->num_rows > 0) {
                                 $sectorInformacion = $resultSector->fetch_assoc();
                             }
-                            // Realizar la consulta en pl_sectores_presupuestarios utilizando id_sector
+
                             $sqlPrograma = "SELECT * FROM pl_programas WHERE id = ?";
                             $stmtPrograma = $conexion->prepare($sqlPrograma);
                             $stmtPrograma->bind_param("i", $sumRow['id_programa']);
@@ -185,23 +185,21 @@ function obtenerTodosEjerciciosFiscales()
 
                             if ($sumRow['id_proyecto'] == 0) {
                                 $proyectoInformacion = 0;
-                            }else{
+                            } else {
                                 $sqlProyecto = "SELECT * FROM pl_proyectos WHERE id = ?";
                                 $stmtProyecto = $conexion->prepare($sqlProyecto);
                                 $stmtProyecto->bind_param("i", $sumRow['id_proyecto']);
                                 $stmtProyecto->execute();
                                 $resultProyecto = $stmtProyecto->get_result();
 
-                        
                                 if ($resultProyecto->num_rows > 0) {
                                     $proyectoInformacion = $resultProyecto->fetch_assoc();
                                 }
                             }
 
-                            // Asignar las propiedades a distribucion_partidas incluyendo sector_informacion
                             $distribucionPartidas[] = [
-                                'id' => $sumRow['id'], // ID de distribucion_presupuestaria
-                                'id_partida' => $partidaId, // ID de partida
+                                'id' => $sumRow['id'],
+                                'id_partida' => $partidaId,
                                 'partida' => $partidaPartida,
                                 'nombre' => $partidaNombre,
                                 'descripcion' => $partidaDescripcion,
@@ -220,15 +218,31 @@ function obtenerTodosEjerciciosFiscales()
                     }
                 }
 
-                // Calcular el restante
-                $restante = $situado - $totalMontoInicial;
+                // Consulta para obtener la suma de monto_total en asignacion_ente para el id_ejercicio actual
+                $sqlAsignacion = "SELECT SUM(monto_total) AS total_asignacion FROM asignacion_ente WHERE id_ejercicio = ?";
+                $stmtAsignacion = $conexion->prepare($sqlAsignacion);
+                $stmtAsignacion->bind_param("i", $id_ejercicio);
+                $stmtAsignacion->execute();
+                $resultAsignacion = $stmtAsignacion->get_result();
 
-                // Añadir el restante, distribuido y distribucion_partidas al array del ejercicio
+                $totalAsignacion = 0;
+                if ($resultAsignacion->num_rows > 0) {
+                    $rowAsignacion = $resultAsignacion->fetch_assoc();
+                    $totalAsignacion = $rowAsignacion['total_asignacion'] ?? 0;
+                }
+
+                $stmtAsignacion->close();
+
+                // Calcular los valores restantes
+                $restante = $situado - $totalMontoInicial;
+                $restanteSituadoAsignacion = $situado - $totalAsignacion;
+
+                // Añadir el restante, distribuido, restante_situado_asignacion y distribucion_partidas al array del ejercicio
                 $row['restante'] = $restante;
                 $row['distribuido'] = $totalMontoInicial;
+                $row['restante_situado_asignacion'] = $restanteSituadoAsignacion;
                 $row['distribucion_partidas'] = $distribucionPartidas;
 
-                // Añadir al array final de ejercicios
                 $ejercicios[] = $row;
 
                 $stmtSum->close();
@@ -276,7 +290,7 @@ function obtenerEjercicioFiscalPorId($id)
             $resultDistribucion = $stmtDistribucion->get_result();
 
             $totalMontoInicial = 0;
-            $distribucionPartidas = []; // Cambiado a un array para almacenar múltiples registros
+            $distribucionPartidas = [];
 
             if ($resultDistribucion->num_rows > 0) {
                 while ($rowDistribucion = $resultDistribucion->fetch_assoc()) {
@@ -291,57 +305,39 @@ function obtenerEjercicioFiscalPorId($id)
 
                     if ($resultPartida->num_rows > 0) {
                         $partidaRow = $resultPartida->fetch_assoc();
-                        $partidaNombre = $partidaRow['nombre'];
-                        $partidaDescripcion = $partidaRow['descripcion'];
-                        $partidaPartida = $partidaRow['partida'];
-                        $partidaId = $partidaRow['id'];
 
-                        // Realizar la consulta en pl_sectores_presupuestarios utilizando id_sector
+                        // Consultas para sector, programa, y proyecto
                         $sqlSector = "SELECT * FROM pl_sectores WHERE id = ?";
                         $stmtSector = $conexion->prepare($sqlSector);
                         $stmtSector->bind_param("i", $rowDistribucion['id_sector']);
                         $stmtSector->execute();
                         $resultSector = $stmtSector->get_result();
-
-                        $sectorInformacion = null;
-                        if ($resultSector->num_rows > 0) {
-                            $sectorInformacion = $resultSector->fetch_assoc();
-                        }
-                         // Realizar la consulta en pl_sectores_presupuestarios utilizando id_sector
+                        $sectorInformacion = $resultSector->num_rows > 0 ? $resultSector->fetch_assoc() : null;
+                        
                         $sqlPrograma = "SELECT * FROM pl_programas WHERE id = ?";
                         $stmtPrograma = $conexion->prepare($sqlPrograma);
                         $stmtPrograma->bind_param("i", $rowDistribucion['id_programa']);
                         $stmtPrograma->execute();
                         $resultPrograma = $stmtPrograma->get_result();
+                        $programaInformacion = $resultPrograma->num_rows > 0 ? $resultPrograma->fetch_assoc() : null;
 
-                        $programaInformacion = null;
-                        if ($resultPrograma->num_rows > 0) {
-                            $programaInformacion = $resultPrograma->fetch_assoc();
+                        $proyectoInformacion = 0;
+                        if ($rowDistribucion['id_proyecto'] != 0) {
+                            $sqlProyecto = "SELECT * FROM pl_proyectos WHERE id = ?";
+                            $stmtProyecto = $conexion->prepare($sqlProyecto);
+                            $stmtProyecto->bind_param("i", $rowDistribucion['id_proyecto']);
+                            $stmtProyecto->execute();
+                            $resultProyecto = $stmtProyecto->get_result();
+                            $proyectoInformacion = $resultProyecto->num_rows > 0 ? $resultProyecto->fetch_assoc() : null;
+                            $stmtProyecto->close();
                         }
 
-                        if ($rowDistribucion['id_proyecto'] == 0) {
-                            $proyectoInformacion = 0;
-                        }else{
-                          $sqlProyecto = "SELECT * FROM pl_proyectos WHERE id = ?";
-                        $stmtProyecto = $conexion->prepare($sqlProyecto);
-                        $stmtProyecto->bind_param("i", $rowDistribucion['id_proyecto']);
-                        $stmtProyecto->execute();
-                        $resultProyecto = $stmtProyecto->get_result();
-
-                        
-                        if ($resultProyecto->num_rows > 0) {
-                            $proyectoInformacion = $resultProyecto->fetch_assoc();
-                        }
-                        }
-                        
-
-                        // Asignar las propiedades a distribucion_partidas incluyendo sector_informacion
                         $distribucionPartidas[] = [
-                            'id' => $rowDistribucion['id'], // ID de distribucion_presupuestaria
-                            'id_partida' => $partidaId, // ID de partida
-                            'partida' => $partidaPartida,
-                            'nombre' => $partidaNombre,
-                            'descripcion' => $partidaDescripcion,
+                            'id' => $rowDistribucion['id'],
+                            'id_partida' => $partidaRow['id'],
+                            'partida' => $partidaRow['partida'],
+                            'nombre' => $partidaRow['nombre'],
+                            'descripcion' => $partidaRow['descripcion'],
                             'monto_inicial' => $rowDistribucion['monto_inicial'],
                             'monto_actual' => $rowDistribucion['monto_actual'],
                             'sector_informacion' => $sectorInformacion,
@@ -357,11 +353,25 @@ function obtenerEjercicioFiscalPorId($id)
                 }
             }
 
-            // Calcular el restante
-            $restante = $ejercicio['situado'] - $totalMontoInicial;
+            // Consulta para obtener los registros en asignacion_ente con el mismo id_ejercicio y sumar monto_total
+            $sqlAsignacion = "SELECT monto_total FROM asignacion_ente WHERE id_ejercicio = ?";
+            $stmtAsignacion = $conexion->prepare($sqlAsignacion);
+            $stmtAsignacion->bind_param("i", $id);
+            $stmtAsignacion->execute();
+            $resultAsignacion = $stmtAsignacion->get_result();
 
-            // Añadir el restante, distribuido y distribucion_partidas al array de respuesta
+            $totalMontoAsignacion = 0;
+            while ($rowAsignacion = $resultAsignacion->fetch_assoc()) {
+                $totalMontoAsignacion += $rowAsignacion['monto_total'];
+            }
+
+            // Calcular el restante y el restante_situado_asignacion
+            $restante = $ejercicio['situado'] - $totalMontoInicial;
+            $restanteSituadoAsignacion = $ejercicio['situado'] - $totalMontoAsignacion;
+
+            // Añadir el restante, restante_situado_asignacion, distribuido y distribucion_partidas al array de respuesta
             $ejercicio['restante'] = $restante;
+            $ejercicio['restante_situado_asignacion'] = $restanteSituadoAsignacion;
             $ejercicio['distribuido'] = $totalMontoInicial;
             $ejercicio['distribucion_partidas'] = $distribucionPartidas;
 
@@ -374,6 +384,7 @@ function obtenerEjercicioFiscalPorId($id)
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 
 
