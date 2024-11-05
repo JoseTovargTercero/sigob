@@ -550,6 +550,10 @@ function unidad2($numuero)
             width: 50%;
         }
 
+        .w-20 {
+            width: 20%;
+        }
+
         .table-title {
             font-size: 10px;
             margin-top: 10px;
@@ -639,8 +643,7 @@ function unidad2($numuero)
         </strong></div>
     <div style="font-size: 15px">
         <p><strong>Artículo 1:</strong> Se aprueba la estimación de los Ingresos y Gastos Públicos para el Ejercicio
-            Fiscal <?= $ano ?> en la cantidad de <span
-                class="font-arial fw-bold"><?php echo convertirNumeroLetra2($total); ?>
+            Fiscal <?= $ano ?> en la cantidad de <span class="font-arial"><?php echo convertirNumeroLetra2($total); ?>
                 (Bs.
                 <?php echo number_format($total, 2) ?>),</span> la cual está constituida por los siguientes rubros de
             ingresos:
@@ -692,7 +695,7 @@ function unidad2($numuero)
             <tr>
                 <th class="bl bt bb" colspan="4">CÓDIGO DE RECURSOS</th>
                 <th class="bl bt bb br" rowspan="2">DENOMINACIÓN</th>
-                <th class="bl bt bb br" rowspan="2">MONTO Bs.</th>
+                <th class="bl bt bb br w-20" rowspan="2">MONTO Bs.</th>
             </tr>
             <tr>
                 <th class="bl bt bb">RAMO</th>
@@ -779,7 +782,7 @@ function unidad2($numuero)
                         echo "<tr>";
                         echo "<td class='bl bt bb fw-bold'>" . htmlspecialchars($programa2['programa']) . "</td>";
                         echo "<td class='bl bt bb br text-left'>" . htmlspecialchars($programa2['programa_denominacion']) . "</td>";
-                        echo "<td class='bl bt bb br text-right'>" . number_format($programa2['monto'], 2) . "</td>";
+                        echo "<td class='bl bt bb br text-right w-20'>" . number_format($programa2['monto'], 2) . "</td>";
                         echo "</tr>";
                     }
                     echo "</table>";
