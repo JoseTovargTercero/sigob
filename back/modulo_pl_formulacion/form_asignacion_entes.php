@@ -67,16 +67,23 @@ function eliminarAsignacionEnte($id)
     $conexion->begin_transaction();
 
     try {
-        $sql = "DELETE FROM asignacion_ente WHERE id = ?";
-        $stmt = $conexion->prepare($sql);
-        $stmt->bind_param("i", $id);
-        $stmt->execute();
+        // Primero eliminar los registros de distribucion_entes con el id_asignacion correspondiente
+        $sqlDistribucion = "DELETE FROM distribucion_entes WHERE id_asignacion = ?";
+        $stmtDistribucion = $conexion->prepare($sqlDistribucion);
+        $stmtDistribucion->bind_param("i", $id);
+        $stmtDistribucion->execute();
 
-        if ($stmt->affected_rows > 0) {
+        // Ahora eliminar el registro de asignacion_ente
+        $sqlAsignacion = "DELETE FROM asignacion_ente WHERE id = ?";
+        $stmtAsignacion = $conexion->prepare($sqlAsignacion);
+        $stmtAsignacion->bind_param("i", $id);
+        $stmtAsignacion->execute();
+
+        if ($stmtAsignacion->affected_rows > 0) {
             $conexion->commit();
             return json_encode(["success" => "Registro eliminado correctamente."]);
         } else {
-            throw new Exception("No se encontró el registro para eliminar.");
+            throw new Exception("No se encontró el registro en asignacion_ente para eliminar.");
         }
     } catch (Exception $e) {
         $conexion->rollback();
@@ -84,6 +91,7 @@ function eliminarAsignacionEnte($id)
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 function consultarAsignacionPorId($id)
 {
     global $conexion;

@@ -205,7 +205,7 @@ if ($resultDescripcionProgramas && $resultDescripcionProgramas->num_rows > 0) {
             $actividad_2 = $actividades[1];
 
 
-            $pdf_files["{$url_pdf}&ente=$id"] = "{$sector}-{$programa}-{$actividad_1}-{$actividad_2}.pdf";
+            $pdf_files["{$url_pdf}&ente=$id&id_ejercicio=$id_ejercicio"] = "{$sector}-{$programa}-{$actividad_1}-{$actividad_2}.pdf";
         }
     }
     $stmt->close();
