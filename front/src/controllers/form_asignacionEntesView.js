@@ -65,6 +65,7 @@ export const validateAsignacionEntesView = async () => {
     // REGISTRAR NUEVA ASIGNACIÓN A ENTE
     if (e.target.id === 'entes-asignar') {
       console.log(ejercicioFiscal)
+      if (!ejercicioFiscal) return
 
       form_asignacion_entes_card({
         elementToInset: 'asignacion-entes-view',

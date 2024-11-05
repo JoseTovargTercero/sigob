@@ -1155,6 +1155,13 @@ export const form_asignacion_entes_form_card = async ({
   // CARGAR LISTA DE PARTIDAS
 
   function enviarInformacion(data) {
+    if (montos.distribuido_total < Number(montos.total_asignado)) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.fail,
+        message: 'Monto distribuido es menor al monto asignado al ente',
+      })
+      return
+    }
     console.log(data)
     confirmNotification({
       type: NOTIFICATIONS_TYPES.send,
