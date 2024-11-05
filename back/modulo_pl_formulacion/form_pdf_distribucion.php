@@ -35,12 +35,12 @@ if ($result->num_rows > 0) {
 $stmt->close();
 
 // Consultar distribuciones del ente en la tabla distribucion_entes
-$sqlDistribuciones = "SELECT distribucion, actividad_id FROM distribucion_entes WHERE id_ente = ?";
+$sqlDistribuciones = "SELECT distribucion, actividad_id FROM distribucion_entes WHERE id_ente = ? AND id_ejercicio = ?";
 $stmt = $conexion->prepare($sqlDistribuciones);
 if (!$stmt) {
     die("Error en consulta de distribuciones del ente: " . mysqli_error($conexion));
 }
-$stmt->bind_param('i', $ente);
+$stmt->bind_param('ii', $ente, $id_ejercicio);
 $stmt->execute();
 $resultDistribuciones = $stmt->get_result();
 $partidasData = [];
@@ -57,12 +57,12 @@ while ($rowDistribucion = $resultDistribuciones->fetch_assoc()) {
         $id_distribucion = $distribucion['id_distribucion'];
 
         // Consultar distribucion_presupuestaria para obtener id_partida y monto_actual
-        $sqlDistribucionPres = "SELECT id_partida, monto_actual FROM distribucion_presupuestaria WHERE id = ?";
+        $sqlDistribucionPres = "SELECT id_partida, monto_actual FROM distribucion_presupuestaria WHERE id = ? AND id_ejercicio = ?";
         $stmtPres = $conexion->prepare($sqlDistribucionPres);
         if (!$stmtPres) {
             die("Error en consulta de distribucion_presupuestaria: " . mysqli_error($conexion));
         }
-        $stmtPres->bind_param('i', $id_distribucion);
+        $stmtPres->bind_param('ii', $id_distribucion, $id_ejercicio);
         $stmtPres->execute();
         $resultDistribucionPres = $stmtPres->get_result();
         $dataDistribucionPres = $resultDistribucionPres->fetch_assoc();
