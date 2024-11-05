@@ -33,7 +33,7 @@ require_once '../../back/sistema_global/session.php';
                             <div class=" d-flex justify-content-between">
                                 <h4 class="fw-bold py-3 mb-4">
                                     <span class="text-muted fw-light">Formulación / </span>
-                                    <span class="text-muted fw-light">Informacion /</span> Título 1
+                                    <span class="text-muted fw-light">Teoría y leyes /</span> Título 1
                                 </h4>
                                 <!-- <div class="row" id="ejercicios-fiscales">
                                 </div> -->
@@ -50,7 +50,7 @@ require_once '../../back/sistema_global/session.php';
                     <div class="card">
                         <div class="card-header d-flex justify-content-between">
                             <div class="">
-                                <h5 class="mb-0">Información gobernación</h5>
+                                <h5 class="mb-0">Título 1</h5>
                                 <small class="mt-0 text-muted">...</small>
                             </div>
                             <button class="btn btn-primary" id="titulo-1-registrar">REGISTRAR</button>

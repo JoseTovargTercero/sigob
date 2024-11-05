@@ -56,7 +56,7 @@ $reportes = [
     ],
     'informacion' => [
         'nombre' => 'INFORMACIÓN GENERAL DE LA ENTIDAD FEDERAL',
-        'formato' => 'A4-L'
+        'formato' => 'A4'
     ],
     'indice' => [
         'nombre' => 'ÍNDICE DE CATEGORÍAS PROGRAMÁTICAS',
