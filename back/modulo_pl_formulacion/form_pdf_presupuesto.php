@@ -151,7 +151,6 @@ try {
     }
 
     $conexion->commit();
-
 } catch (Exception $e) {
     $conexion->rollback();
     die("Error en la consulta: " . $e->getMessage());
@@ -799,25 +798,22 @@ function unidad2($numuero)
             }
         }
         ?>
-
-
         <p><strong><?= htmlspecialchars($articulo27['articulo']) ?></strong>
             <?= htmlspecialchars($articulo27['descripcion']) ?></p>
-        <div style="">
-            <!-- Impresión de información de personas -->
+        <div>
             <?php
             $cantidadPersonas = 0;
             $alineacionDerecha = true; // Variable para determinar la alineación
-            
+
             foreach ($personasData as $persona):
                 if ($cantidadPersonas < 2) {
                     // Mostrar persona
-                    ?>
-                    <div class="<?= $alineacionDerecha ? 'text-right' : 'text-left'; ?>" style="margin-bottom: 80px;">
+            ?>
+                    <div class="<?= $alineacionDerecha ? 'text-right' : 'text-left'; ?>" style="margin-bottom: 30px;">
                         <p><?= htmlspecialchars($persona['nombres']); ?></p>
                         <p><strong><?= htmlspecialchars($persona['cargo']) ?></strong></p>
                     </div>
-                    <?php
+            <?php
                     $cantidadPersonas++;
                 }
 

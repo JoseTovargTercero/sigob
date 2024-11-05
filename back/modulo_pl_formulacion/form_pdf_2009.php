@@ -278,28 +278,6 @@ $stmt->close();
             font-weight: bold;
 
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        .subtitle {
-            font-weight: bold;
-            background-color: #f0f0f0;
-            color: blue;
-        }
     </style>
 </head>
 
@@ -309,111 +287,104 @@ $stmt->close();
         <table class='b-1 bc-lightgray'>
             <tr>
                 <td class="text-left pt-1 pb-0" colspan="2">
-                    <b>GOBERNACION DEL ESTADO INDIGENA DE AMAZONAS</b>
+                    <b>GOBERNACIÓN DEL ESTADO INDÍGENA DE AMAZONAS</b> <br> <br>
+                    <b>CODIGO PRESUPUESTARIO: E5100 </b> <br> <br>
+                    <b>PRESUPUESTO: <?php echo $ano ?></b>
+
                 </td>
-                <td class="text-right pt-1 pb-0">
-                    <b>Pagina: 1 de 1</b>
-                </td>
-            </tr>
-            <tr>
-                <td class="text-left py-0" colspan="2">
-                    <b>CODIGO PRESUPUESTARIO: E5100 </b>
-                </td>
-                <td class="text-right py-0">
-                    <b>Fecha: <?php echo date('d/m/Y') ?></b>
+                <td class="text-right ">
+                    <b>Fecha: <?php echo date('d/m/Y') ?></b> <br> <br>
+                    <img src='../../img/logo.jpg' class='logo'>
+
                 </td>
             </tr>
 
             <tr>
-                <td class="pt-1">
-                    <b>
-                        PRESUPUESTO: <?php echo $ano ?>
-                    </b>
+
+                <td class="pt-1 text-center" colspan="3">
+                    <h2>GASTOS DE INVERSION ESTIMADOS POR EL ESTADO </h2>
                 </td>
-                <td class="pt-1">
-                    <h2> TRANSFERENCIAS Y DONACIONES OTORGADAS A ORGANISMOS DEL SECTOR PUBLICO Y PRIVADO</h2>
-                </td>
-                <td class="pt-1">
-                    <img src='../../img/logo.jpg' class='logo'>
-                </td>
+
+            </tr>
+        </table>
+
+        <table>
+            <!-- Encabezado de la tabla -->
+            <tr>
+                <td colspan="6" class="header"></td>
+                <td colspan="3" class="title">DETALLE DE PARTIDAS</td>
+            </tr>
+
+            <!-- Encabezado de columnas -->
+            <tr>
+                <th class="bl bt bb br">SECTOR</th>
+                <th class="bt bb br">PROGRAMA</th>
+                <th class="bt bb br">PARTIDA</th>
+                <th class="bt bb br">GEN</th>
+                <th class="bt bb br">ESP</th>
+                <th class="bt bb br">SUB ESP</th>
+                <th class="bt bb br">DENOMINACIÓN</th>
+                <th class="bt bb br">ASIGNACION PRESUPUESTARIA</th>
+                <th class="bt bb br">OBSERVACION</th>
+            </tr>
+
+            <tr>
+
+            </tr>
+
+            <?php
+            $totalPartida = 0;
+            $totalGeneral = 0;
+            $partAnterior = null;
+
+            foreach ($partidasArray as $index => $partida):
+                // Verificar si la partida ha cambiado para mostrar el total del grupo anterior
+                if ($partAnterior !== null && $partAnterior !== $partida['partida']) {
+                    // Actualizar el total general con el total acumulado de la partida anterior
+                    $totalGeneral += $totalPartida;
+                    $totalPartida = 0;  // Reiniciar el total de la partida actual
+                }
+
+                // Acumular el total de la partida actual
+                $totalPartida += $partida['monto'];
+                $partAnterior = $partida['partida'];
+
+            ?>
+                <!-- Fila de datos consolidada por partida -->
+                <tr>
+                    <td class="bl br w-7"><?= $partida['sector'] ?></td>
+                    <td class="br w-7"><?= $partida['programa'] ?></td>
+                    <td class="br w-7"><?= $partida['partida'] ?></td>
+                    <td class="br w-7"><?= $partida['gen'] ?></td>
+                    <td class="br w-7"><?= $partida['esp'] ?></td>
+                    <td class="br w-7"><?= $partida['sub'] ?></td>
+                    <td class="br"><?= $partida['denominacion'] ?></td>
+                    <td class="br"><?= number_format($partida['monto'], 2) ?></td>
+                    <td class="br"></td>
+                </tr>
+
+            <?php
+                // Al final del último registro, sumamos el total de la última partida al total general
+                if ($index === array_key_last($partidasArray)) {
+                    $totalGeneral += $totalPartida;
+                }
+            endforeach;
+            ?>
+
+            <!-- Fila de total general -->
+            <tr>
+                <td colspan="7" class="bt bl bb text-right br"><b>TOTAL</b></td>
+                <td class="bt br bb"><b><?= number_format($totalGeneral, 2) ?></b></td>
+                <td class="bt br bb"></td>
             </tr>
         </table>
 
 
-
-
-
-
-
-
-<table>
-    <!-- Encabezado de la tabla -->
-    <tr>
-        <td colspan="6" class="header"></td>
-        <td colspan="3" class="title">DETALLE DE PARTIDAS</td>
-    </tr>
-
-    <!-- Encabezado de columnas -->
-    <tr>
-        <th class="br">SECTOR</th>
-        <th class="br">PROGRAMA</th>
-        <th class="br">PARTIDA</th>
-        <th class="br">GEN</th>
-        <th class="br">ESP</th>
-        <th class="br">SUB ESP</th>
-        <th class="br">DENOMINACIÓN</th>
-        <th class="br">ASIGNACION PRESUPUESTARIA</th>
-        <th class="br">OBSERVACION</th>
-    </tr>
-
-    <?php
-    $totalPartida = 0;
-    $totalGeneral = 0;
-    $partAnterior = null;
-
-    foreach ($partidasArray as $index => $partida):
-        // Verificar si la partida ha cambiado para mostrar el total del grupo anterior
-        if ($partAnterior !== null && $partAnterior !== $partida['partida']) {
-            // Actualizar el total general con el total acumulado de la partida anterior
-            $totalGeneral += $totalPartida;
-            $totalPartida = 0;  // Reiniciar el total de la partida actual
-        }
-
-        // Acumular el total de la partida actual
-        $totalPartida += $partida['monto'];
-        $partAnterior = $partida['partida'];
-
-        ?>
-        <!-- Fila de datos consolidada por partida -->
-        <tr>
-            <td class="br"><?= $partida['sector'] ?></td>
-            <td class="br"><?= $partida['programa'] ?></td>
-            <td class="br"><?= $partida['partida'] ?></td>
-            <td class="br"><?= $partida['gen'] ?></td>
-            <td class="br"><?= $partida['esp'] ?></td>
-            <td class="br"><?= $partida['sub'] ?></td>
-            <td class="br subtitle"><?= $partida['denominacion'] ?></td>
-            <td class="br"><?= number_format($partida['monto'], 2) ?></td>
-            <td class="br"></td>
-        </tr>
-
-        <?php
-        // Al final del último registro, sumamos el total de la última partida al total general
-        if ($index === array_key_last($partidasArray)) {
-            $totalGeneral += $totalPartida;
-        }
-    endforeach;
-    ?>
-
-    <!-- Fila de total general -->
-    <tr>
-        <td colspan="6" class="crim br">TOTAL GENERAL</td>
-        <td class="crim br"></td>
-        <td class="crim br"><?= number_format($totalGeneral, 2) ?></td>
-    </tr>
-</table>
-
-
+        <style>
+            .w-7 {
+                width: 4%;
+            }
+        </style>
 
 
 
