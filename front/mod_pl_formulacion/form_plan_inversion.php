@@ -18,7 +18,7 @@ function contar($table, $condicion)
 if (isset($_GET["ejercicio"])) {
   $annio = $_GET["ejercicio"];
 } else {
-  $annio = date('Y');
+  $annio = '2025';
 }
 
 $stmt = mysqli_prepare($conexion, "SELECT * FROM `ejercicio_fiscal` WHERE ano = ?");
@@ -156,9 +156,9 @@ $stmt->close();
       <div class=" d-flex justify-content-between">
 
         <?php
-        $y_d1 = date('Y') - 1;
-        $y_d = date('Y');
-        $y_d2 = date('Y') + 1;
+        $y_d = date('Y') + 1;
+        $y_d1 = $y_d - 1;
+        $y_d2 = date('Y') + 2;
         ?>
         <h4 class="fw-bold py-3 mb-4">
           <span class="text-muted fw-light">Formulación /</span> Plan de inversión <?php echo $y_d; ?>

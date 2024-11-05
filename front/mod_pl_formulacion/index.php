@@ -18,7 +18,7 @@ function contar($table, $condicion)
 if (isset($_GET["ejercicio"])) {
   $annio = $_GET["ejercicio"];
 } else {
-  $annio = date('Y');
+  $annio = '2025';
 }
 
 
@@ -165,9 +165,9 @@ $stmt->close();
       <div class=" d-flex justify-content-between">
 
         <?php
-        $y_d1 = date('Y') - 1;
-        $y_d = date('Y');
-        $y_d2 = date('Y') + 1;
+        $y_d = date('Y') + 1;
+        $y_d1 = $y_d - 1;
+        $y_d2 = date('Y') + 2;
         ?>
         <h4 class="fw-bold py-3 mb-4">
           <span class="text-muted fw-light">Formulación /</span> Ejercicio fiscal <?php echo $y_d; ?>
@@ -284,7 +284,7 @@ $stmt->close();
 
                   <div class="mb-0 d-flex flex-column justify-content-between text-center text-sm-start me-3">
                     <div class="card-title">
-                      <h4 class="text-danger mb-2">Ejercicio fiscal ' . (isset($_GET["a"]) ? $_GET["a"] : date('Y')) . ' </h4>
+                      <h4 class="text-danger mb-2">Ejercicio fiscal ' . (isset($_GET["a"]) ? $_GET["a"] : $annio) . ' </h4>
                       <p class="text-body app-academy-sm-60 app-academy-xl-100">
                         No hay ningún plan registrado este año.
                       </p>

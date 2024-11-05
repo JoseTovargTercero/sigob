@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 05-11-2024 a las 00:30:18
+-- Tiempo de generación: 05-11-2024 a las 17:08:40
 -- Versión del servidor: 10.4.16-MariaDB
 -- Versión de PHP: 7.4.12
 
@@ -35,18 +35,6 @@ CREATE TABLE `asignacion_ente` (
   `fecha` varchar(255) DEFAULT NULL,
   `status` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Volcado de datos para la tabla `asignacion_ente`
---
-
-INSERT INTO `asignacion_ente` (`id`, `id_ente`, `monto_total`, `id_ejercicio`, `fecha`, `status`) VALUES
-(3, 36, '2000', 1, '2024-10-24', '0'),
-(4, 20, '2000', 1, '2024-10-24', '0'),
-(5, 23, '2500', 1, '2024-10-24', '0'),
-(6, 61, '5000', 1, '2024-10-30', '0'),
-(7, 1, '5000', 1, '2024-10-30', '0'),
-(8, 4, '1000', 1, '2024-10-30', '0');
 
 -- --------------------------------------------------------
 
@@ -100,7 +88,11 @@ INSERT INTO `audit_logs` (`id`, `action_type`, `table_name`, `situation`, `affec
 (29, 'DELETE', 'pl_programas', 'id= ?', 1, 35, '2024-10-30 19:44:04'),
 (30, 'DELETE', 'pl_programas', 'id= ?', 1, 35, '2024-10-30 19:44:07'),
 (31, 'DELETE', 'pl_sectores', 'id= ?', 1, 35, '2024-10-30 20:00:29'),
-(32, 'UPDATE', 'pl_sectores', 'id = 12', 1, 35, '2024-10-30 20:02:16');
+(32, 'UPDATE', 'pl_sectores', 'id = 12', 1, 35, '2024-10-30 20:02:16'),
+(33, 'DELETE', 'pl_actividades', 'id= ?', 1, 35, '2024-11-05 08:41:27'),
+(34, 'DELETE', 'descripcion_programas', 'id= ?', 1, 35, '2024-11-05 08:43:43'),
+(35, 'DELETE', 'descripcion_programas', 'id= ?', 1, 35, '2024-11-05 08:44:07'),
+(36, 'DELETE', 'descripcion_programas', 'id= ?', 1, 35, '2024-11-05 11:46:30');
 
 -- --------------------------------------------------------
 
@@ -1078,7 +1070,6 @@ CREATE TABLE `descripcion_programas` (
 --
 
 INSERT INTO `descripcion_programas` (`id`, `id_sector`, `id_programa`, `descripcion`) VALUES
-(1, 1, 1, 'Con este programa se satisfacen las necesidades legislativas  del Estado, se elaboran nuevas leyes y se reforman las que  lo ameritan, así como resoluciones para obtención de medidas seguras para el buen ejercicio de la Entidad, en beneficio de la comunidad Amazonense; atendiendo necesidades tanto del sector público, como del sector privado por tratarse de leyes que afectan a toda la población.\r\n\r\n \r\nEntre otras actividades estarán la de legislar en materias de su competencia de acuerdo a la Constitución,  Leyes del Estado y la Nación, para dotarlo de instrumentos normativos legales que permitan la promoción del desarrollo integral y sustentable del Estado.\r\n'),
 (2, 1, 2, 'La Contraloría del Estado Amazonas,  es el órgano de control, vigilancia y fiscalización de los ingresos, gastos y bienes públicos del Estado y a tal efecto goza de autonomía orgánica y funcional,  de conformidad con lo establecido en el articulo 163 de la Constitución de la República Bolivariana de Venezuela, sin menoscabo de la función de control, seguimiento y evaluación de la Contraloría General de la República. \r\n \r\nLa Contraloría del Estado Amazonas, ahora como órgano integrante del Sistema Nacional de Control Fiscal, el cual es un conjunto de órganos, estructuras, recursos y procesos que integrados bajo la rectoría de la Contraloría General de la República, interactúan coordinadamente a fin de lograr la unidad de dirección de los sistemas y procedimientos de control  que coadyuven al logro de los objetivos generales de los distintos entes y organismos sujetos a control fiscal, así como también al buen funcionamiento de la administración pública; cuyos objetivos son:\r\n \r\n* Fortalecer la capacidad del Estado para ejecutar eficazmente su función de gobierno.\r\n\r\n* Lograr la transparencia y la eficiencia en el manejo de los recursos del sector público   y así contribuir a optimizar la calidad de vida de la ciudadanía.\r\n\r\n* Establecer las responsabilidades por la comisión de irregularidades relacionadas con la gestión  de las entidades públicas.\r\n'),
 (3, 1, 3, 'Le corresponde representar y amparar judicial y extrajudicialmente, conforme a las instrucciones emanadas del Ejecutivo Regional o del Consejo Legislativo los intereses del Estado, sus bienes, su patrimonio, rentas y derechos, redactar y suscribir conforme a las instrucciones que le fueren comunicadas por el Ejecutivo Regional, por el Consejo Legislativo, los documentos contentivos de actos, negocio o contratos que conciernan al Estado; además prestar asesoría jurídica a los órganos y dependencia del Estado.\r\n	\r\nAsistir en representación del Estado a las discusiones de los Contratos Colectivos que el Ejecutivo regional, Consejo Legislativo y sus dependencias, órganos auxiliares y conexos tengan a bien suscribir con sus trabajadores.\r\n\r\nLlevar un inventario permanente de los bienes inmuebles del Estado,  velar por el estricto  cumplimiento de las leyes, en el ámbito del estado y pedir por ante los organismos jurisdiccionales competentes la nulidad de leyes, decretos, ordenanzas, acuerdos y resoluciones dictadas en el Estado.\r\n \r\nPresentar proyectos de leyes ante el Consejo Legislativo Regional y solicitar la reforma parcial de las ya existentes, cuando ella sea pertinente a los intereses del Estado y la Nación.\r\n \r\nElaborar su propio Presupuesto de Gastos a fin de ser incluidos en el Presupuesto General de Ingresos y Gastos del Estado, y ordenar traslados de partidas y otros movimientos contables dentro de su propio presupuesto anual de gasto, conforme a lo establecido en la Ley orgánica de Administración del Estado, Ley Orgánica de Presupuesto y la Ley Orgánica de Régimen presupuestario del Estado y demás normativa vigente.\r\n'),
 (4, 1, 4, 'El Gobernador del estado como Jefe del Ejecutivo Regional y Agente del Ejecutivo Nacional, tendrá las facultades previstas en la Constitución de la República, la Ley sobre Elección y Remoción de Gobernadores, Ley Orgánica de Descentralización, Delimitación y Transferencia de competencia del poder público, la Constitución del Estado Amazonas y las otras normativas legales vigentes.\r\n \r\n \r\nEl propósito de este programa, es responder en el más alto nivel, el estricto cumplimiento de todas las actividades que sean necesarias para Gobernar el Estado Amazonas y para coordinar acciones administrativas y sociales, en función del desarrollo económico y social sustentable del Estado.\r\n'),
@@ -1130,14 +1121,6 @@ CREATE TABLE `distribucion_entes` (
   `id_asignacion` int(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
---
--- Volcado de datos para la tabla `distribucion_entes`
---
-
-INSERT INTO `distribucion_entes` (`id`, `id_ente`, `actividad_id`, `distribucion`, `monto_total`, `status`, `id_ejercicio`, `comentario`, `fecha`, `id_asignacion`) VALUES
-(3, 23, 71, '[{\"id_distribucion\":\"9\",\"monto\":500}]', '2500', 0, 1, '', '2024-10-27', 5),
-(4, 23, 72, '[{\"id_distribucion\":\"10\",\"monto\":500}]', '2500', 0, 1, '', '2024-10-27', 5);
-
 -- --------------------------------------------------------
 
 --
@@ -1156,16 +1139,6 @@ CREATE TABLE `distribucion_presupuestaria` (
   `status` int(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
---
--- Volcado de datos para la tabla `distribucion_presupuestaria`
---
-
-INSERT INTO `distribucion_presupuestaria` (`id`, `id_partida`, `monto_inicial`, `id_ejercicio`, `monto_actual`, `id_sector`, `id_programa`, `id_proyecto`, `status`) VALUES
-(9, 725, '2000', 1, '2000', 1, 1, 0, 1),
-(10, 725, '1000', 1, '1000', 2, 14, 0, 1),
-(11, 1436, '4000', 1, '4000', 10, 34, 0, 1),
-(12, 1009, '500', 1, '500', 1, 1, 0, 1);
-
 -- --------------------------------------------------------
 
 --
@@ -1179,14 +1152,6 @@ CREATE TABLE `ejercicio_fiscal` (
   `divisor` varchar(255) DEFAULT NULL,
   `status` int(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Volcado de datos para la tabla `ejercicio_fiscal`
---
-
-INSERT INTO `ejercicio_fiscal` (`id`, `ano`, `situado`, `divisor`, `status`) VALUES
-(1, '2024', '10000', '12', 1),
-(2, '2023', '12222', '12', 1);
 
 -- --------------------------------------------------------
 
@@ -4115,12 +4080,12 @@ INSERT INTO `entes` (`id`, `sector`, `programa`, `proyecto`, `actividad`, `ente_
 
 CREATE TABLE `entes_dependencias` (
   `id` int(255) NOT NULL,
-  `ue` varchar(10) NOT NULL,
-  `sector` varchar(10) NOT NULL,
-  `programa` varchar(10) NOT NULL,
-  `proyecto` varchar(10) NOT NULL,
-  `actividad` varchar(10) NOT NULL,
-  `ente_nombre` longtext NOT NULL,
+  `ue` varchar(10) DEFAULT NULL,
+  `sector` varchar(10) DEFAULT NULL,
+  `programa` varchar(10) DEFAULT NULL,
+  `proyecto` varchar(10) DEFAULT NULL,
+  `actividad` varchar(10) DEFAULT NULL,
+  `ente_nombre` longtext DEFAULT NULL,
   `tipo_ente` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -4277,7 +4242,8 @@ INSERT INTO `error_log` (`id`, `descripcion`, `fecha`) VALUES
 (3, 'Una partida ya esta en uso en el mismo sector: 401.01.01.0000', '2024-10-24 11:21:20'),
 (4, 'El tipo de ente Descentralizado solo permite una distribución.', '2024-10-24 12:51:44'),
 (5, 'La suma de los montos de las distribuciones no es igual al monto total.', '2024-10-24 12:53:07'),
-(6, 'La suma de los montos de las distribuciones no es igual al monto total.', '2024-10-24 20:46:06');
+(6, 'La suma de los montos de las distribuciones no es igual al monto total.', '2024-10-24 20:46:06'),
+(7, 'El tipo de ente Descentralizado solo permite una distribución.[{\"id_distribucion\":\"13\",\"monto\":500},{\"id_distribucion\":\"14\",\"monto\":500},{\"id_distribucion\":\"15\",\"monto\":500},{\"id_distribucion\":\"16\",\"monto\":500}]', '2024-11-05 08:31:33');
 
 -- --------------------------------------------------------
 
@@ -5204,7 +5170,7 @@ INSERT INTO `menu` (`id`, `oficina`, `categoria`, `nombre`, `dir`, `icono`) VALU
 (37, 'pl_formulacion', 'Teoría y leyes', 'Contraloría', 'mod_pl_formulacion/form_contraloria_tabla', NULL),
 (38, 'pl_formulacion', 'Teoría y leyes', 'Consejo', 'mod_pl_formulacion/form_consejo_tabla', NULL),
 (39, 'pl_formulacion', 'Teoría y leyes', 'Personas', 'mod_pl_formulacion/form_persona_tabla', NULL),
-(40, 'pl_formulacion', 'Teoría y leyes', 'Titulo 1', 'mod_pl_formulacion/form_titulo1_tabla', NULL),
+(40, 'pl_formulacion', 'Teoría y leyes', 'Articulos', 'mod_pl_formulacion/form_titulo1_tabla', NULL),
 (41, 'pl_formulacion', 'Configuracion', 'Descripcion de programas', 'mod_pl_formulacion/form_descripcionPrograma_tabla', NULL);
 
 -- --------------------------------------------------------
@@ -5383,7 +5349,7 @@ CREATE TABLE `partidas_presupuestarias` (
   `partida` varchar(255) DEFAULT NULL,
   `nombre` longtext DEFAULT NULL,
   `descripcion` longtext DEFAULT NULL,
-  `status` int(255) NOT NULL
+  `status` int(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -6748,11 +6714,11 @@ CREATE TABLE `password_resets` (
 --
 
 CREATE TABLE `personal_directivo` (
-  `id` int(255) NOT NULL,
-  `direccion` longtext NOT NULL,
-  `nombre_apellido` longtext NOT NULL,
-  `email` longtext NOT NULL,
-  `telefono` longtext NOT NULL
+  `id` int(255) DEFAULT NULL,
+  `direccion` longtext DEFAULT NULL,
+  `nombre_apellido` longtext DEFAULT NULL,
+  `email` longtext DEFAULT NULL,
+  `telefono` longtext DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -6811,17 +6777,9 @@ INSERT INTO `peticiones` (`id`, `empleados`, `asignaciones`, `deducciones`, `apo
 
 CREATE TABLE `plan_inversion` (
   `id` int(255) NOT NULL,
-  `id_ejercicio` int(255) NOT NULL,
+  `id_ejercicio` int(255) DEFAULT NULL,
   `monto_total` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Volcado de datos para la tabla `plan_inversion`
---
-
-INSERT INTO `plan_inversion` (`id`, `id_ejercicio`, `monto_total`) VALUES
-(1, 1, '123'),
-(2, 2, '12');
 
 -- --------------------------------------------------------
 
@@ -6831,8 +6789,8 @@ INSERT INTO `plan_inversion` (`id`, `id_ejercicio`, `monto_total`) VALUES
 
 CREATE TABLE `pl_actividades` (
   `id` int(11) NOT NULL,
-  `actividad` varchar(10) NOT NULL,
-  `denominacion` longtext NOT NULL
+  `actividad` varchar(10) DEFAULT NULL,
+  `denominacion` longtext DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -6843,8 +6801,8 @@ CREATE TABLE `pl_actividades` (
 
 CREATE TABLE `pl_partidas` (
   `id` int(11) NOT NULL,
-  `partida` varchar(20) NOT NULL,
-  `denominacion` longtext NOT NULL
+  `partida` varchar(20) DEFAULT NULL,
+  `denominacion` longtext DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -6869,9 +6827,9 @@ INSERT INTO `pl_partidas` (`id`, `partida`, `denominacion`) VALUES
 
 CREATE TABLE `pl_programas` (
   `id` int(11) NOT NULL,
-  `sector` varchar(10) NOT NULL,
-  `programa` varchar(10) NOT NULL,
-  `denominacion` longtext NOT NULL
+  `sector` varchar(10) DEFAULT NULL,
+  `programa` varchar(10) DEFAULT NULL,
+  `denominacion` longtext DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -6922,16 +6880,9 @@ INSERT INTO `pl_programas` (`id`, `sector`, `programa`, `denominacion`) VALUES
 
 CREATE TABLE `pl_proyectos` (
   `id` int(11) NOT NULL,
-  `proyecto_id` varchar(255) NOT NULL,
-  `denominacion` varchar(255) NOT NULL
+  `proyecto_id` varchar(255) DEFAULT NULL,
+  `denominacion` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Volcado de datos para la tabla `pl_proyectos`
---
-
-INSERT INTO `pl_proyectos` (`id`, `proyecto_id`, `denominacion`) VALUES
-(1, '02', 'SEGURIDAD SOCIAL');
 
 -- --------------------------------------------------------
 
@@ -6941,8 +6892,8 @@ INSERT INTO `pl_proyectos` (`id`, `proyecto_id`, `denominacion`) VALUES
 
 CREATE TABLE `pl_sectores` (
   `id` int(11) NOT NULL,
-  `sector` varchar(11) NOT NULL,
-  `denominacion` longtext NOT NULL
+  `sector` varchar(11) DEFAULT NULL,
+  `denominacion` longtext DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -6959,8 +6910,7 @@ INSERT INTO `pl_sectores` (`id`, `sector`, `denominacion`) VALUES
 (7, '12', 'SALUD'),
 (8, '13', 'DESARROLLO SOCIAL Y PARTICIPACIÓN'),
 (9, '14', 'SEGURIDAD SOCIAL'),
-(10, '15', 'GASTOS NO CLASIFICADOS SECTORIALMENTE'),
-(12, '77', 'JOSE RICARDO');
+(10, '15', 'GASTOS NO CLASIFICADOS SECTORIALMENTE');
 
 -- --------------------------------------------------------
 
@@ -6970,10 +6920,10 @@ INSERT INTO `pl_sectores` (`id`, `sector`, `denominacion`) VALUES
 
 CREATE TABLE `pl_sectores_presupuestarios` (
   `id` int(11) NOT NULL,
-  `sector` varchar(10) NOT NULL,
-  `programa` varchar(10) NOT NULL,
-  `proyecto` varchar(10) NOT NULL,
-  `nombre` longtext NOT NULL
+  `sector` varchar(10) DEFAULT NULL,
+  `programa` varchar(10) DEFAULT NULL,
+  `proyecto` varchar(10) DEFAULT NULL,
+  `nombre` longtext DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -7041,8 +6991,8 @@ CREATE TABLE `poa_actividades` (
 
 CREATE TABLE `primantiguedad` (
   `id` int(255) NOT NULL,
-  `porcentaje` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `tiempo` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL
+  `porcentaje` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `tiempo` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -7111,16 +7061,9 @@ CREATE TABLE `proyecto_inversion` (
   `proyecto` longtext DEFAULT NULL,
   `descripcion` longtext DEFAULT NULL,
   `monto_proyecto` varchar(255) DEFAULT NULL,
-  `status` int(255) NOT NULL DEFAULT 0,
+  `status` int(255) DEFAULT NULL DEFAULT 0,
   `comentario` longtext DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Volcado de datos para la tabla `proyecto_inversion`
---
-
-INSERT INTO `proyecto_inversion` (`id`, `id_plan`, `proyecto`, `descripcion`, `monto_proyecto`, `status`, `comentario`) VALUES
-(14, 1, 'otroooooooo', 'otro proyecto mas', '120', 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -7130,22 +7073,14 @@ INSERT INTO `proyecto_inversion` (`id`, `id_plan`, `proyecto`, `descripcion`, `m
 
 CREATE TABLE `proyecto_inversion_partidas` (
   `id` int(11) NOT NULL,
-  `id_proyecto` int(11) NOT NULL,
+  `id_proyecto` int(11) DEFAULT NULL,
   `partida` longtext DEFAULT NULL,
   `monto` varchar(255) DEFAULT NULL,
   `sector_id` varchar(255) DEFAULT NULL,
-  `programa_id` int(10) NOT NULL,
-  `proyecto_id` int(10) NOT NULL,
-  `actividad_id` int(10) NOT NULL
+  `programa_id` int(10) DEFAULT NULL,
+  `proyecto_id` int(10) DEFAULT NULL,
+  `actividad_id` int(10) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Volcado de datos para la tabla `proyecto_inversion_partidas`
---
-
-INSERT INTO `proyecto_inversion_partidas` (`id`, `id_proyecto`, `partida`, `monto`, `sector_id`, `programa_id`, `proyecto_id`, `actividad_id`) VALUES
-(42, 14, '724', '60', '1', 2, 1, 12),
-(43, 14, '725', '60', '2', 15, 0, 12);
 
 -- --------------------------------------------------------
 
@@ -11322,7 +11257,7 @@ CREATE TABLE `reportes` (
   `columnas` longtext COLLATE latin1_spanish_ci DEFAULT NULL,
   `formato` varchar(10) COLLATE latin1_spanish_ci DEFAULT NULL,
   `nombre` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `user` int(10) NOT NULL,
+  `user` int(10) DEFAULT NULL,
   `creacion` datetime NOT NULL DEFAULT current_timestamp(),
   `tipoFiltro` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
@@ -11364,8 +11299,8 @@ CREATE TABLE `solicitud_dozavos` (
   `monto` varchar(255) DEFAULT NULL,
   `fecha` varchar(255) DEFAULT NULL,
   `partidas` varchar(255) DEFAULT NULL,
-  `id_ente` int(255) NOT NULL,
-  `status` int(255) NOT NULL
+  `id_ente` int(255) DEFAULT NULL,
+  `status` int(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -11393,12 +11328,12 @@ INSERT INTO `solicitud_dozavos` (`id`, `numero_orden`, `numero_compromiso`, `des
 CREATE TABLE `system_users` (
   `u_id` int(11) NOT NULL,
   `u_nombre` varchar(255) DEFAULT NULL,
-  `u_oficina_id` int(11) NOT NULL,
+  `u_oficina_id` int(11) DEFAULT NULL,
   `u_oficina` varchar(255) DEFAULT NULL,
   `u_email` varchar(255) CHARACTER SET utf8 COLLATE utf8_spanish2_ci DEFAULT NULL,
   `u_contrasena` varchar(255) DEFAULT NULL,
-  `creado` datetime NOT NULL DEFAULT current_timestamp(),
-  `u_nivel` int(11) NOT NULL,
+  `creado` datetime DEFAULT NULL DEFAULT current_timestamp(),
+  `u_nivel` int(11) DEFAULT NULL,
   `u_status` int(11) NOT NULL DEFAULT 1,
   `u_cedula` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -11894,7 +11829,7 @@ CREATE TABLE `tasa` (
 --
 
 INSERT INTO `tasa` (`id`, `descripcion`, `simbolo`, `valor`) VALUES
-(1, 'Precio del Dólar Actual', '$', '42.5622');
+(1, 'Precio del Dólar Actual', '$', '42.8569');
 
 -- --------------------------------------------------------
 
@@ -11928,7 +11863,8 @@ INSERT INTO `tasa_historico` (`id`, `u_nombre`, `precio`, `descripcion`, `fecha`
 (11, 'sigob', '40.8803', 'actualizacion automática', '24-10-2024'),
 (12, 'sigob', '41.0429', 'actualizacion automática', '27-10-2024'),
 (13, 'sigob', '42.2256', 'actualizacion automática', '30-10-2024'),
-(14, 'sigob', '42.5622', 'actualizacion automática', '31-10-2024');
+(14, 'sigob', '42.5622', 'actualizacion automática', '31-10-2024'),
+(15, 'sigob', '42.8569', 'actualizacion automática', '05-11-2024');
 
 -- --------------------------------------------------------
 
@@ -16656,13 +16592,13 @@ ALTER TABLE `txt`
 -- AUTO_INCREMENT de la tabla `asignacion_ente`
 --
 ALTER TABLE `asignacion_ente`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `audit_logs`
 --
 ALTER TABLE `audit_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- AUTO_INCREMENT de la tabla `backups`
@@ -16728,25 +16664,25 @@ ALTER TABLE `dependencias`
 -- AUTO_INCREMENT de la tabla `descripcion_programas`
 --
 ALTER TABLE `descripcion_programas`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- AUTO_INCREMENT de la tabla `distribucion_entes`
 --
 ALTER TABLE `distribucion_entes`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `distribucion_presupuestaria`
 --
 ALTER TABLE `distribucion_presupuestaria`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `ejercicio_fiscal`
 --
 ALTER TABLE `ejercicio_fiscal`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `empleados`
@@ -16782,7 +16718,7 @@ ALTER TABLE `entes_dependencias`
 -- AUTO_INCREMENT de la tabla `error_log`
 --
 ALTER TABLE `error_log`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de la tabla `frecuencias_por_grupo`
@@ -16884,7 +16820,7 @@ ALTER TABLE `notificaciones`
 -- AUTO_INCREMENT de la tabla `partidas_presupuestarias`
 --
 ALTER TABLE `partidas_presupuestarias`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2056;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2057;
 
 --
 -- AUTO_INCREMENT de la tabla `password_resets`
@@ -16908,13 +16844,13 @@ ALTER TABLE `peticiones`
 -- AUTO_INCREMENT de la tabla `plan_inversion`
 --
 ALTER TABLE `plan_inversion`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `pl_actividades`
 --
 ALTER TABLE `pl_actividades`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT de la tabla `pl_partidas`
@@ -16968,13 +16904,13 @@ ALTER TABLE `profesiones`
 -- AUTO_INCREMENT de la tabla `proyecto_inversion`
 --
 ALTER TABLE `proyecto_inversion`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `proyecto_inversion_partidas`
 --
 ALTER TABLE `proyecto_inversion_partidas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `recibo_pago`
@@ -17028,7 +16964,7 @@ ALTER TABLE `tasa`
 -- AUTO_INCREMENT de la tabla `tasa_historico`
 --
 ALTER TABLE `tasa_historico`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT de la tabla `titulo_1`

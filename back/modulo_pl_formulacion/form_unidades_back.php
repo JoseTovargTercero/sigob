@@ -22,7 +22,7 @@ function guardarEnte($proyectosArray)
         $actividad = $proyectosArray['actividad'];
         $nombre = $proyectosArray['nombre'];
         $tipo_ente = $proyectosArray['tipo_ente'];
-
+        /*
         // verificar nombre
         $stmt = mysqli_prepare($conexion, "SELECT * FROM `entes` WHERE sector = ? AND programa = ? AND proyecto = ?");
         $stmt->bind_param('sss', $sector, $programa, $proyecto);
@@ -34,7 +34,7 @@ function guardarEnte($proyectosArray)
         $stmt->close();
         // Verificar que no exista una actividad para el sector y programa seleccionado
 
-
+*/
 
         $sql = "INSERT INTO entes (
         sector,
