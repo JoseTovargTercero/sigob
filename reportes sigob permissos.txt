@@ -1,0 +1,20 @@
+mkdir /var/www/html/sigob/temp
+sudo chmod 777 /var/www/html/sigob/temp
+
+sudo chown -R apache:apache /var/www/html/sigob
+sudo chmod -R 755 /var/www/html/sigob
+
+
+sudo setsebool -P httpd_can_network_connect on
+
+
+sudo chcon -R -t httpd_sys_rw_content_t /var/www/html/sigob/back/modulo_pl_formulacion/temp
+
+sudo chmod -R 777 /var/www/html/sigob/back/modulo_pl_formulacion/temp
+
+sudo chmod -R 777 /var/www/html/sigob/back/modulo_pl_formulacion/temp
+
+sudo systemctl restart httpd
+
+
+sudo setsebool -P httpd_unified 1
