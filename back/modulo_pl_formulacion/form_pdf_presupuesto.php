@@ -71,47 +71,53 @@ try {
         }
     }
 
-    // Consultar montos en la tabla proyecto_inversion_partidas en una sola consulta
-    $sqlMontos = "
+   // Consultar montos en la tabla proyecto_inversion_partidas en una sola consulta
+$sqlMontos = "
     SELECT sector_id, programa_id, SUM(monto) AS total_monto 
     FROM proyecto_inversion_partidas 
     GROUP BY sector_id, programa_id
 ";
-    $resultadoMontos = $conexion->query($sqlMontos);
-    $montosData = [];
-    if ($resultadoMontos && $resultadoMontos->num_rows > 0) {
-        while ($row = $resultadoMontos->fetch_assoc()) {
-            $montosData[$row['sector_id']][$row['programa_id']] = $row['total_monto'];
-        }
+$resultadoMontos = $conexion->query($sqlMontos);
+$montosData = [];
+if ($resultadoMontos && $resultadoMontos->num_rows > 0) {
+    while ($row = $resultadoMontos->fetch_assoc()) {
+        $montosData[$row['sector_id']][$row['programa_id']] = $row['total_monto'];
     }
+}
 
-    // Consultar montos actuales en la tabla distribucion_presupuestaria
-    $sqlDistribucion = "
+// Consultar montos actuales en la tabla distribucion_presupuestaria
+$sqlDistribucion = "
     SELECT id_sector, id_programa, SUM(monto_actual) AS total_monto_actual
     FROM distribucion_presupuestaria
     GROUP BY id_sector, id_programa
 ";
-    $resultadoDistribucion = $conexion->query($sqlDistribucion);
-    $distribucionData = [];
-    if ($resultadoDistribucion && $resultadoDistribucion->num_rows > 0) {
-        while ($row = $resultadoDistribucion->fetch_assoc()) {
-            $distribucionData[$row['id_sector']][$row['id_programa']] = $row['total_monto_actual'];
-        }
+$resultadoDistribucion = $conexion->query($sqlDistribucion);
+$distribucionData = [];
+if ($resultadoDistribucion && $resultadoDistribucion->num_rows > 0) {
+    while ($row = $resultadoDistribucion->fetch_assoc()) {
+        $distribucionData[$row['id_sector']][$row['id_programa']] = $row['total_monto_actual'];
     }
+}
 
-    // Asociar los montos de proyecto_inversion_partidas y distribucion_presupuestaria a los programas
-    foreach ($sectoresData as &$sector) {
-        foreach ($sector['programas'] as &$programa) {
-            // Agregar monto de proyecto_inversion_partidas si existe
-            if (isset($montosData[$sector['sector_id']][$programa['programa_id']])) {
-                $programa['monto'] = $montosData[$sector['sector_id']][$programa['programa_id']];
-            }
-            // Agregar monto_actual de distribucion_presupuestaria si existe
-            if (isset($distribucionData[$sector['sector_id']][$programa['programa_id']])) {
-                $programa['monto'] += $distribucionData[$sector['sector_id']][$programa['programa_id']];
-            }
+// Asociar los montos de proyecto_inversion_partidas y distribucion_presupuestaria a los programas y acumular total de sector
+foreach ($sectoresData as &$sector) {
+    $sectorTotal = 0; // Inicializar acumulador de total del sector
+    foreach ($sector['programas'] as &$programa) {
+        // Agregar monto de proyecto_inversion_partidas si existe
+        $programaMonto = 0;
+        if (isset($montosData[$sector['sector_id']][$programa['programa_id']])) {
+            $programaMonto += $montosData[$sector['sector_id']][$programa['programa_id']];
         }
+        // Agregar monto_actual de distribucion_presupuestaria si existe
+        if (isset($distribucionData[$sector['sector_id']][$programa['programa_id']])) {
+            $programaMonto += $distribucionData[$sector['sector_id']][$programa['programa_id']];
+        }
+        $programa['monto'] = $programaMonto; // Asignar monto acumulado al programa
+        $sectorTotal += $programaMonto; // Acumular al total del sector
     }
+    $sector['total'] = $sectorTotal; // Asignar total del sector
+}
+unset($sector, $programa); // Liberar referencias para evitar errores
 
 
 
@@ -751,46 +757,40 @@ function unidad2($numuero)
         <!-- Tabla HTML -->
 
         <table>
-        </table>
-        <?php
-        $sectoresImprimidos = [];
+</table>
 
-        foreach ($sectoresData as $sectorData) {
-            $sectorKey = $sectorData['sector'];
+<?php
+$sectoresImprimidos = [];
 
-            // .pb-0 {
-            //     padding-bottom: 0 !important;
-            // }
-        
-            // .pt-0 {
-            //     padding-top: 0 !important;
-            // }
-        
-            // Verificar si el sector ya ha sido impreso
-            if (!in_array($sectorKey, $sectoresImprimidos)) {
-                // Imprimir información del sector
-                echo "<table ><tr><td colspan='3' class='text-left pb-0 pt-0'><strong>Sector:</strong> " . htmlspecialchars($sectorData['sector']) . "</td></tr>";
-                echo "<tr><td class='fw-bold text-left  pt-0'>" . htmlspecialchars($sectorData['sector_denominacion']) . "</td> <td colspan='2' class='fw-bold  pt-0 text-right'>TOTAL (PENDIENTE)</td></tr> </table>";
+foreach ($sectoresData as $sectorData) {
+    $sectorKey = $sectorData['sector'];
 
-                // Si hay programas
-                if (!empty($sectorData['programas']) && is_array($sectorData['programas'])) {
-                    echo "<table class='mt-0'><tr><th class='bl bt bb' colspan='2'>PROGRAMA</th><th class='bl bt bb br'>MONTO Bs.</th></tr>";
-                    foreach ($sectorData['programas'] as $programa2) {
-                        echo "<tr>";
-                        echo "<td class='bl bt bb fw-bold'>" . htmlspecialchars($programa2['programa']) . "</td>";
-                        echo "<td class='bl bt bb br text-left'>" . htmlspecialchars($programa2['programa_denominacion']) . "</td>";
-                        echo "<td class='bl bt bb br text-right'>" . number_format($programa2['monto'], 2) . "</td>";
-                        echo "</tr>";
-                    }
-                    echo "</table>";
-                } else {
-                    echo "<table class='mt-0'><tr><td class='bl bt bb br' colspan='3'>No hay programas disponibles para este sector.</td></tr></table>";
-                }
+    // Verificar si el sector ya ha sido impreso
+    if (!in_array($sectorKey, $sectoresImprimidos)) {
+        // Imprimir información del sector con el total acumulado
+        echo "<table><tr><td colspan='3' class='text-left pb-0 pt-0'><strong>Sector:</strong> " . htmlspecialchars($sectorData['sector']) . "</td></tr>";
+        echo "<tr><td class='fw-bold text-left pt-0'>" . htmlspecialchars($sectorData['sector_denominacion']) . "</td>";
+        echo "<td colspan='2' class='fw-bold pt-0 text-right'>TOTAL: " . number_format($sectorData['total'], 2) . " Bs.</td></tr></table>";
 
-                // Agregar el sector a la lista de impresos
-                $sectoresImprimidos[] = $sectorKey;
+        // Si hay programas
+        if (!empty($sectorData['programas']) && is_array($sectorData['programas'])) {
+            echo "<table class='mt-0'><tr><th class='bl bt bb' colspan='2'>PROGRAMA</th><th class='bl bt bb br'>MONTO Bs.</th></tr>";
+            foreach ($sectorData['programas'] as $programa2) {
+                echo "<tr>";
+                echo "<td class='bl bt bb fw-bold'>" . htmlspecialchars($programa2['programa']) . "</td>";
+                echo "<td class='bl bt bb br text-left'>" . htmlspecialchars($programa2['programa_denominacion']) . "</td>";
+                echo "<td class='bl bt bb br text-right'>" . number_format($programa2['monto'], 2) . "</td>";
+                echo "</tr>";
             }
+            echo "</table>";
+        } else {
+            echo "<table class='mt-0'><tr><td class='bl bt bb br' colspan='3'>No hay programas disponibles para este sector.</td></tr></table>";
         }
+
+        // Agregar el sector a la lista de impresos
+        $sectoresImprimidos[] = $sectorKey;
+    }
+}
         ?>
 
 
