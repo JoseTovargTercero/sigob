@@ -37,7 +37,7 @@ function registrar($partida, $ordinaria, $denominacion)
     // Intentar insertar el registro
     try {
         $resultado = $db->insert('partidas_presupuestarias', $campos_valores);
-        return json_encode($resultado);
+        return $resultado;
     } catch (Exception $e) {
         throw new Exception("Error: " . $e->getMessage());
     }
@@ -54,5 +54,6 @@ if (isset($data["partida"]) && isset($data["ordinaria"]) && isset($data["denomin
     $response = registrar($partida, $ordinaria, $denominacion);
 } else {
     echo json_encode(['error' => 'No se recibieron los datos necesarios.']);
+    exit;
 }
-echo $response;
+echo json_encode($response);

@@ -45,7 +45,6 @@ try {
     }
 
     $conexion->commit();
-
 } catch (Exception $e) {
     $conexion->rollback();
     die("Error en la consulta: " . $e->getMessage());
@@ -158,7 +157,7 @@ $data = [
         }
 
         .logo {
-            width: 120px;
+            width: 80px;
         }
 
         .t-border-0>tr>td {
@@ -214,29 +213,37 @@ $data = [
         .p-2 {
             padding: 10px;
         }
+
+        .p-32 {
+            padding: 3px 0 20px 3px;
+        }
+
+        .p-1 {
+            padding: 2px;
+        }
     </style>
 </head>
 
 <body>
-    <!-- Encabezado -->
-    <?php
-    echo "
+
+
+
+
     <div style='font-size: 9px;'>
         <table class='header-table bt br bb bl bc-lightgray'>
             <tr>
-                <td class='text-left' style='width: 20px'>
-                    <img src='../../img/logo.jpg' class='logo'>
-                </td>
                 <td class='text-left' style='vertical-align: top; padding-top: 13px;'>
                     <b>
-                    REPÚBLICA BOLIVARIANA DE VENEZUELA <br>
-                    GOBERNACIÓN DEL ESTADO AMAZONAS 
+                        GOBERNACION DE AMAZONAS <br>
+                        CÓDIGO PRESUPUESTARIO: E5100 <br>
+                        PERÍODO PRESUPUESTARIO: AÑO 2020
                     </b>
                 </td>
-                <td class='text-right' style='vertical-align: top; padding: 13px 10px 0 0;'>
-                    <b>
-                    Fecha: " . date('d/m/Y') . " 
-                    </b>
+                <td>
+
+                </td>
+                <td class='text-right'>
+                    <img src='../../img/logo.jpg' class='logo'>
                 </td>
             </tr>
             <tr>
@@ -245,122 +252,125 @@ $data = [
                 </td>
             </tr>
         </table>
-    "; 
-    ?>
 
-    <!-- Tabla principal -->
-    <table>
-        <?php foreach ($data['gobernacion'] as $gobernacion) : ?>
-            <tr>
-                <th class="bl bt bb" colspan="4">Base Legal</th>
-            </tr>
-             <tr>
-                <th class="bl bt bb" colspan="4">IDENTIFICACIÓN DE LOS ÓRGANOS DEL PODER PÚBLICO ESTADAL:</th>
-            </tr>
-            <tr>
-                <th class="bl bt bb" colspan="4"><?= $gobernacion['identificacion'] ?></th>
-            </tr>
-            <tr>
-                <th class="bl bt bb" colspan="4">Domicilio Legal: <?= $gobernacion['domicilio'] ?> </th>
-            </tr>
-            <tr>
-                <th class="bl bt bb">Telefono(s)</th>
-                <th class="bl bt bb br">Pagina Web</th>
-                <th class="bl bt bb br">Fax(s)</th>
-                <th class="bl bt bb br">Codigo Postal</th>
-            </tr>
-            <tr>
-                <th class="bl bt bb"><?= $gobernacion['telefono'] ?></th>
-                <th class="bl bt bb br"><?= $gobernacion['pagina_web'] ?></th>
-                <th class="bl bt bb br"><?= $gobernacion['fax'] ?></th>
-                <th class="bl bt bb br"><?= $gobernacion['codigo_postal'] ?></th>
-            </tr>
-            <tr>
-                <th class="bl bt bb" colspan="4">NOMBRES Y APELLIDOS DEL GOBERNADOR (RA)</th>        
-            </tr>
-            <tr>
-                <td class="bl bt bb" colspan="4"><?= $gobernacion['nombre_apellido_gobernador'] ?></td>
-            </tr>
+        <!-- Tabla principal -->
+        <table>
+            <?php foreach ($data['gobernacion'] as $gobernacion) : ?>
+                <tr>
+                    <th class="bl bt bb br text-left p-32" colspan="4">
+                        <b>BASE LEGAL:</b>
+                    </th>
+                </tr>
+
+                <tr>
+                    <th class="bl bb br text-left text-left p-32" colspan="4">IDENTIFICACIÓN DE LOS ÓRGANOS DEL PODER PÚBLICO ESTADAL:</th>
+                </tr>
+                <tr>
+                    <td class="bl bb br text-left text-left p-32" colspan="4"><?= $gobernacion['identificacion'] ?></td>
+                </tr>
+                <tr>
+                    <td class="bl bb br text-left text-left p-32" colspan="4">DOMICILIO LEGAL: <?= $gobernacion['domicilio'] ?> </td>
+                </tr>
+                <tr>
+                    <th class="p-1 bl bb">Telefono (s)</th>
+                    <th class="p-1 bl bb br">Pagina Web</th>
+                    <th class="p-1 bl bb br">Fax(s)</th>
+                    <th class="p-1 bl bb br">Codigo Postal</th>
+                </tr>
+                <tr>
+                    <td class="bl bb"><?= $gobernacion['telefono'] ?></td>
+                    <td class="bl bb br"><?= $gobernacion['pagina_web'] ?></td>
+                    <td class="bl bb br"><?= $gobernacion['fax'] ?></td>
+                    <td class="bl bb br"><?= $gobernacion['codigo_postal'] ?></td>
+                </tr>
+                <tr>
+                    <td class="bl bb br p-32 text-left" colspan="4">
+                        <b>NOMBRES Y APELLIDOS DEL GOBERNADOR (RA)</b> <br>
+                        <?= $gobernacion['nombre_apellido_gobernador'] ?>
+                    </td>
+                </tr>
+
             <?php endforeach; ?>
             <tr>
-                <th class="bl bt bb" colspan="4">PERSONAL DIRECTIVO DE LA GOBERNACIÓN Y ÓRGANOS AUXILIARES:</th>
+                <th class="bl bb br p-2" colspan="4">PERSONAL DIRECTIVO DE LA GOBERNACIÓN Y ÓRGANOS AUXILIARES:</th>
             </tr>
-            
+
             <tr>
-                        <th class="bl bt bb">DIRECCIÓN ADMINISTRATIVA</th>
-                        <th class="bl bt bb br">NOMBRES Y APELLIDOS</th>
-                        <th class="bl bt bb br">CORREO ELECTRÓNICO</th>
-                        <th class="bl bt bb br">TELÉFONO (S)</th>
+                <th class="bl bb br">DIRECCIÓN ADMINISTRATIVA</th>
+                <th class="bl bb br">NOMBRES Y APELLIDOS</th>
+                <th class="bl bb br">CORREO ELECTRÓNICO</th>
+                <th class="bl bb br">TELÉFONO (S)</th>
             </tr>
             <?php foreach ($data['directivo'] as $directivo) : ?>
-            <tr>
-                        <th class="bl bt bb"><?= $directivo['direccion'] ?></th>
-                        <th class="bl bt bb"><?= $directivo['nombre_apellido'] ?></th>
-                        <th class="bl bt bb"><?= $directivo['email'] ?></th>
-                        <th class="bl bt bb"><?= $directivo['telefono'] ?></th>
-            </tr>
+                <tr>
+                    <td class="bl br text-left"><?= $directivo['direccion'] ?></td>
+                    <td class="bl br text-left"><?= $directivo['nombre_apellido'] ?></td>
+                    <td class="bl br text-left"><?= $directivo['email'] ?></td>
+                    <td class="bl br text-left"><?= $directivo['telefono'] ?></td>
+                </tr>
             <?php endforeach; ?>
             <?php foreach ($data['contraloria'] as $contraloria) : ?>
-            <tr>
-                        <th class="bl bt bb" colspan="4">CONTRALORÍA ESTADAL</th>
-            </tr>
-            <tr>
-                        <th class="bl bt bb" colspan="4">NOMBRES Y APELLIDOS DEL CONTRALOR (A)</th>
-            </tr>
-            <tr>
-                        <th class="bl bt bb" colspan="4"><?= $contraloria['nombre_apellido_contralor'] ?></th>
-            </tr>
-            <tr>
-                        <th class="bl bt bb" colspan="4">DOMICILIO LEGAL:</th>
-            </tr>
-            <tr>
-                        <th class="bl bt bb" colspan="4"><?= $contraloria['domicilio'] ?></th>
-            </tr>
-            <tr>
-                        <th class="bl bt bb">TELÉFONO (S)</th>
-                        <th class="bl bt bb br">PÁGINA WEB</th>
-                        <th class="bl bt bb br" colspan="2">CORREO ELECTRÓNICO</th>
-            </tr>
-            <tr>
-                        <th class="bl bt bb"><?= $contraloria['telefono'] ?></th>
-                        <th class="bl bt bb br"><?= $contraloria['pagina_web'] ?></th>
-                        <th class="bl bt bb br" colspan="2"><?= $contraloria['email'] ?></th>
-            </tr>
+                <tr>
+                    <th class="bl bb bt p1 text-left" colspan="4">CONTRALORÍA ESTADAL</th>
+                </tr>
+                <tr>
+                    <th class="bl bb p1 text-left" colspan="4">NOMBRES Y APELLIDOS DEL CONTRALOR (A)</th>
+                </tr>
+                <tr>
+                    <td class="bl bb p1 text-left" colspan="4"><?= $contraloria['nombre_apellido_contralor'] ?></td>
+                </tr>
+                <tr>
+                    <th class="bl bb p1 text-left" colspan="4">DOMICILIO LEGAL:</th>
+                </tr>
+                <tr>
+                    <td class="bl bb p1 text-left" colspan="4"><?= $contraloria['domicilio'] ?></td>
+                </tr>
+                <tr>
+                    <th class="bl bb">TELÉFONO (S)</th>
+                    <th class="bl bb br">PÁGINA WEB</th>
+                    <th class="bl bb br" colspan="2">CORREO ELECTRÓNICO</th>
+                </tr>
+                <tr>
+                    <td class="bl bb"><?= $contraloria['telefono'] ?></td>
+                    <td class="bl bb br"><?= $contraloria['pagina_web'] ?></td>
+                    <td class="bl bb br" colspan="2"><?= $contraloria['email'] ?></td>
+                </tr>
             <?php endforeach; ?>
             <?php foreach ($data['consejo'] as $consejo) : ?>
-            <tr>
-                        <th class="bl bt bb" colspan="4">CONCEJO LEGISLATIVO:</th>
-            </tr>
-            <tr>
-                        <th class="bl bt bb" colspan="4">NOMBRES Y APELLIDOS DEL PRESIDENTE (A): <?= $consejo['nombre_apellido_presidente'] ?> </th>
-            </tr>
-            <tr>
-                        <th class="bl bt bb" colspan="4">NOMBRES Y APELLIDOS DEL SECRETARIO (A): <?= $consejo['nombre_apellido_secretario'] ?></th>
-            </tr>
-            <tr>
-                        <th class="bl bt bb" colspan="4">DOMICILIO LEGAL: <?= $consejo['domicilio'] ?></th>
-            </tr>
-            <tr>
-                        <th class="bl bt bb">TELÉFONO (S)</th>
-                        <th class="bl bt bb br">PÁGINA WEB</th>
-                        <th class="bl bt bb br" colspan="2">CORREO ELECTRÓNICO</th>
-            </tr>
-            <tr>
-                        <th class="bl bt bb"><?= $consejo['telefono'] ?></th>
-                        <th class="bl bt bb br"><?= $consejo['pagina_web'] ?></th>
-                        <th class="bl bt bb br" colspan="2"><?= $consejo['email'] ?></th>
-            </tr>
+                <tr>
+                    <th class="bl bb text-left" colspan="4">CONCEJO LEGISLATIVO:</th>
+                </tr>
+                <tr>
+                    <th class="bl bb text-left" colspan="4">NOMBRES Y APELLIDOS DEL PRESIDENTE (A): <?= $consejo['nombre_apellido_presidente'] ?> </th>
+                </tr>
+                <tr>
+                    <th class="bl bb text-left" colspan="4">NOMBRES Y APELLIDOS DEL SECRETARIO (A): <?= $consejo['nombre_apellido_secretario'] ?></th>
+                </tr>
+                <tr>
+                    <td class="bl bb text-left" colspan="4">DOMICILIO LEGAL: <?= $consejo['domicilio'] ?></td>
+                </tr>
+                <tr>
+                    <th class="bl bb">TELÉFONO (S)</th>
+                    <th class="bl bb br">PÁGINA WEB</th>
+                    <th class="bl bb br" colspan="2">CORREO ELECTRÓNICO</th>
+                </tr>
+                <tr>
+                    <td class="bl bb"><?= $consejo['telefono'] ?></td>
+                    <td class="bl bb br"><?= $consejo['pagina_web'] ?></td>
+                    <td class="bl bb br" colspan="2"><?= $consejo['email'] ?></td>
+                </tr>
 
-            <tr>
-                        <th class="bl bt bb">CONSEJO LOCAL DE PLANIFICACIÓN PÚBLICA :</th>
-                        <th class="bl bt bb br"></th>
-                        <th class="bl bt bb br" colspan="2"></th>
-            </tr>
-            <tr>
-                        <th class="bl bt bb">NOMBRES Y APELLIDOS DE LOS CONSEJEROS (AS) :</th>
-                        <th class="bl bt bb br" colspan="4"><?= $consejo['consejo_local'] ?></th>
-            </tr>
+                <tr>
+                    <th class="bl bb">CONSEJO LOCAL DE PLANIFICACIÓN PÚBLICA :</th>
+                    <th class="bl bb br"></th>
+                    <th class="bl bb br" colspan="2"></th>
+                </tr>
+                <tr>
+                    <td class="bl bb">NOMBRES Y APELLIDOS DE LOS CONSEJEROS (AS) :</td>
+                    <td class="bl bb br" colspan="4"><?= $consejo['consejo_local'] ?></td>
+                </tr>
             <?php endforeach; ?>
-    </table>
+        </table>
 </body>
+
 </html>

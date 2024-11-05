@@ -1,20 +1,23 @@
 <?php
 require_once '../sistema_global/conexion.php';
 
-
-// Suponemos que recibimos $id y $id_ejercicio de alguna manera, como parámetros GET
+// Suponemos que recibimos $id_ejercicio y $ente de alguna manera, como parámetros GET
 $id_ejercicio = $_GET['id_ejercicio'];
 $ente = $_GET['ente'];
 
-
-
-// INFORMACION DEL SECTOR Y PROGRAMA
-$stmt = mysqli_prepare($conexion, "SELECT entes.ente_nombre, ppy.proyecto_id, ppy.denominacion AS nombre_proyecto, pp.programa, pp.denominacion AS nombre_programa, ps.sector, ps.denominacion AS nombre_sector FROM `entes`
-LEFT JOIN pl_sectores ps ON ps.id = entes.sector 
-LEFT JOIN pl_programas pp ON pp.id = entes.programa 
-LEFT JOIN pl_proyectos ppy ON ppy.id = entes.proyecto 
-
- WHERE entes.id = ?");
+// CONSULTAS
+// Información del sector, programa y proyecto del ente
+$stmt = mysqli_prepare($conexion, "SELECT entes.ente_nombre, ppy.proyecto_id, ppy.denominacion AS nombre_proyecto, 
+                                    pp.programa, pp.denominacion AS nombre_programa, 
+                                    ps.sector, ps.denominacion AS nombre_sector 
+                                   FROM entes
+                                   LEFT JOIN pl_sectores ps ON ps.id = entes.sector 
+                                   LEFT JOIN pl_programas pp ON pp.id = entes.programa 
+                                   LEFT JOIN pl_proyectos ppy ON ppy.id = entes.proyecto 
+                                   WHERE entes.id = ?");
+if (!$stmt) {
+    die("Error en consulta de sector y programa: " . mysqli_error($conexion));
+}
 $stmt->bind_param('s', $ente);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -31,25 +34,141 @@ if ($result->num_rows > 0) {
 }
 $stmt->close();
 
+// Consultar distribuciones del ente en la tabla distribucion_entes
+$sqlDistribuciones = "SELECT distribucion, actividad_id FROM distribucion_entes WHERE id_ente = ?";
+$stmt = $conexion->prepare($sqlDistribuciones);
+if (!$stmt) {
+    die("Error en consulta de distribuciones del ente: " . mysqli_error($conexion));
+}
+$stmt->bind_param('i', $ente);
+$stmt->execute();
+$resultDistribuciones = $stmt->get_result();
+$partidasData = [];
+$maxActividad = 51;  // Inicializamos con el mínimo de las actividades
+
+while ($rowDistribucion = $resultDistribuciones->fetch_assoc()) {
+    $distribuciones = json_decode($rowDistribucion['distribucion'], true); // Decodificar el JSON
+    $actividad_id = $rowDistribucion['actividad_id'];
+    if ($actividad_id > $maxActividad) {
+        $maxActividad = $actividad_id;
+    }
+
+    foreach ($distribuciones as $distribucion) {
+        $id_distribucion = $distribucion['id_distribucion'];
+
+        // Consultar distribucion_presupuestaria para obtener id_partida y monto_actual
+        $sqlDistribucionPres = "SELECT id_partida, monto_actual FROM distribucion_presupuestaria WHERE id = ?";
+        $stmtPres = $conexion->prepare($sqlDistribucionPres);
+        if (!$stmtPres) {
+            die("Error en consulta de distribucion_presupuestaria: " . mysqli_error($conexion));
+        }
+        $stmtPres->bind_param('i', $id_distribucion);
+        $stmtPres->execute();
+        $resultDistribucionPres = $stmtPres->get_result();
+        $dataDistribucionPres = $resultDistribucionPres->fetch_assoc();
+
+        if ($dataDistribucionPres) {
+            $id_partida = $dataDistribucionPres['id_partida'];
+            $monto_actual = $dataDistribucionPres['monto_actual'];
+
+            // Consultar partida y descripcion en partidas_presupuestarias
+            $sqlPartida = "SELECT partida, descripcion FROM partidas_presupuestarias WHERE id = ?";
+            $stmtPartida = $conexion->prepare($sqlPartida);
+            if (!$stmtPartida) {
+                die("Error en consulta de partidas_presupuestarias: " . mysqli_error($conexion));
+            }
+            $stmtPartida->bind_param('i', $id_partida);
+            $stmtPartida->execute();
+            $resultPartida = $stmtPartida->get_result();
+            $dataPartida = $resultPartida->fetch_assoc();
+
+            if ($dataPartida) {
+                $partidaCompleta = $dataPartida['partida'];
+                $descripcion = $dataPartida['descripcion'];
+
+                // Desglosar la partida en part, gen, esp, sub_esp, cod_ordi
+                $partidaArray = explode('.', $partidaCompleta);
+                $partidaInfo = [
+                    'part' => $partidaArray[0] ?? null,
+                    'gen' => $partidaArray[1] ?? null,
+                    'esp' => $partidaArray[2] ?? null,
+                    'sub_esp' => $partidaArray[3] ?? null,
+                    'cod_ordi' => $partidaArray[4] ?? null,
+                    'denominacion' => $descripcion,
+                    'monto' => $monto_actual,
+                ];
+               // Consultar actividad en la tabla ente_dependencias
+                $sqlActividad = "SELECT actividad FROM entes_dependencias WHERE id = ?";
+                $stmtActividad = $conexion->prepare($sqlActividad);
+                if (!$stmtActividad) {
+                    die("Error en consulta de actividad en ente_dependencias: " . mysqli_error($conexion));
+                }
+                $stmtActividad->bind_param('i', $actividad_id);
+                $stmtActividad->execute();
+                $resultActividad = $stmtActividad->get_result();
+                $dataActividad = $resultActividad->fetch_assoc();
+
+                if ($dataActividad) {
+                    $partidaInfo['actividad'] = $dataActividad['actividad'];
+                }
+
+                $partidasData[] = $partidaInfo;
+            }
+
+            $stmtPartida->close();
+        }
+
+        $stmtPres->close();
+    }
+}
+$stmt->close();
+
+// Obtener el máximo valor de actividad desde entes_dependencias
+$maxActividadQuery = "SELECT MAX(actividad) AS max_actividad FROM entes_dependencias WHERE id IN (SELECT actividad_id FROM distribucion_entes WHERE id_ente = ?)";
+$stmtMaxActividad = $conexion->prepare($maxActividadQuery);
+if (!$stmtMaxActividad) {
+    die("Error en consulta del máximo de actividad: " . mysqli_error($conexion));
+}
+$stmtMaxActividad->bind_param('i', $ente);
+$stmtMaxActividad->execute();
+$resultMaxActividad = $stmtMaxActividad->get_result();
+$rowMaxActividad = $resultMaxActividad->fetch_assoc();
+$maxActividad = $rowMaxActividad['max_actividad'];
+$stmtMaxActividad->close();
 
 
+// Determinar el rango de actividades
+$inicioActividad = 51;
+$finActividad = $maxActividad;
 
+// Paso 1: Consolidar datos en una sola entrada por denominación y actividad
+$partidasAgrupadas = [];
+foreach ($partidasData as $partida) {
+    $partKey = $partida['part'] . '-' . $partida['denominacion'];
+    $actividad = $partida['actividad'];
+    
+    // Si la partida no existe en el array, inicializarla
+    if (!isset($partidasAgrupadas[$partKey])) {
+        $partidasAgrupadas[$partKey] = [
+            'part' => $partida['part'],
+            'gen' => $partida['gen'],
+            'esp' => $partida['esp'],
+            'sub_esp' => $partida['sub_esp'],
+            'cod_ordi' => $partida['cod_ordi'],
+            'denominacion' => $partida['denominacion'],
+            'total_programa' => 0,
+            'actividades' => array_fill($inicioActividad, $finActividad - $inicioActividad + 1, 0)
+        ];
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    // Acumular el monto en el total del programa
+    $partidasAgrupadas[$partKey]['total_programa'] += $partida['monto'];
+    
+    // Acumular el monto en la actividad correspondiente
+    if (isset($partidasAgrupadas[$partKey]['actividades'][$actividad])) {
+        $partidasAgrupadas[$partKey]['actividades'][$actividad] += $partida['monto'];
+    }
+}
 
 
 
@@ -66,6 +185,7 @@ $ano = $data['ano'];
 $situado = $data['situado'];
 $stmt->close();
 ?>
+
 
 <!DOCTYPE html>
 <html>
@@ -316,76 +436,85 @@ $stmt->close();
 
 
 
-    <table>
-        <!-- Encabezado de la tabla -->
-        <tr>
-            <td colspan="6" class="header"></td>
-            <td colspan="6" class="title">ACTIVIDADES</td>
-        </tr>
+<table>
+    <!-- Encabezado de la tabla -->
+    <tr>
+        <td colspan="6" class="header"></td>
+        <td colspan="<?= $finActividad - $inicioActividad + 2 ?>" class="title">ACTIVIDADES</td>
+    </tr>
 
-        <!-- Encabezado de columnas -->
-        <tr>
-            <th class="br">PART</th>
-            <th class="br">GEN</th>
-            <th class="br">ESP</th>
-            <th class="br">SUB ESP</th>
-            <th class="br">COD ORDI</th>
-            <th class="br">DENOMINACIÓN</th>
-            <th class="br">TOTAL PROGRAMA</th>
-            <th class="br">ACTIVIDAD 51</th>
-            <th class="br">ACTIVIDAD 52</th>
-            <th class="br">ACTIVIDAD 53</th>
-            <th class="br">ACTIVIDAD 54</th>
-            <th class="br">ACTIVIDAD 55</th>
-            <th class="br">MONTO DE LA OBRA</th>
-        </tr>
+    <!-- Encabezado de columnas -->
+    <tr>
+        <th class="br">PART</th>
+        <th class="br">GEN</th>
+        <th class="br">ESP</th>
+        <th class="br">SUB ESP</th>
+        <th class="br">COD ORDI</th>
+        <th class="br">DENOMINACIÓN</th>
+        <th class="br">TOTAL PROGRAMA</th>
+        <?php for ($actividad = $inicioActividad; $actividad <= $finActividad; $actividad++): ?>
+            <th class="br">ACTIVIDAD <?= $actividad ?></th>
+        <?php endfor; ?>
+        <th class="br">MONTO DE LA OBRA</th>
+    </tr>
 
-        <!-- Ejemplo de fila de datos -->
-        <tr>
-            <td class="br">401</td>
-            <td class="br">01</td>
-            <td class="br">01</td>
-            <td class="br">00</td>
-            <td class="br">000</td>
-            <td class="br subtitle">SUELDOS BÁSICOS PERSONAL FIJO A TIEMPO COMPLETO</td>
-            <td class="br">Ejemplo</td>
-            <td class="br">Ejemplo</td>
-            <td class="br">Ejemplo</td>
-            <td class="br">Ejemplo</td>
-            <td class="br">Ejemplo</td>
-            <td class="br">Ejemplo</td>
-            <td class="br">Ejemplo</td>
-        </tr>
+    <?php
+    $totalPartida = 0;
+    $partAnterior = null;
+    foreach ($partidasAgrupadas as $partidaKey => $partida):
+        // Verificar si la partida ha cambiado para mostrar el total del grupo anterior
+        if ($partAnterior !== null && $partAnterior !== $partida['part']) {
+            ?>
+            <!-- Fila de total por PART -->
+            <tr>
+                <td colspan="6" class="crim br">TOTAL POR PARTIDA <?= $partAnterior ?></td>
+                <td class="crim br"><?= number_format($totalPartida, 2) ?></td>
+                <?php for ($actividad = $inicioActividad; $actividad <= $finActividad; $actividad++): ?>
+                    <td class="crim br"></td>
+                <?php endfor; ?>
+                <td class="crim br"><?= number_format($totalPartida, 2) ?></td>
+            </tr>
+            <?php
+            // Reiniciar el total para la nueva partida
+            $totalPartida = 0;
+        }
 
-        <!-- Ejemplo de fila total por partida -->
+        // Acumular el total de la partida actual
+        $totalPartida += $partida['total_programa'];
+        $partAnterior = $partida['part'];
+        ?>
+        <!-- Fila de datos consolidada por partida -->
         <tr>
-            <td colspan="6" class="crim br">TOTAL POR PARTIDA 401</td>
-            <td class="crim br">Ejemplo</td>
-            <td class="crim br">Ejemplo</td>
-            <td class="crim br">Ejemplo</td>
-            <td class="crim br">Ejemplo</td>
-            <td class="crim br">Ejemplo</td>
-            <td class="crim br">Ejemplo</td>
-            <td class="crim br">Ejemplo</td>
-        </tr>
+            <td class="br"><?= $partida['part'] ?></td>
+            <td class="br"><?= $partida['gen'] ?></td>
+            <td class="br"><?= $partida['esp'] ?></td>
+            <td class="br"><?= $partida['sub_esp'] ?></td>
+            <td class="br"><?= $partida['cod_ordi'] ?></td>
+            <td class="br subtitle"><?= $partida['denominacion'] ?></td>
+            <td class="br"><?= number_format($partida['total_programa'], 2) ?></td>
 
-        <!-- Fila de separación para diferentes partidas -->
-        <tr>
-            <td class="br">402</td>
-            <td class="br">01</td>
-            <td class="br">01</td>
-            <td class="br">00</td>
-            <td class="br">000</td>
-            <td class="subtitle br">ALIMENTOS Y BEBIDAS PARA PERSONAS</td>
-            <td class="br">Ejemplo</td>
-            <td class="br">Ejemplo</td>
-            <td class="br">Ejemplo</td>
-            <td class="br">Ejemplo</td>
-            <td class="br">Ejemplo</td>
-            <td class="br">Ejemplo</td>
-            <td class="br">Ejemplo</td>
+            <!-- Actividades dinámicas -->
+            <?php for ($actividad = $inicioActividad; $actividad <= $finActividad; $actividad++): ?>
+                <td class="br"><?= ($partida['actividades'][$actividad] > 0 ? number_format($partida['actividades'][$actividad], 2) : '') ?></td>
+            <?php endfor; ?>
+
+            <!-- Monto de la obra -->
+            <td class="br"><?= number_format($partida['total_programa'], 2) ?></td>
         </tr>
-    </table>
+    <?php endforeach; ?>
+
+    <!-- Fila de total de la última partida -->
+    <tr>
+        <td colspan="6" class="crim br">TOTAL POR PARTIDA <?= $partAnterior ?></td>
+        <td class="crim br"><?= number_format($totalPartida, 2) ?></td>
+        <?php for ($actividad = $inicioActividad; $actividad <= $finActividad; $actividad++): ?>
+            <td class="crim br"></td>
+        <?php endfor; ?>
+        <td class="crim br"><?= number_format($totalPartida, 2) ?></td>
+    </tr>
+</table>
+
+
 
 
 </body>
