@@ -733,8 +733,8 @@ function unidad2($numuero)
                 <td class="bl bt bb br text-right"><?= number_format($monto_total, 2) ?></td>
             </tr>
             <tr>
-                <td colspan="5" class="bl bt bb text-right">TOTAL</td>
-                <td class="bl bt bb br text-right"><?= number_format($total, 2) ?></td>
+                <td colspan="5" class="bl bt bb text-right fw-bold">TOTAL</td>
+                <td class="bl bt bb br text-right fw-bold"><?= number_format($total, 2) ?></td>
             </tr>
         </table>
         <div style="text-align: center;">
