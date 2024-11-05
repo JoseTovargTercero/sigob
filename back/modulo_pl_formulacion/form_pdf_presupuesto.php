@@ -556,6 +556,10 @@ function unidad2($numuero)
             width: 50%;
         }
 
+        .w-20 {
+            width: 20%;
+        }
+
         .table-title {
             font-size: 10px;
             margin-top: 10px;
@@ -645,8 +649,7 @@ function unidad2($numuero)
         </strong></div>
     <div style="font-size: 15px">
         <p><strong>Artículo 1:</strong> Se aprueba la estimación de los Ingresos y Gastos Públicos para el Ejercicio
-            Fiscal <?= $ano ?> en la cantidad de <span
-                class="font-arial fw-bold"><?php echo convertirNumeroLetra2($total); ?>
+            Fiscal <?= $ano ?> en la cantidad de <span class="font-arial"><?php echo convertirNumeroLetra2($total); ?>
                 (Bs.
                 <?php echo number_format($total, 2) ?>),</span> la cual está constituida por los siguientes rubros de
             ingresos:
@@ -698,7 +701,7 @@ function unidad2($numuero)
             <tr>
                 <th class="bl bt bb" colspan="4">CÓDIGO DE RECURSOS</th>
                 <th class="bl bt bb br" rowspan="2">DENOMINACIÓN</th>
-                <th class="bl bt bb br" rowspan="2">MONTO Bs.</th>
+                <th class="bl bt bb br w-20" rowspan="2">MONTO Bs.</th>
             </tr>
             <tr>
                 <th class="bl bt bb">RAMO</th>
@@ -765,12 +768,29 @@ $sectoresImprimidos = [];
 foreach ($sectoresData as $sectorData) {
     $sectorKey = $sectorData['sector'];
 
+<<<<<<< HEAD
     // Verificar si el sector ya ha sido impreso
     if (!in_array($sectorKey, $sectoresImprimidos)) {
         // Imprimir información del sector con el total acumulado
         echo "<table><tr><td colspan='3' class='text-left pb-0 pt-0'><strong>Sector:</strong> " . htmlspecialchars($sectorData['sector']) . "</td></tr>";
         echo "<tr><td class='fw-bold text-left pt-0'>" . htmlspecialchars($sectorData['sector_denominacion']) . "</td>";
         echo "<td colspan='2' class='fw-bold pt-0 text-right'>TOTAL: " . number_format($sectorData['total'], 2) . " Bs.</td></tr></table>";
+=======
+                // Si hay programas
+                if (!empty($sectorData['programas']) && is_array($sectorData['programas'])) {
+                    echo "<table class='mt-0'><tr><th class='bl bt bb' colspan='2'>PROGRAMA</th><th class='bl bt bb br'>MONTO Bs.</th></tr>";
+                    foreach ($sectorData['programas'] as $programa2) {
+                        echo "<tr>";
+                        echo "<td class='bl bt bb fw-bold'>" . htmlspecialchars($programa2['programa']) . "</td>";
+                        echo "<td class='bl bt bb br text-left'>" . htmlspecialchars($programa2['programa_denominacion']) . "</td>";
+                        echo "<td class='bl bt bb br text-right w-20'>" . number_format($programa2['monto'], 2) . "</td>";
+                        echo "</tr>";
+                    }
+                    echo "</table>";
+                } else {
+                    echo "<table class='mt-0'><tr><td class='bl bt bb br' colspan='3'>No hay programas disponibles para este sector.</td></tr></table>";
+                }
+>>>>>>> a494fb9b398acb5b64183adabe55e8ab2e59b9d3
 
         // Si hay programas
         if (!empty($sectorData['programas']) && is_array($sectorData['programas'])) {
