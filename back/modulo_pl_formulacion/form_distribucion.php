@@ -75,8 +75,10 @@ function guardarDistribucionPresupuestaria($dataArray)
 
             $stmt->close();
         }
+        
 
         return json_encode(["success" => "Datos de distribución presupuestaria guardados correctamente"]);
+        // recargar pagina
     } catch (Exception $e) {
         registrarError($e->getMessage());
         return json_encode(['error' => $e->getMessage()]);

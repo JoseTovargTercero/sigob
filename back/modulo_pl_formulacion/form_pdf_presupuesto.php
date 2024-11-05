@@ -631,6 +631,25 @@ function unidad2($numuero)
         }
     </style>
 </head>
+<?php
+function formatearTextoConItems($texto)
+{
+    // Expresión regular para buscar patrones como " a) ", " b) ", etc.
+    $patron = '/\s([a-zA-Z])\)\s/';
+
+    // Función para reemplazar los patrones encontrados con el formato deseado
+    $textoFormateado = preg_replace_callback($patron, function ($coincidencia) {
+        // Extraer la letra encontrada en el patrón
+        $letra = $coincidencia[1];
+
+        // Generar el formato en HTML para cada ítem
+        return "<br><strong>$letra)</strong>&nbsp;&nbsp;&nbsp;";
+    }, $texto);
+
+    // Retornar el texto formateado con saltos de línea y negrita
+    return $textoFormateado;
+}
+?>
 
 <body>
     <div style="text-align: center; font-size: 15px"><strong>
@@ -682,7 +701,7 @@ function unidad2($numuero)
             <?php foreach ($tituloData as $titulo): ?>
                 <?php if ($titulo['articulo'] !== 'ARTICULO 27:'): ?>
                     <p><strong><?= htmlspecialchars($titulo['articulo']) ?></strong>
-                        <?= htmlspecialchars($titulo['descripcion']) ?></p>
+                        <?= formatearTextoConItems(htmlspecialchars($titulo['descripcion'])) ?></p>
                 <?php endif; ?>
             <?php endforeach; ?>
         </div>
@@ -762,6 +781,11 @@ function unidad2($numuero)
         </table>
 
         <?php
+
+
+
+
+
         $sectoresImprimidos = [];
 
         foreach ($sectoresData as $sectorData) {
@@ -797,8 +821,13 @@ function unidad2($numuero)
                 $sectoresImprimidos[] = $sectorKey;
             }
         }
+
+
+
         ?>
         <p><strong><?= htmlspecialchars($articulo27['articulo']) ?></strong>
+
+
             <?= htmlspecialchars($articulo27['descripcion']) ?></p>
         <div>
             <?php
