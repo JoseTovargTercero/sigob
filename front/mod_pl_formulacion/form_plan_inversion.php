@@ -640,7 +640,7 @@ $stmt->close();
           `
 
           let inputPartida = `<div class="col-lg-2">
-                        <label class="form-label">Partida presupuestaria</label>
+                        <label class="form-label">Partida</label>
                          <select type="text" class="form-control c_partida chosen-select">
                           <option value="">Seleccione</option>`
 

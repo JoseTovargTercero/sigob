@@ -530,3 +530,22 @@ function handleResponse(response, optionsArray, selector, formatOption) {
     });
   }
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+  const activeItem = document.querySelector(
+    ".pc-item.active:not(.pc-hasmenu) a"
+  );
+
+  // Verifica que el elemento existe antes de intentar acceder a su texto
+  if (activeItem) {
+    const activeText = activeItem.textContent.trim(); // Obtiene el texto
+
+    // Obtén todos los elementos con la clase .descripcion_pagina
+    const descripcionPaginas = document.querySelectorAll(".descripcion_pagina");
+
+    // Itera sobre cada elemento y rellénalo con el texto obtenido
+    descripcionPaginas.forEach((descripcionPagina) => {
+      descripcionPagina.textContent = activeText;
+    });
+  }
+});

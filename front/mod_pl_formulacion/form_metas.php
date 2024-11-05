@@ -2,6 +2,24 @@
 require_once '../../back/sistema_global/conexion.php';
 require_once '../../back/sistema_global/session.php';
 
+/*
+
+$stmt = mysqli_prepare($conexion, "SELECT * FROM `ejercicio_fiscal` WHERE ano = ?");
+$stmt->bind_param('s', $annio);
+$stmt->execute();
+$result = $stmt->get_result();
+if ($result->num_rows > 0) {
+  while ($row = $result->fetch_assoc()) {
+    $ejercicio_fiscal = $row['id']; // formato: dd-mm-YY
+    $situado = $row['situado']; // formato: dd-mm-YY
+    $status_ejercicio = $row['status']; // formato: dd-mm-YY
+  }
+} else {
+  $ejercicio_fiscal = 'No';
+  $situado = 0; // formato: dd-mm-YY
+}
+$stmt->close();
+*/
 
 
 ?>
@@ -9,7 +27,7 @@ require_once '../../back/sistema_global/session.php';
 <html lang="es">
 
 <head>
-  <title>Actividades</title>
+  <title>Unidades</title>
   <!-- [Meta] -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">

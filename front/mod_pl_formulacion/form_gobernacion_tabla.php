@@ -51,9 +51,8 @@ require_once '../../back/sistema_global/session.php';
                         <div class="card-header d-flex justify-content-between">
                             <div class="">
                                 <h5 class="mb-0">Información gobernación</h5>
-                                <small class="mt-0 text-muted">...</small>
+                                <small class="mt-0 text-muted">Información de la entidad</small>
                             </div>
-                            <button class="btn btn-primary" id="gobernacion-registrar">REGISTRAR</button>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive p-1">

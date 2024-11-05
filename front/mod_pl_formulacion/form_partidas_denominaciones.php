@@ -2,6 +2,24 @@
 require_once '../../back/sistema_global/conexion.php';
 require_once '../../back/sistema_global/session.php';
 
+/*
+
+$stmt = mysqli_prepare($conexion, "SELECT * FROM `ejercicio_fiscal` WHERE ano = ?");
+$stmt->bind_param('s', $annio);
+$stmt->execute();
+$result = $stmt->get_result();
+if ($result->num_rows > 0) {
+  while ($row = $result->fetch_assoc()) {
+    $ejercicio_fiscal = $row['id']; // formato: dd-mm-YY
+    $situado = $row['situado']; // formato: dd-mm-YY
+    $status_ejercicio = $row['status']; // formato: dd-mm-YY
+  }
+} else {
+  $ejercicio_fiscal = 'No';
+  $situado = 0; // formato: dd-mm-YY
+}
+$stmt->close();
+*/
 
 
 ?>
@@ -9,7 +27,7 @@ require_once '../../back/sistema_global/session.php';
 <html lang="es">
 
 <head>
-  <title>Actividades</title>
+  <title class="descripcion_pagina"></title>
   <!-- [Meta] -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
@@ -55,7 +73,7 @@ require_once '../../back/sistema_global/session.php';
 
       <div class=" d-flex justify-content-between">
         <h4 class="fw-bold py-3 mb-4">
-          <span class="text-muted fw-light">Formulación /</span> Actividades
+          <span class="text-muted fw-light">Formulación /</span> <span class="descripcion_pagina"></span>
         </h4>
       </div>
 
@@ -66,12 +84,10 @@ require_once '../../back/sistema_global/session.php';
             <div class="card-body">
               <div class="d-flex flex-column">
                 <div class="card-title mb-auto d-flex justify-content-between">
-                  <h5 class="mb-0">
-                    Actividades registradas
-                  </h5>
-                  <button class="btn btn-secondary btn-sm" onclick="nuevaActividad()">
+                  <h5 class="mb-0 descripcion_pagina"></h5>
+                  <button class="btn btn-secondary btn-sm" onclick="nuevaPartida()">
                     <i class="bx bx-plus"></i>
-                    Nueva actividad
+                    Nueva denominación
                   </button>
                 </div>
 
@@ -82,7 +98,7 @@ require_once '../../back/sistema_global/session.php';
                     <thead>
                       <tr>
                         <th>#</th>
-                        <th>Actividad</th>
+                        <th>Partida</th>
                         <th>Denominación</th>
                         <th></th>
                         <th></th>
@@ -103,20 +119,20 @@ require_once '../../back/sistema_global/session.php';
       <div class="dialogs">
         <div class="dialogs-content " style="width: 45%;">
           <span class="close-button">×</span>
-          <h5 class="mb-1">Agregar nueva actividad</h5>
+          <h5 class="mb-1">Agregar nueva denominación</h5>
 
           <div class="card-body pt-3">
 
-            <form id="data_actividad">
+            <form id="data_partida">
 
               <div class="mb-3 ">
                 <label for="partida" class="form-label">Denominación</label>
-                <input type="text" id="nombre" class="form-control" placeholder="Denominación de la actividad">
+                <input type="text" id="nombre" class="form-control" placeholder="Denominación de la partida">
               </div>
 
               <div class="mb-3 ">
-                <label for="partida" class="form-label">Actividad</label>
-                <input type="text" id="actividad" class="form-control">
+                <label for="partida" class="form-label">Partida</label>
+                <input type="text" id="partida" class="form-control">
               </div>
 
 
@@ -136,32 +152,23 @@ require_once '../../back/sistema_global/session.php';
       <script src="../../src/assets/js/notificaciones.js"></script>
       <script src="../../src/assets/js/main.js"></script>
       <script src="../../src/assets/js/ajax_class.js"></script>
-
-      <script src="../../src/assets/js/amcharts5/index.js"></script>
-      <script src="../../src/assets/js/amcharts5/themes/Animated.js"></script>
-      <script src="../../src/assets/js/amcharts5/xy.js"></script>
-
-
-
       <script>
-        const url_back = '../../back/modulo_pl_formulacion/form_actividades_back.php'
-
-
+        const url_back = '../../back/modulo_pl_formulacion/form_denominaciones_partidas_back.php'
 
         // DATA TABLE
         var DataTable = $("#table").DataTable({
           language: lenguaje_datat
         });
 
-        let actividades = []
+        let partidas = []
         let accion = null
         let edt = null
 
 
         // Iniciar registro
-        function nuevaActividad() {
+        function nuevaPartida() {
           accion = 'registrar'
-          $('#actividad').attr('disabled', false)
+          $('#partida').attr('disabled', false)
           toggleDialogs()
         }
 
@@ -170,10 +177,8 @@ require_once '../../back/sistema_global/session.php';
         function editar(id) {
           edt = id
           accion = 'actualizar'
-          console.log(actividades[id])
-
-          $('#nombre').val(actividades[id]['2'])
-          $('#actividad').val(actividades[id]['1'])
+          $('#nombre').val(partidas[id]['2'])
+          $('#partida').val(partidas[id]['1'])
           toggleDialogs()
 
         }
@@ -231,15 +236,15 @@ require_once '../../back/sistema_global/session.php';
 
 
 
-        // onsubmit registrar actividad
-        document.getElementById('data_actividad').addEventListener('submit', function(event) {
+        // onsubmit registrar partida
+        document.getElementById('data_partida').addEventListener('submit', function(event) {
           event.preventDefault();
 
-          const actividad = document.getElementById('actividad').value;
+          const partida = document.getElementById('partida').value;
           const nombre = document.getElementById('nombre').value;
 
 
-          let campos = ['nombre', 'actividad'];
+          let campos = ['nombre', 'partida'];
 
           let errors = false
 
@@ -263,7 +268,7 @@ require_once '../../back/sistema_global/session.php';
               accion: accion,
               info: {
                 nombre: nombre,
-                actividad: actividad,
+                partida: partida,
                 id: edt
               }
             }),
@@ -274,7 +279,7 @@ require_once '../../back/sistema_global/session.php';
               if (response.success) {
                 get_tabla()
                 toggleDialogs()
-                $('#data_actividad')[0].reset()
+                $('#data_partida')[0].reset()
 
                 toast_s('success', 'Se ha agregado cone éxito.');
               } else {
@@ -294,11 +299,11 @@ require_once '../../back/sistema_global/session.php';
             type: "json",
             contentType: 'application/json',
             data: JSON.stringify({
-              table: 'pl_actividades'
+              table: 'pl_partidas'
             }),
             success: function(response) {
               let data_tabla = [] // Informacion de la tabla
-              actividades = []
+              partidas = []
 
               if (response.success) {
                 let count = 1;
@@ -308,15 +313,15 @@ require_once '../../back/sistema_global/session.php';
                 response.success.forEach(function(item) {
 
 
-                  actividades[item.id] = [
+                  partidas[item.id] = [
                     item.id,
-                    item.actividad,
+                    item.partida,
                     item.denominacion
                   ]
 
                   data_tabla.push([
                     count++,
-                    item.actividad,
+                    item.partida,
                     item.denominacion,
                     `<button class="btn btn-update btn-sm bg-brand-color-2 text-white " data-edit-id="${item.id}"></button>`,
                     `<button class="btn btn-danger btn-sm btn-destroy" data-delete-id="${item.id}"></button>`
