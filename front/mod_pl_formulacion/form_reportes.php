@@ -187,6 +187,7 @@ $stmt->close();
                   <a class="list-group-item list-group-item-action pointer" data-tab-id="descripcion" data-bs-toggle="tab">DESCRIPCIÓN DEL PROGRAMA, SUB - PROGRAMA Y PROYECTO</a>
                   <a class="list-group-item list-group-item-action pointer" data-tab-id="presupuesto" data-bs-toggle="tab">LEY DE PRESUPUESTO DE INGRESOS Y GASTOS DEL ESTADO AMAZONAS</a>
                   <a class="list-group-item list-group-item-action pointer" data-tab-id="distribucion" data-bs-toggle="tab">DISTRIBUCIÓN INSTITUCIONAL</a>
+                  <a class="list-group-item list-group-item-action pointer" data-tab-id="metas" data-bs-toggle="tab">METAS DEL PROGRAMA, SUB-PROGRAMA Y/O PROYECTO</a>
                 </div>
               </div>
             </div>
@@ -406,6 +407,13 @@ $stmt->close();
             'texto': texto_nr,
             'autorun': true,
             'nombre_archivo': 'LEY DE PRESUPUESTO'
+          },
+          'metas': {
+            'inputs': [],
+            'titulo': 'METAS DEL PROGRAMA, SUB-PROGRAMA Y/O PROYECTO',
+            'texto': texto_nr,
+            'autorun': true,
+            'nombre_archivo': 'METAS DE LOS PROGRAMAS'
           },
 
         }
