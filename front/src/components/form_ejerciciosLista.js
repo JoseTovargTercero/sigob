@@ -8,16 +8,22 @@ export const ejerciciosLista = async ({ elementToInsert, ejercicioFiscal }) => {
   let ejerciciosFiscales = await getEjecicios()
   console.log(ejerciciosFiscales)
 
+  const ejercicioGuardado = localStorage.getItem('ejercicioSeleccionado')
+
   let fechaActual = new Date().getFullYear()
-  let ejercicioFechaActual = ejerciciosFiscales.find(
-    (ejercicio) => Number(ejercicio.ano) === fechaActual
-  )
+  let ejercicioFechaActual = ejercicioGuardado
+    ? ejerciciosFiscales.find(
+        (ejercicio) => Number(ejercicio.ano) === Number(ejercicioGuardado)
+      )
+    : ejerciciosFiscales.find(
+        (ejercicio) => Number(ejercicio.ano) === fechaActual
+      )
 
   console.log(ejerciciosFiscales)
 
   console.log(ejercicioFechaActual)
 
-  const ejercicioGuardado = localStorage.getItem('ejercicioSeleccionado')
+  console.log(ejercicioGuardado)
 
   // Si hay un ejercicio almacenado, usamos ese; de lo contrario, usamos el año actual
   let ejercicioSeleccionado = ejercicioGuardado || ejercicioFechaActual
@@ -92,8 +98,8 @@ export const ejerciciosLista = async ({ elementToInsert, ejercicioFiscal }) => {
 
   d.getElementById(elementToInsert).innerHTML = ejerciciosMapeados
 
-  return ejercicioActual
-    ? ejercicioActual
+  return ejercicioSeleccionado
+    ? ejercicioSeleccionado
     : ejerciciosFiscales.length > 0
     ? ejerciciosFiscales[0]
     : null
