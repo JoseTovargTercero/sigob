@@ -711,7 +711,7 @@ $stmt->close();
               if (contenedorAsignacion) {
                 const selectPartida = contenedorAsignacion.querySelector('.c_program');
                 if (selectPartida) {
-                  get_programa(sector_s, selectPartida);
+                  actualizarSelectPrograma(sector_s, selectPartida);
                 }
               }
             });
@@ -894,7 +894,7 @@ $stmt->close();
             let c_actividad = proyectos[id]['5'][index]['actividad_id'];
 
             let selectProgram = $(this).find('.c_program')[0];
-            get_programa(c_sector, selectProgram)
+            actualizarSelectPrograma(c_sector, selectProgram)
 
             $(this).find('.c_sector').val(c_sector).trigger("chosen:updated");
             $(this).find('.c_partida').val(partida).trigger("chosen:updated");
@@ -906,33 +906,7 @@ $stmt->close();
             $(this).find('.c_monto').val(monto);
           });
           $('#cargando').hide()
-
-
         }
-
-
-
-
-        function get_programa(sector_s, selectPartida) {
-          // Reinicia las opciones del select .c_partida
-          selectPartida.innerHTML = '<option value="">Seleccione</option>';
-
-          // Filtra y agrega las opciones según el sector
-          programas_options.forEach(element => {
-            if (element[0] == sector_s) {
-              selectPartida.innerHTML += `<option value="${element[3]}">${element[1]} - ${element[2]}</option>`;
-            }
-          });
-
-          // Si estás usando Chosen, actualiza el select manualmente
-          $(selectPartida).trigger("chosen:updated");
-
-          return true;
-        }
-
-
-
-
 
 
         function cancelarRegistro() {

@@ -43,11 +43,6 @@ try {
 
 
 
-
-
-
-
-
 /*
     * Configuraciones:
     Agrega bloques con la configuracion
@@ -65,7 +60,7 @@ function _default($tabla)
         'order_by' => null,
         'join' => null
     ];
-}
+} // Tabla por defecto
 
 function _lista_programas($tabla)
 {
@@ -78,26 +73,22 @@ function _lista_programas($tabla)
             'pl_sectores' => "$tabla.sector = pl_sectores.id"
         ]
     ];
-}
+} // carga un join a sectores
 
 
-
-
-/*
- *Ejemplo de uso
-function _ejemplo_config($tabla)
+function _join_programas($tabla)
 {
+    global $data;
+    $id_ejercicio = $data['id_ejercicio'];
+
     return [
-        'columnas' => ['columna1', 'columna2'],
+        'columnas' => ["$tabla.*", "pl_programas.programa AS programa_n, pl_programas.denominacion, pl_sectores.sector AS sector_n, pl_sectores.id AS sector_id"],
         'tabla' => $tabla,
-        'where' => "id='1' OR id='2' AND sector='02'",
-        'order_by' => [
-            ['nombre_campo' => 'columna2', 'asc_desc' => 'DESC']
-        ],
+        'where' => "id_ejercicio='$id_ejercicio'",
+        'order_by' => ['pl_programas.programa'],
         'join' => [
-            'otra_tabla' => "$tabla.id_otro = otra_tabla.id"
+            'pl_programas' => "$tabla.programa = pl_programas.id",
+            'pl_sectores' => "pl_programas.sector = pl_sectores.id"
         ]
     ];
-}
-    
-    */
+} // carga el programa por join y filtra por id_ejercicio

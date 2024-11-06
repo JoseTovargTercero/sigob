@@ -2,7 +2,14 @@
 require_once '../../back/sistema_global/conexion.php';
 require_once '../../back/sistema_global/session.php';
 
-/*
+
+
+
+if (isset($_GET["ejercicio"])) {
+  $annio = $_GET["ejercicio"];
+} else {
+  $annio = '2025';
+}
 
 $stmt = mysqli_prepare($conexion, "SELECT * FROM `ejercicio_fiscal` WHERE ano = ?");
 $stmt->bind_param('s', $annio);
@@ -10,16 +17,15 @@ $stmt->execute();
 $result = $stmt->get_result();
 if ($result->num_rows > 0) {
   while ($row = $result->fetch_assoc()) {
-    $ejercicio_fiscal = $row['id']; // formato: dd-mm-YY
+    $id_ejercicio = $row['id']; // formato: dd-mm-YY
     $situado = $row['situado']; // formato: dd-mm-YY
     $status_ejercicio = $row['status']; // formato: dd-mm-YY
   }
 } else {
-  $ejercicio_fiscal = 'No';
+  $id_ejercicio = 'No';
   $situado = 0; // formato: dd-mm-YY
 }
 $stmt->close();
-*/
 
 
 ?>
@@ -27,7 +33,7 @@ $stmt->close();
 <html lang="es">
 
 <head>
-  <title>Unidades</title>
+  <title class="descripcion_pagina"></title>
   <!-- [Meta] -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
@@ -72,9 +78,23 @@ $stmt->close();
 
 
       <div class=" d-flex justify-content-between">
+
+        <?php
+        $y_d = date('Y') + 1;
+        $y_d1 = $y_d - 1;
+        $y_d2 = date('Y') + 2;
+        ?>
+
         <h4 class="fw-bold py-3 mb-4">
-          <span class="text-muted fw-light">Formulación /</span> Actividades
+          <span class="text-muted fw-light">Formulación /</span> <span class="descripcion_pagina"></span>
         </h4>
+
+        <div class="d-flex gap-1">
+          <p><a class="pointer <?php echo ($annio == $y_d1 ? 'text-decoration-underline text-primary' : 'text-dark') ?>" href="?ejercicio=<?php echo $y_d1 ?>"><?php echo $y_d1 ?></a></p>
+          <p><a class="pointer <?php echo ($annio == $y_d ? 'text-decoration-underline text-primary' : 'text-dark') ?> " href="?ejercicio=<?php echo $y_d ?>"><?php echo $y_d ?></a></p>
+          <p><a href="?ejercicio=<?php echo $y_d2 ?>" class="pointer <?php echo ($annio == $y_d2 ? 'text-decoration-underline text-primary' : 'text-dark') ?>"><?php echo $y_d2 ?></a></p>
+
+        </div>
       </div>
 
 
@@ -84,24 +104,22 @@ $stmt->close();
             <div class="card-body">
               <div class="d-flex flex-column">
                 <div class="card-title mb-auto d-flex justify-content-between">
-                  <h5 class="mb-0">
-                    Actividades registradas
-                  </h5>
-                  <button class="btn btn-secondary btn-sm" onclick="nuevaActividad()">
-                    <i class="bx bx-plus"></i>
-                    Nueva actividad
-                  </button>
+                  <h5 class="mb-0 descripcion_pagina"></h5>
+                  <?php
+                  if ($id_ejercicio != 'No') {
+                    echo '<button class="btn btn-secondary btn-sm" onclick="nuevaActividad()"><i class="bx bx-plus"></i>Nueva meta</button>';
+                  }
+                  ?>
                 </div>
-
-
                 <div class="mt-2 card-body">
-
                   <table class="table" id="table">
                     <thead>
                       <tr>
                         <th>#</th>
-                        <th>Actividad</th>
-                        <th>Denominación</th>
+                        <th>Programa</th>
+                        <th>Meta</th>
+                        <th>Cantidades</th>
+                        <th>Costo</th>
                         <th></th>
                         <th></th>
                       </tr>
@@ -118,23 +136,53 @@ $stmt->close();
 
 
 
+
+
       <div class="dialogs">
         <div class="dialogs-content " style="width: 45%;">
           <span class="close-button">×</span>
-          <h5 class="mb-1">Agregar nueva actividad</h5>
+          <h5 class="mb-1">Agregar nueva meta</h5>
 
           <div class="card-body pt-3">
 
-            <form id="data_actividad">
+            <form id="data_form_standar">
+              <div class="row d-asignacion mb-3">
+                <div class="col-lg-6">
 
-              <div class="mb-3 ">
-                <label for="partida" class="form-label">Denominación</label>
-                <input type="text" id="nombre" class="form-control" placeholder="Denominación de la actividad">
+                  <label class="form-label">Sector</label>
+                  <select class="form-control c_sector chosen-select" id="sector" name="sector">
+                    <option value="">Seleccione</option>
+                  </select>
+                </div>
+                <div class="col-lg-6">
+                  <label class="form-label">Programa</label>
+                  <select class="form-control c_program  chosen-select" id="programa" name="programa">
+                    <option value="">Seleccione</option>
+                  </select>
+                </div>
               </div>
 
-              <div class="mb-3 ">
-                <label for="partida" class="form-label">Actividad</label>
-                <input type="text" id="actividad" class="form-control">
+
+              <div class="mb-3">
+                <label for="partida" class="form-label">Denominación</label>
+                <input type="text" id="denominacion" name="denominacion" class="form-control" placeholder="Denominación de la meta">
+              </div>
+
+              <div class="row mb-3">
+                <div class="col-lg-6">
+                  <label for="partida" class="form-label">Unidad de medida</label>
+                  <input type="text" id="unidad_medida" name="unidad_medida" class="form-control" placeholder="Denominación de la actividad">
+                </div>
+
+                <div class="col-lg-6">
+                  <label for="partida" class="form-label">Cantidades programadas</label>
+                  <input type="text" id="cantidades" name="cantidades" class="form-control" placeholder="Cantidades programadas">
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label for="partida" class="form-label">Costo financiero</label>
+                <input type="text" id="costo" name="costo" class="form-control" placeholder="Costo financiero">
               </div>
 
 
@@ -153,17 +201,34 @@ $stmt->close();
       <script src="../../src/assets/js/plugins/feather.min.js"></script>
       <script src="../../src/assets/js/notificaciones.js"></script>
       <script src="../../src/assets/js/main.js"></script>
+      <script src="../../src/assets/js/forms.js"></script>
       <script src="../../src/assets/js/ajax_class.js"></script>
-
-      <script src="../../src/assets/js/amcharts5/index.js"></script>
-      <script src="../../src/assets/js/amcharts5/themes/Animated.js"></script>
-      <script src="../../src/assets/js/amcharts5/xy.js"></script>
-
 
 
       <script>
-        const url_back = '../../back/modulo_pl_formulacion/form_actividades_back.php'
+        const url_back = '../../back/modulo_pl_formulacion/form_metas_back.php'
+        let sectores_options = []
+        let programas_options = []
+        const id_ejercicio = "<?php echo $id_ejercicio ?>"
 
+
+        dbh_select('pl_sectores').then(response => {
+          handleResponse(
+            response,
+            sectores_options,
+            '.c_sector',
+            item => `<option value="${item.id}">${item.sector}.${item.denominacion}</option>`
+          );
+        }).catch(error => console.error("Error al obtener pl_sectores:", error));
+
+        dbh_select('pl_programas').then(response => {
+          handleResponse(
+            response,
+            programas_options,
+            null,
+            item => [item.sector, item.programa, item.denominacion, item.id]
+          );
+        }).catch(error => console.error("Error al obtener pl_programas:", error));
 
 
         // DATA TABLE
@@ -171,7 +236,7 @@ $stmt->close();
           language: lenguaje_datat
         });
 
-        let actividades = []
+        let metas = []
         let accion = null
         let edt = null
 
@@ -188,12 +253,18 @@ $stmt->close();
         function editar(id) {
           edt = id
           accion = 'actualizar'
-          console.log(actividades[id])
 
-          $('#nombre').val(actividades[id]['2'])
-          $('#actividad').val(actividades[id]['1'])
+          $('#denominacion').val(metas[id]['5'])
+          $('#unidad_medida').val(metas[id]['8'])
+          $('#cantidades').val(metas[id]['0'])
+          $('#costo').val(metas[id]['1'])
+          $('#sector').val(metas[id]['10']).trigger("chosen:updated");
+
+          let selectProgram = document.getElementById('programa');
+          actualizarSelectPrograma(metas[id]['10'], selectProgram); // actualizar los opt del select programa antes de cambiar su valor
+          $('#programa').val(metas[id]['6']).trigger("chosen:updated");
+
           toggleDialogs()
-
         }
 
 
@@ -247,63 +318,32 @@ $stmt->close();
           }
         });
 
+        function initializeChosenEventListeners() {
+          // Selecciona todos los elementos con la clase .c_sector y .chosen-select
+          document.querySelectorAll('.c_sector.chosen-select').forEach(element => {
+            // Detecta cambios usando el evento específico de Chosen
+            $(element).on('change', function(event) {
 
+              const sector_s = event.target.value;
+              const contenedorAsignacion = event.target.closest('.d-asignacion');
 
-        // onsubmit registrar actividad
-        document.getElementById('data_actividad').addEventListener('submit', function(event) {
-          event.preventDefault();
-
-          const actividad = document.getElementById('actividad').value;
-          const nombre = document.getElementById('nombre').value;
-
-
-          let campos = ['nombre', 'actividad'];
-
-          let errors = false
-
-          campos.forEach(campo => {
-            if (!validarCampo(campo)) {
-              errors = true;
-            }
-          });
-
-          if (errors) {
-            toast_s('error', 'Todos los campos son obligatorios.');
-            return;
-          }
-
-
-          $.ajax({
-            url: url_back,
-            type: "json",
-            contentType: 'application/json',
-            data: JSON.stringify({
-              accion: accion,
-              info: {
-                nombre: nombre,
-                actividad: actividad,
-                id: edt
+              if (contenedorAsignacion) {
+                const selectPartida = contenedorAsignacion.querySelector('.c_program');
+                if (selectPartida) {
+                  actualizarSelectPrograma(sector_s, selectPartida);
+                }
               }
-            }),
-
-            success: function(response) {
-              let data_tabla = [] // Informacion de la tabla
-
-              if (response.success) {
-                get_tabla()
-                toggleDialogs()
-                $('#data_actividad')[0].reset()
-
-                toast_s('success', 'Se ha agregado cone éxito.');
-              } else {
-                toast_s('error', 'Error al agregar la unidad. ' + response.error);
-              }
-            },
-            error: function(xhr, status, error) {
-              toast_s('error', 'Ocurrió un error al ejecutar la orden ' + xhr.responseText)
-            },
+            });
           });
-        })
+        }
+
+        // Llama a la función para establecer los listeners al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+          initializeChosenEventListeners();
+          $('.chosen-select').chosen().trigger("chosen:updated");
+        });
+
+
 
 
         function get_tabla() {
@@ -312,11 +352,13 @@ $stmt->close();
             type: "json",
             contentType: 'application/json',
             data: JSON.stringify({
-              table: 'pl_actividades'
+              table: 'pl_metas',
+              config: '_join_programas',
+              id_ejercicio: id_ejercicio
             }),
             success: function(response) {
               let data_tabla = [] // Informacion de la tabla
-              actividades = []
+              metas = []
 
               if (response.success) {
                 let count = 1;
@@ -325,17 +367,26 @@ $stmt->close();
 
                 response.success.forEach(function(item) {
 
-
-                  actividades[item.id] = [
+                  metas[item.id] = [
+                    item.cantidad,
+                    item.costo,
+                    item.denominacion,
                     item.id,
-                    item.actividad,
-                    item.denominacion
+                    item.id_ejercicio,
+                    item.meta,
+                    item.programa,
+                    item.programa_n,
+                    item.unidad_medida,
+                    item.sector_n,
+                    item.sector_id
                   ]
 
                   data_tabla.push([
                     count++,
-                    item.actividad,
-                    item.denominacion,
+                    item.sector_n + '.' + item.programa_n,
+                    item.meta,
+                    item.cantidad,
+                    item.costo,
                     `<button class="btn btn-update btn-sm bg-brand-color-2 text-white " data-edit-id="${item.id}"></button>`,
                     `<button class="btn btn-danger btn-sm btn-destroy" data-delete-id="${item.id}"></button>`
                   ]);
