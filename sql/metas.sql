@@ -27,7 +27,7 @@ SET time_zone = "+00:00";
 -- Estructura de tabla para la tabla `metas`
 --
 
-CREATE TABLE `metas` (
+CREATE TABLE `pl_metas` (
   `id` int(255) NOT NULL,
   `id_programa` int(255) NOT NULL,
   `meta` longtext NOT NULL,
@@ -42,9 +42,9 @@ CREATE TABLE `metas` (
 --
 
 --
--- Indices de la tabla `metas`
+-- Indices de la tabla `pl_metas`
 --
-ALTER TABLE `metas`
+ALTER TABLE `pl_metas`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -52,9 +52,9 @@ ALTER TABLE `metas`
 --
 
 --
--- AUTO_INCREMENT de la tabla `metas`
+-- AUTO_INCREMENT de la tabla `pl_metas`
 --
-ALTER TABLE `metas`
+ALTER TABLE `pl_metas`
   MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
 COMMIT;
 
