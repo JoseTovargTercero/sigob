@@ -13,7 +13,7 @@ import {
   ejerciciosLista,
   validarEjercicioActual,
 } from '../components/form_ejerciciosLista.js'
-import { toastNotification } from '../helpers/helpers.js'
+import { confirmNotification, toastNotification } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 import {
   loadAsignacionEntesTable,
@@ -55,10 +55,17 @@ export const validateAsignacionEntesView = async () => {
     }
 
     if (e.target.dataset.eliminarid) {
-      let res = await eliminarAsignacionEnte(e.target.dataset.eliminarid)
-      if (res.success) {
-        loadAsignacionEntesTable(ejercicioFiscal.id)
-      }
+      confirmNotification({
+        type: NOTIFICATIONS_TYPES.delete,
+        message:
+          '¿Está seguro de eliminar esta asignación? Se eliminarán todas sus distribuciones asociadas.',
+        successFunction: async function () {
+          let res = await eliminarAsignacionEnte(e.target.dataset.eliminarid)
+          if (res.success) {
+            loadAsignacionEntesTable(ejercicioFiscal.id)
+          }
+        },
+      })
     }
 
     if (e.target.dataset.ejercicioid) {
