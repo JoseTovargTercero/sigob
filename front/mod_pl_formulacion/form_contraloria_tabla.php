@@ -50,13 +50,15 @@ require_once '../../back/sistema_global/session.php';
                     <div class="card">
                         <div class="card-header d-flex justify-content-between">
                             <div class="">
-                                <h5 class="mb-0">Información contraloría</h5>
-                                <small class="mt-0 text-muted">...</small>
+                                <h5 class="mb-0">Información del ente contralor</h5>
+                                <small class="mt-0 text-muted">Actualice la información del ente contralor</small>
                             </div>
-                            <button class="btn btn-primary" id="contraloria-registrar">REGISTRAR</button>
+                            <!-- <button class="btn btn-primary" id="contraloria-registrar">REGISTRAR</button> -->
                         </div>
-                        <div class="card-body">
-                            <div class="table-responsive p-1">
+                        <div class="card-body" id="contraloria-view-body">
+
+
+                            <!-- <div class="table-responsive p-1">
                                 <table id="contraloria-table" class="table table-striped" style="width:100%">
                                     <thead class="w-100">
 
@@ -71,7 +73,7 @@ require_once '../../back/sistema_global/session.php';
                                     </thead>
 
                                 </table>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                 </div>

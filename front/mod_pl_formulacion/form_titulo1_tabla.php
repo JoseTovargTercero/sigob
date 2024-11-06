@@ -51,7 +51,7 @@ require_once '../../back/sistema_global/session.php';
                         <div class="card-header d-flex justify-content-between">
                             <div class="">
                                 <h5 class="mb-0">Articulos</h5>
-                                <small class="mt-0 text-muted">...</small>
+                                <small class="mt-0 text-muted">Gestione los artículos registrados</small>
                             </div>
                             <button class="btn btn-primary" id="titulo-1-registrar">REGISTRAR</button>
                         </div>

@@ -207,6 +207,7 @@ export const loadAsignacionEntesTable = async (id_ejercicio) => {
             ? `
             <button class="btn btn-primary btn-sm" data-validarId="${el.id}"><i class='bx bx-cog'></i></button>`
             : `
+            <button class="btn btn-primary btn-sm" data-validarId="${el.id}"><i class='bx bx-cog'></i></button>
             <a
               href='form_distribucion_detalles.php?id=${el.id}'
               class='btn bg-brand-color-2 btn-sm text-white no-br'

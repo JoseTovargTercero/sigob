@@ -26,38 +26,38 @@ export const form_informacionGobernacionForm = ({ elementToInsert, data }) => {
   let fieldListErrors = {
     identificacion: {
       value: true,
-      message: 'Introduzca una identificacion válida',
-      type: 'textarea',
+      message: 'mensaje de error',
+      type: 'text',
     },
     domicilio: {
       value: true,
-      message: 'Introduzca un domicilio válido',
-      type: 'textarea',
+      message: 'mensaje de error',
+      type: 'text',
     },
     telefono: {
-      value: true,
-      message: 'Introduzca un teléfono válido',
-      type: 'textarea',
+      value: 'number',
+      message: 'mensaje de error',
+      type: 'text',
     },
     pagina_web: {
       value: true,
-      message: 'Introduzca una página web válida',
-      type: 'textarea',
+      message: 'mensaje de error',
+      type: 'text',
     },
     fax: {
       value: null,
-      message: 'Introduzca un fax válido',
-      type: 'textarea',
+      message: 'mensaje de error',
+      type: 'text',
     },
     codigo_postal: {
       value: true,
-      message: 'Introduzca un código postal válido',
-      type: 'textarea',
+      message: 'mensaje de error',
+      type: 'text',
     },
     nombre_apellido_gobernador: {
       value: true,
-      message: 'Introduzca un nombre válido',
-      type: 'textarea',
+      message: 'mensaje de error',
+      type: 'text',
     },
   }
   const oldCardElement = d.getElementById('gobernacion-form-card')
@@ -145,13 +145,13 @@ export const form_informacionGobernacionForm = ({ elementToInsert, data }) => {
               />
           </div>
       </div>
+  </form>
+      
       <div class='card-footer'>
-      <button class='btn btn-primary' id='gobernacion-guardar'>
-        Actualizar
-      </button>
-    </div>
-    </form>
-    `
+        <button class='btn btn-primary' id='gobernacion-guardar'>
+          Guardar
+        </button>
+      </div>`
 
   d.getElementById(elementToInsert).insertAdjacentHTML('afterbegin', card)
 
@@ -224,17 +224,27 @@ export const form_informacionGobernacionForm = ({ elementToInsert, data }) => {
         message: '¿Desea actualizar este registro?',
         successFunction: async function () {
           let res = await actualizarGobernacionData({ info: fieldList })
-        },
-      })
-    } else {
-      confirmNotification({
-        type: NOTIFICATIONS_TYPES.send,
-        message: '¿Desea realizar este registro?',
-        successFunction: async function () {
-          let res = await registrarGobernacionData({ info: fieldList })
+
+          if (res.success) {
+            // loadGobernacionTable()
+            // closeCard()
+          }
         },
       })
     }
+    // else {
+    //   confirmNotification({
+    //     type: NOTIFICATIONS_TYPES.send,
+    //     message: '¿Desea realizar este registro?',
+    //     successFunction: async function () {
+    //       let res = await registrarGobernacionData({ info: fieldList })
+    //       if (res.success) {
+    //         loadGobernacionTable()
+    //         closeCard()
+    //       }
+    //     },
+    //   })
+    // }
   }
 
   formElement.addEventListener('submit', (e) => e.preventDefault())

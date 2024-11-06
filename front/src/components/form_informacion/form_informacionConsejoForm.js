@@ -32,60 +32,45 @@ export const form_informacionConsejoForm = ({ elementToInsert, data }) => {
   let fieldListErrors = {
     nombre_apellido_presidente: {
       value: true,
-      message: 'mensaje de error',
-      type: 'text',
+      message: 'Introduzca un texto válido',
+      type: 'textarea',
     },
     nombre_apellido_secretario: {
       value: true,
-      message: 'mensaje de error',
-      type: 'text',
+      message: 'Introduzca un texto válido',
+      type: 'textarea',
     },
     domicilio: {
       value: true,
-      message: 'mensaje de error',
-      type: 'text',
+      message: 'Introduzca un texto válido',
+      type: 'textarea',
     },
     telefono: {
-      value: 'number',
-      message: 'mensaje de error',
-      type: 'text',
+      value: true,
+      message: 'Introduzca un número telefónico válido',
+      type: 'number',
     },
     pagina_web: {
       value: true,
-      message: 'mensaje de error',
-      type: 'text',
+      message: 'Introduzca una web válida',
+      type: 'textarea',
     },
     email: {
       value: true,
-      message: 'mensaje de error',
+      message: 'Introduzca un correo eléctrónico válido',
       type: 'email',
     },
 
     consejo_local: {
       value: true,
-      message: 'mensaje de error',
-      type: 'text',
+      message: 'Introduzca un texto válido',
+      type: 'textarea',
     },
   }
   const oldCardElement = d.getElementById('consejo-form-card')
   if (oldCardElement) oldCardElement.remove()
 
-  let card = `    <div class='card slide-up-animation' id='consejo-form-card'>
-      <div class='card-header d-flex justify-content-between'>
-        <div class=''>
-          <h5 class='mb-0'>Formulario contraloria</h5>
-          <small class='mt-0 text-muted'>Introduzca los datos requeridos</small>
-        </div>
-        <button
-          data-close='btn-close'
-          type='button'
-          class='btn btn-danger'
-          aria-label='Close'
-        >
-          &times;
-        </button>
-      </div>
-      <div class='card-body'>
+  let card = `
  <form id="consejo-form">
     <div class='row mb-3'>
         <div class='col'>
@@ -169,16 +154,16 @@ export const form_informacionConsejoForm = ({ elementToInsert, data }) => {
             />
         </div>
      </div>
+     <div class='card-footer'>
+        <button class='btn btn-primary' id='consejo-guardar'>
+          Guardar
+        </button></div>
 </form>
 
   
-      </div>
-      <div class='card-footer'>
-        <button class='btn btn-primary' id='consejo-guardar'>
-          Guardar
-        </button>
-      </div>
-    </div>`
+      
+      
+     `
 
   d.getElementById(elementToInsert).insertAdjacentHTML('afterbegin', card)
 
@@ -252,11 +237,8 @@ export const form_informacionConsejoForm = ({ elementToInsert, data }) => {
         type: NOTIFICATIONS_TYPES.send,
         message: '¿Desea actualizar este registro?',
         successFunction: async function () {
+          console.log(fieldList)
           let res = await actualizarConsejoData({ info: fieldList })
-          if (res.success) {
-            loadConsejoTable()
-            closeCard()
-          }
         },
       })
     } else {
@@ -265,13 +247,6 @@ export const form_informacionConsejoForm = ({ elementToInsert, data }) => {
         message: '¿Desea realizar este registro?',
         successFunction: async function () {
           let res = await registrarConsejoData({ info: fieldList })
-          if (res.success) {
-            loadConsejoTable()
-            closeCard()
-          }
-
-          closeCard()
-          loadConsejoTable()
         },
       })
     }
@@ -279,6 +254,6 @@ export const form_informacionConsejoForm = ({ elementToInsert, data }) => {
 
   formElement.addEventListener('submit', (e) => e.preventDefault())
 
-  cardElement.addEventListener('input', validateInputFunction)
-  cardElement.addEventListener('click', validateClick)
+  formElement.addEventListener('input', validateInputFunction)
+  formElement.addEventListener('click', validateClick)
 }

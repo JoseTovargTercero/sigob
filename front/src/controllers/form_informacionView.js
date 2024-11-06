@@ -43,129 +43,134 @@ import {
 import { form_informacionPersonaForm } from '../components/form_informacion/form_informacionPersonaForm.js'
 import { form_informacionTitulo1Form } from '../components/form_informacion/form_informacionTitulo1Form.js'
 import { form_informacionDescripcionProgramaForm } from '../components/form_informacion/form_informacionDescripcionPrograma.js'
+import { form_informacionConsejoForm } from '../components/form_informacion/form_informacionConsejoForm.js'
+import { selectTables } from '../api/globalApi.js'
 
 const d = document
 
 export const validateGobernacionView = async () => {
   let btnNewElement = d.getElementById('gobernacion-registrar')
 
-  validateGobernacionTable()
+  // validateGobernacionTable()
 
-  console.log('hola')
+  let data = await selectTables('informacion_gobernacion')
 
-  d.addEventListener('click', async (e) => {
-    if (e.target.id === 'gobernacion-registrar') {
-      scroll(0, 0)
-      form_informacionGobernacionForm({ elementToInsert: 'gobernacion-view' })
-    }
-
-    if (e.target.dataset.editarid) {
-      scroll(0, 0)
-      let data = await getGobernacionDataId(e.target.dataset.editarid)
-      console.log(data)
-
-      form_informacionGobernacionForm({
-        elementToInsert: 'gobernacion-view',
-        data,
-      })
-    }
-
-    if (e.target.dataset.eliminarid) {
-      let row = e.target.closest('tr')
-      confirmNotification({
-        type: NOTIFICATIONS_TYPES.delete,
-        message: '¿Desea eliminar este registro?',
-        successFunction: async function () {
-          deleteGobernacionRow({ row })
-          eliminarGobernacionId(e.target.dataset.eliminarid)
-        },
-      })
-    }
+  form_informacionGobernacionForm({
+    elementToInsert: 'gobernacion-view-body',
+    data: data[0],
   })
+
+  // d.addEventListener('click', async (e) => {
+  //   // if (e.target.id === 'gobernacion-registrar') {
+  //   //   scroll(0, 0)
+  //   //   form_informacionGobernacionForm({ elementToInsert: 'gobernacion-view' })
+  //   // }
+
+  //   if (e.target.dataset.editarid) {
+  //     scroll(0, 0)
+
+  //     console.log(data)
+  //   }
+
+  //   // if (e.target.dataset.eliminarid) {
+  //   //   let row = e.target.closest('tr')
+  //   //   confirmNotification({
+  //   //     type: NOTIFICATIONS_TYPES.delete,
+  //   //     message: '¿Desea eliminar este registro?',
+  //   //     successFunction: async function () {
+  //   //       deleteGobernacionRow({ row })
+  //   //       eliminarGobernacionId(e.target.dataset.eliminarid)
+  //   //     },
+  //   //   })
+  //   // }
+  // })
 }
 
 export const validateContraloriaView = async () => {
   let btnNewElement = d.getElementById('contraloria-registrar')
 
-  validateContraloriaTable()
+  // validateContraloriaTable()
 
-  console.log('hola')
+  let data = await selectTables('informacion_contraloria')
 
-  d.addEventListener('click', async (e) => {
-    if (e.target.id === 'contraloria-registrar') {
-      scroll(0, 0)
-      form_informacionContraloriaForm({ elementToInsert: 'contraloria-view' })
-    }
-
-    if (e.target.dataset.editarid) {
-      scroll(0, 0)
-      let data = await getContraloriaDataId(e.target.dataset.editarid)
-      console.log(data)
-
-      form_informacionContraloriaForm({
-        elementToInsert: 'contraloria-view',
-        data,
-      })
-    }
-
-    if (e.target.dataset.eliminarid) {
-      let row = e.target.closest('tr')
-      confirmNotification({
-        type: NOTIFICATIONS_TYPES.delete,
-        message: '¿Desea eliminar este registro?',
-        successFunction: async function () {
-          deleteContraloriaRow({ row })
-          eliminarContraloriaId(e.target.dataset.eliminarid)
-        },
-      })
-    }
+  form_informacionContraloriaForm({
+    elementToInsert: 'contraloria-view-body',
+    data: data[0],
   })
+
+  // d.addEventListener('click', async (e) => {
+  // if (e.target.id === 'contraloria-registrar') {
+  //   scroll(0, 0)
+  //   form_informacionContraloriaForm({ elementToInsert: 'contraloria-view' })
+  // }
+  // if (e.target.dataset.editarid) {
+  //   scroll(0, 0)
+  //   let data = await getContraloriaDataId(e.target.dataset.editarid)
+  //   console.log(data)
+  //   form_informacionContraloriaForm({
+  //     elementToInsert: 'contraloria-view',
+  //     data,
+  //   })
+  // }
+  // if (e.target.dataset.eliminarid) {
+  //   let row = e.target.closest('tr')
+  //   confirmNotification({
+  //     type: NOTIFICATIONS_TYPES.delete,
+  //     message: '¿Desea eliminar este registro?',
+  //     successFunction: async function () {
+  //       deleteContraloriaRow({ row })
+  //       eliminarContraloriaId(e.target.dataset.eliminarid)
+  //     },
+  //   })
+  // }
+  // })
 }
 
 export const validateConsejoView = async () => {
   let btnNewElement = d.getElementById('consejo-registrar')
 
-  validateConsejoTable()
+  let data = await selectTables('informacion_consejo')
 
-  console.log('hola')
-
-  d.addEventListener('click', async (e) => {
-    if (e.target.id === 'consejo-registrar') {
-      scroll(0, 0)
-      form_informacionDirectivoForm({ elementToInsert: 'consejo-view' })
-    }
-
-    if (e.target.dataset.editarid) {
-      scroll(0, 0)
-      let data = await getConsejoDataId(e.target.dataset.editarid)
-      console.log(data)
-
-      form_informacionDirectivoForm({
-        elementToInsert: 'consejo-view',
-        data,
-      })
-    }
-
-    if (e.target.dataset.eliminarid) {
-      let row = e.target.closest('tr')
-      confirmNotification({
-        type: NOTIFICATIONS_TYPES.delete,
-        message: '¿Desea eliminar este registro?',
-        successFunction: async function () {
-          deleteConsejoRow({ row })
-          eliminarConsejoId(e.target.dataset.eliminarid)
-        },
-      })
-    }
+  form_informacionConsejoForm({
+    elementToInsert: 'consejo-view-body',
+    data: data[0],
   })
+
+  // d.addEventListener('click', async (e) => {
+  // if (e.target.id === 'consejo-registrar') {
+  //   scroll(0, 0)
+  //   form_informacionDirectivoForm({ elementToInsert: 'consejo-view' })
+  // }
+
+  // if (e.target.dataset.editarid) {
+  //   scroll(0, 0)
+  //   let data = await getConsejoDataId(e.target.dataset.editarid)
+  //   console.log(data)
+
+  //   form_informacionConsejoForm({
+  //     elementToInsert: 'consejo-view',
+  //     data,
+  //   })
+  // }
+
+  // if (e.target.dataset.eliminarid) {
+  //   let row = e.target.closest('tr')
+  //   confirmNotification({
+  //     type: NOTIFICATIONS_TYPES.delete,
+  //     message: '¿Desea eliminar este registro?',
+  //     successFunction: async function () {
+  //       deleteConsejoRow({ row })
+  //       eliminarConsejoId(e.target.dataset.eliminarid)
+  //     },
+  //   })
+  // }
+  // })
 }
 
 export const validateDirectivoView = async () => {
   let btnNewElement = d.getElementById('directivo-registrar')
 
   validateDirectivoTable()
-
-  console.log('hola')
 
   d.addEventListener('click', async (e) => {
     if (e.target.id === 'directivo-registrar') {
@@ -204,8 +209,6 @@ export const validatePersonaView = async () => {
 
   validatePersonaTable()
 
-  console.log('hola')
-
   d.addEventListener('click', async (e) => {
     if (e.target.id === 'persona-registrar') {
       scroll(0, 0)
@@ -243,8 +246,6 @@ export const validateTitulo1View = async () => {
 
   validateTitulo1Table()
 
-  console.log('hola')
-
   d.addEventListener('click', async (e) => {
     if (e.target.id === 'titulo-1-registrar') {
       scroll(0, 0)
@@ -280,8 +281,6 @@ export const validateDescripcionProgramaView = async () => {
   let btnNewElement = d.getElementById('descripcion-programa-registrar')
 
   validateDescripcionProgramaTable()
-
-  console.log('hola')
 
   d.addEventListener('click', async (e) => {
     if (e.target.id === 'descripcion-programa-registrar') {

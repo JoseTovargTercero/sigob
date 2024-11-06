@@ -23,23 +23,23 @@ export const form_informacionDirectivoForm = ({ elementToInsert, data }) => {
   let fieldListErrors = {
     nombre_apellido: {
       value: true,
-      message: 'mensaje de error',
-      type: 'text',
+      message: 'Introduzca un nombre válido',
+      type: 'textarea',
     },
     direccion: {
       value: true,
-      message: 'mensaje de error',
-      type: 'text',
+      message: 'Introduzca una dirección válida',
+      type: 'textarea',
     },
     telefono: {
-      value: 'number',
-      message: 'mensaje de error',
-      type: 'text',
+      value: true,
+      message: 'Introduzca un número telefónico válido',
+      type: 'number',
     },
     email: {
       value: true,
-      message: 'mensaje de error',
-      type: 'text',
+      message: 'Introduzca un email válido',
+      type: 'email',
     },
   }
   const oldCardElement = d.getElementById('directivo-form-card')

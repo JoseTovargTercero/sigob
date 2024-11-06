@@ -1,4 +1,5 @@
 import {
+  eliminarAsignacionEnte,
   getAsignacionesEnte,
   getDistribucionEnte,
   getEntesPlan,
@@ -12,6 +13,8 @@ import {
   ejerciciosLista,
   validarEjercicioActual,
 } from '../components/form_ejerciciosLista.js'
+import { toastNotification } from '../helpers/helpers.js'
+import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 import {
   loadAsignacionEntesTable,
   validateAsignacionEntesTable,
@@ -28,6 +31,16 @@ export const validateAsignacionEntesView = async () => {
 
   d.addEventListener('click', async (e) => {
     if (e.target.dataset.validarid) {
+      if (
+        !ejercicioFiscal.distribucion_partidas ||
+        ejercicioFiscal.distribucion_partidas.length < 1
+      )
+        return toastNotification({
+          type: NOTIFICATIONS_TYPES.fail,
+          message:
+            'Realice la distribucion presupuestaria del ejercicio seleccionado',
+        })
+
       // let plan = await getEntesPlan(Number(e.target.dataset.validarid))
       scroll(0, 0)
       let asignacion = await getAsignacionesEnte(e.target.dataset.validarid)
@@ -40,6 +53,14 @@ export const validateAsignacionEntesView = async () => {
         },
       })
     }
+
+    if (e.target.dataset.eliminarid) {
+      let res = await eliminarAsignacionEnte(e.target.dataset.eliminarid)
+      if (res.success) {
+        loadAsignacionEntesTable(ejercicioFiscal.id)
+      }
+    }
+
     if (e.target.dataset.ejercicioid) {
       // QUITAR CARD SI SE CAMBIA EL AÑO FISCAL
       let formCard = d.getElementById('asignacion-entes-form-card')
@@ -65,7 +86,11 @@ export const validateAsignacionEntesView = async () => {
     // REGISTRAR NUEVA ASIGNACIÓN A ENTE
     if (e.target.id === 'entes-asignar') {
       console.log(ejercicioFiscal)
-      if (!ejercicioFiscal) return
+      if (!ejercicioFiscal)
+        return toastNotification({
+          type: NOTIFICATIONS_TYPES.fail,
+          message: 'Cree o seleccione un ejercicio fiscal',
+        })
 
       form_asignacion_entes_card({
         elementToInset: 'asignacion-entes-view',

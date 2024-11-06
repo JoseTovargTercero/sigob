@@ -50,12 +50,14 @@ require_once '../../back/sistema_global/session.php';
                     <div class="card">
                         <div class="card-header d-flex justify-content-between">
                             <div class="">
-                                <h5 class="mb-0">Información gobernación</h5>
-                                <small class="mt-0 text-muted">Información de la entidad</small>
+                                <h5 class="mb-0">Información de la entidad entidad de gobierno</h5>
+                                <small class="mt-0 text-muted">Actualice la información de la entidad de
+                                    gobierno</small>
                             </div>
+
                         </div>
-                        <div class="card-body">
-                            <div class="table-responsive p-1">
+                        <div class="card-body" id="gobernacion-view-body">
+                            <!-- <div class="table-responsive p-1">
                                 <table id="gobernacion-table" class="table table-striped" style="width:100%">
                                     <thead class="w-100">
 
@@ -71,7 +73,7 @@ require_once '../../back/sistema_global/session.php';
                                     </thead>
 
                                 </table>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                 </div>

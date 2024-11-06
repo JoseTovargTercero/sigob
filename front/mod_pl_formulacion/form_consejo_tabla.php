@@ -50,13 +50,13 @@ require_once '../../back/sistema_global/session.php';
                     <div class="card">
                         <div class="card-header d-flex justify-content-between">
                             <div class="">
-                                <h5 class="mb-0">Información consejo</h5>
-                                <small class="mt-0 text-muted">...</small>
+                                <h5 class="mb-0">Información de ente legislativo</h5>
+                                <small class="mt-0 text-muted">Actualice la información del ente legislativo</small>
                             </div>
-                            <button class="btn btn-primary" id="consejo-registrar">REGISTRAR</button>
+
                         </div>
-                        <div class="card-body">
-                            <div class="table-responsive p-1">
+                        <div class="card-body" id="consejo-view-body">
+                            <!-- <div class="table-responsive p-1">
                                 <table id="consejo-table" class="table table-striped" style="width:100%">
                                     <thead class="w-100">
 
@@ -72,16 +72,16 @@ require_once '../../back/sistema_global/session.php';
 
                                     </thead>
 
-                                </table>
-                            </div>
+                                </table> -->
                         </div>
                     </div>
                 </div>
-                <!-- [ worldLow section ] end -->
-                <!-- [ Recent Users ] end -->
             </div>
-            <!-- [ Main Content ] end -->
+            <!-- [ worldLow section ] end -->
+            <!-- [ Recent Users ] end -->
         </div>
+        <!-- [ Main Content ] end -->
+    </div>
     </div>
 
 
