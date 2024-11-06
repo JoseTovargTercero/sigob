@@ -258,13 +258,15 @@ if ($zip->open($zip_filename, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== TR
 foreach ($pdf_files as $url => $pdf_filename) {
     $html = file_get_contents($url);
 
-    $mpdf = new \Mpdf\Mpdf([
-        'mode' => 'utf-8',
-        'format' => $reportes[$tipo]['formato'],
-        'tempDir' => __DIR__ . '/temp/mpdf',
-        'margin_left' => 8,
-        'margin_right' => 8
-    ]);
+   $mpdf = new \Mpdf\Mpdf([
+    'mode' => 'utf-8',
+    'format' => $reportes[$tipo]['formato'],
+    'tempDir' => __DIR__ . '/temp/mpdf',
+    'margin_left' => 15,  // margen izquierdo estándar (en mm)
+    'margin_right' => 15, // margen derecho estándar (en mm)
+    'margin_top' => 16,   // margen superior estándar (en mm)
+    'margin_bottom' => 16 // margen inferior estándar (en mm)
+]);
     $mpdf->SetHTMLHeader('<div style="text-align: right;">Página {PAGENO} de {nb}</div>');
     $mpdf->WriteHTML($html);
     $mpdf->Output($pdf_filename, 'F');
