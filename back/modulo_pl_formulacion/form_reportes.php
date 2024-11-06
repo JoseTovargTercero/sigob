@@ -40,7 +40,7 @@ $reportes = [
     ],
     '2006' => [
         'nombre' => 'FORMULARIO 2006 RESUM. CRED. PRES. A NIVEL  PARTIDAS DE SECTORES ' . $fecha,
-        'formato' => [430, 216]
+        'formato' => 'A4-L'
     ],
     '2009' => [
         'nombre' => 'FORMULARIO 2009 GASTOS DE INVERSION ESTIMADO ' . $fecha,
@@ -56,19 +56,19 @@ $reportes = [
     ],
     'informacion' => [
         'nombre' => 'INFORMACIÓN GENERAL DE LA ENTIDAD FEDERAL',
-        'formato' => 'A4'
+        'formato' => 'A4-L'
     ],
     'indice' => [
         'nombre' => 'ÍNDICE DE CATEGORÍAS PROGRAMÁTICAS',
-        'formato' => 'A4'
+        'formato' => 'A4-L'
     ],
     'descripcion' => [
         'nombre' => 'DESCRIPCION DEL PROGRAMA,  SUB - PROGRAMA Y PROYECTO',
-        'formato' => 'A4'
+        'formato' => 'A4-L'
     ],
     'presupuesto' => [
         'nombre' => 'LEY DE PRESUPUESTO DE INGRESOS Y GASTOS DEL ESTADO AMAZONAS',
-        'formato' => 'A4'
+        'formato' => 'A4-L'
     ],
     'distribucion' => [
         'nombre' => 'DISTRIBUCIÓN INSTITUCIONAL',
