@@ -26,7 +26,7 @@ export const ejerciciosLista = async ({ elementToInsert, ejercicioFiscal }) => {
   console.log(ejercicioGuardado)
 
   // Si hay un ejercicio almacenado, usamos ese; de lo contrario, usamos el año actual
-  let ejercicioSeleccionado = ejercicioGuardado || ejercicioFechaActual
+  let ejercicioSeleccionado = ejercicioFechaActual
 
   let ejercicioActual
 
