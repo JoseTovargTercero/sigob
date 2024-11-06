@@ -1,3 +1,4 @@
+import { selectTables } from '../api/globalApi.js'
 import { getEjecicio, getEjecicios } from '../api/pre_distribucion.js'
 
 const d = document
@@ -5,13 +6,21 @@ export const ejerciciosLista = async ({ elementToInsert, ejercicioFiscal }) => {
   const ejerciciosListContainer = d.getElementById('ejercicios-fiscales')
 
   let ejerciciosFiscales = await getEjecicios()
+  console.log(ejerciciosFiscales)
 
   let fechaActual = new Date().getFullYear()
+  let ejercicioFechaActual = ejerciciosFiscales.find(
+    (ejercicio) => Number(ejercicio.ano) === fechaActual
+  )
+
+  console.log(ejerciciosFiscales)
+
+  console.log(ejercicioFechaActual)
 
   const ejercicioGuardado = localStorage.getItem('ejercicioSeleccionado')
 
   // Si hay un ejercicio almacenado, usamos ese; de lo contrario, usamos el año actual
-  const ejercicioSeleccionado = ejercicioGuardado || fechaActual
+  let ejercicioSeleccionado = ejercicioGuardado || ejercicioFechaActual
 
   let ejercicioActual
 
@@ -29,26 +38,45 @@ export const ejerciciosLista = async ({ elementToInsert, ejercicioFiscal }) => {
           </div>`
     return
   }
-  let ejerciciosMapeados = ejerciciosFiscales.fullInfo
+  let ejerciciosMapeados = ejerciciosFiscales
     .sort((a, b) => a.ano - b.ano)
-    .map((ejercicio) => {
+    .map((ejercicio, index) => {
       let ano = Number(ejercicio.ano)
 
-      if (ano === Number(ejercicioSeleccionado)) {
-        ejercicioActual = ejercicio
-        return `  <div class='col-sm-4'>
-            <p>
-              <a
-                data-ejercicioid='${ejercicio.id}'
-                class='pointer text-decoration-underline text-primary'
-                previewlistener='true'
-              >
-                ${ejercicio.ano}
-              </a>
-            </p>
-          </div>`
+      if (ejercicioFechaActual) {
+        if (ano === Number(ejercicioFechaActual.ano)) {
+          return `  <div class='col-sm-4'>
+              <p>
+                <a
+                  data-ejercicioid='${ejercicio.id}'
+                  class='pointer text-decoration-underline text-primary'
+                  previewlistener='true'
+                >
+                  ${ejercicio.ano}
+                </a>
+              </p>
+            </div>`
+        }
       } else {
-        return `  <div class='col-sm-4'>
+        if (index === 0) {
+          // SI NO HAY UN EJERCICIO CON EL AÑO ACTUAL Y NO ESTÁ GUARDADO EN EL LOCAL STORAGE, SE UTILIZA EL PRIMER EJERCICIO REGISTRADO
+
+          ejercicioSeleccionado = ejercicio
+          return `  <div class='col-sm-4'>
+          <p>
+            <a
+              data-ejercicioid='${ejercicio.id}'
+              class='pointer text-decoration-underline text-primary'
+              previewlistener='true'
+            >
+              ${ejercicio.ano}
+            </a>
+          </p>
+        </div>`
+        }
+      }
+
+      return `  <div class='col-sm-4'>
             <p>
               <a
                 data-ejercicioid='${ejercicio.id}'
@@ -59,7 +87,6 @@ export const ejerciciosLista = async ({ elementToInsert, ejercicioFiscal }) => {
               </a>
             </p>
           </div>`
-      }
     })
     .join('')
 
@@ -67,8 +94,8 @@ export const ejerciciosLista = async ({ elementToInsert, ejercicioFiscal }) => {
 
   return ejercicioActual
     ? ejercicioActual
-    : ejerciciosFiscales.fullInfo.length > 0
-    ? ejerciciosFiscales.fullInfo[0]
+    : ejerciciosFiscales.length > 0
+    ? ejerciciosFiscales[0]
     : null
 }
 

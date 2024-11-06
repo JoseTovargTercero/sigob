@@ -249,7 +249,7 @@ function obtenerTodosEjerciciosFiscales()
             }
             return json_encode(["success" => $ejercicios]);
         } else {
-            return json_encode(["success" => "No se encontraron registros en ejercicio_fiscal."]);
+            return json_encode(["success" => []]);
         }
     } catch (Exception $e) {
         registrarError($e->getMessage());
@@ -313,7 +313,7 @@ function obtenerEjercicioFiscalPorId($id)
                         $stmtSector->execute();
                         $resultSector = $stmtSector->get_result();
                         $sectorInformacion = $resultSector->num_rows > 0 ? $resultSector->fetch_assoc() : null;
-                        
+
                         $sqlPrograma = "SELECT * FROM pl_programas WHERE id = ?";
                         $stmtPrograma = $conexion->prepare($sqlPrograma);
                         $stmtPrograma->bind_param("i", $rowDistribucion['id_programa']);
@@ -391,7 +391,8 @@ function obtenerEjercicioFiscalPorId($id)
 
 
 // Función para modificar las partidas en distribucion_presupuestaria
-function modificarPartida($partida1, $partida2, $monto) {
+function modificarPartida($partida1, $partida2, $monto)
+{
     global $conexion;
 
     try {
@@ -498,7 +499,7 @@ if (isset($data["accion"])) {
         if (empty($data["partida1"]) || empty($data["partida2"]) || empty($data["monto"])) {
             echo json_encode(['error' => "Faltaron uno o más valores (partida1, partida2, monto)"]);
         } else {
-        echo modificarPartida($data["partida1"], $data["partida2"], $data["monto"]);
+            echo modificarPartida($data["partida1"], $data["partida2"], $data["monto"]);
         }
     } else {
         echo json_encode(['error' => "Acción no aceptada"]);

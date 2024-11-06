@@ -29,12 +29,12 @@ export const form_informacionTitulo1Form = ({ elementToInsert, data }) => {
   let fieldListErrors = {
     articulo: {
       value: true,
-      message: 'mensaje de error',
-      type: 'text',
+      message: 'Introduzca un válido para el artículo',
+      type: 'textarea',
     },
     descripcion: {
       value: true,
-      message: 'mensaje de error',
+      message: 'Descripción no acepta carácteres especiales',
       type: 'textarea',
     },
   }

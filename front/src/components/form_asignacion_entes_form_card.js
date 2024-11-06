@@ -198,24 +198,12 @@ export const form_asignacion_entes_form_card = async ({
           (distribucion) => Number(distribucion.status) === 1
         )
 
-        if (distribucionesEstanAprobadas) {
-          acciones = ` <a
-              href='../../../../sigob/back/modulo_pl_formulacion/form_distribucion_detalles.php?id="${actividad.actividad_id}"'
-              target='_blank'
-              class='btn btn-sm bg-brand-color-2 text-white'
-            >
-              <i class='bx bx-detail'></i>
-            </a>`
-        } else {
-          acciones = ` <button
-          
-          
+        acciones = ` <button
           class='btn btn-sm bg-brand-color-2 text-white'
           disabled
         >
           <i class='bx bx-detail'></i>
         </button>`
-        }
       } else {
         acciones = `<button class="btn btn-danger btn-sm btn-destroy" data-eliminaractividadid="${
           actividad.actividad_id

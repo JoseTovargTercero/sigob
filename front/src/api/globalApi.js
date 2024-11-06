@@ -20,7 +20,7 @@ const selectTables = async (table, config = null) => {
     })
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
-    console.log(res)
+    // console.log(res)
 
     let clone = res.clone()
     let text = await clone.text()
@@ -28,7 +28,7 @@ const selectTables = async (table, config = null) => {
 
     const json = await res.json()
 
-    console.log(json)
+    // console.log(json)
 
     if (json.success) {
       return json.success
