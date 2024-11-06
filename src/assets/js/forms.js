@@ -59,7 +59,7 @@ document
           $(".chosen-select").chosen().trigger("chosen:updated");
           toast_s("success", "Se ha agregado con éxito.");
         } else {
-          toast_s("error", "Error al agregar la unidad. " + response.error);
+          toast_s("error", response.error);
         }
       },
       error: function (xhr, status, error) {

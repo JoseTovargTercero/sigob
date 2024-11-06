@@ -21,12 +21,12 @@ function registrar($info)
 
     // Definir los valores a insertar en el array asociativo
     $campos_valores = [
-        ['programa', $programa],
+        ['programa', $programa, true],
         ['meta', $denominacion],
         ['unidad_medida', $unidad_medida],
         ['cantidad', $cantidades],
         ['costo', $costo],
-        ['id_ejercicio', $id_ejercicio]
+        ['id_ejercicio', $id_ejercicio, true]
     ];
 
     // Intentar insertar el registro
