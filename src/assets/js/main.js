@@ -549,3 +549,34 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 });
+
+/**
+ * Actualiza las opciones de un elemento select de programa en función del sector seleccionado.
+ *
+ * Esta función limpia el select `programa` representado por el parámetro `selectPartida` y luego
+ * agrega las opciones correspondientes al sector específico (`sector_s`). Las opciones se extraen
+ * de `programas_options`, que contiene todos los programas disponibles con su sector correspondiente.
+ * Si se usa Chosen en el select, la función también actualiza la interfaz.
+ *
+ * @param {string} sector_s - Identificador del sector seleccionado, utilizado para filtrar los programas.
+ * @param {HTMLElement} selectPartida - Elemento `<select>` que muestra los programas filtrados.
+ *
+ * @returns {boolean} - Devuelve true al finalizar la actualización.
+ */
+
+function actualizarSelectPrograma(sector_s, select) {
+  // Reinicia las opciones del select .c_partida
+  select.innerHTML = '<option value="">Seleccione</option>';
+
+  // Filtra y agrega las opciones según el sector
+  programas_options.forEach((element) => {
+    if (element[0] == sector_s) {
+      select.innerHTML += `<option value="${element[3]}">${element[1]} - ${element[2]}</option>`;
+    }
+  });
+
+  // Si estás usando Chosen, actualiza el select manualmente
+  $(select).trigger("chosen:updated");
+
+  return true;
+}

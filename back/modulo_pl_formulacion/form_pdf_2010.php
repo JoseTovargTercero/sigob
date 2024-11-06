@@ -275,21 +275,6 @@ $stmt->close();
         }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         .subtitle {
             font-weight: bold;
             background-color: #f0f0f0;
@@ -307,7 +292,6 @@ $stmt->close();
                     <b>GOBERNACION DEL ESTADO INDIGENA DE AMAZONAS</b>
                 </td>
                 <td class="text-right pt-1 pb-0">
-                    <b>Pagina: 1 de 1</b>
                 </td>
             </tr>
             <tr>

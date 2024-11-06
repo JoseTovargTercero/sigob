@@ -237,7 +237,6 @@ $stmt->close();
                     <b>GOBERNACION DEL ESTADO INDIGENA DE AMAZONAS</b>
                 </td>
                 <td class="text-right pt-1 pb-0">
-                    <b>Pagina: 1 de 1</b>
                 </td>
             </tr>
             <tr>

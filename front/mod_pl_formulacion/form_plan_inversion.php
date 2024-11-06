@@ -320,7 +320,7 @@ $stmt->close();
                 </div>
 
 
-                <div class="mt-2 card-body">
+                <form id="data_form" class="mt-2 card-body">
 
                   <div class="mb-3">
                     <label for="nombre" class="form-label">Nombre del proyecto</label>
@@ -358,7 +358,7 @@ $stmt->close();
                       </div>
                       <div class="col-lg-2">
                         <label class="form-label">Programa</label>
-                        <select class="form-control c_program  chosen-select">
+                        <select class="form-control c_program chosen-select">
                           <option value="">Seleccione</option>
                         </select>
                       </div>
@@ -399,10 +399,10 @@ $stmt->close();
                   </div>
 
                   <div class="mb-3 d-flex justify-content-between">
-                    <button class="btn btn-secondary" id="btn-cancelar-registro">Cancelar</button>
-                    <button class="btn btn-primary" id="btn-registro">Guardar</button>
+                    <button type="button" class="btn btn-secondary" id="btn-cancelar-registro">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="btn-registro">Guardar</button>
                   </div>
-                </div>
+                </form>
               </div>
             </div>
           </div>
@@ -711,7 +711,7 @@ $stmt->close();
               if (contenedorAsignacion) {
                 const selectPartida = contenedorAsignacion.querySelector('.c_program');
                 if (selectPartida) {
-                  get_programa(sector_s, selectPartida);
+                  actualizarSelectPrograma(sector_s, selectPartida);
                 }
               }
             });
@@ -894,7 +894,7 @@ $stmt->close();
             let c_actividad = proyectos[id]['5'][index]['actividad_id'];
 
             let selectProgram = $(this).find('.c_program')[0];
-            get_programa(c_sector, selectProgram)
+            actualizarSelectPrograma(c_sector, selectProgram)
 
             $(this).find('.c_sector').val(c_sector).trigger("chosen:updated");
             $(this).find('.c_partida').val(partida).trigger("chosen:updated");
@@ -906,39 +906,16 @@ $stmt->close();
             $(this).find('.c_monto').val(monto);
           });
           $('#cargando').hide()
-
-
         }
-
-
-
-
-        function get_programa(sector_s, selectPartida) {
-          // Reinicia las opciones del select .c_partida
-          selectPartida.innerHTML = '<option value="">Seleccione</option>';
-
-          // Filtra y agrega las opciones según el sector
-          programas_options.forEach(element => {
-            if (element[0] == sector_s) {
-              selectPartida.innerHTML += `<option value="${element[3]}">${element[1]} - ${element[2]}</option>`;
-            }
-          });
-
-          // Si estás usando Chosen, actualiza el select manualmente
-          $(selectPartida).trigger("chosen:updated");
-
-          return true;
-        }
-
-
-
-
 
 
         function cancelarRegistro() {
           $('#vista_registro').addClass('hide')
           $('#vista-tabla').removeClass('hide')
-          $('.form-control').val('')
+          $('#data_form')[0].reset()
+          $('.c_sector.chosen-select').chosen().trigger("chosen:updated");
+          $('.c_program.chosen-select').chosen().trigger("chosen:updated");
+          $('.c_partida.chosen-select').chosen().trigger("chosen:updated");
           $('.fila').remove()
         }
         document.getElementById('btn-cancelar-registro').addEventListener('click', cancelarRegistro)
@@ -1407,8 +1384,12 @@ $stmt->close();
                   toast_s('success', `Proyecto ${accion === 'update_proyecto' ? 'actualizado' : 'registrado'} con éxito`);
                   get_tabla();
                   cancelarRegistro();
+
+                  $('#data_form')[0].reset()
+
                   $('.fila').remove();
-                  $(".c_partida, .c_sector").eq(0).val('').trigger("chosen:updated");
+
+
                 } else {
                   console.log(response);
                   toast_s('error', `Error al ${accion === 'update_proyecto' ? 'actualizar' : 'registrar'} proyecto`);

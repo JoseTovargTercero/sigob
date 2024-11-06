@@ -40,7 +40,7 @@ $reportes = [
     ],
     '2006' => [
         'nombre' => 'FORMULARIO 2006 RESUM. CRED. PRES. A NIVEL  PARTIDAS DE SECTORES ' . $fecha,
-        'formato' => [430, 216]
+        'formato' => 'A4-L'
     ],
     '2009' => [
         'nombre' => 'FORMULARIO 2009 GASTOS DE INVERSION ESTIMADO ' . $fecha,
@@ -64,7 +64,7 @@ $reportes = [
     ],
     'descripcion' => [
         'nombre' => 'DESCRIPCION DEL PROGRAMA,  SUB - PROGRAMA Y PROYECTO',
-        'formato' => 'A4'
+        'formato' => 'A4-L'
     ],
     'presupuesto' => [
         'nombre' => 'LEY DE PRESUPUESTO DE INGRESOS Y GASTOS DEL ESTADO AMAZONAS',
@@ -72,6 +72,10 @@ $reportes = [
     ],
     'distribucion' => [
         'nombre' => 'DISTRIBUCIÓN INSTITUCIONAL',
+        'formato' => 'A4-L'
+    ],
+    'metas' => [
+        'nombre' => 'METAS DEL PROGRAMA, SUB-PROGRAMA Y/O PROYECTO',
         'formato' => 'A4-L'
     ],
 ];
@@ -163,6 +167,35 @@ if ($resultDescripcionProgramas && $resultDescripcionProgramas->num_rows > 0) {
     }
 }
 
+}elseif ($tipo == 'metas') {
+$pdf_files = [];
+
+// Consulta a pl_programas para obtener id, sector y programa
+$queryProgramas = "SELECT id, sector, programa FROM pl_programas";
+$resultProgramas = $conexion->query($queryProgramas);
+
+while ($rowPrograma = $resultProgramas->fetch_assoc()) {
+    $id_programa = $rowPrograma['id'];
+    $programa = $rowPrograma['programa'];
+
+    // Consulta a pl_sectores para obtener el sector que coincide con el id de sector de pl_programas
+    $querySector = "SELECT sector FROM pl_sectores WHERE id = ?";
+    $stmtSector = $conexion->prepare($querySector);
+    $stmtSector->bind_param("i", $rowPrograma['sector']);
+    $stmtSector->execute();
+    $resultSector = $stmtSector->get_result();
+
+    if ($rowSector = $resultSector->fetch_assoc()) {
+        $sector = $rowSector['sector'];
+
+        // Genera la URL del PDF y lo almacena en el array con el formato especificado
+        $pdf_files["{$url_pdf}&id_programa=$id_programa&id_ejercicio=$id_ejercicio"] = "{$sector}-{$programa}.pdf";
+    }
+
+    $stmtSector->close();
+}
+
+$resultProgramas->close();
 } elseif ($tipo == 'distribucion') {
 
     function obtenerActividades($ue)
