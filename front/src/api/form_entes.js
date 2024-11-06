@@ -383,7 +383,7 @@ const getAsignacionesEnte = async (id) => {
 
 const eliminarAsignacionEnte = async (id) => {
   try {
-    let res = await fetch(entesDistribucionUrl, {
+    let res = await fetch(entesAsignacionUrl, {
       method: 'POST',
       body: JSON.stringify({ id, accion: 'delete' }),
     })
