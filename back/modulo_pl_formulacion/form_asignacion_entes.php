@@ -67,19 +67,29 @@ function eliminarAsignacionEnte($id)
     $conexion->begin_transaction();
 
     try {
-        // Primero eliminar los registros de distribucion_entes con el id_asignacion correspondiente
-        $sqlDistribucion = "DELETE FROM distribucion_entes WHERE id_asignacion = ?";
-        $stmtDistribucion = $conexion->prepare($sqlDistribucion);
-        $stmtDistribucion->bind_param("i", $id);
-        $stmtDistribucion->execute();
-
-        // Ahora eliminar el registro de asignacion_ente
+        // Primero elimina el registro en asignacion_ente
         $sqlAsignacion = "DELETE FROM asignacion_ente WHERE id = ?";
         $stmtAsignacion = $conexion->prepare($sqlAsignacion);
         $stmtAsignacion->bind_param("i", $id);
         $stmtAsignacion->execute();
 
         if ($stmtAsignacion->affected_rows > 0) {
+            // Verifica si existen registros en distribucion_entes con el id_asignacion correspondiente
+            $sqlVerificacion = "SELECT COUNT(*) AS total FROM distribucion_entes WHERE id_asignacion = ?";
+            $stmtVerificacion = $conexion->prepare($sqlVerificacion);
+            $stmtVerificacion->bind_param("i", $id);
+            $stmtVerificacion->execute();
+            $resultVerificacion = $stmtVerificacion->get_result();
+            $rowVerificacion = $resultVerificacion->fetch_assoc();
+
+            // Si hay registros en distribucion_entes, procede con la eliminación
+            if ($rowVerificacion['total'] > 0) {
+                $sqlDistribucion = "DELETE FROM distribucion_entes WHERE id_asignacion = ?";
+                $stmtDistribucion = $conexion->prepare($sqlDistribucion);
+                $stmtDistribucion->bind_param("i", $id);
+                $stmtDistribucion->execute();
+            }
+
             $conexion->commit();
             return json_encode(["success" => "Registro eliminado correctamente."]);
         } else {
