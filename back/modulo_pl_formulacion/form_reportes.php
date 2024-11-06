@@ -56,11 +56,11 @@ $reportes = [
     ],
     'informacion' => [
         'nombre' => 'INFORMACIÓN GENERAL DE LA ENTIDAD FEDERAL',
-        'formato' => 'A4-L'
+        'formato' => 'A4'
     ],
     'indice' => [
         'nombre' => 'ÍNDICE DE CATEGORÍAS PROGRAMÁTICAS',
-        'formato' => 'A4-L'
+        'formato' => 'A4'
     ],
     'descripcion' => [
         'nombre' => 'DESCRIPCION DEL PROGRAMA,  SUB - PROGRAMA Y PROYECTO',
@@ -68,7 +68,7 @@ $reportes = [
     ],
     'presupuesto' => [
         'nombre' => 'LEY DE PRESUPUESTO DE INGRESOS Y GASTOS DEL ESTADO AMAZONAS',
-        'formato' => 'A4-L'
+        'formato' => 'A4'
     ],
     'distribucion' => [
         'nombre' => 'DISTRIBUCIÓN INSTITUCIONAL',
