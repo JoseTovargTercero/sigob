@@ -29,7 +29,7 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `pl_metas` (
   `id` int(255) NOT NULL,
-  `id_programa` int(255) NOT NULL,
+  `programa` int(255) NOT NULL,
   `meta` longtext NOT NULL,
   `unidad_medida` longtext NOT NULL,
   `cantidad` int(255) NOT NULL,
