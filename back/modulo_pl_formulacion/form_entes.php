@@ -61,18 +61,31 @@ function actualizarEnte($id, $ente_nombre, $tipo_ente)
 function eliminarEnte($id)
 {
     global $conexion;
+    $user_id = $_SESSION['u_id']; // Obtener el user_id de la sesión actual
 
     try {
         if (empty($id)) {
             throw new Exception("Debe proporcionar un ID para eliminar");
         }
 
+        // Eliminar el registro en entes
         $sql = "DELETE FROM entes WHERE id = ?";
         $stmt = $conexion->prepare($sql);
         $stmt->bind_param("i", $id);
         $stmt->execute();
 
         if ($stmt->affected_rows > 0) {
+            // Insertar un registro en audit_logs después de la eliminación
+            $sqlAudit = "INSERT INTO audit_logs (action_type, table_name, situation, affected_rows, user_id, timestamp) 
+                         VALUES (?, ?, ?, ?, ?, NOW())";
+            $stmtAudit = $conexion->prepare($sqlAudit);
+            $action_type = 'DELETE';
+            $table_name = 'entes';
+            $situation = "id=$id";
+            $affected_rows = $stmt->affected_rows;
+            $stmtAudit->bind_param("sssii", $action_type, $table_name, $situation, $affected_rows, $user_id);
+            $stmtAudit->execute();
+
             return json_encode(["success" => "Ente eliminado correctamente"]);
         } else {
             throw new Exception("No se pudo eliminar el ente");
@@ -82,6 +95,7 @@ function eliminarEnte($id)
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 // Función para obtener todos los entes
 function obtenerTodosEntes()

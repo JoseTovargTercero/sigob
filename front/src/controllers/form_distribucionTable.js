@@ -40,7 +40,7 @@ export const validateDistribucionTable = async ({ partidas }) => {
         },
       },
       { data: 'monto_inicial' },
-      { data: 'monto_actual' },
+      // { data: 'monto_actual' },
       //  { data: 'acciones' },
     ],
     responsive: true,
@@ -87,7 +87,7 @@ export const loadDistribucionTable = async (partidas) => {
       partida: el.partida,
       descripcion: descripcion,
       monto_inicial: `${separarMiles(el.monto_inicial)} Bs`,
-      monto_actual: `${separarMiles(el.monto_actual)} Bs`,
+      // monto_actual: `${separarMiles(el.monto_actual)} Bs`,
       acciones: `
       <button class="btn btn-danger btn-sm btn-destroy" data-eliminarid="${el.id}"></button>
       `,

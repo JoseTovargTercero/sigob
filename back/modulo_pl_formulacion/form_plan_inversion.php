@@ -200,32 +200,55 @@ function ejecutarProyecto($comentario, $id_proyecto)
 function eliminarPlanInversion($id_plan)
 {
     global $conexion;
+    $user_id = $_SESSION['u_id']; // Obtener el user_id de la sesión actual
 
     try {
+        // Iniciar transacción
+        $conexion->begin_transaction();
+
         // Eliminar los proyectos relacionados
         $sqlDeleteProyectos = "DELETE FROM proyecto_inversion WHERE id_plan = ?";
         $stmtDeleteProyectos = $conexion->prepare($sqlDeleteProyectos);
         $stmtDeleteProyectos->bind_param("i", $id_plan);
         $stmtDeleteProyectos->execute();
+        $affectedRowsProyectos = $stmtDeleteProyectos->affected_rows;
         $stmtDeleteProyectos->close();
 
         // Eliminar el plan de inversión
-        $sql = "DELETE FROM plan_inversion WHERE id = ?";
-        $stmt = $conexion->prepare($sql);
-        $stmt->bind_param("i", $id_plan);
-        $stmt->execute();
-
-        if ($stmt->affected_rows <= 0) {
+        $sqlDeletePlan = "DELETE FROM plan_inversion WHERE id = ?";
+        $stmtDeletePlan = $conexion->prepare($sqlDeletePlan);
+        $stmtDeletePlan->bind_param("i", $id_plan);
+        $stmtDeletePlan->execute();
+        $affectedRowsPlan = $stmtDeletePlan->affected_rows;
+        
+        if ($affectedRowsPlan <= 0) {
             throw new Exception("Error al eliminar el plan de inversión.");
         }
 
-        $stmt->close();
+        $stmtDeletePlan->close();
+
+        // Registrar en audit_logs
+        $sqlAudit = "INSERT INTO audit_logs (action_type, table_name, situation, affected_rows, user_id, timestamp) 
+                     VALUES (?, ?, ?, ?, ?, NOW())";
+        $stmtAudit = $conexion->prepare($sqlAudit);
+        $action_type = 'DELETE';
+        $table_name = 'plan_inversion - proyecto_inversion';
+        $situation = "id_plan=$id_plan";
+        $affected_rows = $affectedRowsPlan + $affectedRowsProyectos; // Total de filas afectadas
+        $stmtAudit->bind_param("sssii", $action_type, $table_name, $situation, $affected_rows, $user_id);
+        $stmtAudit->execute();
+        
+        // Confirmar la transacción
+        $conexion->commit();
         return json_encode(["success" => "Plan de inversión y proyectos eliminados correctamente."]);
+
     } catch (Exception $e) {
+        $conexion->rollback(); // Revertir en caso de error
         registrarError($e->getMessage());
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 function getPartidasXProyecto($proyecto)
 {
@@ -282,42 +305,68 @@ function getProyectos($id_plan)
 function eliminarProyecto($id)
 {
     global $conexion;
+    $user_id = $_SESSION['u_id']; // Obtener el user_id de la sesión actual
 
-    $stmt = mysqli_prepare($conexion, "SELECT status FROM `proyecto_inversion` WHERE id = ? ");
-    $stmt->bind_param('s', $id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
+    try {
+        // Iniciar transacción
+        $conexion->begin_transaction();
+
+        // Verificar el estado del proyecto
+        $stmt = $conexion->prepare("SELECT status FROM `proyecto_inversion` WHERE id = ?");
+        $stmt->bind_param('i', $id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
             if ($row['status'] == 1) {
-                echo json_encode(['error' => 'No se puede eliminar un proyecto ejecutado']);
-                exit;
+                throw new Exception('No se puede eliminar un proyecto ejecutado');
             }
+        } else {
+            throw new Exception('El proyecto no existe');
         }
-    } else {
-        echo json_encode(['error' => 'El proyecto no existe']);
-        exit;
+        $stmt->close();
+
+        // Eliminar el proyecto de la tabla proyecto_inversion si el status es 0
+        $stmtDeleteProyecto = $conexion->prepare("DELETE FROM `proyecto_inversion` WHERE id = ? AND status = '0'");
+        $stmtDeleteProyecto->bind_param("i", $id);
+        $stmtDeleteProyecto->execute();
+        $affectedRowsProyecto = $stmtDeleteProyecto->affected_rows;
+        $stmtDeleteProyecto->close();
+
+        if ($affectedRowsProyecto <= 0) {
+            throw new Exception("No se pudo eliminar el proyecto.");
+        }
+
+        // Eliminar las partidas asociadas en proyecto_inversion_partidas
+        $stmtDeletePartidas = $conexion->prepare("DELETE FROM `proyecto_inversion_partidas` WHERE id_proyecto = ?");
+        $stmtDeletePartidas->bind_param("i", $id);
+        $stmtDeletePartidas->execute();
+        $affectedRowsPartidas = $stmtDeletePartidas->affected_rows;
+        $stmtDeletePartidas->close();
+
+        // Registrar en audit_logs
+        $sqlAudit = "INSERT INTO audit_logs (action_type, table_name, situation, affected_rows, user_id, timestamp) 
+                     VALUES (?, ?, ?, ?, ?, NOW())";
+        $stmtAudit = $conexion->prepare($sqlAudit);
+        $action_type = 'DELETE';
+        $table_name = 'proyecto_inversion - proyecto_inversion_partidas';
+        $situation = "id_proyecto=$id";
+        $affected_rows = $affectedRowsProyecto + $affectedRowsPartidas; // Total de filas afectadas
+        $stmtAudit->bind_param("sssii", $action_type, $table_name, $situation, $affected_rows, $user_id);
+        $stmtAudit->execute();
+        $stmtAudit->close();
+
+        // Confirmar la transacción
+        $conexion->commit();
+        return json_encode(['success' => 'Proyecto y partidas asociadas eliminados correctamente']);
+
+    } catch (Exception $e) {
+        $conexion->rollback(); // Revertir en caso de error
+        registrarError($e->getMessage());
+        return json_encode(['error' => $e->getMessage()]);
     }
-    $stmt->close();
-
-
-    $stmt = $conexion->prepare("DELETE FROM `proyecto_inversion` WHERE id = ? AND status='0'");
-    $stmt->bind_param("i", $id);
-
-    if ($stmt->execute()) {
-
-        $stmt_d = $conexion->prepare("DELETE FROM `proyecto_inversion_partidas` WHERE id_proyecto= ?");
-        $stmt_d->bind_param("i", $id);
-        $stmt_d->execute();
-        $stmt_d->close();
-
-
-        echo json_encode(['success' => 'Proyecto eliminado']);
-    } else {
-        echo json_encode(['error' => 'No se pudo eliminar el proyecto']);
-    }
-    $stmt->close();
 }
+
 
 // Procesar la solicitud
 $data = json_decode(file_get_contents("php://input"), true);

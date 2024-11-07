@@ -142,6 +142,7 @@ function actualizarPartida($id, $partida, $nombre, $descripcion)
 function eliminarPartida($id)
 {
     global $conexion;
+    $user_id = $_SESSION['u_id']; // Obtener el user_id de la sesión actual
 
     try {
         if (empty($id)) {
@@ -159,7 +160,7 @@ function eliminarPartida($id)
 
         // Si el status es 1, no permitir la eliminación
         if ($status == 1) {
-            return json_encode(['error' => "No se puede eliminar una partida, si ya esta siendo utilizada."]);
+            return json_encode(['error' => "No se puede eliminar una partida, si ya está siendo utilizada."]);
         }
 
         // Si el status no es 1, proceder con la eliminación
@@ -169,6 +170,17 @@ function eliminarPartida($id)
         $stmt->execute();
 
         if ($stmt->affected_rows > 0) {
+            // Insertar un registro en audit_logs después de la eliminación
+            $sqlAudit = "INSERT INTO audit_logs (action_type, table_name, situation, affected_rows, user_id, timestamp) 
+                         VALUES (?, ?, ?, ?, ?, NOW())";
+            $stmtAudit = $conexion->prepare($sqlAudit);
+            $action_type = 'DELETE';
+            $table_name = 'partidas_presupuestarias';
+            $situation = "id=$id";
+            $affected_rows = $stmt->affected_rows;
+            $stmtAudit->bind_param("sssii", $action_type, $table_name, $situation, $affected_rows, $user_id);
+            $stmtAudit->execute();
+
             return json_encode(["success" => "Partida presupuestaria eliminada correctamente"]);
         } else {
             throw new Exception("No se pudo eliminar la partida presupuestaria");

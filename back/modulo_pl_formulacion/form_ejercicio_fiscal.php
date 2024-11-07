@@ -80,6 +80,7 @@ function actualizarEjercicioFiscal($id, $ano, $situado, $divisor, $status)
 function eliminarEjercicioFiscal($id)
 {
     global $conexion;
+    $user_id = $_SESSION['u_id']; // Obtener el user_id de la sesión actual
 
     try {
         if (empty($id)) {
@@ -99,12 +100,23 @@ function eliminarEjercicioFiscal($id)
         }
 
         // Eliminar el registro de la tabla
-        $sql = "DELETE FROM ejercicio_fiscal WHERE id = ?";
-        $stmt = $conexion->prepare($sql);
-        $stmt->bind_param("i", $id);
-        $stmt->execute();
+        $sqlEliminar = "DELETE FROM ejercicio_fiscal WHERE id = ?";
+        $stmtEliminar = $conexion->prepare($sqlEliminar);
+        $stmtEliminar->bind_param("i", $id);
+        $stmtEliminar->execute();
 
-        if ($stmt->affected_rows > 0) {
+        if ($stmtEliminar->affected_rows > 0) {
+            // Insertar un registro en audit_logs después de la eliminación
+            $sqlAudit = "INSERT INTO audit_logs (action_type, table_name, situation, affected_rows, user_id, timestamp) 
+                         VALUES (?, ?, ?, ?, ?, NOW())";
+            $stmtAudit = $conexion->prepare($sqlAudit);
+            $action_type = 'DELETE';
+            $table_name = 'ejercicio_fiscal';
+            $situation = "id=$id";
+            $affected_rows = $stmtEliminar->affected_rows;
+            $stmtAudit->bind_param("sssii", $action_type, $table_name, $situation, $affected_rows, $user_id);
+            $stmtAudit->execute();
+
             return json_encode(["success" => "Datos de ejercicio fiscal eliminados correctamente"]);
         } else {
             throw new Exception("No se pudo eliminar el registro de ejercicio fiscal");
@@ -114,6 +126,7 @@ function eliminarEjercicioFiscal($id)
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 function obtenerTodosEjerciciosFiscales()
 {

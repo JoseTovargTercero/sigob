@@ -16,7 +16,7 @@ function guardarDistribucionPresupuestaria($dataArray)
         }
 
         foreach ($dataArray as $registro) {
-            if (count($registro) !== 6) { // Actualizado para incluir id_sector, id_programa, id_proyecto
+            if (count($registro) !== 7) { // Actualizado para incluir id_actividad
                 throw new Exception("El formato del array no es válido");
             }
 
@@ -24,8 +24,9 @@ function guardarDistribucionPresupuestaria($dataArray)
             $monto_inicial = $registro[1];
             $id_ejercicio = $registro[2];
             $id_sector = $registro[3];
-            $id_programa = $registro[4]; // Nuevo campo
-            $id_proyecto = $registro[5]; // Nuevo campo
+            $id_programa = $registro[4];
+            $id_proyecto = empty($registro[5]) ? 0 : $registro[5]; // Si id_proyecto está vacío, asigna 0
+            $id_actividad = empty($registro[6]) ? 0 : $registro[6]; // Si id_actividad está vacío, asigna 0
 
             // Validar que no existan duplicados con el mismo id_partida, id_ejercicio, id_sector, id_programa, id_proyecto
             $verificarSql = "SELECT PP.partida FROM distribucion_presupuestaria AS DP 
@@ -63,10 +64,11 @@ function guardarDistribucionPresupuestaria($dataArray)
                 throw new Exception("Faltan datos en uno de los registros (id_partida, monto_inicial, id_ejercicio, id_sector, id_programa)");
             }
 
-            // Insertar los datos en la tabla
-            $sql = "INSERT INTO distribucion_presupuestaria (id_partida, monto_inicial, id_ejercicio, monto_actual, id_sector, id_programa, id_proyecto, status) VALUES (?, ?, ?, ?, ?, ?, ?, 1)";
+            // Insertar los datos en la tabla, ahora con id_actividad e id_proyecto asignados como 0 si están vacíos
+            $sql = "INSERT INTO distribucion_presupuestaria (id_partida, monto_inicial, id_ejercicio, monto_actual, id_sector, id_programa, id_proyecto, id_actividad, status) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1)";
             $stmt = $conexion->prepare($sql);
-            $stmt->bind_param("isiiiii", $id_partida, $monto_inicial, $id_ejercicio, $monto_actual, $id_sector, $id_programa, $id_proyecto);
+            $stmt->bind_param("isisiii", $id_partida, $monto_inicial, $id_ejercicio, $monto_actual, $id_sector, $id_programa, $id_proyecto, $id_actividad);
             $stmt->execute();
 
             if ($stmt->affected_rows <= 0) {
@@ -75,15 +77,15 @@ function guardarDistribucionPresupuestaria($dataArray)
 
             $stmt->close();
         }
-        
 
         return json_encode(["success" => "Datos de distribución presupuestaria guardados correctamente"]);
-        // recargar pagina
     } catch (Exception $e) {
         registrarError($e->getMessage());
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
+
 
 // Función para obtener todos los registros de la tabla distribucion_presupuestaria, incluyendo el sector
 function obtenerDistribuciones()
@@ -139,8 +141,8 @@ function obtenerDistribucionPorId($id)
     }
 }
 
-// Función para actualizar un registro, incluyendo id_sector, id_programa e id_proyecto
-function actualizarDistribucion($id, $id_partida, $monto_inicial, $id_ejercicio, $id_sector, $id_programa, $id_proyecto)
+// Función para actualizar un registro, incluyendo id_sector, id_programa, id_proyecto y id_actividad
+function actualizarDistribucion($id, $id_partida, $monto_inicial, $id_ejercicio, $id_sector, $id_programa, $id_proyecto, $id_actividad)
 {
     global $conexion;
 
@@ -173,12 +175,15 @@ function actualizarDistribucion($id, $id_partida, $monto_inicial, $id_ejercicio,
             throw new Exception("El ejercicio fiscal seleccionado ya fue cerrado.");
         }
 
+        // Si id_actividad está vacío, asignar 0
+        $id_actividad = empty($id_actividad) ? 0 : $id_actividad;
+
         // Actualizar el registro en la tabla distribucion_presupuestaria
         $sql = "UPDATE distribucion_presupuestaria 
-                SET id_partida = ?, monto_inicial = ?, id_ejercicio = ?, id_sector = ?, id_programa = ?, id_proyecto = ? 
+                SET id_partida = ?, monto_inicial = ?, id_ejercicio = ?, id_sector = ?, id_programa = ?, id_proyecto = ?, id_actividad = ? 
                 WHERE id = ?";
         $stmt = $conexion->prepare($sql);
-        $stmt->bind_param("isiiiii", $id_partida, $monto_inicial, $id_ejercicio, $id_sector, $id_programa, $id_proyecto, $id);
+        $stmt->bind_param("isiiiiii", $id_partida, $monto_inicial, $id_ejercicio, $id_sector, $id_programa, $id_proyecto, $id_actividad, $id);
         $stmt->execute();
 
         if ($stmt->affected_rows > 0) {
@@ -283,7 +288,22 @@ function eliminarDistribucion($id)
         $stmtEliminar->bind_param("i", $id);
         $stmtEliminar->execute();
 
-        if ($stmtEliminar->affected_rows > 0) {
+        $affectedRows = $stmtEliminar->affected_rows;
+
+        if ($affectedRows > 0) {
+            // Registro en la tabla audit_logs después de eliminar
+            $sqlAudit = "INSERT INTO audit_logs (action_type, table_name, situation, affected_rows, user_id, timestamp) 
+                         VALUES (?, ?, ?, ?, ?, NOW())";
+            $stmtAudit = $conexion->prepare($sqlAudit);
+            
+            $actionType = 'DELETE';
+            $tableName = 'distribucion_presupuestaria';
+            $situation = "id=$id";
+            $user_id = $_SESSION['u_id'];
+            
+            $stmtAudit->bind_param("sssii", $actionType, $tableName, $situation, $affectedRows, $user_id);
+            $stmtAudit->execute();
+
             return json_encode(["success" => "Registro eliminado correctamente."]);
         } else {
             throw new Exception("Error al eliminar el registro.");
@@ -293,6 +313,7 @@ function eliminarDistribucion($id)
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 
 // Procesar la solicitud

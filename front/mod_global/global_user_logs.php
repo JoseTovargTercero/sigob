@@ -8,7 +8,7 @@ require_once '../../back/sistema_global/session.php';
 
 
 <head>
-    <title>Distribución presupuestarias</title>
+    <title>Seguimiento a usuarios</title>
 
     <link rel="stylesheet" href="../src/styles/style.css">
     <link rel="stylesheet" href="../../src/assets/css/chosen.min.css">

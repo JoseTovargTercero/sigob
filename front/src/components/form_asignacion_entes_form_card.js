@@ -634,7 +634,7 @@ export const form_asignacion_entes_form_card = async ({
       fieldListErrorsPartidas[`partida-monto-${distribucion.id}`] = {
         value: true,
         message: 'Monto inválido',
-        type: 'number',
+        type: 'textarea',
       }
 
       console.log(distribucion)

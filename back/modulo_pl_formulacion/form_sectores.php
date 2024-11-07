@@ -92,14 +92,17 @@ function actualizarSectorPresupuestario($id, $sector, $programa, $proyecto, $nom
     }
 }
 
-// Función para eliminar un sector presupuestario
 function eliminarSectorPresupuestario($id) {
     global $conexion;
+    $user_id = $_SESSION['u_id']; // Obtener el user_id de la sesión actual
 
     try {
         if (empty($id)) {
             throw new Exception("Debe proporcionar un ID para eliminar.");
         }
+
+        // Iniciar transacción
+        $conexion->begin_transaction();
 
         // Eliminar el sector presupuestario
         $sql = "DELETE FROM pl_sectores_presupuestarios WHERE id = ?";
@@ -108,16 +111,32 @@ function eliminarSectorPresupuestario($id) {
         $stmt->execute();
 
         if ($stmt->affected_rows > 0) {
+            // Registrar en audit_logs
+            $sqlAudit = "INSERT INTO audit_logs (action_type, table_name, situation, affected_rows, user_id, timestamp) 
+                         VALUES (?, ?, ?, ?, ?, NOW())";
+            $stmtAudit = $conexion->prepare($sqlAudit);
+            $action_type = 'DELETE';
+            $table_name = 'pl_sectores_presupuestarios';
+            $situation = "id_sector=$id";
+            $affected_rows = $stmt->affected_rows;
+            $stmtAudit->bind_param("sssii", $action_type, $table_name, $situation, $affected_rows, $user_id);
+            $stmtAudit->execute();
+            $stmtAudit->close();
+
+            // Confirmar la transacción
+            $conexion->commit();
             return json_encode(["success" => "Sector presupuestario eliminado correctamente."]);
         } else {
             throw new Exception("No se pudo eliminar el sector presupuestario.");
         }
 
     } catch (Exception $e) {
+        $conexion->rollback(); // Revertir en caso de error
         registrarError($e->getMessage());
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 // Función para obtener todos los sectores presupuestarios
 function obtenerTodosSectoresPresupuestarios() {

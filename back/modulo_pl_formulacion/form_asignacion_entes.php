@@ -72,8 +72,10 @@ function eliminarAsignacionEnte($id)
         $stmtAsignacion = $conexion->prepare($sqlAsignacion);
         $stmtAsignacion->bind_param("i", $id);
         $stmtAsignacion->execute();
+        
+        $affectedRowsAsignacion = $stmtAsignacion->affected_rows;
 
-        if ($stmtAsignacion->affected_rows > 0) {
+        if ($affectedRowsAsignacion > 0) {
             // Verifica si existen registros en distribucion_entes con el id_asignacion correspondiente
             $sqlVerificacion = "SELECT COUNT(*) AS total FROM distribucion_entes WHERE id_asignacion = ?";
             $stmtVerificacion = $conexion->prepare($sqlVerificacion);
@@ -82,15 +84,35 @@ function eliminarAsignacionEnte($id)
             $resultVerificacion = $stmtVerificacion->get_result();
             $rowVerificacion = $resultVerificacion->fetch_assoc();
 
+            $affectedRowsDistribucion = 0;
+
             // Si hay registros en distribucion_entes, procede con la eliminación
             if ($rowVerificacion['total'] > 0) {
                 $sqlDistribucion = "DELETE FROM distribucion_entes WHERE id_asignacion = ?";
                 $stmtDistribucion = $conexion->prepare($sqlDistribucion);
                 $stmtDistribucion->bind_param("i", $id);
                 $stmtDistribucion->execute();
+                
+                $affectedRowsDistribucion = $stmtDistribucion->affected_rows;
             }
 
+            // Commit de la transacción de eliminación
             $conexion->commit();
+
+            // Inserción en la tabla audit_logs después de completar la eliminación
+            $sqlAudit = "INSERT INTO audit_logs (action_type, table_name, situation, affected_rows, user_id, timestamp) 
+                         VALUES (?, ?, ?, ?, ?, NOW())";
+            $stmtAudit = $conexion->prepare($sqlAudit);
+            
+            $actionType = 'DELETE';
+            $tableName = 'asignacion_ente - distribucion_entes';
+            $situation = "id=$id";
+            $affectedRows = $affectedRowsAsignacion + $affectedRowsDistribucion;
+            $user_id = $_SESSION['u_id'];
+            
+            $stmtAudit->bind_param("sssii", $actionType, $tableName, $situation, $affectedRows, $user_id);
+            $stmtAudit->execute();
+
             return json_encode(["success" => "Registro eliminado correctamente."]);
         } else {
             throw new Exception("No se encontró el registro en asignacion_ente para eliminar.");
@@ -101,6 +123,7 @@ function eliminarAsignacionEnte($id)
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 function consultarAsignacionPorId($id)
 {

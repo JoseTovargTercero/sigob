@@ -34,7 +34,7 @@ export const form_informacionDirectivoForm = ({ elementToInsert, data }) => {
     telefono: {
       value: true,
       message: 'Introduzca un número telefónico válido',
-      type: 'number',
+      type: 'textarea',
     },
     email: {
       value: true,
