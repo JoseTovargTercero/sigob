@@ -68,7 +68,7 @@ function guardarDistribucionPresupuestaria($dataArray)
             $sql = "INSERT INTO distribucion_presupuestaria (id_partida, monto_inicial, id_ejercicio, monto_actual, id_sector, id_programa, id_proyecto, id_actividad, status) 
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1)";
             $stmt = $conexion->prepare($sql);
-            $stmt->bind_param("isiiiii", $id_partida, $monto_inicial, $id_ejercicio, $monto_actual, $id_sector, $id_programa, $id_proyecto, $id_actividad);
+            $stmt->bind_param("isisiii", $id_partida, $monto_inicial, $id_ejercicio, $monto_actual, $id_sector, $id_programa, $id_proyecto, $id_actividad);
             $stmt->execute();
 
             if ($stmt->affected_rows <= 0) {
