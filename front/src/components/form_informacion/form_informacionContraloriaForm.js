@@ -30,7 +30,7 @@ export const form_informacionContraloriaForm = ({ elementToInsert, data }) => {
     telefono: {
       value: true,
       message: 'Introduzca un número telefónico válido',
-      type: 'number',
+      type: 'textarea',
     },
     pagina_web: {
       value: true,
