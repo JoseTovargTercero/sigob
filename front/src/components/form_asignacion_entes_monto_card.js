@@ -23,7 +23,7 @@ export const form_asignacion_entes_monto_card = async ({
     monto: {
       value: true,
       message: 'Monto inválido',
-      type: 'number',
+      type: 'textarea',
     },
   }
 

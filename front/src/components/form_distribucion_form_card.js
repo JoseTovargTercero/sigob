@@ -377,7 +377,7 @@ export const form_distribucion_form_card = async ({
     fieldListErrorsPartidas[`partida-monto-${newNumRow}`] = {
       value: true,
       message: 'Monto inválido',
-      type: 'number',
+      type: 'textarea',
     }
 
     let options = [`<option value=''>Elegir partida...</option>`]
