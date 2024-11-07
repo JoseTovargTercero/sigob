@@ -41,7 +41,7 @@ function returnValue($tabla, $id)
 
 
 // Función para obtener sumatoria según el tipo
-function obtenerSumatoriaPorTipo($ejercicio, $tipo)
+function obtenerSumatoriaPorTipoSPP($ejercicio, $tipo)
 {
     global $conexion;
 
@@ -110,6 +110,22 @@ function obtenerSumatoriaPorTipo($ejercicio, $tipo)
     }
 }
 
+
+
+function obtenerSumatoriaPorPartida(){
+
+}
+
+
+function obtenerSumatoriaPorActiviad(){
+
+}
+
+
+
+
+
+
 // Función auxiliar para obtener el índice del tipo en la partida
 function obtenerIndiceTipo($tipo)
 {
@@ -117,7 +133,9 @@ function obtenerIndiceTipo($tipo)
         "sector" => ['id_sector', 'pl_sectores', 'sector'],
         "programa" => ['id_programa', 'pl_programas', 'programa'],
         "proyecto" => ['id_proyecto', 'pl_proyectos', 'proyecto_id'],
-        //  "actividad" => ['id_actividad', ''],
+
+        "actividad" => ['id_actividad', ''],
+        "partida" => ['id_partida', 'partidas_presupuestarias', 0],
         "generica" => ['id_partida', 'partidas_presupuestarias', 0],
         "especifica" => ['id_partida', 'partidas_presupuestarias', 1],
         "subespecifica" => ['id_partida', 'partidas_presupuestarias', 2]
@@ -127,17 +145,27 @@ function obtenerIndiceTipo($tipo)
 }
 
 // Procesar la solicitud
+echo obtenerSumatoriaPorPartida($ejercicio, $tipo);
+
+
 
 /*
 echo obtenerSumatoriaPorTipo('1', 'programa');
-exit;*/
+*/
+exit;
 $data = json_decode(file_get_contents("php://input"), true);
 if (isset($data["ejercicio"]) && isset($data["tipo"])) {
     $ejercicio = $data["ejercicio"];
     $tipo = $data["tipo"]; // Recibimos solo un valor de tipo
 
     // Llamar a la función para obtener las sumatorias por tipo
-    echo obtenerSumatoriaPorTipo($ejercicio, $tipo);
+    if ($tipo == "sector" || $tipo == "programa" || $tipo == "proyecto") {
+        echo obtenerSumatoriaPorTipoSPP($ejercicio, $tipo);
+    } elseif($tipo == "actividad"){
+        echo obtenerSumatoriaPorActiviad($ejercicio, $tipo);
+    }else{
+        echo obtenerSumatoriaPorPartida($ejercicio, $tipo);
+    }
 } else {
     echo json_encode(['error' => "No se proporcionaron los datos necesarios (ejercicio y tipo)"]);
 }

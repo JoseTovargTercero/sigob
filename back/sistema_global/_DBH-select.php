@@ -47,8 +47,8 @@ try {
     * Configuraciones:
     Agrega bloques con la configuracion
 
-    todo: Por favor! Comenta la configuracion usando:  > nombre_archivo que solicita / uso que se le dara <
-    * Ejemplo: nom_empleados.php / Cargar la lista de todos los empleados que sean mayores de 24 annios
+    todo: Por favor! Comenta la configuracion usando:  uso que se le dara <
+    * Cargar la lista de todos los empleados que sean mayores de 24 annios
 */
 
 function _default($tabla)
@@ -92,3 +92,17 @@ function _join_programas($tabla)
         ]
     ];
 } // carga el programa por join y filtra por id_ejercicio
+
+
+function _to_users($tabla)
+{
+    return [
+        'columnas' => ["$tabla.*", "system_users.u_nombre"],
+        'tabla' => $tabla,
+        'where' => null,
+        'order_by' => null,
+        'join' => [
+            'system_users' => "$tabla.user_id = system_users.u_id"
+        ]
+    ];
+} // Carga 

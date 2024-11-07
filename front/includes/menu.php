@@ -137,6 +137,8 @@
               </li>
               <li class="pc-item"><a class="pc-link" href="<?php echo constant('URL') ?>front/mod_global/global_users_access">Permisos</a>
               </li>
+              <li class="pc-item"><a class="pc-link" href="<?php echo constant('URL') ?>front/mod_global/global_user_logs">Acciones</a>
+              </li>
             </ul>
           </li>
         <?php } ?>

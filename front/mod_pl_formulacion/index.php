@@ -52,8 +52,6 @@ if ($result->num_rows > 0) {
 }
 $stmt->close();
 
-
-
 $stmt = mysqli_prepare($conexion, "SELECT * FROM plan_inversion WHERE id_ejercicio=?");
 $stmt->bind_param('i', $ejercicio_fiscal);
 $stmt->execute();
@@ -69,18 +67,6 @@ if ($result->num_rows > 0) {
   $proyectos = 0;
 }
 $stmt->close();
-
-
-
-
-
-
-
-
-
-
-
-
 
 ?>
 <!DOCTYPE html>
@@ -369,6 +355,8 @@ $stmt->close();
                       <option value="programa">Programa</option>
                       <option value="actividad">Actividad</option>
                       <option value="proyecto">Proyecto</option>
+                      <option value="partida">Partida</option>
+
                     </select>
                   </div>
                 </div>
