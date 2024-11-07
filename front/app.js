@@ -21,6 +21,7 @@ import {
   validateTitulo1View,
 } from './src/controllers/form_informacionView.js'
 import { validatePartidasView } from './src/controllers/form_partidasView.js'
+import { validateUserLogs } from './src/controllers/global_userLogsTable.js'
 import { validateEmployeeView } from './src/controllers/nom_employeeView.js'
 import { loadRequestTableHistorico } from './src/controllers/peticionesHistoricoTable.js'
 import { validateRequestForm } from './src/controllers/peticionesNominaForm.js'
@@ -50,6 +51,10 @@ d.addEventListener('DOMContentLoaded', (e) => {
   const dependenciaTable = d.getElementById('dependencia-table')
   const categoriaTable = d.getElementById('categoria-table')
   const tasaView = d.getElementById('tasa-view')
+
+  // GLOBAL
+  let userLogsView = d.getElementById('user-logs-view')
+
   // EJECUCIÓN PRESUPUESTARIA
   const solicitudesDozavosView = d.getElementById('solicitudes-dozavos-view')
   const gastosView = d.getElementById('gastos-view')
@@ -64,6 +69,8 @@ d.addEventListener('DOMContentLoaded', (e) => {
   const personaView = d.getElementById('persona-view')
   const titulo1View = d.getElementById('titulo-1-view')
   const descripcionProgramaView = d.getElementById('descripcion-programa-view')
+
+  // NOMINA
 
   if (tabulatorForm) {
     validateTabulatorForm({
@@ -171,9 +178,13 @@ d.addEventListener('DOMContentLoaded', (e) => {
     validateRequestNomForm()
   }
 
+  // VALIDACIÓN DE LA TASA
+
   if (tasaView) {
     validateTasaActual()
   }
+
+  // EJECUCIÓN PRESUPUESTARIA
 
   if (solicitudesDozavosView) {
     validateSolicitudesDozavos()
@@ -183,6 +194,7 @@ d.addEventListener('DOMContentLoaded', (e) => {
     validateGastosView()
   }
 
+  //  FORMULACIÓN
   if (partidasView) {
     validatePartidasView()
   }
@@ -216,6 +228,10 @@ d.addEventListener('DOMContentLoaded', (e) => {
   }
   if (descripcionProgramaView) {
     validateDescripcionProgramaView()
+  }
+
+  if (userLogsView) {
+    validateUserLogs()
   }
 
   // if (payNomForm) {

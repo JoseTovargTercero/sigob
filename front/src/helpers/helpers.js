@@ -3,6 +3,31 @@ import { regularExpressions } from './regExp.js'
 
 const d = document
 
+const tableLanguage = {
+  decimal: '',
+  emptyTable: 'No hay datos disponibles en la tabla',
+  info: 'Mostrando _START_ a _END_ de _TOTAL_ entradas',
+  infoEmpty: 'Mostrando 0 a 0 de 0 entradas',
+  infoFiltered: '(filtrado de _MAX_ entradas totales)',
+  infoPostFix: '',
+  thousands: ',',
+  lengthMenu: 'Mostrar _MENU_',
+  loadingRecords: 'Cargando...',
+  processing: '',
+  search: 'Buscar:',
+  zeroRecords: 'No se encontraron registros coincidentes',
+  paginate: {
+    first: 'Primera',
+    last: 'Última',
+    next: 'Siguiente',
+    previous: 'Anterior',
+  },
+  aria: {
+    orderable: 'Ordenar por esta columna',
+    orderableReverse: 'Orden inverso de esta columna',
+  },
+}
+
 function validateInput({ target, fieldList = {}, fieldListErrors = {}, type }) {
   let value
 
@@ -693,4 +718,5 @@ export {
   separarMiles,
   insertOptions,
   recortarTexto,
+  tableLanguage,
 }
