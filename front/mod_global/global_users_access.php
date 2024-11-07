@@ -83,11 +83,11 @@ require_once '../../back/sistema_global/session.php';
 
 
   <div class="dialogs">
-    <div class="dialogs-content " style="width: 35%;">
+    <div class="dialogs-content " style="width: 60%;">
       <span class="close-button">×</span>
       <h5 class="mb-1">Permisos des usuario</h5>
       <hr>
-      <div class="card-body">
+      <div class="card-body" style="max-height: 60vh;overflow-y: auto;">
         <table class="table table-hover datatable-table" id="list_permisos">
           <thead>
             <tr>
