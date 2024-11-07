@@ -65,30 +65,50 @@ function actualizarActividad($id, $actividades, $responsable, $unidad_medida, $t
     }
 }
 
-// Función para eliminar una actividad en poa_actividades
 function eliminarActividad($id) {
     global $conexion;
+    $user_id = $_SESSION['u_id']; // Obtener el user_id de la sesión actual
 
     try {
         if (empty($id)) {
             return json_encode(['error' => "Debe proporcionar un ID para eliminar la actividad"]);
         }
 
+        // Iniciar transacción
+        $conexion->begin_transaction();
+
+        // Eliminar la actividad en poa_actividades
         $sql = "DELETE FROM poa_actividades WHERE id = ?";
         $stmt = $conexion->prepare($sql);
         $stmt->bind_param("i", $id);
         $stmt->execute();
 
         if ($stmt->affected_rows > 0) {
+            // Registrar en audit_logs
+            $sqlAudit = "INSERT INTO audit_logs (action_type, table_name, situation, affected_rows, user_id, timestamp) 
+                         VALUES (?, ?, ?, ?, ?, NOW())";
+            $stmtAudit = $conexion->prepare($sqlAudit);
+            $action_type = 'DELETE';
+            $table_name = 'poa_actividades';
+            $situation = "id_actividad=$id";
+            $affected_rows = $stmt->affected_rows;
+            $stmtAudit->bind_param("sssii", $action_type, $table_name, $situation, $affected_rows, $user_id);
+            $stmtAudit->execute();
+            $stmtAudit->close();
+
+            // Confirmar la transacción
+            $conexion->commit();
             return json_encode(["success" => "Actividad eliminada correctamente"]);
         } else {
             throw new Exception("No se pudo eliminar la actividad");
         }
     } catch (Exception $e) {
+        $conexion->rollback(); // Revertir en caso de error
         registrarError($e->getMessage());
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 // Procesar la petición
 $data = json_decode(file_get_contents("php://input"), true);

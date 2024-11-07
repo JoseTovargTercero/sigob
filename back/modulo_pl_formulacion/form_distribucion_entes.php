@@ -181,15 +181,28 @@ function actualizarDistribucionEntes($id, $id_ente, $actividad_id, $distribucion
 function eliminarDistribucionEntes($id)
 {
     global $conexion;
+    $user_id = $_SESSION['u_id']; // Obtener el user_id de la sesión actual
     $conexion->begin_transaction();
 
     try {
+        // Eliminar el registro en distribucion_entes
         $sqlDelete = "DELETE FROM distribucion_entes WHERE id = ?";
         $stmtDelete = $conexion->prepare($sqlDelete);
         $stmtDelete->bind_param("i", $id);
         $stmtDelete->execute();
 
         if ($stmtDelete->affected_rows > 0) {
+            // Insertar un registro en audit_logs después de la eliminación
+            $sqlAudit = "INSERT INTO audit_logs (action_type, table_name, situation, affected_rows, user_id, timestamp) 
+                         VALUES (?, ?, ?, ?, ?, NOW())";
+            $stmtAudit = $conexion->prepare($sqlAudit);
+            $action_type = 'DELETE';
+            $table_name = 'distribucion_entes';
+            $situation = "id=$id";
+            $affected_rows = $stmtDelete->affected_rows;
+            $stmtAudit->bind_param("sssii", $action_type, $table_name, $situation, $affected_rows, $user_id);
+            $stmtAudit->execute();
+
             $conexion->commit();
             return json_encode(["success" => "Distribución eliminada correctamente"]);
         } else {
@@ -201,6 +214,7 @@ function eliminarDistribucionEntes($id)
         return json_encode(["error" => $e->getMessage()]);
     }
 }
+
 
 // Función para consultar un registro por ID en la tabla distribucion_entes y obtener detalles adicionales
 function consultarDistribucionPorId($id)

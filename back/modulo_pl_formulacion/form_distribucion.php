@@ -283,7 +283,22 @@ function eliminarDistribucion($id)
         $stmtEliminar->bind_param("i", $id);
         $stmtEliminar->execute();
 
-        if ($stmtEliminar->affected_rows > 0) {
+        $affectedRows = $stmtEliminar->affected_rows;
+
+        if ($affectedRows > 0) {
+            // Registro en la tabla audit_logs después de eliminar
+            $sqlAudit = "INSERT INTO audit_logs (action_type, table_name, situation, affected_rows, user_id, timestamp) 
+                         VALUES (?, ?, ?, ?, ?, NOW())";
+            $stmtAudit = $conexion->prepare($sqlAudit);
+            
+            $actionType = 'DELETE';
+            $tableName = 'distribucion_presupuestaria';
+            $situation = "id=$id";
+            $user_id = $_SESSION['u_id'];
+            
+            $stmtAudit->bind_param("sssii", $actionType, $tableName, $situation, $affectedRows, $user_id);
+            $stmtAudit->execute();
+
             return json_encode(["success" => "Registro eliminado correctamente."]);
         } else {
             throw new Exception("Error al eliminar el registro.");
@@ -293,6 +308,7 @@ function eliminarDistribucion($id)
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 
 // Procesar la solicitud
