@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 07-11-2024 a las 13:08:30
+-- Tiempo de generación: 07-11-2024 a las 21:53:06
 -- Versión del servidor: 10.4.16-MariaDB
 -- Versión de PHP: 7.4.12
 
@@ -40,7 +40,8 @@ CREATE TABLE `system_bd` (
 -- Indices de la tabla `system_bd`
 --
 ALTER TABLE `system_bd`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `actualizacion` (`actualizacion`);
 
 --
 -- AUTO_INCREMENT de las tablas volcadas
@@ -50,7 +51,7 @@ ALTER TABLE `system_bd`
 -- AUTO_INCREMENT de la tabla `system_bd`
 --
 ALTER TABLE `system_bd`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

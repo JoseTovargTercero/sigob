@@ -27,8 +27,10 @@ function registrar($id)
 
 
 
-function ejecutar($id, $qry) {
+function ejecutar($id, $qry)
+{
     global $conexion;
+    global $db;
 
     try {
         // Intentar ejecutar la consulta completa
@@ -40,7 +42,15 @@ function ejecutar($id, $qry) {
                 }
                 /* Prepararse para el siguiente resultado en caso de que haya múltiples */
             } while ($conexion->next_result());
-            
+
+
+            $campos_valores = [
+                ['actualizacion', $id, true]
+            ];
+
+            $db->insert('system_bd', $campos_valores);
+
+
             return json_encode(["success" => "Consulta ejecutada con éxito."]);
         } else {
             throw new Exception("Error en la ejecución de la consulta: " . $conexion->error);
@@ -49,7 +59,6 @@ function ejecutar($id, $qry) {
         // Enviar el mensaje de error en JSON
         return json_encode(["error" => $e->getMessage()]);
     }
-
 }
 
 

@@ -19,6 +19,7 @@ $db = new DatabaseHandler($conexion);
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.27.0/themes/prism-okaidia.min.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.27.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.27.0/components/prism-sql.min.js"></script>
+    <script src="../../src/assets/js/sweetalert2.all.min.js"></script>
 
     <style>
         .loader {
@@ -55,7 +56,7 @@ $db = new DatabaseHandler($conexion);
             <label for="llave" class="form-label">Llave de verificación</label>
             <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-key"></i></span>
-                <input type="text" value="" class="form-control" id="llave" placeholder="Ingrese la llave">
+                <input type="text" value="4F1DAB34F6B9065EBAE074B5599A869914DB11D9A596B3C4130093A3A9AB92C1" class="form-control" id="llave" placeholder="Ingrese la llave">
                 <button id="btn-validar" class="btn btn-primary">Validar</button>
 
             </div>
@@ -202,12 +203,13 @@ $db = new DatabaseHandler($conexion);
                             }
 
                             if (jsonResponse.success) {
-                                alert('Consulta enviada correctamente');
+                                toast_s('success', 'Consulta enviada correctamente')
+
                                 $('#consulta').val('')
                                 registrarCambio(jsonResponse.success)
                                 // almacenar registro segun el id enviado
                             } else {
-                                alert(jsonResponse.error)
+                                toast_s('error', 'error' + jsonResponse.error)
                             }
                         },
                         error: function(xhr, status, error) {
@@ -215,7 +217,9 @@ $db = new DatabaseHandler($conexion);
                         }
                     });
                 } else {
-                    alert('Por favor, completa ambos campos.');
+                    toast_s('error', 'error' + jsonResponse.error)
+
+
                 }
             });
 
@@ -234,7 +238,14 @@ $db = new DatabaseHandler($conexion);
                         accion: 'ejecutar'
                     }),
                     success: function(response) {
-                        alert('Consulta ejecutada correctamente');
+                        console.log(response)
+                        if (response.success) {
+                            toast_s('success', 'Consulta ejecutada correctamente.')
+
+                            $('#row_' + id).remove()
+                        } else {
+                            toast_s('error', 'error: ' + response.error)
+                        }
                     },
                     error: function(xhr, status, error) {
                         alert('Error al ejecutar la consulta: ' + error);
@@ -284,7 +295,7 @@ $db = new DatabaseHandler($conexion);
                                             if (registros_locales.indexOf(element.id) == -1) {
                                                 cambios = true
                                                 $('#historialActualizaciones').append(`
-                                                    <tr>
+                                                    <tr id="row_${element.id}">
                                                     <td>  <pre><code class="language-sql">${element.qry}</code></pre></td>
                                                     <td class="text-center">
                                                     <br>
@@ -308,12 +319,18 @@ $db = new DatabaseHandler($conexion);
                                 Prism.highlightAll();
 
                                 if (!cambios) {
+
                                     $('#msg').html(`<div class="alert alert-success alert-dismissible fade show" role="alert"><strong>Respuesta exitosa. </strong> No hay cambios pendientes.</div>`)
                                 }
 
 
                             } else if (jsonResponse.error) {
-                                $('#msg').html(`<div class="alert alert-danger alert-dismissible fade show" role="alert"><strong>Respuesta exitosa. </strong>${jsonResponse.error}</div>`)
+
+                                if (jsonResponse.error == 'No tiene permisos de acceso') {
+                                    toast_s('error', jsonResponse.error)
+                                } else {
+                                    $('#msg').html(`<div class="alert alert-danger alert-dismissible fade show" role="alert"><strong>Respuesta exitosa. </strong>${jsonResponse.error}</div>`)
+                                }
                             }
                         },
                         error: function(xhr, status, error) {
@@ -323,7 +340,8 @@ $db = new DatabaseHandler($conexion);
                         }
                     });
                 } else {
-                    alert('Por favor, completa ambos campos.');
+                    toast_s('error', 'Por favor, completa ambos campos.')
+
                 }
             })
         });
