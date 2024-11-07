@@ -100,7 +100,7 @@ export const form_informacionContraloriaForm = ({ elementToInsert, data }) => {
             Página Web
           </label>
           <input
-            type='url'
+            type='text'
             class='form-control contraloria-input'
             id='pagina_web'
             name='pagina_web'

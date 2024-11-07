@@ -124,7 +124,7 @@ export const form_informacionConsejoForm = ({ elementToInsert, data }) => {
         <div class='col'>
             <label class="form-label" for='pagina_web'>Página Web</label>
             <input
-                type='url'
+                type='text'
                 class='form-control consejo-input'
                 id='pagina_web'
                 name='pagina_web'
