@@ -144,7 +144,7 @@ function obtenerTodosEjerciciosFiscales()
                 $situado = $row['situado'];
 
                 // Calcular la sumatoria de los montos iniciales en distribucion_presupuestaria
-                $sqlSum = "SELECT id, id_partida, monto_inicial, monto_actual, id_sector, id_programa, id_proyecto, id_actividad FROM distribucion_presupuestaria";
+                $sqlSum = "SELECT id, id_partida, monto_inicial, monto_actual, id_sector, id_programa, id_proyecto, id_actividad FROM distribucion_presupuestaria WHERE id_ejercicio=$id_ejercicio";
                 $stmtSum = $conexion->prepare($sqlSum);
                 if (!$stmtSum) {
                     throw new Exception("Error en la preparación de la consulta SQL para distribucion_presupuestaria: " . $conexion->error);
