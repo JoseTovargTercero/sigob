@@ -686,53 +686,43 @@ export const form_asignacion_entes_form_card = async ({
       dependenciaNombre = '-'
     }
 
-    let ente_sector = Number(asignacion.sector)
-    let ente_programa = Number(asignacion.programa)
+    let partidasRelacionadas = partidasSeleccionadas.map((id) => {
+      let partidaEncontrada = ejercicioFiscal.distribucion_partidas.find(
+        (partida) => partida.id == id
+      )
 
-    let partidasRelacionadas = ejercicioFiscal.distribucion_partidas
-      .filter((partida) => {
-        return (
-          Number(partida.sector_informacion.sector) === ente_sector &&
-          Number(partida.programa_informacion.programa) === ente_programa
-        )
-        //
-      })
-      .map((el) => {
-        let sector = `${
-          el.sector_informacion
-            ? el.sector_informacion.sector
-            : 'Sector no disponible'
-        }`
-        let programa = `${
-          el.programa_informacion
-            ? el.programa_informacion.programa
-            : 'Programa no disponible'
-        }`
-        let proyecto = `${
-          el.proyecto_informacion == 0
-            ? '00'
-            : el.proyecto_informacion.proyecto_id
-        }`
+      console.log(datosDistribucionActividades)
 
-        return {
-          id: el.id,
-          actividad_id,
-          sector,
-          programa,
-          proyecto,
-          actividad: dependenciaActividad,
-          actividad_nombre: dependenciaNombre,
-          partida: el.partida,
-          nombre: el.nombre || 'No asignado',
-          descripcion: el.descripcion,
-          monto_disponible: disponibilidadPartida[`distribucion-${el.id}`],
-        }
-      })
-    // let partidaEncontrada = ejercicioFiscal.distribucion_partidas.find(
-    //   (partida) => partida.id == id
-    // )
+      let sector = `${
+        partidaEncontrada.sector_informacion
+          ? partidaEncontrada.sector_informacion.sector
+          : 'Sector no disponible'
+      }`
+      let programa = `${
+        partidaEncontrada.programa_informacion
+          ? partidaEncontrada.programa_informacion.programa
+          : 'Programa no disponible'
+      }`
+      let proyecto = `${
+        partidaEncontrada.proyecto_informacion == 0
+          ? '00'
+          : partidaEncontrada.proyecto_informacion.proyecto_id
+      }`
 
-    // console.log(datosDistribucionActividades)
+      return {
+        id: id,
+        actividad_id,
+        sector,
+        programa,
+        proyecto,
+        actividad: dependenciaActividad,
+        actividad_nombre: dependenciaNombre,
+        partida: partidaEncontrada.partida,
+        nombre: partidaEncontrada.nombre || 'No asignado',
+        descripcion: partidaEncontrada.descripcion,
+        monto_disponible: disponibilidadPartida[`distribucion-${id}`],
+      }
+    })
 
     console.log(partidasRelacionadas)
 
@@ -1228,7 +1218,6 @@ export const form_asignacion_entes_form_card = async ({
         // btnNext.textContent = 'Enviar'
         // btnAdd.classList.add('d-none')
         formFocus++
-
         return
       }
 
@@ -1406,8 +1395,6 @@ export const form_asignacion_entes_form_card = async ({
     btnPrevius.removeAttribute('disabled')
     // btnAdd.classList.remove('d-none')
   }
-
-  function formFocusPart2() {}
 
   function actualizarMontoRestante() {
     let montoElement = d.getElementById('monto-total-asignado')
