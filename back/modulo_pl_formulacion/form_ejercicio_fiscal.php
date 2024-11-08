@@ -198,7 +198,7 @@ function obtenerTodosEjerciciosFiscales()
                             $stmtPrograma->close();
 
                             // Consultar pl_proyectos solo si id_proyecto es diferente de 0
-                            $proyectoInformacion = null;
+                            $proyectoInformacion = 0;
                             if ($sumRow['id_proyecto'] != 0) {
                                 $sqlProyecto = "SELECT * FROM pl_proyectos WHERE id = ?";
                                 $stmtProyecto = $conexion->prepare($sqlProyecto);
