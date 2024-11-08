@@ -4,6 +4,7 @@ header('Content-Type: application/json');
 require_once '../sistema_global/session.php';
 require_once '../sistema_global/errores.php';
 
+
 function insertarDistribuciones($distribuciones)
 {
     global $conexion;
@@ -85,6 +86,21 @@ function insertarDistribuciones($distribuciones)
                 $stmtUpdateAsignacion = $conexion->prepare($sqlUpdateAsignacion);
                 $stmtUpdateAsignacion->bind_param("i", $id_asignacion);
                 $stmtUpdateAsignacion->execute();
+
+                // Actualizar la tabla distribucion_presupuestaria
+                foreach ($distribucion as $item) {
+                    $id_distribucion = $item['id_distribucion'];
+                    $monto = $item['monto'];
+
+                    $sqlUpdateDistribucionPresupuestaria = "UPDATE distribucion_presupuestaria SET monto_actual = monto_actual - ? WHERE id = ?";
+                    $stmtUpdateDistribucionPresupuestaria = $conexion->prepare($sqlUpdateDistribucionPresupuestaria);
+                    $stmtUpdateDistribucionPresupuestaria->bind_param("di", $monto, $id_distribucion);
+                    $stmtUpdateDistribucionPresupuestaria->execute();
+
+                    if ($stmtUpdateDistribucionPresupuestaria->affected_rows === 0) {
+                        throw new Exception("No se pudo actualizar el monto en distribucion_presupuestaria para el ID de distribución: $id_distribucion.");
+                    }
+                }
             } else {
                 throw new Exception("No se pudo insertar la distribución para el ente ID: $id_ente.");
             }
@@ -133,6 +149,7 @@ function actualizarEstadoDistribucionPorAsignacion($id_asignacion, $status, $com
         } else {
             throw new Exception("No se encontraron registros de distribución con el id_asignacion especificado o los estados ya estaban configurados.");
         }
+
     } catch (Exception $e) {
         $conexion->rollback();
         registrarError($e->getMessage());
@@ -550,3 +567,6 @@ if (isset($data["accion"])) {
 } else {
     echo json_encode(['error' => "No se recibió ninguna acción"]);
 }
+
+
+?>
