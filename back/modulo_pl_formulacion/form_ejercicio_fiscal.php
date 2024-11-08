@@ -208,7 +208,7 @@ function obtenerTodosEjerciciosFiscales()
                                 $stmtProyecto->bind_param("i", $sumRow['id_proyecto']);
                                 $stmtProyecto->execute();
                                 $resultProyecto = $stmtProyecto->get_result();
-                                $proyectoInformacion = $resultProyecto->num_rows > 0 ? $resultProyecto->fetch_assoc() : null;
+                                $proyectoInformacion = $resultProyecto->num_rows > 0 ? $resultProyecto->fetch_assoc() : 0;
                                 $stmtProyecto->close();
                             }
 
@@ -360,7 +360,7 @@ function obtenerEjercicioFiscalPorId($id)
                             $stmtProyecto->bind_param("i", $rowDistribucion['id_proyecto']);
                             $stmtProyecto->execute();
                             $resultProyecto = $stmtProyecto->get_result();
-                            $proyectoInformacion = $resultProyecto->num_rows > 0 ? $resultProyecto->fetch_assoc() : null;
+                            $proyectoInformacion = $resultProyecto->num_rows > 0 ? $resultProyecto->fetch_assoc() : 0;
                             $stmtProyecto->close();
                         }
 
