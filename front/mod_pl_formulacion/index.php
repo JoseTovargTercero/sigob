@@ -356,8 +356,7 @@ $stmt->close();
                       <option value="actividad">Actividad</option>
                       <option value="proyecto">Proyecto</option>
                       <option value="partida">Partida</option>
-                      <option value="Partidas_programa">Partida (Por sector y programa)</option>
-
+                      <option value="partida_programa">Partida (Por sector y programa)</option>
                     </select>
                   </div>
                 </div>
