@@ -157,7 +157,8 @@ function obtenerTodosEjerciciosFiscales()
                 if ($resultSum->num_rows > 0) {
                     // Recorrer los registros de distribucion_presupuestaria
                     while ($sumRow = $resultSum->fetch_assoc()) {
-                        $totalMontoInicial += $sumRow['monto_inicial'];
+                        $montoInicial = isset($sumRow['monto_inicial']) ? (float) $sumRow['monto_inicial'] : 0;
+                        $totalMontoInicial += $montoInicial;
 
                         // Consultar la tabla partidas_presupuestarias para obtener la partida asociada
                         $sqlPartida = "SELECT id, partida, nombre, descripcion FROM partidas_presupuestarias WHERE id = ?";

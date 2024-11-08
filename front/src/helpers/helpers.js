@@ -232,6 +232,28 @@ function validateInput({ target, fieldList = {}, fieldListErrors = {}, type }) {
       }
     }
 
+    if (type === 'number3') {
+      let isNumber = regularExpressions.NUMBER3.test(value)
+
+      if (!isNumber || value < 0) {
+        target.classList.add('input-error')
+        fieldListErrors[target.name].value = true
+        errorMessage(target, message)
+        fieldList = {
+          ...fieldList,
+          [target.name]: target.value,
+        }
+      } else {
+        fieldListErrors[target.name].value = false
+        target.classList.remove('input-error')
+        errorMessage(target, message)
+        fieldList = {
+          ...fieldList,
+          [target.name]: target.value,
+        }
+      }
+    }
+
     if (type === 'text') {
       let isText = regularExpressions.TEXT.test(value)
       if (!isText) {
@@ -663,25 +685,53 @@ function insertOptions({ input, data }) {
 // SEPARADOR DE MILES
 
 function separarMiles(numero) {
+  console.log(numero)
+  // Comprobar si el número es NaN o no es un tipo aceptable
+  if (
+    isNaN(numero) ||
+    (typeof numero !== 'number' && typeof numero !== 'string')
+  ) {
+    return `!${numero}`
+  }
+
+  // Si es una cadena, se asegura de que se procese como número
+  if (typeof numero === 'string') {
+    // Reemplazar la coma por un punto para trabajar con él como número
+    numero = numero.replace(',', '.')
+  }
+
+  // Convertir a float
+  numero = parseFloat(numero)
+
+  // Verificar si el número es válido
   if (isNaN(numero)) {
     return `!${numero}`
   }
 
-  if (typeof numero !== 'number' && typeof numero !== 'string') {
-    return `!${numero}`
+  // Separar la parte entera de la decimal
+  const partes = numero.toString().split('.')
+  const parteEntera = partes[0]
+  const parteDecimal = partes.length > 1 ? ',' + partes[1] : ''
+
+  // Agregar el punto para la separación de miles
+  const resultadoEntero = parteEntera.replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+
+  // Regresar el resultado con la parte decimal
+  return resultadoEntero + parteDecimal
+}
+
+const formatearFloat = (numeroStr) => {
+  // Reemplaza la coma por un punto
+  numeroStr = numeroStr.replace(',', '.')
+  // Intenta convertir la cadena a un número
+  const numero = parseFloat(numeroStr)
+
+  // Verifica si la conversión fue exitosa
+  if (isNaN(numero)) {
+    return 'Error: el formato del número es incorrecto.'
   }
 
-  if (typeof numero === 'string') {
-    numero = parseFloat(numero)
-  }
-
-  if (!Number.isInteger(numero) && typeof numero !== 'number') {
-    return `!${numero}`
-  }
-
-  return Number(numero)
-    .toString()
-    .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  return numero
 }
 
 export function validarIdentificador(identificador) {
@@ -718,5 +768,6 @@ export {
   separarMiles,
   insertOptions,
   recortarTexto,
+  formatearFloat,
   tableLanguage,
 }

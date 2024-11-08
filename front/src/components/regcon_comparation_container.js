@@ -174,11 +174,13 @@ const createObjectList = (anterior, actual, title) => {
   let cantidadPropiedades = Object.values(actual).length
 
   const celdaDiferencia = (diferencia) => {
+    let diferenciaNumber = separarMiles(Number(diferencia).toFixed(2))
+
     if (diferencia > 0)
-      return `<td class="table-success">+${Number(diferencia).toFixed(2)}</td>`
+      return `<td class="table-success">+${diferenciaNumber}</td>`
     if (diferencia < 0)
-      return `<td class="table-blue-gray">${Number(diferencia).toFixed(2)}</td>`
-    return `<td class="table-info">${Number(diferencia).toFixed(2)}</td>`
+      return `<td class="table-blue-gray">${diferenciaNumber}</td>`
+    return `<td class="table-info">${diferenciaNumber}</td>`
   }
 
   // lista de petición consultada

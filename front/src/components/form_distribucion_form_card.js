@@ -16,8 +16,10 @@ import { getSectores } from '../api/sectores.js'
 import { loadDistribucionTable } from '../controllers/form_distribucionTable.js'
 import {
   confirmNotification,
+  formatearFloat,
   hideLoader,
   insertOptions,
+  separarMiles,
   toastNotification,
   validateInput,
 } from '../helpers/helpers.js'
@@ -26,6 +28,7 @@ const d = document
 export const form_distribucion_form_card = async ({
   elementToInset,
   ejercicioFiscal,
+  recargarEjercicio,
 }) => {
   let montos = {
     total: ejercicioFiscal.situado,
@@ -43,11 +46,6 @@ export const form_distribucion_form_card = async ({
     id_proyecto: 0,
   }
   let fieldListErrors = {
-    // id_sector: {
-    //   value: true,
-    //   message: 'Seleccione un sector',
-    //   type: 'number',
-    // },
     // descripcion: {
     //   value: true,
     //   message: 'Añada una descripción al plan operativo',
@@ -62,7 +60,7 @@ export const form_distribucion_form_card = async ({
   const oldCardElement = d.getElementById('distribucion-form-card')
   if (oldCardElement) oldCardElement.remove()
 
-  let card = `  <div class='card slide-up-animation' id='distribucion-form-card'>
+  let card = `    <div class='card slide-up-animation' id='distribucion-form-card'>
       <div class='card-header d-flex justify-content-between'>
         <div class=''>
           <h5 class='mb-0'>Realizar distribución presupuestaria</h5>
@@ -109,7 +107,7 @@ export const form_distribucion_form_card = async ({
                   Seleccione el sector
                 </label>
                 <select
-                  class='form-select distribucion-input chosen-sector'
+                  class='form-select chosen-sector'
                   name='id_sector'
                   id='search-select-sector'
                 >
@@ -123,28 +121,43 @@ export const form_distribucion_form_card = async ({
                   Seleccione el programa
                 </label>
                 <select
-                  class='form-select distribucion-input chosen-programa'
+                  class='form-select chosen-programa'
                   name='id_programa'
                   id='search-select-programa'
                 >
                   <option>Elegir...</option>
                 </select>
               </div>
-             
             </div>
-            <div class="col">
-             <div class='form-group'>
+            <div class='col'>
+              <div class='form-group'>
                 <label for='search-select-programa' class='form-label'>
                   Seleccione el proyecto (opcional)
                 </label>
                 <select
-                  class='form-select distribucion-input chosen-proyecto'
+                  class='form-select chosen-proyecto'
                   name='id_proyecto'
                   id='search-select-proyecto'
                 >
                   <option>Elegir...</option>
                 </select>
-              </div></div>
+              </div>
+            </div>
+
+            <div class='col'>
+              <div class='form-group'>
+                <label for='id_actividad' class='form-label'>
+                  Seleccione el la actividad (opcional)
+                </label>
+                <input
+                  class='form-control distribucion-input'
+                  type='number'
+                  placeholder='Número para actividad (Defecto "00")'
+                  name='id_actividad'
+                  id='id_actividad'
+                />
+              </div>
+            </div>
           </div>
 
           <h5 class='mb-0'>Distribución de presupuesto por partida</h5>
@@ -179,10 +192,14 @@ export const form_distribucion_form_card = async ({
   let montoTotalElement = d.getElementById('monto-total')
   let montoRestanteElement = d.getElementById('monto-restante')
 
-  montoTotalElement.textContent = ejercicioFiscal.situado
+  montoTotalElement.textContent = separarMiles(ejercicioFiscal.situado)
   montoRestanteElement.innerHTML = ejercicioFiscal.restante
-    ? `<span class="text-success">${ejercicioFiscal.restante}</span>`
-    : `<span class="text-secondary">${ejercicioFiscal.restante}</span>`
+    ? `<span class="text-success">${separarMiles(
+        ejercicioFiscal.restante
+      )}</span>`
+    : `<span class="text-secondary">${separarMiles(
+        ejercicioFiscal.restante
+      )}</span>`
 
   let partidalist = d.getElementById('lista-partidas')
   let formElement = d.getElementById('distribucion-form')
@@ -335,6 +352,11 @@ export const form_distribucion_form_card = async ({
       actualizarMontoRestante(montos.restante)
     }
 
+    if (e.target.classList.contains('distribucion-input')) {
+      if (!e.target.value) return (fieldList[e.target.name] = 0)
+
+      fieldList[e.target.name] = e.target.value
+    }
     if (e.target.classList.contains('partida-input')) {
       fieldListPartidas = validateInput({
         target: e.target,
@@ -377,7 +399,7 @@ export const form_distribucion_form_card = async ({
     fieldListErrorsPartidas[`partida-monto-${newNumRow}`] = {
       value: true,
       message: 'Monto inválido',
-      type: 'textarea',
+      type: 'number3',
     }
 
     let options = [`<option value=''>Elegir partida...</option>`]
@@ -410,21 +432,27 @@ export const form_distribucion_form_card = async ({
     montos.acumulado = 0
 
     inputsPartidasMontos.forEach((input) => {
-      montos.acumulado += Number(input.value)
+      montos.acumulado += Number(formatearFloat(input.value))
     })
 
     let montoRestante = montos.restante - montos.acumulado
 
     if (montoRestante < 0) {
-      montoRestanteElement.innerHTML = `<span class="text-danger">${montoRestante}</span>`
+      montoRestanteElement.innerHTML = `<span class="text-danger">${separarMiles(
+        montoRestante
+      )}</span>`
       return montoRestante
     }
     if (montoRestante > 0) {
-      montoRestanteElement.innerHTML = `<span class="text-success">${montoRestante}</span>`
+      montoRestanteElement.innerHTML = `<span class="text-success">${separarMiles(
+        montoRestante
+      )}</span>`
       return montoRestante
     }
 
-    montoRestanteElement.innerHTML = `<span class="text-secondary">${montoRestante}</span>`
+    montoRestanteElement.innerHTML = `<span class="text-secondary">${separarMiles(
+      montoRestante
+    )}</span>`
     return montoRestante
   }
 
@@ -487,11 +515,12 @@ export const form_distribucion_form_card = async ({
 
       return [
         partidaEncontrada.id,
-        montoInput.value,
+        formatearFloat(montoInput.value),
         fieldList.id_ejercicio,
         fieldList.id_sector,
         fieldList.id_programa,
         fieldList.id_proyecto,
+        fieldList.id_actividad,
       ]
     })
 
@@ -569,8 +598,8 @@ export const form_distribucion_form_card = async ({
             }
           })
 
-          d.getElementById('search-select-programa').innerHTML =
-            optionsPrograma.join('')
+          selectPrograma.innerHTML = optionsPrograma.join('')
+
           $('.chosen-programa').trigger('chosen:updated')
         })
       })
@@ -597,6 +626,7 @@ export const form_distribucion_form_card = async ({
         let ejericioActualizado = await getEjecicio(ejercicioFiscal.id)
         if (res.success) {
           loadDistribucionTable(ejericioActualizado.distribucion_partidas)
+          recargarEjercicio()
           closeCard()
         }
       },
@@ -634,7 +664,7 @@ function partidaRow(partidaNum) {
             <div class='col'>
               <input
                 class='form-control partida-input partida-monto'
-                type='number'
+                type='text'
                 name='partida-monto-${partidaNum}'
                 id='partida-monto-${partidaNum}'
                 placeholder='Monto a asignar...'

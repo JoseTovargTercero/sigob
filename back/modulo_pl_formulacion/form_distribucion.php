@@ -68,7 +68,7 @@ function guardarDistribucionPresupuestaria($dataArray)
             $sql = "INSERT INTO distribucion_presupuestaria (id_partida, monto_inicial, id_ejercicio, monto_actual, id_sector, id_programa, id_proyecto, id_actividad, status) 
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1)";
             $stmt = $conexion->prepare($sql);
-            $stmt->bind_param("isisiii", $id_partida, $monto_inicial, $id_ejercicio, $monto_actual, $id_sector, $id_programa, $id_proyecto, $id_actividad);
+            $stmt->bind_param("isisiiii", $id_partida, $monto_inicial, $id_ejercicio, $monto_actual, $id_sector, $id_programa, $id_proyecto, $id_actividad);
             $stmt->execute();
 
             if ($stmt->affected_rows <= 0) {
@@ -294,12 +294,12 @@ function eliminarDistribucion($id)
             $sqlAudit = "INSERT INTO audit_logs (action_type, table_name, situation, affected_rows, user_id, timestamp) 
                          VALUES (?, ?, ?, ?, ?, NOW())";
             $stmtAudit = $conexion->prepare($sqlAudit);
-            
+
             $actionType = 'DELETE';
             $tableName = 'distribucion_presupuestaria';
             $situation = "id=$id";
             $user_id = $_SESSION['u_id'];
-            
+
             $stmtAudit->bind_param("sssii", $actionType, $tableName, $situation, $affectedRows, $user_id);
             $stmtAudit->execute();
 

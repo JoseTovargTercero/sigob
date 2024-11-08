@@ -83,7 +83,7 @@ export const loadDistribucionTable = async (partidas) => {
         el.sector_informacion ? el.sector_informacion.sector : '0'
       }.${el.programa_informacion ? el.programa_informacion.programa : '0'}.${
         el.proyecto_informacion == 0 ? '00' : el.proyecto_informacion.proyecto
-      }`,
+      }.${el.id_actividad == 0 ? '00' : el.id_actividad}`,
       partida: el.partida,
       descripcion: descripcion,
       monto_inicial: `${separarMiles(el.monto_inicial)} Bs`,
