@@ -86,7 +86,6 @@ function guardarDistribucionPresupuestaria($dataArray)
 }
 
 
-
 // Función para obtener todos los registros de la tabla distribucion_presupuestaria, incluyendo el sector
 function obtenerDistribuciones()
 {
@@ -111,7 +110,6 @@ function obtenerDistribuciones()
 
     return json_encode($distribuciones);
 }
-
 
 // Función para obtener un solo registro por ID, incluyendo el sector
 function obtenerDistribucionPorId($id)
@@ -140,6 +138,7 @@ function obtenerDistribucionPorId($id)
         return json_encode(['error' => 'No se encontró el registro']);
     }
 }
+
 
 // Función para actualizar un registro, incluyendo id_sector, id_programa, id_proyecto y id_actividad
 function actualizarDistribucion($id, $id_partida, $monto_inicial, $id_ejercicio, $id_sector, $id_programa, $id_proyecto, $id_actividad)
