@@ -112,14 +112,10 @@ function obtenerSumatoriaPorTipoSPP($ejercicio, $tipo)
 
 
 
-function obtenerSumatoriaPorPartida(){
-
-}
+function obtenerSumatoriaPorPartida() {}
 
 
-function obtenerSumatoriaPorActiviad(){
-
-}
+function obtenerSumatoriaPorActiviad() {}
 
 
 
@@ -145,14 +141,16 @@ function obtenerIndiceTipo($tipo)
 }
 
 // Procesar la solicitud
-echo obtenerSumatoriaPorPartida($ejercicio, $tipo);
+//echo obtenerSumatoriaPorPartida($ejercicio, $tipo);
 
 
 
-/*
-echo obtenerSumatoriaPorTipo('1', 'programa');
-*/
+
+echo obtenerSumatoriaPorTipoSPP('1', 'programa');
 exit;
+
+
+
 $data = json_decode(file_get_contents("php://input"), true);
 if (isset($data["ejercicio"]) && isset($data["tipo"])) {
     $ejercicio = $data["ejercicio"];
@@ -161,9 +159,9 @@ if (isset($data["ejercicio"]) && isset($data["tipo"])) {
     // Llamar a la función para obtener las sumatorias por tipo
     if ($tipo == "sector" || $tipo == "programa" || $tipo == "proyecto") {
         echo obtenerSumatoriaPorTipoSPP($ejercicio, $tipo);
-    } elseif($tipo == "actividad"){
+    } elseif ($tipo == "actividad") {
         echo obtenerSumatoriaPorActiviad($ejercicio, $tipo);
-    }else{
+    } else {
         echo obtenerSumatoriaPorPartida($ejercicio, $tipo);
     }
 } else {
