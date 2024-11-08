@@ -145,9 +145,8 @@ function obtenerTodosEjerciciosFiscales()
                 $situado = $row['situado'];
 
                 // Calcular la sumatoria de los montos iniciales en distribucion_presupuestaria para este id_ejercicio
-                $sqlSum = "SELECT id, id_partida, monto_inicial, monto_actual, id_sector, id_programa, id_proyecto, id_actividad FROM distribucion_presupuestaria WHERE id_ejercicio = ?";
+                $sqlSum = "SELECT id, id_partida, monto_inicial, monto_actual, id_sector, id_programa, id_proyecto, id_actividad FROM distribucion_presupuestaria";
                 $stmtSum = $conexion->prepare($sqlSum);
-                $stmtSum->bind_param("i", $id_ejercicio);
                 $stmtSum->execute();
                 $resultSum = $stmtSum->get_result();
 
@@ -309,7 +308,8 @@ function obtenerEjercicioFiscalPorId($id)
 
             if ($resultDistribucion->num_rows > 0) {
                 while ($rowDistribucion = $resultDistribucion->fetch_assoc()) {
-                    $totalMontoInicial += $rowDistribucion['monto_inicial'];
+                    $montoInicial = isset($rowDistribucion['monto_inicial']) ? (float) $rowDistribucion['monto_inicial'] : 0;
+                    $totalMontoInicial += $montoInicial;
 
                     // Obtener el valor de partida de la tabla partidas_presupuestarias
                     $sqlPartida = "SELECT id, partida, nombre, descripcion FROM partidas_presupuestarias WHERE id = ?";
