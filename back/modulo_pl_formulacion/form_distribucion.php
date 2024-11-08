@@ -264,7 +264,6 @@ function eliminarDistribucion($id)
     global $conexion;
 
     try {
-        // Verificar si el registro existe y su estado
         $sql = "SELECT id, status FROM distribucion_presupuestaria WHERE id = ?";
         $stmt = $conexion->prepare($sql);
         $stmt->bind_param("i", $id);
@@ -275,11 +274,31 @@ function eliminarDistribucion($id)
         if (!$distribucion) {
             throw new Exception("El registro no existe.");
         }
+        // Verificar si el registro existe y su estado
 
-        // No permitir eliminar si el registro tiene status 0 (cerrado)
         if ($distribucion['status'] == 0) {
             throw new Exception("No se puede eliminar un registro cerrado.");
         }
+        // No permitir eliminar si el registro tiene status 0 (cerrado)
+
+
+
+        $bucar = `{"id_distribucion":"$id","`;
+        $sql = "SELECT * FROM distribucion_entes WHERE distribucion LIKE ?";
+        $stmt = $conexion->prepare($sql);
+        $stmt->bind_param("s", $bucar);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $distribucion = $result->fetch_assoc();
+
+        if (!$distribucion) {
+            throw new Exception("No se puede eliminar, se está usando para una asignación a uno o mas entes.");
+        }
+        // verificar si esta en uso no 
+
+
+
+
 
         // Eliminar el registro
         $sqlEliminar = "DELETE FROM distribucion_presupuestaria WHERE id = ?";

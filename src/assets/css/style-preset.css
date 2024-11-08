@@ -3681,7 +3681,7 @@ hr.hr-text::before {
   color: white !important;
 }
 
-.btn-detail {
+.btn-detail::before {
   content: "\ea97" !important;
   font-family: "boxicons" !important;
   font-weight: normal !important;
