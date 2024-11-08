@@ -219,7 +219,7 @@ function obtenerSumatoriaPorPartida($ejercicio, $tipo)
 
 
 
-function obtenerSumatoriaPorActividad($ejercicio, $tipo)
+function obtenerSumatoriaPorActividad($ejercicio)
 {
     global $conexion;
 
@@ -230,7 +230,7 @@ function obtenerSumatoriaPorActividad($ejercicio, $tipo)
         }
 
         // Consulta para obtener los registros de distribucion_presupuestaria con el id_ejercicio dado
-        $sql = "SELECT DP.id_actividad, DP.monto_inicial, DP.monto_actual, DP.id_sector 
+        $sql = "SELECT DP.id_actividad, DP.monto_inicial, DP.monto_actual, DP.id_sector, DP.id_programa 
                 FROM distribucion_presupuestaria AS DP 
                 WHERE DP.id_ejercicio = ?";
         $stmt = $conexion->prepare($sql);
@@ -238,7 +238,7 @@ function obtenerSumatoriaPorActividad($ejercicio, $tipo)
         $stmt->execute();
         $resultadoDistribucion = $stmt->get_result();
 
-        // Array para almacenar la sumatoria de los montos por sector.actividad
+        // Array para almacenar la sumatoria de los montos por sector.programa.actividad
         $actividadesDatos = [];
 
         // Iterar sobre los registros obtenidos de distribucion_presupuestaria
@@ -256,8 +256,17 @@ function obtenerSumatoriaPorActividad($ejercicio, $tipo)
             $sectorValor = $resultadoSector->fetch_assoc()['sector'] ?? '00';
             $stmtSector->close();
 
-            // Formar el identificador compuesto como "sector.actividad"
-            $grupoActividad = sprintf("%02s.%s", $sectorValor, $idActividad);
+            // Obtener el valor de programa desde pl_programas
+            $sqlPrograma = "SELECT programa FROM pl_programas WHERE id = ?";
+            $stmtPrograma = $conexion->prepare($sqlPrograma);
+            $stmtPrograma->bind_param("i", $row['id_programa']);
+            $stmtPrograma->execute();
+            $resultadoPrograma = $stmtPrograma->get_result();
+            $programaValor = $resultadoPrograma->fetch_assoc()['programa'] ?? '00';
+            $stmtPrograma->close();
+
+            // Formar el identificador compuesto como "sector.programa.actividad"
+            $grupoActividad = sprintf("%02s.%02s.%s", $sectorValor, $programaValor, $idActividad);
 
             // Sumar montos en el array agrupado por el identificador adecuado
             if (isset($actividadesDatos[$grupoActividad])) {
@@ -291,6 +300,7 @@ function obtenerSumatoriaPorActividad($ejercicio, $tipo)
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 
 
