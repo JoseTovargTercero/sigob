@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 08-11-2024 a las 18:03:30
+-- Tiempo de generación: 08-11-2024 a las 18:03:21
 -- Versión del servidor: 10.4.27-MariaDB
 -- Versión de PHP: 7.4.33
 
@@ -24,20 +24,20 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `distribucion_presupuestaria`
+-- Estructura de tabla para la tabla `distribucion_entes`
 --
 
-CREATE TABLE `distribucion_presupuestaria` (
+CREATE TABLE `distribucion_entes` (
   `id` int(255) NOT NULL,
-  `id_partida` int(255) NOT NULL,
-  `monto_inicial` varchar(255) DEFAULT NULL,
-  `id_ejercicio` int(255) NOT NULL,
-  `monto_actual` varchar(255) DEFAULT NULL,
-  `id_sector` int(255) NOT NULL,
-  `id_programa` int(255) NOT NULL,
-  `id_proyecto` int(255) NOT NULL,
-  `id_actividad` int(255) NOT NULL,
+  `id_ente` int(255) NOT NULL,
+  `actividad_id` int(255) DEFAULT NULL,
+  `distribucion` longtext NOT NULL,
+  `monto_total` varchar(255) DEFAULT NULL,
   `status` int(255) NOT NULL,
+  `id_ejercicio` int(255) NOT NULL,
+  `comentario` longtext NOT NULL,
+  `fecha` varchar(255) DEFAULT NULL,
+  `id_asignacion` int(255) NOT NULL,
   `status_cerrar` int(255) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -46,9 +46,9 @@ CREATE TABLE `distribucion_presupuestaria` (
 --
 
 --
--- Indices de la tabla `distribucion_presupuestaria`
+-- Indices de la tabla `distribucion_entes`
 --
-ALTER TABLE `distribucion_presupuestaria`
+ALTER TABLE `distribucion_entes`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -56,10 +56,10 @@ ALTER TABLE `distribucion_presupuestaria`
 --
 
 --
--- AUTO_INCREMENT de la tabla `distribucion_presupuestaria`
+-- AUTO_INCREMENT de la tabla `distribucion_entes`
 --
-ALTER TABLE `distribucion_presupuestaria`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+ALTER TABLE `distribucion_entes`
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
