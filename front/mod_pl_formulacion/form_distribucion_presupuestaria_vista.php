@@ -65,7 +65,7 @@ require_once '../../back/sistema_global/session.php';
                     <th class="text-left">DESCRIPCION</th>
                     <th>MONTO INICIAL</th>
                     <!-- <th>MONTO ACTUAL</th> -->
-                    <!-- <th>ACCIONES</th>-->
+                    <th>ACCIONES</th>
 
                   </thead>
 
