@@ -19,7 +19,7 @@ function insertarDistribuciones($distribuciones)
             $distribucion = $distribucionData['distribuciones'];
             $id_ejercicio = $distribucionData['id_ejercicio'];
             $id_asignacion = $distribucionData['id_asignacion'];
-            $status = 0;
+            $status = 1;
             $comentario = "";
 
             $sqlTipoEnte = "SELECT tipo_ente FROM entes WHERE id = ?";
@@ -133,7 +133,6 @@ function actualizarEstadoDistribucionPorAsignacion($id_asignacion, $status, $com
         } else {
             throw new Exception("No se encontraron registros de distribución con el id_asignacion especificado o los estados ya estaban configurados.");
         }
-
     } catch (Exception $e) {
         $conexion->rollback();
         registrarError($e->getMessage());
@@ -551,6 +550,3 @@ if (isset($data["accion"])) {
 } else {
     echo json_encode(['error' => "No se recibió ninguna acción"]);
 }
-
-
-?>
