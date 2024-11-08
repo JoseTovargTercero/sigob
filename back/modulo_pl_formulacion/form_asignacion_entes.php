@@ -131,7 +131,7 @@ function consultarAsignacionPorId($id)
 
     try {
         // Consulta principal para obtener los datos de asignacion_ente y sus detalles del ente
-        $sql = "SELECT a.*, e.ente_nombre, e.tipo_ente 
+        $sql = "SELECT a.*, e.ente_nombre, e.tipo_ente, e.sector, e.programa, e.proyecto, e.actividad 
                 FROM asignacion_ente a
                 JOIN entes e ON a.id_ente = e.id
                 WHERE a.id = ?";
@@ -255,7 +255,7 @@ function consultarTodasAsignaciones()
     global $conexion;
 
     try {
-        $sql = "SELECT a.*, e.ente_nombre, e.tipo_ente 
+        $sql = "SELECT a.*, e.ente_nombre, e.tipo_ente, e.sector, e.programa, e.proyecto, e.actividad 
                 FROM asignacion_ente a
                 JOIN entes e ON a.id_ente = e.id";
         $result = $conexion->query($sql);
