@@ -19,6 +19,13 @@ export const form_asignacion_entes_monto_card = async ({
   ejercicioFiscal,
   actualizar,
 }) => {
+  let montos = {
+    total: ejercicioFiscal.situado,
+    restante: ejercicioFiscal.restante,
+    distribuido: ejercicioFiscal.distribuido,
+    acumulado: 0,
+  }
+
   let fieldList = { monto: '' }
   let fieldListErrors = {
     monto: {
@@ -28,14 +35,8 @@ export const form_asignacion_entes_monto_card = async ({
     },
   }
 
-  let montos = {
-    total: ejercicioFiscal.situado,
-    restante: ejercicioFiscal.restante,
-    distribuido: ejercicioFiscal.distribuido,
-    acumulado: 0,
-  }
-
   let ente = await getEnte(enteId)
+  fieldList.monto = ente.distribucion_sumatoria
 
   const oldCardElement = d.getElementById('asignacion-ente-monto-form-card')
   if (oldCardElement) oldCardElement.remove()
@@ -63,11 +64,11 @@ export const form_asignacion_entes_monto_card = async ({
           Tipo: ${ente.tipo_ente === 'J' ? 'Jurídico' : 'Descentralizado'}
         </h6>
         <h6>
-          Sector/Programa/Proyecto/Actividad:  ${ente.sector || '0'}.${
-    ente.programa || '0'
-  }.${ente.proyecto == 0 ? '00' : ente.proyecto}.${
-    ente.actividad == 0 ? '00' : ente.actividad
-  }
+          Sector/Programa/Proyecto/Actividad:  ${
+            ente.sector_informacion.sector || '00'
+          }.${ente.programa_informacion.programa || '0'}.${
+    ente.proyecto == 0 ? '00' : ente.proyecto
+  }.${ente.actividad == 0 ? '00' : ente.actividad}
         </h6>
         <h6>
           Tipo: ${ente.tipo_ente === 'J' ? 'Jurídico' : 'Descentralizado'}
@@ -81,23 +82,44 @@ export const form_asignacion_entes_monto_card = async ({
           <h6>
             Monto total asignado: <b id='monto-total-asignado'>0</b>
           </h6>
-        </div>
-        <form id='asignacion-ente-monto-form'>
-          <div class='row'>
-            <div class='form-group'>
-              <label class='form-label' for='monto'>
-                MONTO A ASIGNAR
-              </label>
-              <input
-                type='number'
-                name='monto'
-                id='monto'
-                class='form-control'
-                placeholder='Asignar monto a ente "${ente.ente_nombre}"'
-              />
-            </div>
-          </div>
-        </form>
+        </div>${
+          ente.distribucion_sumatoria > 0
+            ? `<form id='asignacion-ente-monto-form'>
+              <div class='row'>
+                <div class='form-group'>
+                  <label class='form-label' for='monto'>
+                    MONTO TOTAL ASIGNADO A ESTE ENTE
+                  </label>
+                  <input
+                    type='text'
+                    name='monto'
+                    id='monto'
+                    class='form-control'
+                    value='${separarMiles(ente.distribucion_sumatoria)}'
+                    disabled
+                    placeholder='Asignar monto a ente "${ente.ente_nombre}"'
+                  />
+                </div>
+              </div>
+            </form>`
+            : ` <form id='asignacion-ente-monto-form'>
+              <div class='row'>
+                <div class='form-group'>
+                  <label class='form-label' for='monto'>
+                    MONTO A ASIGNAR
+                  </label>
+                  <input
+                    type='number'
+                    name='monto'
+                    id='monto'
+                    class='form-control'
+                    placeholder='Asignar monto a ente "${ente.ente_nombre}"'
+                  />
+                </div>
+              </div>
+            </form>`
+        }
+       
       </div>
       <div class='card-footer'>
         <button class='btn btn-primary' id='asignacion-ente-monto-guardar'>

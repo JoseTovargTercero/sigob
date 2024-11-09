@@ -92,6 +92,7 @@ export const form_asignacion_entes_form_card = async ({
 
   console.log(ejercicioFiscal)
   console.log(asignacion)
+  console.log(asignacion.monto_total)
 
   let montos = { total: 0, restante: 0, acumulado: 0, distribuido_total: 0 }
 
@@ -390,6 +391,7 @@ export const form_asignacion_entes_form_card = async ({
           class='form-control partida-input partida-monto-disponible'
           type='text'
           data-valorinicial='${distribucion.monto_disponible}'
+          data-id='${distribucion.id}'
           name='partida-monto-disponible-${distribucion.id}'
           id='partida-monto-disponible-${distribucion.id}'
           placeholder='Monto a asignar...'
@@ -529,7 +531,7 @@ export const form_asignacion_entes_form_card = async ({
               Distribución presupuestaria actual: <b id='monto-total-asignado'><span class="p-2 text-secondary">0</span></b>
             </h6>
             <h6>
-            Distribución presupuestaria actual: <b id='monto-total-distribuido'><span class="p-2 text-secondary">${
+            Total distribuido: <b id='monto-total-distribuido'><span class="p-2 text-secondary">${
               montos.distribuido_total
             }</span></b>
           </h6>
@@ -675,6 +677,8 @@ export const form_asignacion_entes_form_card = async ({
         let partidaEncontrada = ejercicioFiscal.distribucion_partidas.find(
           (partida) => Number(partida.id) === Number(el.id_distribucion)
         )
+
+        console.log(partidaEncontrada)
 
         let sector = `${
           partidaEncontrada.sector_informacion
@@ -836,6 +840,8 @@ export const form_asignacion_entes_form_card = async ({
   // CARGAR LISTA DE PARTIDAS
 
   function enviarInformacion(data) {
+    console.log(montos)
+
     if (montos.distribuido_total < Number(montos.total_asignado)) {
       toastNotification({
         type: NOTIFICATIONS_TYPES.fail,
@@ -954,6 +960,8 @@ export const form_asignacion_entes_form_card = async ({
           return { id_distribucion, monto }
         })
 
+        montos.distribuido_total += monto_total_asignado
+
         console.log(disponibilidadPartida)
 
         let data = {
@@ -1021,8 +1029,6 @@ export const form_asignacion_entes_form_card = async ({
       }
     }
   }
-
-  function formFocusPart2() {}
 
   function actualizarMontoRestante() {
     let montoElement = d.getElementById('monto-total-asignado')

@@ -2,6 +2,7 @@ import {
   confirmNotification,
   hideLoader,
   insertOptions,
+  separarMiles,
   toastNotification,
   validateInput,
 } from '../helpers/helpers.js'
@@ -65,7 +66,7 @@ export const form_distribucion_entes_card = ({
                   <td>${proyecto}</td>
                   <td>${actividad}</td>
                   <td>${partida}</td>
-                  <td>${monto}</td>
+                  <td>${separarMiles(monto)}</td>
               </tr>`
   })
 

@@ -3,14 +3,15 @@ import {
   getDistribucionEntes,
   getEntesPlan,
   getEntesPlanes,
-} from "../api/form_entes.js";
+} from '../api/form_entes.js'
+import { separarMiles } from '../helpers/helpers.js'
 
 let datos = [
   {
     id: 0,
     id_ente: 0,
-    tipo_ente: "D",
-    ente_nombre: "Ente 1",
+    tipo_ente: 'D',
+    ente_nombre: 'Ente 1',
     id_poa: 0,
     partidas: [
       { id: 1, monto: 5000 },
@@ -21,8 +22,8 @@ let datos = [
   {
     id: 1,
     id_ente: 1,
-    tipo_ente: "J",
-    ente_nombre: "Ente 2",
+    tipo_ente: 'J',
+    ente_nombre: 'Ente 2',
     partidas: [
       { id: 1, monto: 7000 },
       { id: 2, monto: 12000 },
@@ -32,8 +33,8 @@ let datos = [
   {
     id: 2,
     id_ente: 2,
-    tipo_ente: "D",
-    ente_nombre: "Ente 3",
+    tipo_ente: 'D',
+    ente_nombre: 'Ente 3',
     id_poa: 2,
     partidas: [
       { id: 1, monto: 6000 },
@@ -44,8 +45,8 @@ let datos = [
   {
     id: 3,
     id_ente: 3,
-    tipo_ente: "J",
-    ente_nombre: "Ente 4",
+    tipo_ente: 'J',
+    ente_nombre: 'Ente 4',
     id_poa: 3,
     partidas: [
       { id: 1, monto: 8000 },
@@ -56,8 +57,8 @@ let datos = [
   {
     id: 4,
     id_ente: 4,
-    tipo_ente: "D",
-    ente_nombre: "Ente 5",
+    tipo_ente: 'D',
+    ente_nombre: 'Ente 5',
     id_poa: 4,
     partidas: [
       { id: 1, monto: 9000 },
@@ -68,8 +69,8 @@ let datos = [
   {
     id: 5,
     id_ente: 5,
-    tipo_ente: "J",
-    ente_nombre: "Ente 6",
+    tipo_ente: 'J',
+    ente_nombre: 'Ente 6',
     id_poa: 5,
     partidas: [
       { id: 1, monto: 7000 },
@@ -80,8 +81,8 @@ let datos = [
   {
     id: 6,
     id_ente: 6,
-    tipo_ente: "D",
-    ente_nombre: "Ente 7",
+    tipo_ente: 'D',
+    ente_nombre: 'Ente 7',
     id_poa: 6,
     partidas: [
       { id: 1, monto: 10000 },
@@ -92,8 +93,8 @@ let datos = [
   {
     id: 7,
     id_ente: 7,
-    tipo_ente: "J",
-    ente_nombre: "Ente 8",
+    tipo_ente: 'J',
+    ente_nombre: 'Ente 8',
     id_poa: 7,
     partidas: [
       { id: 1, monto: 9500 },
@@ -104,8 +105,8 @@ let datos = [
   {
     id: 8,
     id_ente: 8,
-    tipo_ente: "D",
-    ente_nombre: "Ente 9",
+    tipo_ente: 'D',
+    ente_nombre: 'Ente 9',
     id_poa: 8,
     partidas: [
       { id: 1, monto: 8500 },
@@ -116,8 +117,8 @@ let datos = [
   {
     id: 9,
     id_ente: 9,
-    tipo_ente: "J",
-    ente_nombre: "Ente 10",
+    tipo_ente: 'J',
+    ente_nombre: 'Ente 10',
     id_poa: 9,
     partidas: [
       { id: 1, monto: 9200 },
@@ -125,80 +126,82 @@ let datos = [
     ],
     monto: 19000,
   },
-];
+]
 
 const tableLanguage = {
-  decimal: "",
-  emptyTable: "No hay datos disponibles en la tabla",
-  info: "Mostrando _START_ a _END_ de _TOTAL_ entradas",
-  infoEmpty: "Mostrando 0 a 0 de 0 entradas",
-  infoFiltered: "(filtrado de _MAX_ entradas totales)",
-  infoPostFix: "",
-  thousands: ",",
-  lengthMenu: "Mostrar _MENU_",
-  loadingRecords: "Cargando...",
-  processing: "",
-  search: "Buscar:",
-  zeroRecords: "No se encontraron registros coincidentes",
+  decimal: '',
+  emptyTable: 'No hay datos disponibles en la tabla',
+  info: 'Mostrando _START_ a _END_ de _TOTAL_ entradas',
+  infoEmpty: 'Mostrando 0 a 0 de 0 entradas',
+  infoFiltered: '(filtrado de _MAX_ entradas totales)',
+  infoPostFix: '',
+  thousands: ',',
+  lengthMenu: 'Mostrar _MENU_',
+  loadingRecords: 'Cargando...',
+  processing: '',
+  search: 'Buscar:',
+  zeroRecords: 'No se encontraron registros coincidentes',
   paginate: {
-    first: "Primera",
-    last: "Última",
-    next: "Siguiente",
-    previous: "Anterior",
+    first: 'Primera',
+    last: 'Última',
+    next: 'Siguiente',
+    previous: 'Anterior',
   },
   aria: {
-    orderable: "Ordenar por esta columna",
-    orderableReverse: "Orden inverso de esta columna",
+    orderable: 'Ordenar por esta columna',
+    orderableReverse: 'Orden inverso de esta columna',
   },
-};
+}
 
-let asignacionEntesTable;
+let asignacionEntesTable
 export const validateAsignacionEntesTable = async (id_ejercicio) => {
-  asignacionEntesTable = new DataTable("#asignacion-entes-table", {
+  asignacionEntesTable = new DataTable('#asignacion-entes-table', {
     columns: [
-      { data: "ente_nombre" },
-      { data: "monto" },
-      { data: "fecha" },
-      { data: "acciones" },
+      { data: 'ente_nombre' },
+      { data: 'monto' },
+      { data: 'fecha' },
+      { data: 'acciones' },
     ],
     responsive: true,
     scrollY: 400,
     language: tableLanguage,
     layout: {
       topStart: function () {
-        let toolbar = document.createElement("div");
+        let toolbar = document.createElement('div')
         toolbar.innerHTML = `
             <h5 class="text-center">Lista de asignación presupuestaria a entes</h5>
-                      `;
-        return toolbar;
+                      `
+        return toolbar
       },
-      topEnd: { search: { placeholder: "Buscar..." } },
-      bottomStart: "info",
-      bottomEnd: "paging",
+      topEnd: { search: { placeholder: 'Buscar...' } },
+      bottomStart: 'info',
+      bottomEnd: 'paging',
     },
-  });
+  })
 
-  if (!id_ejercicio) return;
+  if (!id_ejercicio) return
 
-  loadAsignacionEntesTable(id_ejercicio);
-};
+  loadAsignacionEntesTable(id_ejercicio)
+}
 
 export const loadAsignacionEntesTable = async (id_ejercicio) => {
   // let planes = await getEntesPlanes()
-  let asignaciones = await getAsignacionesEntes();
+  let asignaciones = await getAsignacionesEntes()
 
-  if (!Array.isArray(asignaciones.fullInfo)) return;
+  if (!Array.isArray(asignaciones.fullInfo)) return
 
-  if (!asignaciones || asignaciones.error) return;
+  if (!asignaciones || asignaciones.error) return
 
-  let datosOrdenados = [...asignaciones.fullInfo].sort((a, b) => a.id - b.id);
+  let datosOrdenados = [...asignaciones.fullInfo].sort((a, b) => a.id - b.id)
 
   let data = datosOrdenados
     .filter((el) => Number(el.id_ejercicio) === Number(id_ejercicio))
     .map((el) => {
+      console.log(el.status)
+
       return {
         ente_nombre: el.ente_nombre,
-        monto: el.monto_total,
+        monto: separarMiles(el.monto_total),
         tipo: el.tipo_ente,
         fecha: el.fecha,
         acciones: `
@@ -217,49 +220,49 @@ export const loadAsignacionEntesTable = async (id_ejercicio) => {
             el.id
           }"></button>
         `,
-      };
-    });
-  console.log(data);
+      }
+    })
+  console.log(data)
 
-  asignacionEntesTable.clear().draw();
+  asignacionEntesTable.clear().draw()
 
   // console.log(datosOrdenados)
-  asignacionEntesTable.rows.add(data).draw();
-};
+  asignacionEntesTable.rows.add(data).draw()
+}
 
-let distribucionEntesTable2;
+let distribucionEntesTable2
 export const validateAsignacionEntesTable2 = async () => {
-  distribucionEntesTable = new DataTable("#distribucion-entes-table", {
-    columns: [{ data: "ente_nombre" }, { data: "monto" }, { data: "acciones" }],
+  distribucionEntesTable = new DataTable('#distribucion-entes-table', {
+    columns: [{ data: 'ente_nombre' }, { data: 'monto' }, { data: 'acciones' }],
     responsive: true,
     scrollY: 400,
     language: tableLanguage,
     layout: {
       topStart: function () {
-        let toolbar = document.createElement("div");
+        let toolbar = document.createElement('div')
         toolbar.innerHTML = `
             <h5 class="text-center">Historial de asignaciones a entes</h5>
-                      `;
-        return toolbar;
+                      `
+        return toolbar
       },
-      topEnd: { search: { placeholder: "Buscar..." } },
-      bottomStart: "info",
-      bottomEnd: "paging",
+      topEnd: { search: { placeholder: 'Buscar...' } },
+      bottomStart: 'info',
+      bottomEnd: 'paging',
     },
-  });
+  })
 
-  loadAsignacionEntesTable();
-};
+  loadAsignacionEntesTable()
+}
 
 export const loadAsignacionEntesTable2 = async () => {
   // let planes = await getEntesPlanes()
-  let distribuciones = await getDistribucionEntes();
+  let distribuciones = await getDistribucionEntes()
 
-  if (!Array.isArray(distribuciones.fullInfo)) return;
+  if (!Array.isArray(distribuciones.fullInfo)) return
 
-  if (!distribuciones || distribuciones.error) return;
+  if (!distribuciones || distribuciones.error) return
 
-  let datosOrdenados = [...distribuciones.fullInfo].sort((a, b) => a.id - b.id);
+  let datosOrdenados = [...distribuciones.fullInfo].sort((a, b) => a.id - b.id)
   let data = datosOrdenados.map((el) => {
     return {
       ente_nombre: `Distribucion para ente "${el.ente_nombre}"`,
@@ -275,15 +278,15 @@ export const loadAsignacionEntesTable2 = async () => {
           : ` <span class='btn btn-danger btn-sm'>
             Rechazado
           </span>`,
-    };
-  });
+    }
+  })
 
-  distribucionEntesTable.clear().draw();
+  distribucionEntesTable.clear().draw()
 
   // console.log(datosOrdenados)
-  distribucionEntesTable.rows.add(data).draw();
-};
+  distribucionEntesTable.rows.add(data).draw()
+}
 
 export async function deletePartidaRow({ id, row }) {
-  distribucionEntesTable.row(row).remove().draw();
+  distribucionEntesTable.row(row).remove().draw()
 }
