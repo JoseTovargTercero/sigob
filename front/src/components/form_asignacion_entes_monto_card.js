@@ -1,4 +1,5 @@
 import { asignarMontoEnte, getEnte } from '../api/form_entes.js'
+import { selectTables } from '../api/globalApi.js'
 import { loadAsignacionEntesTable } from '../controllers/form_asignacionEntesTable.js'
 import {
   confirmNotification,
@@ -23,7 +24,7 @@ export const form_asignacion_entes_monto_card = async ({
     monto: {
       value: true,
       message: 'Monto inválido',
-      type: 'textarea',
+      type: 'number3',
     },
   }
 
@@ -39,7 +40,7 @@ export const form_asignacion_entes_monto_card = async ({
   const oldCardElement = d.getElementById('asignacion-ente-monto-form-card')
   if (oldCardElement) oldCardElement.remove()
 
-  let card = ` <div class='card slide-up-animation' id='asignacion-ente-monto-form-card'>
+  let card = `<div class='card slide-up-animation' id='asignacion-ente-monto-form-card'>
       <div class='card-header d-flex justify-content-between'>
         <div class=''>
           <h5 class='mb-0'>Asignar monto presupuestario a ente</h5>
@@ -57,8 +58,17 @@ export const form_asignacion_entes_monto_card = async ({
         </button>
       </div>
       <div class='card-body'>
-       
         <h5>Nombre: ${ente.ente_nombre}</h5>
+        <h6>
+          Tipo: ${ente.tipo_ente === 'J' ? 'Jurídico' : 'Descentralizado'}
+        </h6>
+        <h6>
+          Sector/Programa/Proyecto/Actividad:  ${ente.sector || '0'}.${
+    ente.programa || '0'
+  }.${ente.proyecto == 0 ? '00' : ente.proyecto}.${
+    ente.actividad == 0 ? '00' : ente.actividad
+  }
+        </h6>
         <h6>
           Tipo: ${ente.tipo_ente === 'J' ? 'Jurídico' : 'Descentralizado'}
         </h6>
@@ -75,10 +85,16 @@ export const form_asignacion_entes_monto_card = async ({
         <form id='asignacion-ente-monto-form'>
           <div class='row'>
             <div class='form-group'>
-              <label class="form-label" for='monto'>MONTO A ASIGNAR</label>
-              <input type="number" name='monto' id='monto' class='form-control' placeholder='Asignar monto a ente "${
-                ente.ente_nombre
-              }"'/>
+              <label class='form-label' for='monto'>
+                MONTO A ASIGNAR
+              </label>
+              <input
+                type='number'
+                name='monto'
+                id='monto'
+                class='form-control'
+                placeholder='Asignar monto a ente "${ente.ente_nombre}"'
+              />
             </div>
           </div>
         </form>

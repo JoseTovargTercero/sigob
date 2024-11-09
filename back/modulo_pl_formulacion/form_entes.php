@@ -131,7 +131,7 @@ function obtenerEntePorId($id)
             throw new Exception("Debe proporcionar un ID para la consulta");
         }
 
-        $sql = "SELECT id, ente_nombre, tipo_ente FROM entes WHERE id = ?";
+        $sql = "SELECT id, sector, programa, proyecto, actividad, ente_nombre, tipo_ente FROM entes WHERE id = ?";
         $stmt = $conexion->prepare($sql);
         $stmt->bind_param("i", $id);
         $stmt->execute();

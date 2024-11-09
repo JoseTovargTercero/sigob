@@ -8,6 +8,7 @@ import {
 import { form_asignacion_entes_card } from '../components/form_asignacion_entes_card.js'
 
 import { form_asignacion_entes_form_card } from '../components/form_asignacion_entes_form_card.js'
+import { form_asignacion_entes_monto_card } from '../components/form_asignacion_entes_monto_card.js'
 
 import {
   ejerciciosLista,
@@ -101,6 +102,14 @@ export const validateAsignacionEntesView = async () => {
 
       form_asignacion_entes_card({
         elementToInset: 'asignacion-entes-view',
+        ejercicioFiscal,
+      })
+    }
+
+    if (e.target.dataset.asignarid) {
+      form_asignacion_entes_monto_card({
+        elementToInset: 'asignacion-entes-view',
+        enteId: e.target.dataset.asignarid,
         ejercicioFiscal,
         actualizar: async function () {
           let res = await actualizarEjercicioFiscal()
