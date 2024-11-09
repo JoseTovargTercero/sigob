@@ -103,12 +103,39 @@ function obtenerTodosEntes()
     global $conexion;
 
     try {
-        $sql = "SELECT id, ente_nombre, tipo_ente FROM entes";
+        $sql = "SELECT id, sector, programa, proyecto, actividad, ente_nombre, tipo_ente FROM entes";
         $result = $conexion->query($sql);
 
         if ($result->num_rows > 0) {
             $entes = [];
             while ($row = $result->fetch_assoc()) {
+                // Obtener información del sector
+                $sqlSector = "SELECT * FROM pl_sectores WHERE id = ?";
+                $stmtSector = $conexion->prepare($sqlSector);
+                $stmtSector->bind_param("i", $row['sector']);
+                $stmtSector->execute();
+                $resultSector = $stmtSector->get_result();
+                $row['sector_informacion'] = $resultSector->fetch_assoc();
+
+                // Obtener información del programa
+                $sqlPrograma = "SELECT * FROM pl_programas WHERE id = ?";
+                $stmtPrograma = $conexion->prepare($sqlPrograma);
+                $stmtPrograma->bind_param("i", $row['programa']);
+                $stmtPrograma->execute();
+                $resultPrograma = $stmtPrograma->get_result();
+                $row['programa_informacion'] = $resultPrograma->fetch_assoc();
+
+                // Obtener información del proyecto
+                $sqlProyecto = "SELECT * FROM pl_proyectos WHERE id = ?";
+                $stmtProyecto = $conexion->prepare($sqlProyecto);
+                $stmtProyecto->bind_param("i", $row['proyecto']);
+                $stmtProyecto->execute();
+                $resultProyecto = $stmtProyecto->get_result();
+                $row['proyecto_informacion'] = $resultProyecto->fetch_assoc();
+
+                // Configurar información de actividad
+                $row['actividad_informacion'] = !empty($row['actividad']) ? $row['actividad'] : 0;
+
                 $entes[] = $row;
             }
             return json_encode(["success" => $entes]);
@@ -139,6 +166,34 @@ function obtenerEntePorId($id)
 
         if ($result->num_rows > 0) {
             $ente = $result->fetch_assoc();
+
+            // Obtener información del sector
+            $sqlSector = "SELECT * FROM pl_sectores WHERE id = ?";
+            $stmtSector = $conexion->prepare($sqlSector);
+            $stmtSector->bind_param("i", $ente['sector']);
+            $stmtSector->execute();
+            $resultSector = $stmtSector->get_result();
+            $ente['sector_informacion'] = $resultSector->fetch_assoc();
+
+            // Obtener información del programa
+            $sqlPrograma = "SELECT * FROM pl_programas WHERE id = ?";
+            $stmtPrograma = $conexion->prepare($sqlPrograma);
+            $stmtPrograma->bind_param("i", $ente['programa']);
+            $stmtPrograma->execute();
+            $resultPrograma = $stmtPrograma->get_result();
+            $ente['programa_informacion'] = $resultPrograma->fetch_assoc();
+
+            // Obtener información del proyecto
+            $sqlProyecto = "SELECT * FROM pl_proyectos WHERE id = ?";
+            $stmtProyecto = $conexion->prepare($sqlProyecto);
+            $stmtProyecto->bind_param("i", $ente['proyecto']);
+            $stmtProyecto->execute();
+            $resultProyecto = $stmtProyecto->get_result();
+            $ente['proyecto_informacion'] = $resultProyecto->fetch_assoc();
+
+            // Configurar información de actividad
+            $ente['actividad_informacion'] = !empty($ente['actividad']) ? $ente['actividad'] : 0;
+
             return json_encode(["success" => $ente]);
         } else {
             return json_encode(["error" => "No se encontró un registro con el ID proporcionado."]);
