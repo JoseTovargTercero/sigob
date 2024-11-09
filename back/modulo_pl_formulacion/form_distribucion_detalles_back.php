@@ -20,7 +20,7 @@ function actualizar($info)
         $conexion->begin_transaction();
 
         // Obtener la distribución actual
-        $sqlDistribucion = "SELECT distribucion FROM distribucion_entes WHERE id = ?";
+        $sqlDistribucion = "SELECT distribucion, id_asignacion FROM distribucion_entes WHERE id = ?";
         $stmtDistribucion = $conexion->prepare($sqlDistribucion);
         $stmtDistribucion->bind_param("i", $id);
         $stmtDistribucion->execute();
@@ -33,6 +33,7 @@ function actualizar($info)
         $distribucionData = json_decode($row['distribucion'], true);
         $monto_anterior = $distribucionData[$key]['monto'];
         $id_distribucion = $distribucionData[$key]['id_distribucion'];
+        $id_asignacion = $row['id_asignacion'];
 
         // Verificar la disponibilidad en distribucion_presupuestaria
         $sqlPresupuestaria = "SELECT monto_actual FROM distribucion_presupuestaria WHERE id = ?";
@@ -65,6 +66,12 @@ function actualizar($info)
         $stmtUpdateDistribucion = $conexion->prepare($sqlUpdateDistribucion);
         $stmtUpdateDistribucion->bind_param("sdi", $nuevaDistribucion, $diferencia, $id);
         $stmtUpdateDistribucion->execute();
+
+        // Actualizar monto_total en asignacion_ente
+        $sqlUpdateAsignacion = "UPDATE asignacion_ente SET monto_total = monto_total + ? WHERE id = ?";
+        $stmtUpdateAsignacion = $conexion->prepare($sqlUpdateAsignacion);
+        $stmtUpdateAsignacion->bind_param("di", $diferencia, $id_asignacion);
+        $stmtUpdateAsignacion->execute();
 
         $conexion->commit();
         return json_encode(["success" => "Distribución actualizada correctamente."]);
@@ -147,9 +154,10 @@ switch ($accion) {
     case "borrar":
         $response = eliminar($data);
         break;
-
     default:
         $response = ["error" => "Acción inválida."];
 }
 
 echo $response;
+
+?>
