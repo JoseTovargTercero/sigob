@@ -25,59 +25,108 @@ class AjaxRequest {
   send(onSuccess, onError) {
     return $.ajax({
       url: this.url,
-      type: 'POST',
+      type: "POST",
       contentType: this.contentType,
       data: JSON.stringify(this.data),
-      success: function(response) {
-       //console.log(response);
+      success: function (response) {
+        //console.log(response);
         try {
-          if (typeof response !== 'object') {
+          if (typeof response !== "object") {
             response = JSON.parse(response);
           }
         } catch (e) {
-          console.error('Error al parsear la respuesta JSON:', e);
-          toast_s('error', 'Respuesta del servidor no válida');
+          console.error("Error al parsear la respuesta JSON:", e);
+          toast_s("error", "Respuesta del servidor no válida");
           return;
         }
 
-        if (response.status === 'ok') {
-          if (typeof onSuccess === 'function') {
+        if (response.status === "ok") {
+          if (typeof onSuccess === "function") {
             onSuccess(response);
           }
         } else {
           console.log(response.message);
-          toast_s('error', 'Error: ' + response.message);
-          if (typeof onError === 'function') {
+          toast_s("error", "Error: " + response.message);
+          if (typeof onError === "function") {
             onError(response);
           }
         }
       },
-      error: function(jqXHR, textStatus, errorThrown) {
-        console.error('Error en la solicitud AJAX:', textStatus, errorThrown);
+      error: function (jqXHR, textStatus, errorThrown) {
+        console.error("Error en la solicitud AJAX:", textStatus, errorThrown);
         try {
           const response = JSON.parse(jqXHR.responseText);
-          console.error('Error del servidor:', response.mensaje, 'Archivo:', response.archivo, 'Línea:', response.linea);
-          toast_s('error', 'Error del servidor: ' + response.mensaje);
-          
+          console.error(
+            "Error del servidor:",
+            response.mensaje,
+            "Archivo:",
+            response.archivo,
+            "Línea:",
+            response.linea
+          );
+          toast_s("error", "Error del servidor: " + response.mensaje);
         } catch (e) {
-          console.error('Error al parsear la respuesta de error:', e);
-          toast_s('error', 'Error en la solicitud: ' + textStatus);
+          console.error("Error al parsear la respuesta de error:", e);
+          toast_s("error", "Error en la solicitud: " + textStatus);
         }
-        if (typeof onError === 'function') {
-          onError({textStatus, errorThrown});
+        if (typeof onError === "function") {
+          onError({ textStatus, errorThrown });
         }
       },
-      complete: function() {
-      //  console.log('Solicitud AJAX completada');
-      }
+      complete: function () {
+        //  console.log('Solicitud AJAX completada');
+      },
+    });
+  }
+
+  sendResolveJson(onSuccess, onError) {
+    return $.ajax({
+      url: this.url,
+      type: "POST",
+      contentType: this.contentType,
+      data: JSON.stringify(this.data),
+      success: function (response) {
+        //console.log(response);
+
+        if (response.success) {
+          if (typeof onSuccess === "function") {
+            onSuccess(response);
+          }
+        } else {
+          console.log(response.message);
+          toast_s("error", "Error: " + response.message);
+          if (typeof onError === "function") {
+            onError(response);
+          }
+        }
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        console.error("Error en la solicitud AJAX:", textStatus, errorThrown);
+        try {
+          const response = JSON.parse(jqXHR.responseText);
+          console.error(
+            "Error del servidor:",
+            response.mensaje,
+            "Archivo:",
+            response.archivo,
+            "Línea:",
+            response.linea
+          );
+          toast_s("error", "Error del servidor: " + response.mensaje);
+        } catch (e) {
+          console.error("Error al parsear la respuesta de error:", e);
+          toast_s("error", "Error en la solicitud: " + textStatus);
+        }
+        if (typeof onError === "function") {
+          onError({ textStatus, errorThrown });
+        }
+      },
+      complete: function () {
+        //  console.log('Solicitud AJAX completada');
+      },
     });
   }
 }
-
-
-
-
-
 
 /**
  * Represents an AJAX form sender.
@@ -119,7 +168,7 @@ class AjaxFormSender {
       if (this.xhr.readyState === XMLHttpRequest.DONE) {
         if (this.xhr.status === 200) {
           try {
-            JSON.parse(this.xhr.responseText)
+            JSON.parse(this.xhr.responseText);
             callback(null, JSON.parse(this.xhr.responseText));
           } catch (error) {
             callback(null, this.xhr.responseText);
@@ -133,6 +182,3 @@ class AjaxFormSender {
     this.xhr.send(jsonString);
   }
 }
-
-
-

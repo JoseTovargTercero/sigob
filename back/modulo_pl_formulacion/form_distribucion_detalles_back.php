@@ -147,10 +147,9 @@ switch ($accion) {
     case "borrar":
         $response = eliminar($data);
         break;
+
     default:
         $response = ["error" => "Acción inválida."];
 }
 
 echo $response;
-
-?>

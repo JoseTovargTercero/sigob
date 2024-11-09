@@ -218,7 +218,6 @@ require_once '../../back/sistema_global/session.php';
         }
 
         document.addEventListener('click', function(event) {
-
           if (event.target.closest('.btn-destroy')) {
             const id = event.target.closest('.btn-destroy').getAttribute('data-delete-id');
             eliminar(id);

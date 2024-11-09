@@ -16,7 +16,7 @@ $stmt->close();
 
 
 // INFORMACION DE LA DISTRIBUCION POIR ACTIVIDADES
-$stmt = mysqli_prepare($conexion, 'SELECT * FROM `distribucion_entes` AS DE
+$stmt = mysqli_prepare($conexion, 'SELECT DE.*, ED.actividad, ED.ente_nombre FROM `distribucion_entes` AS DE
 LEFT JOIN entes_dependencias AS ED ON ED.id = DE.actividad_id
 WHERE DE.id_asignacion = ? ORDER BY ED.actividad');
 $stmt->bind_param('s', $id);
@@ -33,7 +33,6 @@ if ($result->num_rows > 0) {
 $stmt->close();
 
 
-
 // INFORMACION COMPLEMENTARIA DE LAS PARTIDAS USADAS
 
 
@@ -45,12 +44,11 @@ ps.denominacion AS sector_nombre_completo,
 pp.programa AS programa_nombre, 
 pp.denominacion AS programa_nombre_completo
 FROM distribucion_presupuestaria dp
-JOIN pl_sectores ps ON dp.id_sector = ps.id
-JOIN pl_programas pp ON dp.id_programa = pp.id
+LEFT JOIN pl_sectores ps ON dp.id_sector = ps.id
+LEFT JOIN pl_programas pp ON dp.id_programa = pp.id
 LEFT JOIN pl_proyectos ON dp.id_proyecto = pl_proyectos.id
-JOIN partidas_presupuestarias p ON dp.id_partida = p.id
-WHERE dp.id_ejercicio=$id_ejercicio
-";
+LEFT JOIN partidas_presupuestarias p ON dp.id_partida = p.id
+WHERE dp.id_ejercicio=$id_ejercicio";
 
 $result = $conexion->query($sql);
 
@@ -59,6 +57,7 @@ $distribuciones = [];
 while ($row = $result->fetch_assoc()) {
   $distribuciones[$row['id']] = $row;
 }
+
 
 
 
@@ -133,6 +132,7 @@ $titulo = 'Distribución por entes';
                 </div>
                 <div class="mt-2 card-body">
 
+
                   <table class="table" id="table">
                     <thead>
                       <tr>
@@ -140,6 +140,8 @@ $titulo = 'Distribución por entes';
                         <th>S/P/P</th>
                         <th>Partida</th>
                         <th>Asignación</th>
+                        <th></th>
+                        <th></th>
                       </tr>
                     </thead>
                     <tbody>
@@ -166,13 +168,17 @@ $titulo = 'Distribución por entes';
       <script src="../../src/assets/js/amcharts5/xy.js"></script>
 
       <script>
+        const url_back = '../../back/modulo_pl_formulacion/form_distribucion_detalles_back.php'
+
         var DataTable = $("#table").DataTable({
           language: lenguaje_datat
         });
 
         const distribucionData = <?php echo json_encode($data); ?>;
         const distribucionPartida = <?php echo json_encode($distribuciones); ?>;
+        let ultima_actividad = '51';
 
+        //  console.log(distribucionPartida)
 
         // CREAR BOTONES PILLS
         let ul_pills = document.getElementById('pills-tab')
@@ -192,31 +198,167 @@ $titulo = 'Distribución por entes';
             const id = event.target.closest('.nav-item').getAttribute('data-id-actividad');
             info_actividades(id)
           }
+
+          if (event.target.closest('.btn-destroy')) {
+            const id = event.target.closest('.btn-destroy').getAttribute('data-delete-id-dist');
+            const key = event.target.closest('.btn-destroy').getAttribute('data-key-id');
+            eliminar(id, key);
+          }
+          if (event.target.closest('.btn-update')) {
+            const id = event.target.closest('.btn-update').getAttribute('data-edit-id-dist');
+            const key = event.target.closest('.btn-update').getAttribute('data-key-id');
+            editar(id, key);
+          }
         });
 
 
 
-        // CARGAR LA INFO DE LA ACTIVIDAD, TABLA Y NOMBRE DEL ENTE
-        function info_actividades(actividad) {
-          const ente_nombre = distribucionData[actividad].ente_nombre
-          document.getElementById('actividad').innerHTML = `<b class="text-info">Actividad ${actividad}</b> - ${ente_nombre}`
 
-          let info_tabla = []
-          let count = 1;
-          if (Array.isArray(distribucionData[actividad].distribucion)) {
-            DataTable.clear()
-            distribucionData[actividad].distribucion.forEach(distrib => {
-              let proyecto = distribucionPartida[distrib.id_distribucion]['proyecto_id'] ?? '00'
-              let spp = distribucionPartida[distrib.id_distribucion]['sector_nombre'] + '.' + distribucionPartida[distrib.id_distribucion]['programa_nombre'] + '.' + proyecto
-
-              info_tabla.push([count++, spp, distribucionPartida[distrib.id_distribucion]['partida'], distrib.monto + 'Bs'])
-            });
-            DataTable.rows.add(info_tabla).draw()
+        async function editar(id, key) {
+          $('#modalNotification').modal('toggle')
+          const {
+            value: monto
+          } = await Swal.fire({
+            title: "Asignación",
+            input: "text",
+            html: 'Actualice el monto de la asignación, el monto total de la asignación de se ajustara según el nuevo monto y la disponibilidad presupuestaria.',
+            showCancelButton: true,
+            confirmButtonColor: "#69a5ff",
+            cancelButtonText: `Cancelar`,
+            inputValidator: (value) => {
+              console.log(esNumero(value))
+              if (!value || !esNumero(value)) {
+                return "¡Es necesario indicar un monto valido!";
+              }
+            }
+          });
+          if (monto) {
+            editarMonto(id, key, monto)
           }
+          if (!monto) {
+            $('#modalNotification').modal('toggle')
+          }
+
         }
 
 
-        const url_back = '../../back/modulo_pl_formulacion/form_programas_back.php'
+        function editarMonto(id, key, monto) {
+          if (id == '' || key == '' || monto == '') {
+            toast_s("error", 'No se puedo procesar la solicitud');
+            return;
+          }
+          $.ajax({
+            url: url_back,
+            type: "json",
+            contentType: 'application/json',
+            data: JSON.stringify({
+              accion: 'actualizar',
+              id: id,
+              key: key,
+              monto_nuevo: monto
+            }),
+            success: function(response) {
+              console.log(response)
+              if (response.success) {
+                msgReload()
+              } else {
+                toast_s("error", response.error);
+              }
+            },
+            error: function(xhr, status, error) {
+              toast_s("error", xhr.responseText);
+            },
+          });
+        }
+
+
+
+        function msgReload() {
+          Swal.fire({
+            icon: "success",
+            title: "Éxito",
+            html: 'Acción realizada con éxito, se requiere actualizar la pagina',
+            confirmButtonText: "Ok",
+          }).then((result) => {
+            window.location.reload();
+          });
+        }
+
+        /*
+
+        Se podra modificar el monto.
+        Se vetrifica la disponiblidad presupuestaria en la partida
+
+        */
+
+        // CARGAR LA INFO DE LA ACTIVIDAD, TABLA Y NOMBRE DEL ENTE
+        function info_actividades(actividad = ultima_actividad) {
+          ultima_actividad = actividad;
+
+          console.log(distribucionData[actividad]);
+          const ente_nombre = distribucionData[actividad].ente_nombre;
+          document.getElementById('actividad').innerHTML = `<b class="text-info">Actividad ${actividad}</b> - ${ente_nombre}`;
+          let id = distribucionData[actividad].id;
+
+          let info_tabla = [];
+          let count = 1;
+
+          if (Array.isArray(distribucionData[actividad].distribucion)) {
+            DataTable.clear();
+
+            distribucionData[actividad].distribucion.forEach((distrib, index) => {
+              let proyecto = distribucionPartida[distrib.id_distribucion]?.proyecto_id ?? '00';
+              let spp = distribucionPartida[distrib.id_distribucion]['sector_nombre'] + '.' + distribucionPartida[distrib.id_distribucion]['programa_nombre'] + '.' + proyecto;
+
+              info_tabla.push([
+                count++,
+                spp,
+                distribucionPartida[distrib.id_distribucion]['partida'],
+                agregarSeparadorMiles(distrib.monto) + ' Bs',
+                `<button class="btn btn-update btn-sm bg-brand-color-2 text-white" data-edit-id-dist="${id}" data-monto="${distrib.monto}" data-key-id="${index}"></button>`,
+                `<button class="btn btn-danger btn-sm btn-destroy" data-delete-id-dist="${id}" data-monto="${distrib.monto}" data-key-id="${index}"></button>`
+              ]);
+            });
+            DataTable.rows.add(info_tabla).draw();
+          }
+        }
+
+        function eliminar(id, key) {
+          Swal.fire({
+            title: "¿Estás seguro?",
+            text: "¡No podrás revertir esto!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#04a9f5",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Sí, eliminarlo!",
+            cancelButtonText: "Cancelar",
+          }).then((result) => {
+            if (result.isConfirmed) {
+              $.ajax({
+                url: url_back,
+                type: "json",
+                contentType: 'application/json',
+                data: JSON.stringify({
+                  accion: 'borrar',
+                  id: id,
+                  key: key
+                }),
+                success: function(response) {
+                  console.log(response)
+                  if (response.success) {
+                    msgReload()
+                  } else {
+                    toast_s("error", response.error);
+                  }
+                },
+                error: function(xhr, status, error) {
+                  console.error(xhr.responseText);
+                },
+              });
+            }
+          });
+        }
       </script>
 
 </body>
