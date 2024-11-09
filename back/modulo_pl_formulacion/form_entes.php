@@ -136,6 +136,14 @@ function obtenerTodosEntes()
                 // Configurar información de actividad
                 $row['actividad_informacion'] = !empty($row['actividad']) ? $row['actividad'] : 0;
 
+                // Calcular distribucion_sumatoria desde distribucion_presupuestaria
+                $sqlDistribucion = "SELECT SUM(monto_actual) as distribucion_sumatoria FROM distribucion_presupuestaria WHERE id_sector = ? AND id_programa = ? AND id_actividad = ?";
+                $stmtDistribucion = $conexion->prepare($sqlDistribucion);
+                $stmtDistribucion->bind_param("iii", $row['sector'], $row['programa'], $row['actividad']);
+                $stmtDistribucion->execute();
+                $resultDistribucion = $stmtDistribucion->get_result();
+                $row['distribucion_sumatoria'] = $resultDistribucion->fetch_assoc()['distribucion_sumatoria'] ?? 0;
+
                 $entes[] = $row;
             }
             return json_encode(["success" => $entes]);
@@ -194,6 +202,14 @@ function obtenerEntePorId($id)
             // Configurar información de actividad
             $ente['actividad_informacion'] = !empty($ente['actividad']) ? $ente['actividad'] : 0;
 
+            // Calcular distribucion_sumatoria desde distribucion_presupuestaria
+            $sqlDistribucion = "SELECT SUM(monto_actual) as distribucion_sumatoria FROM distribucion_presupuestaria WHERE id_sector = ? AND id_programa = ? AND id_actividad = ?";
+            $stmtDistribucion = $conexion->prepare($sqlDistribucion);
+            $stmtDistribucion->bind_param("iii", $ente['sector'], $ente['programa'], $ente['actividad']);
+            $stmtDistribucion->execute();
+            $resultDistribucion = $stmtDistribucion->get_result();
+            $ente['distribucion_sumatoria'] = $resultDistribucion->fetch_assoc()['distribucion_sumatoria'] ?? 0;
+
             return json_encode(["success" => $ente]);
         } else {
             return json_encode(["error" => "No se encontró un registro con el ID proporcionado."]);
@@ -203,6 +219,7 @@ function obtenerEntePorId($id)
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 // Procesar la solicitud
 $data = json_decode(file_get_contents("php://input"), true);
