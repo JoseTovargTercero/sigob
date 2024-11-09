@@ -116,11 +116,22 @@ function eliminar($info)
 
         // Eliminar el monto de distribucion en distribucion_entes
         unset($distribucionData[$key]);
-        $nuevaDistribucion = json_encode(array_values($distribucionData));
-        $sqlUpdateDistribucion = "UPDATE distribucion_entes SET distribucion = ?, monto_total = monto_total - ? WHERE id = ?";
-        $stmtUpdateDistribucion = $conexion->prepare($sqlUpdateDistribucion);
-        $stmtUpdateDistribucion->bind_param("sdi", $nuevaDistribucion, $monto_eliminar, $id);
-        $stmtUpdateDistribucion->execute();
+        
+        // Si el array de distribución está vacío después de la eliminación
+        if (empty($distribucionData)) {
+            // Eliminar el registro de distribucion_entes
+            $sqlDeleteDistribucion = "DELETE FROM distribucion_entes WHERE id = ?";
+            $stmtDeleteDistribucion = $conexion->prepare($sqlDeleteDistribucion);
+            $stmtDeleteDistribucion->bind_param("i", $id);
+            $stmtDeleteDistribucion->execute();
+        } else {
+            // Actualizar el JSON en distribucion_entes con los valores restantes
+            $nuevaDistribucion = json_encode(array_values($distribucionData));
+            $sqlUpdateDistribucion = "UPDATE distribucion_entes SET distribucion = ?, monto_total = monto_total - ? WHERE id = ?";
+            $stmtUpdateDistribucion = $conexion->prepare($sqlUpdateDistribucion);
+            $stmtUpdateDistribucion->bind_param("sdi", $nuevaDistribucion, $monto_eliminar, $id);
+            $stmtUpdateDistribucion->execute();
+        }
 
         // Actualizar monto_total en asignacion_ente
         $sqlUpdateAsignacion = "UPDATE asignacion_ente SET monto_total = monto_total - ? WHERE id = ?";
