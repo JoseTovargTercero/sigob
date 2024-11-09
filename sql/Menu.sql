@@ -1,1 +1,0 @@
-INSERT INTO `menu` (`id`, `oficina`, `categoria`, `nombre`, `dir`, `icono`) VALUES (NULL, '', 'usuarios', 'Seguimiento general', 'mod_global/global_user_logs', NULL);
