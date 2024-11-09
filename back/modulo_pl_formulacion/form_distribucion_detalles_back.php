@@ -9,35 +9,126 @@ $db = new DatabaseHandler($conexion);
 
 function actualizar($info)
 {
-    global $db;
+    global $conexion;
 
-    // si el monto nuevo es mayor al monto anterior, se debe verificar la disponibilidad presupuestaria por la partida, sector, programa y actividad correspondiente
+    $id = $info['id'];
+    $monto_nuevo = $info['monto_nuevo'];
+    $key = $info['key'];
+    $fecha = date("Y-m-d");
 
-    // debe actualizar el monto_actual en la partida usada
+    try {
+        $conexion->begin_transaction();
 
-    // debe actualizar el monto en la distribucion_entes corresponidente por el key (igual que en el delete)
+        // Obtener la distribución actual
+        $sqlDistribucion = "SELECT distribucion FROM distribucion_entes WHERE id = ?";
+        $stmtDistribucion = $conexion->prepare($sqlDistribucion);
+        $stmtDistribucion->bind_param("i", $id);
+        $stmtDistribucion->execute();
+        $resultadoDistribucion = $stmtDistribucion->get_result();
+        if ($resultadoDistribucion->num_rows === 0) {
+            throw new Exception("Distribución no encontrada.");
+        }
 
-    // debe actualiza el monto_total (restando o sumando la diferencia entre el monto nuevo-monto anterior)
+        $row = $resultadoDistribucion->fetch_assoc();
+        $distribucionData = json_decode($row['distribucion'], true);
+        $monto_anterior = $distribucionData[$key]['monto'];
+        $id_distribucion = $distribucionData[$key]['id_distribucion'];
 
+        // Verificar la disponibilidad en distribucion_presupuestaria
+        $sqlPresupuestaria = "SELECT monto_actual FROM distribucion_presupuestaria WHERE id = ?";
+        $stmtPresupuestaria = $conexion->prepare($sqlPresupuestaria);
+        $stmtPresupuestaria->bind_param("i", $id_distribucion);
+        $stmtPresupuestaria->execute();
+        $resultadoPresupuestaria = $stmtPresupuestaria->get_result();
+        if ($resultadoPresupuestaria->num_rows === 0) {
+            throw new Exception("Distribución presupuestaria no encontrada.");
+        }
 
+        $monto_actual = $resultadoPresupuestaria->fetch_assoc()['monto_actual'];
+        $diferencia = $monto_nuevo - $monto_anterior;
 
+        if ($monto_nuevo > $monto_anterior && $diferencia > $monto_actual) {
+            throw new Exception("No hay disponibilidad presupuestaria suficiente.");
+        }
+
+        // Actualizar monto_actual en distribucion_presupuestaria
+        $nuevoMontoActual = $monto_actual - $diferencia;
+        $sqlUpdatePresupuestaria = "UPDATE distribucion_presupuestaria SET monto_actual = ? WHERE id = ?";
+        $stmtUpdatePresupuestaria = $conexion->prepare($sqlUpdatePresupuestaria);
+        $stmtUpdatePresupuestaria->bind_param("di", $nuevoMontoActual, $id_distribucion);
+        $stmtUpdatePresupuestaria->execute();
+
+        // Actualizar monto en distribucion_entes
+        $distribucionData[$key]['monto'] = $monto_nuevo;
+        $nuevaDistribucion = json_encode($distribucionData);
+        $sqlUpdateDistribucion = "UPDATE distribucion_entes SET distribucion = ?, monto_total = monto_total + ? WHERE id = ?";
+        $stmtUpdateDistribucion = $conexion->prepare($sqlUpdateDistribucion);
+        $stmtUpdateDistribucion->bind_param("sdi", $nuevaDistribucion, $diferencia, $id);
+        $stmtUpdateDistribucion->execute();
+
+        $conexion->commit();
+        return json_encode(["success" => "Distribución actualizada correctamente."]);
+    } catch (Exception $e) {
+        $conexion->rollback();
+        registrarError($e->getMessage());
+        return json_encode(['error' => $e->getMessage()]);
+    }
 }
 
-function eliminar($id)
+function eliminar($info)
 {
-    global $db;
-    // debe actualizar el monto de la asignacion total al ente (asignacion_ente.sql), restando la del monto que se esta eliminando 
+    global $conexion;
 
-    // debe actualizar el monto_actual en la partida usada
+    $id = $info['id'];
+    $key = $info['key'];
 
-    // debe eliminar mediante la distribucion al ente usando update, con el key (0,1,2,3,etc) identificas la posición en el json y lo eliminas
+    try {
+        $conexion->begin_transaction();
 
-    // debe actualiza el monto_total (restando lo eliminado)
+        // Obtener la distribución actual
+        $sqlDistribucion = "SELECT distribucion, monto_total, id_asignacion FROM distribucion_entes WHERE id = ?";
+        $stmtDistribucion = $conexion->prepare($sqlDistribucion);
+        $stmtDistribucion->bind_param("i", $id);
+        $stmtDistribucion->execute();
+        $resultadoDistribucion = $stmtDistribucion->get_result();
+        if ($resultadoDistribucion->num_rows === 0) {
+            throw new Exception("Distribución no encontrada.");
+        }
 
-    // regresas un json con success o una excepción 
+        $row = $resultadoDistribucion->fetch_assoc();
+        $distribucionData = json_decode($row['distribucion'], true);
+        $monto_eliminar = $distribucionData[$key]['monto'];
+        $id_distribucion = $distribucionData[$key]['id_distribucion'];
+        $id_asignacion = $row['id_asignacion'];
 
+        // Actualizar monto_actual en distribucion_presupuestaria
+        $sqlPresupuestaria = "UPDATE distribucion_presupuestaria SET monto_actual = monto_actual + ? WHERE id = ?";
+        $stmtPresupuestaria = $conexion->prepare($sqlPresupuestaria);
+        $stmtPresupuestaria->bind_param("di", $monto_eliminar, $id_distribucion);
+        $stmtPresupuestaria->execute();
+
+        // Eliminar el monto de distribucion en distribucion_entes
+        unset($distribucionData[$key]);
+        $nuevaDistribucion = json_encode(array_values($distribucionData));
+        $sqlUpdateDistribucion = "UPDATE distribucion_entes SET distribucion = ?, monto_total = monto_total - ? WHERE id = ?";
+        $stmtUpdateDistribucion = $conexion->prepare($sqlUpdateDistribucion);
+        $stmtUpdateDistribucion->bind_param("sdi", $nuevaDistribucion, $monto_eliminar, $id);
+        $stmtUpdateDistribucion->execute();
+
+        // Actualizar monto_total en asignacion_ente
+        $sqlUpdateAsignacion = "UPDATE asignacion_ente SET monto_total = monto_total - ? WHERE id = ?";
+        $stmtUpdateAsignacion = $conexion->prepare($sqlUpdateAsignacion);
+        $stmtUpdateAsignacion->bind_param("di", $monto_eliminar, $id_asignacion);
+        $stmtUpdateAsignacion->execute();
+
+        $conexion->commit();
+        return json_encode(["success" => "Distribución eliminada correctamente."]);
+    } catch (Exception $e) {
+        $conexion->rollback();
+        registrarError($e->getMessage());
+        return json_encode(['error' => $e->getMessage()]);
+    }
 }
-
 
 // PROCESAR SOLICITUDES
 $data = json_decode(file_get_contents("php://input"), true);
@@ -51,13 +142,15 @@ $response = null;
 
 switch ($accion) {
     case "actualizar":
-        $response = actualizar($data['id'], $data['monto'], $data['key'], $data['monto_nuevo']);
+        $response = actualizar($data);
         break;
     case "borrar":
-        $response = eliminar($data['id'], $data['monto'], $data['key']);
+        $response = eliminar($data);
         break;
     default:
         $response = ["error" => "Acción inválida."];
 }
 
 echo $response;
+
+?>
