@@ -274,7 +274,7 @@ $stmt->close();
                       <p class="text-body app-academy-sm-60 app-academy-xl-100">
                         No hay ningún plan registrado este año.
                       </p>
-                      <div class="mb-0"><button class="btn btn-danger" onclick="toggleDialogs()">Iniciar Plan</button></div>
+                      <div class="mb-0"><button class="btn btn-danger" onclick="toggleDialogs()">Iniciar ejercicio</button></div>
                     </div>
                   </div>
 
@@ -291,7 +291,7 @@ $stmt->close();
 
                   <div id="status">
                     <?php
-                    if ($status == 1) {
+                    if ($status == 1 || $status == 2) {
                       echo '<div class="badge bg-light-success">Abierto</div>';
                     } else {
                       echo '<div class="badge bg-light-dark">Cerrado</div>';
@@ -303,14 +303,12 @@ $stmt->close();
 
 
                 <?php
-                echo '<p class="mb-1 d-flex flex-column flex-sm-row justify-content-between text-center gap-3">Situado constitucional: <b>' . number_format($situado, 0, ',', '.') . ' Bs</b></p>';
-                ?>
-                <hr>
+                echo '<p class="mb-1 d-flex flex-column flex-sm-row justify-content-between text-center gap-3">Situado constitucional: <b>' . number_format($situado, 0, ',', '.') . ' Bs</b></p><hr>';
 
 
-                <?php
                 if ($status == 1) {
                   echo '<div class="text-center"><button class="btn btn-sm btn-danger" id="btn-cerrar">Cerrar ejercicio</button></div>';
+                } else if ($status == 1) {
                 }
                 ?>
 

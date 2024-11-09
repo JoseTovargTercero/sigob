@@ -476,7 +476,7 @@ const lenguaje_datat = {
 
 // Separador de miles
 function agregarSeparadorMiles(numero) {
-  return numero.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  return numero.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 // informacion del sistema
@@ -579,4 +579,14 @@ function actualizarSelectPrograma(sector_s, select) {
   $(select).trigger("chosen:updated");
 
   return true;
+}
+
+function esNumero(valor) {
+  // Convertimos el punto en una coma para aceptar decimales con coma
+  const valorConComa = valor.toString().replace(".", ",");
+
+  // Verificamos que el valor sea un número y no contenga texto adicional
+  return (
+    !isNaN(valorConComa.replace(",", ".")) && /^-?\d*,?\d*$/.test(valorConComa)
+  );
 }
