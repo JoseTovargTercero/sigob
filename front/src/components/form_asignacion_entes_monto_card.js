@@ -36,7 +36,9 @@ export const form_asignacion_entes_monto_card = async ({
   }
 
   let ente = await getEnte(enteId)
-  fieldList.monto = ente.distribucion_sumatoria
+  ente.dependencias.forEach((el) => {
+    fieldList.monto = el.distribucion_sumatoria
+  })
 
   const oldCardElement = d.getElementById('asignacion-ente-monto-form-card')
   if (oldCardElement) oldCardElement.remove()
@@ -83,7 +85,7 @@ export const form_asignacion_entes_monto_card = async ({
             Monto total asignado: <b id='monto-total-asignado'>0</b>
           </h6>
         </div>${
-          ente.distribucion_sumatoria > 0
+          fieldList.monto > 0
             ? `<form id='asignacion-ente-monto-form'>
               <div class='row'>
                 <div class='form-group'>
