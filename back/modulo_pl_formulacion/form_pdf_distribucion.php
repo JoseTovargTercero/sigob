@@ -1,12 +1,10 @@
 <?php
 require_once '../sistema_global/conexion.php';
 
-// Suponemos que recibimos $id_ejercicio y $ente de alguna manera, como parámetros GET
 $id_ejercicio = $_GET['id_ejercicio'];
 $ente = $_GET['ente'];
 
 // CONSULTAS
-// Información del sector, programa y proyecto del ente
 $stmt = mysqli_prepare($conexion, "SELECT entes.ente_nombre, ppy.proyecto_id, ppy.denominacion AS nombre_proyecto, 
                                     pp.programa, pp.denominacion AS nombre_programa, 
                                     ps.sector, ps.denominacion AS nombre_sector 
@@ -44,7 +42,7 @@ $stmt->bind_param('ii', $ente, $id_ejercicio);
 $stmt->execute();
 $resultDistribuciones = $stmt->get_result();
 $partidasData = [];
-$maxActividad = 51;  // Inicializamos con el mínimo de las actividades
+$maxActividad = 51;
 
 while ($rowDistribucion = $resultDistribuciones->fetch_assoc()) {
     $distribuciones = json_decode($rowDistribucion['distribucion'], true); // Decodificar el JSON
@@ -55,6 +53,7 @@ while ($rowDistribucion = $resultDistribuciones->fetch_assoc()) {
 
     foreach ($distribuciones as $distribucion) {
         $id_distribucion = $distribucion['id_distribucion'];
+        $monto = $distribucion['monto'];
 
         // Consultar distribucion_presupuestaria para obtener id_partida y monto_actual
         $sqlDistribucionPres = "SELECT id_partida, monto_actual FROM distribucion_presupuestaria WHERE id = ? AND id_ejercicio = ?";
@@ -95,9 +94,10 @@ while ($rowDistribucion = $resultDistribuciones->fetch_assoc()) {
                     'sub_esp' => $partidaArray[3] ?? null,
                     'cod_ordi' => $partidaArray[4] ?? null,
                     'denominacion' => $descripcion,
-                    'monto' => $monto_actual,
+                    'monto' => $monto,
                 ];
-               // Consultar actividad en la tabla ente_dependencias
+
+                // Consultar actividad en la tabla ente_dependencias
                 $sqlActividad = "SELECT actividad FROM entes_dependencias WHERE id = ?";
                 $stmtActividad = $conexion->prepare($sqlActividad);
                 if (!$stmtActividad) {
@@ -147,7 +147,6 @@ foreach ($partidasData as $partida) {
     $partKey = $partida['part'] . '-' . $partida['denominacion'];
     $actividad = $partida['actividad'];
     
-    // Si la partida no existe en el array, inicializarla
     if (!isset($partidasAgrupadas[$partKey])) {
         $partidasAgrupadas[$partKey] = [
             'part' => $partida['part'],
@@ -161,17 +160,12 @@ foreach ($partidasData as $partida) {
         ];
     }
 
-    // Acumular el monto en el total del programa
     $partidasAgrupadas[$partKey]['total_programa'] += $partida['monto'];
     
-    // Acumular el monto en la actividad correspondiente
     if (isset($partidasAgrupadas[$partKey]['actividades'][$actividad])) {
         $partidasAgrupadas[$partKey]['actividades'][$actividad] += $partida['monto'];
     }
 }
-
-
-
 
 // Consultar datos del ejercicio fiscal
 $query_sector = "SELECT * FROM ejercicio_fiscal WHERE id = ?";
