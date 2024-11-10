@@ -26,7 +26,7 @@ export const form_asignacion_entes_monto_card = async ({
     acumulado: 0,
   }
 
-  let fieldList = { monto: '' }
+  let fieldList = { monto: 0 }
   let fieldListErrors = {
     monto: {
       value: true,
@@ -37,7 +37,9 @@ export const form_asignacion_entes_monto_card = async ({
 
   let ente = await getEnte(enteId)
   ente.dependencias.forEach((el) => {
-    fieldList.monto = el.distribucion_sumatoria
+    fieldList.monto += Number(el.distribucion_sumatoria)
+    console.log(el.distribucion_sumatoria)
+    console.log(fieldList.monto)
   })
 
   const oldCardElement = d.getElementById('asignacion-ente-monto-form-card')
@@ -82,7 +84,9 @@ export const form_asignacion_entes_monto_card = async ({
             )}
           </h6>
           <h6>
-            Monto total asignado: <b id='monto-total-asignado'>0</b>
+            Monto total asignado: <b id='monto-total-asignado'>${
+              fieldList.monto
+            }</b>
           </h6>
         </div>${
           fieldList.monto > 0
@@ -97,7 +101,7 @@ export const form_asignacion_entes_monto_card = async ({
                     name='monto'
                     id='monto'
                     class='form-control'
-                    value='${separarMiles(ente.distribucion_sumatoria)}'
+                    value='${separarMiles(fieldList.monto)}'
                     disabled
                     placeholder='Asignar monto a ente "${ente.ente_nombre}"'
                   />
