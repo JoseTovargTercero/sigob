@@ -464,7 +464,7 @@ export const form_asignacion_entes_form_card = async ({
         partida: el.partida,
         nombre: el.nombre || 'No asignado',
         descripcion: el.descripcion,
-        monto_disponible: disponibilidadPartida[`distribucion-${el.id}`],
+        monto_disponible: Number(el.monto_actual),
       }
     })
     // let partidaEncontrada = ejercicioFiscal.distribucion_partidas.find(
@@ -529,14 +529,6 @@ export const form_asignacion_entes_form_card = async ({
                 asignacion.monto_total
               )}</b>
             </h6>
-            <h6>
-              Distribución presupuestaria actual: <b id='monto-total-asignado'><span class="p-2 text-secondary">0</span></b>
-            </h6>
-            <h6>
-            Total distribuido: <b id='monto-total-distribuido'><span class="p-2 text-secondary">${
-              montos.distribuido_total
-            }</span></b>
-          </h6>
           </div>
           <div class='col'>
             <h6>Nombre: ${asignacion.ente_nombre}</h6>
@@ -974,6 +966,8 @@ export const form_asignacion_entes_form_card = async ({
           id_asignacion: asignacion.id,
           monto_total_asignado,
         }
+
+        console.log(data)
 
         datosDistribucionActividades.push(data)
 
