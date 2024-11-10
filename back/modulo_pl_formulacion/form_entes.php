@@ -210,6 +210,43 @@ function obtenerEntePorId($id)
             $resultDistribucion = $stmtDistribucion->get_result();
             $ente['distribucion_sumatoria'] = $resultDistribucion->fetch_assoc()['distribucion_sumatoria'] ?? 0;
 
+            // Obtener dependencias del ente
+            $sqlDependencias = "SELECT id, sector, programa, proyecto, actividad, ente_nombre, tipo_ente FROM entes_dependencias WHERE ue = ?";
+            $stmtDependencias = $conexion->prepare($sqlDependencias);
+            $stmtDependencias->bind_param("i", $id);
+            $stmtDependencias->execute();
+            $resultDependencias = $stmtDependencias->get_result();
+
+            $ente['dependencias'] = [];
+
+            while ($dependencia = $resultDependencias->fetch_assoc()) {
+                // Obtener información del sector para la dependencia
+                $stmtSector->bind_param("i", $dependencia['sector']);
+                $stmtSector->execute();
+                $dependencia['sector_informacion'] = $stmtSector->get_result()->fetch_assoc();
+
+                // Obtener información del programa para la dependencia
+                $stmtPrograma->bind_param("i", $dependencia['programa']);
+                $stmtPrograma->execute();
+                $dependencia['programa_informacion'] = $stmtPrograma->get_result()->fetch_assoc();
+
+                // Obtener información del proyecto para la dependencia
+                $stmtProyecto->bind_param("i", $dependencia['proyecto']);
+                $stmtProyecto->execute();
+                $dependencia['proyecto_informacion'] = $stmtProyecto->get_result()->fetch_assoc();
+
+                // Configurar información de actividad para la dependencia
+                $dependencia['actividad_informacion'] = !empty($dependencia['actividad']) ? $dependencia['actividad'] : 0;
+
+                // Calcular distribucion_sumatoria para la dependencia desde distribucion_presupuestaria
+                $stmtDistribucion->bind_param("iii", $dependencia['sector'], $dependencia['programa'], $dependencia['actividad']);
+                $stmtDistribucion->execute();
+                $dependencia['distribucion_sumatoria'] = $stmtDistribucion->get_result()->fetch_assoc()['distribucion_sumatoria'] ?? 0;
+
+                // Agregar la dependencia con toda su información al array de dependencias
+                $ente['dependencias'][] = $dependencia;
+            }
+
             return json_encode(["success" => $ente]);
         } else {
             return json_encode(["error" => "No se encontró un registro con el ID proporcionado."]);
@@ -219,6 +256,7 @@ function obtenerEntePorId($id)
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 
 // Procesar la solicitud
