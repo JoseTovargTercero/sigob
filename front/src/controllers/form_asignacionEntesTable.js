@@ -157,12 +157,19 @@ let asignacionEntesTable
 export const validateAsignacionEntesTable = async (id_ejercicio) => {
   asignacionEntesTable = new DataTable('#asignacion-entes-table', {
     columns: [
-      { data: 'ente_nombre' },
+      {
+        data: 'ente_nombre',
+        render: function (data) {
+          return `<div class="text-wrap">
+              ${data}
+            </div>`
+        },
+      },
       { data: 'monto' },
       { data: 'fecha' },
       { data: 'acciones' },
     ],
-    responsive: true,
+
     scrollY: 400,
     language: tableLanguage,
     layout: {
@@ -225,7 +232,6 @@ export const loadAsignacionEntesTable = async (id_ejercicio) => {
   console.log(data)
 
   asignacionEntesTable.clear().draw()
-
   // console.log(datosOrdenados)
   asignacionEntesTable.rows.add(data).draw()
 }

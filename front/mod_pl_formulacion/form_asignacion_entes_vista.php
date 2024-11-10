@@ -69,9 +69,9 @@ require_once '../../back/sistema_global/session.php';
               </div> -->
               <div class="table-responsive">
                 <table id="asignacion-entes-table" class="table table-striped" style="width:100%">
-                  <thead class="w-100">
-                    <th>ENTE</th>
-                    <th>MONTO ASIGNADO</th>
+                  <thead class="">
+                    <th class="w-50">ENTE</th>
+                    <th class="w-10">MONTO ASIGNADO</th>
                     <th>FECHA</th>
                     <th>ACCIONES</th>
                   </thead>
