@@ -77,23 +77,37 @@ function eliminarAsignacionEnte($id)
 
         if ($affectedRowsAsignacion > 0) {
             // Verifica si existen registros en distribucion_entes con el id_asignacion correspondiente
-            $sqlVerificacion = "SELECT COUNT(*) AS total FROM distribucion_entes WHERE id_asignacion = ?";
+            $sqlVerificacion = "SELECT id, distribucion FROM distribucion_entes WHERE id_asignacion = ?";
             $stmtVerificacion = $conexion->prepare($sqlVerificacion);
             $stmtVerificacion->bind_param("i", $id);
             $stmtVerificacion->execute();
             $resultVerificacion = $stmtVerificacion->get_result();
-            $rowVerificacion = $resultVerificacion->fetch_assoc();
-
+            
             $affectedRowsDistribucion = 0;
 
-            // Si hay registros en distribucion_entes, procede con la eliminación
-            if ($rowVerificacion['total'] > 0) {
-                $sqlDistribucion = "DELETE FROM distribucion_entes WHERE id_asignacion = ?";
-                $stmtDistribucion = $conexion->prepare($sqlDistribucion);
-                $stmtDistribucion->bind_param("i", $id);
-                $stmtDistribucion->execute();
+            // Si hay registros en distribucion_entes, procesa cada uno
+            while ($rowVerificacion = $resultVerificacion->fetch_assoc()) {
+                $distribucionData = json_decode($rowVerificacion['distribucion'], true);
                 
-                $affectedRowsDistribucion = $stmtDistribucion->affected_rows;
+                // Iterar sobre cada elemento en el array `distribucion` para actualizar `monto_actual` en `distribucion_presupuestaria`
+                foreach ($distribucionData as $item) {
+                    $id_distribucion = $item['id_distribucion'];
+                    $monto = $item['monto'];
+
+                    // Actualizar monto_actual en distribucion_presupuestaria sumando el monto de cada elemento
+                    $sqlUpdatePresupuestaria = "UPDATE distribucion_presupuestaria SET monto_actual = monto_actual + ? WHERE id = ?";
+                    $stmtUpdatePresupuestaria = $conexion->prepare($sqlUpdatePresupuestaria);
+                    $stmtUpdatePresupuestaria->bind_param("di", $monto, $id_distribucion);
+                    $stmtUpdatePresupuestaria->execute();
+                }
+
+                // Eliminar el registro en distribucion_entes después de actualizar los montos
+                $sqlDistribucion = "DELETE FROM distribucion_entes WHERE id = ?";
+                $stmtDistribucion = $conexion->prepare($sqlDistribucion);
+                $stmtDistribucion->bind_param("i", $rowVerificacion['id']);
+                $stmtDistribucion->execute();
+
+                $affectedRowsDistribucion += $stmtDistribucion->affected_rows;
             }
 
             // Commit de la transacción de eliminación
@@ -123,6 +137,7 @@ function eliminarAsignacionEnte($id)
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 
 function consultarAsignacionPorId($id)

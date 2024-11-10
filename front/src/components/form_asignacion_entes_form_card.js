@@ -191,7 +191,7 @@ export const form_asignacion_entes_form_card = async ({
       <td>${actividad_nombre}</td>
       <td>${actividad_codigo}</td>
 
-      <td>${montoTotalActividad}</td>
+      <td>${separarMiles(montoTotalActividad)}</td>
       <td>${status}</td>
       <td>
      ${acciones}
@@ -382,10 +382,10 @@ export const form_asignacion_entes_form_card = async ({
       .filter((distribucion) => Number(distribucion.monto_disponible) > 0)
       .map((distribucion) => {
         return `  <tr>
-          <td>${distribucion.sector}</td>
-          <td>${distribucion.programa}</td>
-          <td>${distribucion.proyecto}</td>
-          <td>${distribucion.actividad}</td>
+          <td>${distribucion.sector}.${distribucion.programa}.${
+          distribucion.actividad
+        }</td>
+          <td>${distribucion.partida}</td>
           <td>
           <input
           class='form-control partida-input partida-monto-disponible'
@@ -525,7 +525,9 @@ export const form_asignacion_entes_form_card = async ({
           <div class='col'>
             
             <h6>
-              Asignación total: <b id=''>${asignacion.monto_total}</b>
+              Asignación total: <b id=''>${separarMiles(
+                asignacion.monto_total
+              )}</b>
             </h6>
             <h6>
               Distribución presupuestaria actual: <b id='monto-total-asignado'><span class="p-2 text-secondary">0</span></b>
@@ -553,10 +555,8 @@ export const form_asignacion_entes_form_card = async ({
           style='width:100%'
         >
           <thead class='w-100'>
-            <th>SECTOR</th>
-            <th>PROGRAMA</th>
-            <th>PROYECTO</th>
-            <th>ACTIVIDAD</th>
+            <th>S/P/A</th>
+            <th>PARTIDA</th>
             
             <th>ASIGNACION</th>
           </thead>
