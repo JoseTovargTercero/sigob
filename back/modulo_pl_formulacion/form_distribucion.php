@@ -291,7 +291,7 @@ function eliminarDistribucion($id)
         $result = $stmt->get_result();
         $distribucion = $result->fetch_assoc();
 
-        if (!$distribucion) {
+        if ($distribucion) {
             throw new Exception("No se puede eliminar, se está usando para una asignación a uno o mas entes.");
         }
         // verificar si esta en uso no 
