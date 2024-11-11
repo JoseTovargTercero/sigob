@@ -395,10 +395,10 @@ $stmt->close();
             'nombre_archivo': 'DESCRIPCION DEL PROGRAMA,  SUB - PROGRAMA Y PROYECTO'
           },
           'distribucion': {
-            'inputs': ['sect-sector', 'sect-programa'],
+            'inputs': [],
             'titulo': 'DISTRIBUCIÓN INSTITUCIONAL',
-            'texto': '<div class="text-center text-info">En caso de querer exportar todos los sectores deje los campos vacíos.</div>',
-            'autorun': false,
+            'texto': texto_nr,
+            'autorun': true,
             'nombre_archivo': 'DISTRIBUCIÓN INSTITUCIONAL'
           },
           'presupuesto': {

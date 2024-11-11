@@ -8,14 +8,14 @@ import {
   aceptarDistribucionEnte,
   getDistribucionEnte,
   rechazarDistribucionEnte,
-} from '../api/form_entes.js'
-import { getFormPartidas, getPartidas } from '../api/partidas.js'
+} from "../api/form_entes.js";
+import { getFormPartidas, getPartidas } from "../api/partidas.js";
 import {
   enviarDistribucionPresupuestariaEntes,
   getEjecicio,
   getEjecicios,
-} from '../api/pre_distribucion.js'
-import { loadAsignacionEntesTable } from '../controllers/form_asignacionEntesTable.js'
+} from "../api/pre_distribucion.js";
+import { loadAsignacionEntesTable } from "../controllers/form_asignacionEntesTable.js";
 import {
   confirmNotification,
   formatearFloat,
@@ -24,35 +24,35 @@ import {
   separarMiles,
   toastNotification,
   validateInput,
-} from '../helpers/helpers.js'
-import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
-import { form_distribucion_entes_card } from './form_distribucion_entes_card.js'
-const d = document
+} from "../helpers/helpers.js";
+import { NOTIFICATIONS_TYPES } from "../helpers/types.js";
+import { form_distribucion_entes_card } from "./form_distribucion_entes_card.js";
+const d = document;
 
 const tableLanguage = {
-  decimal: '',
-  emptyTable: 'No hay datos disponibles en la tabla',
-  info: 'Mostrando _START_ a _END_ de _TOTAL_ entradas',
-  infoEmpty: 'Mostrando 0 a 0 de 0 entradas',
-  infoFiltered: '(filtrado de _MAX_ entradas totales)',
-  infoPostFix: '',
-  thousands: ',',
-  lengthMenu: 'Mostrar _MENU_',
-  loadingRecords: 'Cargando...',
-  processing: '',
-  search: 'Buscar:',
-  zeroRecords: 'No se encontraron registros coincidentes',
+  decimal: "",
+  emptyTable: "No hay datos disponibles en la tabla",
+  info: "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+  infoEmpty: "Mostrando 0 a 0 de 0 entradas",
+  infoFiltered: "(filtrado de _MAX_ entradas totales)",
+  infoPostFix: "",
+  thousands: ",",
+  lengthMenu: "Mostrar _MENU_",
+  loadingRecords: "Cargando...",
+  processing: "",
+  search: "Buscar:",
+  zeroRecords: "No se encontraron registros coincidentes",
   paginate: {
-    first: 'Primera',
-    last: 'Última',
-    next: 'Siguiente',
-    previous: 'Anterior',
+    first: "Primera",
+    last: "Última",
+    next: "Siguiente",
+    previous: "Anterior",
   },
   aria: {
-    orderable: 'Ordenar por esta columna',
-    orderableReverse: 'Orden inverso de esta columna',
+    orderable: "Ordenar por esta columna",
+    orderableReverse: "Orden inverso de esta columna",
   },
-}
+};
 
 export const form_asignacion_entes_form_card = async ({
   elementToInset,
@@ -60,111 +60,111 @@ export const form_asignacion_entes_form_card = async ({
   ejercicioFiscal,
   actualizar,
 }) => {
-  let fieldList = { ejemplo: '' }
+  let fieldList = { ejemplo: "" };
   let fieldListErrors = {
     ejemplo: {
       value: true,
-      message: 'mensaje de error',
-      type: 'text',
+      message: "mensaje de error",
+      type: "text",
     },
-  }
+  };
 
   // PARA GUARDAR DEPENDENCIAS DEL ENTE SELECCIONADAS
-  let dependenciaEnteSeleccionada = null
+  let dependenciaEnteSeleccionada = null;
 
   // DATOS A ENVIAR PARA REGISTRAR DISTRIBUCION
 
-  let datosDistribucionActividades = []
+  let datosDistribucionActividades = [];
 
   // DATOS PARA GUARDAR ESTADO DE LAS PARTIDAS (MONTO ASIGNADO Y/O DISPONIBLE)
-  let disponibilidadPartida = {}
+  let disponibilidadPartida = {};
 
   ejercicioFiscal.distribucion_partidas.forEach((distribucion) => {
     disponibilidadPartida[`distribucion-${distribucion.id}`] = Number(
       distribucion.monto_actual
-    )
-  })
+    );
+  });
 
   // CONTROLAR FOCUS DEL FORMUALRIO
-  let formFocus = 1
+  let formFocus = 1;
 
   // OBTENER DATOS PARA TRABAJAR EN EL FORMULARIO
 
-  console.log(ejercicioFiscal)
-  console.log(asignacion)
-  console.log(asignacion.monto_total)
+  console.log(ejercicioFiscal);
+  console.log(asignacion);
+  console.log(asignacion.monto_total);
 
-  let montos = { total: 0, restante: 0, acumulado: 0, distribuido_total: 0 }
+  let montos = { total: 0, restante: 0, acumulado: 0, distribuido_total: 0 };
 
-  montos.total = ejercicioFiscal.situado
-  montos.restante = ejercicioFiscal.restante
-  montos.distribuido = ejercicioFiscal.distribuido
-  montos.total_asignado = asignacion.monto_total
+  montos.total = ejercicioFiscal.situado;
+  montos.restante = ejercicioFiscal.restante;
+  montos.distribuido = ejercicioFiscal.distribuido;
+  montos.total_asignado = asignacion.monto_total;
 
-  const oldCardElement = d.getElementById('asignacion-entes-form-card')
-  if (oldCardElement) oldCardElement.remove()
+  const oldCardElement = d.getElementById("asignacion-entes-form-card");
+  if (oldCardElement) oldCardElement.remove();
 
   // PARTE 1
 
   function recortarTexto(str, length) {
-    let texto = str.length < length ? str : `${str.slice(0, length)} ...`
+    let texto = str.length < length ? str : `${str.slice(0, length)} ...`;
 
-    return texto
+    return texto;
   }
 
   const distribucionPartidasEnteList = ({ info }) => {
-    let data = info
+    let data = info;
 
-    let montoTotalDistribuido = 0
+    let montoTotalDistribuido = 0;
 
     let filas = data.map((actividad) => {
       let actividad_codigo = actividad.actividad,
         actividad_nombre = recortarTexto(actividad.ente_nombre, 35),
         status,
-        acciones
+        acciones;
 
       if (asignacion.actividades_entes.length > 0) {
         let distribucionesEstanAprobadas = asignacion.actividades_entes.every(
           (distribucion) => Number(distribucion.status) === 1
-        )
+        );
 
         acciones = ` <button
           class='btn btn-sm bg-brand-color-2 text-white'
           disabled
         >
           <i class='bx bx-detail'></i>
-        </button>`
+        </button>`;
       } else {
         acciones = `<button class="btn btn-danger btn-sm btn-destroy" data-eliminaractividadid="${
           actividad.actividad_id
-        }" ${Number(asignacion.status) === 1 ? 'disabled' : ''}></button>
+        }" ${Number(asignacion.status) === 1 ? "disabled" : ""}></button>
          <button
             data-distribuciondetalleid='${actividad.actividad_id}'
             type='button'
             class='btn btn-sm btn-success'
             data-toggle='tooltip'
             title='Ver distribucion'
-            ${asignacion.status === 1 ? 'disabled' : ''}
+            ${asignacion.status === 1 ? "disabled" : ""}
           >
             <i class='bx bx-detail'></i>
-          </button>`
+          </button>`;
       }
 
       if (actividad.status) {
         if (actividad.status === 0) {
-          status = `<span class='btn btn-sm btn-secondary'>Pendiente</span>`
+          status = `<span class='btn btn-sm btn-secondary'>Pendiente</span>`;
         }
         if (actividad.status === 1) {
-          status = `<span class='btn btn-sm btn-success'>Aceptado</span>`
+          status = `<span class='btn btn-sm btn-success'>Aceptado</span>`;
         }
         if (actividad.status === 2) {
-          status = `<span class='btn btn-sm btn-danger'>Rechazada</span>`
+          status = `<span class='btn btn-sm btn-danger'>Rechazada</span>`;
         }
       } else {
-        status = `<span class='btn btn-sm btn-secondary'>Pendiente</span>`
+        status = `<span class='btn btn-sm btn-secondary'>Pendiente</span>`;
       }
 
-      let montoTotalActividad = 0
+      let montoTotalActividad = 0;
 
       actividad.distribucion_partidas.forEach((partida) => {
         // let sector_codigo = `${partida.sector_informacion.sector}.${partida.sector_informacion.programa}.${partida.sector_informacion.proyecto}`,
@@ -172,9 +172,9 @@ export const form_asignacion_entes_form_card = async ({
         //   partida_codigo = partida.partida,
         //   nombre = partida.nombre || 'No asignado',
         //   descripcion = partida.descripcion,
-        let monto = partida.monto
+        let monto = partida.monto;
 
-        montoTotalActividad += Number(monto)
+        montoTotalActividad += Number(monto);
 
         // return `<tr class=''>
         //             <td>${sector_nombre}</td>
@@ -183,9 +183,9 @@ export const form_asignacion_entes_form_card = async ({
         //             <td>${actividad_codigo}</td>
         //             <td>${monto}</td>
         //         </tr>`
-      })
+      });
 
-      montoTotalDistribuido += montoTotalActividad
+      montoTotalDistribuido += montoTotalActividad;
 
       return `<tr class=''>
       <td>${actividad_nombre}</td>
@@ -197,8 +197,8 @@ export const form_asignacion_entes_form_card = async ({
      ${acciones}
       
       </td>
-  </tr>`
-    })
+  </tr>`;
+    });
 
     let tabla = `<div class='row'>
         <div class='col'>
@@ -224,12 +224,12 @@ export const form_asignacion_entes_form_card = async ({
             <th>ACCIONES</th>
           </thead>
 
-          <tbody>${filas.join('')}</tbody>
+          <tbody>${filas.join("")}</tbody>
         </table>
-      </div>`
+      </div>`;
 
-    return tabla
-  }
+    return tabla;
+  };
 
   // GENERAR LISTA DE CHECKBOX DE LAS ACTIVIDADES LIGADAS AL ENTE
 
@@ -239,9 +239,9 @@ export const form_asignacion_entes_form_card = async ({
         !datosDistribucionActividades.some(
           (el) => Number(el.actividad_id) === Number(dependencia.id)
         )
-    )
+    );
 
-    let liItems
+    let liItems;
     // SI YA HAY DISTRIBUCIONES REGISTRADAS, ENTONCES CARGAR LAS ACTIVIDADES LAS CUALES TIENEN UNA DISTRIBUCION
 
     if (asignacion.actividades_entes.length > 0) {
@@ -261,14 +261,12 @@ export const form_asignacion_entes_form_card = async ({
           class='form-check-label'
           for='ente-dependencia-check-${dependencia.actividad_id}'
         >
-          ${dependencia.actividad} - ${dependencia.ente_nombre}
+        <span> ${dependencia.actividad} - ${dependencia.ente_nombre}</span>
         </label>
-      </div>`
-      })
+      </div>`;
+      });
 
-      return `<h4 class='text-blue-800'>Actividades de ente:</h4> ${liItems.join(
-        ''
-      )}`
+      return `<h4 class='text-blue-800'>Actividades:</h4> ${liItems.join("")}`;
     }
 
     // PARA ACTUALIZAR A MEDIDA DE QUE SE VAYA REALIZANDO LA DISTRIBUCION
@@ -293,8 +291,8 @@ export const form_asignacion_entes_form_card = async ({
               >
                 ${dependencia.actividad} - ${dependencia.ente_nombre}
               </label>
-            </div>`
-        })
+            </div>`;
+        });
       } else {
         liItems = dependenciasList.map((dependencia) => {
           return `  <div class='form-check'>
@@ -312,49 +310,49 @@ export const form_asignacion_entes_form_card = async ({
               >
                 ${dependencia.actividad} - ${dependencia.ente_nombre}
               </label>
-            </div>`
-        })
+            </div>`;
+        });
       }
 
-      return `<h4 class='text-blue-800'>Actividades de ente:</h4> ${liItems.join(
-        ''
-      )}`
+      return `<h4 class='text-blue-800'>Actividades:</h4> ${liItems.join("")}`;
     } else {
-      return `<h4 class='text-red-800'>Sin dependencias a usar</h4>`
+      return `<h4 class='text-red-800'>Sin dependencias a usar</h4>`;
     }
-  }
+  };
 
   // GENERAR CARD PRINCIPAL DONDE SE CARGARÍA LA INFORMACIÓN DE ASIGNACIÓN O DISTRIBUCIÓN DE PARTIDAS DEL ENTE
 
   const planEnte = async () => {
-    let tipo = asignacion.tipo_ente
+    let tipo = asignacion.tipo_ente;
     return `<div id='card-body-part1' class='slide-up-animation'>
-        <div class='row'>
-          <div class='col'>
-            <h4 class='text-blue-800'>Información sobre asignación:</h4>
-            <h6>Nombre: ${asignacion.ente_nombre || 'Ente sin nombre'}</h6>
-            <h6>
-              Tipo: ${tipo === 'J' ? 'juridico' : 'Descentralizado'}
-            </h6>
-            <h6>
-              Monto total asignado: ${separarMiles(asignacion.monto_total)}
-            </h6>
+
+    <div class="text-center w-100 mb-4">
+            <h5>${asignacion.ente_nombre || "Ente sin nombre"}</h6>
+            
+            <span class="me-2">
+            ${separarMiles(asignacion.monto_total)} Asignado. 
+            </span>
+            ${
+              tipo === "J"
+                ? "<span class='badge bg-primary'>Jurídico</span>"
+                : "<span class='badge bg-success'>Descentralizado</span>"
+            } <br>
+
             ${
               montos.distribuido_total > 0
                 ? `<h6>
-              Monto total distribuido: ${separarMiles(montos.distribuido_total)}
+              ${separarMiles(montos.distribuido_total)} Confirmados.
             </h6>`
-                : ''
+                : ""
             }
-           
-          </div>
+    </div>
+
           ${
             asignacion.dependencias.length > 0
-              ? `<div class='col'>${dependenciasEnteList()}</div>`
-              : ''
+              ? `<div class="mb-2">${dependenciasEnteList()}</div>`
+              : ""
           }
-          
-        </div>
+
         <hr/>
         ${
           asignacion.actividades_entes.length > 0
@@ -363,17 +361,10 @@ export const form_asignacion_entes_form_card = async ({
               })
             : datosDistribucionActividades.length > 0
             ? distribucionPartidasEnteList({ info: relacionarActividades() })
-            : `<div>
-              <h4 class='text-center text-blue-800'>
-                Esta asignación no posee distribución de partidas.
-              </h4>
-              <h4 class='text-center text-blue-800'>
-                Proceda a realizar la distribución.
-              </h4>
-            </div>`
+            : ``
         }
-      </div>`
-  }
+      </div>`;
+  };
 
   // PARTE 2: ASIGNAR MONTOS A PARTIDAS
 
@@ -388,7 +379,7 @@ export const form_asignacion_entes_form_card = async ({
           <td>${distribucion.partida}</td>
           <td>
           <input
-          class='form-control partida-input partida-monto-disponible'
+          class='form-control-sm partida-input partida-monto-disponible'
           type='text'
           data-valorinicial='${distribucion.monto_disponible}'
           data-id='${distribucion.id}'
@@ -400,26 +391,26 @@ export const form_asignacion_entes_form_card = async ({
           disabled
         />
 </td>
-        </tr>`
-      })
+        </tr>`;
+      });
 
-    return liItems.join('')
-  }
+    return liItems.join("");
+  };
 
   function relacionarPartidas() {
-    let dependenciaActividad, dependenciaNombre, actividad_id
+    let dependenciaActividad, dependenciaNombre, actividad_id;
 
     if (dependenciaEnteSeleccionada) {
-      dependenciaActividad = dependenciaEnteSeleccionada.actividad
-      dependenciaNombre = dependenciaEnteSeleccionada.ente_nombre
-      actividad_id = null
+      dependenciaActividad = dependenciaEnteSeleccionada.actividad;
+      dependenciaNombre = dependenciaEnteSeleccionada.ente_nombre;
+      actividad_id = null;
     } else {
-      dependenciaActividad = '-'
-      dependenciaNombre = '-'
+      dependenciaActividad = "-";
+      dependenciaNombre = "-";
     }
 
-    let ente_sector = Number(asignacion.sector)
-    let ente_programa = Number(asignacion.programa)
+    let ente_sector = Number(asignacion.sector);
+    let ente_programa = Number(asignacion.programa);
 
     let partidasRelacionadas = ejercicioFiscal.distribucion_partidas.filter(
       (partida) => {
@@ -427,31 +418,31 @@ export const form_asignacion_entes_form_card = async ({
           Number(partida.sector_informacion.sector) === ente_sector &&
           (Number(partida.programa_informacion.programa) === ente_programa) &
             (Number(partida.id_actividad) === Number(dependenciaActividad))
-        )
+        );
         //
       }
-    )
+    );
 
     if (partidasRelacionadas.length === 0) {
-      return false
+      return false;
     }
 
     return partidasRelacionadas.map((el) => {
       let sector = `${
         el.sector_informacion
           ? el.sector_informacion.sector
-          : 'Sector no disponible'
-      }`
+          : "Sector no disponible"
+      }`;
       let programa = `${
         el.programa_informacion
           ? el.programa_informacion.programa
-          : 'Programa no disponible'
-      }`
+          : "Programa no disponible"
+      }`;
       let proyecto = `${
         el.proyecto_informacion == 0
-          ? '00'
+          ? "00"
           : el.proyecto_informacion.proyecto_id
-      }`
+      }`;
 
       return {
         id: el.id,
@@ -462,11 +453,11 @@ export const form_asignacion_entes_form_card = async ({
         actividad: dependenciaActividad,
         actividad_nombre: dependenciaNombre,
         partida: el.partida,
-        nombre: el.nombre || 'No asignado',
+        nombre: el.nombre || "No asignado",
         descripcion: el.descripcion,
         monto_disponible: Number(el.monto_actual),
-      }
-    })
+      };
+    });
     // let partidaEncontrada = ejercicioFiscal.distribucion_partidas.find(
     //   (partida) => partida.id == id
     // )
@@ -482,10 +473,10 @@ export const form_asignacion_entes_form_card = async ({
         distribuciones,
         id_ejercicio,
         id_asignacion,
-      } = data
+      } = data;
       let actividadEncontrada = asignacion.dependencias.find(
         (dependencia) => Number(dependencia.id) === Number(actividad_id)
-      )
+      );
 
       // let monto_asignado = 0
 
@@ -501,15 +492,15 @@ export const form_asignacion_entes_form_card = async ({
           ? Number(actividadEncontrada.id)
           : null,
         id_ente,
-        actividad: actividadEncontrada ? actividadEncontrada.actividad : '-',
+        actividad: actividadEncontrada ? actividadEncontrada.actividad : "-",
         ente_nombre: actividadEncontrada
           ? actividadEncontrada.ente_nombre
-          : '-',
+          : "-",
         distribucion_partidas: distribuciones,
-      }
-    })
+      };
+    });
 
-    return dataRelacionada
+    return dataRelacionada;
   }
 
   const asignarMontoPartidas = (partidasRelacionadas) => {
@@ -530,14 +521,6 @@ export const form_asignacion_entes_form_card = async ({
               )}</b>
             </h6>
           </div>
-          <div class='col'>
-            <h6>Nombre: ${asignacion.ente_nombre}</h6>
-            <h6>Tipo: ${
-              asignacion.tipo_ente === 'J' ? 'Jurídico' : 'Descentralizado'
-            }</h6>
-            
-          </div>
-          
         </div>
 
       
@@ -549,32 +532,31 @@ export const form_asignacion_entes_form_card = async ({
           <thead class='w-100'>
             <th>S/P/A</th>
             <th>PARTIDA</th>
-            
             <th>ASIGNACION</th>
           </thead>
 
           <tbody>${partidasSeleccionadasList(partidasRelacionadas)}</tbody>
         </table>
-      </div>`
-  }
+      </div>`;
+  };
 
   const validarFooter = () => {
     if (asignacion.actividades_entes.length > 0) {
       let distribucionesEstanPendientes = asignacion.actividades_entes.every(
         (distribucion) => Number(distribucion.status) === 0
-      )
+      );
       let distribucionesEstanAprobadas = asignacion.actividades_entes.every(
         (distribucion) => Number(distribucion.status) === 1
-      )
+      );
       let distribucionesEstanRechazadas = asignacion.actividades_entes.every(
         (distribucion) => Number(distribucion.status) === 2
-      )
+      );
 
       if (distribucionesEstanAprobadas) {
-        return `<span class='btn btn-success'>Esta distribucion fue aprobada</span>`
+        return `<span class='btn btn-success'>Esta distribucion fue aprobada</span>`;
       }
       if (distribucionesEstanRechazadas) {
-        return `<span class='btn btn-danger'>Esta distribucion fue rechazada</span>`
+        return `<span class='btn btn-danger'>Esta distribucion fue rechazada</span>`;
       }
 
       if (distribucionesEstanPendientes) {
@@ -583,7 +565,7 @@ export const form_asignacion_entes_form_card = async ({
       </button>
       <button class='btn btn-danger' id='distribucion-ente-rechazar'>
         Rechazar
-      </button>`
+      </button>`;
       }
     } else {
       return ` <button class='btn btn-secondary' id='btn-previus' disabled>
@@ -593,15 +575,15 @@ export const form_asignacion_entes_form_card = async ({
       Siguiente
     </button>
     <button class='btn btn-success d-none' id='btn-add'>
-      Añadir
+      Finalizar
     </button>
     
     <button class='btn btn-success d-none' id='btn-send'>
-      Añadir
+      Finalizar
     </button>
-    `
+    `;
     }
-  }
+  };
 
   let card = ` <div class='card slide-up-animation' id='asignacion-entes-form-card'>
       <div class='card-header d-flex justify-content-between'>
@@ -623,75 +605,75 @@ export const form_asignacion_entes_form_card = async ({
       <div class='card-body' id='card-body-container'>
         
       </div>
-      <div class='card-footer d-flex justify-content-center gap-2'>
+      <div class='card-footer d-flex justify-content-center pt-0 gap-2'>
         ${validarFooter()}
       </div>
-    </div>`
+    </div>`;
 
-  d.getElementById(elementToInset).insertAdjacentHTML('afterbegin', card)
+  d.getElementById(elementToInset).insertAdjacentHTML("afterbegin", card);
 
-  let cardBody = d.getElementById('card-body-container')
+  let cardBody = d.getElementById("card-body-container");
 
   // INICIALIZAR CARD
 
-  cardBody.innerHTML = await planEnte()
-  validarPartidasEntesTable()
+  cardBody.innerHTML = await planEnte();
+  validarPartidasEntesTable();
 
-  let cardElement = d.getElementById('asignacion-entes-form-card')
+  let cardElement = d.getElementById("asignacion-entes-form-card");
   // let formElement = d.getElementById('asignacion-entes-form')
 
   const closeCard = () => {
     // validateEditButtons()
-    cardElement.remove()
-    cardElement.removeEventListener('click', validateClick)
-    cardElement.removeEventListener('input', validateInputFunction)
+    cardElement.remove();
+    cardElement.removeEventListener("click", validateClick);
+    cardElement.removeEventListener("input", validateInputFunction);
 
-    return false
-  }
+    return false;
+  };
 
   async function validateClick(e) {
     if (e.target.dataset.close) {
-      closeCard()
+      closeCard();
     }
 
-    if (e.target.closest('[data-distribuciondetalleid]')) {
-      let id = Number(e.target.closest('button').dataset.distribuciondetalleid)
+    if (e.target.closest("[data-distribuciondetalleid]")) {
+      let id = Number(e.target.closest("button").dataset.distribuciondetalleid);
 
       let distribucionEncontrada = datosDistribucionActividades.find(
         (el) => Number(el.actividad_id) === id
-      )
+      );
 
       let dependenciaEnteEncontrada = asignacion.dependencias.find(
         (el) => Number(el.id) === id
-      )
+      );
 
       let detallesDatos = distribucionEncontrada.distribuciones.map((el) => {
         let partidaEncontrada = ejercicioFiscal.distribucion_partidas.find(
           (partida) => Number(partida.id) === Number(el.id_distribucion)
-        )
+        );
 
-        console.log(partidaEncontrada)
+        console.log(partidaEncontrada);
 
         let sector = `${
           partidaEncontrada.sector_informacion
             ? partidaEncontrada.sector_informacion.sector
-            : 'Sector no disponible'
-        }`
+            : "Sector no disponible"
+        }`;
         let programa = `${
           partidaEncontrada.programa_informacion
             ? partidaEncontrada.programa_informacion.programa
-            : 'Programa no disponible'
-        }`
+            : "Programa no disponible"
+        }`;
         let proyecto = `${
           partidaEncontrada.proyecto_informacion == 0
-            ? '00'
+            ? "00"
             : partidaEncontrada.proyecto_informacion.proyecto_id
-        }`
+        }`;
 
-        let partida = partidaEncontrada.partida
+        let partida = partidaEncontrada.partida;
 
-        return { sector, programa, proyecto, partida, monto: el.monto }
-      })
+        return { sector, programa, proyecto, partida, monto: el.monto };
+      });
 
       let informacion = {
         ente_nombre: dependenciaEnteEncontrada.ente_nombre,
@@ -701,14 +683,14 @@ export const form_asignacion_entes_form_card = async ({
         actividad: dependenciaEnteEncontrada.actividad,
         distribuciones: detallesDatos,
         monto_total: distribucionEncontrada.monto_total_asignado,
-      }
+      };
 
-      console.log(informacion)
+      console.log(informacion);
 
       form_distribucion_entes_card({
-        elementToInsert: 'asignacion-entes-view',
+        elementToInsert: "asignacion-entes-view",
         informacion: informacion,
-      })
+      });
     }
 
     if (e.target.dataset.eliminaractividadid) {
@@ -718,90 +700,90 @@ export const form_asignacion_entes_form_card = async ({
         (el) =>
           Number(el.actividad_id) ===
           Number(e.target.dataset.eliminaractividadid)
-      )
+      );
 
-      montos.distribuido_total -= distribucionRestar.monto_total_asignado
+      montos.distribuido_total -= distribucionRestar.monto_total_asignado;
 
       // ACTUALIZAR MONTO DISPONIBLE DE DISTRIBUCIONES
       distribucionRestar.distribuciones.forEach((el) => {
         disponibilidadPartida[`distribucion-${el.id_distribucion}`] += Number(
           el.monto
-        )
-      })
+        );
+      });
 
-      if (asignacion.tipo_ente === 'D') {
-        datosDistribucionActividades = []
+      if (asignacion.tipo_ente === "D") {
+        datosDistribucionActividades = [];
       } else {
         datosDistribucionActividades = datosDistribucionActividades.filter(
           (el) => {
             return (
               Number(el.actividad_id) !==
               Number(e.target.dataset.eliminaractividadid)
-            )
+            );
           }
-        )
+        );
       }
 
-      console.log(montos)
+      console.log(montos);
 
       // ELIMINAR TABLA Y ACTUALIZAR CARD
 
-      cardBody.innerHTML = await planEnte()
-      validarPartidasEntesTable()
+      cardBody.innerHTML = await planEnte();
+      validarPartidasEntesTable();
     }
 
-    if (e.target.id === 'btn-send') {
+    if (e.target.id === "btn-send") {
       if (datosDistribucionActividades.length > 0) {
-        enviarInformacion(datosDistribucionActividades)
+        enviarInformacion(datosDistribucionActividades);
       } else {
         toastNotification({
           type: NOTIFICATIONS_TYPES.fail,
-          message: 'Tienes que realizar al menos una distribución en este ente',
-        })
+          message: "Tienes que realizar al menos una distribución en este ente",
+        });
       }
     }
-    if (e.target.id === 'distribucion-ente-aceptar') {
+    if (e.target.id === "distribucion-ente-aceptar") {
       confirmNotification({
         type: NOTIFICATIONS_TYPES.send,
         message: `¿Desea aceptar esta distribución de presupuesto?`,
         successFunction: async function () {
           let res = await aceptarDistribucionEnte({
             id: asignacion.id,
-          })
+          });
 
           if (res.success) {
-            closeCard()
-            loadAsignacionEntesTable(ejercicioFiscal.id)
+            closeCard();
+            loadAsignacionEntesTable(ejercicioFiscal.id);
           }
         },
-      })
+      });
     }
 
-    if (e.target.id === 'distribucion-ente-rechazar') {
+    if (e.target.id === "distribucion-ente-rechazar") {
       confirmNotification({
         type: NOTIFICATIONS_TYPES.delete,
         message: `¿Desea rechazar esta distribución de presupuesto?`,
         successFunction: async function () {
           let res = await rechazarDistribucionEnte({
             id: asignacion.id,
-          })
+          });
 
           if (res.success) {
-            closeCard()
-            loadAsignacionEntesTable(ejercicioFiscal.id)
+            closeCard();
+            loadAsignacionEntesTable(ejercicioFiscal.id);
           }
         },
-      })
+      });
     }
 
-    validateFormFocus(e)
+    validateFormFocus(e);
   }
   async function validateInputFunction(e) {
     if (e.target.dataset.dependencia) {
       let dependencia = asignacion.dependencias.find(
         (el) => Number(el.id) === Number(e.target.value)
-      )
-      dependenciaEnteSeleccionada = dependencia
+      );
+      dependenciaEnteSeleccionada = dependencia;
     }
     // if (e.target.classList.contains('partida-monto')) {
     //   let montoDisponibleInput = d.getElementById(
@@ -832,129 +814,129 @@ export const form_asignacion_entes_form_card = async ({
   // CARGAR LISTA DE PARTIDAS
 
   function enviarInformacion(data) {
-    console.log(montos)
+    console.log(montos);
 
     if (montos.distribuido_total < Number(montos.total_asignado)) {
       toastNotification({
         type: NOTIFICATIONS_TYPES.fail,
-        message: 'Monto distribuido es menor al monto asignado al ente',
-      })
-      return
+        message: "Monto distribuido es menor al monto asignado al ente",
+      });
+      return;
     }
 
     confirmNotification({
       type: NOTIFICATIONS_TYPES.send,
-      message: '¿Desea registrar esta distribución presupuestaria?',
+      message: "¿Desea registrar esta distribución presupuestaria?",
       successFunction: async function () {
         let res = await enviarDistribucionPresupuestariaEntes({
           data: data,
-        })
+        });
         if (res.success) {
-          closeCard()
-          actualizar()
+          closeCard();
+          actualizar();
         }
       },
-    })
+    });
   }
 
   function formFocusPart1() {
-    let btnNext = d.getElementById('btn-next')
-    let btnPrevius = d.getElementById('btn-previus')
-    let btnSend = d.getElementById('btn-send')
+    let btnNext = d.getElementById("btn-next");
+    let btnPrevius = d.getElementById("btn-previus");
+    let btnSend = d.getElementById("btn-send");
     // let btnAdd = d.getElementById('btn-add')
-    let cardBodyPart1 = d.getElementById('card-body-part1')
-    let cardBodyPart2 = d.getElementById('card-body-part2')
+    let cardBodyPart1 = d.getElementById("card-body-part1");
+    let cardBodyPart2 = d.getElementById("card-body-part2");
 
-    if (cardBodyPart2) cardBodyPart2.remove()
+    if (cardBodyPart2) cardBodyPart2.remove();
 
     if (ejercicioFiscal.distribucion_partidas.length < 1) {
       toastNotification({
         type: NOTIFICATIONS_TYPES.fail,
         message:
-          'El ejercicio fiscal actual no posee una distribución de partidas',
-      })
-      return
+          "El ejercicio fiscal actual no posee una distribución de partidas",
+      });
+      return;
     }
 
     if (!dependenciaEnteSeleccionada && asignacion.dependencias.length > 0) {
       toastNotification({
         type: NOTIFICATIONS_TYPES.fail,
-        message: 'Seleccione la actividad a asignar monto',
-      })
-      return
+        message: "Seleccione la actividad a asignar monto",
+      });
+      return;
     }
 
-    let partidasRelacionadas = relacionarPartidas()
+    let partidasRelacionadas = relacionarPartidas();
 
-    console.log(partidasRelacionadas)
+    console.log(partidasRelacionadas);
     if (!partidasRelacionadas) {
       toastNotification({
         type: NOTIFICATIONS_TYPES.fail,
-        message: 'Esta actividad no posee una distribución',
-      })
-      return
+        message: "Esta actividad no posee una distribución",
+      });
+      return;
     }
 
-    cardBodyPart1.classList.add('d-none')
-    cardBody.innerHTML += asignarMontoPartidas(partidasRelacionadas)
-    validarAsignacionPartidasTable()
+    cardBodyPart1.classList.add("d-none");
+    cardBody.innerHTML += asignarMontoPartidas(partidasRelacionadas);
+    validarAsignacionPartidasTable();
 
-    formFocus++
-    btnPrevius.classList.remove('d-none')
-    btnSend.classList.add('d-none')
-    btnPrevius.removeAttribute('disabled')
+    formFocus++;
+    btnPrevius.classList.remove("d-none");
+    btnSend.classList.add("d-none");
+    btnPrevius.removeAttribute("disabled");
     // btnAdd.classList.remove('d-none')
   }
 
   async function validateFormFocus(e) {
-    let btnNext = d.getElementById('btn-next')
-    let btnPrevius = d.getElementById('btn-previus')
-    let btnSend = d.getElementById('btn-send')
+    let btnNext = d.getElementById("btn-next");
+    let btnPrevius = d.getElementById("btn-previus");
+    let btnSend = d.getElementById("btn-send");
     // let btnAdd = d.getElementById('btn-add')
-    let cardBodyPart1 = d.getElementById('card-body-part1')
-    let cardBodyPart2 = d.getElementById('card-body-part2')
+    let cardBodyPart1 = d.getElementById("card-body-part1");
+    let cardBodyPart2 = d.getElementById("card-body-part2");
 
     if (e.target === btnNext) {
-      scroll(0, 0)
+      scroll(0, 0);
       if (formFocus === 1) {
         if (
           asignacion.dependencias.length ===
             datosDistribucionActividades.length &&
           datosDistribucionActividades.length > 0
         ) {
-          enviarInformacion(datosDistribucionActividades)
-          return
+          enviarInformacion(datosDistribucionActividades);
+          return;
         }
 
         if (
-          asignacion.tipo_ente === 'D' &&
+          asignacion.tipo_ente === "D" &&
           datosDistribucionActividades.length > 0
         ) {
-          enviarInformacion(datosDistribucionActividades)
-          return
+          enviarInformacion(datosDistribucionActividades);
+          return;
         }
 
-        formFocusPart1()
+        formFocusPart1();
 
-        return
+        return;
       }
       if (formFocus === 2) {
-        let inputsPartidas = d.querySelectorAll('.partida-monto-disponible')
+        let inputsPartidas = d.querySelectorAll(".partida-monto-disponible");
 
-        let monto_total_asignado = 0
+        let monto_total_asignado = 0;
 
         let mappedInfo = Array.from(inputsPartidas).map((input) => {
-          let id_distribucion = input.dataset.id
-          let monto = Number(input.dataset.valorinicial)
+          let id_distribucion = input.dataset.id;
+          let monto = Number(input.dataset.valorinicial);
 
-          monto_total_asignado += monto
+          monto_total_asignado += monto;
 
-          return { id_distribucion, monto }
-        })
+          return { id_distribucion, monto };
+        });
 
-        montos.distribuido_total += monto_total_asignado
+        montos.distribuido_total += monto_total_asignado;
 
-        console.log(disponibilidadPartida)
+        console.log(disponibilidadPartida);
 
         let data = {
           id_ente: asignacion.id_ente,
@@ -965,132 +947,132 @@ export const form_asignacion_entes_form_card = async ({
           id_ejercicio: ejercicioFiscal.id,
           id_asignacion: asignacion.id,
           monto_total_asignado,
-        }
+        };
 
-        console.log(data)
+        console.log(data);
 
-        datosDistribucionActividades.push(data)
+        datosDistribucionActividades.push(data);
 
-        cardBody.innerHTML = await planEnte()
+        cardBody.innerHTML = await planEnte();
 
-        dependenciaEnteSeleccionada = null
-        formFocus = 1
-        btnSend.classList.remove('d-none')
+        dependenciaEnteSeleccionada = null;
+        formFocus = 1;
+        btnSend.classList.remove("d-none");
 
         toastNotification({
           type: NOTIFICATIONS_TYPES.done,
-          message: 'Distribución a actividad añadida',
-        })
+          message: "Distribución confirmada",
+        });
 
-        return
+        return;
       }
     }
 
     if (e.target === btnPrevius) {
-      scroll(0, 100)
+      scroll(0, 100);
 
       if (formFocus === 3) {
         confirmNotification({
           type: NOTIFICATIONS_TYPES.send,
-          message: 'Si continua se borrarán los cambios hechos aquí',
+          message: "Si continua se borrarán los cambios hechos aquí",
           successFunction: function () {
-            cardBodyPart2.remove()
+            cardBodyPart2.remove();
 
-            cardBodyPart1.classList.remove('d-block')
-            cardBodyPart1.classList.add('d-none')
-            btnNext.textContent = 'Siguiente'
+            cardBodyPart1.classList.remove("d-block");
+            cardBodyPart1.classList.add("d-none");
+            btnNext.textContent = "Siguiente";
             // btnAdd.classList.remove('d-none')
 
-            partidasSeleccionadas = []
-            cardBody.innerHTML += seleccionPartidas()
-            validarSeleccionPartidasTable()
+            partidasSeleccionadas = [];
+            cardBody.innerHTML += seleccionPartidas();
+            validarSeleccionPartidasTable();
 
-            formFocus--
+            formFocus--;
           },
-        })
-        return
+        });
+        return;
       }
       if (formFocus === 2) {
-        btnPrevius.setAttribute('disabled', true)
+        btnPrevius.setAttribute("disabled", true);
         // btnAdd.classList.add('d-none')
 
-        cardBodyPart2.remove()
+        cardBodyPart2.remove();
 
-        cardBodyPart1.classList.remove('d-none')
-        dependenciaEnteSeleccionada = null
-        formFocus--
-        return
+        cardBodyPart1.classList.remove("d-none");
+        dependenciaEnteSeleccionada = null;
+        formFocus--;
+        return;
       }
     }
   }
 
   function actualizarMontoRestante() {
-    let montoElement = d.getElementById('monto-total-asignado')
+    let montoElement = d.getElementById("monto-total-asignado");
     let montoDistribuidoTotalElement = d.getElementById(
-      'monto-total-distribuido'
-    )
+      "monto-total-distribuido"
+    );
 
-    let inputsPartidasMontos = d.querySelectorAll('.partida-monto')
+    let inputsPartidasMontos = d.querySelectorAll(".partida-monto");
 
     // REINICIAR MONTO ACUMULADO
-    montos.acumulado = montos.distribuido_total
+    montos.acumulado = montos.distribuido_total;
 
     inputsPartidasMontos.forEach((input) => {
-      montos.acumulado += Number(input.value)
-    })
+      montos.acumulado += Number(input.value);
+    });
 
     let diferenciaSolicitado =
-      Number(montos.total_asignado) - Number(montos.acumulado)
+      Number(montos.total_asignado) - Number(montos.acumulado);
 
-    montoDistribuidoTotalElement.innerHTML = montos.acumulado
+    montoDistribuidoTotalElement.innerHTML = montos.acumulado;
 
     if (montos.acumulado > montos.distribuido) {
-      montoElement.innerHTML = `<span class="text-danger">${montos.acumulado}</span>`
-      return
+      montoElement.innerHTML = `<span class="text-danger">${montos.acumulado}</span>`;
+      return;
     }
 
     // console.log(diferenciaSolicitado)
 
     if (diferenciaSolicitado < 0) {
-      montoElement.innerHTML = `<span class="px-2 rounded text-red-600 bg-red-100">${montos.acumulado}</span>`
-      return
+      montoElement.innerHTML = `<span class="px-2 rounded text-red-600 bg-red-100">${montos.acumulado}</span>`;
+      return;
     }
     if (diferenciaSolicitado > 0) {
-      montoElement.innerHTML = `<span class="px-2 rounded text-green-600 bg-green-100">${montos.acumulado}</span>`
-      return
+      montoElement.innerHTML = `<span class="px-2 rounded text-green-600 bg-green-100">${montos.acumulado}</span>`;
+      return;
     }
     if (diferenciaSolicitado === 0) {
-      montoElement.innerHTML = `<span class="class="px-2 rounded text-secondary">${montos.acumulado}</span>`
-      return
+      montoElement.innerHTML = `<span class="class="px-2 rounded text-secondary">${montos.acumulado}</span>`;
+      return;
     }
   }
 
   // formElement.addEventListener('submit', (e) => e.preventDefault())
 
-  cardElement.addEventListener('input', validateInputFunction)
-  cardElement.addEventListener('click', validateClick)
-}
+  cardElement.addEventListener("input", validateInputFunction);
+  cardElement.addEventListener("click", validateClick);
+};
 
 function validarPartidasEntesTable() {
-  let planesTable = new DataTable('#asignacion-part1-table', {
+  let planesTable = new DataTable("#asignacion-part1-table", {
     responsive: true,
     scrollY: 120,
     language: tableLanguage,
     layout: {
       topStart: function () {
-        let toolbar = document.createElement('div')
+        let toolbar = document.createElement("div");
         toolbar.innerHTML = `
             <h5 class="text-center mb-0">Distribución de partidas del ente:</h5>
-                      `
-        return toolbar
+                      `;
+        return toolbar;
       },
-      topEnd: { search: { placeholder: 'Buscar...' } },
-      bottomStart: 'info',
-      bottomEnd: 'paging',
+      topEnd: { search: { placeholder: "Buscar..." } },
+      bottomStart: "info",
+      bottomEnd: "paging",
     },
-  })
+  });
 }
-let seleccionPartidasTable
+let seleccionPartidasTable;
 function validarSeleccionPartidasTable() {
   // let planesTable2 = new DataTable('#asignacion-part2-table', {
   //   scrollY: 120,
@@ -1109,53 +1091,53 @@ function validarSeleccionPartidasTable() {
   //   },
   // })
 
-  seleccionPartidasTable = new DataTable('#asignacion-part3-table', {
+  seleccionPartidasTable = new DataTable("#asignacion-part3-table", {
     scrollY: 200,
     responsive: false,
     colums: [
-      { data: 'elegir' },
-      { data: 'sector_nombre' },
-      { data: 'sector_codigo' },
-      { data: 'partida' },
-      { data: 'nombre' },
-      { data: 'descripcion' },
-      { data: 'monto_solicitado' },
+      { data: "elegir" },
+      { data: "sector_nombre" },
+      { data: "sector_codigo" },
+      { data: "partida" },
+      { data: "nombre" },
+      { data: "descripcion" },
+      { data: "monto_solicitado" },
     ],
     language: tableLanguage,
     layout: {
       topStart: function () {
-        let toolbar = document.createElement('div')
+        let toolbar = document.createElement("div");
         toolbar.innerHTML = `
         <h5 class="text-center text-blue-800">Partidas seleccionadas: <b id="partidas-seleccionadas">0</b></h5>
-                      `
-        return toolbar
+                      `;
+        return toolbar;
       },
-      topEnd: { search: { placeholder: 'Buscar...' } },
-      bottomStart: 'info',
-      bottomEnd: 'paging',
+      topEnd: { search: { placeholder: "Buscar..." } },
+      bottomStart: "info",
+      bottomEnd: "paging",
     },
-  })
+  });
 }
 
 function addSeleccionPartidasrow(datos) {
-  seleccionPartidasTable.row.add(datos).draw()
+  seleccionPartidasTable.row.add(datos).draw();
 }
 
 function validarAsignacionPartidasTable() {
-  let planesTable = new DataTable('#asignacion-part4-table', {
+  let planesTable = new DataTable("#asignacion-part4-table", {
     scrollY: 300,
     language: tableLanguage,
     layout: {
       topStart: function () {
-        let toolbar = document.createElement('div')
+        let toolbar = document.createElement("div");
         toolbar.innerHTML = `
             <h5 class="text-center mb-0">Partidas seleccionadas:</h5>
-                      `
-        return toolbar
+                      `;
+        return toolbar;
       },
-      topEnd: { search: { placeholder: 'Buscar...' } },
-      bottomStart: 'info',
-      bottomEnd: 'paging',
+      topEnd: { search: { placeholder: "Buscar..." } },
+      bottomStart: "info",
+      bottomEnd: "paging",
     },
-  })
+  });
 }

@@ -69,7 +69,6 @@ require_once '../../back/sistema_global/session.php';
                       <th class="w-50">Fecha de creación</th>
                       <th class="w-10"></th>
                       <th class="w-10"></th>
-                      <th class="w-10"></th>
                     </tr>
                   </thead>
                   <tbody>
@@ -192,15 +191,8 @@ require_once '../../back/sistema_global/session.php';
               <td>` + u_nombre + `</td>
               <td>` + creado + `</td>
 
-    
 
-              <td><a class="pointer btn-wicon badge me-2 bg-light-dark  f-12" onclick="verGrupo(` + u_id + `)"> <i class="bx bx-detail"></i> Historial</a></td>
-
-
-              ` + (u_status == '1' ? `<td><a class="pointer btn-wicon badge me-2 bg-warning f-12 text-black" onclick="bloquear(` + u_id + `)"> <i class="bx bx-block"></i> Bloquear</a></td>` : `<td><a class="pointer btn-wicon badge me-2 bg-info f-12 text-white" onclick="bloquear(` + u_id + `)"> <i class="bx bx-unblock"></i> Desbloquear</a></td>`) +
-
-
-                `
+              ` + (u_status == '1' ? `<td><a class="pointer btn-wicon badge me-2 bg-warning f-12 text-black" onclick="bloquear(` + u_id + `)"> <i class="bx bx-block"></i> Bloquear</a></td>` : `<td><a class="pointer btn-wicon badge me-2 bg-info f-12 text-white" onclick="bloquear(` + u_id + `)"> <i class="bx bx-unblock"></i> Desbloquear</a></td>`) + `
               <td><a class="pointer btn-wicon badge me-2 bg-brand-color-2 text-white f-12" onclick="eliminar(` + u_id + `)"><i class="bx bx-trash"></i> Eliminar</a></td>
               </tr>`);
             }

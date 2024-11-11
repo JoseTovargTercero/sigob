@@ -476,7 +476,7 @@ const lenguaje_datat = {
 
 // Separador de miles
 function agregarSeparadorMiles(numero) {
-  return numero.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return numero.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
 
 // informacion del sistema

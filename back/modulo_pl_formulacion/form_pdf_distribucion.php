@@ -4,6 +4,22 @@ require_once '../sistema_global/conexion.php';
 $id_ejercicio = $_GET['id_ejercicio'];
 $ente = $_GET['ente'];
 
+
+$denominacion = [];
+$stmt = mysqli_prepare($conexion, "SELECT * FROM `pl_partidas`");
+$stmt->execute();
+$result = $stmt->get_result();
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $denominacion[$row['partida']] = $row['denominacion'];
+    }
+}
+$stmt->close();
+
+
+
+
+
 // CONSULTAS
 $stmt = mysqli_prepare($conexion, "SELECT entes.ente_nombre, ppy.proyecto_id, ppy.denominacion AS nombre_proyecto, 
                                     pp.programa, pp.denominacion AS nombre_programa, 
@@ -146,7 +162,7 @@ $partidasAgrupadas = [];
 foreach ($partidasData as $partida) {
     $partKey = $partida['part'] . '-' . $partida['denominacion'];
     $actividad = $partida['actividad'];
-    
+
     if (!isset($partidasAgrupadas[$partKey])) {
         $partidasAgrupadas[$partKey] = [
             'part' => $partida['part'],
@@ -161,7 +177,7 @@ foreach ($partidasData as $partida) {
     }
 
     $partidasAgrupadas[$partKey]['total_programa'] += $partida['monto'];
-    
+
     if (isset($partidasAgrupadas[$partKey]['actividades'][$actividad])) {
         $partidasAgrupadas[$partKey]['actividades'][$actividad] += $partida['monto'];
     }
@@ -278,7 +294,7 @@ $stmt->close();
         }
 
         .logo {
-            width: 120px;
+            width: 100px;
         }
 
         .t-border-0>tr>td {
@@ -346,26 +362,26 @@ $stmt->close();
 
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         .subtitle {
             font-weight: bold;
             background-color: #f0f0f0;
             color: blue;
+        }
+
+        .text-end {
+            text-align: right;
+        }
+
+        .underline {
+            text-decoration: underline;
+        }
+
+        .p10 {
+            padding: 10px;
+        }
+
+        .text-start {
+            text-align: left;
         }
     </style>
 </head>
@@ -419,94 +435,84 @@ $stmt->close();
                 <b>: <?php echo $ue_n ?> </b>
             </td>
         </tr>
-
-
     </table>
-
-
-
-
-
-
-
-
-<table>
-    <!-- Encabezado de la tabla -->
-    <tr>
-        <td colspan="6" class="header"></td>
-        <td colspan="<?= $finActividad - $inicioActividad + 2 ?>" class="title">ACTIVIDADES</td>
-    </tr>
-
-    <!-- Encabezado de columnas -->
-    <tr>
-        <th class="br">PART</th>
-        <th class="br">GEN</th>
-        <th class="br">ESP</th>
-        <th class="br">SUB ESP</th>
-        <th class="br">COD ORDI</th>
-        <th class="br">DENOMINACIÓN</th>
-        <th class="br">TOTAL PROGRAMA</th>
-        <?php for ($actividad = $inicioActividad; $actividad <= $finActividad; $actividad++): ?>
-            <th class="br">ACTIVIDAD <?= $actividad ?></th>
-        <?php endfor; ?>
-        <th class="br">MONTO DE LA OBRA</th>
-    </tr>
-
-    <?php
-    $totalPartida = 0;
-    $partAnterior = null;
-    foreach ($partidasAgrupadas as $partidaKey => $partida):
-        // Verificar si la partida ha cambiado para mostrar el total del grupo anterior
-        if ($partAnterior !== null && $partAnterior !== $partida['part']) {
-            ?>
-            <!-- Fila de total por PART -->
-            <tr>
-                <td colspan="6" class="crim br">TOTAL POR PARTIDA <?= $partAnterior ?></td>
-                <td class="crim br"><?= number_format($totalPartida, 2) ?></td>
-                <?php for ($actividad = $inicioActividad; $actividad <= $finActividad; $actividad++): ?>
-                    <td class="crim br"></td>
-                <?php endfor; ?>
-                <td class="crim br"><?= number_format($totalPartida, 2) ?></td>
-            </tr>
-            <?php
-            // Reiniciar el total para la nueva partida
-            $totalPartida = 0;
-        }
-
-        // Acumular el total de la partida actual
-        $totalPartida += $partida['total_programa'];
-        $partAnterior = $partida['part'];
-        ?>
-        <!-- Fila de datos consolidada por partida -->
+    <table>
+        <!-- Encabezado de la tabla -->
         <tr>
-            <td class="br"><?= $partida['part'] ?></td>
-            <td class="br"><?= $partida['gen'] ?></td>
-            <td class="br"><?= $partida['esp'] ?></td>
-            <td class="br"><?= $partida['sub_esp'] ?></td>
-            <td class="br"><?= $partida['cod_ordi'] ?></td>
-            <td class="br subtitle"><?= $partida['denominacion'] ?></td>
-            <td class="br"><?= number_format($partida['total_programa'], 2) ?></td>
-
-            <!-- Actividades dinámicas -->
-            <?php for ($actividad = $inicioActividad; $actividad <= $finActividad; $actividad++): ?>
-                <td class="br"><?= ($partida['actividades'][$actividad] > 0 ? number_format($partida['actividades'][$actividad], 2) : '') ?></td>
-            <?php endfor; ?>
-
-            <!-- Monto de la obra -->
-            <td class="br"><?= number_format($partida['total_programa'], 2) ?></td>
+            <td colspan="6" class="header"></td>
+            <td colspan="<?= $finActividad - $inicioActividad + 2 ?>" class="title">ACTIVIDADES</td>
         </tr>
-    <?php endforeach; ?>
 
-    <!-- Fila de total de la última partida -->
-    <tr>
-        <td colspan="6" class="crim br">TOTAL POR PARTIDA <?= $partAnterior ?></td>
-        <td class="crim br"><?= number_format($totalPartida, 2) ?></td>
-        <?php for ($actividad = $inicioActividad; $actividad <= $finActividad; $actividad++): ?>
-            <td class="crim br"></td>
-        <?php endfor; ?>
-        <td class="crim br"><?= number_format($totalPartida, 2) ?></td>
-    </tr>
-</table>
+        <!-- Encabezado de columnas -->
+        <tr>
+            <th class="br bb bt bl">PART</th>
+            <th class="br bb bt">GEN</th>
+            <th class="br bb bt">ESP</th>
+            <th class="br bb bt">SUB ESP</th>
+            <th class="br bb bt">COD ORDI</th>
+            <th class="br bb bt">DENOMINACIÓN</th>
+            <th class="br bb bt">TOTAL PROGRAMA</th>
+            <?php for ($actividad = $inicioActividad; $actividad <= $finActividad; $actividad++): ?>
+                <th class="br bb bt">ACTIVIDAD <?= $actividad ?></th>
+            <?php endfor; ?>
+            <th class="br bb bt">MONTO DE LA OBRA</th>
+        </tr>
+
+        <?php
+        $totalPartida = 0;
+        $partAnterior = null;
+        foreach ($partidasAgrupadas as $partidaKey => $partida):
+            // Verificar si la partida ha cambiado para mostrar el total del grupo anterior
+            if ($partAnterior !== null && $partAnterior !== $partida['part']) {
+        ?>
+                <!-- Fila de total por PART -->
+                <tr>
+                    <td colspan="6" class="br bb bl text-end underline p10">TOTAL POR PARTIDA <?php echo $partAnterior . '.' . ($denominacion[$partAnterior] ? $denominacion[$partAnterior] : '<span class="text-danger">Sin denominación</span>') ?></td>
+                    <td class="crim br bb bl"><?= number_format($totalPartida, 2) ?></td>
+                    <?php for ($actividad = $inicioActividad; $actividad <= $finActividad; $actividad++): ?>
+                        <td class="crim br bb bl"></td>
+                    <?php endfor; ?>
+                    <td class="crim br bb bl"><?= number_format($totalPartida, 2) ?></td>
+                </tr>
+            <?php
+                // Reiniciar el total para la nueva partida
+                $totalPartida = 0;
+            }
+
+            // Acumular el total de la partida actual
+            $totalPartida += $partida['total_programa'];
+            $partAnterior = $partida['part'];
+            ?>
+            <!-- Fila de datos consolidada por partida -->
+            <tr>
+                <td class="br bb bl"><?= $partida['part'] ?></td>
+                <td class="br bb"><?= $partida['gen'] ?></td>
+                <td class="br bb"><?= $partida['esp'] ?></td>
+                <td class="br bb"><?= $partida['sub_esp'] ?></td>
+                <td class="br bb"><?= $partida['cod_ordi'] ?></td>
+                <td class="br bb text-start"><?= $partida['denominacion'] ?></td>
+                <td class="br bb"><?= number_format($partida['total_programa'], 2) ?></td>
+
+                <!-- Actividades dinámicas -->
+                <?php for ($actividad = $inicioActividad; $actividad <= $finActividad; $actividad++): ?>
+                    <td class="br bb bl"><?= ($partida['actividades'][$actividad] > 0 ? number_format($partida['actividades'][$actividad], 2) : '0,00') ?></td>
+                <?php endfor; ?>
+
+                <!-- Monto de la obra -->
+                <td class="br bb bl"><?= number_format($partida['total_programa'], 2) ?></td>
+            </tr>
+        <?php endforeach; ?>
+
+        <!-- Fila de total de la última partida -->
+        <tr>
+            <td colspan="6" class="br bb bl text-end underline p10">TOTAL POR PARTIDA <?php echo $partAnterior . '.' . ($denominacion[$partAnterior] ? $denominacion[$partAnterior] : '<span class="text-danger">Sin denominación</span>') ?>.</td>
+            <td class="crim br bb"><?= number_format($totalPartida, 2) ?></td>
+            <?php for ($actividad = $inicioActividad; $actividad <= $finActividad; $actividad++): ?>
+                <td class="crim br bb"></td>
+            <?php endfor; ?>
+            <td class="crim br bb"><?= number_format($totalPartida, 2) ?></td>
+        </tr>
+    </table>
 
 
 

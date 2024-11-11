@@ -159,15 +159,15 @@ export const form_distribucion_form_card = async ({
             </div>
           </div>
 
-          <h5 class='mb-0'>Distribución de presupuesto por partida</h5>
+          <h5 class='mb-0'>Distribución del presupuesto</h5>
           <small class='text-muted'>
             Añada las partidas para realizar la distribución presupuestaria.
           </small>
           <div id='lista-partidas' class='mt-4'></div>
 
           <div class='d-flex gap-2 justify-content-center'>
-            <button class='btn btn-success' id='add-row'>
-              Añadir +
+            <button class='btn btn-sm bg-brand-color-1 text-white' id='add-row'>
+              Agregar partida +
             </button>
           </div>
         </form>

@@ -272,7 +272,7 @@ $stmt->close();
                     <div class="card-title">
                       <h4 class="text-danger mb-2">Ejercicio fiscal ' . (isset($_GET["a"]) ? $_GET["a"] : $annio) . ' </h4>
                       <p class="text-body app-academy-sm-60 app-academy-xl-100">
-                        No hay ningún plan registrado este año.
+                        No hay ningún ejercicio registrado este año.
                       </p>
                       <div class="mb-0"><button class="btn btn-danger" onclick="toggleDialogs()">Iniciar ejercicio</button></div>
                     </div>
@@ -552,7 +552,7 @@ $stmt->close();
             })
             .then(response => response.text()) // Recupera la respuesta como texto
             .then(responseText => {
-              console.log('Respuesta del servidor (raw):', responseText); // Imprimir la respuesta original
+              // console.log('Respuesta del servidor (raw):', responseText); // Imprimir la respuesta original
 
               // Intentar convertir la respuesta a JSON
               try {

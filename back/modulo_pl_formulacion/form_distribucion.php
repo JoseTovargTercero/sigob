@@ -31,9 +31,9 @@ function guardarDistribucionPresupuestaria($dataArray)
             // Validar que no existan duplicados con el mismo id_partida, id_ejercicio, id_sector, id_programa, id_proyecto
             $verificarSql = "SELECT PP.partida FROM distribucion_presupuestaria AS DP 
             LEFT JOIN partidas_presupuestarias AS PP ON PP.id=DP.id_partida
-            WHERE id_partida = ? AND id_ejercicio = ? AND id_sector = ? AND id_programa = ? AND id_proyecto = ?";
+            WHERE id_partida = ? AND id_ejercicio = ? AND id_sector = ? AND id_programa = ? AND id_actividad = ?";
             $stmtVerificar = $conexion->prepare($verificarSql);
-            $stmtVerificar->bind_param("iiiii", $id_partida, $id_ejercicio, $id_sector, $id_programa, $id_proyecto);
+            $stmtVerificar->bind_param("iiiii", $id_partida, $id_ejercicio, $id_sector, $id_programa, $id_actividad);
             $stmtVerificar->execute();
             $resultadoVerificar = $stmtVerificar->get_result();
 
@@ -42,7 +42,7 @@ function guardarDistribucionPresupuestaria($dataArray)
                     $partida_repetida = $row['partida'];
                 }
 
-                throw new Exception("Una partida ya está en uso en el mismo sector, programa y proyecto: " . $partida_repetida);
+                throw new Exception("Una o mas partidas ya están en uso en el mismo sector, programa y actividad: " . $partida_repetida);
             }
 
             // Verificar que el ejercicio fiscal esté abierto (status = 1)

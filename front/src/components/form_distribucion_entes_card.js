@@ -5,34 +5,34 @@ import {
   separarMiles,
   toastNotification,
   validateInput,
-} from '../helpers/helpers.js'
-import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
-const d = document
+} from "../helpers/helpers.js";
+import { NOTIFICATIONS_TYPES } from "../helpers/types.js";
+const d = document;
 
 const tableLanguage = {
-  decimal: '',
-  emptyTable: 'No hay datos disponibles en la tabla',
-  info: 'Mostrando _START_ a _END_ de _TOTAL_ entradas',
-  infoEmpty: 'Mostrando 0 a 0 de 0 entradas',
-  infoFiltered: '(filtrado de _MAX_ entradas totales)',
-  infoPostFix: '',
-  thousands: ',',
-  lengthMenu: 'Mostrar _MENU_',
-  loadingRecords: 'Cargando...',
-  processing: '',
-  search: 'Buscar:',
-  zeroRecords: 'No se encontraron registros coincidentes',
+  decimal: "",
+  emptyTable: "No hay datos disponibles en la tabla",
+  info: "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+  infoEmpty: "Mostrando 0 a 0 de 0 entradas",
+  infoFiltered: "(filtrado de _MAX_ entradas totales)",
+  infoPostFix: "",
+  thousands: ",",
+  lengthMenu: "Mostrar _MENU_",
+  loadingRecords: "Cargando...",
+  processing: "",
+  search: "Buscar:",
+  zeroRecords: "No se encontraron registros coincidentes",
   paginate: {
-    first: 'Primera',
-    last: 'Última',
-    next: 'Siguiente',
-    previous: 'Anterior',
+    first: "Primera",
+    last: "Última",
+    next: "Siguiente",
+    previous: "Anterior",
   },
   aria: {
-    orderable: 'Ordenar por esta columna',
-    orderableReverse: 'Orden inverso de esta columna',
+    orderable: "Ordenar por esta columna",
+    orderableReverse: "Orden inverso de esta columna",
   },
-}
+};
 
 export const form_distribucion_entes_card = ({
   elementToInsert,
@@ -47,10 +47,10 @@ export const form_distribucion_entes_card = ({
   //     },
   //   }
 
-  let nombreCard = 'distribucion-ente'
+  let nombreCard = "distribucion-ente";
 
-  const oldCardElement = d.getElementById(`${nombreCard}-form-card`)
-  if (oldCardElement) oldCardElement.remove()
+  const oldCardElement = d.getElementById(`${nombreCard}-form-card`);
+  if (oldCardElement) oldCardElement.remove();
 
   let rows = informacion.distribuciones.map((distribucion) => {
     let sector = distribucion.sector,
@@ -58,7 +58,7 @@ export const form_distribucion_entes_card = ({
       proyecto = distribucion.proyecto,
       actividad = informacion.actividad,
       partida = distribucion.partida,
-      monto = distribucion.monto
+      monto = distribucion.monto;
 
     return `<tr class=''>
                   <td>${sector}</td>
@@ -67,21 +67,20 @@ export const form_distribucion_entes_card = ({
                   <td>${actividad}</td>
                   <td>${partida}</td>
                   <td>${separarMiles(monto)}</td>
-              </tr>`
-  })
+              </tr>`;
+  });
 
   let card = `<div class='card slide-up-animation' id='${nombreCard}-form-card'>
       <div class='card-header d-flex justify-content-between'>
         <div class=''>
           <h5 class='mb-0'>
-            Distribucion de partidas para la actividad: ${informacion.actividad}
+            Distribución de partidas para la actividad: ${informacion.actividad}
           </h5>
-          <small class='mt-0 text-muted'>CAMBIAR TEXTO</small>
         </div>
         <button
           data-close='btn-close'
           type='button'
-          class='btn btn-danger'
+          class='btn btn-sm btn-danger'
           aria-label='Close'
         >
           &times;
@@ -102,58 +101,58 @@ export const form_distribucion_entes_card = ({
             <th>PARTIDA</th>
             <th>MONTO</th>
           </thead>
-          <tbody>${rows.join('')}</tbody>
+          <tbody>${rows.join("")}</tbody>
         </table>
       </div>
-    </div>`
+    </div>`;
 
   let modal = `  <div class='modal-window' id='${nombreCard}-form-card'>
       <div class=' slide-up-animation'>${card}</div>
-    </div>`
+    </div>`;
 
-  d.getElementById(elementToInsert).insertAdjacentHTML('afterbegin', modal)
+  d.getElementById(elementToInsert).insertAdjacentHTML("afterbegin", modal);
 
-  let cardElement = d.getElementById(`${nombreCard}-form-card`)
-  let formElement = d.getElementById(`${nombreCard}-form`)
+  let cardElement = d.getElementById(`${nombreCard}-form-card`);
+  let formElement = d.getElementById(`${nombreCard}-form`);
 
-  let distribucionEnteTable = new DataTable('#distribucion-ente-table', {
+  let distribucionEnteTable = new DataTable("#distribucion-ente-table", {
     scrollY: 200,
     responsive: false,
     colums: [
-      { data: 'elegir' },
-      { data: 'sector_nombre' },
-      { data: 'sector_codigo' },
-      { data: 'partida' },
-      { data: 'nombre' },
-      { data: 'descripcion' },
+      { data: "elegir" },
+      { data: "sector_nombre" },
+      { data: "sector_codigo" },
+      { data: "partida" },
+      { data: "nombre" },
+      { data: "descripcion" },
     ],
     language: tableLanguage,
     layout: {
       topStart: function () {
-        let toolbar = document.createElement('div')
+        let toolbar = document.createElement("div");
         toolbar.innerHTML = `
         <h5 class="text-center text-blue-800">Lista de partidas: <b id="partidas-seleccionadas">${informacion.distribuciones.length}</b></h5>
-                      `
-        return toolbar
+                      `;
+        return toolbar;
       },
-      topEnd: { search: { placeholder: 'Buscar...' } },
-      bottomStart: 'info',
-      bottomEnd: 'paging',
+      topEnd: { search: { placeholder: "Buscar..." } },
+      bottomStart: "info",
+      bottomEnd: "paging",
     },
-  })
+  });
 
   const closeCard = () => {
     // validateEditButtons()
-    cardElement.remove()
-    cardElement.removeEventListener('click', validateClick)
+    cardElement.remove();
+    cardElement.removeEventListener("click", validateClick);
     // cardElement.removeEventListener('input', validateInputFunction)
 
-    return false
-  }
+    return false;
+  };
 
   function validateClick(e) {
     if (e.target.dataset.close) {
-      closeCard()
+      closeCard();
     }
   }
 
@@ -163,7 +162,7 @@ export const form_distribucion_entes_card = ({
       fieldList,
       fieldListErrors,
       type: fieldListErrors[e.target.name].type,
-    })
+    });
   }
 
   // CARGAR LISTA DE PARTIDAS
@@ -173,5 +172,5 @@ export const form_distribucion_entes_card = ({
   //   formElement.addEventListener('submit', (e) => e.preventDefault())
 
   //   cardElement.addEventListener('input', validateInputFunction)
-  cardElement.addEventListener('click', validateClick)
-}
+  cardElement.addEventListener("click", validateClick);
+};

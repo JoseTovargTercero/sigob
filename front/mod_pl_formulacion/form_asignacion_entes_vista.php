@@ -7,7 +7,7 @@ require_once '../../back/sistema_global/session.php';
 <head>
   <link rel="stylesheet" href="../src/styles/style.css">
 
-  <title>Asignación de presupuesto a entes</title>
+  <title>Asignación de presupuesto</title>
 </head>
 
 <body>
@@ -16,6 +16,7 @@ require_once '../../back/sistema_global/session.php';
 
   <?php require_once '../includes/top-bar.php' ?>
   <!-- [ top bar ] -->
+
 
 
 
@@ -33,7 +34,7 @@ require_once '../../back/sistema_global/session.php';
               <div class=" d-flex justify-content-between">
 
                 <h4 class="fw-bold py-3 mb-4">
-                  <span class="text-muted fw-light">Formulación /</span> Asignación de presupuesto a entes
+                  <span class="text-muted fw-light">Formulación /</span> Presupuesto de unidades y dependencias
                 </h4>
 
                 <div class="row" id="ejercicios-fiscales">
@@ -52,10 +53,9 @@ require_once '../../back/sistema_global/session.php';
           <div class="card">
             <div class="card-header d-flex justify-content-between">
               <div class="">
-                <h5 class="mb-0">Asignación de presupuesto a entes</h5>
-                <small class="mt-0 text-muted">Asigne y administre el presupuesto anual de los entes</small>
+                <h5 class="mb-0">Asignación de presupuesto a unidades y dependencias</h5>
               </div>
-              <button class="btn btn-primary" id="entes-asignar">REGISTRAR</button>
+              <button class="btn btn-sm btn-primary" id="entes-asignar">REGISTRAR</button>
             </div>
             <div class="card-body">
               <!-- <div class="table-responsive d-none">

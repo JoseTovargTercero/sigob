@@ -128,12 +128,13 @@ $titulo = 'Distribución por entes';
               <div class="d-flex flex-column">
                 <div class="card-title mb-auto ">
                   <h5 class="mb-0"><?php echo $info_asignacion['ente_nombre'] ?></h5>
+                  <p class="mb-0" id="asignacion_total">Asignación total: <b><?php echo number_format($info_asignacion['monto_total'], 2, ',', '.') ?> Bs</b></p>
                   <p id="actividad"></p>
                 </div>
                 <div class="mt-2 card-body">
 
 
-                  <table class="table" id="table">
+                  <table class="table table-striped dataTable" id="table">
                     <thead>
                       <tr>
                         <th style="width: 5%;">#</th>

@@ -107,7 +107,7 @@ function insertarDistribuciones($distribuciones)
         }
 
         $conexion->commit();
-        return json_encode(["success" => "Distribuciones insertadas correctamente"]);
+        return json_encode(["success" => "La tarea se realizó con éxito"]);
     } catch (Exception $e) {
         $conexion->rollback();
         registrarError($e->getMessage());
@@ -149,7 +149,6 @@ function actualizarEstadoDistribucionPorAsignacion($id_asignacion, $status, $com
         } else {
             throw new Exception("No se encontraron registros de distribución con el id_asignacion especificado o los estados ya estaban configurados.");
         }
-
     } catch (Exception $e) {
         $conexion->rollback();
         registrarError($e->getMessage());
@@ -567,6 +566,3 @@ if (isset($data["accion"])) {
 } else {
     echo json_encode(['error' => "No se recibió ninguna acción"]);
 }
-
-
-?>

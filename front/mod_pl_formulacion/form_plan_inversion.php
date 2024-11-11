@@ -186,7 +186,7 @@ $stmt->close();
               <h3 class="text-white mb-2 f-w-300" id="situado_h2">
                 <?php echo $plan_inversion ?> </h3>
               <span class="text-white">
-                <b id="monto_asigando_ap">0</b> <small>Bs</small> Asignado a proyectos. <br>
+                <b id="monto_asigando_ap">0</b> <small>Bs</small> Asignados. <br>
                 <b id="monto_ejecutado">0</b> <small>Bs</small> Ejecutados.
               </span>
 
@@ -395,7 +395,7 @@ $stmt->close();
 
 
                   <div class="text-center mb-4">
-                    <button class="btn btn-sm bg-brand-color-1 text-white" id="btn-add-row-inputs"><i class="bx bx-plus"></i>Agregar otra partida</button>
+                    <button type="button" class="btn btn-sm bg-brand-color-1 text-white" id="btn-add-row-inputs"><i class="bx bx-plus"></i>Agregar otra partida</button>
                   </div>
 
                   <div class="mb-3 d-flex justify-content-between">
@@ -668,7 +668,7 @@ $stmt->close();
                           <label  class="form-label">Monto</label>
                           <input type="text" class="form-control c_monto" placeholder="Monto">
                         </div>
-                        <div class="col-lg-3 g-self-e">
+                        <div class="col-lg-1 g-self-e">
                           <button class="btn btn-light-danger btn-delete-row"><i class="bx bx-x f-20"></i></button>
                         </div>
                       </div>
@@ -1211,7 +1211,7 @@ $stmt->close();
                   data_tabla.push([
                     count++,
                     item.proyecto,
-                    item.monto_proyecto,
+                    agregarSeparadorMiles(item.monto_proyecto) + 'Bs',
                     item.status === 1 ?
                     `<span class="badge bg-light-primary">Ejecutado</span>` : `<span class="badge bg-light-secondary">Pendiente</span>`,
                     `<button data-id-proyecto="${item.id}" type="button" class="btn avtar avtar-xs btn-success btn-detalles-p" data-toggle="
@@ -1247,8 +1247,8 @@ $stmt->close();
                 actualizarGrafico(data_tabla.length, proyectos_ejecutados)
 
                 DataTable.rows.add(data_tabla).draw()
-                $('#monto_asigando_ap').html(monto_total_proyectos)
-                $('#monto_ejecutado').html(monto_total_ejecutado)
+                $('#monto_asigando_ap').html(agregarSeparadorMiles(monto_total_proyectos))
+                $('#monto_ejecutado').html(agregarSeparadorMiles(monto_total_ejecutado))
               }
             },
             error: function(xhr, status, error) {
@@ -1284,6 +1284,8 @@ $stmt->close();
             monto: document.querySelectorAll('.c_monto')
           };
 
+          let verificar_repetidas = [];
+
           const datos_presupuestarios = [];
           let consolidado = 0,
             errors = false,
@@ -1293,6 +1295,8 @@ $stmt->close();
           $(".border-danger").removeClass("border-danger");
           // Validar y almacenar datos de cada partida
           fields.partida.forEach((partida, index) => {
+
+
             const values = {
               sector: fields.sector[index].value,
               program: fields.program[index].value,
@@ -1301,6 +1305,21 @@ $stmt->close();
               partida: partida.value,
               monto: fields.monto[index].value
             };
+
+
+
+
+            // Control de duplicados
+            let sppa = values.sector + '.' + values.program + '.' + values.proyecto + '.' + values.actividad + '.' + values.partida
+            if (verificar_repetidas[sppa]) {
+              partida.classList.add('border-danger');
+              errors = 'repetido';
+              return
+            } else {
+              verificar_repetidas[sppa] = true
+            }
+
+
 
             // Verificar campos vacíos y aplicar la clase `border-danger` para campos `input` o `chosen-container` en caso de selects
             for (let key in values) {
@@ -1315,21 +1334,19 @@ $stmt->close();
               }
             }
 
-            // Control de duplicados y suma de montos
-            const key = `${values.sector}.${values.partida}.${values.actividad}.${values.proyecto}`;
-            if (controlPartidas[key]) {
-              errors = true;
-              toast_s('error', 'Hay una o más partidas duplicadas en el mismo sector.');
-            } else {
-              controlPartidas[key] = true;
-              datos_presupuestarios.push(values);
-              consolidado += parseInt(values.monto);
-            }
+            // y suma de montos
+            datos_presupuestarios.push(values);
+            consolidado += parseInt(values.monto);
           });
 
           const nombre = $("#nombre").val().trim(),
             descripcion = $("#descripcion").val().trim(),
             monto_total = parseInt($("#monto").val().replace(/\./g, ""));
+
+          if (errors == 'repetido') {
+            toast_s('error', 'Partida repetida, seleccione una diferente o cambie el sector, programa o actividad')
+            return
+          }
 
           // Validar monto total
           if (consolidado !== monto_total) {
