@@ -6,8 +6,8 @@ if (!isset($_GET['id_ejercicio']) || !isset($_GET['ente'])) {
     die("Parámetros faltantes.");
 }
 
-$id_ejercicio = intval($_GET['id_ejercicio']); // Asegurarse de que es entero
-$ente = intval($_GET['ente']); // Asegurarse de que es entero
+$id_ejercicio = intval($_GET['id_ejercicio']);
+$ente = intval($_GET['ente']);
 
 // CONSULTAS
 // Obtener denominaciones desde pl_partidas
@@ -25,10 +25,6 @@ if ($result->num_rows > 0) {
 }
 $stmt->close();
 
-// Verificar si $denominacion se llenó correctamente
-// Uncomment the following line for debugging
-// var_dump($denominacion);
-
 // CONSULTAS
 // Información del sector, programa y proyecto del ente
 $stmt = mysqli_prepare($conexion, "SELECT entes.ente_nombre, ppy.proyecto_id, ppy.denominacion AS nombre_proyecto, 
@@ -42,7 +38,7 @@ $stmt = mysqli_prepare($conexion, "SELECT entes.ente_nombre, ppy.proyecto_id, pp
 if (!$stmt) {
     die("Error en consulta de sector y programa: " . mysqli_error($conexion));
 }
-$stmt->bind_param('i', $ente); // Cambiado de 's' a 'i' si 'ente' es entero
+$stmt->bind_param('i', $ente);
 $stmt->execute();
 $result = $stmt->get_result();
 
@@ -72,18 +68,18 @@ $stmt->execute();
 $resultDistribuciones = $stmt->get_result();
 
 $partidasData = [];
-$maxActividad = 51;  // Inicializamos con el mínimo de las actividades
+$maxActividad = 51;
 
 while ($rowDistribucion = $resultDistribuciones->fetch_assoc()) {
-    $distribuciones = json_decode($rowDistribucion['distribucion'], true); // Decodificar el JSON
+    $distribuciones = json_decode($rowDistribucion['distribucion'], true);
 
     if (!is_array($distribuciones)) {
-        continue; // Si no es un array válido, saltar
+        continue;
     }
 
     foreach ($distribuciones as $distribucion) {
         if (!isset($distribucion['id_distribucion']) || !isset($distribucion['monto'])) {
-            continue; // Saltar si faltan datos
+            continue;
         }
 
         $id_distribucion = intval($distribucion['id_distribucion']);
@@ -106,7 +102,6 @@ while ($rowDistribucion = $resultDistribuciones->fetch_assoc()) {
             $actividad = $dataDistribucionPres['actividad'];
             $monto_actual = $dataDistribucionPres['monto_actual'];
 
-            // Actualizar maxActividad
             if ($actividad > $maxActividad) {
                 $maxActividad = $actividad;
             }
@@ -124,27 +119,77 @@ while ($rowDistribucion = $resultDistribuciones->fetch_assoc()) {
             $stmtPartida->close();
 
             if ($dataPartida) {
-                $partidaCompleta = $dataPartida['partida'];
-                $descripcion = $dataPartida['descripcion'];
+              $partidaCompleta = $dataPartida['partida'];
+$descripcion = $dataPartida['descripcion'];
 
-                // Desglosar la partida en part, gen, esp, sub_esp, cod_ordi
-                $partidaArray = explode('.', $partidaCompleta);
+// Separar la partida completa en sus componentes
+$partidaArray = explode('.', $partidaCompleta);
+
+$part = $partidaArray[0] ?? null;
+$gen = $partidaArray[1] ?? null;
+$esp = $partidaArray[2] ?? null;
+$sub_esp = $partidaArray[3] ?? null;
+$cod_ordi = $partidaArray[4] ?? '0000';  // Definir cod_ordi si no existe
+
+// Modificar la partida para que los últimos 4 dígitos sean 0000
+$partidaModificada = implode('.', array_slice($partidaArray, 0, 4)) . '.0000';
+
+                
+                // Verificar el valor de cod_ordi
+               if ($cod_ordi !== '0000') {
+    // Si cod_ordi es diferente de '0000', buscar la descripcion principal
+    // Usar la partida modificada con los últimos 4 dígitos en '0000'
+    $sqlDenominacionPrincipal = "SELECT descripcion 
+                                 FROM partidas_presupuestarias 
+                                 WHERE partida = ?";
+    $stmtDenominacionPrincipal = $conexion->prepare($sqlDenominacionPrincipal);
+    
+    if (!$stmtDenominacionPrincipal) {
+        die("Error en consulta de denominación principal: " . mysqli_error($conexion));
+    }
+
+    // Pasar la partida modificada a la consulta
+    $stmtDenominacionPrincipal->bind_param('s', $partidaModificada);
+    $stmtDenominacionPrincipal->execute();
+    $resultDenominacionPrincipal = $stmtDenominacionPrincipal->get_result();
+    $dataDenominacionPrincipal = $resultDenominacionPrincipal->fetch_assoc();
+
+    $denominacion_principal = $dataDenominacionPrincipal['descripcion'] ?? $descripcion;
+} else {
+    $denominacion_principal = $descripcion;
+}
+// Desglosar la denominación principal
+$partidaPrincipalArray = explode('.', $partidaModificada);
+$part_principal = $partidaPrincipalArray[0] ?? null;
+$gen_principal = $partidaPrincipalArray[1] ?? null;
+$esp_principal = $partidaPrincipalArray[2] ?? null;
+$sub_esp_principal = $partidaPrincipalArray[3] ?? null;
+$cod_ordi_principal = $partidaPrincipalArray[4] ?? '0000'; // Este será siempre 0000
+
                 $partidaInfo = [
-                    'part' => $partidaArray[0] ?? null,
-                    'gen' => $partidaArray[1] ?? null,
-                    'esp' => $partidaArray[2] ?? null,
-                    'sub_esp' => $partidaArray[3] ?? null,
-                    'cod_ordi' => $partidaArray[4] ?? null,
-                    'denominacion' => $descripcion,
-                    'monto' => $monto,
-                    'actividad' => $actividad // Usar la actividad desde distribucion_presupuestaria
-                ];
+    'part' => $part,
+    'gen' => $gen,
+    'esp' => $esp,
+    'sub_esp' => $sub_esp,
+    'cod_ordi' => $cod_ordi,
+    'denominacion' => $descripcion,
+    'denominacion_principal' => $denominacion_principal,
+    'part_principal' => $part_principal,
+    'gen_principal' => $gen_principal,
+    'esp_principal' => $esp_principal,
+    'sub_esp_principal' => $sub_esp_principal,
+    'cod_ordi_principal' => $cod_ordi_principal,
+    'monto' => $monto,
+    'actividad' => $actividad
+];
 
-                $partidasData[] = $partidaInfo;
+$partidasData[] = $partidaInfo;
+
             }
         }
     }
 }
+
 $stmt->close();
 
 
@@ -160,6 +205,25 @@ foreach ($partidasData as $partida) {
     $partKey = $partida['part'] . '-' . $partida['denominacion'];
     $actividad = intval($partida['actividad']);
 
+    // Estructura para almacenar información consolidada de la partida
+    $partidaInfo = [
+        'part' => $partida['part'],
+        'gen' => $partida['gen'],
+        'esp' => $partida['esp'],
+        'sub_esp' => $partida['sub_esp'],
+        'cod_ordi' => $partida['cod_ordi'],
+        'denominacion' => $partida['denominacion'],
+        'denominacion_principal' => $partida['denominacion_principal'],
+        'part_principal' => $partida['part_principal'],
+        'gen_principal' => $partida['gen_principal'],
+        'esp_principal' => $partida['esp_principal'],
+        'sub_esp_principal' => $partida['sub_esp_principal'],
+        'cod_ordi_principal' => $partida['cod_ordi_principal'],
+        'monto' => $partida['monto'],
+        'actividad' => $partida['actividad']
+    ];
+
+    // Agrupando las partidas por la clave (part-denominacion)
     if (!isset($partidasAgrupadas[$partKey])) {
         $partidasAgrupadas[$partKey] = [
             'part' => $partida['part'],
@@ -168,22 +232,25 @@ foreach ($partidasData as $partida) {
             'sub_esp' => $partida['sub_esp'],
             'cod_ordi' => $partida['cod_ordi'],
             'denominacion' => $partida['denominacion'],
+            'denominacion_principal' => $partida['denominacion_principal'],
+            'part_principal' => $partida['part_principal'],
+            'gen_principal' => $partida['gen_principal'],
+            'esp_principal' => $partida['esp_principal'],
+            'sub_esp_principal' => $partida['sub_esp_principal'],
+            'cod_ordi_principal' => $partida['cod_ordi_principal'],
             'total_programa' => 0,
             'actividades' => array_fill($inicioActividad, $finActividad - $inicioActividad + 1, 0)
         ];
     }
 
-    // Acumular el monto en el total del programa
+    // Acumulando el monto en el total del programa
     $partidasAgrupadas[$partKey]['total_programa'] += $partida['monto'];
 
-    // Acumular el monto en la actividad correspondiente
+    // Acumulando el monto en la actividad correspondiente
     if ($actividad >= $inicioActividad && $actividad <= $finActividad) {
         $partidasAgrupadas[$partKey]['actividades'][$actividad] += $partida['monto'];
     }
 }
-
-
-
 
 // Consultar datos del ejercicio fiscal
 $query_sector = "SELECT * FROM ejercicio_fiscal WHERE id = ?";
@@ -200,6 +267,7 @@ $stmt->close();
 $ano = $data['ano'] ?? 'Desconocido';
 $situado = $data['situado'] ?? 'Desconocido';
 ?>
+
 
 
 <!DOCTYPE html>
@@ -394,10 +462,28 @@ $situado = $data['situado'] ?? 'Desconocido';
 <body>
 
 <?php
+$totalProgramaGeneral = 0;
+$totalActividad = array_fill($inicioActividad, $finActividad - $inicioActividad + 1, 0);
+$totalMontoObra = 0;
+$totalPartida = 0;
+$partAnterior = null;
+usort($partidasAgrupadas, function ($a, $b) {
+    // Primero, manejar los casos donde 'cod_ordi' es vacío o '0000'
+    if ($a['cod_ordi'] === '0000' && $b['cod_ordi'] !== '0000') {
+        return 1;  // Poner el '0000' al final
+    }
+    if ($a['cod_ordi'] !== '0000' && $b['cod_ordi'] === '0000') {
+        return -1;  // Poner el '0000' al final
+    }
+    
+    // Si ambos son diferentes de '0000', ordenar numéricamente
+    return (int)$a['cod_ordi'] <=> (int)$b['cod_ordi'];
+});
 // Ordenar el array $partidasAgrupadas por 'part'
 usort($partidasAgrupadas, function ($a, $b) {
     return $a['part'] <=> $b['part'];
 });
+
 ?>
 
 <table class='header-table bt br bb bl bc-lightgray'>
@@ -439,7 +525,6 @@ usort($partidasAgrupadas, function ($a, $b) {
         </td>
     </tr>
 </table>
-
 <table>
     <!-- Encabezado de la tabla -->
     <tr>
@@ -454,6 +539,7 @@ usort($partidasAgrupadas, function ($a, $b) {
         <th class="br bb bt">ESP</th>
         <th class="br bb bt">SUB ESP</th>
         <th class="br bb bt">COD ORDI</th>
+        <th class="br bb bt">COD OBR</th>
         <th class="br bb bt">DENOMINACIÓN</th>
         <th class="br bb bt">TOTAL PROGRAMA</th>
         <?php for ($actividad = $inicioActividad; $actividad <= $finActividad; $actividad++): ?>
@@ -462,71 +548,126 @@ usort($partidasAgrupadas, function ($a, $b) {
         <th class="br bb bt">MONTO DE LA OBRA</th>
     </tr>
 
-    <?php
-    $totalProgramaGeneral = 0;
-    $totalActividad = array_fill($inicioActividad, $finActividad - $inicioActividad + 1, 0);
-    $totalMontoObra = 0;
+    <!-- Fila para los encabezados principales (part, gen, esp, sub-esp) -->
+    <?php 
     $totalPartida = 0;
-    $partAnterior = null;
-
-    foreach ($partidasAgrupadas as $partidaKey => $partida):
-        // Verificar si la partida ha cambiado para mostrar el total del grupo anterior
-        if ($partAnterior !== null && $partAnterior !== $partida['part']) {
+    $codigoPartidaAnterior = ''; // Para verificar cuando cambie el código de partida
     ?>
-        <!-- Fila de total por PART -->
+
+    <?php foreach ($partidasAgrupadas as $partidaKey => $partida): ?>
+        <?php
+        // Verificar si el código de la partida cambió
+        if ($partida['part'] !== $codigoPartidaAnterior && $codigoPartidaAnterior !== ''):
+            // Realizar la consulta para obtener la denominación de la partida
+            $denominacionPartida = '';
+            $queryDenominacion = "SELECT denominacion FROM pl_partidas WHERE partida = '" . $codigoPartidaAnterior . "'";
+            $resultDenominacion = mysqli_query($conexion, $queryDenominacion);
+            if ($row = mysqli_fetch_assoc($resultDenominacion)) {
+                $denominacionPartida = $row['denominacion'];
+            }
+            ?>
+            <tr>
+                <td colspan="6" class="br bb bl text-end underline p10">
+                    TOTAL POR PARTIDA <?= $codigoPartidaAnterior ?>
+                </td>
+                <td class="br bb"><?= $denominacionPartida ?></td>
+                <td class="br bb"><?= number_format($totalPartida, 2) ?></td>
+
+                <!-- Totales por actividad -->
+                <?php for ($actividad = $inicioActividad; $actividad <= $finActividad; $actividad++): ?>
+                    <td class="br bb bl"><?= number_format($totalActividad[$actividad], 2) ?></td>
+                <?php endfor; ?>
+
+                <td class="br bb bl"><?= number_format($totalPartida, 2) ?></td>
+            </tr>
+            <?php
+            // Reiniciar el acumulado para la nueva partida
+            $totalPartida = 0;
+        endif;
+        ?>
+
+        <!-- Fila para los encabezados normales (part, gen, esp, sub-esp) -->
         <tr>
-            <td colspan="<?= 6 + ($finActividad - $inicioActividad + 2) ?>" class="br bb bl text-end underline p10">
-                TOTAL POR PARTIDA <?php echo $partAnterior ?>
-            </td>
-            <td class="crim br bb"><?= number_format($totalPartida, 2) ?></td>
+            <th class="crim br bb bt bl"><?= $partida['part_principal'] ?></th>
+            <th class="crim br bb bt"><?= $partida['gen_principal'] ?></th>
+            <th class="crim br bb bt"><?= $partida['esp_principal'] ?></th>
+            <th class="crim br bb bt"><?= $partida['sub_esp_principal'] ?></th>
+            <td class="br bb"></td> <!-- Espacio vacío para COD ORDI -->
+            <td class="br bb"></td> <!-- Espacio vacío para COD OBR -->
+            <th class="crim br bb bt"><u><?= $partida['denominacion_principal'] ?></u></th>
+            <td class="br bb"></td>
+
+            <!-- Actividades dinámicas -->
+            <?php for ($actividad = $inicioActividad; $actividad <= $finActividad; $actividad++): ?>
+                <td class="br bb bl"></td>
+            <?php endfor; ?>
+
+            <!-- Monto de la obra -->
+            <td class="br bb bl"></td>
         </tr>
-    <?php
-        // Reiniciar el total para la nueva partida
-        $totalPartida = 0;
-    }
 
-    // Acumular el total de la partida actual y de cada actividad
-    $totalPartida += $partida['total_programa'];
-    $totalProgramaGeneral += $partida['total_programa'];
-    $partAnterior = $partida['part'];
+        <!-- Fila para los encabezados normales (part, gen, esp, sub-esp) -->
+        <tr>
+            <th class="br bb bt bl"><?= $partida['part'] ?></th>
+            <th class="br bb bt"><?= $partida['gen'] ?></th>
+            <th class="br bb bt"><?= $partida['esp'] ?></th>
+            <th class="br bb bt"><?= $partida['sub_esp'] ?></th>
+            <td class="br bb"><?= $partida['cod_ordi'] ?></td> <!-- COD ORDI -->
+            <td class="br bb"></td> <!-- Espacio vacío para COD OBR -->
+            <th class="br bb"><?= $partida['denominacion'] ?></th>
+            <td class="br bb"><?= number_format($partida['total_programa'], 2) ?></td>
 
-    foreach ($partida['actividades'] as $actividad => $monto) {
-        $totalActividad[$actividad] += $monto;
-    }
+            <!-- Actividades dinámicas -->
+            <?php for ($actividad = $inicioActividad; $actividad <= $finActividad; $actividad++): ?>
+                <td class="br bb bl"><?= ($partida['actividades'][$actividad] > 0 ? number_format($partida['actividades'][$actividad], 2) : '0,00') ?></td>
+                <?php 
+                    // Acumulando el total de actividades
+                    $totalActividad[$actividad] += $partida['actividades'][$actividad];
+                ?>
+            <?php endfor; ?>
 
-    $totalMontoObra += $partida['total_programa'];
-    ?>
-    <!-- Fila de datos consolidada por partida -->
-    <tr>
-        <td class="br bb bl"><?= $partida['part'] ?></td>
-        <td class="br bb"><?= $partida['gen'] ?></td>
-        <td class="br bb"><?= $partida['esp'] ?></td>
-        <td class="br bb"><?= $partida['sub_esp'] ?></td>
-        <td class="br bb"><?= $partida['cod_ordi'] ?></td>
-        <td class="br bb text-start"><?= $partida['denominacion'] ?></td>
-        <td class="br bb"><?= number_format($partida['total_programa'], 2) ?></td>
-
-        <!-- Actividades dinámicas -->
-        <?php for ($actividad = $inicioActividad; $actividad <= $finActividad; $actividad++): ?>
-            <td class="br bb bl"><?= ($partida['actividades'][$actividad] > 0 ? number_format($partida['actividades'][$actividad], 2) : '0,00') ?></td>
-        <?php endfor; ?>
-
-        <!-- Monto de la obra -->
-        <td class="br bb bl"><?= number_format($partida['total_programa'], 2) ?></td>
-    </tr>
+            <!-- Monto de la obra -->
+            <td class="br bb bl"><?= number_format($partida['total_programa'], 2) ?></td>
+            <?php 
+                // Acumulando el total de la obra
+                $totalMontoObra += $partida['total_programa']; 
+                // Acumulando el total de la partida
+                $totalPartida += $partida['total_programa']; 
+                // Acumulando el total general del programa
+                $totalProgramaGeneral += $partida['total_programa'];
+                $codigoPartidaAnterior = $partida['part']; // Guardar el código de la partida actual
+            ?>
+        </tr>
     <?php endforeach; ?>
 
     <!-- Fila de total de la última partida -->
+    <?php
+    // Obtener la denominación de la última partida
+    $denominacionPartida = '';
+    $queryDenominacion = "SELECT denominacion FROM pl_partidas WHERE partida = '" . $codigoPartidaAnterior . "'";
+    $resultDenominacion = mysqli_query($conexion, $queryDenominacion);
+    if ($row = mysqli_fetch_assoc($resultDenominacion)) {
+        $denominacionPartida = $row['denominacion'];
+    }
+    ?>
     <tr>
-       <td colspan="<?= 6 + ($finActividad - $inicioActividad + 2) ?>" class="br bb bl text-end underline p10">
-            TOTAL POR PARTIDA <?php echo $partAnterior  ?>
-       </td>
-        <td class="crim br bb"><?= number_format($totalPartida, 2) ?></td>
+        <td colspan="6" class="br bb bl text-end underline p10">
+            TOTAL POR PARTIDA <?= $codigoPartidaAnterior ?>
+        </td>
+        <td class="br bb"><?= $denominacionPartida ?></td>
+        <td class=" br bb"><?= number_format($totalPartida, 2) ?></td>
+
+        <!-- Totales por actividad -->
+        <?php for ($actividad = $inicioActividad; $actividad <= $finActividad; $actividad++): ?>
+            <td class="br bb bl"><?= number_format($totalActividad[$actividad], 2) ?></td>
+        <?php endfor; ?>
+
+        <td class="br bb bl"><?= number_format($totalPartida, 2) ?></td>
     </tr>
 
     <!-- Fila de totales generales -->
     <tr>
-        <td colspan="6" class="br bb bl text-end underline p10">TOTAL GENERAL</td>
+        <td colspan="7" class="br bb bl text-end underline p10">TOTAL GENERAL</td>
         <td class="crim br bb"><?= number_format($totalProgramaGeneral, 2) ?></td>
 
         <!-- Totales por actividad -->
@@ -538,6 +679,10 @@ usort($partidasAgrupadas, function ($a, $b) {
         <td class="crim br bb"><?= number_format($totalMontoObra, 2) ?></td>
     </tr>
 </table>
+
+
+
+
 
 
 
