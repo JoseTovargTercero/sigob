@@ -183,9 +183,6 @@ foreach ($partidasData as $partida) {
 }
 
 
-echo "<pre>";
-var_dump($partidasAgrupadas);
-echo "</pre>";
 
 
 // Consultar datos del ejercicio fiscal
