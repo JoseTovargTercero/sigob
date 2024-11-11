@@ -30,6 +30,7 @@ import {
   deleteDescripcionProgramaRow,
   deleteDirectivoRow,
   deleteGobernacionRow,
+  deletePersonaRow,
   deleteTitulo1Row,
   loadGobernacionTable,
   validateConsejoTable,
@@ -233,7 +234,7 @@ export const validatePersonaView = async () => {
         type: NOTIFICATIONS_TYPES.delete,
         message: '¿Desea eliminar este registro?',
         successFunction: async function () {
-          deleteTitulo1Row({ row })
+          deletePersonaRow({ row })
           eliminarPersonaId(e.target.dataset.eliminarid)
         },
       })
