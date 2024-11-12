@@ -18,7 +18,6 @@ $ano = $data['ano'];
 $situado = $data['situado'];
 $stmt->close();
 
-
 // Consultar denominación del sector y valor de sector desde pl_sectores
 $query_denominacion_sector = "SELECT denominacion, sector FROM pl_sectores WHERE id = ?";
 $stmt_denominacion_sector = $conexion->prepare($query_denominacion_sector);
@@ -40,7 +39,6 @@ $programa_data = $result_denominacion_programa->fetch_assoc();
 
 $denominacion_programa = $programa_data['denominacion'];
 $programa = $programa_data['programa'];
-
 
 // Consultar distribuciones presupuestarias
 $query_distribucion = "SELECT monto_inicial, id_partida FROM distribucion_presupuestaria WHERE id_sector = ? AND id_programa = ? AND id_ejercicio = ?";
@@ -77,20 +75,26 @@ foreach ($distribuciones as $distribucion) {
     // Extraer el código de partida (los primeros 3 caracteres)
     $codigo_partida = substr($partida, 0, 3);
 
+    // Obtener el monto FCI sumado de proyecto_inversion_partidas
+    $query_fci = "SELECT SUM(monto) as total_fci FROM proyecto_inversion_partidas WHERE partida = ?";
+    $stmt_fci = $conexion->prepare($query_fci);
+    $stmt_fci->bind_param('i', $id_partida);
+    $stmt_fci->execute();
+    $result_fci = $stmt_fci->get_result();
+    $fci_data = $result_fci->fetch_assoc();
+    $total_fci = $fci_data['total_fci'] ?? 0;
+
     // Agrupar datos por código de partida
     if (in_array($codigo_partida, $partidas_a_agrupadas)) {
-        $data[$codigo_partida][] = [$partida, $descripcion, 0, $monto_inicial, 0, 0, $monto_inicial];
+        $data[$codigo_partida][] = [$partida, $descripcion, 0, $monto_inicial, $total_fci, 0, $monto_inicial + $total_fci];
 
         if (!isset($totales_por_partida[$codigo_partida])) {
             $totales_por_partida[$codigo_partida] = 0;
         }
-        $totales_por_partida[$codigo_partida] += $monto_inicial;
+        $totales_por_partida[$codigo_partida] += ($monto_inicial + $total_fci);
     }
 }
-
-// Aquí podrías agregar un paso adicional para imprimir o utilizar $denominacion_sector y $denominacion_programa, si lo necesitas
 ?>
-
 <!DOCTYPE html>
 <html>
 
@@ -290,7 +294,7 @@ foreach ($distribuciones as $distribucion) {
 
 
 
-    <table>
+       <table>
         <thead>
             <tr>
                 <td class="bl bt bb"></td>
@@ -380,7 +384,6 @@ foreach ($distribuciones as $distribucion) {
             echo "</tbody >
         </table>";
             ?>
-
 
 </body>
 

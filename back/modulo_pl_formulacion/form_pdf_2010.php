@@ -4,7 +4,6 @@ require_once '../sistema_global/conexion.php';
 // Suponemos que recibimos $id_ejercicio y $ente de alguna manera, como parámetros GET
 $id_ejercicio = $_GET['id_ejercicio'];
 
-
 // Consultar registros de entes con sector 10
 $sqlEntes = "SELECT id, ente_nombre FROM entes WHERE sector = 10";
 $resultEntes = $conexion->query($sqlEntes);
@@ -32,6 +31,7 @@ if ($resultEntes && $resultEntes->num_rows > 0) {
             // Procesar cada item de la distribución
             foreach ($distribuciones as $distribucionItem) {
                 $idDistribucion = $distribucionItem['id_distribucion'];
+                $montoDistribucion = $distribucionItem['monto'];
 
                 // Consultar distribucion_presupuestaria para obtener id_partida y monto_actual
                 $sqlDistribucionPres = "SELECT id_partida, monto_actual FROM distribucion_presupuestaria WHERE id = ?";
@@ -70,7 +70,7 @@ if ($resultEntes && $resultEntes->num_rows > 0) {
                             'esp' => $partidaArray[2] ?? null,
                             'sub' => $partidaArray[3] ?? null,
                             'denominacion' => $enteNombre,
-                            'monto' => $montoActual
+                            'monto' => $montoDistribucion // Monto específico de cada distribución
                         ];
 
                         // Añadir la partida al array principal
@@ -87,13 +87,6 @@ if ($resultEntes && $resultEntes->num_rows > 0) {
         $stmtDistribuciones->close();
     }
 }
-
-
-
-
-
-
-
 
 // Consultar datos del ejercicio fiscal
 $query_sector = "SELECT * FROM ejercicio_fiscal WHERE id = ?";
