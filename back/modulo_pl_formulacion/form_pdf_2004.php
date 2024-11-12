@@ -29,63 +29,74 @@ if ($stmt_programa === false) {
 $stmt_programa->execute();
 $result_programa = $stmt_programa->get_result();
 
-// Agrupar los programas por sector y programa
-$programas = []; // Array para agrupar programas
+$programas = [];
 while ($programa_data = $result_programa->fetch_assoc()) {
-    $sector_numero = $programa_data['sector_numero']; // Nuevo valor de sector
+    $sector_numero = $programa_data['sector_numero'];
     $programa = $programa_data['programa'];
     $denominacion = $programa_data['denominacion'];
     $id_programa = $programa_data['id_programa'];
 
-    // Asegurarse de que el sector y programa existen en el array
     if (!isset($programas[$sector_numero][$programa])) {
         $programas[$sector_numero][$programa] = [
             'denominacion' => $denominacion,
             'ids' => [],
+            'programa_ids' => [], // Agregamos un array para los id_programa
         ];
     }
-
-    // Agregar el ID del programa al sector y programa correspondiente
-    $programas[$sector_numero][$programa]['ids'][] = $id_programa;
+    $programas[$sector_numero][$programa]['ids'][] = $sector_numero;
+    $programas[$sector_numero][$programa]['programa_ids'][] = $id_programa;
 }
 
-// Verificamos si hay programas disponibles
 if (empty($programas)) {
     die('No se encontraron programas.');
 }
 
-// Iterar sobre los sectores y programas
+// Iterar sobre los sectores y programas para consultas separadas
 foreach ($programas as $sector_numero => $programas_info) {
     foreach ($programas_info as $programa => $info) {
-        $id_list = implode(',', $info['ids']); // Convertimos el array de IDs a una lista separada por comas
+        $sector_id_list = implode(',', $info['ids']); // Convertimos el array de sectores a lista separada por comas
+        $programa_id_list = implode(',', $info['programa_ids']); // Convertimos el array de programas a lista separada por comas
 
-        // Hacer la consulta a distribucion_presupuestaria
-        if (!empty($id_list)) {
+        // Consulta a distribucion_presupuestaria para obtener los valores filtrando por sector y programa
+        if (!empty($sector_id_list) && !empty($programa_id_list)) {
             $query_distribucion = "SELECT 
                                         SUM(0) AS total_ingresos_propios, 
                                         SUM(monto_inicial) AS total_situado_estadal, 
-                                        SUM(0) AS total_fci, 
                                         SUM(0) AS total_otras_fuentes 
                                     FROM distribucion_presupuestaria 
-                                    WHERE id_sector IN ($id_list) AND id_ejercicio = ?";
+                                    WHERE id_sector IN ($sector_id_list) 
+                                      AND id_programa IN ($programa_id_list) 
+                                      AND id_ejercicio = ?";
 
             $stmt_distribucion = $conexion->prepare($query_distribucion);
             if ($stmt_distribucion === false) {
                 die('Error en la consulta SQL (distribucion_presupuestaria): ' . $conexion->error);
             }
-
             $stmt_distribucion->bind_param('i', $id_ejercicio);
             $stmt_distribucion->execute();
             $result_distribucion = $stmt_distribucion->get_result();
             $distribucion_data = $result_distribucion->fetch_assoc();
 
-            // Extraer los montos o asignar 0 si no hay datos
             $ingresos_propios = $distribucion_data['total_ingresos_propios'] ?? 0;
             $situado_estadal = $distribucion_data['total_situado_estadal'] ?? 0;
-            $fci = $distribucion_data['total_fci'] ?? 0;
             $otras_fuentes = $distribucion_data['total_otras_fuentes'] ?? 0;
+
+            // Consulta a proyecto_inversion_partidas para calcular el FCI
+            $query_fci = "SELECT SUM(monto) AS total_fci 
+                          FROM proyecto_inversion_partidas 
+                          WHERE sector_id = ? AND programa_id = ?";
+            $stmt_fci = $conexion->prepare($query_fci);
+            if ($stmt_fci === false) {
+                die('Error en la consulta SQL (proyecto_inversion_partidas): ' . $conexion->error);
+            }
+
+            $stmt_fci->bind_param('ii', $sector_id_list, $programa_id_list);
+            $stmt_fci->execute();
+            $result_fci = $stmt_fci->get_result();
+            $fci_data = $result_fci->fetch_assoc();
+
+            $fci = $fci_data['total_fci'] ?? 0;
         } else {
-            // Si no hay IDs, asignar valores en 0
             $ingresos_propios = $situado_estadal = $fci = $otras_fuentes = 0;
         }
 
@@ -96,7 +107,6 @@ foreach ($programas as $sector_numero => $programas_info) {
         $data[] = [$sector_numero, $programa, $info['denominacion'], $ingresos_propios, $situado_estadal, $fci, $otras_fuentes, $total];
     }
 }
-
 ?>
 
 
