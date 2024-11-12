@@ -46,7 +46,7 @@ class DatabaseHandler
             $condicion = preg_replace('/\s*([=<>!]+)\s*/', '$1', $condicion);
 
             // Reemplazar valores después de operadores con '?' y eliminar comillas alrededor del valor
-            $condicion = preg_replace_callback('/([=<>!]+)(["\'`]?)(\S+)\2/', function ($matches) use (&$valores) {
+            $condicion = preg_replace_callback('/([=<>!]+)(["\'`]?)([^"\']+?)\2/', function ($matches) use (&$valores) {
                 $valores[] = trim($matches[3]);  // Agrega el valor sin comillas al array
                 return $matches[1] . ' ?';       // Retorna el operador seguido de '?'
             }, $condicion);
@@ -67,6 +67,11 @@ class DatabaseHandler
                 $query .= " ORDER BY " . implode(", ", $order_clauses);
             }
         }
+
+
+
+
+
 
         // Preparar consulta
         $stmt = mysqli_prepare($this->conexion, $query);
@@ -185,8 +190,9 @@ class DatabaseHandler
         // Verificar unicidad solo si hay campos marcados como únicos
         if (!empty($condicion_unicidad)) {
             $condicion_unica = implode(" AND ", $condicion_unicidad);
+
             $coincidencias = $this->comprobar_existencia([
-                ['tabla' => $tabla, 'condicion' => $condicion_unica]
+                ['tabla' => $tabla, 'condicion' => "$condicion_unica"]
             ]);
 
             if ($coincidencias > 0) {
