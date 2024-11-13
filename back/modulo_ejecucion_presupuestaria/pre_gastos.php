@@ -40,9 +40,9 @@ function crearGasto($id_tipo, $descripcion, $monto, $id_ejercicio, $tipo_benefic
             throw new Exception("El presupuesto actual es inferior al monto del gasto. No se puede registrar el gasto.");
         }else{
              // Paso 4: Insertar el gasto si el presupuesto es suficiente
-            $sqlInsertGasto = "INSERT INTO gastos (id_tipo, descripcion, monto, status, id_ejercicio, tipo_beneficiario, id_beneficiario, id_distribucion) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            $sqlInsertGasto = "INSERT INTO gastos (id_tipo, descripcion, monto, status, id_ejercicio, tipo_beneficiario, id_beneficiario, id_distribucion) VALUES (?, ?, ?, 0, ?, ?, ?, ?)";
             $stmtInsertGasto = $conexion->prepare($sqlInsertGasto);
-            $stmtInsertGasto->bind_param("isdiisii", $id_tipo, $descripcion, $monto, $id_ejercicio, $tipo_beneficiario, $id_beneficiario, $id_distribucion);
+            $stmtInsertGasto->bind_param("issisii", $id_tipo, $descripcion, $monto, $id_ejercicio, $tipo_beneficiario, $id_beneficiario, $id_distribucion);
             $stmtInsertGasto->execute();
 
             if ($stmtInsertGasto->affected_rows > 0) {
@@ -88,6 +88,8 @@ function gestionarGasto($idGasto, $accion) {
         $id_ejercicio = $filaGasto['id_ejercicio'];
         $id_distribucion = $filaGasto['id_distribucion'];
         $status = $filaGasto['status'];
+        $tipo_beneficiario = $filaGasto['tipo_beneficiario'];
+        $id_beneficiario = $filaGasto['id_beneficiario'];
 
         // Verificar si el gasto ya ha sido procesado
         if ($status !== 0) {
@@ -126,7 +128,7 @@ function gestionarGasto($idGasto, $accion) {
 
             if ($stmtUpdateGasto->affected_rows > 0) {
                 // Paso 4: Registrar el compromiso
-                $resultadoCompromiso = registrarCompromiso($idGasto, 'gastos', $descripcion, $tipo_beneficiario, $id_beneficiario);
+                $resultadoCompromiso = registrarCompromiso($idGasto, 'gastos', $descripcion, $tipo_beneficiario, $id_beneficiario, $id_ejercicio);
 
                 // Paso 5: Actualizar el monto_actual en distribucion_presupuestaria
                 $nuevoMontoActual = $monto_actual - $monto;

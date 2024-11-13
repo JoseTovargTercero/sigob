@@ -5,13 +5,13 @@ require_once '../sistema_global/errores.php';
 
 
 // Función para registrar un compromiso
-function registrarCompromiso($idRegistro, $nombreTabla, $descripcion, $tipo_beneficiario, $id_beneficiario)
+function registrarCompromiso($idRegistro, $nombreTabla, $descripcion, $tipo_beneficiario, $id_beneficiario, $id_ejercicio)
 {
     global $conexion;
 
     try {
         // Verificar que los parámetros necesarios estén presentes
-        if (!isset($idRegistro) || !isset($nombreTabla) || !isset($descripcion) || !isset($tipo_beneficiario) || !isset($id_beneficiario)) {
+        if (!isset($idRegistro) || !isset($nombreTabla) || !isset($descripcion) || !isset($tipo_beneficiario) || !isset($id_beneficiario) || !isset($id_ejercicio)) {
             return ["error" => "Faltan datos obligatorios para registrar el compromiso."];
         }
 
@@ -38,10 +38,10 @@ function registrarCompromiso($idRegistro, $nombreTabla, $descripcion, $tipo_bene
         // Formatear el número de seguimiento (C00001-YYYY)
         $nuevoCorrelativo = 'C' . str_pad($numeroSeguimiento, 5, '0', STR_PAD_LEFT) . '-' . $yearActual;
 
-        // Insertar el nuevo compromiso en la tabla compromisos, incluyendo tipo_beneficiario e id_beneficiario
-        $sqlInsert = "INSERT INTO compromisos (correlativo, descripcion, id_registro, tipo_beneficiario, id_beneficiario) VALUES (?, ?, ?, ?, ?)";
+        // Insertar el nuevo compromiso en la tabla compromisos, incluyendo tipo_beneficiario, id_beneficiario, e id_ejercicio
+        $sqlInsert = "INSERT INTO compromisos (correlativo, descripcion, id_registro, tipo_beneficiario, id_beneficiario, id_ejercicio, tabla_registro) VALUES (?, ?, ?, ?, ?, ?, ?)";
         $stmtInsert = $conexion->prepare($sqlInsert);
-        $stmtInsert->bind_param("ssisi", $nuevoCorrelativo, $descripcion, $idRegistro, $tipo_beneficiario, $id_beneficiario);
+        $stmtInsert->bind_param("ssisiis", $nuevoCorrelativo, $descripcion, $idRegistro, $tipo_beneficiario, $id_beneficiario, $id_ejercicio, $nombreTabla);
         $stmtInsert->execute();
 
         // Verificar si la inserción fue exitosa
@@ -69,6 +69,7 @@ function registrarCompromiso($idRegistro, $nombreTabla, $descripcion, $tipo_bene
         return ["error" => $e->getMessage()];
     }
 }
+
 
 
 
