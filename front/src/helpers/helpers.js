@@ -716,7 +716,19 @@ function separarMiles(numero) {
   const resultadoEntero = parteEntera.replace(/\B(?=(\d{3})+(?!\d))/g, '.')
 
   // Regresar el resultado con la parte decimal
-  return resultadoEntero + parteDecimal
+  return numero.toLocaleString('es-VE')
+}
+
+function separadorLocal(numero) {
+  // Comprobar si el número es NaN o no es un tipo aceptable
+  if (
+    isNaN(numero) ||
+    (typeof numero !== 'number' && typeof numero !== 'string')
+  ) {
+    return `!${numero}`
+  }
+
+  return numero.toLocaleString('es-VE')
 }
 
 const formatearFloat = (numeroStr) => {
@@ -765,6 +777,7 @@ export {
   mapData,
   mapDataManual,
   separarMiles,
+  separadorLocal,
   insertOptions,
   recortarTexto,
   formatearFloat,
