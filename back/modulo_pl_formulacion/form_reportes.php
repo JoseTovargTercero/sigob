@@ -64,7 +64,7 @@ $reportes = [
     ],
     'descripcion' => [
         'nombre' => 'DESCRIPCION DEL PROGRAMA,  SUB - PROGRAMA Y PROYECTO',
-        'formato' => 'A4-L'
+        'formato' => 'A4'
     ],
     'presupuesto' => [
         'nombre' => 'LEY DE PRESUPUESTO DE INGRESOS Y GASTOS DEL ESTADO AMAZONAS',
@@ -76,7 +76,7 @@ $reportes = [
     ],
     'metas' => [
         'nombre' => 'METAS DEL PROGRAMA, SUB-PROGRAMA Y/O PROYECTO',
-        'formato' => 'A4-L'
+        'formato' => 'A4'
     ],
 ];
 
