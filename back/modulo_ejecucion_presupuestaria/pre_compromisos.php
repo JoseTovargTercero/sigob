@@ -5,13 +5,13 @@ require_once '../sistema_global/errores.php';
 
 
 // Función para registrar un compromiso
-function registrarCompromiso($idRegistro, $nombreTabla, $descripcion)
+function registrarCompromiso($idRegistro, $nombreTabla, $descripcion, $tipo_beneficiario, $id_beneficiario)
 {
     global $conexion;
 
     try {
         // Verificar que los parámetros necesarios estén presentes
-        if (!isset($idRegistro) || !isset($nombreTabla) || !isset($descripcion)) {
+        if (!isset($idRegistro) || !isset($nombreTabla) || !isset($descripcion) || !isset($tipo_beneficiario) || !isset($id_beneficiario)) {
             return ["error" => "Faltan datos obligatorios para registrar el compromiso."];
         }
 
@@ -20,7 +20,7 @@ function registrarCompromiso($idRegistro, $nombreTabla, $descripcion)
 
         // Obtener el número de seguimiento del año actual (reinicia si es un nuevo año)
         $sql = "SELECT correlativo FROM compromisos WHERE correlativo LIKE ? ORDER BY correlativo DESC LIMIT 1";
-        $correlativoLike = "C%-$yearActual"; // Buscar correlativos del formato Cxxxxx-2024
+        $correlativoLike = "C%-$yearActual"; // Buscar correlativos del formato Cxxxxx-YYYY
         $stmt = $conexion->prepare($sql);
         $stmt->bind_param("s", $correlativoLike);
         $stmt->execute();
@@ -35,16 +35,13 @@ function registrarCompromiso($idRegistro, $nombreTabla, $descripcion)
             $numeroSeguimiento = 1; // Si no hay registros anteriores, iniciar en 1
         }
 
-        // Formatear el número de seguimiento (C00001-2024)
+        // Formatear el número de seguimiento (C00001-YYYY)
         $nuevoCorrelativo = 'C' . str_pad($numeroSeguimiento, 5, '0', STR_PAD_LEFT) . '-' . $yearActual;
 
-        // Obtener el primer carácter de la descripción para el campo tipo (en mayúscula)
-        $tipo = strtoupper(substr($descripcion, 0, 1));
-
-        // Insertar el nuevo compromiso en la tabla compromisos
-        $sqlInsert = "INSERT INTO compromisos (correlativo, tipo, id_registro) VALUES (?, ?, ?)";
+        // Insertar el nuevo compromiso en la tabla compromisos, incluyendo tipo_beneficiario e id_beneficiario
+        $sqlInsert = "INSERT INTO compromisos (correlativo, descripcion, id_registro, tipo_beneficiario, id_beneficiario) VALUES (?, ?, ?, ?, ?)";
         $stmtInsert = $conexion->prepare($sqlInsert);
-        $stmtInsert->bind_param("ssi", $nuevoCorrelativo, $tipo, $idRegistro);
+        $stmtInsert->bind_param("ssisi", $nuevoCorrelativo, $descripcion, $idRegistro, $tipo_beneficiario, $id_beneficiario);
         $stmtInsert->execute();
 
         // Verificar si la inserción fue exitosa
@@ -74,22 +71,5 @@ function registrarCompromiso($idRegistro, $nombreTabla, $descripcion)
 }
 
 
-// Función para actualizar el compromiso relacionado
-function actualizarCompromiso($idSolicitud, $descripcion)
-{
-    global $conexion;
 
-    // Actualizar el tipo en la tabla compromisos
-    $tipo = strtoupper(substr($descripcion, 0, 1));
-    $sqlCompromiso = "UPDATE compromisos SET tipo = ? WHERE id_registro = ?";
-    $stmtCompromiso = $conexion->prepare($sqlCompromiso);
-    $stmtCompromiso->bind_param("si", $tipo, $idSolicitud);
-    $stmtCompromiso->execute();
-
-    if ($stmtCompromiso->affected_rows > 0) {
-        return ["success" => "Compromiso actualizado correctamente."];
-    } else {
-        return ["error" => "No se pudo actualizar el compromiso o no hubo cambios."];
-    }
-}
 
