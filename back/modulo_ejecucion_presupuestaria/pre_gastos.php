@@ -40,9 +40,9 @@ function crearGasto($id_tipo, $descripcion, $monto, $id_ejercicio, $tipo_benefic
             throw new Exception("El presupuesto actual es inferior al monto del gasto. No se puede registrar el gasto.");
         }else{
              // Paso 4: Insertar el gasto si el presupuesto es suficiente
-            $sqlInsertGasto = "INSERT INTO gastos (id_tipo, descripcion, monto, status, id_ejercicio, tipo_beneficiario, id_beneficiario, id_distribucion) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            $sqlInsertGasto = "INSERT INTO gastos (id_tipo, descripcion, monto, status, id_ejercicio, tipo_beneficiario, id_beneficiario, id_distribucion) VALUES (?, ?, ?, 0, ?, ?, ?, ?)";
             $stmtInsertGasto = $conexion->prepare($sqlInsertGasto);
-            $stmtInsertGasto->bind_param("isdiisii", $id_tipo, $descripcion, $monto, $id_ejercicio, $tipo_beneficiario, $id_beneficiario, $id_distribucion);
+            $stmtInsertGasto->bind_param("issisii", $id_tipo, $descripcion, $monto, $id_ejercicio, $tipo_beneficiario, $id_beneficiario, $id_distribucion);
             $stmtInsertGasto->execute();
 
             if ($stmtInsertGasto->affected_rows > 0) {
