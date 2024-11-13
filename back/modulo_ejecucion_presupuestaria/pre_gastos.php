@@ -308,7 +308,7 @@ function obtenerGastoPorId($id) {
                         // Obtener información del beneficiario según el tipo_beneficiario
                         if ($tipo_beneficiario == 0) {
                             // Consultar en la tabla entes
-                            $sqlBeneficiario = "SELECT * FROM entes WHERE id = ?";
+                            $sqlBeneficiario = "SELECT * FROM entes_dependencias WHERE id = ?";
                         } else {
                             // Consultar en la tabla empleados
                             $sqlBeneficiario = "SELECT * FROM empleados WHERE id = ?";
