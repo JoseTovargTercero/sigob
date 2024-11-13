@@ -88,6 +88,8 @@ function gestionarGasto($idGasto, $accion) {
         $id_ejercicio = $filaGasto['id_ejercicio'];
         $id_distribucion = $filaGasto['id_distribucion'];
         $status = $filaGasto['status'];
+        $tipo_beneficiario = $filaGasto['tipo_beneficiario'];
+        $id_beneficiario = $filaGasto['id_beneficiario'];
 
         // Verificar si el gasto ya ha sido procesado
         if ($status !== 0) {
