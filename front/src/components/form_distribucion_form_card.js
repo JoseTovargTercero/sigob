@@ -285,6 +285,26 @@ export const form_distribucion_form_card = async ({
         return
       }
 
+      let inputsMontos = Array.from(d.querySelectorAll('.partida-monto'))
+      inputsMontos.forEach((input) => {
+        fieldListPartidas = validateInput({
+          target: input,
+          fieldList: fieldListPartidas,
+          fieldListErrors: fieldListErrorsPartidas,
+          type: fieldListErrorsPartidas[input.name],
+        })
+      })
+
+      console.log(fieldListPartidas, fieldListErrorsPartidas)
+
+      if (Object.values(fieldListErrorsPartidas).some((el) => el.value)) {
+        toastNotification({
+          type: NOTIFICATIONS_TYPES.fail,
+          message: 'Hay montos inválidos',
+        })
+        return
+      }
+
       console.log(partidasValidadas)
 
       enviarInformacion(partidasValidadas, closeCard)
@@ -363,6 +383,8 @@ export const form_distribucion_form_card = async ({
         fieldListErrors: fieldListErrorsPartidas,
         type: fieldListErrorsPartidas[e.target.name].type,
       })
+
+      console.log(fieldListPartidas)
     } else {
       // fieldList = validateInput({
       //   target: e.target,
@@ -388,12 +410,12 @@ export const form_distribucion_form_card = async ({
 
     // AÑADIR ESTADO Y ERRORES A INPUTS
 
-    fieldListPartidas[`partida-${newNumRow}`] = ''
-    fieldListErrorsPartidas[`partida-${newNumRow}`] = {
-      value: true,
-      message: 'Partida inválida',
-      type: 'partida',
-    }
+    // fieldListPartidas[`partida-${newNumRow}`] = ''
+    // fieldListErrorsPartidas[`partida-${newNumRow}`] = {
+    //   value: true,
+    //   message: 'Partida inválida',
+    //   type: 'partida',
+    // }
     fieldListPartidas[`partida-monto-${newNumRow}`] = ''
     fieldListErrorsPartidas[`partida-monto-${newNumRow}`] = {
       value: true,
