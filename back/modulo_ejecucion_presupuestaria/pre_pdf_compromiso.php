@@ -632,6 +632,17 @@ function unidad2($numuero)
     </tr>
 </table>
 
+
+<br>
+<br>
+<br>
+
+<div style="display: flex; justify-content: space-between; width: 100%;">
+    <p style="margin: 0;">NOMBRES Y APELLIDOS DEL ANALISTA ______________________________________________ C.I NRO: _________________________________</p>
+    <p style="margin: 0;">JEFE DE OFICINA DE PRESUPUESTO _______________________________________________</p>
+</div>
+
+
 </body>
 
 </html>
