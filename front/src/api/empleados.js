@@ -68,6 +68,10 @@ const getEmployeesData = async () => {
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
 
+    const clone = res.clone()
+    const text = await clone.text()
+    console.log(text)
+
     const json = await res.json()
     return json
   } catch (e) {

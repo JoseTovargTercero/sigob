@@ -72,7 +72,7 @@ export async function validateTiposGastosTable() {
   tipoGastosTable = new DataTable('#tipos-gastos-table', {
     columns: [
       { data: 'nombre' },
-      { data: 'partida' },
+
       { data: 'acciones' },
       // { data: 'partida_descripcion' },
     ],
@@ -98,8 +98,6 @@ export async function validateTiposGastosTable() {
 export async function loadGastosTable() {
   let gastos = await getGastos()
 
-  let tiposGastos = await getTiposGastos()
-
   if (!Array.isArray(gastos)) return
 
   if (!gastos || gastos.error) return
@@ -107,13 +105,10 @@ export async function loadGastosTable() {
   let datosOrdenados = [...gastos].sort((a, b) => a.id - b.id)
 
   let data = datosOrdenados.map((gastos) => {
-    let tipoGasto = tiposGastos.fullInfo.find(
-      (tipo) => tipo.id === gastos.id_tipo
-    )
     return {
       numero_compromiso: gastos.numero_compromiso,
       descripcion: gastos.descripcion,
-      tipo: tipoGasto.nombre,
+      tipo: '',
       monto: `${separarMiles(gastos.monto)} Bs`,
       fecha: gastos.fecha,
       estado:
@@ -136,23 +131,19 @@ export async function loadGastosTable() {
 
 export async function loadTipoGastosTable() {
   let tipoGastos = await getTiposGastos()
-  let partidas = await getPartidas()
 
-  if (!Array.isArray(tipoGastos.fullInfo)) return
+  if (!Array.isArray(tipoGastos)) return
 
   if (!tipoGastos || tipoGastos.error) return
 
   console.log(tipoGastos)
 
-  let datosOrdenados = [...tipoGastos.fullInfo].sort((a, b) => a.id - b.id)
+  let datosOrdenados = [...tipoGastos].sort((a, b) => a.id - b.id)
 
   let data = datosOrdenados.map((gastos) => {
-    let partidaEncontrada = partidas.fullInfo.find(
-      (p) => p.id === gastos.id_partida
-    )
     return {
       nombre: gastos.nombre,
-      partida: partidaEncontrada.partida,
+
       acciones: `<button class="btn btn-danger btn-sm" data-eliminarid="${gastos.id}">Eliminar</button>`,
       // partida_descripcion: partidaEncontrada.descripcion,
     }

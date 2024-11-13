@@ -1,12 +1,27 @@
 import { getPartidas } from '../api/partidas.js'
-import { confirmNotification, toastNotification } from '../helpers/helpers.js'
+import { registrarTipoGasto } from '../api/pre_gastos.js'
+import {
+  confirmNotification,
+  toastNotification,
+  validateInput,
+} from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
+import { pre_gastos_form_card } from './pre_gastos_form_card.js'
 
 const d = document
 
 export const pre_gastosTipo_form_card = async ({ elementToInsert, data }) => {
   const cardElement = d.getElementById('gastos-tipo-form-card')
   if (cardElement) cardElement.remove()
+
+  let fieldList = { nombre: '' }
+  let fieldListErrors = {
+    nombre: {
+      value: true,
+      message: 'Escriba el nombre del tipo de gasto',
+      type: 'text',
+    },
+  }
 
   let card = `  <div class='card slide-up-animation' id='gastos-tipo-form-card'>
       <div class='card-header d-flex justify-content-between'>
@@ -44,50 +59,20 @@ export const pre_gastosTipo_form_card = async ({ elementToInsert, data }) => {
                 </div>
               </div>
             </div>
-            <div class='col-sm'>
-              <div class='form-group'>
-                <label for="id_partida" class='form-label'>
-                 Partida asociada
-                </label>
-                <input
-                  class='form-control'
-                  type='text'
-                  name='id_partida'
-                  placeholder='Partida...'
-                  id='id_partida'
-                  list='partidas-list'
-                />
-                <datalist id='partidas-list'></datalist>
-              </div>
+
             </div>
           </div>
         </form>
-       
+        <div class='card-footer'>
+        <button class='btn btn-primary' id='gastos-tipo-guardar'>
+          Guardar
+        </button>
       </div>
-      <div class='card-footer'>
-      <button class='btn btn-primary' id='gastos-tipo-guardar'>
-        Guardar
-      </button>
-    </div>
+      </div>
+     
     </div>`
 
-  console.log(d.getElementById(elementToInsert))
-
   d.getElementById(elementToInsert).insertAdjacentHTML('afterbegin', card)
-
-  getPartidas().then((res) => {
-    let partidasList = d.getElementById('partidas-list')
-    console.log(res)
-    partidasList.innerHTML = ''
-    let options = res.fullInfo
-      .map((option) => {
-        return `<option value="${option.partida}">${option.descripcion}</option>`
-      })
-      .join('')
-
-    partidasList.innerHTML = options
-    return
-  })
 
   const formElement = d.getElementById('gastos-tipo-form')
 
@@ -106,28 +91,27 @@ export const pre_gastosTipo_form_card = async ({ elementToInsert, data }) => {
   }
 
   function validateClick(e) {
-    if (e.target.dataset.rechazarid) {
-      let id = e.target.dataset.rechazarid
-      confirmNotification({
-        type: NOTIFICATIONS_TYPES.send,
-        message: '¿Seguro de rechazar esta solicitud de dozavo?',
-        successFunction: async function () {
-          let row = d.querySelector(`[data-detalleid="${id}"]`).closest('tr')
-
-          toastNotification({
-            type: NOTIFICATIONS_TYPES.done,
-            message: 'Solicitud rechazada',
-          })
-
-          deleteSolicitudDozeavo({ row, id })
-          closeCard()
-        },
-      })
-    }
-
     if (e.target.dataset.close) {
       closeCard()
+      pre_gastos_form_card({ elementToInsert: 'gastos-view' })
     }
+    if (e.target.id === 'gastos-tipo-guardar') {
+      enviarInformacion()
+    }
+  }
+
+  function enviarInformacion() {
+    confirmNotification({
+      type: NOTIFICATIONS_TYPES.send,
+      message: '¿Desea registrar este tipo de gasto?',
+      successFunction: async function () {
+        let res = await registrarTipoGasto({ nombre: fieldList.nombre })
+        if (res.success) {
+          closeCard()
+          pre_gastos_form_card({ elementToInsert: 'gastos-view' })
+        }
+      },
+    })
   }
 
   function validateInputFunction(e) {

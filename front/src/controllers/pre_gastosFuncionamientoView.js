@@ -1,4 +1,8 @@
 import { getGastos, getTiposGastos } from '../api/pre_gastos.js'
+import {
+  ejerciciosLista,
+  validarEjercicioActual,
+} from '../components/form_ejerciciosLista.js'
 import { pre_gastos_form_card } from '../components/pre_gastos_form_card.js'
 import { confirmNotification, toastNotification } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
@@ -10,10 +14,14 @@ import {
 } from './pre_gastosFuncionamientoTable.js'
 
 const d = document
-export const validateGastosView = () => {
+export const validateGastosView = async () => {
   if (!document.getElementById('gastos-view')) return
   validateGastosTable()
   validateTiposGastosTable()
+
+  let ejercicioFiscal = await ejerciciosLista({
+    elementToInsert: 'ejercicios-fiscales',
+  })
 
   let gastosForm = d.getElementById('gastos-form')
   let gastosRegistrarCointaner = d.getElementById('gastos-registrar-container')
@@ -27,7 +35,6 @@ export const validateGastosView = () => {
     }
 
     if (e.target.dataset.tableid) {
-      console.log(e.target.dataset)
       mostrarTabla(e.target.dataset.tableid)
       d.querySelectorAll('.nav-link').forEach((el) => {
         el.classList.remove('active')
@@ -79,6 +86,16 @@ export const validateGastosView = () => {
             message: 'Tipo de gasto eliminado',
           })
         },
+      })
+    }
+
+    if (e.target.dataset.ejercicioid) {
+      // QUITAR CARD SI SE CAMBIA EL AÑO FISCAL
+      let formCard = d.getElementById('distribucion-form-card')
+      if (formCard) formCard.remove()
+
+      ejercicioFiscal = await validarEjercicioActual({
+        ejercicioTarget: e.target,
       })
     }
   })

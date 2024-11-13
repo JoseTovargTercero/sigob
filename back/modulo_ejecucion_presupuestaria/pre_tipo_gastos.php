@@ -6,18 +6,18 @@ require_once '../sistema_global/session.php';
 require_once '../sistema_global/errores.php';
 
 // Función para insertar un nuevo tipo de gasto con id_sector
-function registrarTipoGasto($nombre, $id_sector)
+function registrarTipoGasto($nombre)
 {
     global $conexion;
-    if (empty($nombre) || empty($id_sector)) {
+    if (empty($nombre)) {
         return json_encode(['error' => "No puede registrar con campos vacíos"]);
     }
 
     try {
         // Registrar el nuevo tipo de gasto
-        $sql = "INSERT INTO tipo_gastos (nombre, id_sector) VALUES (?, ?)";
+        $sql = "INSERT INTO tipo_gastos (nombre) VALUES (?)";
         $stmt = $conexion->prepare($sql);
-        $stmt->bind_param("si", $nombre, $id_sector);
+        $stmt->bind_param("s", $nombre);
         $stmt->execute();
 
         if ($stmt->affected_rows > 0) {
@@ -45,7 +45,7 @@ function consultarTiposGastos()
             $tipos_gastos = $result->fetch_all(MYSQLI_ASSOC); // Devuelve todos los resultados en un array asociativo
             return json_encode($tipos_gastos);
         } else {
-            return json_encode(['error' => "No se encontraron tipos de gastos"]);
+            return json_encode(['success' => []]);
         }
     } catch (Exception $e) {
         registrarError($e->getMessage());
@@ -83,7 +83,7 @@ function consultarTipoGastoPorId($id)
 }
 
 // Función para actualizar un tipo de gasto, incluyendo id_sector
-function actualizarTipoGasto($id, $nombre, $id_sector)
+function actualizarTipoGasto($id, $nombre)
 {
     global $conexion;
 
@@ -96,7 +96,7 @@ function actualizarTipoGasto($id, $nombre, $id_sector)
         // Actualizar el tipo de gasto
         $sql = "UPDATE tipo_gastos SET nombre = ?, id_sector = ? WHERE id = ?";
         $stmt = $conexion->prepare($sql);
-        $stmt->bind_param("sii", $nombre, $id_sector, $id);
+        $stmt->bind_param("si", $nombre, $id);
         $stmt->execute();
 
         if ($stmt->affected_rows > 0) {
@@ -147,9 +147,9 @@ if (isset($data["accion"])) {
     $id = $data["id"] ?? '';
 
     if ($accion === "insert") {
-        $response = registrarTipoGasto($nombre, $id_sector);
+        $response = registrarTipoGasto($nombre);
     } elseif ($accion === "update") {
-        $response = actualizarTipoGasto($id, $nombre, $id_sector);
+        $response = actualizarTipoGasto($id, $nombre);
     } elseif ($accion === "delete") {
         $response = eliminarTipoGasto($id);
     } elseif ($accion === "consultar_todos") {

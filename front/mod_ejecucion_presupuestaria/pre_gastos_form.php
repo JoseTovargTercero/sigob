@@ -6,6 +6,9 @@ require_once '../../back/sistema_global/session.php';
 
 <head>
     <link rel="stylesheet" href="../src/styles/style.css">
+    <link rel="stylesheet" href="../../src/assets/css/chosen.min.css">
+
+    <script src="../../src/assets/js/chosen.jquery.min.js"></script>
 
     <title>Gastos de funcionamiento</title>
 </head>
@@ -26,11 +29,20 @@ require_once '../../back/sistema_global/session.php';
                 <div class="page-block">
                     <div class="row align-items-center">
                         <div class="col-md-12">
-                            <div class="page-header-title">
-                                <h5 class="mb-0">Gastos de Funcionamiento</h5>
+
+                            <div class=" d-flex justify-content-between">
+                                <h4 class="fw-bold py-3 mb-4">
+                                    <span class="text-muted fw-light">Ejecución presupuestaria /</span> Gastos de
+                                    funcionamiento
+                                </h4>
+                                <div class="row" id="ejercicios-fiscales">
+                                </div>
+
                             </div>
                         </div>
                     </div>
+
+
                 </div>
             </div>
             <!-- [ Main Content ] start -->
@@ -85,7 +97,7 @@ require_once '../../back/sistema_global/session.php';
                                 <table id="tipos-gastos-table" class="table table-striped" style="width:90%">
                                     <thead>
                                         <th>NOMBRE</th>
-                                        <th>PARTIDA</th>
+
                                         <!-- <th>PARTIDA DESCRIPCION</th> -->
                                         <th>ACCIONES</th>
 

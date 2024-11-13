@@ -8,7 +8,7 @@ import {
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 
 const ejercicioFiscalUrl =
-  '../../../../sigob/back/modulo_pl_formulacion/form_ejercicio_fiscal.php'
+  '../../../../sigob/back/sistema_global/ejercicio_fiscal.php'
 
 const distribucionPresupuestariaUrl =
   '../../../../sigob/back/modulo_pl_formulacion/form_distribucion.php'
