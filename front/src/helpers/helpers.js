@@ -728,7 +728,7 @@ function separadorLocal(numero) {
     return `!${numero}`
   }
 
-  return numero.toLocaleString('es-VE')
+  return Number(numero).toLocaleString('es-VE')
 }
 
 const formatearFloat = (numeroStr) => {
