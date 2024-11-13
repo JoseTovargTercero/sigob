@@ -285,6 +285,14 @@ export const form_distribucion_form_card = async ({
         return
       }
 
+      if (Object.values(fieldListErrorsPartidas).some((el) => el.value)) {
+        toastNotification({
+          type: NOTIFICATIONS_TYPES.fail,
+          message: 'Hay montos inválidos',
+        })
+        return
+      }
+
       let inputsMontos = Array.from(d.querySelectorAll('.partida-monto'))
       inputsMontos.forEach((input) => {
         fieldListPartidas = validateInput({
@@ -296,14 +304,6 @@ export const form_distribucion_form_card = async ({
       })
 
       console.log(fieldListPartidas, fieldListErrorsPartidas)
-
-      if (Object.values(fieldListErrorsPartidas).some((el) => el.value)) {
-        toastNotification({
-          type: NOTIFICATIONS_TYPES.fail,
-          message: 'Hay montos inválidos',
-        })
-        return
-      }
 
       console.log(partidasValidadas)
 
@@ -455,6 +455,11 @@ export const form_distribucion_form_card = async ({
     inputsPartidasMontos.forEach((input) => {
       montos.acumulado += Number(formatearFloat(input.value))
     })
+
+    if (isNaN(montos.acumulado)) {
+      montoRestanteElement.innerHTML = `<span class="text-secondary">¡Revise los montos!</span>`
+      return
+    }
 
     let montoRestante = montos.restante - montos.acumulado
 
