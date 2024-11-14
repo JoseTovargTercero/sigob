@@ -11,14 +11,14 @@ header('Content-Type: application/json');
 require_once '../sistema_global/errores.php';
 
 // Función para crear un nuevo gasto
-function crearGasto($id_tipo, $descripcion, $monto, $id_ejercicio, $tipo_beneficiario, $id_beneficiario, $id_distribucion)
+function crearGasto($id_tipo, $descripcion, $monto, $id_ejercicio, $tipo_beneficiario, $id_beneficiario, $id_distribucion, $fecha)
 {
     global $conexion;
 
     try {
         // Validar que todos los campos no estén vacíos
-        if (empty($id_tipo) || empty($descripcion) || empty($monto) || empty($id_ejercicio) || $tipo_beneficiario == "" || empty($id_beneficiario) || empty($id_distribucion)) {
-            throw new Exception("Faltaron uno o más valores (id_tipo, descripción, monto, id_ejercicio, tipo_beneficiario, id_beneficiario, id_distribucion)");
+        if (empty($id_tipo) || empty($descripcion) || empty($monto) || empty($id_ejercicio) || $tipo_beneficiario == "" || empty($id_beneficiario) || empty($id_distribucion) || empty($fecha)) {
+            throw new Exception("Faltaron uno o más valores (id_tipo, descripción, monto, id_ejercicio, tipo_beneficiario, id_beneficiario, id_distribucion, fecha_ultimo)");
         }
 
         // Paso 1: Buscar id_partida en la tabla distribucion_presupuestaria usando id_distribucion
@@ -41,9 +41,9 @@ function crearGasto($id_tipo, $descripcion, $monto, $id_ejercicio, $tipo_benefic
             throw new Exception("El presupuesto actual es inferior al monto del gasto. No se puede registrar el gasto.");
         } else {
             // Paso 4: Insertar el gasto si el presupuesto es suficiente
-            $sqlInsertGasto = "INSERT INTO gastos (id_tipo, descripcion, monto, status, id_ejercicio, tipo_beneficiario, id_beneficiario, id_distribucion) VALUES (?, ?, ?, 0, ?, ?, ?, ?)";
+            $sqlInsertGasto = "INSERT INTO gastos (id_tipo, descripcion, monto, status, id_ejercicio, tipo_beneficiario, id_beneficiario, id_distribucion, fecha) VALUES (?, ?, ?, 0, ?, ?, ?, ?, ?)";
             $stmtInsertGasto = $conexion->prepare($sqlInsertGasto);
-            $stmtInsertGasto->bind_param("issisii", $id_tipo, $descripcion, $monto, $id_ejercicio, $tipo_beneficiario, $id_beneficiario, $id_distribucion);
+            $stmtInsertGasto->bind_param("issisiss", $id_tipo, $descripcion, $monto, $id_ejercicio, $tipo_beneficiario, $id_beneficiario, $id_distribucion, $fecha);
             $stmtInsertGasto->execute();
 
             if ($stmtInsertGasto->affected_rows > 0) {
@@ -52,7 +52,6 @@ function crearGasto($id_tipo, $descripcion, $monto, $id_ejercicio, $tipo_benefic
                 throw new Exception("No se pudo registrar el gasto");
             }
         }
-
 
     } catch (Exception $e) {
         // Registrar el error en la tabla error_log
@@ -446,7 +445,8 @@ if (isset($data["accion"])) {
                 $data["id_ejercicio"],
                 $data["tipo_beneficiario"],
                 $data["id_beneficiario"],
-                $data["id_distribucion"]
+                $data["id_distribucion"],
+                $data["fecha"],
             );
             break;
 
