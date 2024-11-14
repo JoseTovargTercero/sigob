@@ -1,7 +1,7 @@
 <?php
 
 require_once '../sistema_global/conexion.php';
-require_once '../sistema_global/session.php'; 
+require_once '../sistema_global/session.php';
 require_once '../sistema_global/notificaciones.php';
 require_once 'pre_compromisos.php'; // Agregado
 require_once 'pre_dispo_presupuestaria.php'; // Agregado
@@ -11,7 +11,8 @@ header('Content-Type: application/json');
 require_once '../sistema_global/errores.php';
 
 // Función para crear un nuevo gasto
-function crearGasto($id_tipo, $descripcion, $monto, $id_ejercicio, $tipo_beneficiario, $id_beneficiario, $id_distribucion) {
+function crearGasto($id_tipo, $descripcion, $monto, $id_ejercicio, $tipo_beneficiario, $id_beneficiario, $id_distribucion)
+{
     global $conexion;
 
     try {
@@ -38,21 +39,21 @@ function crearGasto($id_tipo, $descripcion, $monto, $id_ejercicio, $tipo_benefic
         $disponible = consultarDisponibilidad($id_partida, $id_ejercicio, $monto);
         if (!$disponible) {
             throw new Exception("El presupuesto actual es inferior al monto del gasto. No se puede registrar el gasto.");
-        }else{
-             // Paso 4: Insertar el gasto si el presupuesto es suficiente
+        } else {
+            // Paso 4: Insertar el gasto si el presupuesto es suficiente
             $sqlInsertGasto = "INSERT INTO gastos (id_tipo, descripcion, monto, status, id_ejercicio, tipo_beneficiario, id_beneficiario, id_distribucion) VALUES (?, ?, ?, 0, ?, ?, ?, ?)";
             $stmtInsertGasto = $conexion->prepare($sqlInsertGasto);
             $stmtInsertGasto->bind_param("issisii", $id_tipo, $descripcion, $monto, $id_ejercicio, $tipo_beneficiario, $id_beneficiario, $id_distribucion);
             $stmtInsertGasto->execute();
 
             if ($stmtInsertGasto->affected_rows > 0) {
-            return json_encode(["success" => "Gasto registrado correctamente"]);
+                return json_encode(["success" => "Gasto registrado correctamente"]);
             } else {
-            throw new Exception("No se pudo registrar el gasto");
+                throw new Exception("No se pudo registrar el gasto");
             }
         }
 
-       
+
     } catch (Exception $e) {
         // Registrar el error en la tabla error_log
         registrarError($e->getMessage());
@@ -61,7 +62,8 @@ function crearGasto($id_tipo, $descripcion, $monto, $id_ejercicio, $tipo_benefic
 }
 
 
-function gestionarGasto($idGasto, $accion) {
+function gestionarGasto($idGasto, $accion)
+{
     global $conexion;
 
     try {
@@ -175,17 +177,19 @@ function gestionarGasto($idGasto, $accion) {
 
 
 // Función para obtener todos los gastos
-function obtenerGastos() {
+function obtenerGastos()
+{
     global $conexion;
 
     try {
-        $sql = "SELECT id, id_tipo, descripcion, monto, status, tipo_beneficiario, id_beneficiario, id_distribucion FROM gastos";
+        $sql = "SELECT id, id_tipo, descripcion, monto, status, id_ejercicio, tipo_beneficiario, id_beneficiario, id_distribucion FROM gastos";
         $resultado = $conexion->query($sql);
 
         $gastos = [];
         while ($fila = $resultado->fetch_assoc()) {
             $id = $fila['id'];
             $id_tipo = $fila['id_tipo'];
+            $id_ejercicio = $fila['id_ejercicio'];
             $tipo_beneficiario = $fila['tipo_beneficiario'];
             $id_beneficiario = $fila['id_beneficiario'];
             $id_distribucion = $fila['id_distribucion'];
@@ -248,6 +252,7 @@ function obtenerGastos() {
                 'descripcion_gasto' => $fila['descripcion'],
                 'monto_gasto' => $fila['monto'],
                 'status_gasto' => $fila['status'],
+                'id_ejercicio' => $id_ejercicio,
                 'informacion_beneficiario' => $informacionBeneficiario,
                 'id_compromiso' => $idCompromiso
             ];
@@ -266,7 +271,8 @@ function obtenerGastos() {
 
 
 // Función para obtener un gasto por su ID
-function obtenerGastoPorId($id) {
+function obtenerGastoPorId($id)
+{
     global $conexion;
 
     try {
@@ -382,7 +388,8 @@ function obtenerGastoPorId($id) {
 }
 
 
-function actualizarGasto($id, $id_tipo, $descripcion, $monto, $status, $id_ejercicio, $tipo_beneficiario, $id_beneficiario, $id_distribucion) {
+function actualizarGasto($id, $id_tipo, $descripcion, $monto, $status, $id_ejercicio, $tipo_beneficiario, $id_beneficiario, $id_distribucion)
+{
     global $conexion;
 
     try {
@@ -409,7 +416,8 @@ function actualizarGasto($id, $id_tipo, $descripcion, $monto, $status, $id_ejerc
 }
 
 // Función para eliminar un gasto
-function eliminarGasto($id) {
+function eliminarGasto($id)
+{
     global $conexion;
 
     try {
