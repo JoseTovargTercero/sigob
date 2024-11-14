@@ -175,7 +175,6 @@ function gestionarGasto($idGasto, $accion)
 
 
 
-// Función para obtener todos los gastos
 function obtenerGastos()
 {
     global $conexion;
@@ -202,7 +201,7 @@ function obtenerGastos()
             $resultadoTipoGasto = $stmtTipoGasto->get_result();
             $nombreTipoGasto = $resultadoTipoGasto->fetch_assoc()['nombre'] ?? null;
 
-            // Obtener id_partida desde distribucion_presupuestaria y toda su información
+            // Obtener id_partida y demás información desde distribucion_presupuestaria
             $sqlDistribucion = "SELECT * FROM distribucion_presupuestaria WHERE id = ?";
             $stmtDistribucion = $conexion->prepare($sqlDistribucion);
             $stmtDistribucion->bind_param("i", $id_distribucion);
@@ -210,8 +209,10 @@ function obtenerGastos()
             $resultadoDistribucion = $stmtDistribucion->get_result();
             $infoDistribucion = $resultadoDistribucion->fetch_assoc();
             $id_partida = $infoDistribucion['id_partida'] ?? null;
+            $id_sector = $infoDistribucion['id_sector'] ?? null;
+            $id_programa = $infoDistribucion['id_programa'] ?? null;
 
-            // Consultar información de partida
+            // Consultar información de la partida
             $partidaInfo = null;
             if ($id_partida) {
                 $sqlPartida = "SELECT partida, nombre, descripcion FROM partidas_presupuestarias WHERE id = ?";
@@ -222,48 +223,72 @@ function obtenerGastos()
                 $partidaInfo = $resultadoPartida->fetch_assoc();
             }
 
+            // Consultar información del sector
+            $sectorInfo = null;
+            if ($id_sector) {
+                $sqlSector = "SELECT sector AS sector_numero FROM pl_sectores WHERE id = ?";
+                $stmtSector = $conexion->prepare($sqlSector);
+                $stmtSector->bind_param("i", $id_sector);
+                $stmtSector->execute();
+                $resultadoSector = $stmtSector->get_result();
+                $sectorInfo = $resultadoSector->fetch_assoc();
+            }
+
+            // Consultar información del programa
+            $programaInfo = null;
+            if ($id_programa) {
+                $sqlPrograma = "SELECT programa AS programa_numero FROM pl_programas WHERE id = ?";
+                $stmtPrograma = $conexion->prepare($sqlPrograma);
+                $stmtPrograma->bind_param("i", $id_programa);
+                $stmtPrograma->execute();
+                $resultadoPrograma = $stmtPrograma->get_result();
+                $programaInfo = $resultadoPrograma->fetch_assoc();
+            }
+
+            // Añadir el sector y programa a la información de distribución
+            $infoDistribucion['sector'] = $sectorInfo['sector_numero'] ?? null;
+            $infoDistribucion['programa'] = $programaInfo['programa_numero'] ?? null;
+
             // Consultar información del beneficiario según el tipo_beneficiario
             if ($tipo_beneficiario == 0) {
                 $sqlBeneficiario = "SELECT * FROM entes WHERE id = ?";
             } else {
                 $sqlBeneficiario = "SELECT * FROM empleados WHERE id = ?";
             }
-
             $stmtBeneficiario = $conexion->prepare($sqlBeneficiario);
             $stmtBeneficiario->bind_param("i", $id_beneficiario);
             $stmtBeneficiario->execute();
             $resultadoBeneficiario = $stmtBeneficiario->get_result();
             $informacionBeneficiario = $resultadoBeneficiario->fetch_assoc();
 
-          // Consultar id de compromiso relacionado
-$sqlCompromiso = "SELECT id, correlativo FROM compromisos WHERE id_registro = ? AND tabla_registro = 'gastos'";
-$stmtCompromiso = $conexion->prepare($sqlCompromiso);
-$stmtCompromiso->bind_param("i", $id);
-$stmtCompromiso->execute();
-$resultadoCompromiso = $stmtCompromiso->get_result();
-$compromiso = $resultadoCompromiso->fetch_assoc();
+            // Consultar id de compromiso relacionado
+            $sqlCompromiso = "SELECT id, correlativo FROM compromisos WHERE id_registro = ? AND tabla_registro = 'gastos'";
+            $stmtCompromiso = $conexion->prepare($sqlCompromiso);
+            $stmtCompromiso->bind_param("i", $id);
+            $stmtCompromiso->execute();
+            $resultadoCompromiso = $stmtCompromiso->get_result();
+            $compromiso = $resultadoCompromiso->fetch_assoc();
+            $idCompromiso = $compromiso['id'] ?? null;
+            $correlativo = $compromiso['correlativo'] ?? null;
 
-$idCompromiso = $compromiso['id'] ?? null;
-$correlativo = $compromiso['correlativo'] ?? null;
-
-// Construir el array con la información completa del gasto
-$gasto = [
-    'id' => $fila['id'],
-    'fecha' => $fila['fecha'],
-    'nombre_tipo_gasto' => $nombreTipoGasto,
-    'partida' => $partidaInfo['partida'] ?? null,
-    'nombre_partida' => $partidaInfo['nombre'] ?? null,
-    'descripcion_partida' => $partidaInfo['descripcion'] ?? null,
-    'descripcion_gasto' => $fila['descripcion'],
-    'monto_gasto' => $fila['monto'],
-    'status_gasto' => $fila['status'],
-    'id_ejercicio' => $id_ejercicio,
-    'informacion_beneficiario' => $informacionBeneficiario,
-    'id_compromiso' => $idCompromiso,
-    'correlativo' => $correlativo,
-    'informacion_distribucion' => $infoDistribucion // Incluye toda la información de la distribucion_presupuestaria
-];
-
+            // Construir el array con la información completa del gasto
+            $gasto = [
+                'id' => $fila['id'],
+                'fecha' => $fila['fecha'],
+                'nombre_tipo_gasto' => $nombreTipoGasto,
+                'tipo_beneficiario' => $tipo_beneficiario,
+                'partida' => $partidaInfo['partida'] ?? null,
+                'nombre_partida' => $partidaInfo['nombre'] ?? null,
+                'descripcion_partida' => $partidaInfo['descripcion'] ?? null,
+                'descripcion_gasto' => $fila['descripcion'],
+                'monto_gasto' => $fila['monto'],
+                'status_gasto' => $fila['status'],
+                'id_ejercicio' => $id_ejercicio,
+                'informacion_beneficiario' => $informacionBeneficiario,
+                'id_compromiso' => $idCompromiso,
+                'correlativo' => $correlativo,
+                'informacion_distribucion' => $infoDistribucion // Incluye toda la información de distribucion_presupuestaria con sector y programa
+            ];
 
             $gastos[] = $gasto;
         }
@@ -278,7 +303,6 @@ $gasto = [
 
 
 
-// Función para obtener un gasto por su ID
 function obtenerGastoPorId($id)
 {
     global $conexion;
@@ -319,6 +343,8 @@ function obtenerGastoPorId($id)
 
             if ($distribucionInfo) {
                 $id_partida = $distribucionInfo['id_partida'];
+                $id_sector = $distribucionInfo['id_sector'];
+                $id_programa = $distribucionInfo['id_programa'];
 
                 // Consultar la tabla partidas_presupuestarias para obtener partida, nombre y descripcion
                 $sqlPartida = "SELECT partida, nombre, descripcion FROM partidas_presupuestarias WHERE id = ?";
@@ -327,6 +353,26 @@ function obtenerGastoPorId($id)
                 $stmtPartida->execute();
                 $resultadoPartida = $stmtPartida->get_result();
                 $partidaInfo = $resultadoPartida->fetch_assoc();
+
+                // Obtener el sector desde pl_sectores
+                $sqlSector = "SELECT sector AS sector_numero FROM pl_sectores WHERE id = ?";
+                $stmtSector = $conexion->prepare($sqlSector);
+                $stmtSector->bind_param("i", $id_sector);
+                $stmtSector->execute();
+                $resultadoSector = $stmtSector->get_result();
+                $sectorInfo = $resultadoSector->fetch_assoc();
+
+                // Obtener el programa desde pl_programas
+                $sqlPrograma = "SELECT programa AS programa_numero FROM pl_programas WHERE id = ?";
+                $stmtPrograma = $conexion->prepare($sqlPrograma);
+                $stmtPrograma->bind_param("i", $id_programa);
+                $stmtPrograma->execute();
+                $resultadoPrograma = $stmtPrograma->get_result();
+                $programaInfo = $resultadoPrograma->fetch_assoc();
+
+                // Añadir el sector y el programa a la información de distribución
+                $distribucionInfo['sector'] = $sectorInfo['sector_numero'] ?? null;
+                $distribucionInfo['programa'] = $programaInfo['programa_numero'] ?? null;
 
                 // Obtener información del beneficiario según el tipo_beneficiario
                 if ($tipo_beneficiario == 0) {
@@ -355,6 +401,7 @@ function obtenerGastoPorId($id)
                     'nombre_tipo_gasto' => $nombreTipoGasto,
                     'partida' => $partidaInfo['partida'] ?? null,
                     'nombre_partida' => $partidaInfo['nombre'] ?? null,
+                    'tipo_beneficiario' => $tipo_beneficiario,
                     'descripcion_partida' => $partidaInfo['descripcion'] ?? null,
                     'descripcion_gasto' => $descripcion,
                     'monto_gasto' => $monto,
@@ -363,7 +410,7 @@ function obtenerGastoPorId($id)
                     'status_gasto' => $status,
                     'informacion_beneficiario' => $informacionBeneficiario,
                     'id_compromiso' => $idCompromiso,
-                    'informacion_distribucion' => $distribucionInfo // Agregar la información completa de distribucion_presupuestaria
+                    'informacion_distribucion' => $distribucionInfo // Agregar la información completa de distribucion_presupuestaria con sector y programa
                 ];
 
                 return json_encode($resultado);
@@ -378,6 +425,7 @@ function obtenerGastoPorId($id)
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 
 
