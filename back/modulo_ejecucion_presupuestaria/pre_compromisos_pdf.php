@@ -8,8 +8,8 @@ require_once '../sistema_global/conexion.php'; // Archivo de conexión con $cone
 use Mpdf\Mpdf;
 
 
-$data = json_decode(file_get_contents('php://input'), true)['data'];
-$id_compromiso = $data['id_compromiso'];
+$id_compromiso = $_GET['id_compromiso'];
+
 
 
 
