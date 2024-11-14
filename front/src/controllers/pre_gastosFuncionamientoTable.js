@@ -42,7 +42,7 @@ export async function validateGastosTable(id_ejercicio) {
   gastosTable = new DataTable('#gastos-table', {
     columns: [
       { data: 'compromiso' },
-      { data: 'descripcion' },
+
       { data: 'tipo' },
       { data: 'monto' },
       { data: 'fecha' },
@@ -98,8 +98,6 @@ export async function validateTiposGastosTable() {
 export async function loadGastosTable({ id_ejercicio }) {
   let gastos = await getGastos()
 
-  console.log('CARGÓO')
-
   if (!Array.isArray(gastos)) return
 
   if (!gastos || gastos.error) return
@@ -116,11 +114,11 @@ export async function loadGastosTable({ id_ejercicio }) {
       // }.${el.id_actividad == 0 ? '00' : el.id_actividad}`
 
       return {
-        compromiso: gastos.compromiso || 'Pendiente',
-        descripcion: gastos.descripcion_gasto,
+        compromiso: gastos.correlativo || 'Pendiente',
+
         tipo: gastos.nombre_tipo_gasto,
         monto: `${separarMiles(gastos.monto_gasto)} Bs`,
-        fecha: 'Pendiente',
+        fecha: gastos.fecha,
         estado:
           Number(gastos.status_gasto) === 0
             ? ` <span class='btn btn-sm btn-secondary'>Pendiente</span>`
@@ -129,13 +127,13 @@ export async function loadGastosTable({ id_ejercicio }) {
             : `<span class='btn btn-sm btn-danger'>Rechazado</span>`,
         acciones:
           Number(gastos.status_gasto) === 0
-            ? `<button class="btn btn-danger btn-sm" data-rechazarid="${gastos.id}">Rechazar</button>
-      <button class="btn btn-info btn-sm" data-aceptarid="${gastos.id}">Aceptar</button>`
+            ? `<button class="btn btn-secondary btn-sm" data-detallesid="${gastos.id}">Detalles</button>`
             : `Gasto procesado`,
       }
     })
 
-  console.log(data)
+  // <button class="btn btn-danger btn-sm" data-rechazarid="${gastos.id}">Rechazar</button>
+  // <button class="btn btn-info btn-sm" data-aceptarid="${gastos.id}">Aceptar</button>
 
   gastosTable.clear().draw()
 

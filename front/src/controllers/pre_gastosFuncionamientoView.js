@@ -1,6 +1,7 @@
 import {
   aceptarGasto,
   eliminatTipoGasto,
+  getGasto,
   getGastos,
   getTiposGastos,
   rechazarGasto,
@@ -10,6 +11,7 @@ import {
   validarEjercicioActual,
 } from '../components/form_ejerciciosLista.js'
 import { pre_gastos_form_card } from '../components/pre_gastos_form_card.js'
+import { pre_gastosDetalles } from '../components/pre_gastosDetalles.js'
 import { confirmNotification, toastNotification } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 import {
@@ -71,32 +73,29 @@ export const validateGastosView = async () => {
       e.target.classList.add('active')
     }
 
-    if (e.target.dataset.rechazarid) {
-      confirmNotification({
-        type: NOTIFICATIONS_TYPES.send,
-        message:
-          'Rechazar este gasto hará que se elimine y reintegre el monto al presupuesto ¿Desea continuar?',
-        successFunction: async function () {
-          let res = await rechazarGasto(e.target.dataset.rechazarid)
-          if (res.success) {
-            loadGastosTable({ id_ejercicio: ejercicioFiscal.id })
-          }
+    if (e.target.dataset.detallesid) {
+      let data = await getGasto(e.target.dataset.detallesid)
+      pre_gastosDetalles({
+        elementToInsert: 'gastos-view',
+        data,
+        ejercicioFiscal: ejercicioFiscal,
+        recargarEjercicio: async function () {
+          let ejercicioFiscalElement = d.querySelector(
+            `[data-ejercicioid="${ejercicioFiscal.id}"]`
+          )
+          ejercicioFiscal = await validarEjercicioActual({
+            ejercicioTarget: ejercicioFiscalElement,
+          })
+
+          loadGastosTable({ id_ejercicio: ejercicioFiscal.id })
         },
       })
     }
 
+    if (e.target.dataset.rechazarid) {
+    }
+
     if (e.target.dataset.aceptarid) {
-      confirmNotification({
-        type: NOTIFICATIONS_TYPES.send,
-        message:
-          'Al aceptar este gasto se descontará del presupuesto actual ¿Desea continuar?',
-        successFunction: async function () {
-          let res = await aceptarGasto(e.target.dataset.aceptarid)
-          if (res.success) {
-            loadGastosTable({ id_ejercicio: ejercicioFiscal.id })
-          }
-        },
-      })
     }
 
     if (e.target.dataset.eliminarid) {

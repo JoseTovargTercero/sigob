@@ -52,6 +52,47 @@ const getGastos = async () => {
   }
 }
 
+const getGasto = async (id) => {
+  showLoader()
+  try {
+    let res = await fetch(gastosUrl, {
+      method: 'POST',
+      body: JSON.stringify({
+        accion: 'obtenerPorId',
+        id,
+      }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    let clone = res.clone()
+    let text = await clone.text()
+
+    console.log(text)
+
+    const json = await res.json()
+    console.log(json)
+
+    if (json.success) {
+      return json.success
+    }
+
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
+    return json
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener tipos de gatos',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
 const registrarGasto = async ({ data }) => {
   showLoader()
   try {
@@ -350,6 +391,7 @@ const eliminatTipoGasto = async (id) => {
 
 export {
   getGastos,
+  getGasto,
   registrarGasto,
   aceptarGasto,
   rechazarGasto,

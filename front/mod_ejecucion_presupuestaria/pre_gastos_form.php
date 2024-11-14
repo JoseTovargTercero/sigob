@@ -83,7 +83,7 @@ require_once '../../back/sistema_global/session.php';
                                 <table id="gastos-table" class="table table-striped" style="width:100%">
                                     <thead>
                                         <th>N° COMPROMISO</th>
-                                        <th>DESCRIPCION</th>
+
                                         <th>TIPO</th>
                                         <th>MONTO</th>
                                         <th>FECHA</th>
