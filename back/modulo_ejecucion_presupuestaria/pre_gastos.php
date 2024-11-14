@@ -316,6 +316,7 @@ function obtenerGastoPorId($id)
         $resultadoGasto = $stmtGasto->get_result();
 
         if ($gasto = $resultadoGasto->fetch_assoc()) {
+            $id_gasto = $gasto['id'];
             $id_tipo = $gasto['id_tipo'];
             $descripcion = $gasto['descripcion'];
             $monto = $gasto['monto'];
@@ -398,6 +399,7 @@ function obtenerGastoPorId($id)
 
                 // Construir el array con los datos obtenidos
                 $resultado = [
+                    'id' => $id_gasto,
                     'nombre_tipo_gasto' => $nombreTipoGasto,
                     'partida' => $partidaInfo['partida'] ?? null,
                     'nombre_partida' => $partidaInfo['nombre'] ?? null,
