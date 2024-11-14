@@ -4,6 +4,7 @@ import {
   confirmNotification,
   hideLoader,
   insertOptions,
+  separadorLocal,
   toastNotification,
   validateInput,
 } from '../helpers/helpers.js'
@@ -72,16 +73,16 @@ export const pre_gastosDetalles = ({
 
     if (Number(data.tipo_beneficiario) === 0) {
       return `  <div>
-          <h5>Tipo beneficiario: Ente</h5>
-          <h5>
-            Nombre beneficiario: ${data.informacion_beneficiario.ente_nombre}
-          </h5>
+          <h6>Tipo beneficiario: Ente</h6>
+          <h6>
+            Nombre: ${data.informacion_beneficiario.ente_nombre}
+          </h6>
         </div>`
     } else {
       return ` <div>
-          <h5>Tipo beneficiario: Empleado</h5>
-          <h5>Nombre beneficiario: ${data.informacion_beneficiario.nombres}</h5>
-          <h5>Cédula: ${data.informacion_beneficiario.cedula}</h5>
+          <h6>Tipo beneficiario: Empleado</h6>
+          <h6>Nombre: ${data.informacion_beneficiario.nombres}</h6>
+          <h6>Cédula: ${data.informacion_beneficiario.cedula}</h6>
         </div>`
     }
   }
@@ -90,7 +91,11 @@ export const pre_gastosDetalles = ({
     data.informacion_distribucion ? data.informacion_distribucion.sector : '0'
   }.${
     data.informacion_distribucion ? data.informacion_distribucion.programa : '0'
-  }.${data.id_actividad == 0 ? '00' : data.id_actividad}`
+  }.${
+    data.informacion_distribucion.id_actividad == 0
+      ? '00'
+      : data.informacion_distribucion.id_actividad
+  }`
 
   let nombreCard = 'gastos-detalles'
 
@@ -100,8 +105,8 @@ export const pre_gastosDetalles = ({
   let card = `    <div class='card slide-up-animation' id='${nombreCard}-form-card'>
       <div class='card-header d-flex justify-content-between'>
         <div class=''>
-          <h5 class='mb-0'>CAMBIAR TEXTO</h5>
-          <small class='mt-0 text-muted'>CAMBIAR TEXTO</small>
+          <h5 class='mb-0'>Detalles de gasto de funcionamiento</h5>
+          <small class='mt-0 text-muted'>Visualice los detalles del gasto y el beneficiario</small>
         </div>
         <button
           data-close='btn-close'
@@ -112,15 +117,16 @@ export const pre_gastosDetalles = ({
           &times;
         </button>
       </div>
-      <div class='card-body'>
-        <h3>Información beneficiario:</h3>${generarBeneficiarioInformacion()}
-        <h3>Información de gasto:</h3>
-        <h5>Compromiso: ${data.correlativo || 'No obtenido'}</h5>
-        <h5>Tipo de gasto: ${data.nombre_tipo_gasto || 'No obtenido'}</h5>
-        <h5>Fecha: ${data.fecha || 'No obtenido'}</h5>
-       
-        <h5>Descripción: ${data.descripcion_gasto || 'No obtenido'}</h5>
-         <h5>
+      <div class='card-body text-center'>
+        <h3>Beneficiario:</h3>${generarBeneficiarioInformacion()}
+        <h3>Informacion gasto de funcionamiento:</h3>
+        <h6>Compromiso: ${data.correlativo || 'No obtenido'}</h6>
+        <h6>Tipo de gasto: ${data.nombre_tipo_gasto || 'No obtenido'}</h6>
+        <h6>Monto: ${separadorLocal(data.monto_gasto) || 'No obtenido'}</h6>
+        
+        <h6>Descripción: ${data.descripcion_gasto || 'No obtenido'}</h6>
+        <h6>Fecha: ${data.fecha || 'No obtenido'}</h6>
+         <h6>
           Estado: ${
             Number(data.status_gasto) === 0
               ? ` <span class='btn btn-sm btn-secondary'>Pendiente</span>`
@@ -128,7 +134,8 @@ export const pre_gastosDetalles = ({
               ? `<span class='btn btn-sm btn-success'>Procesado</span>`
               : `<span class='btn btn-sm btn-danger'>Rechazado</span>`
           }
-        </h5>
+        </h6>
+        <h6>Distribucion: ${sector_programa_proyecto}.${data.partida}</h6>
       </div>
       <div class='card-footer d-flex justify-content-center gap-2'>
       ${
