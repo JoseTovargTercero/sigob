@@ -60,17 +60,15 @@ function crearGasto($id_tipo, $descripcion, $monto, $id_ejercicio, $tipo_benefic
     }
 }
 
-// Función para aceptar o rechazar un gasto
+
 function gestionarGasto($idGasto, $accion) {
     global $conexion;
 
     try {
-        // Validar que se proporcionen los parámetros necesarios
         if (empty($idGasto) || empty($accion)) {
             throw new Exception("Faltan uno o más valores necesarios (idGasto, accion)");
         }
 
-        // Obtener el registro de la tabla gastos con el id proporcionado
         $sqlGasto = "SELECT id_tipo, descripcion, monto, id_ejercicio, id_distribucion, status, tipo_beneficiario, id_beneficiario FROM gastos WHERE id = ?";
         $stmtGasto = $conexion->prepare($sqlGasto);
         $stmtGasto->bind_param("i", $idGasto);
@@ -91,13 +89,11 @@ function gestionarGasto($idGasto, $accion) {
         $tipo_beneficiario = $filaGasto['tipo_beneficiario'];
         $id_beneficiario = $filaGasto['id_beneficiario'];
 
-        // Verificar si el gasto ya ha sido procesado
         if ($status !== 0) {
             throw new Exception("El gasto ya ha sido procesado anteriormente");
         }
 
         if ($accion === "aceptar") {
-            // Paso 1: Obtener el id_partida de la tabla distribucion_presupuestaria usando id_distribucion
             $sqlDistribucionPresupuestaria = "SELECT id_partida FROM distribucion_presupuestaria WHERE id = ?";
             $stmtDistribucionPresupuestaria = $conexion->prepare($sqlDistribucionPresupuestaria);
             $stmtDistribucionPresupuestaria->bind_param("i", $id_distribucion);
@@ -111,7 +107,6 @@ function gestionarGasto($idGasto, $accion) {
             $filaDistribucionPresupuestaria = $resultadoDistribucionPresupuestaria->fetch_assoc();
             $id_partida = $filaDistribucionPresupuestaria['id_partida'];
 
-            // Llamar a la función para verificar disponibilidad presupuestaria
             $resultado = consultarDisponibilidad($id_partida, $id_ejercicio, $monto);
 
             if ($resultado['exito']) {
@@ -120,37 +115,42 @@ function gestionarGasto($idGasto, $accion) {
                 throw new Exception("El presupuesto actual es inferior al monto del gasto. No se puede registrar el gasto.");
             }
 
-            // Paso 3: Actualizar el status del gasto a 1 (aceptado)
             $sqlUpdateGasto = "UPDATE gastos SET status = 1 WHERE id = ?";
             $stmtUpdateGasto = $conexion->prepare($sqlUpdateGasto);
             $stmtUpdateGasto->bind_param("i", $idGasto);
             $stmtUpdateGasto->execute();
 
             if ($stmtUpdateGasto->affected_rows > 0) {
-                // Paso 4: Registrar el compromiso
                 $resultadoCompromiso = registrarCompromiso($idGasto, 'gastos', $descripcion, $tipo_beneficiario, $id_beneficiario, $id_ejercicio);
 
-                // Paso 5: Actualizar el monto_actual en distribucion_presupuestaria
-                $nuevoMontoActual = $monto_actual - $monto;
-                $sqlUpdateDistribucion = "UPDATE distribucion_presupuestaria SET monto_actual = ? WHERE id_partida = ? AND id_ejercicio = ?";
-                $stmtUpdateDistribucion = $conexion->prepare($sqlUpdateDistribucion);
-                $stmtUpdateDistribucion->bind_param("dii", $nuevoMontoActual, $id_partida, $id_ejercicio);
-                $stmtUpdateDistribucion->execute();
+                if (isset($resultadoCompromiso['success']) && $resultadoCompromiso['success']) {
+                    $idCompromiso = $resultadoCompromiso['id_compromiso'];
+                    $nuevoMontoActual = $monto_actual - $monto;
 
-                if ($stmtUpdateDistribucion->affected_rows > 0) {
-                    return json_encode([
-                        "success" => "El gasto ha sido aceptado, el compromiso se ha registrado y el presupuesto actualizado",
-                        "compromiso" => $resultadoCompromiso
-                    ]);
+                    $sqlUpdateDistribucion = "UPDATE distribucion_presupuestaria SET monto_actual = ? WHERE id_partida = ? AND id_ejercicio = ?";
+                    $stmtUpdateDistribucion = $conexion->prepare($sqlUpdateDistribucion);
+                    $stmtUpdateDistribucion->bind_param("dii", $nuevoMontoActual, $id_partida, $id_ejercicio);
+                    $stmtUpdateDistribucion->execute();
+
+                    if ($stmtUpdateDistribucion->affected_rows > 0) {
+                        return json_encode([
+                            "success" => "El gasto ha sido aceptado, el compromiso se ha registrado y el presupuesto actualizado",
+                            "compromiso" => [
+                                "correlativo" => $resultadoCompromiso['correlativo'],
+                                "id_compromiso" => $idCompromiso
+                            ]
+                        ]);
+                    } else {
+                        throw new Exception("No se pudo actualizar el monto actual de la distribución presupuestaria");
+                    }
                 } else {
-                    throw new Exception("No se pudo actualizar el monto actual de la distribución presupuestaria");
+                    throw new Exception("No se pudo registrar el compromiso");
                 }
             } else {
                 throw new Exception("No se pudo actualizar el gasto a aceptado");
             }
 
         } elseif ($accion === "rechazar") {
-            // Si se selecciona "rechazar", solo se actualiza el status del gasto a 2 (rechazado)
             $sqlUpdateGasto = "UPDATE gastos SET status = 2 WHERE id = ?";
             $stmtUpdateGasto = $conexion->prepare($sqlUpdateGasto);
             $stmtUpdateGasto->bind_param("i", $idGasto);
@@ -167,11 +167,11 @@ function gestionarGasto($idGasto, $accion) {
         }
 
     } catch (Exception $e) {
-        // Registrar el error en la tabla error_log
         registrarError($e->getMessage());
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 
 // Función para obtener todos los gastos
@@ -184,6 +184,7 @@ function obtenerGastos() {
 
         $gastos = [];
         while ($fila = $resultado->fetch_assoc()) {
+            $id = $fila['id'];
             $id_tipo = $fila['id_tipo'];
             $tipo_beneficiario = $fila['tipo_beneficiario'];
             $id_beneficiario = $fila['id_beneficiario'];
@@ -229,6 +230,14 @@ function obtenerGastos() {
             $resultadoBeneficiario = $stmtBeneficiario->get_result();
             $informacionBeneficiario = $resultadoBeneficiario->fetch_assoc();
 
+            // Consultar id de compromiso relacionado
+            $sqlCompromiso = "SELECT id FROM compromisos WHERE id_registro = ? AND tabla_registro = 'gastos'";
+            $stmtCompromiso = $conexion->prepare($sqlCompromiso);
+            $stmtCompromiso->bind_param("i", $id);
+            $stmtCompromiso->execute();
+            $resultadoCompromiso = $stmtCompromiso->get_result();
+            $idCompromiso = $resultadoCompromiso->fetch_assoc()['id'] ?? null;
+
             // Construir el array con la información completa del gasto
             $gasto = [
                 'id' => $fila['id'],
@@ -239,7 +248,8 @@ function obtenerGastos() {
                 'descripcion_gasto' => $fila['descripcion'],
                 'monto_gasto' => $fila['monto'],
                 'status_gasto' => $fila['status'],
-                'informacion_beneficiario' => $informacionBeneficiario
+                'informacion_beneficiario' => $informacionBeneficiario,
+                'id_compromiso' => $idCompromiso
             ];
 
             $gastos[] = $gasto;
@@ -252,6 +262,7 @@ function obtenerGastos() {
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 
 // Función para obtener un gasto por su ID
@@ -322,6 +333,18 @@ function obtenerGastoPorId($id) {
                         $resultadoBeneficiario = $stmtBeneficiario->get_result();
 
                         if ($informacionBeneficiario = $resultadoBeneficiario->fetch_assoc()) {
+                            // Buscar el registro en la tabla compromisos
+                            $sqlCompromiso = "SELECT id FROM compromisos WHERE id_registro = ? AND tabla_registro = 'gastos'";
+                            $stmtCompromiso = $conexion->prepare($sqlCompromiso);
+                            $stmtCompromiso->bind_param("i", $id);
+                            $stmtCompromiso->execute();
+                            $resultadoCompromiso = $stmtCompromiso->get_result();
+
+                            $idCompromiso = null;
+                            if ($compromiso = $resultadoCompromiso->fetch_assoc()) {
+                                $idCompromiso = $compromiso['id'];
+                            }
+
                             // Construir el array con los datos obtenidos
                             $resultado = [
                                 'nombre_tipo_gasto' => $nombreTipoGasto,
@@ -331,7 +354,8 @@ function obtenerGastoPorId($id) {
                                 'descripcion_gasto' => $descripcion,
                                 'monto_gasto' => $monto,
                                 'status_gasto' => $status,
-                                'informacion_beneficiario' => $informacionBeneficiario
+                                'informacion_beneficiario' => $informacionBeneficiario,
+                                'id_compromiso' => $idCompromiso // Agregar el ID del compromiso si existe
                             ];
 
                             return json_encode($resultado);
@@ -356,6 +380,7 @@ function obtenerGastoPorId($id) {
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 function actualizarGasto($id, $id_tipo, $descripcion, $monto, $status, $id_ejercicio, $tipo_beneficiario, $id_beneficiario, $id_distribucion) {
     global $conexion;
