@@ -1,7 +1,6 @@
 import {
   confirmNotification,
   hideLoader,
-  mapData,
   showLoader,
   toastNotification,
 } from '../helpers/helpers.js'
@@ -30,7 +29,7 @@ const getGastos = async () => {
     console.log(text)
 
     const json = await res.json()
-    console.log(json)
+    // console.log(json)
 
     if (json.success) {
       return json.success
@@ -68,10 +67,10 @@ const getGasto = async (id) => {
     let clone = res.clone()
     let text = await clone.text()
 
-    console.log(text)
+    // console.log(text)
 
     const json = await res.json()
-    console.log(json)
+    // console.log(json)
 
     if (json.success) {
       return json.success

@@ -108,7 +108,6 @@ export const pre_gastosTipo_form_card = async ({ elementToInsert, data }) => {
         let res = await registrarTipoGasto({ nombre: fieldList.nombre })
         if (res.success) {
           closeCard()
-          pre_gastos_form_card({ elementToInsert: 'gastos-view' })
         }
       },
     })

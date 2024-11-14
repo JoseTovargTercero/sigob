@@ -26,6 +26,8 @@ export const pre_gastos_form_card = async ({
   const cardElement = d.getElementById('gastos-form-card')
   if (cardElement) cardElement.remove()
 
+  console.log(ejercicioFiscal.id)
+
   let fieldList = {
     id_tipo: '',
     monto: 0,

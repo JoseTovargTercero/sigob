@@ -1,3 +1,4 @@
+import { generarCompromisoPdf } from '../api/pre_compromisos.js'
 import { aceptarGasto, rechazarGasto } from '../api/pre_gastos.js'
 import {
   confirmNotification,
@@ -64,6 +65,7 @@ export const pre_gastosDetalles = ({
       type: 'text',
     },
   }
+  console.log(data)
 
   const generarBeneficiarioInformacion = () => {
     console.log(data.tipo_beneficiario)
@@ -129,12 +131,20 @@ export const pre_gastosDetalles = ({
         </h5>
       </div>
       <div class='card-footer d-flex justify-content-center gap-2'>
-        <button class='btn btn-primary' data-aceptarid="${data.id}">
+      ${
+        Number(data.status_gasto) === 1
+          ? `<button class='btn btn-secondary'
+            data-compromisoid='${data.id_compromiso}'>
+            Descargar compromiso
+          </button>`
+          : `<button class='btn btn-primary' data-aceptarid="${data.id}">
           Guardar
         </button>
         <button class='btn btn-danger' data-rechazarid="${data.id}">
           rechazar
-        </button>
+        </button>`
+      }
+        
       </div>
     </div>`
 
@@ -145,6 +155,10 @@ export const pre_gastosDetalles = ({
 
   const closeCard = () => {
     // validateEditButtons()
+    let gastosRegistrarCointaner = d.getElementById(
+      'gastos-registrar-container'
+    )
+    gastosRegistrarCointaner.classList.remove('hide')
     cardElement.remove()
     cardElement.removeEventListener('click', validateClick)
     cardElement.removeEventListener('input', validateInputFunction)
@@ -156,6 +170,11 @@ export const pre_gastosDetalles = ({
     if (e.target.dataset.close) {
       closeCard()
     }
+    if (e.target.dataset.compromisoid) {
+      console.log(e.target.dataset.compromisoid)
+      generarCompromisoPdf(e.target.dataset.compromisoid, data.correlativo)
+    }
+
     if (e.target.dataset.aceptarid) {
       confirmNotification({
         type: NOTIFICATIONS_TYPES.send,
@@ -166,6 +185,10 @@ export const pre_gastosDetalles = ({
 
           let res = await aceptarGasto(data.id)
           if (res.success) {
+            generarCompromisoPdf(
+              res.compromiso.id_compromiso,
+              res.compromiso.correlativo
+            )
             recargarEjercicio()
             closeCard()
           }

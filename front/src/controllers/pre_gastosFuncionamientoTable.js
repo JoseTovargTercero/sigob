@@ -125,10 +125,7 @@ export async function loadGastosTable({ id_ejercicio }) {
             : Number(gastos.status_gasto) === 1
             ? `<span class='btn btn-sm btn-success'>Procesado</span>`
             : `<span class='btn btn-sm btn-danger'>Rechazado</span>`,
-        acciones:
-          Number(gastos.status_gasto) === 0
-            ? `<button class="btn btn-secondary btn-sm" data-detallesid="${gastos.id}">Detalles</button>`
-            : `Gasto procesado`,
+        acciones: `<button class="btn btn-secondary btn-sm" data-detallesid="${gastos.id}">Detalles</button>`,
       }
     })
 
