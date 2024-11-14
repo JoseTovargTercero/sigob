@@ -17,7 +17,7 @@ function crearGasto($id_tipo, $descripcion, $monto, $id_ejercicio, $tipo_benefic
 
     try {
         // Validar que todos los campos no estén vacíos
-        if (empty($id_tipo) || empty($descripcion) || empty($monto) || empty($id_ejercicio) || empty($tipo_beneficiario) || empty($id_beneficiario) || empty($id_distribucion)) {
+        if (empty($id_tipo) || empty($descripcion) || empty($monto) || empty($id_ejercicio) || $tipo_beneficiario == "" || empty($id_beneficiario) || empty($id_distribucion)) {
             throw new Exception("Faltaron uno o más valores (id_tipo, descripción, monto, id_ejercicio, tipo_beneficiario, id_beneficiario, id_distribucion)");
         }
 
@@ -182,7 +182,7 @@ function obtenerGastos()
     global $conexion;
 
     try {
-        $sql = "SELECT id, id_tipo, descripcion, monto, status, id_ejercicio, tipo_beneficiario, id_beneficiario, id_distribucion FROM gastos";
+        $sql = "SELECT id, id_tipo, descripcion, monto, status, id_ejercicio, tipo_beneficiario, id_beneficiario, id_distribucion, fecha FROM gastos";
         $resultado = $conexion->query($sql);
 
         $gastos = [];
@@ -193,6 +193,7 @@ function obtenerGastos()
             $tipo_beneficiario = $fila['tipo_beneficiario'];
             $id_beneficiario = $fila['id_beneficiario'];
             $id_distribucion = $fila['id_distribucion'];
+            $fecha = $fila['fecha'];
 
             // Consultar nombre de tipo de gasto
             $sqlTipoGasto = "SELECT nombre FROM tipo_gastos WHERE id = ?";
@@ -202,13 +203,14 @@ function obtenerGastos()
             $resultadoTipoGasto = $stmtTipoGasto->get_result();
             $nombreTipoGasto = $resultadoTipoGasto->fetch_assoc()['nombre'] ?? null;
 
-            // Obtener id_partida desde distribucion_presupuestaria
-            $sqlDistribucion = "SELECT id_partida FROM distribucion_presupuestaria WHERE id = ?";
+            // Obtener id_partida desde distribucion_presupuestaria y toda su información
+            $sqlDistribucion = "SELECT * FROM distribucion_presupuestaria WHERE id = ?";
             $stmtDistribucion = $conexion->prepare($sqlDistribucion);
             $stmtDistribucion->bind_param("i", $id_distribucion);
             $stmtDistribucion->execute();
             $resultadoDistribucion = $stmtDistribucion->get_result();
-            $id_partida = $resultadoDistribucion->fetch_assoc()['id_partida'] ?? null;
+            $infoDistribucion = $resultadoDistribucion->fetch_assoc();
+            $id_partida = $infoDistribucion['id_partida'] ?? null;
 
             // Consultar información de partida
             $partidaInfo = null;
@@ -234,28 +236,35 @@ function obtenerGastos()
             $resultadoBeneficiario = $stmtBeneficiario->get_result();
             $informacionBeneficiario = $resultadoBeneficiario->fetch_assoc();
 
-            // Consultar id de compromiso relacionado
-            $sqlCompromiso = "SELECT id FROM compromisos WHERE id_registro = ? AND tabla_registro = 'gastos'";
-            $stmtCompromiso = $conexion->prepare($sqlCompromiso);
-            $stmtCompromiso->bind_param("i", $id);
-            $stmtCompromiso->execute();
-            $resultadoCompromiso = $stmtCompromiso->get_result();
-            $idCompromiso = $resultadoCompromiso->fetch_assoc()['id'] ?? null;
+          // Consultar id de compromiso relacionado
+$sqlCompromiso = "SELECT id, correlativo FROM compromisos WHERE id_registro = ? AND tabla_registro = 'gastos'";
+$stmtCompromiso = $conexion->prepare($sqlCompromiso);
+$stmtCompromiso->bind_param("i", $id);
+$stmtCompromiso->execute();
+$resultadoCompromiso = $stmtCompromiso->get_result();
+$compromiso = $resultadoCompromiso->fetch_assoc();
 
-            // Construir el array con la información completa del gasto
-            $gasto = [
-                'id' => $fila['id'],
-                'nombre_tipo_gasto' => $nombreTipoGasto,
-                'partida' => $partidaInfo['partida'] ?? null,
-                'nombre_partida' => $partidaInfo['nombre'] ?? null,
-                'descripcion_partida' => $partidaInfo['descripcion'] ?? null,
-                'descripcion_gasto' => $fila['descripcion'],
-                'monto_gasto' => $fila['monto'],
-                'status_gasto' => $fila['status'],
-                'id_ejercicio' => $id_ejercicio,
-                'informacion_beneficiario' => $informacionBeneficiario,
-                'id_compromiso' => $idCompromiso
-            ];
+$idCompromiso = $compromiso['id'] ?? null;
+$correlativo = $compromiso['correlativo'] ?? null;
+
+// Construir el array con la información completa del gasto
+$gasto = [
+    'id' => $fila['id'],
+    'fecha' => $fila['fecha'],
+    'nombre_tipo_gasto' => $nombreTipoGasto,
+    'partida' => $partidaInfo['partida'] ?? null,
+    'nombre_partida' => $partidaInfo['nombre'] ?? null,
+    'descripcion_partida' => $partidaInfo['descripcion'] ?? null,
+    'descripcion_gasto' => $fila['descripcion'],
+    'monto_gasto' => $fila['monto'],
+    'status_gasto' => $fila['status'],
+    'id_ejercicio' => $id_ejercicio,
+    'informacion_beneficiario' => $informacionBeneficiario,
+    'id_compromiso' => $idCompromiso,
+    'correlativo' => $correlativo,
+    'informacion_distribucion' => $infoDistribucion // Incluye toda la información de la distribucion_presupuestaria
+];
+
 
             $gastos[] = $gasto;
         }
@@ -277,7 +286,7 @@ function obtenerGastoPorId($id)
 
     try {
         // Consultar el registro de la tabla gastos por su ID
-        $sqlGasto = "SELECT id_tipo, descripcion, monto, status, tipo_beneficiario, id_beneficiario, id_distribucion FROM gastos WHERE id = ?";
+        $sqlGasto = "SELECT id_tipo, descripcion, monto, status, tipo_beneficiario, id_beneficiario, id_distribucion, fecha FROM gastos WHERE id = ?";
         $stmtGasto = $conexion->prepare($sqlGasto);
         $stmtGasto->bind_param("i", $id);
         $stmtGasto->execute();
@@ -291,6 +300,7 @@ function obtenerGastoPorId($id)
             $tipo_beneficiario = $gasto['tipo_beneficiario'];
             $id_beneficiario = $gasto['id_beneficiario'];
             $id_distribucion = $gasto['id_distribucion'];
+            $fecha = $gasto['fecha'];
 
             // Consultar la tabla tipo_gastos para obtener el nombre del tipo de gasto
             $sqlTipoGasto = "SELECT nombre FROM tipo_gastos WHERE id = ?";
@@ -298,94 +308,78 @@ function obtenerGastoPorId($id)
             $stmtTipoGasto->bind_param("i", $id_tipo);
             $stmtTipoGasto->execute();
             $resultadoTipoGasto = $stmtTipoGasto->get_result();
+            $nombreTipoGasto = $resultadoTipoGasto->fetch_assoc()['nombre'] ?? null;
 
-            if ($tipoGasto = $resultadoTipoGasto->fetch_assoc()) {
-                $nombreTipoGasto = $tipoGasto['nombre'];
+            // Obtener toda la información de distribucion_presupuestaria
+            $sqlDistribucion = "SELECT * FROM distribucion_presupuestaria WHERE id = ?";
+            $stmtDistribucion = $conexion->prepare($sqlDistribucion);
+            $stmtDistribucion->bind_param("i", $id_distribucion);
+            $stmtDistribucion->execute();
+            $resultadoDistribucion = $stmtDistribucion->get_result();
+            $distribucionInfo = $resultadoDistribucion->fetch_assoc();
 
-                // Obtener el id_partida de distribucion_presupuestaria utilizando el id_distribucion
-                $sqlDistribucion = "SELECT id_partida FROM distribucion_presupuestaria WHERE id = ?";
-                $stmtDistribucion = $conexion->prepare($sqlDistribucion);
-                $stmtDistribucion->bind_param("i", $id_distribucion);
-                $stmtDistribucion->execute();
-                $resultadoDistribucion = $stmtDistribucion->get_result();
+            if ($distribucionInfo) {
+                $id_partida = $distribucionInfo['id_partida'];
 
-                if ($distribucion = $resultadoDistribucion->fetch_assoc()) {
-                    $id_partida = $distribucion['id_partida'];
+                // Consultar la tabla partidas_presupuestarias para obtener partida, nombre y descripcion
+                $sqlPartida = "SELECT partida, nombre, descripcion FROM partidas_presupuestarias WHERE id = ?";
+                $stmtPartida = $conexion->prepare($sqlPartida);
+                $stmtPartida->bind_param("i", $id_partida);
+                $stmtPartida->execute();
+                $resultadoPartida = $stmtPartida->get_result();
+                $partidaInfo = $resultadoPartida->fetch_assoc();
 
-                    // Consultar la tabla partidas_presupuestarias para obtener partida, nombre y descripcion
-                    $sqlPartida = "SELECT partida, nombre, descripcion FROM partidas_presupuestarias WHERE id = ?";
-                    $stmtPartida = $conexion->prepare($sqlPartida);
-                    $stmtPartida->bind_param("i", $id_partida);
-                    $stmtPartida->execute();
-                    $resultadoPartida = $stmtPartida->get_result();
-
-                    if ($partidaInfo = $resultadoPartida->fetch_assoc()) {
-                        $partida = $partidaInfo['partida'];
-                        $nombrePartida = $partidaInfo['nombre'];
-                        $descripcionPartida = $partidaInfo['descripcion'];
-
-                        // Obtener información del beneficiario según el tipo_beneficiario
-                        if ($tipo_beneficiario == 0) {
-                            // Consultar en la tabla entes
-                            $sqlBeneficiario = "SELECT * FROM entes_dependencias WHERE id = ?";
-                        } else {
-                            // Consultar en la tabla empleados
-                            $sqlBeneficiario = "SELECT * FROM empleados WHERE id = ?";
-                        }
-
-                        $stmtBeneficiario = $conexion->prepare($sqlBeneficiario);
-                        $stmtBeneficiario->bind_param("i", $id_beneficiario);
-                        $stmtBeneficiario->execute();
-                        $resultadoBeneficiario = $stmtBeneficiario->get_result();
-
-                        if ($informacionBeneficiario = $resultadoBeneficiario->fetch_assoc()) {
-                            // Buscar el registro en la tabla compromisos
-                            $sqlCompromiso = "SELECT id FROM compromisos WHERE id_registro = ? AND tabla_registro = 'gastos'";
-                            $stmtCompromiso = $conexion->prepare($sqlCompromiso);
-                            $stmtCompromiso->bind_param("i", $id);
-                            $stmtCompromiso->execute();
-                            $resultadoCompromiso = $stmtCompromiso->get_result();
-
-                            $idCompromiso = null;
-                            if ($compromiso = $resultadoCompromiso->fetch_assoc()) {
-                                $idCompromiso = $compromiso['id'];
-                            }
-
-                            // Construir el array con los datos obtenidos
-                            $resultado = [
-                                'nombre_tipo_gasto' => $nombreTipoGasto,
-                                'partida' => $partida,
-                                'nombre_partida' => $nombrePartida,
-                                'descripcion_partida' => $descripcionPartida,
-                                'descripcion_gasto' => $descripcion,
-                                'monto_gasto' => $monto,
-                                'status_gasto' => $status,
-                                'informacion_beneficiario' => $informacionBeneficiario,
-                                'id_compromiso' => $idCompromiso // Agregar el ID del compromiso si existe
-                            ];
-
-                            return json_encode($resultado);
-                        } else {
-                            throw new Exception("No se encontró la información del beneficiario.");
-                        }
-                    } else {
-                        throw new Exception("No se encontró la partida presupuestaria.");
-                    }
+                // Obtener información del beneficiario según el tipo_beneficiario
+                if ($tipo_beneficiario == 0) {
+                    $sqlBeneficiario = "SELECT * FROM entes_dependencias WHERE id = ?";
                 } else {
-                    throw new Exception("No se encontró la distribución presupuestaria correspondiente.");
+                    $sqlBeneficiario = "SELECT * FROM empleados WHERE id = ?";
                 }
+                $stmtBeneficiario = $conexion->prepare($sqlBeneficiario);
+                $stmtBeneficiario->bind_param("i", $id_beneficiario);
+                $stmtBeneficiario->execute();
+                $resultadoBeneficiario = $stmtBeneficiario->get_result();
+                $informacionBeneficiario = $resultadoBeneficiario->fetch_assoc();
+
+                // Buscar el registro en la tabla compromisos
+                $sqlCompromiso = "SELECT id, correlativo FROM compromisos WHERE id_registro = ? AND tabla_registro = 'gastos'";
+                $stmtCompromiso = $conexion->prepare($sqlCompromiso);
+                $stmtCompromiso->bind_param("i", $id);
+                $stmtCompromiso->execute();
+                $resultadoCompromiso = $stmtCompromiso->get_result();
+                $compromiso = $resultadoCompromiso->fetch_assoc();
+                $idCompromiso = $compromiso['id'] ?? null;
+                $correlativo = $compromiso['correlativo'] ?? null;
+
+                // Construir el array con los datos obtenidos
+                $resultado = [
+                    'nombre_tipo_gasto' => $nombreTipoGasto,
+                    'partida' => $partidaInfo['partida'] ?? null,
+                    'nombre_partida' => $partidaInfo['nombre'] ?? null,
+                    'descripcion_partida' => $partidaInfo['descripcion'] ?? null,
+                    'descripcion_gasto' => $descripcion,
+                    'monto_gasto' => $monto,
+                    'fecha' => $fecha,
+                    'correlativo' => $correlativo,
+                    'status_gasto' => $status,
+                    'informacion_beneficiario' => $informacionBeneficiario,
+                    'id_compromiso' => $idCompromiso,
+                    'informacion_distribucion' => $distribucionInfo // Agregar la información completa de distribucion_presupuestaria
+                ];
+
+                return json_encode($resultado);
             } else {
-                throw new Exception("No se encontró el tipo de gasto.");
+                throw new Exception("No se encontró la distribución presupuestaria correspondiente.");
             }
         } else {
             throw new Exception("Gasto no encontrado.");
         }
-
     } catch (Exception $e) {
         registrarError($e->getMessage());
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 
 function actualizarGasto($id, $id_tipo, $descripcion, $monto, $status, $id_ejercicio, $tipo_beneficiario, $id_beneficiario, $id_distribucion)

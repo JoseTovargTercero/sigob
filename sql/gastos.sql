@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 13-11-2024 a las 15:41:48
+-- Tiempo de generación: 14-11-2024 a las 14:50:21
 -- Versión del servidor: 10.4.27-MariaDB
 -- Versión de PHP: 7.4.33
 
@@ -36,7 +36,8 @@ CREATE TABLE `gastos` (
   `id_ejercicio` int(255) NOT NULL,
   `tipo_beneficiario` int(255) NOT NULL,
   `id_beneficiario` int(255) NOT NULL,
-  `id_distribucion` int(255) NOT NULL
+  `id_distribucion` int(255) NOT NULL,
+  `fecha` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -57,7 +58,7 @@ ALTER TABLE `gastos`
 -- AUTO_INCREMENT de la tabla `gastos`
 --
 ALTER TABLE `gastos`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
