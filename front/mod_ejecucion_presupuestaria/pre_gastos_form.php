@@ -58,8 +58,7 @@ require_once '../../back/sistema_global/session.php';
                         </div>
                         <div class="card-body">
                             <div class="d-flex justify-content-center align-items-center gap-2">
-                                <h5 class="text-center m-0">Presupuesto total: <span id="presupuesto">10.000 Bs</span>
-                                </h5>
+
                                 <button class="btn btn-success btn-sm" id="gastos-registrar">REGISTRAR GASTO</button>
                             </div>
 
@@ -84,7 +83,7 @@ require_once '../../back/sistema_global/session.php';
                                 <table id="gastos-table" class="table table-striped" style="width:100%">
                                     <thead>
                                         <th>N° COMPROMISO</th>
-                                        <th>DESCRIPCION</th>
+
                                         <th>TIPO</th>
                                         <th>MONTO</th>
                                         <th>FECHA</th>

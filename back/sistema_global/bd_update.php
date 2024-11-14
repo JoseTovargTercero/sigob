@@ -74,6 +74,7 @@ $db = new DatabaseHandler($conexion);
         <!-- Tabla de actualizaciones -->
         <div class="mt-5">
             <h5>Historial de Actualizaciones</h5>
+
             <table class="table table-striped">
                 <thead>
                     <tr>
@@ -296,7 +297,7 @@ $db = new DatabaseHandler($conexion);
                                                 cambios = true
                                                 $('#historialActualizaciones').append(`
                                                     <tr id="row_${element.id}">
-                                                    <td>  <pre><code class="language-sql">${element.qry}</code></pre></td>
+                                                    <td>  <pre style="width: 70vw;"><code class="language-sql">${element.qry}</code></pre></td>
                                                     <td class="text-center">
                                                     <br>
                                                     <b>Información de la actualización</b>

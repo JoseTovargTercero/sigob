@@ -38,11 +38,11 @@ const tableLanguage = {
   },
 }
 let gastosTable, tipoGastosTable
-export async function validateGastosTable() {
+export async function validateGastosTable(id_ejercicio) {
   gastosTable = new DataTable('#gastos-table', {
     columns: [
-      { data: 'numero_compromiso' },
-      { data: 'descripcion' },
+      { data: 'compromiso' },
+
       { data: 'tipo' },
       { data: 'monto' },
       { data: 'fecha' },
@@ -65,7 +65,7 @@ export async function validateGastosTable() {
     },
   })
 
-  loadGastosTable()
+  loadGastosTable(id_ejercicio)
 }
 
 export async function validateTiposGastosTable() {
@@ -95,7 +95,7 @@ export async function validateTiposGastosTable() {
   loadTipoGastosTable()
 }
 
-export async function loadGastosTable() {
+export async function loadGastosTable({ id_ejercicio }) {
   let gastos = await getGastos()
 
   if (!Array.isArray(gastos)) return
@@ -104,24 +104,36 @@ export async function loadGastosTable() {
 
   let datosOrdenados = [...gastos].sort((a, b) => a.id - b.id)
 
-  let data = datosOrdenados.map((gastos) => {
-    return {
-      numero_compromiso: gastos.numero_compromiso,
-      descripcion: gastos.descripcion,
-      tipo: '',
-      monto: `${separarMiles(gastos.monto)} Bs`,
-      fecha: gastos.fecha,
-      estado:
-        gastos.estado === 0
-          ? ` <span class='btn btn-sm btn-warning'>Pendiente</span>`
-          : `<span class='btn btn-sm btn-success'>Procesado</span>`,
-      acciones:
-        gastos.estado === 0
-          ? `<button class="btn btn-danger btn-sm" data-rechazarid="${gastos.id}">Rechazar</button>
-      <button class="btn btn-info btn-sm" data-aceptarid="${gastos.id}">Aceptar</button>`
-          : ``,
-    }
-  })
+  let data = datosOrdenados
+    .filter((gastos) => Number(gastos.id_ejercicio) === Number(id_ejercicio))
+    .map((gastos) => {
+      // let sector_programa_proyecto = `${
+      //   el.sector_informacion ? el.sector_informacion.sector : '0'
+      // }.${el.programa_informacion ? el.programa_informacion.programa : '0'}.${
+      //   el.proyecto_informacion == 0 ? '00' : el.proyecto_informacion.proyecto
+      // }.${el.id_actividad == 0 ? '00' : el.id_actividad}`
+
+      return {
+        compromiso: gastos.correlativo || 'Pendiente',
+
+        tipo: gastos.nombre_tipo_gasto,
+        monto: `${separarMiles(gastos.monto_gasto)} Bs`,
+        fecha: gastos.fecha,
+        estado:
+          Number(gastos.status_gasto) === 0
+            ? ` <span class='btn btn-sm btn-secondary'>Pendiente</span>`
+            : Number(gastos.status_gasto) === 1
+            ? `<span class='btn btn-sm btn-success'>Procesado</span>`
+            : `<span class='btn btn-sm btn-danger'>Rechazado</span>`,
+        acciones:
+          Number(gastos.status_gasto) === 0
+            ? `<button class="btn btn-secondary btn-sm" data-detallesid="${gastos.id}">Detalles</button>`
+            : `Gasto procesado`,
+      }
+    })
+
+  // <button class="btn btn-danger btn-sm" data-rechazarid="${gastos.id}">Rechazar</button>
+  // <button class="btn btn-info btn-sm" data-aceptarid="${gastos.id}">Aceptar</button>
 
   gastosTable.clear().draw()
 

@@ -1,14 +1,23 @@
-import { getGastos, getTiposGastos } from '../api/pre_gastos.js'
+import {
+  aceptarGasto,
+  eliminatTipoGasto,
+  getGasto,
+  getGastos,
+  getTiposGastos,
+  rechazarGasto,
+} from '../api/pre_gastos.js'
 import {
   ejerciciosLista,
   validarEjercicioActual,
 } from '../components/form_ejerciciosLista.js'
 import { pre_gastos_form_card } from '../components/pre_gastos_form_card.js'
+import { pre_gastosDetalles } from '../components/pre_gastosDetalles.js'
 import { confirmNotification, toastNotification } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 import {
   deleteGasto,
   deleteTipoGasto,
+  loadGastosTable,
   validateGastosTable,
   validateTiposGastosTable,
 } from './pre_gastosFuncionamientoTable.js'
@@ -16,22 +25,43 @@ import {
 const d = document
 export const validateGastosView = async () => {
   if (!document.getElementById('gastos-view')) return
-  validateGastosTable()
-  validateTiposGastosTable()
 
   let ejercicioFiscal = await ejerciciosLista({
     elementToInsert: 'ejercicios-fiscales',
   })
+
+  validateGastosTable({
+    id_ejercicio: ejercicioFiscal ? ejercicioFiscal.id : null,
+  })
+  validateTiposGastosTable()
 
   let gastosForm = d.getElementById('gastos-form')
   let gastosRegistrarCointaner = d.getElementById('gastos-registrar-container')
 
   d.addEventListener('click', async (e) => {
     if (e.target.id === 'gastos-registrar') {
+      if (!ejercicioFiscal) {
+        toastNotification({
+          type: NOTIFICATIONS_TYPES.fail,
+          message: 'No hay ejercicio fiscal seleccionado',
+        })
+        return
+      }
       gastosRegistrarCointaner.classList.add('hide')
-      pre_gastos_form_card({ elementToInsert: 'gastos-view' })
-    }
-    if (e.target.id === 'gastos-tipos-guardar') {
+      pre_gastos_form_card({
+        elementToInsert: 'gastos-view',
+        ejercicioFiscal: ejercicioFiscal,
+        recargarEjercicio: async function () {
+          let ejercicioFiscalElement = d.querySelector(
+            `[data-ejercicioid="${ejercicioFiscal.id}"]`
+          )
+          ejercicioFiscal = await validarEjercicioActual({
+            ejercicioTarget: ejercicioFiscalElement,
+          })
+
+          loadGastosTable({ id_ejercicio: ejercicioFiscal.id })
+        },
+      })
     }
 
     if (e.target.dataset.tableid) {
@@ -43,55 +73,51 @@ export const validateGastosView = async () => {
       e.target.classList.add('active')
     }
 
-    if (e.target.dataset.rechazarid) {
-      confirmNotification({
-        type: NOTIFICATIONS_TYPES.send,
-        message:
-          'Rechazar este gasto hará que se elimine y reintegre el monto al presupuesto ¿Desea continuar?',
-        successFunction: function () {
-          let row = e.target.closest('tr')
-          deleteGasto({ row })
-
-          toastNotification({
-            type: NOTIFICATIONS_TYPES.done,
-            message: 'Gasto rechazado',
+    if (e.target.dataset.detallesid) {
+      let data = await getGasto(e.target.dataset.detallesid)
+      pre_gastosDetalles({
+        elementToInsert: 'gastos-view',
+        data,
+        ejercicioFiscal: ejercicioFiscal,
+        recargarEjercicio: async function () {
+          let ejercicioFiscalElement = d.querySelector(
+            `[data-ejercicioid="${ejercicioFiscal.id}"]`
+          )
+          ejercicioFiscal = await validarEjercicioActual({
+            ejercicioTarget: ejercicioFiscalElement,
           })
+
+          loadGastosTable({ id_ejercicio: ejercicioFiscal.id })
         },
       })
     }
 
+    if (e.target.dataset.rechazarid) {
+    }
+
     if (e.target.dataset.aceptarid) {
-      confirmNotification({
-        type: NOTIFICATIONS_TYPES.send,
-        message:
-          'Al aceptar este gasto se descontará del presupuesto actual ¿Desea continuar?',
-        successFunction: function () {
-          toastNotification({
-            type: NOTIFICATIONS_TYPES.done,
-            message: 'Gasto aceptado y descontado del presupuesto',
-          })
-        },
-      })
     }
 
     if (e.target.dataset.eliminarid) {
       confirmNotification({
         type: NOTIFICATIONS_TYPES.send,
         message: '¿Desea eliminar este tipo de gasto',
-        successFunction: function () {
-          let row = e.target.closest('tr')
-          deleteTipoGasto({ row })
-          toastNotification({
-            type: NOTIFICATIONS_TYPES.done,
-            message: 'Tipo de gasto eliminado',
-          })
+        successFunction: async function () {
+          let res = await eliminatTipoGasto(e.target.dataset.eliminarid)
+          if (res.success) {
+            let row = e.target.closest('tr')
+            deleteTipoGasto({ row })
+
+            let formCard = d.getElementById('gastos-form-card')
+            if (formCard) formCard.remove()
+          }
         },
       })
     }
 
     if (e.target.dataset.ejercicioid) {
       // QUITAR CARD SI SE CAMBIA EL AÑO FISCAL
-      let formCard = d.getElementById('distribucion-form-card')
+      let formCard = d.getElementById('gastos-form-card')
       if (formCard) formCard.remove()
 
       ejercicioFiscal = await validarEjercicioActual({
