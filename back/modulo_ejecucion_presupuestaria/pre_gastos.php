@@ -22,7 +22,7 @@ function crearGasto($id_tipo, $descripcion, $monto, $id_ejercicio, $beneficiario
         }
 
         // Decodificar el JSON de distribuciones
-        $distribucionesArray = json_decode($distribuciones, true);
+        $distribucionesArray = $distribuciones;
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new Exception("El formato de distribuciones no es válido");
         }

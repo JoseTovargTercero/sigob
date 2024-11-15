@@ -589,8 +589,6 @@ export const form_distribucion_form_card = async ({
     let sectores = await selectTables('pl_sectores')
     let proyectos = await selectTables('pl_proyectos')
 
-    console.log(proyectos)
-
     let options = [`<option value=''>Elegir sector...</option>`]
 
     sectores.forEach((sector) => {

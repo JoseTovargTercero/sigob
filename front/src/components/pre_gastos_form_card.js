@@ -32,7 +32,7 @@ export const pre_gastos_form_card = async ({
     id_tipo: '',
     monto: 0,
     beneficiario: '',
-    identificacion: '',
+    identificador: '',
     fecha: '',
     descripcion: '',
     id_ejercicio: ejercicioFiscal.id,
@@ -40,13 +40,15 @@ export const pre_gastos_form_card = async ({
   }
 
   let fieldListPartidas = {}
+  let fieldListErrorsPartidas = {}
+
   let fieldListErrors = {
     beneficiario: {
       value: true,
       message: 'Elija un tipo de beneficiario',
       type: 'text',
     },
-    identificacion: {
+    identificador: {
       value: true,
       message: 'Elija un tipo de beneficiario',
       type: 'text',
@@ -160,14 +162,14 @@ export const pre_gastos_form_card = async ({
             </div>
             <div class='col-sm'>
               <div class='form-group'>
-                <label for='identificacion' class='form-label'>
+                <label for='identificador' class='form-label'>
                   Identificacion
                 </label>
                 <input
                   class='form-control gasto-input'
                   type='text'
-                  name='identificacion'
-                  id='identificacion'
+                  name='identificador'
+                  id='identificador'
                   placeholder='Identificación del beneficiario...'
                 />
               </div>
@@ -282,8 +284,6 @@ export const pre_gastos_form_card = async ({
         })
       })
 
-      console.log(fieldList, fieldListErrors)
-
       // if (Object.values(fieldListErrors).some((el) => el.value)) {
       //   toastNotification({
       //     type: NOTIFICATIONS_TYPES.fail,
@@ -301,7 +301,7 @@ export const pre_gastos_form_card = async ({
       // }
 
       let partidasValidadas = validarPartidas()
-      console.log(partidasValidadas)
+
       if (!partidasValidadas) {
         return
       }
@@ -317,11 +317,56 @@ export const pre_gastos_form_card = async ({
         return
       }
 
+      let inputsMontos = Array.from(d.querySelectorAll('.partida-monto'))
+      inputsMontos.forEach((input) => {
+        fieldListPartidas = validateInput({
+          target: input,
+          fieldList: fieldListPartidas,
+          fieldListErrors: fieldListErrorsPartidas,
+          type: fieldListErrorsPartidas[input.name],
+        })
+      })
+
+      if (Object.values(fieldListErrorsPartidas).some((el) => el.value)) {
+        toastNotification({
+          type: NOTIFICATIONS_TYPES.fail,
+          message: 'Hay montos inválidos',
+        })
+        return
+      }
+
       enviarInformacion()
     }
 
     if (e.target.id === 'add-row') {
+      if (Number(fieldList.monto) < 1) {
+        toastNotification({
+          type: NOTIFICATIONS_TYPES.fail,
+          message: 'Antes de añadir partidas añada el monto total usado',
+        })
+        return
+      }
       addRow()
+    }
+
+    if (e.target.dataset.deleteRow) {
+      let id = e.target.dataset.deleteRow
+      confirmNotification({
+        type: NOTIFICATIONS_TYPES.send,
+        message:
+          'Al eliminar esta fila se actualizará el monto restante ¿Desea continuar?',
+        successFunction: function () {
+          let row = d.querySelector(`[data-row="${id}"]`)
+
+          // ELIMINAR ESTADO Y ERRORES DE INPUTS
+
+          delete fieldListPartidas[`distribucion-monto-${id}`]
+          delete fieldListErrorsPartidas[`distribucion-monto-${id}`]
+
+          if (row) numsRows--
+          row.remove()
+        },
+      })
     }
   }
 
@@ -343,6 +388,11 @@ export const pre_gastos_form_card = async ({
     //   type: 'partida',
     // }
     fieldListPartidas[`distribucion-monto-${newNumRow}`] = ''
+    fieldListErrorsPartidas[`distribucion-monto-${newNumRow}`] = {
+      value: true,
+      message: 'Monto inválido',
+      type: 'number3',
+    }
 
     let options = [`<option value=''>Elegir partida...</option>`]
 
@@ -394,12 +444,6 @@ export const pre_gastos_form_card = async ({
         (partida) => Number(partida.id) === Number(partidaInput.value)
       )
 
-      console.log(
-        ejercicioFiscal.distribucion_partidas,
-        partidaEncontrada,
-        partidaInput
-      )
-
       // Verificar si la partida introducida existe
 
       if (!partidaEncontrada) {
@@ -441,6 +485,8 @@ export const pre_gastos_form_card = async ({
   }
 
   function enviarInformacion() {
+    console.log(fieldList)
+
     confirmNotification({
       type: NOTIFICATIONS_TYPES.send,
       message: '¿Desea registrar este gasto?',
@@ -466,14 +512,19 @@ export const pre_gastos_form_card = async ({
       if (e.target.name === 'monto') {
         fieldList.monto = formatearFloat(e.target.value)
       }
-
-      console.log(e.target, e.target.value)
-
-      console.log(fieldList, fieldListErrors)
     }
 
     if (e.target.id === 'search-select-tipo-beneficiario') {
       cargarBeneficiarios()
+    }
+
+    if (e.target.classList.contains('distribucion-monto')) {
+      fieldListPartidas = validateInput({
+        target: e.target,
+        fieldList: fieldListPartidas,
+        fieldListErrors: fieldListErrorsPartidas,
+        type: fieldListErrorsPartidas[e.target.name].type,
+      })
     }
   }
 
@@ -506,7 +557,7 @@ function partidaRow(partidaNum) {
           <div class='row'>
             <div class='col'>
               <input
-                class='form-control partida-input partida-monto'
+                class='form-control partida-input distribucion-monto'
                 type='text'
                 name='distribucion-monto-${partidaNum}'
                 id='distribucion-monto-${partidaNum}'
@@ -514,7 +565,7 @@ function partidaRow(partidaNum) {
               />
             </div>
             <div class='col'>
-              <button class='btn btn-danger' data-delete-row='${partidaNum}'>
+              <button type="button" class='btn btn-danger' data-delete-row='${partidaNum}'>
                 ELIMINAR
               </button>
             </div>

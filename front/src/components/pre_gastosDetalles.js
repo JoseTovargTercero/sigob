@@ -5,52 +5,12 @@ import {
   hideLoader,
   insertOptions,
   separadorLocal,
+  tableLanguage,
   toastNotification,
   validateInput,
 } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 const d = document
-
-let obj = {
-  id: '6',
-  fecha: '2023-12-31',
-  nombre_tipo_gasto: 'TIPO DE GASTO',
-  tipo_beneficiario: '0',
-  partida: '402.00.00.00.0000',
-  nombre_partida: null,
-  descripcion_partida: 'MATERIALES, SUMINISTROS Y MERCANCÍAS',
-  descripcion_gasto: 'asdasdas',
-  monto_gasto: '10',
-  status_gasto: '0',
-  id_ejercicio: '1',
-  informacion_beneficiario: {
-    id: 9,
-    sector: '1',
-    programa: '9',
-    proyecto: '0',
-    actividad: '51',
-    ente_nombre: 'TESORERIA',
-    tipo_ente: 'J',
-  },
-  id_compromiso: 4,
-  correlativo: 'C00003-2024',
-  informacion_distribucion: {
-    id: 2,
-    id_partida: 1009,
-    monto_inicial: '5000',
-    id_ejercicio: 1,
-    monto_actual: '4855',
-    id_sector: 1,
-    id_programa: 1,
-    id_proyecto: 0,
-    id_actividad: 51,
-    status: 1,
-    status_cerrar: 0,
-    sector: '01',
-    programa: '01',
-  },
-  tipo_beneficiario: '0',
-}
 
 export const pre_gastosDetalles = ({
   elementToInsert,
@@ -58,55 +18,43 @@ export const pre_gastosDetalles = ({
   data,
   recargarEjercicio,
 }) => {
-  let fieldList = { ejemplo: '' }
-  let fieldListErrors = {
-    ejemplo: {
-      value: true,
-      message: 'mensaje de error',
-      type: 'text',
-    },
-  }
   console.log(data)
 
-  const generarBeneficiarioInformacion = () => {
-    console.log(data.tipo_beneficiario)
-
-    if (Number(data.tipo_beneficiario) === 0) {
-      return `  <div>
-          <h6>Tipo beneficiario: Ente</h6>
-          <h6>
-            Nombre: ${data.informacion_beneficiario.ente_nombre}
-          </h6>
-        </div>`
-    } else {
-      return ` <div>
-          <h6>Tipo beneficiario: Empleado</h6>
-          <h6>Nombre: ${data.informacion_beneficiario.nombres}</h6>
-          <h6>Cédula: ${data.informacion_beneficiario.cedula}</h6>
-        </div>`
-    }
-  }
-
-  let sector_programa_proyecto = `${
-    data.informacion_distribucion ? data.informacion_distribucion.sector : '0'
-  }.${
-    data.informacion_distribucion ? data.informacion_distribucion.programa : '0'
-  }.${
-    data.informacion_distribucion.id_actividad == 0
-      ? '00'
-      : data.informacion_distribucion.id_actividad
-  }`
+  // let sector_programa_proyecto = `${
+  //   data.informacion_distribucion ? data.informacion_distribucion.sector : '0'
+  // }.${
+  //   data.informacion_distribucion ? data.informacion_distribucion.programa : '0'
+  // }.${
+  //   data.informacion_distribucion.id_actividad == 0
+  //     ? '00'
+  //     : data.informacion_distribucion.id_actividad
+  // }`
 
   let nombreCard = 'gastos-detalles'
 
   const oldCardElement = d.getElementById(`${nombreCard}-form-card`)
   if (oldCardElement) oldCardElement.remove()
 
-  let card = `    <div class='card slide-up-animation' id='${nombreCard}-form-card'>
+  const distribucionLista = () => {
+    let filas = data.informacion_distribuciones.map((el) => {
+      return `  <tr>
+          <td>
+            ${el.sector}.${el.programa}.${el.sector}.${el.partida}
+          </td>
+          <td>${separadorLocal(el.monto)}</td>
+        </tr>`
+    })
+
+    return filas.join('')
+  }
+
+  let card = ` <div class='card slide-up-animation' id='${nombreCard}-form-card'>
       <div class='card-header d-flex justify-content-between'>
         <div class=''>
           <h5 class='mb-0'>Detalles de gasto de funcionamiento</h5>
-          <small class='mt-0 text-muted'>Visualice los detalles del gasto y el beneficiario</small>
+          <small class='mt-0 text-muted'>
+            Visualice los detalles del gasto y el beneficiario
+          </small>
         </div>
         <button
           data-close='btn-close'
@@ -118,15 +66,17 @@ export const pre_gastosDetalles = ({
         </button>
       </div>
       <div class='card-body text-center'>
-        <h3>Beneficiario:</h3>${generarBeneficiarioInformacion()}
+        <h3>Beneficiario:</h3>
+        <h6>Beneficiario: ${data.beneficiario}</h6>
+        <h6>Identificacion: ${data.identificador}</h6>
         <h3>Informacion gasto de funcionamiento:</h3>
-        <h6>Compromiso: ${data.correlativo || 'No obtenido'}</h6>
+        <h6>Compromiso: ${data.correlativo || 'No registrado'}</h6>
         <h6>Tipo de gasto: ${data.nombre_tipo_gasto || 'No obtenido'}</h6>
         <h6>Monto: ${separadorLocal(data.monto_gasto) || 'No obtenido'}</h6>
-        
+
         <h6>Descripción: ${data.descripcion_gasto || 'No obtenido'}</h6>
         <h6>Fecha: ${data.fecha || 'No obtenido'}</h6>
-         <h6>
+        <h6>
           Estado: ${
             Number(data.status_gasto) === 0
               ? ` <span class='btn btn-sm btn-secondary'>Pendiente</span>`
@@ -135,23 +85,36 @@ export const pre_gastosDetalles = ({
               : `<span class='btn btn-sm btn-danger'>Rechazado</span>`
           }
         </h6>
-        <h6>Distribucion: ${sector_programa_proyecto}.${data.partida}</h6>
+        
+        <h3 class="text-left mb-0">Partidas afectadas:</h3>
+        <div class="table-responsive">
+                                <table id="distribuciones-table" class="table table-striped" style="width:100%">
+                                    <thead class="w-100">
+                                        <th class="">S/P/P/A</th>
+                                        <th class="">Monto</th>
+                                        
+                                    </thead>
+<tbody>
+${distribucionLista()}
+</tbody>
+                                </table>
+                            </div>
+        
       </div>
       <div class='card-footer d-flex justify-content-center gap-2'>
-      ${
-        Number(data.status_gasto) === 1
-          ? `<button class='btn btn-secondary'
+        ${
+          Number(data.status_gasto) === 1
+            ? `<button class='btn btn-secondary'
             data-compromisoid='${data.id_compromiso}'>
             Descargar compromiso
           </button>`
-          : `<button class='btn btn-primary' data-aceptarid="${data.id}">
-          Guardar
+            : `<button class='btn btn-primary' data-aceptarid="${data.id}">
+          Aceptar
         </button>
         <button class='btn btn-danger' data-rechazarid="${data.id}">
-          rechazar
+          Rechazar
         </button>`
-      }
-        
+        }
       </div>
     </div>`
 
@@ -159,6 +122,24 @@ export const pre_gastosDetalles = ({
 
   let cardElement = d.getElementById(`${nombreCard}-form-card`)
   let formElement = d.getElementById(`${nombreCard}-form`)
+
+  let personaTable = new DataTable('#distribuciones-table', {
+    responsive: true,
+    scrollY: 100,
+    language: tableLanguage,
+    layout: {
+      topStart: function () {
+        let toolbar = document.createElement('div')
+        toolbar.innerHTML = `
+              <h5 class="text-center">Lista de partidas afectadas por este gasto</h5>
+                        `
+        return toolbar
+      },
+      topEnd: { search: { placeholder: 'Buscar...' } },
+      bottomStart: 'info',
+      bottomEnd: 'paging',
+    },
+  })
 
   const closeCard = () => {
     // validateEditButtons()
