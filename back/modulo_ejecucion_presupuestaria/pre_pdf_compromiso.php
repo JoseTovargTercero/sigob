@@ -5,7 +5,7 @@ require_once '../sistema_global/conexion.php';
 $id_compromiso = $_GET["id"];
 
 // Consultar los datos del compromiso
-$queryCompromiso = "SELECT id, correlativo, descripcion, id_registro, tipo_beneficiario, id_beneficiario, id_ejercicio, tabla_registro FROM compromisos WHERE id = ?";
+$queryCompromiso = "SELECT id, correlativo, descripcion, id_registro, id_ejercicio, tabla_registro FROM compromisos WHERE id = ?";
 $stmtCompromiso = $conexion->prepare($queryCompromiso);
 $stmtCompromiso->bind_param('i', $id_compromiso);
 $stmtCompromiso->execute();
@@ -30,24 +30,6 @@ $stmtEjercicio->close();
 
 $ano = $dataEjercicio['ano'];
 
-// Determinar si buscar en `entes_dependencias` o en `empleados` según el `tipo_beneficiario`
-if ($dataCompromiso['tipo_beneficiario'] == 0) {
-    $queryBeneficiario = "SELECT * FROM entes_dependencias WHERE id = ?";
-} else {
-    $queryBeneficiario = "SELECT * FROM empleados WHERE id = ?";
-}
-
-$stmtBeneficiario = $conexion->prepare($queryBeneficiario);
-$stmtBeneficiario->bind_param('i', $dataCompromiso['id_beneficiario']);
-$stmtBeneficiario->execute();
-$resultBeneficiario = $stmtBeneficiario->get_result();
-$dataBeneficiario = $resultBeneficiario->fetch_assoc();
-$stmtBeneficiario->close();
-
-if (!$dataBeneficiario) {
-    die("No se encontró el beneficiario correspondiente.");
-}
-
 // Realizar una consulta dinámica en la tabla indicada por `tabla_registro` para obtener los datos de `id_registro`
 $tablaRegistro = $dataCompromiso['tabla_registro'];
 $idRegistro = $dataCompromiso['id_registro'];
@@ -64,42 +46,66 @@ if (!$dataRegistro) {
     die("No se encontró el registro en la tabla especificada.");
 }
 
-// Consultar el `id_partida` en la tabla `distribucion_presupuestaria` usando `id_distribucion`
-$id_distribucion = $dataRegistro['id_distribucion'];
-$queryDistribucion = "SELECT id_partida FROM distribucion_presupuestaria WHERE id = ?";
-$stmtDistribucion = $conexion->prepare($queryDistribucion);
-$stmtDistribucion->bind_param('i', $id_distribucion);
-$stmtDistribucion->execute();
-$resultDistribucion = $stmtDistribucion->get_result();
-$dataDistribucion = $resultDistribucion->fetch_assoc();
-$stmtDistribucion->close();
+// Consultar las distribuciones asociadas al compromiso
+$queryGastos = "SELECT * FROM gastos WHERE id = ?";
+$stmtGastos = $conexion->prepare($queryGastos);
+$stmtGastos->bind_param('i', $idRegistro);
+$stmtGastos->execute();
+$resultGastos = $stmtGastos->get_result();
+$dataGastos = $resultGastos->fetch_assoc();
+$stmtGastos->close();
 
-if (!$dataDistribucion) {
-    die("No se encontró la distribución presupuestaria correspondiente.");
+if (!$dataGastos) {
+    die("No se encontraron los gastos asociados al compromiso.");
 }
 
-$id_partida = $dataDistribucion['id_partida'];
+// Consultar los detalles de la distribución presupuestaria usando el campo `distribuciones`
+$distribuciones = json_decode($dataGastos['distribuciones'], true);
+$detalleDistribuciones = [];
 
-// Consultar los datos de `partidas_presupuestarias` usando `id_partida`
-$queryPartida = "SELECT * FROM partidas_presupuestarias WHERE id = ?";
-$stmtPartida = $conexion->prepare($queryPartida);
-$stmtPartida->bind_param('i', $id_partida);
-$stmtPartida->execute();
-$resultPartida = $stmtPartida->get_result();
-$dataPartida = $resultPartida->fetch_assoc();
-$stmtPartida->close();
+foreach ($distribuciones as $distribucion) {
+    $id_distribucion = $distribucion['id_distribucion'];
+    $queryDistribucion = "SELECT id_partida FROM distribucion_presupuestaria WHERE id = ?";
+    $stmtDistribucion = $conexion->prepare($queryDistribucion);
+    $stmtDistribucion->bind_param('i', $id_distribucion);
+    $stmtDistribucion->execute();
+    $resultDistribucion = $stmtDistribucion->get_result();
+    $dataDistribucion = $resultDistribucion->fetch_assoc();
+    $stmtDistribucion->close();
 
-if (!$dataPartida) {
-    die("No se encontró la partida presupuestaria correspondiente.");
+    if ($dataDistribucion) {
+        // Consultar los datos de la partida presupuestaria
+        $id_partida = $dataDistribucion['id_partida'];
+        $queryPartida = "SELECT * FROM partidas_presupuestarias WHERE id = ?";
+        $stmtPartida = $conexion->prepare($queryPartida);
+        $stmtPartida->bind_param('i', $id_partida);
+        $stmtPartida->execute();
+        $resultPartida = $stmtPartida->get_result();
+        $dataPartida = $resultPartida->fetch_assoc();
+        $stmtPartida->close();
+
+        if ($dataPartida) {
+            $detalleDistribuciones[] = [
+                'distribucion' => $distribucion,
+                'partida_presupuestaria' => $dataPartida
+            ];
+        } else {
+            die("No se encontró la partida presupuestaria correspondiente.");
+        }
+    } else {
+        die("No se encontró la distribución presupuestaria correspondiente.");
+    }
 }
 
-// Resultado final con la información de compromiso, ejercicio fiscal, beneficiario, registro específico, y partida presupuestaria
+// Resultado final con la información de compromiso, ejercicio fiscal, registro específico, gastos y distribuciones presupuestarias
 $response = [
     'compromiso' => $dataCompromiso,
-    'beneficiario' => $dataBeneficiario,
     'registro_especifico' => $dataRegistro,
-    'partida_presupuestaria' => $dataPartida
+    'gastos' => $dataGastos,
+    'distribuciones' => $detalleDistribuciones
 ];
+
+
 
 
 
@@ -590,26 +596,27 @@ function unidad2($numuero)
     ";
     ?>
 
-    <!-- Tabla principal -->
+<!-- Tabla principal -->
 <table>
     <tr>
         <th class="bl bt bb">NRO DE COMPROMISO <?php echo $dataCompromiso['correlativo']; ?></th>
         <th class="bl bt bb br">Tipo: COMPROMISO PRESUPUESTARIO</th>
         <th class="bl bt bb br">Fecha: <?php echo date('d/m/Y'); ?></th>
     </tr>
-    <?php if ($dataRegistro['tipo_beneficiario'] == 1) { ?>
+
+    <!-- Información de Beneficiario eliminada, ahora se consulta desde las distribuciones -->
+    <?php 
+    if (!empty($dataRegistro)) {
+        $detalleDistribucion = $detalleDistribuciones[0] ?? null;
+        if ($detalleDistribucion) { 
+            $dataPartida = $detalleDistribucion['partida_presupuestaria'] ?? null; 
+    ?>
         <tr>
-            <th class="bl bt bb">Beneficiario: <?php echo $dataBeneficiario['nombres']; ?></th>
-            <th class="bl bt bb br">RIF: </th>
-            <th class="bl bt bb br"> <?php echo $dataBeneficiario['cedula'] ?? ''; ?></th>
-        </tr>
-    <?php } else { ?>
-        <tr>
-            <th class="bl bt bb">Beneficiario: <?php echo $dataBeneficiario['ente_nombre']; ?></th>
-            <th class="bl bt bb br">RIF: <?php echo $dataBeneficiario['rif'] ?? ''; ?></th>
+            <th class="bl bt bb">Beneficiario: <?php echo $dataRegistro['beneficiario'] ?? ''; ?></th>
+            <th class="bl bt bb br">RIF: <?php echo $dataRegistro['identificador'] ?? ''; ?></th>
             <th class="bl bt bb br"></th>
         </tr>
-    <?php } ?>
+    <?php } } ?>
    
     <tr>
         <th class="bl bt bb br" colspan="3">Concepto: <?php echo $dataCompromiso['descripcion']; ?></th>
@@ -625,12 +632,20 @@ function unidad2($numuero)
         <th class="bl bt bb br">DENOMINACION:</th>
         <th class="bl bt bb br">MONTO:</th>
     </tr>
-    <tr>
-        <th class="bl bt bb"><?php echo $dataPartida['partida'] ?? ''; ?></th>
-        <th class="bl bt bb br"><?php echo $dataPartida['descripcion'] ?? ''; ?></th>
-        <th class="bl bt bb br"><?php echo number_format($dataRegistro['monto'], 2, ',', '.'); ?></th>
-    </tr>
+
+    <!-- Distribución presupuestaria y monto actualizado -->
+    <?php if (!empty($detalleDistribuciones)) { 
+        foreach ($detalleDistribuciones as $distribucion) {
+            $partidaPresupuestaria = $distribucion['partida_presupuestaria'];
+    ?>
+        <tr>
+            <th class="bl bt bb"><?php echo $partidaPresupuestaria['partida'] ?? ''; ?></th>
+            <th class="bl bt bb br"><?php echo $partidaPresupuestaria['descripcion'] ?? ''; ?></th>
+            <th class="bl bt bb br"><?php echo number_format($distribucion['distribucion']['monto'], 2, ',', '.'); ?></th> <!-- Monto de la distribución -->
+        </tr>
+    <?php } } ?>
 </table>
+
 
 
 <br>

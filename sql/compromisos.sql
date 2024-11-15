@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 13-11-2024 a las 17:41:18
+-- Tiempo de generación: 15-11-2024 a las 03:31:11
 -- Versión del servidor: 10.4.27-MariaDB
 -- Versión de PHP: 7.4.33
 
@@ -32,8 +32,6 @@ CREATE TABLE `compromisos` (
   `correlativo` varchar(255) DEFAULT NULL,
   `descripcion` longtext DEFAULT NULL,
   `id_registro` int(255) NOT NULL,
-  `tipo_beneficiario` int(255) NOT NULL,
-  `id_beneficiario` int(255) NOT NULL,
   `id_ejercicio` int(255) NOT NULL,
   `tabla_registro` longtext NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -56,7 +54,7 @@ ALTER TABLE `compromisos`
 -- AUTO_INCREMENT de la tabla `compromisos`
 --
 ALTER TABLE `compromisos`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
