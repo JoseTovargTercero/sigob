@@ -137,7 +137,7 @@ const registrarGasto = async ({ data }) => {
   }
 }
 
-const aceptarGasto = async (id) => {
+const aceptarGasto = async (id, codigo) => {
   showLoader()
   try {
     let res = await fetch(gastosUrl, {
@@ -146,6 +146,7 @@ const aceptarGasto = async (id) => {
         accion: 'gestionar',
         id,
         accion_gestion: 'aceptar',
+        codigo: codigo,
       }),
     })
 

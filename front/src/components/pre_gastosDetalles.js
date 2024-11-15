@@ -104,11 +104,14 @@ ${distribucionLista()}
       <div class='card-footer d-flex justify-content-center gap-2'>
         ${
           Number(data.status_gasto) === 1
-            ? `<button class='btn btn-secondary'
+            ? `
+            <button class='btn btn-secondary'
             data-compromisoid='${data.id_compromiso}'>
             Descargar compromiso
           </button>`
-            : `<button class='btn btn-primary' data-aceptarid="${data.id}">
+            : `
+               
+        <button class='btn btn-primary' data-aceptarid="${data.id}">
           Aceptar
         </button>
         <button class='btn btn-danger' data-rechazarid="${data.id}">
@@ -164,22 +167,12 @@ ${distribucionLista()}
     }
 
     if (e.target.dataset.aceptarid) {
-      confirmNotification({
-        type: NOTIFICATIONS_TYPES.send,
-        message:
-          'Al aceptar este gasto se descontará del presupuesto actual ¿Desea continuar?',
-        successFunction: async function () {
-          console.log(data.id)
-
-          let res = await aceptarGasto(data.id)
-          if (res.success) {
-            generarCompromisoPdf(
-              res.compromiso.id_compromiso,
-              res.compromiso.correlativo
-            )
-            recargarEjercicio()
-            closeCard()
-          }
+      form_aceptarGasto({
+        elementToInsert: 'gastos-view',
+        id: data.id,
+        reset: function () {
+          closeCard()
+          recargarEjercicio()
         },
       })
     }
@@ -213,6 +206,140 @@ ${distribucionLista()}
   function enviarInformacion(data) {}
 
   cardElement.addEventListener('submit', (e) => e.preventDefault())
+
+  cardElement.addEventListener('input', validateInputFunction)
+  cardElement.addEventListener('click', validateClick)
+}
+
+export const form_aceptarGasto = ({ elementToInsert, id, reset }) => {
+  let fieldList = { codigo: '' }
+  let fieldListErrors = {
+    codigo: {
+      value: true,
+      message: 'El compromiso necesita una identificación',
+      type: 'textarea',
+    },
+  }
+
+  let nombreCard = 'aceptar-gasto'
+
+  const oldCardElement = d.getElementById(`${nombreCard}-form-card`)
+  if (oldCardElement) oldCardElement.remove()
+
+  let card = `    <div class='card slide-up-animation' id='${nombreCard}-form-card'>
+      <div class='card-header d-flex justify-content-between'>
+        <div class=''>
+          <h5 class='mb-0'>Identificar compromiso antes de aceptar casto</h5>
+        </div>
+        <button
+          data-close='btn-close'
+          type='button'
+          class='btn btn-sm btn-danger'
+          aria-label='Close'
+        >
+          &times;
+        </button>
+      </div>
+      <div class='card-body'>
+        <form id='${nombreCard}-form'>
+          <div class='form-group'>
+            <label for='codigo' class='form-label'>
+              Identificar compromiso
+            </label>
+            <input
+              class='form-control partida-partida chosen-distribucion'
+              type='text'
+              name='codigo'
+              id='codigo'
+              placeholder='Identificación para el compromiso'
+            />
+          </div>
+        </form>
+        <div class='card-footer'>
+          <button class='btn btn-primary' id='${nombreCard}-guardar'>
+            Aceptar
+          </button>
+        </div>
+      </div>
+    </div>`
+
+  let modal = `  <div class='modal-window' id='${nombreCard}-form-card'>
+      <div class=' slide-up-animation'>${card}</div>
+    </div>`
+
+  d.getElementById(elementToInsert).insertAdjacentHTML('afterbegin', modal)
+
+  let cardElement = d.getElementById(`${nombreCard}-form-card`)
+  let formElement = d.getElementById(`${nombreCard}-form`)
+
+  const closeCard = () => {
+    // validateEditButtons()
+    cardElement.remove()
+    cardElement.removeEventListener('click', validateClick)
+    // cardElement.removeEventListener('input', validateInputFunction)
+
+    return false
+  }
+
+  function validateClick(e) {
+    if (e.target.dataset.close) {
+      closeCard()
+    }
+
+    if (e.target.id === `${nombreCard}-guardar`) {
+      let input = d.getElementById('codigo')
+      fieldList = validateInput({
+        target: input,
+        fieldList,
+        fieldListErrors,
+        type: fieldListErrors[input.name].type,
+      })
+
+      if (fieldListErrors.codigo.value) {
+        toastNotification({
+          type: NOTIFICATIONS_TYPES.fail,
+          message: 'Campo invalido',
+        })
+        return
+      }
+
+      enviarInformacion()
+    }
+  }
+
+  async function validateInputFunction(e) {
+    fieldList = validateInput({
+      target: e.target,
+      fieldList,
+      fieldListErrors,
+      type: fieldListErrors[e.target.name].type,
+    })
+  }
+
+  // CARGAR LISTA DE PARTIDAS
+
+  function enviarInformacion() {
+    confirmNotification({
+      type: NOTIFICATIONS_TYPES.send,
+      message:
+        'Al aceptar este gasto se descontará del presupuesto actual ¿Desea continuar?',
+      successFunction: async function () {
+        console.log(id)
+
+        let res = await aceptarGasto(id, fieldList.codigo)
+        if (res.success) {
+          generarCompromisoPdf(
+            res.compromiso.id_compromiso,
+            res.compromiso.correlativo
+          )
+          reset()
+          closeCard()
+        }
+      },
+    })
+  }
+
+  formElement.addEventListener('submit', (e) => e.preventDefault())
 
   cardElement.addEventListener('input', validateInputFunction)
   cardElement.addEventListener('click', validateClick)

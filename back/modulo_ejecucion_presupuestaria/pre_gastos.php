@@ -136,7 +136,7 @@ function gestionarGasto($idGasto, $accion, $codigo)
                 }
 
                 // Calcular y actualizar el monto disponible en `distribucion_presupuestaria`
-                $nuevoMontoActual = $monto_actual - $monto;
+                $nuevoMontoActual = (float) $monto_actual - (float) $monto;
                 $sqlUpdateDistribucion = "UPDATE distribucion_presupuestaria SET monto_actual = ? WHERE id = ?";
                 $stmtUpdateDistribucion = $conexion->prepare($sqlUpdateDistribucion);
                 $stmtUpdateDistribucion->bind_param("di", $nuevoMontoActual, $id_distribucion);

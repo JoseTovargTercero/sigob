@@ -42,6 +42,8 @@ export const pre_gastos_form_card = async ({
   let fieldListPartidas = {}
   let fieldListErrorsPartidas = {}
 
+  let montos = { acumulado: 0 }
+
   let fieldListErrors = {
     beneficiario: {
       value: true,
@@ -284,21 +286,21 @@ export const pre_gastos_form_card = async ({
         })
       })
 
-      // if (Object.values(fieldListErrors).some((el) => el.value)) {
-      //   toastNotification({
-      //     type: NOTIFICATIONS_TYPES.fail,
-      //     message: 'Hay campos inválidos',
-      //   })
-      //   return
-      // }
+      if (Object.values(fieldListErrors).some((el) => el.value)) {
+        toastNotification({
+          type: NOTIFICATIONS_TYPES.fail,
+          message: 'Hay campos inválidos',
+        })
+        return
+      }
 
-      // if (Object.values(fieldList).some((el) => !el)) {
-      //   toastNotification({
-      //     type: NOTIFICATIONS_TYPES.fail,
-      //     message: 'No se ha completado la información necesaria',
-      //   })
-      //   return
-      // }
+      if (Object.values(fieldList).some((el) => !el)) {
+        toastNotification({
+          type: NOTIFICATIONS_TYPES.fail,
+          message: 'No se ha completado la información necesaria',
+        })
+        return
+      }
 
       let partidasValidadas = validarPartidas()
 
@@ -317,7 +319,7 @@ export const pre_gastos_form_card = async ({
         return
       }
 
-      let inputsMontos = Array.from(d.querySelectorAll('.partida-monto'))
+      let inputsMontos = Array.from(d.querySelectorAll('.distribucion-monto'))
       inputsMontos.forEach((input) => {
         fieldListPartidas = validateInput({
           target: input,
@@ -335,6 +337,13 @@ export const pre_gastos_form_card = async ({
         return
       }
 
+      if (montos.acumulado > fieldList.monto) {
+        toastNotification({
+          type: NOTIFICATIONS_TYPES.fail,
+          message: 'La distribución de partidas supera al monto total',
+        })
+        return
+      }
       enviarInformacion()
     }
 
@@ -525,6 +534,15 @@ export const pre_gastos_form_card = async ({
         fieldListErrors: fieldListErrorsPartidas,
         type: fieldListErrorsPartidas[e.target.name].type,
       })
+
+      let inputsPartidasMontos = d.querySelectorAll('.distribucion-monto')
+
+      // REINICIAR MONTO ACUMULADO
+      montos.acumulado = 0
+
+      inputsPartidasMontos.forEach((input) => {
+        montos.acumulado += Number(formatearFloat(input.value))
+      })
     }
   }
 
@@ -533,7 +551,7 @@ export const pre_gastos_form_card = async ({
 }
 
 function partidaRow(partidaNum) {
-  let row = `   <div class='row slide-up-animation' data-row='${partidaNum}'>
+  let row = `<div class='row slide-up-animation' data-row='${partidaNum}'>
       <div class='col-sm'>
         <div class='form-group'>
           <label for='sector-${partidaNum}' class='form-label'>
