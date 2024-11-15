@@ -3,13 +3,13 @@
 require_once '../sistema_global/conexion.php';
 require_once '../sistema_global/errores.php';
 
-function registrarCompromiso($idRegistro, $nombreTabla, $descripcion, $id_ejercicio)
+function registrarCompromiso($idRegistro, $nombreTabla, $descripcion, $id_ejercicio, $codigo)
 {
     global $conexion;
 
     try {
         // Validar que los campos obligatorios no estén vacíos
-        if (!isset($idRegistro) || !isset($nombreTabla) || !isset($descripcion) || !isset($id_ejercicio)) {
+        if (!isset($idRegistro) || !isset($nombreTabla) || !isset($descripcion) || !isset($id_ejercicio) || !isset($codigo)) {
             return ["error" => "Faltan datos obligatorios para registrar el compromiso."];
         }
 
@@ -37,9 +37,9 @@ function registrarCompromiso($idRegistro, $nombreTabla, $descripcion, $id_ejerci
         $nuevoCorrelativo = 'C' . str_pad($numeroSeguimiento, 5, '0', STR_PAD_LEFT) . '-' . $yearActual;
 
         // Insertar el nuevo compromiso en la base de datos
-        $sqlInsert = "INSERT INTO compromisos (correlativo, descripcion, id_registro, id_ejercicio, tabla_registro) VALUES (?, ?, ?, ?, ?)";
+        $sqlInsert = "INSERT INTO compromisos (correlativo, descripcion, id_registro, id_ejercicio, tabla_registro, numero_compromiso) VALUES (?, ?, ?, ?, ?, ?)";
         $stmtInsert = $conexion->prepare($sqlInsert);
-        $stmtInsert->bind_param("ssisi", $nuevoCorrelativo, $descripcion, $idRegistro, $id_ejercicio, $nombreTabla);
+        $stmtInsert->bind_param("ssisis", $nuevoCorrelativo, $descripcion, $idRegistro, $id_ejercicio, $nombreTabla, $codigo);
         $stmtInsert->execute();
 
         // Verificar si la inserción fue exitosa

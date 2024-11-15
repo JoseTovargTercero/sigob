@@ -75,7 +75,7 @@ function crearGasto($id_tipo, $descripcion, $monto, $id_ejercicio, $beneficiario
 
 
 
-function gestionarGasto($idGasto, $accion)
+function gestionarGasto($idGasto, $accion, $codigo)
 {
     global $conexion;
 
@@ -154,7 +154,7 @@ function gestionarGasto($idGasto, $accion)
             $stmtUpdateGasto->execute();
 
             if ($stmtUpdateGasto->affected_rows > 0) {
-                $resultadoCompromiso = registrarCompromiso($idGasto, 'gastos', $descripcion, $id_ejercicio);
+                $resultadoCompromiso = registrarCompromiso($idGasto, 'gastos', $descripcion, $id_ejercicio, $codigo);
 
                 if (isset($resultadoCompromiso['success']) && $resultadoCompromiso['success']) {
                     return json_encode([
@@ -228,7 +228,7 @@ function obtenerGastos()
             $nombreTipoGasto = $resultadoTipoGasto->fetch_assoc()['nombre'] ?? null;
 
             // Obtener el correlativo del compromiso relacionado
-            $sqlCompromiso = "SELECT id, correlativo FROM compromisos WHERE id_registro = ? AND tabla_registro = 'gastos'";
+            $sqlCompromiso = "SELECT id, correlativo, numero_compromiso FROM compromisos WHERE id_registro = ? AND tabla_registro = 'gastos'";
             $stmtCompromiso = $conexion->prepare($sqlCompromiso);
             $stmtCompromiso->bind_param("i", $id);
             $stmtCompromiso->execute();
@@ -236,6 +236,7 @@ function obtenerGastos()
             $compromiso = $resultadoCompromiso->fetch_assoc();
             $idCompromiso = $compromiso['id'] ?? null;
             $correlativo = $compromiso['correlativo'] ?? null;
+            $numero_compromiso = $compromiso['numero_compromiso'] ?? null;
 
             // Preparar los detalles de las distribuciones
             $informacionDistribuciones = [];
@@ -319,6 +320,7 @@ function obtenerGastos()
                 'identificador' => $identificador,
                 'distribuciones' => $informacionDistribuciones,
                 'correlativo' => $correlativo,  // Agregado el correlativo
+                'numero_compromiso' => $numero_compromiso,  // Agregado el correlativo
                 'id_compromiso' => $idCompromiso,  // Agregado el correlativo
             ];
 
@@ -425,7 +427,7 @@ function obtenerGastoPorId($id)
             }
 
             // Buscar el registro en la tabla compromisos
-            $sqlCompromiso = "SELECT id, correlativo FROM compromisos WHERE id_registro = ? AND tabla_registro = 'gastos'";
+            $sqlCompromiso = "SELECT id, correlativo, numero_compromiso FROM compromisos WHERE id_registro = ? AND tabla_registro = 'gastos'";
             $stmtCompromiso = $conexion->prepare($sqlCompromiso);
             $stmtCompromiso->bind_param("i", $id);
             $stmtCompromiso->execute();
@@ -433,6 +435,7 @@ function obtenerGastoPorId($id)
             $compromiso = $resultadoCompromiso->fetch_assoc();
             $idCompromiso = $compromiso['id'] ?? null;
             $correlativo = $compromiso['correlativo'] ?? null;
+            $numero_compromiso = $compromiso['numero_compromiso'] ?? null;
 
             // Construir el array con los datos obtenidos
             $resultado = [
@@ -442,6 +445,7 @@ function obtenerGastoPorId($id)
                 'monto_gasto' => $monto,
                 'fecha' => $fecha,
                 'correlativo' => $correlativo,
+                'numero_compromiso' => $numero_compromiso,
                 'status_gasto' => $status,
                 'beneficiario' => $beneficiario,
                 'identificador' => $identificador,
@@ -564,7 +568,7 @@ if (isset($data["accion"])) {
             break;
 
         case 'gestionar':  // Nueva opción para aceptar o rechazar
-            echo gestionarGasto($data["id"], $data["accion_gestion"]);
+            echo gestionarGasto($data["id"], $data["accion_gestion"], $data["codigo"]);
             break;
 
         default:
