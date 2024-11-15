@@ -103,12 +103,6 @@ export const validateGastosView = async () => {
       })
     }
 
-    if (e.target.dataset.rechazarid) {
-    }
-
-    if (e.target.dataset.aceptarid) {
-    }
-
     if (e.target.dataset.eliminarid) {
       confirmNotification({
         type: NOTIFICATIONS_TYPES.send,
