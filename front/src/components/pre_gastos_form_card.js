@@ -31,15 +31,22 @@ export const pre_gastos_form_card = async ({
   let fieldList = {
     id_tipo: '',
     monto: 0,
-    tipo_beneficiario: '',
-    id_beneficiario: '',
+    beneficiario: '',
+    identificacion: '',
     fecha: '',
     descripcion: '',
     id_ejercicio: ejercicioFiscal.id,
-    id_distribucion: '',
+    distribuciones: [],
   }
+
+  let fieldListPartidas = {}
   let fieldListErrors = {
-    tipo_beneficiario: {
+    beneficiario: {
+      value: true,
+      message: 'Elija un tipo de beneficiario',
+      type: 'text',
+    },
+    identificacion: {
       value: true,
       message: 'Elija un tipo de beneficiario',
       type: 'text',
@@ -61,30 +68,6 @@ export const pre_gastos_form_card = async ({
     },
   }
 
-  const cargarBeneficiarios = async () => {
-    let selectBeneficiarios = d.getElementById('search-select-beneficiario')
-    let data
-    let options = [`<option>Elegir...</option>`]
-    if (fieldList.tipo_beneficiario === '0') {
-      data = await selectTables('entes_dependencias')
-      data.forEach((ente) => {
-        let option = `<option value='${ente.id}'>${ente.actividad} - ${ente.ente_nombre}</option>`
-        options.push(option)
-      })
-    } else {
-      data = await selectTables('empleados')
-
-      data.forEach((empleado) => {
-        let option = `<option value='${empleado.id}'>${empleado.nombres} - ${empleado.cedula}</option>`
-        options.push(option)
-      })
-    }
-
-    selectBeneficiarios.innerHTML = options.join('')
-
-    $('#search-select-beneficiario').trigger('chosen:updated')
-  }
-
   const cargarTiposGastos = async () => {
     let selectTiposGastos = d.getElementById('search-select-tipo-gasto')
     let data = await getTiposGastos()
@@ -100,29 +83,7 @@ export const pre_gastos_form_card = async ({
     $('#search-select-tipo-gasto').trigger('chosen:updated')
   }
 
-  const cargarDistribuciones = () => {
-    let selectDistribucion = d.getElementById('search-select-distribucion')
-    let data = ejercicioFiscal.distribucion_partidas
-
-    let options = [`<option>Elegir...</option>`]
-
-    data.forEach((el) => {
-      let sector_programa_proyecto = `${
-        el.sector_informacion ? el.sector_informacion.sector : '0'
-      }.${el.programa_informacion ? el.programa_informacion.programa : '0'}.${
-        el.proyecto_informacion == 0 ? '00' : el.proyecto_informacion.proyecto
-      }.${el.id_actividad == 0 ? '00' : el.id_actividad}`
-
-      let option = `<option value='${el.id}'>${sector_programa_proyecto} - ${el.partida}</option>`
-      options.push(option)
-    })
-
-    selectDistribucion.innerHTML = options.join('')
-
-    $('#search-select-distribucion').trigger('chosen:updated')
-  }
-
-  let card = `<div class='card slide-up-animation' id='gastos-form-card'>
+  let card = `   <div class='card slide-up-animation' id='gastos-form-card'>
       <div class='card-header d-flex justify-content-between'>
         <div class=''>
           <h5 class='mb-0'>Registro de nuevo gasto presupuestario</h5>
@@ -141,24 +102,6 @@ export const pre_gastos_form_card = async ({
       </div>
       <div class='card-body'>
         <form id='gastos-form'>
-          <div class='row'>
-            <div class='col-sm'>
-              <div class='form-group'>
-                <label for='search-select-distribucion' class='form-label'>
-                  Distribuciónes del ejercicio fiscal ${ejercicioFiscal.ano}
-                </label>
-                <select
-                  class='form-select'
-                  name='tipo_beneficiario'
-                  id='search-select-distribucion'
-                >
-                  <option value='' selected>
-                    Elegir...
-                  </option>
-                </select>
-              </div>
-            </div>
-          </div>
           <div class='row'>
             <div class='col-sm'>
               <div class='form-group'>
@@ -203,36 +146,30 @@ export const pre_gastos_form_card = async ({
           <div class='row'>
             <div class='col-sm'>
               <div class='form-group'>
-                <label for='search-select-tipo-beneficiario' class='form-label'>
-                  Tipo de beneficiario
+                <label for='beneficiario' class='form-label'>
+                  Beneficiario
                 </label>
-                <select
-                  class='form-select gasto-input'
-                  name='tipo_beneficiario'
-                  id='search-select-tipo-beneficiario'
-                >
-                  <option value='' selected>
-                    Elegir...
-                  </option>
-                  <option value='0'>Ente</option>
-                  <option value='1'>Empleado</option>
-                </select>
+                <input
+                  class='form-control gasto-input'
+                  type='text'
+                  name='beneficiario'
+                  id='beneficiario'
+                  placeholder='Beneficiario...'
+                />
               </div>
             </div>
             <div class='col-sm'>
               <div class='form-group'>
-                <label for='search-select-beneficiario' class='form-label'>
-                  Tipo de beneficiario
+                <label for='identificacion' class='form-label'>
+                  Identificacion
                 </label>
-                <select
-                  class='form-select'
-                  name='beneficiario'
-                  id='search-select-beneficiario'
-                >
-                  <option value='' selected>
-                    Seleccione un tipo de beneficiario
-                  </option>
-                </select>
+                <input
+                  class='form-control gasto-input'
+                  type='text'
+                  name='identificacion'
+                  id='identificacion'
+                  placeholder='Identificación del beneficiario...'
+                />
               </div>
             </div>
           </div>
@@ -265,6 +202,22 @@ export const pre_gastos_form_card = async ({
               </div>
             </div>
           </div>
+          <div class='row'>
+          <h6>Distribuciónes del ejercicio fiscal ${ejercicioFiscal.ano}</h6>
+            <div class='col-sm' id='distribuciones-container'>
+            </div>
+          </div>
+          <div class='row'>
+            <div class='form-group'>
+              <button
+                type='button'
+                class='btn btn-sm bg-brand-color-1 text-white'
+                id='add-row'
+              >
+                <i class='bx bx-plus'></i>Agregar otra partida
+              </button>
+            </div>
+          </div>
         </form>
       </div>
       <div class='card-footer'>
@@ -276,12 +229,7 @@ export const pre_gastos_form_card = async ({
 
   d.getElementById(elementToInsert).insertAdjacentHTML('afterbegin', card)
 
-  $('#search-select-beneficiario')
-    .chosen()
-    .change(function (obj, result) {
-      let value = result.selected
-      fieldList.id_beneficiario = value
-    })
+  let numsRows = 0
 
   $('#search-select-tipo-gasto')
     .chosen()
@@ -290,17 +238,11 @@ export const pre_gastos_form_card = async ({
       fieldList.id_tipo = value
     })
 
-  $('#search-select-distribucion')
-    .chosen()
-    .change(function (obj, result) {
-      let value = result.selected
-      fieldList.id_distribucion = value
-    })
-
   cargarTiposGastos()
-  cargarDistribuciones()
 
   // cargarBeneficiarios()
+
+  let distribucionesContainer = d.getElementById('distribuciones-container')
 
   const formElement = d.getElementById('gastos-form')
 
@@ -342,24 +284,160 @@ export const pre_gastos_form_card = async ({
 
       console.log(fieldList, fieldListErrors)
 
-      if (Object.values(fieldListErrors).some((el) => el.value)) {
-        toastNotification({
-          type: NOTIFICATIONS_TYPES.fail,
-          message: 'Hay campos inválidos',
-        })
+      // if (Object.values(fieldListErrors).some((el) => el.value)) {
+      //   toastNotification({
+      //     type: NOTIFICATIONS_TYPES.fail,
+      //     message: 'Hay campos inválidos',
+      //   })
+      //   return
+      // }
+
+      // if (Object.values(fieldList).some((el) => !el)) {
+      //   toastNotification({
+      //     type: NOTIFICATIONS_TYPES.fail,
+      //     message: 'No se ha completado la información necesaria',
+      //   })
+      //   return
+      // }
+
+      let partidasValidadas = validarPartidas()
+      console.log(partidasValidadas)
+      if (!partidasValidadas) {
         return
       }
 
-      if (Object.values(fieldList).some((el) => !el)) {
+      fieldList.distribuciones = partidasValidadas
+
+      if (validarInputIguales()) {
         toastNotification({
           type: NOTIFICATIONS_TYPES.fail,
-          message: 'No se ha completado la información necesaria',
+          message:
+            'Está realizando una asignación a una partida 2 o más veces. Valide nuevamente por favor',
         })
         return
       }
 
       enviarInformacion()
     }
+
+    if (e.target.id === 'add-row') {
+      addRow()
+    }
+  }
+
+  async function addRow() {
+    let newNumRow = numsRows + 1
+    numsRows++
+
+    distribucionesContainer.insertAdjacentHTML(
+      'beforeend',
+      partidaRow(newNumRow)
+    )
+
+    // AÑADIR ESTADO Y ERRORES A INPUTS
+
+    // fieldListPartidas[`partida-${newNumRow}`] = ''
+    // fieldListErrorsPartidas[`partida-${newNumRow}`] = {
+    //   value: true,
+    //   message: 'Partida inválida',
+    //   type: 'partida',
+    // }
+    fieldListPartidas[`distribucion-monto-${newNumRow}`] = ''
+
+    let options = [`<option value=''>Elegir partida...</option>`]
+
+    ejercicioFiscal.distribucion_partidas.forEach((el) => {
+      let sppa = `${
+        el.sector_informacion ? el.sector_informacion.sector : '0'
+      }.${el.programa_informacion ? el.programa_informacion.programa : '0'}.${
+        el.proyecto_informacion == 0 ? '00' : el.proyecto_informacion.proyecto
+      }.${el.id_actividad == 0 ? '00' : el.id_actividad}`
+
+      let opt = `<option value="${el.id}">${sppa}.${el.partida}</option>`
+      options.push(opt)
+    })
+
+    let partidasList = d.getElementById(`distribucion-${newNumRow}`)
+    partidasList.innerHTML = ''
+
+    partidasList.innerHTML = options.join('')
+
+    $('.chosen-distribucion')
+      .chosen()
+      .change(function (obj, result) {
+        console.log('changed: %o', arguments)
+      })
+
+    return
+  }
+
+  function validarPartidas() {
+    let rows = d.querySelectorAll('[data-row]')
+    let rowsArray = Array.from(rows)
+
+    let montoRestante = 0
+
+    // VERIFICAR SI SE HAN SELECCIONADO PARTIDAS
+    if (rowsArray.length < 1) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.fail,
+        message: 'No se han añadido partidas',
+      })
+      return false
+    }
+
+    let mappedPartidas = rowsArray.map((el) => {
+      let partidaInput = el.querySelector(`#distribucion-${el.dataset.row}`)
+      let montoInput = el.querySelector(`#distribucion-monto-${el.dataset.row}`)
+
+      let partidaEncontrada = ejercicioFiscal.distribucion_partidas.find(
+        (partida) => Number(partida.id) === Number(partidaInput.value)
+      )
+
+      console.log(
+        ejercicioFiscal.distribucion_partidas,
+        partidaEncontrada,
+        partidaInput
+      )
+
+      // Verificar si la partida introducida existe
+
+      if (!partidaEncontrada) {
+        return false
+      }
+
+      return { id_distribucion: partidaEncontrada.id, monto: montoInput.value }
+    })
+
+    console.log(mappedPartidas)
+
+    // Verificar si hay algun dato erróneo y cancelar envío
+    if (mappedPartidas.some((el) => !el)) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.fail,
+        message: 'Una o más partidas inválidas',
+      })
+      return false
+    }
+
+    return mappedPartidas
+  }
+
+  function validarInputIguales() {
+    let inputs = Array.from(d.querySelectorAll('[data-row] .partida-partida'))
+
+    const valores = inputs.map((input) => input.value)
+    const conteoValores = valores.reduce((conteo, valor) => {
+      conteo[valor] = (conteo[valor] || 0) + 1
+      return conteo
+    }, {})
+
+    for (let valor in conteoValores) {
+      if (conteoValores[valor] >= 2) {
+        return true
+      }
+    }
+    return false
   }
 
   function enviarInformacion() {
@@ -401,4 +479,49 @@ export const pre_gastos_form_card = async ({
 
   formElement.addEventListener('input', validateInputFunction)
   d.addEventListener('click', validateClick)
+}
+
+function partidaRow(partidaNum) {
+  let row = `   <div class='row slide-up-animation' data-row='${partidaNum}'>
+      <div class='col-sm'>
+        <div class='form-group'>
+          <label for='sector-${partidaNum}' class='form-label'>
+            Distribucion
+          </label>
+          <select
+            class='form-control partida-partida chosen-distribucion'
+            type='text'
+            placeholder='Sector...'
+            name='distribucion-${partidaNum}'
+            id='distribucion-${partidaNum}'
+          ></select>
+        </div>
+      </div>
+
+      <div class='col'>
+        <div class='form-group'>
+          <label for='monto' class='form-label'>
+            Monto de partida
+          </label>
+          <div class='row'>
+            <div class='col'>
+              <input
+                class='form-control partida-input partida-monto'
+                type='text'
+                name='distribucion-monto-${partidaNum}'
+                id='distribucion-monto-${partidaNum}'
+                placeholder='Monto a asignar...'
+              />
+            </div>
+            <div class='col'>
+              <button class='btn btn-danger' data-delete-row='${partidaNum}'>
+                ELIMINAR
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>`
+
+  return row
 }
