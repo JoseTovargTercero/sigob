@@ -39,7 +39,7 @@ function registrarCompromiso($idRegistro, $nombreTabla, $descripcion, $id_ejerci
         // Insertar el nuevo compromiso en la base de datos
         $sqlInsert = "INSERT INTO compromisos (correlativo, descripcion, id_registro, id_ejercicio, tabla_registro, numero_compromiso) VALUES (?, ?, ?, ?, ?, ?)";
         $stmtInsert = $conexion->prepare($sqlInsert);
-        $stmtInsert->bind_param("ssisis", $nuevoCorrelativo, $descripcion, $idRegistro, $id_ejercicio, $nombreTabla, $codigo);
+        $stmtInsert->bind_param("ssisss", $nuevoCorrelativo, $descripcion, $idRegistro, $id_ejercicio, $nombreTabla, $codigo);
         $stmtInsert->execute();
 
         // Verificar si la inserción fue exitosa
