@@ -5,7 +5,7 @@ require_once '../sistema_global/conexion.php';
 $id_compromiso = $_GET["id"];
 
 // Consultar los datos del compromiso
-$queryCompromiso = "SELECT id, correlativo, descripcion, id_registro, id_ejercicio, tabla_registro FROM compromisos WHERE id = ?";
+$queryCompromiso = "SELECT id, correlativo, descripcion, id_registro, id_ejercicio, tabla_registro, numero_compromiso FROM compromisos WHERE id = ?";
 $stmtCompromiso = $conexion->prepare($queryCompromiso);
 $stmtCompromiso->bind_param('i', $id_compromiso);
 $stmtCompromiso->execute();
@@ -599,7 +599,7 @@ function unidad2($numuero)
 <!-- Tabla principal -->
 <table>
     <tr>
-        <th class="bl bt bb">NRO DE COMPROMISO <?php echo $dataCompromiso['correlativo']; ?></th>
+        <th class="bl bt bb">NRO DE COMPROMISO <?php echo $dataCompromiso['numero_compromiso']; ?></th>
         <th class="bl bt bb br">Tipo: COMPROMISO PRESUPUESTARIO</th>
         <th class="bl bt bb br">Fecha: <?php echo date('d/m/Y'); ?></th>
     </tr>
