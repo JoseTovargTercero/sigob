@@ -459,7 +459,10 @@ export const pre_gastos_form_card = async ({
         return false
       }
 
-      return { id_distribucion: partidaEncontrada.id, monto: montoInput.value }
+      return {
+        id_distribucion: partidaEncontrada.id,
+        monto: formatearFloat(montoInput.value),
+      }
     })
 
     console.log(mappedPartidas)
