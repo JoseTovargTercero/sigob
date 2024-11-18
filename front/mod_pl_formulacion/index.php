@@ -620,7 +620,7 @@ $stmt->close();
                 accion: 'insert'
               };
 
-              sendData(data, '../../back/modulo_pl_formulacion/form_ejercicio_fiscal.php')
+              sendData(data, '../../back/sistema_global/ejercicio_fiscal.php')
             }
           })
         <?php } else {

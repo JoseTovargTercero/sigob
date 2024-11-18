@@ -412,14 +412,16 @@ export const form_asignacion_entes_form_card = async ({
     let ente_sector = Number(asignacion.sector);
     let ente_programa = Number(asignacion.programa);
 
+    console.log(ente_sector + "-" + ente_programa + "-" + dependenciaActividad);
+    console.log(ejercicioFiscal.distribucion_partidas);
+
     let partidasRelacionadas = ejercicioFiscal.distribucion_partidas.filter(
       (partida) => {
         return (
-          Number(partida.sector_informacion.sector) === ente_sector &&
-          (Number(partida.programa_informacion.programa) === ente_programa) &
-            (Number(partida.id_actividad) === Number(dependenciaActividad))
+          partida.sector_informacion.id == ente_sector &&
+          partida.programa_informacion.id == ente_programa &&
+          Number(partida.id_actividad) == Number(dependenciaActividad)
         );
-        //
       }
     );
 
@@ -1126,6 +1128,8 @@ function addSeleccionPartidasrow(datos) {
 function validarAsignacionPartidasTable() {
   let planesTable = new DataTable("#asignacion-part4-table", {
     scrollY: 300,
+    paging: false, // Desactiva la paginación
+    deferRender: false, // Asegúrate de que no difiera la renderización
     language: tableLanguage,
     layout: {
       topStart: function () {
