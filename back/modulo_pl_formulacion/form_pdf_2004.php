@@ -9,17 +9,17 @@ $stmt = $conexion->prepare($query_ejercicio);
 $stmt->bind_param('i', $id_ejercicio);
 $stmt->execute();
 $result = $stmt->get_result();
-$data = $result->fetch_assoc();
+$rsult = $result->fetch_assoc();
 
-$ano = $data['ano'];
-$situado = $data['situado'];
+$ano = $rsult['ano'];
+$situado = $rsult['situado'];
 $stmt->close();
 
 // Inicializar array para almacenar los datos por sector y programa
 $data = [];
 
 // Consultar datos del sector, programa y denominación en la tabla pl_programas con un JOIN a pl_sectores
-$query_programa = "SELECT p.id AS id_programa, p.programa, p.sector, p.denominacion, s.sector AS sector_numero 
+$query_programa = "SELECT s.sector AS sector_numero, p.programa, p.sector, p.id AS id_programa, p.denominacion
                    FROM pl_programas p
                    JOIN pl_sectores s ON p.sector = s.id";
 $stmt_programa = $conexion->prepare($query_programa);
@@ -32,6 +32,7 @@ $result_programa = $stmt_programa->get_result();
 $programas = [];
 while ($programa_data = $result_programa->fetch_assoc()) {
     $sector_numero = $programa_data['sector_numero'];
+    $sector_id = $programa_data['sector'];
     $programa = $programa_data['programa'];
     $denominacion = $programa_data['denominacion'];
     $id_programa = $programa_data['id_programa'];
@@ -43,13 +44,16 @@ while ($programa_data = $result_programa->fetch_assoc()) {
             'programa_ids' => [], // Agregamos un array para los id_programa
         ];
     }
-    $programas[$sector_numero][$programa]['ids'][] = $sector_numero;
-    $programas[$sector_numero][$programa]['programa_ids'][] = $id_programa;
+    $programas[$sector_numero][$programa]['ids'][] = $sector_id; // SECTOR_N
+    $programas[$sector_numero][$programa]['programa_ids'][] = $id_programa; // ID PROGRAMA
 }
+
 
 if (empty($programas)) {
     die('No se encontraron programas.');
 }
+
+
 
 // Iterar sobre los sectores y programas para consultas separadas
 foreach ($programas as $sector_numero => $programas_info) {
@@ -358,7 +362,7 @@ foreach ($programas as $sector_numero => $programas_info) {
                 $t_total += $total = $row[7];
 
                 echo "<tr>
-                    <td class='fz-8 bl'>{$secto}</td>
+                    <td class='fz-8 bl '>{$secto}</td>
                     <td class='fz-8 bl'>{$programa}</td>
                     <td class='fz-8 bl text-left'>{$denominacion}</td>
                     <td class='fz-8 bl'>" . number_format($ingresosPropios, 2, ',', '.') . "</td>
