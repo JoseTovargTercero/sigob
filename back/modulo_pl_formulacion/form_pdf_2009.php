@@ -4,100 +4,44 @@ require_once '../sistema_global/conexion.php';
 // Suponemos que recibimos $id_ejercicio de alguna manera, como parámetro GET
 $id_ejercicio = $_GET['id_ejercicio'];
 
-// Consultar registros de la tabla proyecto_inversion_partidas
-$sqlProyectos = "SELECT sector_id, programa_id, partida, monto, id_proyecto FROM proyecto_inversion_partidas";
-$stmtProyectos = $conexion->prepare($sqlProyectos);
-$stmtProyectos->execute();
-$resultProyectos = $stmtProyectos->get_result();
 
-$partidasArray = [];
 
-while ($rowProyecto = $resultProyectos->fetch_assoc()) {
-    $sectorId = $rowProyecto['sector_id'];
-    $programaId = $rowProyecto['programa_id'];
-    $partidaId = $rowProyecto['partida'];
-    $monto = $rowProyecto['monto'];
-    $idProyecto = $rowProyecto['id_proyecto'];
+/*
 
-    // Consultar la tabla proyecto_inversion para obtener id_plan usando id_proyecto
-    $sqlProyectoInversion = "SELECT id_plan FROM proyecto_inversion WHERE id = ?";
-    $stmtProyectoInversion = $conexion->prepare($sqlProyectoInversion);
-    $stmtProyectoInversion->bind_param('i', $idProyecto);
-    $stmtProyectoInversion->execute();
-    $resultProyectoInversion = $stmtProyectoInversion->get_result();
-    $dataProyectoInversion = $resultProyectoInversion->fetch_assoc();
-    $idPlan = $dataProyectoInversion['id_plan'] ?? null;
 
-    // Consultar la tabla plan_inversion para obtener id_ejercicio usando id_plan
-    $sqlPlanInversion = "SELECT id_ejercicio FROM plan_inversion WHERE id = ?";
-    $stmtPlanInversion = $conexion->prepare($sqlPlanInversion);
-    $stmtPlanInversion->bind_param('i', $idPlan);
-    $stmtPlanInversion->execute();
-    $resultPlanInversion = $stmtPlanInversion->get_result();
-    $dataPlanInversion = $resultPlanInversion->fetch_assoc();
-    $planEjercicioId = $dataPlanInversion['id_ejercicio'] ?? null;
+*/
 
-    // Verificar si id_ejercicio de plan_inversion coincide con el recibido
-    if ($planEjercicioId != $id_ejercicio) {
-        continue; // Saltar este registro si no coincide
+$partidasPermitidas = [
+    ['01', '06', '401.01.01.00.0000'],
+    ['01', '06', '401.05.01.00.0000'],
+    ['01', '06', '401.05.03.00.0000'],
+    ['09', '04', '401.01.01.00.0000'],
+    ['09', '04', '401.05.01.00.0000'],
+    ['09', '04', '401.05.03.00.0000'],
+    ['11', '02', '403.18.01.00.0000'],
+    ['11', '02', '404.03.06.00.0000'],
+    ['11', '02', '404.99.01.00.0000'],
+    ['12', '01', '403.18.01.00.0000'],
+    ['12', '01', '404.99.01.00.0000']
+];
+
+
+$sectores_programas_unicos = [];
+
+// Iterar por cada elemento del array
+foreach ($partidasPermitidas as $partida) {
+    // Extraer los índices 0 y 1
+    $par = [$partida[0], $partida[1]];
+    // Evitar duplicados en el sectores_programas_unicos
+    if (!in_array($par, $sectores_programas_unicos, true)) {
+        $sectores_programas_unicos[] = $par;
     }
-
-    // Consultar la tabla pl_sectores para obtener el valor de sector
-    $sqlSector = "SELECT sector FROM pl_sectores WHERE id = ?";
-    $stmtSector = $conexion->prepare($sqlSector);
-    $stmtSector->bind_param('i', $sectorId);
-    $stmtSector->execute();
-    $resultSector = $stmtSector->get_result();
-    $dataSector = $resultSector->fetch_assoc();
-    $sector = $dataSector['sector'] ?? null;
-
-    // Consultar la tabla pl_programas para obtener el valor de programa
-    $sqlPrograma = "SELECT programa FROM pl_programas WHERE id = ?";
-    $stmtPrograma = $conexion->prepare($sqlPrograma);
-    $stmtPrograma->bind_param('i', $programaId);
-    $stmtPrograma->execute();
-    $resultPrograma = $stmtPrograma->get_result();
-    $dataPrograma = $resultPrograma->fetch_assoc();
-    $programa = $dataPrograma['programa'] ?? null;
-
-    // Consultar partida en partidas_presupuestarias para obtener el formato completo y la descripción
-    $sqlPartida = "SELECT partida, descripcion FROM partidas_presupuestarias WHERE id = ?";
-    $stmtPartida = $conexion->prepare($sqlPartida);
-    $stmtPartida->bind_param('i', $partidaId);
-    $stmtPartida->execute();
-    $resultPartida = $stmtPartida->get_result();
-    $dataPartida = $resultPartida->fetch_assoc();
-
-    if ($dataPartida) {
-        $partidaCompleta = $dataPartida['partida'];
-        $descripcion = $dataPartida['descripcion'];
-
-        // Desglose de partida en los componentes requeridos
-        $partidaArray = explode('.', $partidaCompleta);
-        $partidaInfo = [
-            'sector' => $sector,
-            'programa' => $programa,
-            'partida' => $partidaArray[0] ?? null,
-            'gen' => $partidaArray[1] ?? null,
-            'esp' => $partidaArray[2] ?? null,
-            'sub' => $partidaArray[3] ?? null,
-            'denominacion' => $descripcion,
-            'monto' => $monto
-        ];
-
-        // Añadir la partida al array principal
-        $partidasArray[] = $partidaInfo;
-    }
-
-    // Cerrar consultas de cada iteración
-    $stmtSector->close();
-    $stmtPrograma->close();
-    $stmtPartida->close();
-    $stmtProyectoInversion->close();
-    $stmtPlanInversion->close();
 }
 
-$stmtProyectos->close();
+
+
+
+
 
 // Consultar datos del ejercicio fiscal
 $query_sector = "SELECT * FROM ejercicio_fiscal WHERE id = ?";

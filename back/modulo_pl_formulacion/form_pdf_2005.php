@@ -299,6 +299,16 @@ foreach ($distribuciones as $distribucion) {
         <tbody>
             <?php
 
+
+            $tt_ingreso_propio = 0;
+            $tt_situado_estada = 0;
+            $tt_fci = 0;
+            $tt_otras_fuentes = 0;
+            $tt_total = 0;
+
+
+
+
             // Imprimir los registros agrupados y sus totales
             foreach ($partidas_a_agrupadas as $codigo_agrupado) {
                 if (isset($data[$codigo_agrupado])) {
@@ -316,6 +326,14 @@ foreach ($distribuciones as $distribucion) {
                         $t_fci += $fci = $row[4];
                         $t_otras_fuentes += $otras_fuentes = $row[5];
                         $t_total += $total = $row[6];
+
+
+
+                        $tt_ingreso_propio += $ingreso_propio;
+                        $tt_situado_estada += $situado_estada;
+                        $tt_fci += $fci;
+                        $tt_otras_fuentes += $otras_fuentes;
+                        $tt_total += $total;
 
                         echo "<tr>
                             <td class='fz-8 bl'>{$row[0]}</td>
@@ -342,9 +360,24 @@ foreach ($distribuciones as $distribucion) {
                 }
             }
 
+
+            echo "<tr>
+            <td class='bl bb'></td>
+            <td class='bl bb fw-bold'>TOTALES</td>
+            <td class='bl bb fw-bold'>" . number_format($tt_ingreso_propio, 2, ',', '.') . "</td>
+            <td class='bl bb fw-bold'>" . number_format($tt_situado_estada, 2, ',', '.') . "</td>
+            <td class='bl bb fw-bold'>" . number_format($tt_fci, 2, ',', '.') . "</td>
+            <td class='bl bb fw-bold'>" . number_format($tt_otras_fuentes, 2, ',', '.') . "</td>
+            <td class='bl br bb fw-bold'>" . number_format($tt_total, 2, ',', '.') . "</td>
+    </tr >";
+
+
             echo "</tbody >
         </table>";
             ?>
+
+
+
 
 </body>
 

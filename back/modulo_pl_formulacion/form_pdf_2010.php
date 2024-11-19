@@ -4,89 +4,6 @@ require_once '../sistema_global/conexion.php';
 // Suponemos que recibimos $id_ejercicio y $ente de alguna manera, como parámetros GET
 $id_ejercicio = $_GET['id_ejercicio'];
 
-// Consultar registros de entes con sector 10
-$sqlEntes = "SELECT id, ente_nombre FROM entes WHERE sector = 10";
-$resultEntes = $conexion->query($sqlEntes);
-
-$partidasArray = [];
-
-if ($resultEntes && $resultEntes->num_rows > 0) {
-    while ($rowEnte = $resultEntes->fetch_assoc()) {
-        $enteId = $rowEnte['id'];
-        $enteNombre = $rowEnte['ente_nombre'];
-
-        // Consultar distribuciones del ente en la tabla distribucion_entes
-        $sqlDistribuciones = "SELECT distribucion FROM distribucion_entes WHERE id_ente = ?";
-        $stmtDistribuciones = $conexion->prepare($sqlDistribuciones);
-        if (!$stmtDistribuciones) {
-            die("Error en consulta de distribuciones del ente: " . mysqli_error($conexion));
-        }
-        $stmtDistribuciones->bind_param('i', $enteId);
-        $stmtDistribuciones->execute();
-        $resultDistribuciones = $stmtDistribuciones->get_result();
-
-        while ($rowDistribucion = $resultDistribuciones->fetch_assoc()) {
-            $distribuciones = json_decode($rowDistribucion['distribucion'], true);
-
-            // Procesar cada item de la distribución
-            foreach ($distribuciones as $distribucionItem) {
-                $idDistribucion = $distribucionItem['id_distribucion'];
-                $montoDistribucion = $distribucionItem['monto'];
-
-                // Consultar distribucion_presupuestaria para obtener id_partida y monto_actual
-                $sqlDistribucionPres = "SELECT id_partida, monto_actual FROM distribucion_presupuestaria WHERE id = ?";
-                $stmtDistribucionPres = $conexion->prepare($sqlDistribucionPres);
-                if (!$stmtDistribucionPres) {
-                    die("Error en consulta de distribucion_presupuestaria: " . mysqli_error($conexion));
-                }
-                $stmtDistribucionPres->bind_param('i', $idDistribucion);
-                $stmtDistribucionPres->execute();
-                $resultDistribucionPres = $stmtDistribucionPres->get_result();
-                $dataDistribucionPres = $resultDistribucionPres->fetch_assoc();
-
-                if ($dataDistribucionPres) {
-                    $idPartida = $dataDistribucionPres['id_partida'];
-                    $montoActual = $dataDistribucionPres['monto_actual'];
-
-                    // Consultar partida en partidas_presupuestarias para obtener el formato completo
-                    $sqlPartida = "SELECT partida FROM partidas_presupuestarias WHERE id = ?";
-                    $stmtPartida = $conexion->prepare($sqlPartida);
-                    if (!$stmtPartida) {
-                        die("Error en consulta de partidas_presupuestarias: " . mysqli_error($conexion));
-                    }
-                    $stmtPartida->bind_param('i', $idPartida);
-                    $stmtPartida->execute();
-                    $resultPartida = $stmtPartida->get_result();
-                    $dataPartida = $resultPartida->fetch_assoc();
-
-                    if ($dataPartida) {
-                        $partidaCompleta = $dataPartida['partida'];
-                        $partidaArray = explode('.', $partidaCompleta);
-
-                        // Desglose de partida en los componentes requeridos
-                        $partidaInfo = [
-                            'partida' => $partidaArray[0] ?? null,
-                            'gen' => $partidaArray[1] ?? null,
-                            'esp' => $partidaArray[2] ?? null,
-                            'sub' => $partidaArray[3] ?? null,
-                            'denominacion' => $enteNombre,
-                            'monto' => $montoDistribucion // Monto específico de cada distribución
-                        ];
-
-                        // Añadir la partida al array principal
-                        $partidasArray[] = $partidaInfo;
-                    }
-
-                    $stmtPartida->close();
-                }
-
-                $stmtDistribucionPres->close();
-            }
-        }
-
-        $stmtDistribuciones->close();
-    }
-}
 
 // Consultar datos del ejercicio fiscal
 $query_sector = "SELECT * FROM ejercicio_fiscal WHERE id = ?";
@@ -318,73 +235,73 @@ $stmt->close();
 
 
 
-<table>
-    <!-- Encabezado de la tabla -->
-    <tr>
-        <td colspan="6" class="header"></td>
-        <td colspan="3" class="title">DETALLE DE PARTIDAS</td>
-    </tr>
+        <table>
+            <!-- Encabezado de la tabla -->
+            <tr>
+                <td colspan="6" class="header"></td>
+                <td colspan="3" class="title">DETALLE DE PARTIDAS</td>
+            </tr>
 
-    <!-- Encabezado de columnas -->
-    <tr>
-        <th class="br">SECTOR</th>
-        <th class="br">PARTIDA</th>
-        <th class="br">GEN</th>
-        <th class="br">ESP</th>
-        <th class="br">SUB ESP</th>
-        <th class="br">DENOMINACIÓN</th>
-        <th class="br">CORRIENTE</th>
-        <th class="br">CAPITAL</th>
-        <th class="br">TOTAL</th>
-    </tr>
+            <!-- Encabezado de columnas -->
+            <tr>
+                <th class="br bt bb bl" rowspan="2">SECTOR</th>
+                <th class="br bt bb" rowspan="2">PARTIDA</th>
+                <th class="br bt bb" colspan="3">SUB - PARTIDAS</th>
+                <th class="br bt bb" rowspan="2">DENOMINACIÓN</th>
+                <th class="br bt bb" colspan="2">TIPO DE GASTO</th>
+                <th class="br bt bb" rowspan="2">TOTAL</th>
+            </tr>
+            <tr>
+                <th class="br bt bb">GEN</th>
+                <th class="br bt bb">ESP</th>
+                <th class="br bt bb">SUB ESP</th>
+                <th class="br bt bb">CORRIENTE</th>
+                <th class="br bt bb">CAPITAL</th>
+            </tr>
 
-    <?php
-    $totalPartida = 0;
-    $totalGeneral = 0;
-    $partAnterior = null;
+            <?php
+            $total = 0;
 
-    foreach ($partidasArray as $index => $partida):
-        // Verificar si la partida ha cambiado para mostrar el total del grupo anterior
-        if ($partAnterior !== null && $partAnterior !== $partida['partida']) {
-            // Actualizar el total general con el total acumulado de la partida anterior
-            $totalGeneral += $totalPartida;
-            $totalPartida = 0;  // Reiniciar el total de la partida actual
-        }
 
-        // Acumular el total de la partida actual
-        $totalPartida += $partida['monto'];
-        $partAnterior = $partida['partida'];
 
-        ?>
-        <!-- Fila de datos consolidada por partida -->
-        <tr>
-            <td class="br">15</td>
-            <td class="br"><?= $partida['partida'] ?></td>
-            <td class="br"><?= $partida['gen'] ?></td>
-            <td class="br"><?= $partida['esp'] ?></td>
-            <td class="br"><?= $partida['sub'] ?></td>
-            <td class="br subtitle"><?= $partida['denominacion'] ?></td>
-            <td class="br"><?= number_format(0, 2) ?></td>
-            <td class="br"><?= number_format(0, 2) ?></td>
-            <td class="br"><?= number_format($partida['monto'], 2) ?></td>
-        </tr>
+            $stmt = mysqli_prepare($conexion, "SELECT dp.monto_inicial, pp.partida, pp.descripcion FROM `distribucion_presupuestaria` AS dp LEFT JOIN partidas_presupuestarias pp ON pp.id = dp.id_partida WHERE id_sector='10'");
+            $stmt->execute();
+            $result = $stmt->get_result();
+            if ($result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
 
-        <?php
-        // Al final del último registro, sumamos el total de la última partida al total general
-        if ($index === array_key_last($partidasArray)) {
-            $totalGeneral += $totalPartida;
-        }
-    endforeach;
-    ?>
+                    $partida = explode('.', $row['partida']);
+                    $total += $row['monto_inicial'];
 
-    <!-- Fila de total general -->
-    <tr>
-        <td colspan="6" class="crim br">TOTAL GENERAL</td>
-        <td class="crim br"></td>
-        <td class="crim br"></td>
-        <td class="crim br"><?= number_format($totalGeneral, 2) ?></td>
-    </tr>
-</table>
+                    echo '     <tr>
+                    <td class="bl br">15</td>
+                    <td class="br">' . $partida[0] . '</td>
+                    <td class="br">' . $partida[1] . '</td>
+                    <td class="br">' . $partida[2] . '</td>
+                    <td class="br">' . $partida[3] . '</td>
+                    <td class="br text-left">' . $row['descripcion'] . '</td>
+                    <td class="br">' . number_format(0, 2) . '</td>
+                    <td class="br">' . number_format(0, 2) . '</td>
+                    <td class="br">' . number_format($row['monto_inicial'], 2) . '</td>
+                </tr>';
+                }
+            }
+            $stmt->close();
+
+
+            ?>
+            <!-- Fila de datos consolidada por partida -->
+
+
+
+            <!-- Fila de total general -->
+            <tr>
+                <td colspan="6" class="br bt bb text-right">TOTAL GENERAL</td>
+                <td class="br bt bb"><?= number_format(0, 2) ?></td>
+                <td class="br bt bb"><?= number_format(0, 2) ?></td>
+                <td class="br bt bb"><?= number_format($total, 2) ?></td>
+            </tr>
+        </table>
 
 
 
