@@ -36,10 +36,11 @@ export const form_asignacion_entes_monto_card = async ({
   };
 
   let ente = await getEnte(enteId);
+
+  console.log("resutlado");
+  console.log(ente);
   ente.dependencias.forEach((el) => {
     fieldList.monto += Number(el.distribucion_sumatoria);
-    console.log(el.distribucion_sumatoria);
-    console.log(fieldList.monto);
   });
 
   const oldCardElement = d.getElementById("asignacion-ente-monto-form-card");
@@ -156,7 +157,7 @@ ${
     }
 
     if (e.target.id === "asignacion-ente-monto-guardar") {
-      console.log(fieldList);
+      // console.log(fieldList);
       if (!Number(fieldList.monto)) {
         toastNotification({
           type: NOTIFICATIONS_TYPES.fail,

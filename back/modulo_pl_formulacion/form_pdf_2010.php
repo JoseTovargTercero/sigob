@@ -296,7 +296,7 @@ $stmt->close();
 
             <!-- Fila de total general -->
             <tr>
-                <td colspan="6" class="br bt bb text-right">TOTAL GENERAL</td>
+                <td colspan="6" class="br bt bb bl text-right">TOTAL GENERAL</td>
                 <td class="br bt bb"><?= number_format(0, 2) ?></td>
                 <td class="br bt bb"><?= number_format(0, 2) ?></td>
                 <td class="br bt bb"><?= number_format($total, 2) ?></td>

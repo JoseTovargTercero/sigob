@@ -6,39 +6,6 @@ $id_ejercicio = $_GET['id_ejercicio'];
 
 
 
-/*
-
-
-*/
-
-$partidasPermitidas = [
-    ['01', '06', '401.01.01.00.0000'],
-    ['01', '06', '401.05.01.00.0000'],
-    ['01', '06', '401.05.03.00.0000'],
-    ['09', '04', '401.01.01.00.0000'],
-    ['09', '04', '401.05.01.00.0000'],
-    ['09', '04', '401.05.03.00.0000'],
-    ['11', '02', '403.18.01.00.0000'],
-    ['11', '02', '404.03.06.00.0000'],
-    ['11', '02', '404.99.01.00.0000'],
-    ['12', '01', '403.18.01.00.0000'],
-    ['12', '01', '404.99.01.00.0000']
-];
-
-
-$sectores_programas_unicos = [];
-
-// Iterar por cada elemento del array
-foreach ($partidasPermitidas as $partida) {
-    // Extraer los índices 0 y 1
-    $par = [$partida[0], $partida[1]];
-    // Evitar duplicados en el sectores_programas_unicos
-    if (!in_array($par, $sectores_programas_unicos, true)) {
-        $sectores_programas_unicos[] = $par;
-    }
-}
-
-
 
 
 
@@ -253,27 +220,22 @@ $stmt->close();
         </table>
 
         <table>
-            <!-- Encabezado de la tabla -->
-            <tr>
-                <td colspan="6" class="header"></td>
-                <td colspan="3" class="title">DETALLE DE PARTIDAS</td>
-            </tr>
 
             <!-- Encabezado de columnas -->
             <tr>
-                <th class="bl bt bb br">SECTOR</th>
-                <th class="bt bb br">PROGRAMA</th>
-                <th class="bt bb br">PARTIDA</th>
-                <th class="bt bb br">GEN</th>
-                <th class="bt bb br">ESP</th>
-                <th class="bt bb br">SUB ESP</th>
-                <th class="bt bb br">DENOMINACIÓN</th>
-                <th class="bt bb br">ASIGNACION PRESUPUESTARIA</th>
-                <th class="bt bb br">OBSERVACION</th>
+                <th class="bl bt bb br" rowspan="2">SECTOR</th>
+                <th class="bt bb br" rowspan="2">PROGRAMA</th>
+                <th class="bt bb br" rowspan="2">PARTIDA</th>
+                <th class="bt bb br" colspan="3">GEN</th>
+                <th class="bt bb br" rowspan="2">DENOMINACIÓN</th>
+                <th class="bt bb br" rowspan="2">ASIGNACION PRESUPUESTARIA</th>
+                <th class="bt bb br" rowspan="2">OBSERVACION</th>
             </tr>
 
             <tr>
-
+                <th class="bt bb br">GEN</th>
+                <th class="bt bb br">ESP</th>
+                <th class="bt bb br">SUB</th>
             </tr>
 
             <?php
@@ -281,44 +243,155 @@ $stmt->close();
             $totalGeneral = 0;
             $partAnterior = null;
 
-            foreach ($partidasArray as $index => $partida):
-                // Verificar si la partida ha cambiado para mostrar el total del grupo anterior
-                if ($partAnterior !== null && $partAnterior !== $partida['partida']) {
-                    // Actualizar el total general con el total acumulado de la partida anterior
-                    $totalGeneral += $totalPartida;
-                    $totalPartida = 0;  // Reiniciar el total de la partida actual
+            $partidasPermitidas = [
+                ['01', '06', '401.01.01.00.0000'],
+                ['01', '06', '401.05.01.00.0000'],
+                ['01', '06', '401.05.03.00.0000'],
+                ['09', '04', '401.01.01.00.0000'],
+                ['09', '04', '401.05.01.00.0000'],
+                ['09', '04', '401.05.03.00.0000'],
+                ['11', '02', '403.18.01.00.0000'],
+                ['11', '02', '404.03.06.00.0000'],
+                ['11', '02', '404.99.01.00.0000'],
+                ['12', '01', '403.18.01.00.0000'],
+                ['12', '01', '404.99.01.00.0000'],
+            ];
+
+
+            // Función para obtener el ID correspondiente usando mysqli
+            function obtenerId($conexion, $tabla, $campo, $valor)
+            {
+                $query = "SELECT id FROM $tabla WHERE $campo = ?";
+                $stmt = $conexion->prepare($query);
+                if ($stmt) {
+                    $stmt->bind_param("s", $valor);
+                    $stmt->execute();
+                    $resultado = $stmt->get_result();
+                    $row = $resultado->fetch_assoc();
+                    $stmt->close();
+                    return $row ? $row['id'] : null;
+                } else {
+                    die("Error en la consulta: " . $conexion->error);
                 }
-
-                // Acumular el total de la partida actual
-                $totalPartida += $partida['monto'];
-                $partAnterior = $partida['partida'];
-
-            ?>
-                <!-- Fila de datos consolidada por partida -->
-                <tr>
-                    <td class="bl br w-7"><?= $partida['sector'] ?></td>
-                    <td class="br w-7"><?= $partida['programa'] ?></td>
-                    <td class="br w-7"><?= $partida['partida'] ?></td>
-                    <td class="br w-7"><?= $partida['gen'] ?></td>
-                    <td class="br w-7"><?= $partida['esp'] ?></td>
-                    <td class="br w-7"><?= $partida['sub'] ?></td>
-                    <td class="br"><?= $partida['denominacion'] ?></td>
-                    <td class="br"><?= number_format($partida['monto'], 2) ?></td>
-                    <td class="br"></td>
-                </tr>
-
-            <?php
-                // Al final del último registro, sumamos el total de la última partida al total general
-                if ($index === array_key_last($partidasArray)) {
-                    $totalGeneral += $totalPartida;
+            }
+            function obtenerPrograma($conexion, $programa, $sector)
+            {
+                $query = "SELECT id FROM pl_programas WHERE programa = ? AND sector = ?";
+                $stmt = $conexion->prepare($query);
+                if ($stmt) {
+                    $stmt->bind_param("ss", $programa, $sector);
+                    $stmt->execute();
+                    $resultado = $stmt->get_result();
+                    $row = $resultado->fetch_assoc();
+                    $stmt->close();
+                    return $row ? $row['id'] : null;
+                } else {
+                    die("Error en la consulta: " . $conexion->error);
                 }
-            endforeach;
+            }
+
+
+
+
+            // Array con los IDs
+            $partidasConIds = [];
+            foreach ($partidasPermitidas as $partida) {
+                $sectorId = obtenerId($conexion, 'pl_sectores', 'sector', $partida[0]);
+                $programaId = obtenerPrograma($conexion, $partida[1], $sectorId);
+                $partidaId = obtenerId($conexion, 'partidas_presupuestarias', 'partida', $partida[2]);
+
+                // Validar que se hayan encontrado todos los IDs
+                if ($sectorId && $programaId && $partidaId) {
+                    $partidasConIds[] = [$sectorId, $programaId, $partidaId];
+
+                    // echo $partida[0] . '.' . $partida[1] . '.' . $partida[2] . '------' . $sectorId . '.' . $programaId . '.' . $partidaId . '<br>';
+                } else {
+                    // Manejar el caso en que no se encuentren los IDs
+                    $partidasConIds[] = null; // O manejarlo según tu lógica
+                }
+            }
+
+
+            // Construir las condiciones dinámicamente
+            $condiciones = [];
+            foreach ($partidasConIds as $partida) {
+                if ($partida) { // Asegúrate de que la partida no sea nula
+                    $condiciones[] = "(id_sector = {$partida[0]} AND id_programa = {$partida[1]} AND id_partida = {$partida[2]})";
+                }
+            }
+
+            // Agregar la condición final para id_sector = 10
+            $condiciones[] = "(id_sector = 10)";
+
+            // Unir todas las condiciones con OR
+            $whereClause = implode(' OR ', $condiciones);
+
+            // Construir la consulta final
+            $query = "SELECT dp.monto_inicial, pp.partida, ps.sector, pr.programa, pp.descripcion FROM distribucion_presupuestaria AS dp
+                        LEFT JOIN partidas_presupuestarias pp ON pp.id = dp.id_partida
+                        LEFT JOIN pl_sectores ps ON ps.id = dp.id_sector
+                        LEFT JOIN pl_programas pr ON pr.id = dp.id_programa
+                         WHERE $whereClause ORDER BY dp.id_sector";
+
+
+            // Mostrar la consulta
+
+            $resumenes = [];
+            $total  = 0;
+            $stmt = mysqli_prepare($conexion, $query);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            if ($result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    $idKey = $row['sector'] . '.' . $row['programa'] . '.' . $row['partida'];
+
+                    if (@$resumenes[$idKey]) {
+                        $resumenes[$idKey]['monto_inicial'] += $row['monto_inicial'];
+                    } else {
+                        $resumenes[$idKey] = $row;
+                    }
+                }
+            }
+            $stmt->close();
+
+            foreach ($resumenes as $row) {
+                $partida = explode('.', $row['partida']);
+                $total += $row['monto_inicial'];
+
+                echo "<tr>
+                <td class='bl br'>{$row['sector']}</td>
+                <td class='bl br'>{$row['programa']}</td>
+                <td class='br'>{$partida[0]}</td>
+                <td class='br'>{$partida[1]}</td>
+                <td class='br'>{$partida[2]}</td>
+                <td class='br'>{$partida[3]}</td>
+                <td class='br text-left'>{$row['descripcion']}</td>
+                <td class='br'>" . number_format($row['monto_inicial'], 2) . "</td>
+                <td class='br'></td>
+                </tr>";
+            }
+
+            /*
+
+
+            $sectores_programas_unicos = [];
+
+            // Iterar por cada elemento del array
+            foreach ($partidasPermitidas as $partida) {
+                // Extraer los índices 0 y 1
+                $par = [$partida[0], $partida[1]];
+                // Evitar duplicados en el sectores_programas_unicos
+                if (!in_array($par, $sectores_programas_unicos, true)) {
+                    $sectores_programas_unicos[] = $par;
+                }
+            }
+*/
             ?>
 
             <!-- Fila de total general -->
             <tr>
-                <td colspan="7" class="bt bl bb text-right br"><b>TOTAL</b></td>
-                <td class="bt br bb"><b><?= number_format($totalGeneral, 2) ?></b></td>
+                <td colspan="7" class="bt bl br bb text-right"><b>TOTAL</b></td>
+                <td class="bt br bb"><b><?= number_format($total, 2) ?></b></td>
                 <td class="bt br bb"></td>
             </tr>
         </table>

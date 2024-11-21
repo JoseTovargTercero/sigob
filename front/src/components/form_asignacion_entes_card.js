@@ -67,10 +67,18 @@ export const form_asignacion_entes_card = async ({
       //     )
       // )
       .map((ente) => {
+        console.log(ente);
         return `  <tr>
               <td>${ente.ente_nombre}</td>
               <td>${
                 ente.tipo_ente === "J" ? "Jurídico" : "Descentralizado"
+              }</td>
+              <td>${
+                ente.sector_informacion.sector +
+                "." +
+                ente.programa_informacion.programa +
+                "." +
+                (ente.proyecto == "0" ? "00" : ente.proyecto)
               }</td>
               <td>
                 <button class='btn btn-secondary btn-sm' data-asignarid="${
@@ -102,6 +110,7 @@ export const form_asignacion_entes_card = async ({
             <thead>
               <th>NOMBRE</th>
               <th>TIPO</th>
+              <th>P/S/P</th>
               <th>ACCIÓN</th>
             </thead>
             <tbody>${crearFilas()}</tbody>
@@ -161,6 +170,7 @@ function validarEntesTabla() {
     colums: [
       { data: "entes_nombre" },
       { data: "entes_tipo" },
+      { data: "spp" },
       { data: "acciones" },
     ],
     language: tableLanguage,
