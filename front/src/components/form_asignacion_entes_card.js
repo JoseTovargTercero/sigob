@@ -110,7 +110,7 @@ export const form_asignacion_entes_card = async ({
             <thead>
               <th>NOMBRE</th>
               <th>TIPO</th>
-              <th>P/S/P</th>
+              <th>S/P/P</th>
               <th>ACCIÓN</th>
             </thead>
             <tbody>${crearFilas()}</tbody>

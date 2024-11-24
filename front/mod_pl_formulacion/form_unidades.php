@@ -92,118 +92,143 @@ $stmt->close();
 
 
 
+      <div class="row" id="vista_registro">
+
+        <div class="col-lg-12">
+          <div class="card">
+            <div class="card-body">
+              <div class="d-flex flex-column">
+                <div class="card-title mb-auto d-flex justify-content-between">
+                  <h5 class="mb-0">Nueva unidad</h5>
+                </div>
+
+
+                <div class="mt-2 card-body">
+
+                  <form id="data_ente">
+
+                    <div class="row">
+                      <div class="mb-3 col-lg-9">
+                        <label for="partida" class="form-label">Denominación</label>
+                        <input type="text" id="nombre" class="form-control" placeholder="Denominación de la unidad">
+                      </div>
+
+                      <div class="mb-3 col-lg-3">
+                        <label for="partida" class="form-label">Actividad</label>
+                        <input type="text" id="actividad" class="form-control" value="51">
+                      </div>
+
+                    </div>
+                    <div class="row mb-3">
+                      <div class="col-lg-4">
+                        <label for="sector" class="form-label">Sector</label>
+                        <select type="text" class="form-control" id="sector">
+                          <option value="">Seleccione</option>
+
+                          <?php
+                          $stmt = mysqli_prepare($conexion, "SELECT * FROM pl_sectores");
+                          $stmt->execute();
+                          $result = $stmt->get_result();
+                          if ($result->num_rows > 0) {
+                            while ($row = $result->fetch_assoc()) {
+                              $id = $row['id'];
+                              $sector = $row['sector'];
+                              $denominacion = $row['denominacion'];
+                              echo ' <option value="' . $id . '">' . $sector . ' - ' . $denominacion . '</option>;';
+                            }
+                          }
+                          $stmt->close();
+                          ?>
+                        </select>
+                      </div>
+
+                      <div class="col-lg-4">
+                        <label for="programa" class="form-label">Programa</label>
+                        <select type="text" class="form-control" id="programa">
+                          <option value="">Seleccione</option>
+                        </select>
+                      </div>
+                      <div class="col-lg-4">
+                        <label for="proyecto" class="form-label">Proyecto</label>
+                        <select class="form-control" id="proyecto">
+                          <option value="">Seleccione</option>
+                          <option value="0">00</option>
+
+                          <?php
+                          $stmt = mysqli_prepare($conexion, "SELECT * FROM pl_proyectos");
+                          $stmt->execute();
+                          $result = $stmt->get_result();
+                          if ($result->num_rows > 0) {
+                            while ($row = $result->fetch_assoc()) {
+                              $id = $row['id'];
+                              $proyecto_id = $row['proyecto_id'];
+                              $denominacion = $row['denominacion'];
+                              echo ' <option value="' . $id . '">' . $proyecto_id . ' - ' . $denominacion . '</option>;';
+                            }
+                          }
+                          $stmt->close();
+                          ?>
+                        </select>
+
+
+                      </div>
+                    </div>
+                    <div class="mb-4" id="sect_tipo_ente">
+                      <label for="tipo_ente" class="form-label">Tipo</label>
+                      <select type="text" class="form-control" id="tipo_ente">
+                        <option value="">Seleccione</option>
+                        <option value="J">Jurídico</option>
+                        <option value="D">Descentralizado</option>
+                      </select>
+                    </div>
+
+
+
+                    <div class="col-lg-12" id="section_partida">
+                      <label for="partida" class="form-label">Partida</label>
+                      <select type="text" class="form-control chosen-select" id="partida">
+                        <option value="">Seleccione</option>
+                        <?php
+                        $stmt = mysqli_prepare($conexion, "SELECT * FROM partidas_presupuestarias");
+                        $stmt->execute();
+                        $result = $stmt->get_result();
+                        if ($result->num_rows > 0) {
+                          while ($row = $result->fetch_assoc()) {
+                            $id = $row['id'];
+                            $partida = $row['partida'];
+                            $descripcion = $row['descripcion'];
+                            echo ' <option value="' . $id . '">' . $partida . ' - ' . $descripcion . '</option>;';
+                          }
+                        }
+                        $stmt->close();
+                        ?>
+                      </select>
+                    </div>
+
+
+
+                    <div class="mt-4 d-flex justify-content-between">
+                      <button type="button" class="btn btn-secondary" id="btn-cancelar-registro">Cancelar</button>
+                      <button type="button" class="btn btn-primary" id="btn-registro">Guardar</button>
+                    </div>
+
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
 
 
 
 
       <div class="tab-content" id="pills-tabContent">
         <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
-
           <div class="row ">
-
-            <div class="col-lg-12" id="vista_registro">
-              <div class="card">
-                <div class="card-body">
-                  <div class="d-flex flex-column">
-                    <div class="card-title mb-auto d-flex justify-content-between">
-                      <h5 class="mb-0">Nueva unidad</h5>
-
-                    </div>
-
-
-                    <div class="mt-2 card-body">
-
-                      <form id="data_ente">
-
-                        <div class="row">
-                          <div class="mb-3 col-lg-9">
-                            <label for="partida" class="form-label">Denominación</label>
-                            <input type="text" id="nombre" class="form-control" placeholder="Denominación de la unidad">
-                          </div>
-
-                          <div class="mb-3 col-lg-3">
-                            <label for="partida" class="form-label">Actividad</label>
-                            <input type="text" id="actividad" class="form-control" value="51">
-                          </div>
-
-                        </div>
-                        <div class="row mb-3">
-                          <div class="col-lg-4">
-                            <label for="sector" class="form-label">Sector</label>
-                            <select type="text" class="form-control" id="sector">
-                              <option value="">Seleccione</option>
-
-                              <?php
-                              $stmt = mysqli_prepare($conexion, "SELECT * FROM pl_sectores");
-                              $stmt->execute();
-                              $result = $stmt->get_result();
-                              if ($result->num_rows > 0) {
-                                while ($row = $result->fetch_assoc()) {
-                                  $id = $row['id'];
-                                  $sector = $row['sector'];
-                                  $denominacion = $row['denominacion'];
-                                  echo ' <option value="' . $id . '">' . $sector . ' - ' . $denominacion . '</option>;';
-                                }
-                              }
-                              $stmt->close();
-                              ?>
-                            </select>
-                          </div>
-
-                          <div class="col-lg-4">
-                            <label for="programa" class="form-label">Programa</label>
-                            <select type="text" class="form-control" id="programa">
-                              <option value="">Seleccione</option>
-                            </select>
-                          </div>
-                          <div class="col-lg-4">
-                            <label for="proyecto" class="form-label">Proyecto</label>
-                            <select class="form-control" id="proyecto">
-                              <option value="">Seleccione</option>
-                              <option value="0">00</option>
-
-                              <?php
-                              $stmt = mysqli_prepare($conexion, "SELECT * FROM pl_proyectos");
-                              $stmt->execute();
-                              $result = $stmt->get_result();
-                              if ($result->num_rows > 0) {
-                                while ($row = $result->fetch_assoc()) {
-                                  $id = $row['id'];
-                                  $proyecto_id = $row['proyecto_id'];
-                                  $denominacion = $row['denominacion'];
-                                  echo ' <option value="' . $id . '">' . $proyecto_id . ' - ' . $denominacion . '</option>;';
-                                }
-                              }
-                              $stmt->close();
-                              ?>
-                            </select>
-
-
-                          </div>
-                        </div>
-                        <div class="mb-4">
-                          <label for="tipo_ente" class="form-label">Tipo</label>
-                          <select type="text" class="form-control" id="tipo_ente">
-                            <option value="">Seleccione</option>
-                            <option value="J">Jurídico</option>
-                            <option value="D">Descentralizado</option>
-                          </select>
-                        </div>
-                        <div class="mt-4 d-flex justify-content-between">
-                          <button type="button" class="btn btn-secondary" id="btn-cancelar-registro">Cancelar</button>
-                          <button type="button" class="btn btn-primary" id="btn-registro">Guardar</button>
-                        </div>
-
-                      </form>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-
-
-            <div class="col-lg-12" id="vista-tabla">
+            <div class="col-lg-12">
               <div class="card">
                 <div class="card-body">
                   <div class="d-flex flex-column">
@@ -241,16 +266,10 @@ $stmt->close();
               </div>
             </div>
           </div>
-
         </div>
         <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
-
-
-
-
           <div class="row ">
-
-            <div class="col-lg-12" id="vista-tabla-2">
+            <div class="col-lg-12">
               <div class="card">
                 <div class="card-body">
                   <div class="d-flex flex-column">
@@ -276,6 +295,7 @@ $stmt->close();
                             <th>Sector</th>
                             <th>Actividad</th>
                             <th></th>
+                            <th></th>
                           </tr>
                         </thead>
                         <tbody>
@@ -290,7 +310,6 @@ $stmt->close();
 
 
         </div>
-
       </div>
 
 
@@ -444,6 +463,7 @@ $stmt->close();
         const url_back = '../../back/modulo_pl_formulacion/form_unidades_back.php'
         let entes = []
         let sub_entes = []
+        let sub_entes_for_edit = []
 
 
 
@@ -457,6 +477,15 @@ $stmt->close();
 
 
 
+
+        // Llama a la función para establecer los listeners al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+          $('.chosen-select').chosen().trigger("chosen:updated");
+        });
+
+        document.getElementById('tipo_ente').addEventListener('change', function() {
+          document.getElementById('section_partida').classList.toggle('hide', this.value !== 'D');
+        });
 
 
         function getDetallesProyecto(proyecto_id) {
@@ -483,9 +512,6 @@ $stmt->close();
               ])
           }
           DataTable_2.rows.add(data).draw();
-
-          document.getElementById('vista_datalles').classList.remove('hide')
-
         }
 
 
@@ -496,50 +522,67 @@ $stmt->close();
         function nuevoProyecto() {
           accion = 'registrar_ente'
           $('#vista_registro').removeClass('hide')
-          $('#vista-tabla').addClass('hide')
-          $('#vista_datalles').addClass('hide')
+          $('#pills-tabContent').addClass('hide')
         }
 
         var edt
+        var edt_type
 
-        // Mostrar interfaz para editar proyecto existente
-        function editar(id) {
-          edt = id
+        // Mostrar interfaz para editar unidades existente
+        function editar(id, tipo) {
+          $('#cargando').show();
 
-          $('#vista_datalles').addClass('hide')
-          $('#vista_registro').removeClass('hide')
-          $('#vista-tabla').addClass('hide')
-          $('#cargando').show()
-          accion = 'update_ente'
+          // Definir variables base
+          let array = tipo === 'suu' ? sub_entes_for_edit[id] : entes[id];
+          edt_type = tipo;
+          accion = 'update_ente';
+          edt = id;
 
-          $('#nombre').val(entes[id]['6'])
-          $('#actividad').val(entes[id]['4'])
+          // Mostrar/Ocultar elementos según el tipo
+          $('#sect_tipo_ente').toggleClass('hide', tipo === 'suu');
+          $('#vista_registro').removeClass('hide');
+          $('#pills-tabContent').addClass('hide');
 
-          let sector = entes[id]['1'];
+          // Configurar valores en los campos
+          $('#nombre').val(array['6']);
+          $('#actividad').val(array['4']).attr('disabled', true);
 
-          $("#sector" + " option[value='" + sector + "']").attr("selected", true);
+          // Seleccionar opciones en listas desplegables
+          $('#sector').val(array['1']).change();
 
-          if (get_programa(sector)) {
-            $("#programa" + " option[value='" + entes[id]['2'] + "']").attr("selected", true);
+          if (get_programa(array['1'])) {
+            $('#programa').val(array['2']).change();
+          }
+          $('#proyecto').val(array['3']).change();
+          $('#tipo_ente').val(array['5']).change();
+
+          // Actualizar el campo de partida si no es nulo
+          if (array['7'] !== 'null') {
+            $('#partida').val(array['7']).trigger("chosen:updated");
           }
 
-          $("#proyecto" + " option[value='" + entes[id]['3'] + "']").attr("selected", true);
-          $("#tipo_ente" + " option[value='" + entes[id]['5'] + "']").attr("selected", true);
+          // Mostrar/Ocultar sección de partida según el tipo de ente
+          $('#section_partida').toggleClass('hide', array['5'] === 'J');
 
-          $('#actividad').attr('disabled', true)
-          $('#tipo_ente').attr('disabled', true)
-          $('#cargando').hide()
+          // Deshabilitar campos según requerimiento
+          $('#tipo_ente').attr('disabled', true);
 
+          $('#cargando').hide();
         }
+
 
         function cancelarRegistro() {
           $('#vista_registro').addClass('hide')
-          $('#vista-tabla').removeClass('hide')
+          $('#section_partida').addClass('hide')
+          $('#pills-tabContent').removeClass('hide')
           $('.form-control').val('')
+          $('.chosen-select').chosen().trigger("chosen:updated");
 
           $('#actividad').attr('disabled', false)
           $('#tipo_ente').attr('disabled', false)
         }
+
+
         document.getElementById('btn-cancelar-registro').addEventListener('click', cancelarRegistro)
 
         // Registrrar nuevo proyecto
@@ -553,6 +596,7 @@ $stmt->close();
           const programa = document.getElementById('programa').value;
           let proyecto = document.getElementById('proyecto').value;
           const tipo_ente = document.getElementById('tipo_ente').value;
+          const partida = document.getElementById('partida').value;
           // verificar si proyecto tiene un largo de 2 caracteres, sino le pones un cero a la izquierda
 
           if (!validarCampo('nombre') || !validarCampo('actividad') || !validarCampo('sector') || !validarCampo('programa') || !validarCampo('proyecto') || !validarCampo('tipo_ente')) {
@@ -564,6 +608,16 @@ $stmt->close();
             return;
           }
 
+          if (tipo_ente == 'D') {
+
+
+            if (!validarCampo('partida')) {
+              errors = true;
+            } // verificar que ningun campo este vacio
+          }
+
+
+
           const unidad = {
             nombre: nombre,
             actividad: actividad,
@@ -571,36 +625,43 @@ $stmt->close();
             programa: programa,
             proyecto: proyecto,
             tipo_ente: tipo_ente,
-            id_ente: null
+            id_ente: null,
+            partida: partida
           }
+
+          let accion_back = accion;
+
 
           if (accion == 'update_ente') {
             unidad.id_ente = edt
+            accion_back = accion + '_' + edt_type
           }
 
           $.ajax({
             url: url_back,
             type: "json",
             contentType: 'application/json',
+            cache: false,
             data: JSON.stringify({
               unidad: unidad,
-              accion: accion
+              accion: accion_back
             }),
             success: function(response) {
+
               if (response.success) {
-                toast_s('success', 'Unidad ' + (accion == 'update_ente' ? 'actualizada' : 'registrada') + ' con éxito')
-                get_tabla()
-                cancelarRegistro()
-
+                toast_s('success', 'Unidad ' + (accion == 'update_ente' ? 'actualizada' : 'registrada') + ' con éxito');
+                get_tabla();
+                cancelarRegistro();
                 document.getElementById('data_ente').reset();
-
               } else {
-                console.log(response)
-                toast_s('error', 'Error al ' + (accion == 'update_ente' ? 'actualizar' : 'registrar') + ' la unidad')
+                // Mostrar un mensaje claro basado en el mensaje del backend
+                console.error(response);
+                toast_s('error', response.error || 'Error al procesar la solicitud.');
               }
             },
             error: function(xhr, status, error) {
-              console.log(xhr.responseText);
+              console.error('Error en la solicitud:', xhr.responseText);
+              toast_s('error', 'Ocurrió un error inesperado al comunicarse con el servidor.');
 
             },
           });
@@ -659,8 +720,11 @@ $stmt->close();
           }
           if (event.target.closest('.btn-edit')) { // ACCION DE ELIMINAR
             const id = event.target.closest('.btn-edit').getAttribute('data-edit-id');
-            editar(id);
+            const type = event.target.closest('.btn-edit').getAttribute('data-edit-type');
+            editar(id, type);
           }
+
+
 
           if (event.target.closest('.btn-plus')) { // ACCION DE ELIMINAR
             const id = event.target.closest('.btn-plus').getAttribute('data-add-id');
@@ -778,7 +842,6 @@ $stmt->close();
             return;
           }
 
-
           $.ajax({
             url: url_back,
             type: "json",
@@ -795,7 +858,6 @@ $stmt->close();
               }
             }),
 
-
             success: function(response) {
               let data_tabla = [] // Informacion de la tabla
 
@@ -811,15 +873,7 @@ $stmt->close();
               console.error(xhr.responseText);
             },
           });
-
-
-
-
         })
-
-
-
-
 
         function get_tabla() {
           $.ajax({
@@ -836,9 +890,7 @@ $stmt->close();
                 let count = 1;
                 DataTable.clear()
 
-
                 response.success.forEach(function(item) {
-
 
                   entes[item.id] = [
                     item.id,
@@ -847,7 +899,8 @@ $stmt->close();
                     item.proyecto,
                     item.actividad,
                     item.tipo_ente,
-                    item.ente_nombre
+                    item.ente_nombre,
+                    item.partida
                   ]
 
                   let proyecto_n = item.proyecto_n ?? '00'
@@ -855,18 +908,14 @@ $stmt->close();
                   data_tabla.push([
                     count++,
                     item.tipo_ente,
-                    item.ente_nombre,
+                    item.ente_nombre + (item.tipo_ente == 'J' ? '' : "<br><small>" + item.partida_n + " - " + item.partida_name + "</small>"),
                     item.sector_n + "." + item.programa_n + "." + proyecto_n,
                     item.tipo_ente == 'J' ?
                     `<button title="Agregar dependencia interna" class="btn btn-plus btn-sm bg-brand-color-1 text-white " data-add-id="${item.id}"><i class="bx bx-plus"></i></button>` : '-',
-                    `<button class="btn btn-edit btn-sm bg-brand-color-2 text-white " data-edit-id="${item.id}"><i class="bx bx-edit-alt"></i></button>`,
+                    `<button class="btn btn-edit btn-sm bg-brand-color-2 text-white " data-edit-type="ente" data-edit-id="${item.id}"><i class="bx bx-edit-alt"></i></button>`,
                     `<button class="btn btn-danger btn-sm btn-delete" data-delete-id="${item.id}"><i class="bx bx-trash"></i></button>`
                   ]);
-
-
-
                 });
-
                 DataTable.rows.add(data_tabla).draw()
               }
             },
@@ -913,6 +962,18 @@ $stmt->close();
                     item.nombre_ente_p
                   ]);
 
+
+
+                  sub_entes_for_edit[item.id] = [
+                    item.id,
+                    item.sector,
+                    item.programa,
+                    item.proyecto,
+                    item.actividad,
+                    item.tipo_ente,
+                    item.ente_nombre
+                  ];
+
                   let proyecto_n = item.proyecto_n ?? '00'
 
 
@@ -922,6 +983,7 @@ $stmt->close();
                     item.ente_nombre + "<br> <small class='mt-0 text-muted'>" + item.nombre_ente_p + "</small>",
                     item.sector_n + "." + item.programa_n + "." + proyecto_n,
                     item.actividad,
+                    `<button class="btn btn-edit btn-sm bg-brand-color-2 text-white " data-edit-type="suu" data-edit-id="${item.id}"><i class="bx bx-edit-alt"></i></button>`,
                     `<button class="btn btn-danger btn-sm btn-delete" data-delete-id="${item.id}"><i class="bx bx-trash"></i></button>`
                   ]);
 
@@ -943,6 +1005,7 @@ $stmt->close();
         // ejecutar una funcion cuando la pagina se cargue
         $(document).ready(function() {
           $('#vista_registro').addClass('hide')
+          $('#section_partida').addClass('hide')
         })
 
         // cargar el programa cuando el sector cambie

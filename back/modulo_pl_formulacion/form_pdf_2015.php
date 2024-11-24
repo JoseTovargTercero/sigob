@@ -268,8 +268,7 @@ foreach ($distribuciones as $distribucion) {
                     <b>
                         REPÚBLICA BOLIVARIANA DE VENEZUELA <br>
                         GOBERNACIÓN DEL ESTADO AMAZONAS <br>
-                        CODIGO PRESUPUESTARIO: E5100
-                    </b>
+                        CODIGO PRESUPUESTARIO: E5100 </b>
     </div>
     <td class='text-right' style='vertical-align: top;padding: 13px 10px 0 0; '>
         <b>

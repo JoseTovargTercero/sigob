@@ -72,7 +72,7 @@ function eliminarAsignacionEnte($id)
         $stmtAsignacion = $conexion->prepare($sqlAsignacion);
         $stmtAsignacion->bind_param("i", $id);
         $stmtAsignacion->execute();
-        
+
         $affectedRowsAsignacion = $stmtAsignacion->affected_rows;
 
         if ($affectedRowsAsignacion > 0) {
@@ -82,13 +82,13 @@ function eliminarAsignacionEnte($id)
             $stmtVerificacion->bind_param("i", $id);
             $stmtVerificacion->execute();
             $resultVerificacion = $stmtVerificacion->get_result();
-            
+
             $affectedRowsDistribucion = 0;
 
             // Si hay registros en distribucion_entes, procesa cada uno
             while ($rowVerificacion = $resultVerificacion->fetch_assoc()) {
                 $distribucionData = json_decode($rowVerificacion['distribucion'], true);
-                
+
                 // Iterar sobre cada elemento en el array `distribucion` para actualizar `monto_actual` en `distribucion_presupuestaria`
                 foreach ($distribucionData as $item) {
                     $id_distribucion = $item['id_distribucion'];
@@ -117,13 +117,13 @@ function eliminarAsignacionEnte($id)
             $sqlAudit = "INSERT INTO audit_logs (action_type, table_name, situation, affected_rows, user_id, timestamp) 
                          VALUES (?, ?, ?, ?, ?, NOW())";
             $stmtAudit = $conexion->prepare($sqlAudit);
-            
+
             $actionType = 'DELETE';
             $tableName = 'asignacion_ente - distribucion_entes';
             $situation = "id=$id";
             $affectedRows = $affectedRowsAsignacion + $affectedRowsDistribucion;
             $user_id = $_SESSION['u_id'];
-            
+
             $stmtAudit->bind_param("sssii", $actionType, $tableName, $situation, $affectedRows, $user_id);
             $stmtAudit->execute();
 
@@ -146,7 +146,7 @@ function consultarAsignacionPorId($id)
 
     try {
         // Consulta principal para obtener los datos de asignacion_ente y sus detalles del ente
-        $sql = "SELECT a.*, e.ente_nombre, e.tipo_ente, e.sector, e.programa, e.proyecto, e.actividad 
+        $sql = "SELECT a.*, e.partida, e.ente_nombre, e.tipo_ente, e.sector, e.programa, e.proyecto, e.actividad 
                 FROM asignacion_ente a
                 JOIN entes e ON a.id_ente = e.id
                 WHERE a.id = ?";
@@ -270,9 +270,13 @@ function consultarTodasAsignaciones()
     global $conexion;
 
     try {
-        $sql = "SELECT a.*, e.ente_nombre, e.tipo_ente, e.sector, e.programa, e.proyecto, e.actividad 
+        $sql = "SELECT a.*, e.ente_nombre, e.tipo_ente, e.sector, e.programa, e.proyecto, e.actividad, se.sector AS se_denominacion, prg.programa AS prg_denominacion, pr.proyecto_id AS pr_denominacion 
                 FROM asignacion_ente a
-                JOIN entes e ON a.id_ente = e.id";
+                JOIN entes e ON a.id_ente = e.id
+                LEFT JOIN pl_sectores se ON e.sector = se.id
+                LEFT JOIN pl_programas prg ON e.programa = prg.id
+                LEFT JOIN pl_proyectos pr ON e.proyecto = pr.id
+                ";
         $result = $conexion->query($sql);
 
         $asignaciones = [];
@@ -328,5 +332,5 @@ if (isset($data["accion"])) {
     }
 } else {
     echo json_encode(['error' => "No se recibió ninguna acción"]);
+    //echo  consultarTodasAsignaciones();
 }
-?>

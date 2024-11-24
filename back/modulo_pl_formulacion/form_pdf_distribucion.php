@@ -34,7 +34,7 @@ $stmt = mysqli_prepare($conexion, "SELECT entes.ente_nombre, ppy.proyecto_id, pp
                                    LEFT JOIN pl_sectores ps ON ps.id = entes.sector 
                                    LEFT JOIN pl_programas pp ON pp.id = entes.programa 
                                    LEFT JOIN pl_proyectos ppy ON ppy.id = entes.proyecto 
-                                   WHERE entes.id = ?");
+                                   WHERE entes.id = ? LIMIT 1");
 if (!$stmt) {
     die("Error en consulta de sector y programa: " . mysqli_error($conexion));
 }
@@ -49,8 +49,8 @@ if ($result->num_rows > 0) {
         $programa_n = $row['programa'];
         $nombre_programa = $row['nombre_programa'];
         $proyecto_n = $row['proyecto_id'] ?? '00';
-        $nombre_proyecto = ($proyecto_n == '00' ? $nombre_programa : $row['nombre_proyecto']);
-        $ue_n = $row['ente_nombre'];
+        $nombre_proyecto = ($proyecto_n == '00' ? '' : $row['nombre_proyecto']);
+        $ue_n = ($row['sector'] == '15' ? 'DESPACHO DEL GOBERNADOR' : $row['ente_nombre']);
     }
 } else {
     die("No se encontraron datos para el ente proporcionado.");
@@ -344,7 +344,7 @@ $situado = $data['situado'] ?? 'Desconocido';
         }
 
         h2 {
-            font-size: 16px;
+            font-size: 14px;
             margin: 0;
         }
 
@@ -584,7 +584,6 @@ $situado = $data['situado'] ?? 'Desconocido';
                 $totalPartida = 0;
             endif;
             ?>
-
             <!-- Fila para los encabezados normales (part, gen, esp, sub-esp) -->
             <tr>
                 <th class="crim br bb bt bl"><?= $partida['part_principal'] ?></th>

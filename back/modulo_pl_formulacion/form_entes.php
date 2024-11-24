@@ -166,7 +166,7 @@ function obtenerEntePorId($id)
             throw new Exception("Debe proporcionar un ID para la consulta");
         }
 
-        $sql = "SELECT id, sector, programa, proyecto, actividad, ente_nombre, tipo_ente FROM entes WHERE id = ?";
+        $sql = "SELECT id, partida, sector, programa, proyecto, actividad, ente_nombre, tipo_ente FROM entes WHERE id = ?";
         $stmt = $conexion->prepare($sql);
         $stmt->bind_param("i", $id);
         $stmt->execute();
@@ -204,14 +204,37 @@ function obtenerEntePorId($id)
 
             // Calcular distribucion_sumatoria desde distribucion_presupuestaria
             $sqlDistribucion = "SELECT SUM(monto_actual) as distribucion_sumatoria FROM distribucion_presupuestaria WHERE id_sector = ? AND id_programa = ? AND id_actividad = ?";
+
+            if ($ente['tipo_ente'] == 'D') {
+                if ($ente['partida'] != '') {
+                    $sqlDistribucion .= ' AND id_partida = ?';
+                } else {
+                    throw new Exception("El ente seleccionado no tiene una partida asociada.");
+                }
+            }
+
+
+
+
             $stmtDistribucion = $conexion->prepare($sqlDistribucion);
-            $stmtDistribucion->bind_param("iii", $ente['sector'], $ente['programa'], $ente['actividad']);
+
+
+            if ($ente['tipo_ente'] == 'D' && $ente['partida'] != '') {
+                // Incluir el cuarto parámetro id_partida
+                $stmtDistribucion->bind_param("iiii", $ente['sector'], $ente['programa'], $ente['actividad'], $ente['partida']);
+            } else {
+                // Solo tres parámetros
+                $stmtDistribucion->bind_param("iii", $ente['sector'], $ente['programa'], $ente['actividad']);
+            }
+
+
+
             $stmtDistribucion->execute();
             $resultDistribucion = $stmtDistribucion->get_result();
             $ente['distribucion_sumatoria'] = $resultDistribucion->fetch_assoc()['distribucion_sumatoria'] ?? 0;
 
             // Obtener dependencias del ente
-            $sqlDependencias = "SELECT id, sector, programa, proyecto, actividad, ente_nombre, tipo_ente FROM entes_dependencias WHERE ue = ?";
+            $sqlDependencias = "SELECT id, partida, sector, programa, proyecto, actividad, ente_nombre, tipo_ente FROM entes_dependencias WHERE ue = ?";
             $stmtDependencias = $conexion->prepare($sqlDependencias);
             $stmtDependencias->bind_param("i", $id);
             $stmtDependencias->execute();
@@ -239,7 +262,16 @@ function obtenerEntePorId($id)
                 $dependencia['actividad_informacion'] = !empty($dependencia['actividad']) ? $dependencia['actividad'] : 0;
 
                 // Calcular distribucion_sumatoria para la dependencia desde distribucion_presupuestaria
-                $stmtDistribucion->bind_param("iii", $dependencia['sector'], $dependencia['programa'], $dependencia['actividad']);
+
+
+                if ($ente['tipo_ente'] == 'D' && $ente['partida'] != '') {
+                    // Incluir el cuarto parámetro id_partida
+                    $stmtDistribucion->bind_param("iiii", $dependencia['sector'], $dependencia['programa'], $dependencia['actividad'], $dependencia['partida']);
+                } else {
+                    // Solo tres parámetros
+                    $stmtDistribucion->bind_param("iii", $dependencia['sector'], $dependencia['programa'], $dependencia['actividad']);
+                }
+
                 $stmtDistribucion->execute();
                 $dependencia['distribucion_sumatoria'] = $stmtDistribucion->get_result()->fetch_assoc()['distribucion_sumatoria'] ?? 0;
 
@@ -295,7 +327,6 @@ if (isset($data["accion"])) {
         echo json_encode(['error' => "Acción no aceptada"]);
     }
 } else {
-    echo json_encode(['error' => "No se especificó ninguna acción"]);
+    echo json_encode(['error' => "Falta la acción a realizar"]);
+    //   echo obtenerEntePorId("61");
 }
-
-?>

@@ -108,7 +108,6 @@ export const form_asignacion_entes_form_card = async ({
 
   function recortarTexto(str, length) {
     let texto = str.length < length ? str : `${str.slice(0, length)} ...`;
-
     return texto;
   }
 
@@ -408,19 +407,32 @@ export const form_asignacion_entes_form_card = async ({
       dependenciaActividad = "-";
       dependenciaNombre = "-";
     }
+    //  console.log(ejercicioFiscal.distribucion_partidas);
+    //console.log(asignacion);
 
     let ente_sector = Number(asignacion.sector);
     let ente_programa = Number(asignacion.programa);
-
-    console.log(ente_sector + "-" + ente_programa + "-" + dependenciaActividad);
-    console.log(ejercicioFiscal.distribucion_partidas);
-
+    let ente_partida = Number(asignacion.partida);
+    let tipoEnte = asignacion.tipo_ente;
+    /*
     let partidasRelacionadas = ejercicioFiscal.distribucion_partidas.filter(
       (partida) => {
         return (
           partida.sector_informacion.id == ente_sector &&
           partida.programa_informacion.id == ente_programa &&
           Number(partida.id_actividad) == Number(dependenciaActividad)
+        );
+      }
+    );
+*/
+
+    let partidasRelacionadas = ejercicioFiscal.distribucion_partidas.filter(
+      (partida) => {
+        return (
+          partida.sector_informacion.id === ente_sector &&
+          partida.programa_informacion.id === ente_programa &&
+          Number(partida.id_actividad) === Number(dependenciaActividad) &&
+          (tipoEnte !== "D" || partida.id_partida === ente_partida) // Condición adicional
         );
       }
     );
@@ -654,7 +666,7 @@ export const form_asignacion_entes_form_card = async ({
           (partida) => Number(partida.id) === Number(el.id_distribucion)
         );
 
-        console.log(partidaEncontrada);
+        // console.log(partidaEncontrada);
 
         let sector = `${
           partidaEncontrada.sector_informacion

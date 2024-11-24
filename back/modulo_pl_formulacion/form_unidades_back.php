@@ -22,19 +22,7 @@ function guardarEnte($proyectosArray)
         $actividad = $proyectosArray['actividad'];
         $nombre = $proyectosArray['nombre'];
         $tipo_ente = $proyectosArray['tipo_ente'];
-        /*
-        // verificar nombre
-        $stmt = mysqli_prepare($conexion, "SELECT * FROM `entes` WHERE sector = ? AND programa = ? AND proyecto = ?");
-        $stmt->bind_param('sss', $sector, $programa, $proyecto);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        if ($result->num_rows > 0) {
-            throw new Exception("Ya existe un ente con el mismo nombre");
-        }
-        $stmt->close();
-        // Verificar que no exista una actividad para el sector y programa seleccionado
-
-*/
+        $partida = $proyectosArray['partida'];
 
         $sql = "INSERT INTO entes (
         sector,
@@ -42,10 +30,11 @@ function guardarEnte($proyectosArray)
         proyecto,
         actividad,
         ente_nombre,
-        tipo_ente
-        ) VALUES (?, ?, ?, ?, ?, ?)";
+        tipo_ente,
+        partida
+        ) VALUES (?, ?, ?, ?, ?, ?, ?)";
         $stmt = $conexion->prepare($sql);
-        $stmt->bind_param("ssssss", $sector, $programa, $proyecto, $actividad, $nombre, $tipo_ente);
+        $stmt->bind_param("sssssss", $sector, $programa, $proyecto, $actividad, $nombre, $tipo_ente, $partida);
         $stmt->execute();
 
         if ($stmt->affected_rows <= 0) {
@@ -129,61 +118,77 @@ function guardar_suu($info, $tipo_ente = 'J')
     }
 }
 
-// Función para actualizar datos en plan_inversion
-function actualizarPlanInversion($id_plan, $monto_total)
-{
-    global $conexion;
-
-    try {
-        $fecha = date('Y-m-d');
-        $sql = "UPDATE plan_inversion SET monto_total = ?, fecha = ? WHERE id = ?";
-        $stmt = $conexion->prepare($sql);
-        $stmt->bind_param("dsi", $monto_total, $fecha, $id_plan);
-        $stmt->execute();
-
-        if ($stmt->affected_rows <= 0) {
-            throw new Exception("Error al actualizar el plan de inversión.");
-        }
-
-        $stmt->close();
-        return json_encode(["success" => "Plan de inversión actualizado correctamente."]);
-    } catch (Exception $e) {
-        registrarError($e->getMessage());
-        return json_encode(['error' => $e->getMessage()]);
-    }
-}
-
 // Función para actualizar datos en proyecto_inversion
 function actualizarEnte($ente)
 {
     global $conexion;
+    $conexion->begin_transaction();
 
     try {
+
+
         $nombre = $ente['nombre'];
         $sector = $ente['sector'];
         $programa = $ente['programa'];
         $proyecto = $ente['proyecto'];
         $id_ente = $ente['id_ente'];
-
+        $partida = $ente['partida'];
         $error = false;
-        // Actualizar los datos del proyecto
-        $sql = "UPDATE entes SET sector = ?, programa=?, proyecto = ?, ente_nombre= ? WHERE id = ?";
-        $stmt = $conexion->prepare($sql);
-        $stmt->bind_param("sssss", $sector, $programa, $proyecto, $nombre, $id_ente);
-        if (!$stmt->execute()) {
-            $error = true;
+
+
+        if ($sector != '10') {
+
+            // validar que no exista un ente por el mismo sector y programa ! diferente de 15
+            $stmt = mysqli_prepare($conexion, "SELECT * FROM `entes` WHERE sector = ? AND programa = ? AND id != ?");
+            $stmt->bind_param('sss', $sector, $programa, $id_ente);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            if ($result->num_rows > 0) {
+                return json_encode(["error" => "Error al actualizar, ya existe otra unidad por el sector y programa seleccionado."]);
+            }
+        } else {
+
+            // validar que no exista un ente por el mismo sector y programa ! diferente de 15
+            $stmt = mysqli_prepare($conexion, "SELECT * FROM `entes` WHERE partida = ? AND id != ?");
+            $stmt->bind_param('ss', $partida, $id_ente);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            if ($result->num_rows > 0) {
+                return json_encode(["error" => "Ya esta en uso la partida."]);
+            }
         }
         $stmt->close();
 
-        if ($error) {
-            throw new Exception("Error al actualizar el proyecto de inversión.");
+
+        // Actualizar los datos del proyecto
+        $sql = "UPDATE entes SET sector = ?, programa=?, proyecto = ?, ente_nombre= ?, partida = ? WHERE id = ?";
+        $stmt = $conexion->prepare($sql);
+        $stmt->bind_param("ssssss", $sector, $programa, $proyecto, $nombre, $partida, $id_ente);
+        if (!$stmt->execute()) {
+            return json_encode(["error" => "Error al actualizar."]);
         }
+
+
+        $sql = "UPDATE entes_dependencias SET sector = ?, programa=?, proyecto = ?, ente_nombre= ?, partida = ? WHERE ue = ? AND actividad = '51'";
+        $stmt = $conexion->prepare($sql);
+        $stmt->bind_param("ssssss", $sector, $programa, $proyecto, $nombre, $partida, $id_ente);
+        if (!$stmt->execute()) {
+            return json_encode(["error" => "Error al actualizar."]);
+        }
+
+        $conexion->commit();
+        $stmt->close();
+
         return json_encode(["success" => "Proyecto actualizado correctamente."]);
     } catch (Exception $e) {
+        $conexion->rollback();
         registrarError($e->getMessage());
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
+
+function actualizarSuu($ente) {}
 
 
 // Obtener lista de entes
@@ -192,10 +197,11 @@ function get_unidades()
     global $conexion;
     $data = [];
 
-    $stmt = mysqli_prepare($conexion, "SELECT entes.*, pl_sectores.sector AS sector_n, pl_programas.programa AS programa_n, pl_proyectos.proyecto_id AS proyecto_n FROM `entes`
+    $stmt = mysqli_prepare($conexion, "SELECT partidas_presupuestarias.partida AS partida_n, partidas_presupuestarias.descripcion AS partida_name, entes.*, pl_sectores.sector AS sector_n, pl_programas.programa AS programa_n, pl_proyectos.proyecto_id AS proyecto_n FROM `entes`
     LEFT JOIN pl_sectores ON entes.sector = pl_sectores.id
     LEFT JOIN pl_programas ON entes.programa = pl_programas.id
     LEFT JOIN pl_proyectos ON entes.proyecto = pl_proyectos.id
+    LEFT JOIN partidas_presupuestarias ON entes.partida = partidas_presupuestarias.id
      ORDER BY tipo_ente DESC, ente_nombre ASC ");
     $stmt->execute();
     $result = $stmt->get_result();
@@ -300,8 +306,10 @@ if (isset($data["accion"])) {
         echo guardarEnte($data["unidad"]); // TODO: LISTO
     } elseif ($accion === "guardar_suu" && isset($data["info"])) {
         echo guardar_suu($data["info"]); // TODO: LISTO
-    } elseif ($accion === "update_ente" && isset($data["unidad"])) {
+    } elseif ($accion === "update_ente_ente" && isset($data["unidad"])) {
         echo actualizarEnte($data["unidad"]); // TODO: LISTO
+    } elseif ($accion === "update_ente_suu" && isset($data["unidad"])) {
+        echo actualizarSuu($data["unidad"]); // TODO: LISTO
     } elseif ($accion === 'eliminar_ente' && isset($data['id'])) {
         echo eliminarEnte($data['id']);
     } elseif ($accion === "get_unidades") {

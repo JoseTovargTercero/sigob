@@ -166,6 +166,7 @@ export const validateAsignacionEntesTable = async (id_ejercicio) => {
         },
       },
       { data: "monto" },
+      { data: "sppp" },
       { data: "fecha" },
       { data: "acciones" },
     ],
@@ -206,6 +207,12 @@ export const loadAsignacionEntesTable = async (id_ejercicio) => {
 
       return {
         ente_nombre: el.ente_nombre,
+        sppp:
+          el.se_denominacion +
+          "." +
+          el.prg_denominacion +
+          "." +
+          (el.pr_denominacion || "00"),
         monto: separarMiles(el.monto_total),
         tipo: el.tipo_ente,
         fecha: el.fecha,
@@ -227,7 +234,6 @@ export const loadAsignacionEntesTable = async (id_ejercicio) => {
         `,
       };
     });
-  console.log(data);
 
   asignacionEntesTable.clear().draw();
   // console.log(datosOrdenados)
