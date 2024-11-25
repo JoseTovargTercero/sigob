@@ -531,27 +531,31 @@ $situado = $data['situado'] ?? 'Desconocido';
             </td>
         </tr>
     </table>
-    <table>
 
-        <div style="padding: 0 0 10px 0;">
-            <?php
+    <div style="padding: 0 0 10px 0;">
+        <?php
 
 
-            $stmt = mysqli_prepare($conexion, "SELECT * FROM `entes_dependencias` WHERE ue = ? ORDER BY actividad");
-            $stmt->bind_param('s', $ente);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            if ($result->num_rows > 0) {
-                while ($row = $result->fetch_assoc()) {
-                    if (isset($totalActividad[$row['actividad']])) {
-                        echo "<b>{$row['actividad']}: {$row['ente_nombre']}</b><br>";
-                    }
+        $stmt = mysqli_prepare($conexion, "SELECT * FROM `entes_dependencias` WHERE ue = ? ORDER BY actividad");
+        $stmt->bind_param('s', $ente);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                if (isset($totalActividad[$row['actividad']])) {
+                    echo "<b>{$row['actividad']}: {$row['ente_nombre']}</b><br>";
                 }
             }
-            $stmt->close();
+        }
+        $stmt->close();
 
-            ?>
-        </div>
+        ?>
+    </div>
+
+
+
+    <table>
+
 
 
         <!-- Encabezado de columnas -->
