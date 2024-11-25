@@ -146,56 +146,55 @@ if ($tipo == '2015') {
     JOIN pl_sectores ps ON DP.id_sector = ps.id
     JOIN pl_programas pp ON DP.id_programa = pp.id";
 
-$resultDescripcionProgramas = $conexion->query($queryDescripcionProgramas);
+    $resultDescripcionProgramas = $conexion->query($queryDescripcionProgramas);
 
-if ($resultDescripcionProgramas && $resultDescripcionProgramas->num_rows > 0) {
-    while ($rowDescripcion = $resultDescripcionProgramas->fetch_assoc()) {
-        $sector_descripcion = $rowDescripcion['id_sector'];
-        $programa_descripcion = $rowDescripcion['id_programa'];
+    if ($resultDescripcionProgramas && $resultDescripcionProgramas->num_rows > 0) {
+        while ($rowDescripcion = $resultDescripcionProgramas->fetch_assoc()) {
+            $sector_descripcion = $rowDescripcion['id_sector'];
+            $programa_descripcion = $rowDescripcion['id_programa'];
 
-        // Verificar existencia en la tabla `entes`
-        $queryVerificarEnte = "SELECT 1 FROM entes 
+            // Verificar existencia en la tabla `entes`
+            $queryVerificarEnte = "SELECT 1 FROM entes 
             WHERE sector = $sector_descripcion AND programa = $programa_descripcion
             LIMIT 1";
-        $resultVerificarEnte = $conexion->query($queryVerificarEnte);
+            $resultVerificarEnte = $conexion->query($queryVerificarEnte);
 
-        if ($resultVerificarEnte && $resultVerificarEnte->num_rows > 0) {
-            $sector = $rowDescripcion['sector'];
-            $programa = $rowDescripcion['programa'];
-            $pdf_files["{$url_pdf}&id_sector=$sector_descripcion&id_programa=$programa_descripcion"] = "{$sector}-{$programa}.pdf";
+            if ($resultVerificarEnte && $resultVerificarEnte->num_rows > 0) {
+                $sector = $rowDescripcion['sector'];
+                $programa = $rowDescripcion['programa'];
+                $pdf_files["{$url_pdf}&id_sector=$sector_descripcion&id_programa=$programa_descripcion"] = "{$sector}-{$programa}.pdf";
+            }
         }
     }
-}
+} elseif ($tipo == 'metas') {
+    $pdf_files = [];
 
-}elseif ($tipo == 'metas') {
-$pdf_files = [];
+    // Consulta a pl_programas para obtener id, sector y programa
+    $queryProgramas = "SELECT id, sector, programa FROM pl_programas";
+    $resultProgramas = $conexion->query($queryProgramas);
 
-// Consulta a pl_programas para obtener id, sector y programa
-$queryProgramas = "SELECT id, sector, programa FROM pl_programas";
-$resultProgramas = $conexion->query($queryProgramas);
+    while ($rowPrograma = $resultProgramas->fetch_assoc()) {
+        $id_programa = $rowPrograma['id'];
+        $programa = $rowPrograma['programa'];
 
-while ($rowPrograma = $resultProgramas->fetch_assoc()) {
-    $id_programa = $rowPrograma['id'];
-    $programa = $rowPrograma['programa'];
+        // Consulta a pl_sectores para obtener el sector que coincide con el id de sector de pl_programas
+        $querySector = "SELECT sector FROM pl_sectores WHERE id = ?";
+        $stmtSector = $conexion->prepare($querySector);
+        $stmtSector->bind_param("i", $rowPrograma['sector']);
+        $stmtSector->execute();
+        $resultSector = $stmtSector->get_result();
 
-    // Consulta a pl_sectores para obtener el sector que coincide con el id de sector de pl_programas
-    $querySector = "SELECT sector FROM pl_sectores WHERE id = ?";
-    $stmtSector = $conexion->prepare($querySector);
-    $stmtSector->bind_param("i", $rowPrograma['sector']);
-    $stmtSector->execute();
-    $resultSector = $stmtSector->get_result();
+        if ($rowSector = $resultSector->fetch_assoc()) {
+            $sector = $rowSector['sector'];
 
-    if ($rowSector = $resultSector->fetch_assoc()) {
-        $sector = $rowSector['sector'];
+            // Genera la URL del PDF y lo almacena en el array con el formato especificado
+            $pdf_files["{$url_pdf}&id_programa=$id_programa&id_ejercicio=$id_ejercicio"] = "{$sector}-{$programa}.pdf";
+        }
 
-        // Genera la URL del PDF y lo almacena en el array con el formato especificado
-        $pdf_files["{$url_pdf}&id_programa=$id_programa&id_ejercicio=$id_ejercicio"] = "{$sector}-{$programa}.pdf";
+        $stmtSector->close();
     }
 
-    $stmtSector->close();
-}
-
-$resultProgramas->close();
+    $resultProgramas->close();
 } elseif ($tipo == 'distribucion') {
 
     function obtenerActividades($ue)
@@ -222,7 +221,8 @@ $resultProgramas->close();
 
     $stmt = mysqli_prepare($conexion, "SELECT entes.id, ps.sector, pp.programa, entes.sector AS sec_id, entes.programa AS pro_id FROM `entes`
     JOIN pl_sectores ps ON entes.sector = ps.id
-    JOIN pl_programas pp ON entes.programa = pp.id");
+    JOIN pl_programas pp ON entes.programa = pp.id 
+    WHERE tipo_ente='J'");
     $stmt->execute();
     $result = $stmt->get_result();
     if ($result->num_rows > 0) {
@@ -237,11 +237,12 @@ $resultProgramas->close();
             $actividad_1 = $actividades[0];
             $actividad_2 = $actividades[1];
 
-
             $pdf_files["{$url_pdf}&ente=$id&id_ejercicio=$id_ejercicio"] = "{$sector}-{$programa}-{$actividad_1}-{$actividad_2}.pdf";
         }
     }
     $stmt->close();
+
+    $pdf_files["{$base_url}form_pdf_" . $tipo . "_2.php?id_ejercicio=" . $id_ejercicio] = "15-01-51-51.pdf";
 } else {
     $pdf_files["{$url_pdf}"] = $reportes[$tipo]['nombre'] . ".pdf";
 }
@@ -258,15 +259,15 @@ if ($zip->open($zip_filename, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== TR
 foreach ($pdf_files as $url => $pdf_filename) {
     $html = file_get_contents($url);
 
-   $mpdf = new \Mpdf\Mpdf([
-    'mode' => 'utf-8',
-    'format' => $reportes[$tipo]['formato'],
-    'tempDir' => __DIR__ . '/temp/mpdf',
-    'margin_left' => 15,  // margen izquierdo estándar (en mm)
-    'margin_right' => 15, // margen derecho estándar (en mm)
-    'margin_top' => 16,   // margen superior estándar (en mm)
-    'margin_bottom' => 16 // margen inferior estándar (en mm)
-]);
+    $mpdf = new \Mpdf\Mpdf([
+        'mode' => 'utf-8',
+        'format' => $reportes[$tipo]['formato'],
+        'tempDir' => __DIR__ . '/temp/mpdf',
+        'margin_left' => 15,  // margen izquierdo estándar (en mm)
+        'margin_right' => 15, // margen derecho estándar (en mm)
+        'margin_top' => 16,   // margen superior estándar (en mm)
+        'margin_bottom' => 16 // margen inferior estándar (en mm)
+    ]);
     $mpdf->SetHTMLHeader('<div style="text-align: right;">Página {PAGENO} de {nb}</div>');
     $mpdf->WriteHTML($html);
     $mpdf->Output($pdf_filename, 'F');

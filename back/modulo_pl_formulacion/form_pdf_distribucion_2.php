@@ -2,12 +2,12 @@
 require_once '../sistema_global/conexion.php';
 
 // Verificación de parámetros GET
-if (!isset($_GET['id_ejercicio']) || !isset($_GET['ente'])) {
+if (!isset($_GET['id_ejercicio'])) {
     die("Parámetros faltantes.");
 }
 
 $id_ejercicio = intval($_GET['id_ejercicio']);
-$ente = intval($_GET['ente']);
+
 
 // CONSULTAS
 // Obtener denominaciones desde pl_partidas
@@ -26,56 +26,78 @@ if ($result->num_rows > 0) {
 $stmt->close();
 
 
-// CONSULTAS
-// Información del sector, programa y proyecto del ente
-$stmt = mysqli_prepare($conexion, "SELECT entes.ente_nombre, ppy.proyecto_id, ppy.denominacion AS nombre_proyecto, 
-                                        pp.programa, pp.denominacion AS nombre_programa, 
-                                        ps.sector, ps.denominacion AS nombre_sector 
-                                   FROM entes
-                                   LEFT JOIN pl_sectores ps ON ps.id = entes.sector 
-                                   LEFT JOIN pl_programas pp ON pp.id = entes.programa 
-                                   LEFT JOIN pl_proyectos ppy ON ppy.id = entes.proyecto 
-                                   WHERE entes.id = ? LIMIT 1");
-if (!$stmt) {
-    die("Error en consulta de sector y programa: " . mysqli_error($conexion));
-}
-$stmt->bind_param('i', $ente);
+
+
+$sector_n = '15';
+$ue_n = 'DESPACHO DEL GOBERNADOR';
+$proyecto_n = '00';
+$nombre_proyecto = '';
+
+
+$stmt = mysqli_prepare($conexion, "SELECT sec.id AS secId, plp.id AS proId, sec.denominacion AS nombre_sector, plp.programa, plp.denominacion AS nombre_programa FROM `pl_sectores` AS sec
+LEFT JOIN pl_programas plp ON plp.sector = sec.id
+ WHERE sec.sector = ?");
+$stmt->bind_param('s', $sector_n);
 $stmt->execute();
 $result = $stmt->get_result();
-
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
-        $sector_n = $row['sector'];
         $nombre_sector = $row['nombre_sector'];
-        $programa_n = $row['programa'];
         $nombre_programa = $row['nombre_programa'];
-        $proyecto_n = $row['proyecto_id'] ?? '00';
-        $nombre_proyecto = ($proyecto_n == '00' ? '' : $row['nombre_proyecto']);
-        $ue_n = ($row['sector'] == '15' ? 'DESPACHO DEL GOBERNADOR' : $row['ente_nombre']);
+        $programa_n = $row['programa'];
+        $sector_id = $row['secId'];
+        $programa_id = $row['proId'];
     }
-} else {
-    die("No se encontraron datos para el ente proporcionado.");
+}
+$stmt->close();
+// INFO SECCION SUPERIOR
+
+
+
+
+$stmt = mysqli_prepare($conexion, "SELECT entes.id, pp.partida FROM `entes`
+JOIN partidas_presupuestarias pp ON pp.id=entes.partida 
+ WHERE tipo_ente = 'D'
+ ORDER BY pp.partida");
+$stmt->execute();
+$result = $stmt->get_result();
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $idsEntes[] = $row['id']; // Almacena cada ID
+    }
 }
 $stmt->close();
 
+
+if (empty($idsEntes)) {
+    die('No hay entes asociados');
+}
+
+$placeholders = implode(',', array_fill(0, count($idsEntes), '?'));
+
+
 // Consultar distribuciones del ente en la tabla distribucion_entes
-$sqlDistribuciones = "SELECT distribucion FROM distribucion_entes WHERE id_ente = ? AND id_ejercicio = ?";
+$sqlDistribuciones = "SELECT distribucion FROM distribucion_entes 
+                          WHERE id_ente IN ($placeholders) AND id_ejercicio = ?";
 $stmt = $conexion->prepare($sqlDistribuciones);
 if (!$stmt) {
     die("Error en consulta de distribuciones del ente: " . mysqli_error($conexion));
 }
-$stmt->bind_param('ii', $ente, $id_ejercicio);
+
+// Vincula los parámetros: primero los IDs de los entes, luego el id_ejercicio
+$types = str_repeat('i', count($idsEntes)) . 'i'; // 'i' para cada entero
+$params = array_merge($idsEntes, [$id_ejercicio]); // Junta los IDs y el id_ejercicio
+
+$stmt->bind_param($types, ...$params);
 $stmt->execute();
 $resultDistribuciones = $stmt->get_result();
+
 
 $partidasData = [];
 $maxActividad = 51;
 
 while ($rowDistribucion = $resultDistribuciones->fetch_assoc()) {
     $distribuciones = json_decode($rowDistribucion['distribucion'], true);
-
-
-
 
     if (!is_array($distribuciones)) {
         continue;
@@ -187,18 +209,13 @@ while ($rowDistribucion = $resultDistribuciones->fetch_assoc()) {
                     'actividad' => $actividad
                 ];
 
-                $partidasData[$partidaCompleta . '.' . $actividad] = $partidaInfo;
+                $partidasData[] = $partidaInfo;
             }
         }
     }
 }
 
 $stmt->close();
-
-
-ksort($partidasData);
-
-
 
 
 // Determinar el rango de actividades
@@ -257,6 +274,7 @@ foreach ($partidasData as $partida) {
         $partidasAgrupadas[$partKey]['actividades'][$actividad] += $partida['monto'];
     }
 }
+
 
 // Consultar datos del ejercicio fiscal
 $query_sector = "SELECT * FROM ejercicio_fiscal WHERE id = ?";
@@ -470,7 +488,6 @@ $situado = $data['situado'] ?? 'Desconocido';
     <?php
     $totalProgramaGeneral = 0;
     $totalActividad = array_fill($inicioActividad, $finActividad - $inicioActividad + 1, 0);
-    $totalMontoObra = 0;
     $totalPartida = 0;
     $partAnterior = null;
     usort($partidasAgrupadas, function ($a, $b) {
@@ -531,170 +548,122 @@ $situado = $data['situado'] ?? 'Desconocido';
             </td>
         </tr>
     </table>
+
+
+    <div style="padding: 0 0 10px 0;">
+        <b>51: CREDITOS ADMINISTRADOS POR LA DIRECCIÓN EJECUTIVA</b><br>
+    </div>
+
+
+
     <table>
 
-        <div style="padding: 0 0 10px 0;">
-            <?php
-
-
-            $stmt = mysqli_prepare($conexion, "SELECT * FROM `entes_dependencias` WHERE ue = ? ORDER BY actividad");
-            $stmt->bind_param('s', $ente);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            if ($result->num_rows > 0) {
-                while ($row = $result->fetch_assoc()) {
-                    if (isset($totalActividad[$row['actividad']])) {
-                        echo "<b>{$row['actividad']}: {$row['ente_nombre']}</b><br>";
-                    }
-                }
-            }
-            $stmt->close();
-
-            ?>
-        </div>
-
-
-        <!-- Encabezado de columnas -->
         <tr>
-            <th class="br bb bt bl">PART</th>
-            <th class="br bb bt">GEN</th>
-            <th class="br bb bt">ESP</th>
-            <th class="br bb bt">SUB ESP</th>
-            <th class="br bb bt">COD ORDI</th>
-            <th class="br bb bt">COD OBR</th>
-            <th class="br bb bt">DENOMINACIÓN</th>
-            <th class="br bb bt">TOTAL PROGRAMA</th>
+            <th class="br bt bb bl">PART</th>
+            <th class="br bt bb">GEN</th>
+            <th class="br bt bb">ESP</th>
+            <th class="br bt bb">SUB ESP</th>
+            <th class="br bt bb">COD ORDI</th>
+            <th class="br bt bb">COD OBR</th>
+            <th class="br bt bb">DENOMINACIÓN</th>
+            <th class="br bt bb">TOTAL PROGRAMA</th>
             <?php for ($actividad = $inicioActividad; $actividad <= $finActividad; $actividad++): ?>
-                <th class="br bb bt">ACTIVIDAD <?= $actividad ?></th>
+                <th class="br bt bb">ACTIVIDAD <?= $actividad ?></th>
             <?php endfor; ?>
-            <th class="br bb bt">MONTO DE LA OBRA</th>
+            <th class="br bt bb">MONTO DE LA OBRA</th>
         </tr>
-
-        <!-- Fila para los encabezados principales (part, gen, esp, sub-esp) -->
         <?php
         $totalPartida = 0;
-        $codigoPartidaAnterior = ''; // Para verificar cuando cambie el código de partida
-        ?>
+        $codigoPartidaAnterior = '';
+        $totalActividad = array_fill($inicioActividad, $finActividad - $inicioActividad + 1, 0);
+        $totalProgramaGeneral = 0;
+        $ultimaDenominacionPrincipal = '';
 
-        <?php foreach ($partidasAgrupadas as $partidaKey => $partida): ?>
-            <?php
-            // Verificar si el código de la partida cambió
+        // Consulta previa para optimizar las denominaciones
+        $denominacionesPartidas = [];
+        $query = "SELECT partida, denominacion FROM pl_partidas";
+        $result = mysqli_query($conexion, $query);
+        while ($row = mysqli_fetch_assoc($result)) {
+            $denominacionesPartidas[$row['partida']] = $row['denominacion'];
+        }
+
+        foreach ($partidasAgrupadas as $partidaKey => $partida):
+            if ($ultimaDenominacionPrincipal !== $partida['denominacion_principal']) {
+                echo "<tr>
+                  <th class=' crim br bl'>" . $partida['part'] . "</th>
+                <th class=' crim br '>" . $partida['gen'] . "</th>
+                <th class=' crim br '>" . $partida['esp'] . "</th>
+                <th class=' crim br '>" . $partida['sub_esp'] . "</th>
+                <th class=' crim br '></th>
+                <th class=' crim br '></th>
+                <td class=' crim br text-left'><u>{$partida['denominacion_principal']}</u></td>
+                <th class=' crim br '></th>
+                <th class=' crim br '></th>
+                <th class=' crim br '></th>
+                </tr>";
+                $ultimaDenominacionPrincipal = $partida['denominacion_principal'];
+            }
+
             if ($partida['part'] !== $codigoPartidaAnterior && $codigoPartidaAnterior !== ''):
-                // Realizar la consulta para obtener la denominación de la partida
-                $denominacionPartida = '';
-                $queryDenominacion = "SELECT denominacion FROM pl_partidas WHERE partida = '" . $codigoPartidaAnterior . "'";
-                $resultDenominacion = mysqli_query($conexion, $queryDenominacion);
-                if ($row = mysqli_fetch_assoc($resultDenominacion)) {
-                    $denominacionPartida = $row['denominacion'];
-                }
-            ?>
+                $denominacionPartida = $denominacionesPartidas[$codigoPartidaAnterior] ?? '';
+        ?>
                 <tr>
-                    <th colspan="6" class="br bb bt bl text-end underline p10">
-                        TOTAL POR PARTIDA <?= $codigoPartidaAnterior ?>
-                    </th>
-                    <th class="br bb bt text-left underline"><?= $denominacionPartida ?></th>
-                    <th class="br bb bt"><?= number_format($totalPartida, 2) ?></th>
-
-                    <!-- Totales por actividad -->
+                    <td colspan="6" class="br  bl text-end underline ">TOTAL POR PARTIDA <?= $codigoPartidaAnterior ?></td>
+                    <td class="br  text-left"><?= $denominacionPartida ?></td>
+                    <td class="br "><?= number_format($totalPartida, 2) ?></td>
                     <?php for ($actividad = $inicioActividad; $actividad <= $finActividad; $actividad++): ?>
-                        <th class="br bb bt bl"><?= number_format($totalActividad[$actividad], 2) ?></th>
+                        <td class="br  bl"><?= number_format($totalActividad[$actividad], 2) ?></td>
                     <?php endfor; ?>
-
-                    <th class="br   bl"></th>
+                    <td class="br  bl"><?= number_format($totalPartida, 2) ?></td>
                 </tr>
             <?php
-                // Reiniciar el acumulado para la nueva partida
                 $totalPartida = 0;
             endif;
             ?>
-            <!-- Fila para los encabezados normales (part, gen, esp, sub-esp) -->
             <tr>
-                <td class="crim br bl"><?= $partida['part_principal'] ?></td>
-                <td class="crim br"><?= $partida['gen_principal'] ?></td>
-                <td class="crim br"><?= $partida['esp_principal'] ?></td>
-                <td class="crim br"><?= $partida['sub_esp_principal'] ?></td>
-                <td class="br "></td> <!-- Espacio vacío para COD ORDI -->
-                <td class="br "></td> <!-- Espacio vacío para COD OBR -->
-                <td class="crim br  text-left"><u><?= $partida['denominacion_principal'] ?></u></td>
+                <td class="br bl"><?= $partida['part'] ?></td>
+                <td class="br"><?= $partida['gen'] ?></td>
+                <td class="br"><?= $partida['esp'] ?></td>
+                <td class="br"><?= $partida['sub_esp'] ?></td>
+                <td class="br "><?= $partida['cod_ordi'] ?></td>
                 <td class="br "></td>
-
-                <!-- Actividades dinámicas -->
-                <?php for ($actividad = $inicioActividad; $actividad <= $finActividad; $actividad++): ?>
-                    <td class="br  bl"></td>
-                <?php endfor; ?>
-
-                <!-- Monto de la obra -->
-                <td class="br  bl"></td>
-            </tr>
-
-            <!-- Fila para los encabezados normales (part, gen, esp, sub-esp) -->
-            <tr>
-                <td class="br  bl"><?= $partida['part'] ?></td>
-                <td class="br "><?= $partida['gen'] ?></td>
-                <td class="br "><?= $partida['esp'] ?></td>
-                <td class="br "><?= $partida['sub_esp'] ?></td>
-                <td class="br "><?= $partida['cod_ordi'] ?></td> <!-- COD ORDI -->
-                <td class="br "></td> <!-- Espacio vacío para COD OBR -->
                 <td class="br  text-left"><?= $partida['denominacion'] ?></td>
                 <td class="br "><?= number_format($partida['total_programa'], 2) ?></td>
-
-                <!-- Actividades dinámicas -->
                 <?php for ($actividad = $inicioActividad; $actividad <= $finActividad; $actividad++): ?>
-                    <td class="br  bl"><?= ($partida['actividades'][$actividad] > 0 ? number_format($partida['actividades'][$actividad], 2) : '0,00') ?></td>
-                    <?php
-                    // Acumulando el total de actividades
-                    $totalActividad[$actividad] += $partida['actividades'][$actividad];
-                    ?>
+                    <td class="br  bl"><?= $partida['actividades'][$actividad] > 0 ? number_format($partida['actividades'][$actividad], 2) : '' ?></td>
+                    <?php $totalActividad[$actividad] += $partida['actividades'][$actividad]; ?>
                 <?php endfor; ?>
-
-                <td class="br bl"></td>
+                <td class="br  bl"></td>
                 <?php
-                // Acumulando el total de la obra
-                $totalMontoObra += $partida['total_programa'];
-                // Acumulando el total de la partida
                 $totalPartida += $partida['total_programa'];
-                // Acumulando el total general del programa
                 $totalProgramaGeneral += $partida['total_programa'];
-                $codigoPartidaAnterior = $partida['part']; // Guardar el código de la partida actual
+                $codigoPartidaAnterior = $partida['part'];
                 ?>
             </tr>
         <?php endforeach; ?>
-
-        <!-- Fila de total de la última partida -->
-        <?php
-        // Obtener la denominación de la última partida
-        $denominacionPartida = '';
-        $queryDenominacion = "SELECT denominacion FROM pl_partidas WHERE partida = '" . $codigoPartidaAnterior . "'";
-        $resultDenominacion = mysqli_query($conexion, $queryDenominacion);
-        if ($row = mysqli_fetch_assoc($resultDenominacion)) {
-            $denominacionPartida = $row['denominacion'];
-        }
-        ?>
-
-
         <tr>
-            <th colspan="6" class="br bb bt bl text-end underline p10">
-                TOTAL POR PARTIDA <?= $codigoPartidaAnterior ?>
-            </th>
-            <th class="br bb bt"><?= $denominacionPartida ?></th>
-            <th class=" br bb bt"><?= number_format($totalPartida, 2) ?></th>
-            <!-- Totales por actividad -->
+            <th colspan="6" class="br bt bb  bl text-end underline p10 ">TOTAL POR PARTIDA <?= $codigoPartidaAnterior ?></th>
+            <th class="br bt bb  underline p10 text-left"><?= $denominacionesPartidas[$codigoPartidaAnterior] ?? '' ?></th>
+            <th class="br bt bb  underline p10"><?= number_format($totalPartida, 2) ?></th>
             <?php for ($actividad = $inicioActividad; $actividad <= $finActividad; $actividad++): ?>
-                <th class="br bb bt bl"><?= number_format($totalActividad[$actividad], 2) ?></th>
+                <th class="br bt bb  bl underline p10"><?= number_format($totalActividad[$actividad], 2) ?></th>
             <?php endfor; ?>
-            <th class="br bb "></th>
+            <th class="br    bl underline p10"></th>
         </tr>
-
-        <!-- Fila de totales generales -->
-        <tr>
-            <th colspan="7" class="br bb bl text-end underline p10 crim">TOTAL GENERAL</th>
-            <th class="crim br bb"><?= number_format($totalProgramaGeneral, 2) ?></th>
+        <tr style="    font-weight: bold;">
+            <th colspan="7" class="br bt bb bl text-end underline  p10 crim ">TOTAL GENERAL</th>
+            <th class="br bt bb underline  p10 crim"><?= number_format($totalProgramaGeneral, 2) ?></th>
             <?php for ($actividad = $inicioActividad; $actividad <= $finActividad; $actividad++): ?>
-                <th class="crim br bb"><?= number_format($totalActividad[$actividad], 2) ?></th>
+                <th class="br bt bb underline  p10 crim"><?= number_format($totalActividad[$actividad], 2) ?></th>
             <?php endfor; ?>
-            <th class="crim br bb"></th>
+            <th class="br bt bb underline  p10 crim"></th>
         </tr>
     </table>
+
+
+
+
+
 </body>
 
 </html>

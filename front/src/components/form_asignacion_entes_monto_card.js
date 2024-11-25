@@ -37,14 +37,12 @@ export const form_asignacion_entes_monto_card = async ({
 
   let ente = await getEnte(enteId);
 
-  console.log("resutlado");
-  console.log(ente);
   ente.dependencias.forEach((el) => {
     fieldList.monto += Number(el.distribucion_sumatoria);
   });
 
   const oldCardElement = d.getElementById("asignacion-ente-monto-form-card");
-  if (oldCardElement) oldCardElement.remove();
+  // if (oldCardElement) oldCardElement.remove();
 
   let card = `<div class='card slide-up-animation' id='asignacion-ente-monto-form-card'>
       <div class='card-header d-flex justify-content-between'>
@@ -73,7 +71,6 @@ export const form_asignacion_entes_monto_card = async ({
            ? "<span class='badge bg-primary'>Jurídico</span>"
            : "<span class='badge bg-success'>Descentralizado</span>"
        }
-
 
 
       </div>
