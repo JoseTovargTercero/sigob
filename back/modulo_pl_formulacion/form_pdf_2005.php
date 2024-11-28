@@ -9,10 +9,10 @@ $stmt = $conexion->prepare($query_sector);
 $stmt->bind_param('i', $id_ejercicio);
 $stmt->execute();
 $result = $stmt->get_result();
-$data = $result->fetch_assoc();
+$resultado = $result->fetch_assoc();
 
-$ano = $data['ano'];
-$situado = $data['situado'];
+$ano = $resultado['ano'];
+$situado = $resultado['situado'];
 $stmt->close();
 
 // Consultar distribuciones presupuestarias
@@ -63,7 +63,16 @@ foreach ($distribuciones as $distribucion) {
 
     // Agrupar datos por código de partida
     if (in_array($codigo_partida, $partidas_a_agrupadas)) {
-        $data[$codigo_partida][] = [$partida, $descripcion, 0, $monto_inicial, 0, 0, $monto_inicial];
+
+
+        if (@$data[$codigo_partida][$partida]) {
+            $data[$codigo_partida][$partida][3] = intval($data[$codigo_partida][$partida]) +  $monto_inicial;
+        } else {
+            $data[$codigo_partida][$partida] = [$partida, $descripcion, 0, $monto_inicial, 0, 0, $monto_inicial];
+        }
+
+
+
 
         if (!isset($totales_por_partida[$codigo_partida])) {
             $totales_por_partida[$codigo_partida] = 0;
@@ -71,6 +80,10 @@ foreach ($distribuciones as $distribucion) {
         $totales_por_partida[$codigo_partida] += $monto_inicial;
     }
 }
+
+
+
+
 
 ?>
 
@@ -321,6 +334,10 @@ foreach ($distribuciones as $distribucion) {
 
                     foreach ($data[$codigo_agrupado] as $row) {
 
+
+
+
+
                         $t_ingreso_propio += $ingreso_propio = $row[2];
                         $t_situado_estada += $situado_estada = $row[3];
                         $t_fci += $fci = $row[4];
@@ -370,8 +387,6 @@ foreach ($distribuciones as $distribucion) {
             <td class='bl bb fw-bold'>" . number_format($tt_otras_fuentes, 2, ',', '.') . "</td>
             <td class='bl br bb fw-bold'>" . number_format($tt_total, 2, ',', '.') . "</td>
     </tr >";
-
-
             echo "</tbody >
         </table>";
             ?>
