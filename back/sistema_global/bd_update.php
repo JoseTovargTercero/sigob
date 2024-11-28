@@ -56,7 +56,7 @@ $db = new DatabaseHandler($conexion);
             <label for="llave" class="form-label">Llave de verificación</label>
             <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-key"></i></span>
-                <input type="text" value="" class="form-control" id="llave" placeholder="Ingrese la llave">
+                <input type="text" value="4F1DAB34F6B9065EBAE074B5599A869914DB11D9A596B3C493A3A9AB9" class="form-control" id="llave" placeholder="Ingrese la llave">
                 <button id="btn-validar" class="btn btn-primary">Validar</button>
 
             </div>
