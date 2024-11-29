@@ -27,7 +27,6 @@ $stmt->close();
 
 
 
-
 $sector_n = '15';
 $ue_n = 'DESPACHO DEL GOBERNADOR';
 $proyecto_n = '00';
@@ -51,6 +50,103 @@ if ($result->num_rows > 0) {
 }
 $stmt->close();
 // INFO SECCION SUPERIOR
+
+
+
+// Obtener el nombre de la partida
+// Usar la partida modificada con los últimos 4 dígitos en '0000'
+$sqlDenominacionPrincipal = "SELECT descripcion 
+ FROM partidas_presupuestarias 
+ WHERE partida = ?";
+$stmtDenominacionPrincipal = $conexion->prepare($sqlDenominacionPrincipal);
+
+if (!$stmtDenominacionPrincipal) {
+    die("Error en consulta de denominación principal: " . mysqli_error($conexion));
+}
+
+
+
+
+// obtener todoas las partidas incluyendo las que no son entes
+
+$distribuciones_lista_g = [];
+
+$stmt = mysqli_prepare($conexion, "SELECT * FROM `distribucion_presupuestaria` AS dp 
+LEFT JOIN partidas_presupuestarias pp ON pp.id = dp.id_partida
+WHERE id_sector = ? AND id_ejercicio = ?");
+$stmt->bind_param('ss', $sector_id, $id_ejercicio);
+$stmt->execute();
+$result = $stmt->get_result();
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $partidaCompleta = $row['partida'];
+        $descripcion = $row['descripcion'];
+        $monto = $row['monto_inicial'];
+        $actividad = $row['id_actividad'];
+
+        $partidaArray = explode('.', $partidaCompleta);
+
+        $part = $partidaArray[0] ?? null;
+        $gen = $partidaArray[1] ?? null;
+        $esp = $partidaArray[2] ?? null;
+        $sub_esp = $partidaArray[3] ?? null;
+        $cod_ordi = $partidaArray[4] ?? '0000';  // Definir cod_ordi si no existe
+
+
+        // Modificar la partida para que los últimos 4 dígitos sean 0000
+        $partidaModificada = implode('.', array_slice($partidaArray, 0, 4)) . '.0000';
+
+
+        // Verificar el valor de cod_ordi
+        if ($cod_ordi !== '0000') {
+            // Si cod_ordi es diferente de '0000', buscar la descripcion principal
+
+            // Pasar la partida modificada a la consulta
+            $stmtDenominacionPrincipal->bind_param('s', $partidaModificada);
+            $stmtDenominacionPrincipal->execute();
+            $resultDenominacionPrincipal = $stmtDenominacionPrincipal->get_result();
+            $dataDenominacionPrincipal = $resultDenominacionPrincipal->fetch_assoc();
+
+            $denominacion_principal = $dataDenominacionPrincipal['descripcion'] ?? $descripcion;
+        } else {
+            $denominacion_principal = $descripcion;
+        }
+
+        // Desglosar la denominación principal
+        $partidaPrincipalArray = explode('.', $partidaModificada);
+        $part_principal = $partidaPrincipalArray[0] ?? null;
+        $gen_principal = $partidaPrincipalArray[1] ?? null;
+        $esp_principal = $partidaPrincipalArray[2] ?? null;
+        $sub_esp_principal = $partidaPrincipalArray[3] ?? null;
+        $cod_ordi_principal = $partidaPrincipalArray[4] ?? '0000'; // Este será siempre 0000
+
+
+        $partKey = $part . '-' . $descripcion;
+
+
+        $distribuciones_lista_g[$partKey] = [
+            'part' => $part,
+            'gen' => $gen,
+            'esp' => $esp,
+            'sub_esp' => $sub_esp,
+            'cod_ordi' => $cod_ordi,
+            'denominacion' => $descripcion,
+            'denominacion_principal' => $denominacion_principal,
+            'part_principal' => $part_principal,
+            'gen_principal' => $gen_principal,
+            'esp_principal' => $esp_principal,
+            'sub_esp_principal' => $sub_esp_principal,
+            'cod_ordi_principal' => $cod_ordi_principal,
+            'total_programa' => $monto,
+            'actividades' => [
+                $actividad => $monto,
+            ]
+        ];
+    }
+}
+$stmt->close();
+
+
 
 
 
@@ -78,7 +174,10 @@ $placeholders = implode(',', array_fill(0, count($idsEntes), '?'));
 
 // Consultar distribuciones del ente en la tabla distribucion_entes
 $sqlDistribuciones = "SELECT distribucion FROM distribucion_entes 
-                          WHERE id_ente IN ($placeholders) AND id_ejercicio = ?";
+                        LEFT JOIN entes e ON e.id = distribucion_entes.id_ente
+                          WHERE id_ente IN ($placeholders) AND id_ejercicio = ?
+                          ORDER BY e.partida
+                          ";
 $stmt = $conexion->prepare($sqlDistribuciones);
 if (!$stmt) {
     die("Error en consulta de distribuciones del ente: " . mysqli_error($conexion));
@@ -107,6 +206,9 @@ while ($rowDistribucion = $resultDistribuciones->fetch_assoc()) {
         if (!isset($distribucion['id_distribucion']) || !isset($distribucion['monto'])) {
             continue;
         }
+
+
+
 
         $id_distribucion = intval($distribucion['id_distribucion']);
         $monto = floatval($distribucion['monto']);
@@ -157,6 +259,8 @@ while ($rowDistribucion = $resultDistribuciones->fetch_assoc()) {
                 $sub_esp = $partidaArray[3] ?? null;
                 $cod_ordi = $partidaArray[4] ?? '0000';  // Definir cod_ordi si no existe
 
+                $titulo = $part . '.' . $gen . '.' . $esp . '.' . $sub_esp;
+
                 // Modificar la partida para que los últimos 4 dígitos sean 0000
                 $partidaModificada = implode('.', array_slice($partidaArray, 0, 4)) . '.0000';
 
@@ -164,15 +268,6 @@ while ($rowDistribucion = $resultDistribuciones->fetch_assoc()) {
                 // Verificar el valor de cod_ordi
                 if ($cod_ordi !== '0000') {
                     // Si cod_ordi es diferente de '0000', buscar la descripcion principal
-                    // Usar la partida modificada con los últimos 4 dígitos en '0000'
-                    $sqlDenominacionPrincipal = "SELECT descripcion 
-                                 FROM partidas_presupuestarias 
-                                 WHERE partida = ?";
-                    $stmtDenominacionPrincipal = $conexion->prepare($sqlDenominacionPrincipal);
-
-                    if (!$stmtDenominacionPrincipal) {
-                        die("Error en consulta de denominación principal: " . mysqli_error($conexion));
-                    }
 
                     // Pasar la partida modificada a la consulta
                     $stmtDenominacionPrincipal->bind_param('s', $partidaModificada);
@@ -215,6 +310,7 @@ while ($rowDistribucion = $resultDistribuciones->fetch_assoc()) {
     }
 }
 
+
 $stmt->close();
 
 
@@ -227,6 +323,13 @@ $partidasAgrupadas = [];
 foreach ($partidasData as $partida) {
     $partKey = $partida['part'] . '-' . $partida['denominacion'];
     $actividad = intval($partida['actividad']);
+
+
+
+    if (@$distribuciones_lista_g[$partKey]) {
+        unset($distribuciones_lista_g[$partKey]);
+    }
+
 
     // Estructura para almacenar información consolidada de la partida
     $partidaInfo = [
@@ -290,6 +393,55 @@ $stmt->close();
 
 $ano = $data['ano'] ?? 'Desconocido';
 $situado = $data['situado'] ?? 'Desconocido';
+
+
+
+
+
+
+
+foreach ($distribuciones_lista_g as $key => $value) {
+    array_push($partidasAgrupadas, $value);
+}
+
+
+
+usort($partidasAgrupadas, function ($a, $b) {
+    // Compara 'part'
+    if ($a['part'] != $b['part']) {
+        return $a['part'] <=> $b['part'];
+    }
+    // Compara 'gen'
+    if ($a['gen'] != $b['gen']) {
+        return $a['gen'] <=> $b['gen'];
+    }
+    // Compara 'esp'
+    if ($a['esp'] != $b['esp']) {
+        return $a['esp'] <=> $b['esp'];
+    }
+    // Compara 'sub_esp'
+    if ($a['sub_esp'] != $b['sub_esp']) {
+        return $a['sub_esp'] <=> $b['sub_esp'];
+    }
+    // Compara 'cod_ordi'
+    return $a['cod_ordi'] <=> $b['cod_ordi'];
+});
+
+
+
+
+
+/*
+echo '..............';
+echo '<pre>';
+print_r($partidasAgrupadas);
+echo '</pre>';
+
+
+
+exit;
+*/
+
 ?>
 
 
@@ -490,7 +642,7 @@ $situado = $data['situado'] ?? 'Desconocido';
     $totalActividad = array_fill($inicioActividad, $finActividad - $inicioActividad + 1, 0);
     $totalPartida = 0;
     $partAnterior = null;
-    usort($partidasAgrupadas, function ($a, $b) {
+    /*usort($partidasAgrupadas, function ($a, $b) {
         // Primero, manejar los casos donde 'cod_ordi' es vacío o '0000'
         if ($a['cod_ordi'] === '0000' && $b['cod_ordi'] !== '0000') {
             return 1;  // Poner el '0000' al final
@@ -501,12 +653,12 @@ $situado = $data['situado'] ?? 'Desconocido';
 
         // Si ambos son diferentes de '0000', ordenar numéricamente
         return (int)$a['cod_ordi'] <=> (int)$b['cod_ordi'];
-    });
+    });*/
     // Ordenar el array $partidasAgrupadas por 'part'
-    usort($partidasAgrupadas, function ($a, $b) {
+    /*  usort($partidasAgrupadas, function ($a, $b) {
         return $a['part'] <=> $b['part'];
     });
-
+*/
     ?>
 
     <table class='header-table bt br bb bl bc-lightgray'>
@@ -588,38 +740,47 @@ $situado = $data['situado'] ?? 'Desconocido';
         }
 
         foreach ($partidasAgrupadas as $partidaKey => $partida):
+
+            if ($partida['part'] !== $codigoPartidaAnterior && $codigoPartidaAnterior !== '') {
+                $denominacionPartida = $denominacionesPartidas[$codigoPartidaAnterior] ?? '';
+                echo '  <tr>
+                    <td colspan="6" class="  bl text-end underline "><b>TOTAL POR PARTIDA ' . $codigoPartidaAnterior . '</b></td>
+                    <td class=" text-left underline"><b>' . $denominacionPartida . '</b></td>
+                    <td class="underline"><b>' . number_format($totalPartida, 2) . '</b></td>';
+
+                for ($actividad = $inicioActividad; $actividad <= $finActividad; $actividad++) {
+                    echo '<td class="br  underline"><b>' . number_format($totalActividad[$actividad], 2) . '</b></td>';
+                }
+                echo '
+                    <td class="br  underline"><b></b></td>
+                </tr>';
+
+
+                $totalPartida = 0;
+            }
+
+
+
             if ($ultimaDenominacionPrincipal !== $partida['denominacion_principal']) {
                 echo "<tr>
-                  <th class=' crim br bl'>" . $partida['part'] . "</th>
-                <th class=' crim br '>" . $partida['gen'] . "</th>
-                <th class=' crim br '>" . $partida['esp'] . "</th>
-                <th class=' crim br '>" . $partida['sub_esp'] . "</th>
-                <th class=' crim br '></th>
-                <th class=' crim br '></th>
-                <td class=' crim br text-left'><u>{$partida['denominacion_principal']}</u></td>
-                <th class=' crim br '></th>
-                <th class=' crim br '></th>
-                <th class=' crim br '></th>
-                </tr>";
+                      <th class=' crim br bl'>" . $partida['part'] . "</th>
+                    <th class=' crim br '>" . $partida['gen'] . "</th>
+                    <th class=' crim br '>" . $partida['esp'] . "</th>
+                    <th class=' crim br '>" . $partida['sub_esp'] . "</th>
+                    <th class=' crim br '></th>
+                    <th class=' crim br '></th>
+                    <td class=' crim br text-left'><u>{$partida['denominacion_principal']}</u></td>
+                    <th class=' crim br '></th>
+                    <th class=' crim br '></th>
+                    <th class=' crim br '></th>
+                    </tr>";
                 $ultimaDenominacionPrincipal = $partida['denominacion_principal'];
             }
 
-            if ($partida['part'] !== $codigoPartidaAnterior && $codigoPartidaAnterior !== ''):
-                $denominacionPartida = $denominacionesPartidas[$codigoPartidaAnterior] ?? '';
+
+
+
         ?>
-                <tr>
-                    <td colspan="6" class="br  bl text-end underline ">TOTAL POR PARTIDA <?= $codigoPartidaAnterior ?></td>
-                    <td class="br  text-left"><?= $denominacionPartida ?></td>
-                    <td class="br "><?= number_format($totalPartida, 2) ?></td>
-                    <?php for ($actividad = $inicioActividad; $actividad <= $finActividad; $actividad++): ?>
-                        <td class="br  bl"><?= number_format($totalActividad[$actividad], 2) ?></td>
-                    <?php endfor; ?>
-                    <td class="br  bl"><?= number_format($totalPartida, 2) ?></td>
-                </tr>
-            <?php
-                $totalPartida = 0;
-            endif;
-            ?>
             <tr>
                 <td class="br bl"><?= $partida['part'] ?></td>
                 <td class="br"><?= $partida['gen'] ?></td>
