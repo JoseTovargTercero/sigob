@@ -137,7 +137,6 @@ function actualizarEnte($ente)
 
 
         if ($sector != '10') {
-
             // validar que no exista un ente por el mismo sector y programa ! diferente de 15
             $stmt = mysqli_prepare($conexion, "SELECT * FROM `entes` WHERE sector = ? AND programa = ? AND id != ?");
             $stmt->bind_param('sss', $sector, $programa, $id_ente);
@@ -176,6 +175,15 @@ function actualizarEnte($ente)
             return json_encode(["error" => "Error al actualizar."]);
         }
 
+
+        $sql = "UPDATE entes_dependencias SET sector = ?, programa=? WHERE ue = ?";
+        $stmt = $conexion->prepare($sql);
+        $stmt->bind_param("sss", $sector, $programa, $id_ente);
+        if (!$stmt->execute()) {
+            return json_encode(["error" => "Error al actualizar."]);
+        }
+
+
         $conexion->commit();
         $stmt->close();
 
@@ -188,8 +196,26 @@ function actualizarEnte($ente)
 }
 
 
-function actualizarSuu($ente) {}
+function actualizarSuu($ente)
+{
+    global $conexion;
 
+    $nombre = $ente['nombre'];
+    $proyecto = $ente['proyecto'];
+    $id_ente = $ente['id_ente'];
+
+    $sql = "UPDATE entes_dependencias SET ente_nombre = ?, proyecto=? WHERE id = ?";
+    $stmt = $conexion->prepare($sql);
+    $stmt->bind_param("sss", $nombre, $proyecto, $id_ente);
+    if (!$stmt->execute()) {
+        return json_encode(["error" => "Error al actualizar."]);
+    } else {
+        return json_encode(["success" => "Información actualizada correctamente."]);
+    }
+
+    $conexion->commit();
+    $stmt->close();
+}
 
 // Obtener lista de entes
 function get_unidades()
@@ -224,9 +250,6 @@ function get_sub_unidades()
     $data = [];
 
 
-
-
-
     $stmt = mysqli_prepare($conexion, "SELECT entes_dependencias.*, entes.ente_nombre AS nombre_ente_p, pl_sectores.sector AS sector_n, pl_programas.programa AS programa_n, pl_proyectos.proyecto_id AS proyecto_n FROM `entes_dependencias`
     LEFT JOIN entes ON entes.id = entes_dependencias.ue
     LEFT JOIN pl_sectores ON entes_dependencias.sector = pl_sectores.id
@@ -247,8 +270,6 @@ function get_sub_unidades()
     $stmt->close();
     return json_encode(['success' => $data]);
 }
-
-
 
 function eliminarEnte($id)
 {
@@ -295,6 +316,32 @@ function eliminarEnte($id)
     $stmt->close();
 }
 
+function eliminarSuu($id)
+{
+    global $conexion;
+
+    $stmt_2 = mysqli_prepare($conexion, "SELECT * FROM `distribucion_entes` WHERE actividad_id = ? ");
+    $stmt_2->bind_param('s', $id);
+    $stmt_2->execute();
+    $result_2 = $stmt_2->get_result();
+    if ($result_2->num_rows > 0) {
+        echo json_encode(['error' => 'No se puede eliminar, el ente tiene una asignación']);
+        exit;
+    }
+    $stmt_2->close();
+
+
+    $stmt = $conexion->prepare("DELETE FROM `entes_dependencias` WHERE id = ? ");
+    $stmt->bind_param("i", $id);
+
+    if ($stmt->execute()) {
+        echo json_encode(['success' => 'Unidad eliminada']);
+    } else {
+        echo json_encode(['error' => 'No se pudo eliminar la unidad']);
+    }
+    $stmt->close();
+}
+
 // Procesar la solicitud
 $data = json_decode(file_get_contents("php://input"), true);
 
@@ -312,9 +359,10 @@ if (isset($data["accion"])) {
         echo actualizarSuu($data["unidad"]); // TODO: LISTO
     } elseif ($accion === 'eliminar_ente' && isset($data['id'])) {
         echo eliminarEnte($data['id']);
+    } elseif ($accion === 'eliminar_suu' && isset($data['id'])) {
+        echo eliminarSuu($data['id']);
     } elseif ($accion === "get_unidades") {
         echo get_unidades(); // TODO: LISTO
-
     } elseif ($accion === "get_sub_unidades") {
         echo get_sub_unidades(); // TODO: LISTO
     } else {

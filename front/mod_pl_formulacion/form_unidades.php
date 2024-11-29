@@ -120,7 +120,7 @@ $stmt->close();
 
                     </div>
                     <div class="row mb-3">
-                      <div class="col-lg-4">
+                      <div class="col-lg-4 not_suu">
                         <label for="sector" class="form-label">Sector</label>
                         <select type="text" class="form-control" id="sector">
                           <option value="">Seleccione</option>
@@ -142,7 +142,7 @@ $stmt->close();
                         </select>
                       </div>
 
-                      <div class="col-lg-4">
+                      <div class="col-lg-4 not_suu">
                         <label for="programa" class="form-label">Programa</label>
                         <select type="text" class="form-control" id="programa">
                           <option value="">Seleccione</option>
@@ -236,7 +236,7 @@ $stmt->close();
                       <h5 class="mb-0">
                         Unidades registradas
                       </h5>
-                      <button class="btn btn-secondary btn-sm" onclick="nuevoProyecto()">
+                      <button class="btn btn-secondary btn-sm" onclick="nuevaUnidad()">
                         <i class="bx bx-plus"></i>
                         Nueva unidad
                       </button>
@@ -277,7 +277,7 @@ $stmt->close();
                       <h5 class="mb-0">
                         Unidades registradas
                       </h5>
-                      <button class="btn btn-secondary btn-sm" onclick="nuevoProyecto()">
+                      <button class="btn btn-secondary btn-sm" onclick="nuevaUnidad()">
                         <i class="bx bx-plus"></i>
                         Nueva unidad
                       </button>
@@ -340,7 +340,7 @@ $stmt->close();
               <div class="row mb-3">
                 <div class="col-lg-4">
                   <label for="sector-2" class="form-label">Sector</label>
-                  <select class="form-control" id="sector-2">
+                  <select class="form-control" id="sector-2" disabled>
                     <option value="">Seleccione</option>
 
                     <?php
@@ -362,7 +362,7 @@ $stmt->close();
 
                 <div class="col-lg-4">
                   <label for="programa-2" class="form-label">Programa</label>
-                  <select class="form-control" id="programa-2">
+                  <select class="form-control" id="programa-2" disabled>
                     <option value="">Seleccione</option>
                   </select>
                 </div>
@@ -519,9 +519,10 @@ $stmt->close();
 
 
         // verificar si hay dinero antes de mostrar el formulario
-        function nuevoProyecto() {
+        function nuevaUnidad() {
           accion = 'registrar_ente'
           $('#vista_registro').removeClass('hide')
+          $('.not_suu').removeClass('hide')
           $('#pills-tabContent').addClass('hide')
         }
 
@@ -534,6 +535,15 @@ $stmt->close();
 
           // Definir variables base
           let array = tipo === 'suu' ? sub_entes_for_edit[id] : entes[id];
+
+          console.log(tipo)
+          if (tipo == 'suu') {
+            $('.not_suu').addClass('hide')
+          } else {
+            $('.not_suu').removeClass('hide')
+          }
+
+
           edt_type = tipo;
           accion = 'update_ente';
           edt = id;
@@ -572,6 +582,9 @@ $stmt->close();
 
 
         function cancelarRegistro() {
+
+          $('.not_suu').removeClass('hide')
+
           $('#vista_registro').addClass('hide')
           $('#section_partida').addClass('hide')
           $('#pills-tabContent').removeClass('hide')
@@ -586,7 +599,7 @@ $stmt->close();
         document.getElementById('btn-cancelar-registro').addEventListener('click', cancelarRegistro)
 
         // Registrrar nuevo proyecto
-        function guardarProyecto() {
+        function guardarUnidad() {
 
           let errors = false
           // Obtener todos los campos de partida y monto
@@ -615,9 +628,6 @@ $stmt->close();
               errors = true;
             } // verificar que ningun campo este vacio
           }
-
-
-
           const unidad = {
             nombre: nombre,
             actividad: actividad,
@@ -630,6 +640,7 @@ $stmt->close();
           }
 
           let accion_back = accion;
+
 
 
           if (accion == 'update_ente') {
@@ -651,6 +662,7 @@ $stmt->close();
               if (response.success) {
                 toast_s('success', 'Unidad ' + (accion == 'update_ente' ? 'actualizada' : 'registrada') + ' con éxito');
                 get_tabla();
+                get_sub_unidades()
                 cancelarRegistro();
                 document.getElementById('data_ente').reset();
               } else {
@@ -669,12 +681,12 @@ $stmt->close();
 
         // addevenlister btn-registro click
 
-        document.getElementById('btn-registro').addEventListener('click', guardarProyecto);
+        document.getElementById('btn-registro').addEventListener('click', guardarUnidad);
 
 
 
         // eliminar ente
-        function eliminar(id) {
+        function eliminar(id, type) {
           Swal.fire({
             title: "¿Estás seguro?",
             text: "¡No podrás revertir esto!",
@@ -691,7 +703,7 @@ $stmt->close();
                 type: "json",
                 contentType: 'application/json',
                 data: JSON.stringify({
-                  accion: 'eliminar_ente',
+                  accion: type,
                   id: id
                 }),
                 success: function(response) {
@@ -716,7 +728,8 @@ $stmt->close();
 
           if (event.target.closest('.btn-delete')) { // ACCION DE ELIMINAR
             const id = event.target.closest('.btn-delete').getAttribute('data-delete-id');
-            eliminar(id);
+            const type = event.target.closest('.btn-delete').getAttribute('data-delete-type');
+            eliminar(id, type);
           }
           if (event.target.closest('.btn-edit')) { // ACCION DE ELIMINAR
             const id = event.target.closest('.btn-edit').getAttribute('data-edit-id');
@@ -740,21 +753,27 @@ $stmt->close();
         });
 
         function agregaSubUnidad(id) {
+
+          console.log(entes[id])
           const info_id = entes[id][0]
           const info_sector = entes[id][1]
+          const info_sector_n = entes[id][8]
           const info_programa = entes[id][2]
+          const info_programa_n = entes[id][9]
           const info_proyecto = entes[id][3]
           const info_actividad = entes[id][4]
           const info_tipo_ente = entes[id][5]
           const info_ente_nombre = entes[id][6]
 
           document.getElementById('nombre_unidad').innerHTML = info_ente_nombre
-          document.getElementById('sector_informacion').innerHTML = `${info_sector}.${info_programa}.${info_proyecto}`
+          document.getElementById('sector_informacion').innerHTML = `${info_sector_n}.${info_programa_n}.${(info_proyecto == '0' ? '00' : info_proyecto)}`
           document.getElementById('id_ente').value = info_id
 
+          $('#sector-2').val(info_sector).change()
+          updatePrograma(info_sector)
+          $('#programa-2').val(info_programa).change()
 
           listarActividades()
-
 
           toggleDialogs()
         }
@@ -900,7 +919,9 @@ $stmt->close();
                     item.actividad,
                     item.tipo_ente,
                     item.ente_nombre,
-                    item.partida
+                    item.partida,
+                    item.sector_n,
+                    item.programa_n
                   ]
 
                   let proyecto_n = item.proyecto_n ?? '00'
@@ -913,7 +934,7 @@ $stmt->close();
                     item.tipo_ente == 'J' ?
                     `<button title="Agregar dependencia interna" class="btn btn-plus btn-sm bg-brand-color-1 text-white " data-add-id="${item.id}"><i class="bx bx-plus"></i></button>` : '-',
                     `<button class="btn btn-edit btn-sm bg-brand-color-2 text-white " data-edit-type="ente" data-edit-id="${item.id}"><i class="bx bx-edit-alt"></i></button>`,
-                    `<button class="btn btn-danger btn-sm btn-delete" data-delete-id="${item.id}"><i class="bx bx-trash"></i></button>`
+                    `<button class="btn btn-danger btn-sm btn-delete" data-delete-id="${item.id}" data-delete-type="eliminar_ente"><i class="bx bx-trash"></i></button>`
                   ]);
                 });
                 DataTable.rows.add(data_tabla).draw()
@@ -984,7 +1005,7 @@ $stmt->close();
                     item.sector_n + "." + item.programa_n + "." + proyecto_n,
                     item.actividad,
                     `<button class="btn btn-edit btn-sm bg-brand-color-2 text-white " data-edit-type="suu" data-edit-id="${item.id}"><i class="bx bx-edit-alt"></i></button>`,
-                    `<button class="btn btn-danger btn-sm btn-delete" data-delete-id="${item.id}"><i class="bx bx-trash"></i></button>`
+                    `<button class="btn btn-danger btn-sm btn-delete" data-delete-type="eliminar_suu" data-delete-id="${item.id}"><i class="bx bx-trash"></i></button>`
                   ]);
 
 
@@ -1033,13 +1054,18 @@ $stmt->close();
         // cargar el programa cuando el sector cambie
         document.getElementById('sector-2').addEventListener('change', function(event) {
           let sector_s = this.value;
+          updatePrograma(sector_s)
+        })
+
+
+        function updatePrograma(sector_s) {
           document.getElementById('programa-2').innerHTML = '<option value="">Seleccione</option>'
           programas.forEach(element => {
             if (element[0] == sector_s) {
               document.getElementById('programa-2').innerHTML += `<option value="${element[3]}">${element[1]} - ${element[2]}</option>`
             }
           });
-        })
+        }
       </script>
 
 </body>
