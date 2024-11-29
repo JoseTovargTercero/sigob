@@ -342,7 +342,7 @@ foreach ($distribuciones as $distribucion) {
                         $t_situado_estada += $situado_estada = $row[3];
                         $t_fci += $fci = $row[4];
                         $t_otras_fuentes += $otras_fuentes = $row[5];
-                        $t_total += $total = $row[6];
+                        $t_total += $total = $situado_estada;
 
 
 
