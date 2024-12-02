@@ -263,10 +263,10 @@ foreach ($pdf_files as $url => $pdf_filename) {
         'mode' => 'utf-8',
         'format' => $reportes[$tipo]['formato'],
         'tempDir' => __DIR__ . '/temp/mpdf',
-        'margin_left' => 15,  // margen izquierdo estándar (en mm)
+        'margin_left' => 16,  // margen izquierdo estándar (en mm)
         'margin_right' => 15, // margen derecho estándar (en mm)
-        'margin_top' => 16,   // margen superior estándar (en mm)
-        'margin_bottom' => 16 // margen inferior estándar (en mm)
+        'margin_top' => 22,   // margen superior estándar (en mm)
+        'margin_bottom' => 13 // margen inferior estándar (en mm)
     ]);
     $mpdf->SetHTMLHeader('<div style="text-align: right;">Página {PAGENO} de {nb}</div>');
     $mpdf->WriteHTML($html);

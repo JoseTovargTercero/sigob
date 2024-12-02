@@ -803,11 +803,13 @@ function formatearTextoConItems($texto)
                 if (!empty($sectorData['programas']) && is_array($sectorData['programas'])) {
                     echo "<table class='mt-0'><tr><th class='bl bt bb' colspan='2'>PROGRAMA</th><th class='bl bt bb br'>MONTO Bs.</th></tr>";
                     foreach ($sectorData['programas'] as $programa2) {
-                        echo "<tr>";
-                        echo "<td class='bl bt bb fw-bold'>" . htmlspecialchars($programa2['programa']) . "</td>";
-                        echo "<td class='bl bt bb br text-left'>" . htmlspecialchars($programa2['programa_denominacion']) . "</td>";
-                        echo "<td class='bl bt bb br text-right w-20'>" . number_format($programa2['monto'], 2) . "</td>";
-                        echo "</tr>";
+                        if ($programa2['monto'] != 0) {
+                            echo "<tr>";
+                            echo "<td class='bl bt bb fw-bold'>" . htmlspecialchars($programa2['programa']) . "</td>";
+                            echo "<td class='bl bt bb br text-left'>" . htmlspecialchars($programa2['programa_denominacion']) . "</td>";
+                            echo "<td class='bl bt bb br text-right w-20'>" . number_format($programa2['monto'], 2) . "</td>";
+                            echo "</tr>";
+                        }
                     }
                     echo "</table>";
                 } else {

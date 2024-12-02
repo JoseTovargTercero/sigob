@@ -66,7 +66,8 @@ foreach ($distribuciones as $distribucion) {
 
 
         if (@$data[$codigo_partida][$partida]) {
-            $data[$codigo_partida][$partida][3] = intval($data[$codigo_partida][$partida]) +  $monto_inicial;
+
+            $data[$codigo_partida][$partida][3] = intval($data[$codigo_partida][$partida][3]) +  $monto_inicial;
         } else {
             $data[$codigo_partida][$partida] = [$partida, $descripcion, 0, $monto_inicial, 0, 0, $monto_inicial];
         }
