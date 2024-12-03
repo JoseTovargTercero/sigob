@@ -87,7 +87,7 @@ try {
 
     // Consultar montos actuales en la tabla distribucion_presupuestaria
     $sqlDistribucion = "
-    SELECT id_sector, id_programa, SUM(monto_actual) AS total_monto_actual
+    SELECT id_sector, id_programa, SUM(monto_inicial) AS total_monto_actual
     FROM distribucion_presupuestaria
     GROUP BY id_sector, id_programa
 ";
