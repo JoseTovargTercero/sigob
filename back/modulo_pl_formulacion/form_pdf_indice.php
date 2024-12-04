@@ -2,7 +2,31 @@
 require_once '../sistema_global/conexion.php';
 
 
+if (!isset($_GET["id_ejercicio"])) {
+    echo 'Faltan parametros';
+    exit;
+}
+
 $id_ejercicio = $_GET["id_ejercicio"];
+
+
+$actividadesConAsignacion = [];
+
+$stmt = mysqli_prepare($conexion, "SELECT DISTINCT(actividad_id) FROM `distribucion_entes` WHERE id_ejercicio= ?");
+$stmt->bind_param('s', $id_ejercicio);
+$stmt->execute();
+$result = $stmt->get_result();
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        array_push($actividadesConAsignacion, $row['actividad_id']);
+    }
+}
+$stmt->close();
+
+
+
+
+
 
 // Consultar datos del sector
 $query_sector = "SELECT ano, situado FROM ejercicio_fiscal WHERE id = ?";
@@ -20,6 +44,8 @@ $ano = $data_sector['ano'];
 // Consulta para obtener datos de entes y entes_dependencias con denominaciones de sector y programa
 $queryEntes = "
     SELECT 
+        e.id,
+        ed.id AS ed_id,
         e.sector, 
         e.programa, 
         e.proyecto, 
@@ -35,6 +61,7 @@ $queryEntes = "
     LEFT JOIN entes_dependencias ed ON ed.sector = e.sector AND ed.programa = e.programa
     LEFT JOIN pl_sectores ps ON ps.id = e.sector
     LEFT JOIN pl_programas pp ON pp.id = e.programa AND pp.sector = ps.id
+    WHERE e.sector != '10' AND ed.sector!='10'
     ORDER BY ps.sector, pp.programa, e.actividad, ed.actividad
 ";
 
@@ -49,17 +76,43 @@ $allData = [];
 
 // Procesar los resultados de la consulta
 while ($row = $resultEntes->fetch_assoc()) {
-    $allData[] = [
-        'sector' => $row['sector_sectores'],
-        'programa' => $row['programa_programas'],
-        'proyecto' => $row['proyecto'],
-        'actividad' => $row['actividad_final'],
-        'denominacion' => $row['denominacion'],
-        'unidad_ejecutora' => $row['denominacion_dependencia'] ?? $row['denominacion'],
-        'sector_denominacion' => $row['sector_denominacion'],
-        'programa_denominacion' => $row['programa_denominacion']
-    ];
+
+
+    $id = $row['ed_id'] ?? $row['id'];
+
+
+    // verifica si el 199 existe en el array anterior
+    if (in_array($id, $actividadesConAsignacion)) {
+
+
+        $allData[] = [
+            'sector' => $row['sector_sectores'],
+            'programa' => $row['programa_programas'],
+            'proyecto' => $row['proyecto'],
+            'actividad' => $row['actividad_final'],
+            'denominacion' => $row['denominacion'],
+            'unidad_ejecutora' => $row['denominacion_dependencia'] ?? $row['denominacion'],
+            'sector_denominacion' => $row['sector_denominacion'],
+            'programa_denominacion' => $row['programa_denominacion']
+        ];
+    }
 }
+
+
+
+$allData[] = [
+    'sector' => '15',
+    'programa' => '01',
+    'proyecto' => '00',
+    'actividad' => '51',
+    'denominacion' => 'CRÉDITOS ADMINISTRADOS POR LA DIRECCIÓN Y COORDINACION EJECUTIVA',
+    'unidad_ejecutora' => 'SEC. DEL DESPACHO DEL GOBERNADOR Y SEG. DE LA GESTIÓN PÚBLICA',
+    'sector_denominacion' => '',
+    'programa_denominacion' => ''
+];
+
+
+
 
 
 ?>
