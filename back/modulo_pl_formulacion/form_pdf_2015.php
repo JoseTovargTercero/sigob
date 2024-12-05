@@ -30,9 +30,9 @@ $denominacion_sector = $sector_data['denominacion'];
 $sector = $sector_data['sector'];
 
 // Consultar denominación del programa y valor de programa desde pl_programas
-$query_denominacion_programa = "SELECT denominacion, programa FROM pl_programas WHERE sector = ?";
+$query_denominacion_programa = "SELECT denominacion, programa FROM pl_programas WHERE id = ?";
 $stmt_denominacion_programa = $conexion->prepare($query_denominacion_programa);
-$stmt_denominacion_programa->bind_param('s', $id_sector);
+$stmt_denominacion_programa->bind_param('s', $id_programa);
 $stmt_denominacion_programa->execute();
 $result_denominacion_programa = $stmt_denominacion_programa->get_result();
 $programa_data = $result_denominacion_programa->fetch_assoc();
