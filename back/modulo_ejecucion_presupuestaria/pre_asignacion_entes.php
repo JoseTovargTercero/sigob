@@ -103,7 +103,7 @@ function consultarAsignacionPorId($id)
         if ($result->num_rows > 0) {
             $asignacion = $result->fetch_assoc();
 
-            // Consulta adicional para obtener los detalles de distribucion_entes asociados al id_asignacion
+            // Consulta para obtener todas las distribuciones asociadas a la asignación
             $sqlDistribucion = "SELECT id, id_ente, distribucion, monto_total, status, id_ejercicio 
                                 FROM distribucion_entes 
                                 WHERE id_asignacion = ?";
@@ -112,71 +112,69 @@ function consultarAsignacionPorId($id)
             $stmtDistribucion->execute();
             $resultDistribucion = $stmtDistribucion->get_result();
 
-            if ($resultDistribucion->num_rows > 0) {
+            $distribuciones = [];
 
-                while ($distribucion = $resultDistribucion->fetch_assoc()) {
-                    // Decodificar el campo 'distribucion' de JSON a array
-                    if (!empty($distribucion['distribucion'])) {
-                        $asignacion["distribucion_partidas"] = json_decode($distribucion['distribucion'], true);
+            while ($distribucion = $resultDistribucion->fetch_assoc()) {
+                // Decodificar el campo 'distribucion' de JSON a array
+                if (!empty($distribucion['distribucion'])) {
+                    $distribucion["distribucion_partidas"] = json_decode($distribucion['distribucion'], true);
 
-                        // Iterar sobre cada distribución y obtener detalles adicionales de distribucion_presupuestarias
-                        foreach ($asignacion["distribucion_partidas"] as &$distribucionItem) {
-                            $idDistribucion = $distribucionItem['id_distribucion'];
+                    // Iterar sobre cada distribución de partidas y obtener detalles adicionales
+                    foreach ($distribucion["distribucion_partidas"] as &$distribucionItem) {
+                        $idDistribucion = $distribucionItem['id_distribucion'];
 
-                            // Consulta para obtener el id_partida y id_sector de distribucion_presupuestarias
-                            $sqlDistribucionDetalles = "SELECT id_partida, id_sector FROM distribucion_presupuestaria WHERE id = ?";
-                            $stmtDistribucionDetalles = $conexion->prepare($sqlDistribucionDetalles);
-                            $stmtDistribucionDetalles->bind_param("i", $idDistribucion);
-                            $stmtDistribucionDetalles->execute();
-                            $resultDistribucionDetalles = $stmtDistribucionDetalles->get_result();
+                        // Consulta para obtener el id_partida y id_sector de distribucion_presupuestaria
+                        $sqlDistribucionDetalles = "SELECT id_partida, id_sector 
+                                                    FROM distribucion_presupuestaria 
+                                                    WHERE id = ?";
+                        $stmtDistribucionDetalles = $conexion->prepare($sqlDistribucionDetalles);
+                        $stmtDistribucionDetalles->bind_param("i", $idDistribucion);
+                        $stmtDistribucionDetalles->execute();
+                        $resultDistribucionDetalles = $stmtDistribucionDetalles->get_result();
 
-                            if ($resultDistribucionDetalles->num_rows > 0) {
-                                $distribucionDetalles = $resultDistribucionDetalles->fetch_assoc();
-                                $distribucionItem['id_partida'] = $distribucionDetalles['id_partida'];
-                                $distribucionItem['id_sector'] = $distribucionDetalles['id_sector'];
+                        if ($resultDistribucionDetalles->num_rows > 0) {
+                            $distribucionDetalles = $resultDistribucionDetalles->fetch_assoc();
+                            $distribucionItem['id_partida'] = $distribucionDetalles['id_partida'];
+                            $distribucionItem['id_sector'] = $distribucionDetalles['id_sector'];
 
-                                // Obtener detalles del sector
-                                $sqlSector = "SELECT * FROM pl_sectores_presupuestarios WHERE id = ?";
-                                $stmtSector = $conexion->prepare($sqlSector);
-                                $stmtSector->bind_param("i", $distribucionDetalles['id_sector']);
-                                $stmtSector->execute();
-                                $resultSector = $stmtSector->get_result();
+                            // Obtener detalles del sector
+                            $sqlSector = "SELECT * FROM pl_sectores_presupuestarios WHERE id = ?";
+                            $stmtSector = $conexion->prepare($sqlSector);
+                            $stmtSector->bind_param("i", $distribucionDetalles['id_sector']);
+                            $stmtSector->execute();
+                            $resultSector = $stmtSector->get_result();
 
-                                if ($resultSector->num_rows > 0) {
-                                    $distribucionItem['sector_informacion'] = $resultSector->fetch_assoc();
-                                } else {
-                                    $distribucionItem['sector_informacion'] = null;
-                                }
-
-                                // Consulta para obtener los detalles de la partida de la tabla partidas_presupuestarias
-                                $sqlPartida = "SELECT * FROM partidas_presupuestarias WHERE id = ?";
-                                $stmtPartida = $conexion->prepare($sqlPartida);
-                                $stmtPartida->bind_param("i", $distribucionDetalles['id_partida']);
-                                $stmtPartida->execute();
-                                $resultPartida = $stmtPartida->get_result();
-
-                                if ($resultPartida->num_rows > 0) {
-                                    $distribucionItem += $resultPartida->fetch_assoc();
-                                } else {
-                                    $distribucionItem['partida_informacion'] = null;
-                                }
-
+                            if ($resultSector->num_rows > 0) {
+                                $distribucionItem['sector_informacion'] = $resultSector->fetch_assoc();
                             } else {
-                                $distribucionItem['id_partida'] = null;
-                                $distribucionItem['id_sector'] = null;
+                                $distribucionItem['sector_informacion'] = null;
                             }
-                        }
-                    } else {
-                        $asignacion["distribucion_partidas"] = [];
-                    }
 
-                    $distribuciones = $distribucion;
+                            // Consulta para obtener los detalles de la partida de la tabla partidas_presupuestarias
+                            $sqlPartida = "SELECT * FROM partidas_presupuestarias WHERE id = ?";
+                            $stmtPartida = $conexion->prepare($sqlPartida);
+                            $stmtPartida->bind_param("i", $distribucionDetalles['id_partida']);
+                            $stmtPartida->execute();
+                            $resultPartida = $stmtPartida->get_result();
+
+                            if ($resultPartida->num_rows > 0) {
+                                $distribucionItem += $resultPartida->fetch_assoc();
+                            } else {
+                                $distribucionItem['partida_informacion'] = null;
+                            }
+                        } else {
+                            $distribucionItem['id_partida'] = null;
+                            $distribucionItem['id_sector'] = null;
+                        }
+                    }
+                } else {
+                    $distribucion["distribucion_partidas"] = [];
                 }
 
-                $asignacion['distribucion'] = $distribuciones;
-            } else {
-                $asignacion['distribucion'] = false;
+                $distribuciones[] = $distribucion; // Agregar la distribución completa al arreglo
             }
+
+            $asignacion['distribuciones'] = $distribuciones;
 
             return json_encode(["success" => $asignacion]);
         } else {
