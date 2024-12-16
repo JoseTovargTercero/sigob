@@ -24,8 +24,6 @@ const getPreAsignacionEntes = async () => {
 
     let text = await clone.text()
 
-    console.log(text)
-
     const json = await res.json()
 
     console.log(json)
@@ -68,8 +66,6 @@ const getPreAsignacionEnte = async (id) => {
     const clone = res.clone()
 
     let text = await clone.text()
-
-    console.log(text)
 
     const json = await res.json()
 

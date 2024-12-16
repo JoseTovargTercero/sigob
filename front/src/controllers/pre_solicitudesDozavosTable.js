@@ -75,7 +75,7 @@ export async function validateSolicitudesDozavosTable() {
 
 export async function loadSolicitudesDozavosTable() {
   let solicitudes = await getSolicitudesDozavos()
-  console.log(solicitudes)
+  // console.log(solicitudes)
 
   if (!Array.isArray(solicitudes)) return
 

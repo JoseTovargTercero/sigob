@@ -120,7 +120,7 @@ export const pre_solicitudDozavo_card = async ({ elementToInsert, data }) => {
         </div>
         <div class='w-100'>
           <table
-            class='table table-sm table-responsive mx-auto'
+            class='table table-xs table-responsive mx-auto'
             style='width: 100%'
             id="solicitud-partidas"
           >

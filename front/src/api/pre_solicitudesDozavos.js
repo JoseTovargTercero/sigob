@@ -25,9 +25,15 @@ const getSolicitudesDozavos = async (id) => {
       })
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    const clone = res.clone()
+    const text = await clone.text()
+
+    console.log(text)
+
     const json = await res.json()
 
-    console.log(json)
+    // console.log(json)
 
     if (id) {
       return json.success
@@ -52,29 +58,21 @@ const getSolicitudesDozavos = async (id) => {
   }
 }
 
-const registrarSolicitudDozavo = async (id) => {
+const registrarSolicitudDozavo = async (data) => {
   showLoader()
   try {
-    let res
-    if (id)
-      res = await fetch(solicitudesDozavosUrl, {
-        method: 'POST',
-        body: JSON.stringify({ accion: 'consulta_id', id }),
-      })
-    else
-      res = await fetch(solicitudesDozavosUrl, {
-        method: 'POST',
-        body: JSON.stringify({ accion: 'consulta' }),
-      })
+    let res = await fetch(solicitudesDozavosUrl, {
+      method: 'POST',
+      body: JSON.stringify({ accion: 'registrar', ...data }),
+    })
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    const clone = res.clone()
+    const text = await clone.text()
+
+    console.log(text)
     const json = await res.json()
-
-    console.log(json)
-
-    if (id) {
-      return json.success
-    }
 
     if (json.success) {
       return json.success
