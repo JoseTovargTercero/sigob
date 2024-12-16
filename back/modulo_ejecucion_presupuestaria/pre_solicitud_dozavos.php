@@ -155,10 +155,10 @@ function registrarSolicitudozavo($data)
         $fecha = date("Y-m-d");
 
         // Insertar en solicitud_dozavos (numero_compromiso siempre será 0 inicialmente)
-        $sql = "INSERT INTO solicitud_dozavos (numero_orden, numero_compromiso, descripcion, tipo, monto, fecha, partidas, id_ente, status) VALUES (?, 0, ?, ?, ?, ?, ?, ?, 1)";
+        $sql = "INSERT INTO solicitud_dozavos (numero_orden, numero_compromiso, descripcion, tipo, monto, fecha, partidas, id_ente, status, id_ejercicio) VALUES (?, 0, ?, ?, ?, ?, ?, ?, 1, ?)";
         $stmt = $conexion->prepare($sql);
         $partidasJson = json_encode($data['partidas']); // Convertir partidas a formato JSON
-        $stmt->bind_param("sssssss", $numero_orden, $data['descripcion'], $data['tipo'], $data['monto'], $fecha, $partidasJson, $data['id_ente']);
+        $stmt->bind_param("ssssssss", $numero_orden, $data['descripcion'], $data['tipo'], $data['monto'], $fecha, $partidasJson, $data['id_ente'], $data['id_ejercicio']);
         $stmt->execute();
 
         if ($stmt->affected_rows > 0) {
@@ -212,7 +212,7 @@ function gestionarSolicitudDozavos2($idSolicitud, $accion)
         }
 
         // Consultar los detalles de la solicitud, incluyendo el campo partidas
-        $sqlSolicitud = "SELECT numero_orden, numero_compromiso, descripcion, tipo, monto, id_ente, partidas, status FROM solicitud_dozavos WHERE id = ?";
+        $sqlSolicitud = "SELECT numero_orden, numero_compromiso, descripcion, tipo, monto, id_ente, partidas, status, id_ejercicio FROM solicitud_dozavos WHERE id = ?";
         $stmtSolicitud = $conexion->prepare($sqlSolicitud);
         $stmtSolicitud->bind_param("i", $idSolicitud);
         $stmtSolicitud->execute();
@@ -231,6 +231,7 @@ function gestionarSolicitudDozavos2($idSolicitud, $accion)
         $id_ente = $filaSolicitud['id_ente'];
         $partidas = json_decode($filaSolicitud['partidas'], true);
         $status = $filaSolicitud['status'];
+        $id_ejercicio = $filaSolicitud['id_ejercicio'];
 
         if ($status !== 0) {
             throw new Exception("La solicitud ya ha sido procesada anteriormente");
