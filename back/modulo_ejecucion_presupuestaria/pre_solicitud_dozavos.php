@@ -47,6 +47,9 @@ function gestionarSolicitudDozavos($data)
         if ($accion === 'delete') {
             return eliminarSolicitudozavo($data);
         }
+        if ($accion === 'gestionar') {
+            return gestionarSolicitudDozavos2($data);
+        }
 
         // Otras acciones...
 
@@ -143,7 +146,7 @@ function registrarSolicitudozavo($data)
     global $conexion;
 
     try {
-        if (!isset($data['descripcion']) || !isset($data['monto']) || !isset($data['fecha']) || !isset($data['partidas']) || !isset($data['id_ente'])) {
+        if (!isset($data['descripcion']) || !isset($data['monto']) || !isset($data['tipo']) || !isset($data['fecha']) || !isset($data['partidas']) || !isset($data['id_ente'])) {
             return ["error" => "Faltan datos obligatorios para registrar la solicitud."];
         }
 
@@ -151,24 +154,14 @@ function registrarSolicitudozavo($data)
         $numero_orden = generarNumeroOrden();
 
         // Insertar en solicitud_dozavos (numero_compromiso siempre será 0 inicialmente)
-        $sql = "INSERT INTO solicitud_dozavos (numero_orden, numero_compromiso, descripcion, monto, fecha, partidas, id_ente, status) VALUES (?, 0, ?, ?, ?, ?, ?, 0)";
+        $sql = "INSERT INTO solicitud_dozavos (numero_orden, numero_compromiso, descripcion, tipo, monto, fecha, partidas, id_ente, status) VALUES (?, 0, ?, ?, ?, ?, ?, ?, 1)";
         $stmt = $conexion->prepare($sql);
         $partidasJson = json_encode($data['partidas']); // Convertir partidas a formato JSON
-        $stmt->bind_param("isdsss", $numero_orden, $data['descripcion'], $data['monto'], $data['fecha'], $partidasJson, $data['id_ente']);
+        $stmt->bind_param("sssssss", $numero_orden, $data['descripcion'], $data['tipo'], $data['monto'], $data['fecha'], $partidasJson, $data['id_ente']);
         $stmt->execute();
 
         if ($stmt->affected_rows > 0) {
-            $idRegistro = $stmt->insert_id; // Obtener el ID del registro insertado
-
-            // Llamar a la función registrarCompromiso para actualizar numero_compromiso
-            $resultadoCompromiso = registrarCompromiso($idRegistro, 'solicitud_dozavos', $data['descripcion']);
-
-            // Verificar si la función registrarCompromiso fue exitosa
-            if (isset($resultadoCompromiso['error'])) {
-                return ["error" => $resultadoCompromiso['error']];
-            }
-
-            return ["success" => "Registro exitoso y compromiso generado.", "compromiso" => $resultadoCompromiso];
+            return ["success" => "Registro exitoso"];
         } else {
             return ["error" => "No se pudo registrar la solicitud."];
         }
@@ -205,6 +198,123 @@ function generarNumeroOrden() {
     $nuevo_numero_orden = sprintf("%s%05d-%s", $prefijo, $secuencia, $anio_actual);
 
     return $nuevo_numero_orden;
+}
+
+function gestionarSolicitudDozavos2($idSolicitud, $accion) {
+    global $conexion;
+
+    try {
+        if (empty($idSolicitud) || empty($accion)) {
+            throw new Exception("Faltan uno o más valores necesarios (idSolicitud, accion)");
+        }
+
+        // Consultar los detalles de la solicitud, incluyendo el campo partidas
+        $sqlSolicitud = "SELECT numero_orden, numero_compromiso, descripcion, tipo, monto, id_ente, partidas, status FROM solicitud_dozavos WHERE id = ?";
+        $stmtSolicitud = $conexion->prepare($sqlSolicitud);
+        $stmtSolicitud->bind_param("i", $idSolicitud);
+        $stmtSolicitud->execute();
+        $resultadoSolicitud = $stmtSolicitud->get_result();
+
+        if ($resultadoSolicitud->num_rows === 0) {
+            throw new Exception("No se encontró una solicitud con el ID proporcionado");
+        }
+
+        $filaSolicitud = $resultadoSolicitud->fetch_assoc();
+        $numero_orden = $filaSolicitud['numero_orden'];
+        $numero_compromiso = $filaSolicitud['numero_compromiso'];
+        $descripcion = $filaSolicitud['descripcion'];
+        $tipo = $filaSolicitud['tipo'];
+        $montoTotal = $filaSolicitud['monto'];
+        $id_ente = $filaSolicitud['id_ente'];
+        $partidas = json_decode($filaSolicitud['partidas'], true);
+        $status = $filaSolicitud['status'];
+
+        if ($status !== 0) {
+            throw new Exception("La solicitud ya ha sido procesada anteriormente");
+        }
+
+        if ($accion === "aceptar") {
+            // Iterar sobre cada partida en el array partidas
+            foreach ($partidas as $partida) {
+                $id_partida = $partida['id'];
+                $monto = $partida['monto'];
+
+                // Consultar disponibilidad presupuestaria de la partida
+                $sqlPartida = "SELECT monto_actual FROM distribucion_presupuestaria WHERE id_partida = ? AND id_ente = ?";
+                $stmtPartida = $conexion->prepare($sqlPartida);
+                $stmtPartida->bind_param("ii", $id_partida, $id_ente);
+                $stmtPartida->execute();
+                $resultadoPartida = $stmtPartida->get_result();
+
+                if ($resultadoPartida->num_rows === 0) {
+                    throw new Exception("No se encontró una partida con el ID proporcionado para el ente especificado");
+                }
+
+                $filaPartida = $resultadoPartida->fetch_assoc();
+                $monto_actual = $filaPartida['monto_actual'];
+
+                // Verificar si hay suficiente presupuesto disponible
+                if ($monto_actual < $monto) {
+                    throw new Exception("El presupuesto actual es insuficiente para el monto de la partida con ID $id_partida");
+                }
+
+                // Calcular y actualizar el monto disponible en la partida
+                $nuevoMontoActual = (float) $monto_actual - (float) $monto;
+                $sqlUpdatePartida = "UPDATE distribucion_presupuestaria SET monto_actual = ? WHERE id_partida = ? AND id_ente = ?";
+                $stmtUpdatePartida = $conexion->prepare($sqlUpdatePartida);
+                $stmtUpdatePartida->bind_param("dii", $nuevoMontoActual, $id_partida, $id_ente);
+                $stmtUpdatePartida->execute();
+
+                if ($stmtUpdatePartida->affected_rows === 0) {
+                    throw new Exception("No se pudo actualizar el monto actual para la partida con ID $id_partida");
+                }
+            }
+
+            // Actualizar el estado de la solicitud a aceptado
+            $sqlUpdateSolicitud = "UPDATE solicitud_dozavos SET status = 0 WHERE id = ?";
+            $stmtUpdateSolicitud = $conexion->prepare($sqlUpdateSolicitud);
+            $stmtUpdateSolicitud->bind_param("i", $idSolicitud);
+            $stmtUpdateSolicitud->execute();
+
+            if ($stmtUpdateSolicitud->affected_rows > 0) {
+                $resultadoCompromiso = registrarCompromiso($idSolicitud, 'solicitud_dozavos', $descripcion, $id_ejercicio, 0);
+
+                if (isset($resultadoCompromiso['success']) && $resultadoCompromiso['success']) {
+                    return json_encode([
+                        "success" => "La solicitud ha sido aceptada, el compromiso se ha registrado y el presupuesto actualizado",
+                        "compromiso" => [
+                            "correlativo" => $resultadoCompromiso['correlativo'],
+                            "id_compromiso" => $resultadoCompromiso['id_compromiso']
+                        ]
+                    ]);
+                } else {
+                    throw new Exception("No se pudo registrar el compromiso");
+                }
+            } else {
+                throw new Exception("No se pudo actualizar la solicitud a aceptada");
+            }
+
+        } elseif ($accion === "rechazar") {
+            // Actualizar el estado de la solicitud a rechazado
+            $sqlUpdateSolicitud = "UPDATE solicitud_dozavos SET status = 3 WHERE id = ?";
+            $stmtUpdateSolicitud = $conexion->prepare($sqlUpdateSolicitud);
+            $stmtUpdateSolicitud->bind_param("i", $idSolicitud);
+            $stmtUpdateSolicitud->execute();
+
+            if ($stmtUpdateSolicitud->affected_rows > 0) {
+                return json_encode(["success" => "La solicitud ha sido rechazada"]);
+            } else {
+                throw new Exception("No se pudo rechazar la solicitud");
+            }
+
+        } else {
+            throw new Exception("Acción no válida. Debe ser 'aceptar' o 'rechazar'.");
+        }
+
+    } catch (Exception $e) {
+        registrarError($e->getMessage());
+        return json_encode(['error' => $e->getMessage()]);
+    }
 }
 
 // Función para actualizar una solicitud
@@ -283,4 +393,4 @@ function eliminarSolicitudozavo($data)
 
 // Ejecutar la función principal
 $data = json_decode(file_get_contents("php://input"), true);
-echo gestionarSolicitudDozavos($data);
+echo json_encode(gestionarSolicitudDozavos($data));
