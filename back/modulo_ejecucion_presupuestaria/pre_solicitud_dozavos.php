@@ -161,9 +161,9 @@ function registrarSolicitudozavo($data)
         $stmt->execute();
 
         if ($stmt->affected_rows > 0) {
-            return ["success" => "Registro exitoso"];
+            return json_encode(["success" => "Registro exitoso"]);
         } else {
-            return ["error" => "No se pudo registrar la solicitud."];
+            return json_encode(["error" => "No se pudo registrar la solicitud."]);
         }
     } catch (Exception $e) {
         registrarError($e->getMessage());
@@ -172,7 +172,8 @@ function registrarSolicitudozavo($data)
 }
 
 // Función para generar el número de orden
-function generarNumeroOrden() {
+function generarNumeroOrden()
+{
     global $conexion;
 
     $anio_actual = date('Y');
@@ -200,7 +201,8 @@ function generarNumeroOrden() {
     return $nuevo_numero_orden;
 }
 
-function gestionarSolicitudDozavos2($idSolicitud, $accion) {
+function gestionarSolicitudDozavos2($idSolicitud, $accion)
+{
     global $conexion;
 
     try {
@@ -393,4 +395,4 @@ function eliminarSolicitudozavo($data)
 
 // Ejecutar la función principal
 $data = json_decode(file_get_contents("php://input"), true);
-echo json_encode(gestionarSolicitudDozavos($data));
+echo gestionarSolicitudDozavos($data);
