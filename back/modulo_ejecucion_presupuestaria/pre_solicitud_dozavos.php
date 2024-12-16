@@ -146,18 +146,19 @@ function registrarSolicitudozavo($data)
     global $conexion;
 
     try {
-        if (!isset($data['descripcion']) || !isset($data['monto']) || !isset($data['tipo']) || !isset($data['fecha']) || !isset($data['partidas']) || !isset($data['id_ente'])) {
+        if (!isset($data['descripcion']) || !isset($data['monto']) || !isset($data['tipo']) || !isset($data['partidas']) || !isset($data['id_ente'])) {
             return ["error" => "Faltan datos obligatorios para registrar la solicitud."];
         }
 
         // Generar el numero_orden automáticamente
         $numero_orden = generarNumeroOrden();
+        $fecha = date("Y-m-d");
 
         // Insertar en solicitud_dozavos (numero_compromiso siempre será 0 inicialmente)
         $sql = "INSERT INTO solicitud_dozavos (numero_orden, numero_compromiso, descripcion, tipo, monto, fecha, partidas, id_ente, status) VALUES (?, 0, ?, ?, ?, ?, ?, ?, 1)";
         $stmt = $conexion->prepare($sql);
         $partidasJson = json_encode($data['partidas']); // Convertir partidas a formato JSON
-        $stmt->bind_param("sssssss", $numero_orden, $data['descripcion'], $data['tipo'], $data['monto'], $data['fecha'], $partidasJson, $data['id_ente']);
+        $stmt->bind_param("sssssss", $numero_orden, $data['descripcion'], $data['tipo'], $data['monto'], $fecha, $partidasJson, $data['id_ente']);
         $stmt->execute();
 
         if ($stmt->affected_rows > 0) {
