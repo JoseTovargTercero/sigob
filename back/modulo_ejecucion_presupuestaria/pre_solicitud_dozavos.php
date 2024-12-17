@@ -233,6 +233,9 @@ function gestionarSolicitudDozavos2($idSolicitud, $accion, $codigo)
         $status = $filaSolicitud['status'];
         $id_ejercicio = $filaSolicitud['id_ejercicio'];
 
+        if ($status !== 1) {
+            throw new Exception("La solicitud ya ha sido procesada anteriormente");
+        }
 
         if ($accion === "aceptar") {
             // Iterar sobre cada partida en el array partidas
