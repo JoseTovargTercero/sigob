@@ -1,12 +1,12 @@
 <?php
 
 require_once '../sistema_global/conexion.php';
-require_once '../sistema_global/session.php';
+
 require_once '../sistema_global/notificaciones.php';
 header('Content-Type: application/json');
 require_once '../sistema_global/errores.php';
 require_once 'pre_compromisos.php';
-
+require_once 'pre_dispo_presupuestaria.php'; // Agregado
 // Función para gestionar la solicitud y compromisos
 function gestionarSolicitudDozavos($data)
 {
@@ -187,7 +187,7 @@ function registrarSolicitudozavo($data)
     global $conexion;
 
     try {
-        if (!isset($data['descripcion']) || !isset($data['monto']) || !isset($data['tipo']) || !isset($data['partidas']) || !isset($data['id_ente']) || !isset($data['id_ejercicio']) || !isset($data['mes'])) {
+        if (!isset($data['descripcion']) || !isset($data['monto']) || !isset($data['tipo']) || !isset($data['partidas']) || !isset($data['id_ente']) || !isset($data['id_ejercicio'])) {
             return ["error" => "Faltan datos obligatorios para registrar la solicitud."];
         }
 
@@ -196,10 +196,10 @@ function registrarSolicitudozavo($data)
         $fecha = date("Y-m-d");
 
         // Insertar en solicitud_dozavos (numero_compromiso siempre será 0 inicialmente)
-        $sql = "INSERT INTO solicitud_dozavos (numero_orden, numero_compromiso, descripcion, tipo, monto, fecha, partidas, id_ente, status, id_ejercicio, mes) VALUES (?, 0, ?, ?, ?, ?, ?, ?, 1, ?, ?)";
+        $sql = "INSERT INTO solicitud_dozavos (numero_orden, numero_compromiso, descripcion, tipo, monto, fecha, partidas, id_ente, status, id_ejercicio, mes) VALUES (?, 0, ?, ?, ?, ?, ?, ?, 1, ?, 1)";
         $stmt = $conexion->prepare($sql);
         $partidasJson = json_encode($data['partidas']); // Convertir partidas a formato JSON
-        $stmt->bind_param("sssssssss", $numero_orden, $data['descripcion'], $data['tipo'], $data['monto'], $fecha, $partidasJson, $data['id_ente'], $data['id_ejercicio'], $data['mes']);
+        $stmt->bind_param("ssssssss", $numero_orden, $data['descripcion'], $data['tipo'], $data['monto'], $fecha, $partidasJson, $data['id_ente'], $data['id_ejercicio']);
         $stmt->execute();
 
         if ($stmt->affected_rows > 0) {
@@ -301,7 +301,7 @@ function gestionarSolicitudDozavos2($idSolicitud, $accion, $codigo)
                 $partidaValor = $filaPartidaValor['partida'];
 
                 // Consultar disponibilidad presupuestaria de la partida
-                $sqlPartida = "SELECT monto_actual FROM distribucion_presupuestaria WHERE id_partida = ?";
+                $sqlPartida = "SELECT id FROM distribucion_presupuestaria WHERE id_partida = ?";
                 $stmtPartida = $conexion->prepare($sqlPartida);
                 $stmtPartida->bind_param("i", $id_partida);
                 $stmtPartida->execute();
@@ -312,22 +312,60 @@ function gestionarSolicitudDozavos2($idSolicitud, $accion, $codigo)
                 }
 
                 $filaPartida = $resultadoPartida->fetch_assoc();
-                $monto_actual = $filaPartida['monto_actual'];
+                $id_distribucion = $filaPartida['id'];
 
-                // Verificar si hay suficiente presupuesto disponible
-                if ($monto_actual < $monto) {
-                    throw new Exception("El presupuesto actual es insuficiente para el monto de la partida: $partidaValor");
+                $monto = $partida['monto'];
+
+                // Consultar el monto de distribución desde distribucion_entes
+                $sqlMontoDistribucion = "SELECT distribucion 
+                                         FROM distribucion_entes 
+                                         WHERE distribucion LIKE '%\"id_distribucion\":\"$id_distribucion\"%'";
+                $stmtMontoDistribucion = $conexion->prepare($sqlMontoDistribucion);
+                $stmtMontoDistribucion->execute();
+                $resultadoMontoDistribucion = $stmtMontoDistribucion->get_result();
+
+                if ($resultadoMontoDistribucion->num_rows === 0) {
+                    throw new Exception("El ID de distribución no se encuentra en el campo 'distribucion' de distribucion_entes");
                 }
 
-                // Calcular y actualizar el monto disponible en la partida
-                $nuevoMontoActual = (float) $monto_actual - (float) $monto;
-                $sqlUpdatePartida = "UPDATE distribucion_presupuestaria SET monto_actual = ? WHERE id_partida = ?";
+                // Obtener la fila de resultados
+                $filaMontoDistribucion = $resultadoMontoDistribucion->fetch_assoc();
+
+                // Decodificar el campo JSON
+                $distribuciones = json_decode($filaMontoDistribucion['distribucion'], true);
+
+                // Buscar el monto correspondiente al id_distribucion
+                $montoDistribucion = null;
+                foreach ($distribuciones as &$distribucion) {
+                    if ($distribucion['id_distribucion'] == $id_distribucion) {
+                        $montoDistribucion = (float) $distribucion['monto'];
+                        $nuevoMontoActual = $montoDistribucion - $monto;
+                        $distribucion['monto'] = $nuevoMontoActual;  // Actualizar el monto
+                        break;
+                    }
+                }
+
+                // Verificar si se encontró el monto
+                if ($montoDistribucion === null) {
+                    throw new Exception("No se encontró el monto para el ID de distribución especificado.");
+                }
+
+                // Verificar si hay suficiente presupuesto disponible
+                if ($montoDistribucion < $monto) {
+                    throw new Exception("El presupuesto actual en distribucion_entes es insuficiente para el monto de la partida");
+                }
+
+                // Volver a codificar el array a formato JSON
+                $nuevaDistribucion = json_encode($distribuciones);
+
+                // Actualizar el monto en distribucion_entes
+                $sqlUpdatePartida = "UPDATE distribucion_entes SET distribucion = ? WHERE distribucion LIKE '%\"id_distribucion\":\"$id_distribucion\"%'";
                 $stmtUpdatePartida = $conexion->prepare($sqlUpdatePartida);
-                $stmtUpdatePartida->bind_param("di", $nuevoMontoActual, $id_partida);
+                $stmtUpdatePartida->bind_param("s", $nuevaDistribucion);
                 $stmtUpdatePartida->execute();
 
                 if ($stmtUpdatePartida->affected_rows === 0) {
-                    throw new Exception("No se pudo actualizar el monto actual para la partida: $partidaValor");
+                    throw new Exception("No se pudo actualizar el monto de distribución para el ID de distribución proporcionado");
                 }
             }
 
@@ -354,7 +392,6 @@ function gestionarSolicitudDozavos2($idSolicitud, $accion, $codigo)
             } else {
                 throw new Exception("No se pudo actualizar la solicitud a aceptada");
             }
-
         } elseif ($accion === "rechazar") {
             // Actualizar el estado de la solicitud a rechazado
             $sqlUpdateSolicitud = "UPDATE solicitud_dozavos SET status = 3 WHERE id = ?";
@@ -367,16 +404,17 @@ function gestionarSolicitudDozavos2($idSolicitud, $accion, $codigo)
             } else {
                 throw new Exception("No se pudo rechazar la solicitud");
             }
-
         } else {
             throw new Exception("Acción no válida. Debe ser 'aceptar' o 'rechazar'.");
         }
-
     } catch (Exception $e) {
         registrarError($e->getMessage());
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
+
+
 
 
 // Función para actualizar una solicitud
