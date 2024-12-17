@@ -248,9 +248,9 @@ function gestionarSolicitudDozavos2($idSolicitud, $accion, $codigo)
                 $monto = $partida['monto'];
 
                 // Consultar disponibilidad presupuestaria de la partida
-                $sqlPartida = "SELECT monto_actual FROM distribucion_presupuestaria WHERE id_partida = ? AND id_ente = ?";
+                $sqlPartida = "SELECT monto_actual FROM distribucion_presupuestaria WHERE id_partida = ?";
                 $stmtPartida = $conexion->prepare($sqlPartida);
-                $stmtPartida->bind_param("ii", $id_partida, $id_ente);
+                $stmtPartida->bind_param("i", $id_partida);
                 $stmtPartida->execute();
                 $resultadoPartida = $stmtPartida->get_result();
                 if (!$stmtPartida) {
@@ -259,7 +259,7 @@ function gestionarSolicitudDozavos2($idSolicitud, $accion, $codigo)
 
 
                 if ($resultadoPartida->num_rows === 0) {
-                    throw new Exception("No se encontró una partida con el ID proporcionado para el ente especificado");
+                    throw new Exception("No se encontró una partida con el ID proporcionado");
                 }
 
                 $filaPartida = $resultadoPartida->fetch_assoc();
@@ -272,9 +272,9 @@ function gestionarSolicitudDozavos2($idSolicitud, $accion, $codigo)
 
                 // Calcular y actualizar el monto disponible en la partida
                 $nuevoMontoActual = (float) $monto_actual - (float) $monto;
-                $sqlUpdatePartida = "UPDATE distribucion_presupuestaria SET monto_actual = ? WHERE id_partida = ? AND id_ente = ?";
+                $sqlUpdatePartida = "UPDATE distribucion_presupuestaria SET monto_actual = ? WHERE id_partida = ?";
                 $stmtUpdatePartida = $conexion->prepare($sqlUpdatePartida);
-                $stmtUpdatePartida->bind_param("dii", $nuevoMontoActual, $id_partida, $id_ente);
+                $stmtUpdatePartida->bind_param("di", $nuevoMontoActual, $id_partida);
                 $stmtUpdatePartida->execute();
 
                 if ($stmtUpdatePartida->affected_rows === 0) {
