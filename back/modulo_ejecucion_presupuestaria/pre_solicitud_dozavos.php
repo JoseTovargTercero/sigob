@@ -71,6 +71,7 @@ function consultarSolicitudes()
         $solicitudes = [];
 
         while ($row = $result->fetch_assoc()) {
+            // Procesar las partidas asociadas
             $partidasArray = json_decode($row['partidas'], true);
 
             foreach ($partidasArray as &$partida) {
@@ -88,7 +89,27 @@ function consultarSolicitudes()
                 $partida['descripcion'] = $descripcion;
             }
 
+            // Agregar las partidas procesadas al registro
             $row['partidas'] = $partidasArray;
+
+            // Consultar la información del ente asociado
+            $idEnte = $row['id_ente'];
+            $sqlEnte = "SELECT * FROM entes WHERE id = ?";
+            $stmtEnte = $conexion->prepare($sqlEnte);
+            $stmtEnte->bind_param("i", $idEnte);
+            $stmtEnte->execute();
+            $resultEnte = $stmtEnte->get_result();
+            $dataEnte = $resultEnte->fetch_assoc();
+            $stmtEnte->close();
+
+            // Agregar la información del ente como un ítem más
+            if ($dataEnte) {
+                $row['ente'] = $dataEnte;
+            } else {
+                $row['ente'] = null; // Si no se encuentra, se asigna como null
+            }
+
+            // Añadir la solicitud completa a la lista de solicitudes
             $solicitudes[] = $row;
         }
 
@@ -97,6 +118,7 @@ function consultarSolicitudes()
         return json_encode(["success" => "No se encontraron registros en solicitud_dozavos."]);
     }
 }
+
 
 // Función para consultar una solicitud por ID
 function consultarSolicitudPorId($data)
@@ -134,11 +156,30 @@ function consultarSolicitudPorId($data)
         }
 
         $row['partidas'] = $partidasArray;
+
+        // Consultar la información del ente asociado
+        $idEnte = $row['id_ente'];
+        $sqlEnte = "SELECT * FROM entes WHERE id = ?";
+        $stmtEnte = $conexion->prepare($sqlEnte);
+        $stmtEnte->bind_param("i", $idEnte);
+        $stmtEnte->execute();
+        $resultEnte = $stmtEnte->get_result();
+        $dataEnte = $resultEnte->fetch_assoc();
+        $stmtEnte->close();
+
+        // Agregar la información del ente como un ítem más
+        if ($dataEnte) {
+            $row['ente'] = $dataEnte;
+        } else {
+            $row['ente'] = null; // Si no se encuentra, se asigna como null
+        }
+
         return json_encode(["success" => $row]);
     } else {
         return json_encode(["error" => "No se encontró el registro con el ID especificado."]);
     }
 }
+
 
 // Función para registrar solicitud dozavos
 function registrarSolicitudozavo($data)
