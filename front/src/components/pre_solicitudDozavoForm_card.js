@@ -244,24 +244,32 @@ export const pre_solicitudGenerar_card = async ({
             )
             .sort((a, b) => a.actividad - b.actividad)
             .map((dependencia) => {
-              return ` <li class='list-group-item'>
+              return `<li class='list-group-item'>
                   <p class='mb-2'>${dependencia.ente_nombre}</p>
 
                   <p class='mb-0'>
-                    <b>Actividad: </b><span class="px-2 rounded text-secondary"> ${
-                      dependencia.actividad
-                    }</span>
-                    - 
-                    <b>Distribuido: </b> 
-                    <span class="px-2 rounded text-secondary"> ${separadorLocal(
-                      montosActividadDistribuido[dependencia.actividad]
-                    )}Bs</span>
-                   
-                    - 
+                    <b>Actividad: </b>
+                    <span class='px-2 rounded text-secondary'>
+                      ${dependencia.actividad}
+                    </span>
+                  </p>
+                  <p class="mb-0">
+                    <b>Distribuido: </b>
+                    <span class='px-2 rounded text-secondary'>
+                      ${separadorLocal(
+                        montosActividadDistribuido[dependencia.actividad]
+                      )}
+                      Bs
+                    </span>
+                  </p>
+                  <p class="mb-0">
                     <b>Dozavo:</b>
-                    <span class="px-2 rounded text-secondary"> ${separadorLocal(
-                      montosActividadDozavo[dependencia.actividad]
-                    )}Bs</span>
+                    <span class='px-2 rounded text-secondary'>
+                      ${separadorLocal(
+                        montosActividadDozavo[dependencia.actividad]
+                      )}
+                      Bs
+                    </span>
                   </p>
                 </li>`
             })
@@ -469,11 +477,12 @@ export const pre_solicitudGenerar_card = async ({
 
       let dozavoInformacion = {
         id_ente: asignacionEnte.id_ente,
-        descripcion: 'DESCRIPCION EJEMPLO',
+        descripcion: fieldList.descripcion,
         monto: fieldList.dozavoMontoTotal,
         partidas: partidasDozavos,
         id_ejercicio: ejercicioId,
         tipo: 'D',
+        mes: fieldList.mes,
       }
 
       console.log(dozavoInformacion)

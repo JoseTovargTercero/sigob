@@ -1,7 +1,11 @@
 import { getPartidas } from '../api/partidas.js'
 import { deleteSolicitudDozavo } from '../api/pre_solicitudesDozavos.js'
 import { deleteSolicitudDozeavoRow } from '../controllers/pre_solicitudesDozavosTable.js'
-import { confirmNotification, toastNotification } from '../helpers/helpers.js'
+import {
+  confirmNotification,
+  separadorLocal,
+  toastNotification,
+} from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 
 const tableLanguage = {
@@ -55,7 +59,7 @@ export const pre_solicitudDozavo_card = async ({ elementToInsert, data }) => {
                 ${partida.partida}
               </td>
                <td class=''>
-                ${partida.monto}
+                ${separadorLocal(partida.monto)}
               </td>
               <td class=''>
                 ${partida.descripcion}
@@ -83,7 +87,7 @@ export const pre_solicitudDozavo_card = async ({ elementToInsert, data }) => {
           <div class='row'>
             <div class='col'>
               <b>Ente: </b>
-              <p>${ente}</p>
+              <p>${ente.ente_nombre}</p>
             </div>
             <div class='col'>
               <b>Tipo de ente: </b>
@@ -91,7 +95,7 @@ export const pre_solicitudDozavo_card = async ({ elementToInsert, data }) => {
             </div>
             <div class='col'>
               <b>Monto total: </b>
-              <p>${monto}</p>
+              <p>${separadorLocal(monto)}</p>
             </div>
             <div class='col'>
               <b>Descripción: </b>
@@ -114,7 +118,9 @@ export const pre_solicitudDozavo_card = async ({ elementToInsert, data }) => {
             </div>
             <div class='col'>
               <b>Compromiso: </b>
-              <p>${numero_compromiso}</p>
+              <p>${
+                !Number(numero_compromiso) ? 'No registrado' : numero_compromiso
+              }</p>
             </div>
           </div>
         </div>

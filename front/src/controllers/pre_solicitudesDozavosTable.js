@@ -86,8 +86,10 @@ export async function loadSolicitudesDozavosTable() {
   let data = datosOrdenados.map((solicitud) => {
     return {
       numero_orden: solicitud.numero_orden,
-      entes: solicitud.ente || 'Ente',
-      numero_compromiso: solicitud.numero_compromiso,
+      entes: solicitud.ente.ente_nombre,
+      numero_compromiso: !Number(solicitud.numero_compromiso)
+        ? 'No registrado'
+        : solicitud.numero_compromiso,
       descripcion: solicitud.descripcion,
       tipo: solicitud.tipo || 'hola',
       monto: solicitud.monto,
