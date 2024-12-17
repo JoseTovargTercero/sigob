@@ -4,40 +4,18 @@ import {
   getPreAsignacionEntes,
 } from '../api/pre_entes.js'
 import { registrarSolicitudDozavo } from '../api/pre_solicitudesDozavos.js'
+import { loadSolicitudesDozavosTable } from '../controllers/pre_solicitudesDozavosTable.js'
 import {
   confirmNotification,
   hideLoader,
   insertOptions,
   separadorLocal,
+  tableLanguage,
   toastNotification,
   validateInput,
 } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 
-const tableLanguage = {
-  decimal: '',
-  emptyTable: 'No hay datos disponibles en la tabla',
-  info: 'Mostrando _START_ a _END_ de _TOTAL_ entradas',
-  infoEmpty: 'Mostrando 0 a 0 de 0 entradas',
-  infoFiltered: '(filtrado de _MAX_ entradas totales)',
-  infoPostFix: '',
-  thousands: ',',
-  lengthMenu: 'Mostrar _MENU_',
-  loadingRecords: 'Cargando...',
-  processing: '',
-  search: 'Buscar:',
-  zeroRecords: 'No se encontraron registros coincidentes',
-  paginate: {
-    first: 'Primera',
-    last: 'Última',
-    next: 'Siguiente',
-    previous: 'Anterior',
-  },
-  aria: {
-    orderable: 'Ordenar por esta columna',
-    orderableReverse: 'Orden inverso de esta columna',
-  },
-}
 const d = document
 
 export const pre_solicitudEnte_card = async ({ elementToInsert }) => {
@@ -129,10 +107,6 @@ export const pre_solicitudEnte_card = async ({ elementToInsert }) => {
 
     if (e.target.dataset.validarid) {
       closeCard()
-      pre_solicitudGenerar_card({
-        elementToInsert: 'solicitudes-dozavos-view',
-        enteId: e.target.dataset.validarid,
-      })
     }
   }
 
@@ -200,23 +174,32 @@ const mesesOptions = () => {
   ]
 
   let mesesOptionsElement = meses.map((mes, index) => {
-    if (mesActual === index)
-      return `<option value='${index}' selected>${mes}</option>`
+    if (index)
+      if (mesActual === index)
+        return `<option value='${index}' selected>${mes}</option>`
     return `<option value='${index}'>${mes}</option>`
   })
 
-  return mesesOptionsElement.join('')
+  let options = [`<option value=''>Elegir...</option>`, ...mesesOptionsElement]
+
+  return options.join('')
 }
 
 export const pre_solicitudGenerar_card = async ({
   elementToInsert,
   enteId,
+  ejercicioId,
 }) => {
-  let fieldList = { ejemplo: '' }
+  let fieldList = { mes: '', descripcion: '' }
   let fieldListErrors = {
-    ejemplo: {
+    mes: {
       value: true,
-      message: 'mensaje de error',
+      message: 'Elija un mes válido',
+      type: 'text',
+    },
+    descripcion: {
+      value: true,
+      message: 'Escriba descripción de la solicitud',
       type: 'text',
     },
   }
@@ -356,10 +339,10 @@ export const pre_solicitudGenerar_card = async ({
                   Mes de solicitud (mes actual por defecto)
                 </label>
                 <select
-                  class='form-control chosen-select'
+                  class='form-control solicitud-input chosen-select'
                   type='text'
-                  name='solicitud-mes'
-                  id='solicitud-mes'
+                  name='mes'
+                  id='mes'
                 >
                   ${mesesOptions()}
                 </select>
@@ -370,9 +353,9 @@ export const pre_solicitudGenerar_card = async ({
                   Descripción
                 </label>
                 <textarea
-                  class='form-control'
-                  name='solicitud-descripcion'
-                  id='solicitud-descripcion'
+                  class='form-control solicitud-input'
+                  name='descripcion'
+                  id='descripcion'
                   rows='2'
                 ></textarea>
               </div>
@@ -425,7 +408,38 @@ export const pre_solicitudGenerar_card = async ({
       closeCard()
     }
 
+    if (e.target.id === 'solicitud-cancelar') {
+      closeCard()
+    }
+
     if (e.target.id === 'solicitud-generar') {
+      let inputs = d.querySelectorAll('.solicitud-input')
+
+      inputs.forEach((input) => {
+        fieldList = validateInput({
+          target: input,
+          fieldList,
+          fieldListErrors,
+          type: fieldListErrors[input.name].type,
+        })
+      })
+
+      if (Object.values(fieldListErrors).some((el) => el.value)) {
+        toastNotification({
+          type: NOTIFICATIONS_TYPES.fail,
+          message: 'Hay campos inválidos',
+        })
+        return
+      }
+
+      if (Object.values(fieldList).some((el) => !el)) {
+        toastNotification({
+          type: NOTIFICATIONS_TYPES.fail,
+          message: 'No se ha completado la información necesaria',
+        })
+        return
+      }
+
       let dozavoMontoTotal = 0
 
       let partidasDozavos = []
@@ -456,9 +470,9 @@ export const pre_solicitudGenerar_card = async ({
       let dozavoInformacion = {
         id_ente: asignacionEnte.id_ente,
         descripcion: 'DESCRIPCION EJEMPLO',
-        fecha: 'hoy',
         monto: fieldList.dozavoMontoTotal,
         partidas: partidasDozavos,
+        id_ejercicio: ejercicioId,
         tipo: 'D',
       }
 
@@ -484,6 +498,10 @@ export const pre_solicitudGenerar_card = async ({
       message: `¿Desea generar la solicitud de dozavo del ente ${asignacionEnte.ente_nombre}`,
       successFunction: async function () {
         let res = await registrarSolicitudDozavo(data)
+        if (res.success) {
+          closeCard()
+          loadSolicitudesDozavosTable()
+        }
       },
     })
   }

@@ -6,7 +6,7 @@ export const ejerciciosLista = async ({ elementToInsert, ejercicioFiscal }) => {
   const ejerciciosListContainer = d.getElementById('ejercicios-fiscales')
 
   let ejerciciosFiscales = await getEjecicios()
-  console.log(ejerciciosFiscales)
+  // console.log(ejerciciosFiscales)
 
   const ejercicioGuardado = localStorage.getItem('ejercicioSeleccionado')
 
@@ -19,11 +19,11 @@ export const ejerciciosLista = async ({ elementToInsert, ejercicioFiscal }) => {
         (ejercicio) => Number(ejercicio.ano) === fechaActual
       )
 
-  console.log(ejerciciosFiscales)
+  // console.log(ejerciciosFiscales)
 
-  console.log(ejercicioFechaActual)
+  // console.log(ejercicioFechaActual)
 
-  console.log(ejercicioGuardado)
+  // console.log(ejercicioGuardado)
 
   // Si hay un ejercicio almacenado, usamos ese; de lo contrario, usamos el año actual
   let ejercicioSeleccionado = ejercicioFechaActual

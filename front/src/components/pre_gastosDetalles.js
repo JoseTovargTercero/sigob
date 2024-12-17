@@ -229,7 +229,7 @@ export const form_aceptarGasto = ({ elementToInsert, id, reset }) => {
   let card = `    <div class='card slide-up-animation' id='${nombreCard}-form-card'>
       <div class='card-header d-flex justify-content-between'>
         <div class=''>
-          <h5 class='mb-0'>Identificar compromiso antes de aceptar casto</h5>
+          <h5 class='mb-0'>Identificar compromiso antes de aceptar gasto</h5>
         </div>
         <button
           data-close='btn-close'

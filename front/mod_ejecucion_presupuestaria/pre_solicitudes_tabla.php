@@ -26,9 +26,17 @@ require_once '../../back/sistema_global/session.php';
         <div class="page-block">
           <div class="row align-items-center">
             <div class="col-md-12">
-              <div class="page-header-title">
-                <h5 class="mb-0">Solicitudes de Dozavos</h5>
+
+              <div class=" d-flex justify-content-between">
+                <h4 class="fw-bold py-3 mb-4">
+                  <span class="text-muted fw-light">Ejecución presupuestaria /</span> Solicitudes de Dozavos
+                </h4>
+                <div class="row" id="ejercicios-fiscales">
+                </div>
+
               </div>
+
+
             </div>
           </div>
         </div>

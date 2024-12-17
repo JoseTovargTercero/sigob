@@ -20,9 +20,9 @@ const getPreAsignacionEntes = async () => {
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
 
-    const clone = res.clone()
+    // const clone = res.clone()
 
-    let text = await clone.text()
+    // let text = await clone.text()
 
     const json = await res.json()
 
@@ -63,13 +63,13 @@ const getPreAsignacionEnte = async (id) => {
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
 
-    const clone = res.clone()
+    // const clone = res.clone()
 
-    let text = await clone.text()
+    // let text = await clone.text()
 
     const json = await res.json()
 
-    console.log(json)
+    // console.log(json)
     if (json.success) {
       return json.success
     }
