@@ -235,8 +235,6 @@ function gestionarSolicitudDozavos2($idSolicitud, $accion, $codigo)
         // Decodificar el campo `partidas` como un array
         $partidas = json_decode($filaSolicitud['partidas'], true);
 
-    
-
         if ($status !== 1) {
             throw new Exception("La solicitud ya ha sido procesada anteriormente");
         }
@@ -247,16 +245,26 @@ function gestionarSolicitudDozavos2($idSolicitud, $accion, $codigo)
                 $id_partida = $partida['id'];
                 $monto = $partida['monto'];
 
+                // Obtener el valor de partida desde la tabla partidas_presupuestarias
+                $sqlPartidaValor = "SELECT partida FROM partidas_presupuestarias WHERE id = ?";
+                $stmtPartidaValor = $conexion->prepare($sqlPartidaValor);
+                $stmtPartidaValor->bind_param("i", $id_partida);
+                $stmtPartidaValor->execute();
+                $resultadoPartidaValor = $stmtPartidaValor->get_result();
+
+                if ($resultadoPartidaValor->num_rows === 0) {
+                    throw new Exception("No se encontró el valor de partida para el ID proporcionado");
+                }
+
+                $filaPartidaValor = $resultadoPartidaValor->fetch_assoc();
+                $partidaValor = $filaPartidaValor['partida'];
+
                 // Consultar disponibilidad presupuestaria de la partida
                 $sqlPartida = "SELECT monto_actual FROM distribucion_presupuestaria WHERE id_partida = ?";
                 $stmtPartida = $conexion->prepare($sqlPartida);
                 $stmtPartida->bind_param("i", $id_partida);
                 $stmtPartida->execute();
                 $resultadoPartida = $stmtPartida->get_result();
-                if (!$stmtPartida) {
-                    throw new Exception("Error al preparar la consulta: " . $conexion->error);
-                }
-
 
                 if ($resultadoPartida->num_rows === 0) {
                     throw new Exception("No se encontró una partida con el ID proporcionado");
@@ -267,7 +275,7 @@ function gestionarSolicitudDozavos2($idSolicitud, $accion, $codigo)
 
                 // Verificar si hay suficiente presupuesto disponible
                 if ($monto_actual < $monto) {
-                    throw new Exception("El presupuesto actual es insuficiente para el monto de la partida con ID $id_partida");
+                    throw new Exception("El presupuesto actual es insuficiente para el monto de la partida: $partidaValor");
                 }
 
                 // Calcular y actualizar el monto disponible en la partida
@@ -278,7 +286,7 @@ function gestionarSolicitudDozavos2($idSolicitud, $accion, $codigo)
                 $stmtUpdatePartida->execute();
 
                 if ($stmtUpdatePartida->affected_rows === 0) {
-                    throw new Exception("No se pudo actualizar el monto actual para la partida con ID $id_partida");
+                    throw new Exception("No se pudo actualizar el monto actual para la partida: $partidaValor");
                 }
             }
 
@@ -328,6 +336,7 @@ function gestionarSolicitudDozavos2($idSolicitud, $accion, $codigo)
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 // Función para actualizar una solicitud
 function actualizarSolicitudozavo($data)
