@@ -53,6 +53,11 @@ function registrarCompromiso($idRegistro, $nombreTabla, $descripcion, $id_ejerci
                 $stmtUpdate->bind_param("si", $codigo, $idRegistro);
                 $stmtUpdate->execute();
 
+                $sqlUpdate2 = "UPDATE compromisos SET numero_compromiso = ? WHERE id_registro = ?";
+                $stmtUpdate2 = $conexion->prepare($sqlUpdate2);
+                $stmtUpdate2->bind_param("si", $codigo, $idRegistro);
+                $stmtUpdate2->execute();
+
                 // Verificar si la actualización fue exitosa
                 if ($stmtUpdate->affected_rows > 0) {
                     return ["success" => true, "correlativo" => $nuevoCorrelativo, "id_compromiso" => $idCompromiso];

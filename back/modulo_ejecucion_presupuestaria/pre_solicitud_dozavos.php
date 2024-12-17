@@ -146,7 +146,7 @@ function registrarSolicitudozavo($data)
     global $conexion;
 
     try {
-        if (!isset($data['descripcion']) || !isset($data['monto']) || !isset($data['tipo']) || !isset($data['partidas']) || !isset($data['id_ente'])) {
+        if (!isset($data['descripcion']) || !isset($data['monto']) || !isset($data['tipo']) || !isset($data['partidas']) || !isset($data['id_ente']) || !isset($data['id_ejercicio']) || !isset($data['mes'])) {
             return ["error" => "Faltan datos obligatorios para registrar la solicitud."];
         }
 
@@ -155,10 +155,10 @@ function registrarSolicitudozavo($data)
         $fecha = date("Y-m-d");
 
         // Insertar en solicitud_dozavos (numero_compromiso siempre será 0 inicialmente)
-        $sql = "INSERT INTO solicitud_dozavos (numero_orden, numero_compromiso, descripcion, tipo, monto, fecha, partidas, id_ente, status, id_ejercicio) VALUES (?, 0, ?, ?, ?, ?, ?, ?, 1, ?)";
+        $sql = "INSERT INTO solicitud_dozavos (numero_orden, numero_compromiso, descripcion, tipo, monto, fecha, partidas, id_ente, status, id_ejercicio, mes) VALUES (?, 0, ?, ?, ?, ?, ?, ?, 1, ?, ?)";
         $stmt = $conexion->prepare($sql);
         $partidasJson = json_encode($data['partidas']); // Convertir partidas a formato JSON
-        $stmt->bind_param("ssssssss", $numero_orden, $data['descripcion'], $data['tipo'], $data['monto'], $fecha, $partidasJson, $data['id_ente'], $data['id_ejercicio']);
+        $stmt->bind_param("sssssssss", $numero_orden, $data['descripcion'], $data['tipo'], $data['monto'], $fecha, $partidasJson, $data['id_ente'], $data['id_ejercicio'], $data['mes']);
         $stmt->execute();
 
         if ($stmt->affected_rows > 0) {
@@ -343,13 +343,13 @@ function actualizarSolicitudozavo($data)
 {
     global $conexion;
 
-    if (!isset($data['id'], $data['numero_orden'], $data['numero_compromiso'], $data['descripcion'], $data['monto'], $data['fecha'], $data['partidas'], $data['id_ente'], $data['status'])) {
+    if (!isset($data['id'], $data['numero_orden'], $data['numero_compromiso'], $data['descripcion'], $data['monto'], $data['fecha'], $data['partidas'], $data['id_ente'], $data['status'], $data['id_ejercicio'], $data['mes'])) {
         return json_encode(["error" => "Faltan datos o el ID para actualizar la solicitud."]);
     }
 
-    $sql = "UPDATE solicitud_dozavos SET numero_orden = ?, numero_compromiso = ?, descripcion = ?, monto = ?, fecha = ?, partidas = ?, id_ente = ?, status = ? WHERE id = ?";
+    $sql = "UPDATE solicitud_dozavos SET numero_orden = ?, numero_compromiso = ?, descripcion = ?, monto = ?, fecha = ?, partidas = ?, id_ente = ?, status = ?, id_ejercicio = ?, mes = ? WHERE id = ?";
     $stmt = $conexion->prepare($sql);
-    $stmt->bind_param("issdsssii", $data['numero_orden'], $data['numero_compromiso'], $data['descripcion'], $data['monto'], $data['fecha'], json_encode($data['partidas']), $data['id_ente'], $data['status'], $data['id']);
+    $stmt->bind_param("issdsssisss", $data['numero_orden'], $data['numero_compromiso'], $data['descripcion'], $data['monto'], $data['fecha'], json_encode($data['partidas']), $data['id_ente'], $data['status'], $data['id_ejercicio'], $data['mes'], $data['id']);
     $stmt->execute();
 
     if ($stmt->affected_rows > 0) {

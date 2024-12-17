@@ -46,7 +46,9 @@ if (!$dataRegistro) {
     die("No se encontró el registro en la tabla especificada.");
 }
 
-// Consultar las distribuciones asociadas al compromiso
+
+if ($tablaRegistro == "gastos") {
+    // Consultar las distribuciones asociadas al compromiso
 $queryGastos = "SELECT * FROM gastos WHERE id = ?";
 $stmtGastos = $conexion->prepare($queryGastos);
 $stmtGastos->bind_param('i', $idRegistro);
@@ -104,6 +106,101 @@ $response = [
     'gastos' => $dataGastos,
     'distribuciones' => $detalleDistribuciones
 ];
+}elseif ($tablaRegistro == "solicitud_dozavos") {
+    // Consultar la solicitud asociada al compromiso
+    $querySolicitud = "SELECT * FROM solicitud_dozavos WHERE id = ?";
+    $stmtSolicitud = $conexion->prepare($querySolicitud);
+    $stmtSolicitud->bind_param('i', $idRegistro);
+    $stmtSolicitud->execute();
+    $resultSolicitud = $stmtSolicitud->get_result();
+    $dataSolicitud = $resultSolicitud->fetch_assoc();
+    $stmtSolicitud->close();
+
+    $meses = array("ENERO","FEBRERO","MARZO","ABRIL","MAYO","JUNIO","JULIO","AGOSTO","SEPTIEMBRE","OCTUBRE","NOVIEMBRE","DICIEMBRE");
+    $date2 = $meses[$dataSolicitud['mes']];
+    
+    $queryEnte = "SELECT * FROM entes WHERE id = ?";
+    $stmtEnte = $conexion->prepare($queryEnte);
+    $stmtEnte->bind_param('i', $dataSolicitud["id_ente"]);
+    $stmtEnte->execute();
+    $resultEnte = $stmtEnte->get_result();
+    $dataEnte = $resultEnte->fetch_assoc();
+    $stmtEnte->close();
+
+    if (!$dataSolicitud) {
+        die("No se encontró la solicitud asociada al compromiso.");
+    }
+
+    // Decodificar las partidas asociadas a la solicitud
+    $partidas = json_decode($dataSolicitud['partidas'], true);
+    if (empty($partidas)) {
+        die("La solicitud no contiene partidas asociadas.");
+    }
+
+    $detallePartidas = [];
+
+    foreach ($partidas as $partida) {
+        $id_partida = $partida['id'];
+        $monto_partida = $partida['monto'];
+
+        // Consultar la distribución presupuestaria asociada a la partida
+        $queryDistribucion = "SELECT * FROM distribucion_presupuestaria WHERE id_partida = ?";
+        $stmtDistribucion = $conexion->prepare($queryDistribucion);
+        $stmtDistribucion->bind_param('i', $id_partida);
+        $stmtDistribucion->execute();
+        $resultDistribucion = $stmtDistribucion->get_result();
+        $dataDistribucion = $resultDistribucion->fetch_assoc();
+        $stmtDistribucion->close();
+
+        if ($dataDistribucion) {
+            // Consultar los detalles de la partida presupuestaria
+            $queryPartida = "SELECT * FROM partidas_presupuestarias WHERE id = ?";
+            $stmtPartida = $conexion->prepare($queryPartida);
+            $stmtPartida->bind_param('i', $dataDistribucion['id_partida']);
+            $stmtPartida->execute();
+            $resultPartida = $stmtPartida->get_result();
+            $dataPartida = $resultPartida->fetch_assoc();
+            $stmtPartida->close();
+
+            if ($dataPartida) {
+                $detallePartidas[] = [
+                    'partida' => [
+                        'id' => $id_partida,
+                        'monto' => $monto_partida
+                    ],
+                    'distribucion_presupuestaria' => $dataDistribucion,
+                    'partida_presupuestaria' => $dataPartida
+                ];
+            } else {
+                die("No se encontró la información de la partida presupuestaria para el ID {$dataDistribucion['id_partida']}.");
+            }
+        } else {
+            die("No se encontró la distribución presupuestaria para el ID de la partida $id_partida.");
+        }
+    }
+    print_r($detallePartidas);
+    // Resultado final con la información de la solicitud, las partidas y distribuciones presupuestarias
+    $response = [
+        'compromiso' => $dataCompromiso,
+        'registro_especifico' => $dataRegistro,
+        'solicitud' => [
+            'id' => $dataSolicitud['id'],
+            'numero_orden' => $dataSolicitud['numero_orden'],
+            'numero_compromiso' => $dataSolicitud['numero_compromiso'],
+            'descripcion' => $dataSolicitud['descripcion'],
+            'tipo' => $dataSolicitud['tipo'],
+            'monto' => $dataSolicitud['monto'],
+            'fecha' => $dataSolicitud['fecha'],
+            'id_ente' => $dataSolicitud['id_ente'],
+            'status' => $dataSolicitud['status'],
+            'id_ejercicio' => $dataSolicitud['id_ejercicio'],
+        ],
+        'partidas' => $detallePartidas
+    ];
+}
+
+
+
 
 
 
@@ -562,39 +659,36 @@ function unidad2($numuero)
 </head>
 
 <body>
-    <!-- Encabezado -->
-    <?php
-    echo "
-    <div style='font-size: 9px;'>
-        <table class='header-table bt br bb bl bc-lightgray'>
-            <tr>
-           
-                <td class='text-left' style='vertical-align: top; padding-top: 13px;'>
-                    <b>
-                    REPÚBLICA BOLIVARIANA DE VENEZUELA <br>
-                    GOBERNACIÓN DEL ESTADO AMAZONAS  <br>
-                    <br>
-                    <br>
-                    </b>
-                </td>
-                <td class='text-right' style='vertical-align: top; padding: 13px 10px 0 0;'>
-                    <b>
-                    Fecha: " . date('d/m/Y') . " 
-                    </b>
-                    <br>
-                    <img src='../../img/logo.jpg' class='logo'>
-
-                </td>
-            </tr>
-            <tr>
-                <td colspan='3'>
-                    <h2 align='center'>COMPROMISO</h2>
-                </td>
-            </tr>
-  
-        </table>
-    ";
-    ?>
+<!-- Encabezado -->
+<?php
+echo "
+<div style='font-size: 9px;'>
+    <table class='header-table bt br bb bl bc-lightgray'>
+        <tr>
+            <td class='text-left' style='vertical-align: top; padding-top: 13px;'>
+                <b>
+                REPÚBLICA BOLIVARIANA DE VENEZUELA <br>
+                GOBERNACIÓN DEL ESTADO AMAZONAS  <br>
+                <br>
+                <br>
+                </b>
+            </td>
+            <td class='text-right' style='vertical-align: top; padding: 13px 10px 0 0;'>
+                <b>
+                Fecha: " . date('d/m/Y') . " 
+                </b>
+                <br>
+                <img src='../../img/logo.jpg' class='logo'>
+            </td>
+        </tr>
+        <tr>
+            <td colspan='3'>
+                <h2 align='center'>COMPROMISO</h2>
+            </td>
+        </tr>
+    </table>
+";
+?>
 
 <!-- Tabla principal -->
 <table>
@@ -604,46 +698,70 @@ function unidad2($numuero)
         <th class="bl bt bb br">Fecha: <?php echo date('d/m/Y'); ?></th>
     </tr>
 
-    <!-- Información de Beneficiario eliminada, ahora se consulta desde las distribuciones -->
+    <!-- Mostrar Beneficiario o Solicitante según la tablaRegistro -->
     <?php 
-    if (!empty($dataRegistro)) {
-        $detalleDistribucion = $detalleDistribuciones[0] ?? null;
-        if ($detalleDistribucion) { 
-            $dataPartida = $detalleDistribucion['partida_presupuestaria'] ?? null; 
+    if (!empty($dataRegistro)) { 
+        if ($tablaRegistro === 'gastos') { 
     ?>
-        <tr>
-            <th class="bl bt bb">Beneficiario: <?php echo $dataRegistro['beneficiario'] ?? ''; ?></th>
-            <th class="bl bt bb br">RIF: <?php echo $dataRegistro['identificador'] ?? ''; ?></th>
-            <th class="bl bt bb br"></th>
-        </tr>
-    <?php } } ?>
-   
+            <tr>
+                <th class="bl bt bb">Beneficiario: <?php echo $dataRegistro['beneficiario'] ?? ''; ?></th>
+                <th class="bl bt bb br">RIF: <?php echo $dataRegistro['identificador'] ?? ''; ?></th>
+                <th class="bl bt bb br"></th>
+            </tr>
+    <?php 
+        } elseif ($tablaRegistro === 'solicitud_dozavos') { 
+    ?>
+            <tr>
+                <th class="bl bt bb">Solicitante: <?php echo $dataEnte['ente_nombre'] ?? ''; ?></th>
+                <th class="bl bt bb br">Motivo: SOLICITUD DE DOZAVO CORRESPONDIENTE AL MES DE <?php echo $date2; ?></th>
+                <th class="bl bt bb br"></th>
+            </tr>
+    <?php 
+        } 
+    } 
+    ?>
+
     <tr>
         <th class="bl bt bb br" colspan="3">Concepto: <?php echo $dataCompromiso['descripcion']; ?></th>
     </tr>
     <tr>
-        <th class="bl bt bb br" colspan="3">Bolivares: <?php echo number_format($dataRegistro['monto'], 2, ',', '.'); ?></th>
+        <th class="bl bt bb br" colspan="3">Bolívares: <?php echo number_format($dataRegistro['monto'], 2, ',', '.'); ?></th>
     </tr>
     <tr>
         <th class="bl bt bb br" colspan="3">Monto en letras: <?php echo convertirNumeroLetra2($dataRegistro['monto']); ?></th>
     </tr>
     <tr>
-        <th class="bl bt bb">CODIGO PRESUPUESTARIO:<br>ST-PG-PY-AC-PAR-GE-ES-SE-AUXI</th>
-        <th class="bl bt bb br">DENOMINACION:</th>
+        <th class="bl bt bb">CÓDIGO PRESUPUESTARIO:<br>ST-PG-PY-AC-PAR-GE-ES-SE-AUXI</th>
+        <th class="bl bt bb br">DENOMINACIÓN:</th>
         <th class="bl bt bb br">MONTO:</th>
     </tr>
 
-    <!-- Distribución presupuestaria y monto actualizado -->
-    <?php if (!empty($detalleDistribuciones)) { 
+    <!-- Mostrar distribuciones según la tablaRegistro -->
+    <?php 
+    if ($tablaRegistro === 'gastos' && !empty($detalleDistribuciones)) { 
         foreach ($detalleDistribuciones as $distribucion) {
             $partidaPresupuestaria = $distribucion['partida_presupuestaria'];
     ?>
         <tr>
             <th class="bl bt bb"><?php echo $partidaPresupuestaria['partida'] ?? ''; ?></th>
             <th class="bl bt bb br"><?php echo $partidaPresupuestaria['descripcion'] ?? ''; ?></th>
-            <th class="bl bt bb br"><?php echo number_format($distribucion['distribucion']['monto'], 2, ',', '.'); ?></th> <!-- Monto de la distribución -->
+            <th class="bl bt bb br"><?php echo number_format($distribucion['distribucion']['monto'], 2, ',', '.'); ?></th>
         </tr>
-    <?php } } ?>
+    <?php 
+        } 
+    } elseif ($tablaRegistro === 'solicitud_dozavos' && !empty($dataSolicitud)) { 
+        $partidas = json_decode($dataRegistro['partidas'], true); // Decodificar las partidas asociadas
+    ?>
+ <?php foreach ($detallePartidas as $detalle): ?>
+            <tr>
+                <td class="bl bt bb"><?php echo $detalle['partida_presupuestaria']['partida']; ?></td>
+                <td class="bl bt bb"><?php echo htmlspecialchars($detalle['partida_presupuestaria']['descripcion']); ?></td>
+                <td class="bl bt bb"><?php echo number_format($detalle['partida']['monto'], 2, ',', '.'); ?></td>
+            </tr>
+        <?php endforeach; ?>
+    <?php 
+    } 
+    ?>
 </table>
 
 
