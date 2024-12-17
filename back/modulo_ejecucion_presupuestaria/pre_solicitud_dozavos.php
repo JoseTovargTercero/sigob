@@ -253,6 +253,10 @@ function gestionarSolicitudDozavos2($idSolicitud, $accion, $codigo)
                 $stmtPartida->bind_param("ii", $id_partida, $id_ente);
                 $stmtPartida->execute();
                 $resultadoPartida = $stmtPartida->get_result();
+                if (!$stmtPartida) {
+                    throw new Exception("Error al preparar la consulta: " . $conexion->error);
+                }
+
 
                 if ($resultadoPartida->num_rows === 0) {
                     throw new Exception("No se encontró una partida con el ID proporcionado para el ente especificado");
