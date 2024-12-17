@@ -229,16 +229,22 @@ function gestionarSolicitudDozavos2($idSolicitud, $accion, $codigo)
         $tipo = $filaSolicitud['tipo'];
         $montoTotal = $filaSolicitud['monto'];
         $id_ente = $filaSolicitud['id_ente'];
-        $partidas = json_decode($filaSolicitud['partidas'], true);
         $status = $filaSolicitud['status'];
         $id_ejercicio = $filaSolicitud['id_ejercicio'];
+
+        // Decodificar el campo `partidas` como un array
+        $partidas = json_decode($filaSolicitud['partidas'], true);
+
+        if (!is_array($partidas)) {
+            throw new Exception("El campo 'partidas' no contiene un formato válido");
+        }
 
         if ($status !== 1) {
             throw new Exception("La solicitud ya ha sido procesada anteriormente");
         }
 
         if ($accion === "aceptar") {
-            // Iterar sobre cada partida en el array partidas
+            // Iterar sobre cada array de partidas
             foreach ($partidas as $partida) {
                 $id_partida = $partida['id'];
                 $monto = $partida['monto'];
@@ -320,6 +326,7 @@ function gestionarSolicitudDozavos2($idSolicitud, $accion, $codigo)
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 // Función para actualizar una solicitud
 function actualizarSolicitudozavo($data)
