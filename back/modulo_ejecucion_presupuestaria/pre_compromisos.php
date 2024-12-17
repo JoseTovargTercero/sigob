@@ -50,7 +50,7 @@ function registrarCompromiso($idRegistro, $nombreTabla, $descripcion, $id_ejerci
             if ($nombreTabla === 'solicitud_dozavos') {
                 $sqlUpdate = "UPDATE $nombreTabla SET numero_compromiso = ? WHERE id = ?";
                 $stmtUpdate = $conexion->prepare($sqlUpdate);
-                $stmtUpdate->bind_param("si", $nuevoCorrelativo, $idRegistro);
+                $stmtUpdate->bind_param("si", $codigo, $idRegistro);
                 $stmtUpdate->execute();
 
                 // Verificar si la actualización fue exitosa

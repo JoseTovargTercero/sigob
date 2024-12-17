@@ -48,7 +48,7 @@ function gestionarSolicitudDozavos($data)
             return eliminarSolicitudozavo($data);
         }
         if ($accion === 'gestionar') {
-            return gestionarSolicitudDozavos2($data["id"], $data["accion_gestion"]);
+            return gestionarSolicitudDozavos2($data["id"], $data["accion_gestion"], $data["codigo"]);
         }
 
         // Otras acciones...
@@ -202,7 +202,7 @@ function generarNumeroOrden()
     return $nuevo_numero_orden;
 }
 
-function gestionarSolicitudDozavos2($idSolicitud, $accion)
+function gestionarSolicitudDozavos2($idSolicitud, $accion, $codigo)
 {
     global $conexion;
 
@@ -281,7 +281,7 @@ function gestionarSolicitudDozavos2($idSolicitud, $accion)
             $stmtUpdateSolicitud->execute();
 
             if ($stmtUpdateSolicitud->affected_rows > 0) {
-                $resultadoCompromiso = registrarCompromiso($idSolicitud, 'solicitud_dozavos', $descripcion, $id_ejercicio, 0);
+                $resultadoCompromiso = registrarCompromiso($idSolicitud, 'solicitud_dozavos', $descripcion, $id_ejercicio, $codigo);
 
                 if (isset($resultadoCompromiso['success']) && $resultadoCompromiso['success']) {
                     return json_encode([
