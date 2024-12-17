@@ -48,7 +48,7 @@ function gestionarSolicitudDozavos($data)
             return eliminarSolicitudozavo($data);
         }
         if ($accion === 'gestionar') {
-            return gestionarSolicitudDozavos2($data);
+            return gestionarSolicitudDozavos2($data["id"], $data["accion_gestion"]);
         }
 
         // Otras acciones...
