@@ -187,8 +187,24 @@ function registrarSolicitudozavo($data)
     global $conexion;
 
     try {
-        if (!isset($data['descripcion']) || !isset($data['monto']) || !isset($data['tipo']) || !isset($data['partidas']) || !isset($data['id_ente']) || !isset($data['id_ejercicio'])) {
+        if (!isset($data['descripcion']) || !isset($data['monto']) || !isset($data['tipo']) || !isset($data['partidas']) || !isset($data['id_ente']) || !isset($data['id_ejercicio']) || !isset($data['mes'])) {
             return ["error" => "Faltan datos obligatorios para registrar la solicitud."];
+        }
+
+        // Iniciar una transacción
+        $conexion->begin_transaction();
+
+        // Verificar que no exista más de un registro para el mismo id_ente en el mismo mes
+        $sqlVerificar = "SELECT COUNT(*) AS total FROM solicitud_dozavos WHERE id_ente = ? AND mes = ? AND id_ejercicio = ?";
+        $stmtVerificar = $conexion->prepare($sqlVerificar);
+        $stmtVerificar->bind_param("iii", $data['id_ente'], $data['mes'], $data['id_ejercicio']);
+        $stmtVerificar->execute();
+        $resultadoVerificar = $stmtVerificar->get_result();
+        $filaVerificar = $resultadoVerificar->fetch_assoc();
+
+        if ($filaVerificar['total'] > 0) {
+            $conexion->rollback();
+            return ["error" => "Ya existe una solicitud para este ente en el mismo mes."];
         }
 
         // Generar el numero_orden automáticamente
@@ -196,22 +212,28 @@ function registrarSolicitudozavo($data)
         $fecha = date("Y-m-d");
 
         // Insertar en solicitud_dozavos (numero_compromiso siempre será 0 inicialmente)
-        $sql = "INSERT INTO solicitud_dozavos (numero_orden, numero_compromiso, descripcion, tipo, monto, fecha, partidas, id_ente, status, id_ejercicio, mes) VALUES (?, 0, ?, ?, ?, ?, ?, ?, 1, ?, 1)";
-        $stmt = $conexion->prepare($sql);
+        $sqlInsertar = "INSERT INTO solicitud_dozavos (numero_orden, numero_compromiso, descripcion, tipo, monto, fecha, partidas, id_ente, status, id_ejercicio, mes) VALUES (?, 0, ?, ?, ?, ?, ?, ?, 1, ?, ?)";
+        $stmtInsertar = $conexion->prepare($sqlInsertar);
         $partidasJson = json_encode($data['partidas']); // Convertir partidas a formato JSON
-        $stmt->bind_param("ssssssss", $numero_orden, $data['descripcion'], $data['tipo'], $data['monto'], $fecha, $partidasJson, $data['id_ente'], $data['id_ejercicio']);
-        $stmt->execute();
+        $stmtInsertar->bind_param("sssssssss", $numero_orden, $data['descripcion'], $data['tipo'], $data['monto'], $fecha, $partidasJson, $data['id_ente'], $data['id_ejercicio'], $data['mes']);
+        $stmtInsertar->execute();
 
-        if ($stmt->affected_rows > 0) {
-            return json_encode(["success" => "Registro exitoso"]);
+        if ($stmtInsertar->affected_rows > 0) {
+            // Confirmar la transacción
+            $conexion->commit();
+            return ["success" => "Registro exitoso"];
         } else {
-            return json_encode(["error" => "No se pudo registrar la solicitud."]);
+            $conexion->rollback();
+            return ["error" => "No se pudo registrar la solicitud."];
         }
     } catch (Exception $e) {
+        // Revertir transacción en caso de error
+        $conexion->rollback();
         registrarError($e->getMessage());
         return ["error" => $e->getMessage()];
     }
 }
+
 
 // Función para generar el número de orden
 function generarNumeroOrden()
