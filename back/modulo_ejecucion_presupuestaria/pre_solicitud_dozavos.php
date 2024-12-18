@@ -341,8 +341,9 @@ function gestionarSolicitudDozavos2($idSolicitud, $accion, $codigo)
                 // Consultar el monto de distribución desde distribucion_entes
                 $sqlMontoDistribucion = "SELECT distribucion 
                                          FROM distribucion_entes 
-                                         WHERE distribucion LIKE '%\"id_distribucion\":\"$id_distribucion\"%'";
+                                         WHERE id_ente = ? AND id_ejercicio = ? AND distribucion LIKE '%\"id_distribucion\":\"$id_distribucion\"%'";
                 $stmtMontoDistribucion = $conexion->prepare($sqlMontoDistribucion);
+                $stmtMontoDistribucion->bind_param("ii", $id_ente, $id_ejercicio);
                 $stmtMontoDistribucion->execute();
                 $resultadoMontoDistribucion = $stmtMontoDistribucion->get_result();
 
@@ -381,9 +382,9 @@ function gestionarSolicitudDozavos2($idSolicitud, $accion, $codigo)
                 $nuevaDistribucion = json_encode($distribuciones);
 
                 // Actualizar el monto en distribucion_entes
-                $sqlUpdatePartida = "UPDATE distribucion_entes SET distribucion = ? WHERE distribucion LIKE '%\"id_distribucion\":\"$id_distribucion\"%'";
+                $sqlUpdatePartida = "UPDATE distribucion_entes SET distribucion = ? WHERE id_ente = ? AND id_ejercicio = ? AND distribucion LIKE '%\"id_distribucion\":\"$id_distribucion\"%'";
                 $stmtUpdatePartida = $conexion->prepare($sqlUpdatePartida);
-                $stmtUpdatePartida->bind_param("s", $nuevaDistribucion);
+                $stmtUpdatePartida->bind_param("sii", $nuevaDistribucion, $id_ente, $id_ejercicio,);
                 $stmtUpdatePartida->execute();
 
                 if ($stmtUpdatePartida->affected_rows === 0) {
