@@ -119,7 +119,7 @@ const aceptarDozavo = async (id, codigo) => {
 
     if (json.success) {
       toastNotification({
-        type: NOTIFICATIONS_TYPES.success,
+        type: NOTIFICATIONS_TYPES.done,
         message: json.success,
       })
       return json
@@ -163,10 +163,9 @@ const rechazarDozavo = async (id, codigo) => {
 
     if (json.success) {
       toastNotification({
-        type: NOTIFICATIONS_TYPES.success,
+        type: NOTIFICATIONS_TYPES.done,
         message: json.success,
       })
-      return json
     }
     if (json.error) {
       toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })

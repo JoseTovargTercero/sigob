@@ -106,7 +106,7 @@ export async function loadSolicitudesDozavosTable() {
         acciones:
           Number(solicitud.status) === 0
             ? `<button
-              class='btn btn-secondary btn-sm btn-view'
+              class='btn btn-info btn-sm btn-view'
               data-detalleid='${solicitud.id}'
             >
               <i class='bx bx-detail me-1'></i>Detalles

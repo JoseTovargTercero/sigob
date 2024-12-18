@@ -29,7 +29,6 @@ const getGastos = async () => {
     console.log(text)
 
     const json = await res.json()
-    // console.log(json)
 
     if (json.success) {
       return json.success
