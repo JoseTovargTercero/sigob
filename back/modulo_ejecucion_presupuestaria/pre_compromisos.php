@@ -13,6 +13,9 @@ function registrarCompromiso($idRegistro, $nombreTabla, $descripcion, $id_ejerci
             return ["error" => "Faltan datos obligatorios para registrar el compromiso."];
         }
 
+        // Iniciar una transacción
+        $conexion->begin_transaction();
+
         // Obtener el año actual
         $yearActual = date("Y");
 
@@ -58,27 +61,30 @@ function registrarCompromiso($idRegistro, $nombreTabla, $descripcion, $id_ejerci
                 $stmtUpdate2->bind_param("si", $codigo, $idRegistro);
                 $stmtUpdate2->execute();
 
-                // Verificar si la actualización fue exitosa
-                if ($stmtUpdate->affected_rows > 0) {
+                // Verificar si ambas actualizaciones fueron exitosas
+                if ($stmtUpdate->affected_rows > 0 && $stmtUpdate2->affected_rows > 0) {
+                    // Confirmar la transacción
+                    $conexion->commit();
                     return ["success" => true, "correlativo" => $nuevoCorrelativo, "id_compromiso" => $idCompromiso];
                 } else {
+                    // Revertir en caso de error
+                    $conexion->rollback();
                     return ["error" => "No se pudo actualizar el número de compromiso en la tabla $nombreTabla."];
                 }
             } else {
-                // Si no es 'solicitud_dozavos', retornar el éxito
+                // Confirmar la transacción
+                $conexion->commit();
                 return ["success" => true, "correlativo" => $nuevoCorrelativo, "id_compromiso" => $idCompromiso];
             }
         } else {
+            // Revertir la transacción si la inserción falla
+            $conexion->rollback();
             return ["error" => "No se pudo registrar el compromiso."];
         }
     } catch (Exception $e) {
+        // Revertir la transacción en caso de error
+        $conexion->rollback();
         registrarError($e->getMessage());
         return ["error" => $e->getMessage()];
     }
 }
-
-
-
-
-
-
