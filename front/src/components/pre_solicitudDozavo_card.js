@@ -74,9 +74,14 @@ export const pre_solicitudDozavo_card = async ({ elementToInsert, data }) => {
         .join('')
     : `   <li>No posee partidas asociadas</li>`
 
-  let card = `  <div class='card slide-up-animation pb-2' id='card-solicitud-dozavo'>
-      <header class='card-header'>
-        
+  let card = ` <div class='card slide-up-animation pb-2' id='card-solicitud-dozavo'>
+      <div class='card-header d-flex justify-content-between'>
+        <div class=''>
+          <h5 class='mb-0'>Información de solicitud de dozavo</h5>
+          <small class='mt-0 text-muted'>
+            Certifique la información y proceda a realizar una acción
+          </small>
+        </div>
         <button
           data-close='btn-close-report'
           type='button'
@@ -85,7 +90,8 @@ export const pre_solicitudDozavo_card = async ({ elementToInsert, data }) => {
         >
           &times;
         </button>
-      </header>
+      </div>
+
       <div class='card-body text-center'>
         <div class='w-100 align-self-center fs-5'>
           <div class='row'>
@@ -122,9 +128,13 @@ export const pre_solicitudDozavo_card = async ({ elementToInsert, data }) => {
             </div>
             <div class='col'>
               <b>Compromiso: </b>
-              <p>${
-                !Number(numero_compromiso) ? 'No registrado' : numero_compromiso
-              }</p>
+              <p>
+                ${
+                  !Number(numero_compromiso)
+                    ? 'No registrado'
+                    : numero_compromiso
+                }
+              </p>
             </div>
           </div>
         </div>
@@ -132,7 +142,7 @@ export const pre_solicitudDozavo_card = async ({ elementToInsert, data }) => {
           <table
             class='table table-xs table-responsive mx-auto'
             style='width: 100%'
-            id="solicitud-partidas"
+            id='solicitud-partidas'
           >
             <thead>
               <th>Partida</th>
@@ -144,12 +154,12 @@ export const pre_solicitudDozavo_card = async ({ elementToInsert, data }) => {
         </div>
       </div>
       <div class='card-footer d-flex align-items-center justify-content-center gap-2 py-0'>
-      ${
-        status === 0
-          ? ` <span class='p-2 rounded text-white bg-green-600 text-bold'>
+        ${
+          status === 0
+            ? ` <span class='p-2 rounded text-white bg-green-600 text-bold'>
               Comprometido
             </span>`
-          : ` <button
+            : ` <button
             data-confirmarid='${id}'
             class='btn btn-primary size-change-animation'
           >
@@ -161,8 +171,7 @@ export const pre_solicitudDozavo_card = async ({ elementToInsert, data }) => {
           >
             Rechazar
           </button>`
-      }
-        
+        }
       </div>
     </div>`
 
@@ -203,6 +212,7 @@ export const pre_solicitudDozavo_card = async ({ elementToInsert, data }) => {
         message: '¿Seguro de rechazar esta solicitud de dozavo?',
         successFunction: async function () {
           let response = await rechazarDozavo(id)
+          console.log(response)
           if (response.success) {
             let row = d.querySelector(`[data-detalleid="${id}"]`).closest('tr')
             deleteSolicitudDozeavoRow({ row, id })

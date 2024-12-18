@@ -33,7 +33,13 @@ export const pre_solicitudEnte_card = async ({ elementToInsert }) => {
   let distribucionEntes = await getPreAsignacionEntes()
 
   console.log(distribucionEntes)
-
+  if (distribucionEntes.fullInfo.length === 0) {
+    toastNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'No hay entes con distribucion asignada',
+    })
+    return
+  }
   const crearFilas = () => {
     let fila = distribucionEntes.fullInfo
       .filter((distribucion) => Number(distribucion.status) === 1)
@@ -125,7 +131,7 @@ export const pre_solicitudEnte_card = async ({ elementToInsert }) => {
 
   // formElement.addEventListener('submit', (e) => e.preventDefault())
 
-  cardElement.addEventListener('input', validateInputFunction)
+  // cardElement.addEventListener('input', validateInputFunction)
   cardElement.addEventListener('click', validateClick)
 
   function validarEntesTabla() {
@@ -234,7 +240,7 @@ export const pre_solicitudGenerar_card = async ({
     fieldList.dozavoMontoTotal = dozavoMontoTotal
 
     let dependenciasElement =
-      dependencias.length > 1
+      dependencias.length > 0
         ? dependencias
             .filter((dependencia) =>
               actividadesEnte.some(
@@ -283,6 +289,7 @@ export const pre_solicitudGenerar_card = async ({
 
   const crearFilas = () => {
     let fila = []
+
     actividadesEnte.forEach((distribucion) => {
       distribucion.distribucion_partidas.forEach((partida) => {
         let dozavo = partida.monto / 12
