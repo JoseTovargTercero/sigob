@@ -195,7 +195,7 @@ function registrarSolicitudozavo($data)
         $conexion->begin_transaction();
 
         // Verificar que no exista más de un registro para el mismo id_ente en el mismo mes
-        $sqlVerificar = "SELECT COUNT(*) AS total FROM solicitud_dozavos WHERE id_ente = ? AND mes = ? AND id_ejercicio = ?";
+        $sqlVerificar = "SELECT COUNT(*) AS total FROM solicitud_dozavos WHERE id_ente = ? AND mes = ? AND id_ejercicio = ? AND status != '3'";
         $stmtVerificar = $conexion->prepare($sqlVerificar);
         $stmtVerificar->bind_param("iii", $data['id_ente'], $data['mes'], $data['id_ejercicio']);
         $stmtVerificar->execute();
