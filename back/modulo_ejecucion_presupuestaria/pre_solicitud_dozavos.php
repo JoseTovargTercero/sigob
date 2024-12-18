@@ -341,7 +341,7 @@ function gestionarSolicitudDozavos2($idSolicitud, $accion, $codigo)
                 // Consultar el monto de distribución desde distribucion_entes
                 $sqlMontoDistribucion = "SELECT distribucion 
                                          FROM distribucion_entes 
-                                         WHERE id_ente = ? AND id_ejercicio = ? AND distribucion LIKE '%\"id_distribucion\":\"$id_distribucion\"%'";
+                                         WHERE id_ente = ? AND id_ejercicio = ?";
                 $stmtMontoDistribucion = $conexion->prepare($sqlMontoDistribucion);
                 $stmtMontoDistribucion->bind_param("ii", $id_ente, $id_ejercicio);
                 $stmtMontoDistribucion->execute();
@@ -382,7 +382,7 @@ function gestionarSolicitudDozavos2($idSolicitud, $accion, $codigo)
                 $nuevaDistribucion = json_encode($distribuciones);
 
                 // Actualizar el monto en distribucion_entes
-                $sqlUpdatePartida = "UPDATE distribucion_entes SET distribucion = ? WHERE id_ente = ? AND id_ejercicio = ? AND distribucion LIKE '%\"id_distribucion\":\"$id_distribucion\"%'";
+                $sqlUpdatePartida = "UPDATE distribucion_entes SET distribucion = ? WHERE id_ente = ? AND id_ejercicio = ?";
                 $stmtUpdatePartida = $conexion->prepare($sqlUpdatePartida);
                 $stmtUpdatePartida->bind_param("sii", $nuevaDistribucion, $id_ente, $id_ejercicio,);
                 $stmtUpdatePartida->execute();
