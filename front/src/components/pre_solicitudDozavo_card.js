@@ -1,5 +1,8 @@
 import { getPartidas } from '../api/partidas.js'
-import { deleteSolicitudDozavo } from '../api/pre_solicitudesDozavos.js'
+import {
+  deleteSolicitudDozavo,
+  rechazarDozavo,
+} from '../api/pre_solicitudesDozavos.js'
 import { deleteSolicitudDozeavoRow } from '../controllers/pre_solicitudesDozavosTable.js'
 import {
   confirmNotification,
@@ -49,6 +52,7 @@ export const pre_solicitudDozavo_card = async ({ elementToInsert, data }) => {
     monto,
     fecha,
     partidas,
+    status,
   } = data
 
   let partidasLi = partidas
@@ -140,18 +144,25 @@ export const pre_solicitudDozavo_card = async ({ elementToInsert, data }) => {
         </div>
       </div>
       <div class='card-footer d-flex align-items-center justify-content-center gap-2 py-0'>
-        <button
-          data-confirmarid='${id}'
-          class='btn btn-primary size-change-animation'
-        >
-          Aceptar
-        </button>
-        <button
-          data-rechazarid='${id}'
-          class='btn btn-danger size-change-animation'
-        >
-          Rechazar
-        </button>
+      ${
+        status === 0
+          ? ` <span class='p-2 rounded text-white bg-green-600 text-bold'>
+              Comprometido
+            </span>`
+          : ` <button
+            data-confirmarid='${id}'
+            class='btn btn-primary size-change-animation'
+          >
+            Aceptar
+          </button>
+          <button
+            data-rechazarid='${id}'
+            class='btn btn-danger size-change-animation'
+          >
+            Rechazar
+          </button>`
+      }
+        
       </div>
     </div>`
 
@@ -191,11 +202,12 @@ export const pre_solicitudDozavo_card = async ({ elementToInsert, data }) => {
         type: NOTIFICATIONS_TYPES.send,
         message: '¿Seguro de rechazar esta solicitud de dozavo?',
         successFunction: async function () {
-          let response = await deleteSolicitudDozavo(id)
-          if (response.error) return
-          let row = d.querySelector(`[data-detalleid="${id}"]`).closest('tr')
-          deleteSolicitudDozeavoRow({ row, id })
-          closeModalCard()
+          let response = await rechazarDozavo(id)
+          if (response.success) {
+            let row = d.querySelector(`[data-detalleid="${id}"]`).closest('tr')
+            deleteSolicitudDozeavoRow({ row, id })
+            closeModalCard()
+          }
         },
       })
     }

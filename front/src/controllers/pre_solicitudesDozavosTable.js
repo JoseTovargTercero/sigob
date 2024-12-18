@@ -9,6 +9,7 @@ import {
 import { nomTasaCard } from '../components/nom_tasa_card.js'
 import {
   confirmNotification,
+  separadorLocal,
   toastNotification,
   validateInput,
 } from '../helpers/helpers.js'
@@ -46,7 +47,14 @@ export async function validateSolicitudesDozavosTable() {
   solicitudesDozavosTable = new DataTable('#solicitudes-dozavos-table', {
     columns: [
       { data: 'numero_orden' },
-      { data: 'entes' },
+      {
+        data: 'entes',
+        render: function (data) {
+          return `<div class="text-wrap">
+            ${data}
+          </div>`
+        },
+      },
       { data: 'numero_compromiso' },
       { data: 'descripcion' },
       { data: 'tipo' },
@@ -54,7 +62,6 @@ export async function validateSolicitudesDozavosTable() {
       { data: 'fecha' },
       { data: 'acciones' },
     ],
-    responsive: true,
     scrollY: 300,
     language: tableLanguage,
     layout: {
@@ -83,20 +90,35 @@ export async function loadSolicitudesDozavosTable() {
 
   let datosOrdenados = [...solicitudes].sort((a, b) => a.id - b.id)
 
-  let data = datosOrdenados.map((solicitud) => {
-    return {
-      numero_orden: solicitud.numero_orden,
-      entes: solicitud.ente.ente_nombre,
-      numero_compromiso: !Number(solicitud.numero_compromiso)
-        ? 'No registrado'
-        : solicitud.numero_compromiso,
-      descripcion: solicitud.descripcion,
-      tipo: solicitud.tipo || 'hola',
-      monto: solicitud.monto,
-      fecha: solicitud.fecha,
-      acciones: ` <button class="btn btn-info btn-sm btn-view" data-detalleid="${solicitud.id}"><i class="bx bx-detail me-1"></i>Detalles</button>`,
-    }
-  })
+  let data = datosOrdenados
+    .filter((solicitud) => Number(solicitud.status) !== 3)
+    .map((solicitud) => {
+      return {
+        numero_orden: solicitud.numero_orden,
+        entes: solicitud.ente.ente_nombre,
+        numero_compromiso: !solicitud.numero_compromiso
+          ? 'No registrado'
+          : solicitud.numero_compromiso,
+        descripcion: solicitud.descripcion,
+        tipo: solicitud.tipo === 'D' ? 'Disminuye' : 'Aumenta',
+        monto: separadorLocal(solicitud.monto),
+        fecha: solicitud.fecha,
+        acciones:
+          Number(solicitud.status) === 0
+            ? `<button
+              class='btn btn-secondary btn-sm btn-view'
+              data-detalleid='${solicitud.id}'
+            >
+              <i class='bx bx-detail me-1'></i>Detalles
+            </button>`
+            : ` <button
+              class='btn btn-secondary btn-sm btn-view'
+              data-detalleid='${solicitud.id}'
+            >
+              <i class='bx bx-detail me-1'></i>Validar
+            </button>`,
+      }
+    })
 
   solicitudesDozavosTable.clear().draw()
 

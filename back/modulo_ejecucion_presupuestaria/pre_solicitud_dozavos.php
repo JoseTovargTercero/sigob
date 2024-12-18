@@ -64,7 +64,7 @@ function consultarSolicitudes()
 {
     global $conexion;
 
-    $sql = "SELECT id, numero_orden, numero_compromiso, descripcion, monto, fecha, partidas, id_ente, status, id_ejercicio FROM solicitud_dozavos";
+    $sql = "SELECT id, numero_orden, numero_compromiso, descripcion, monto, fecha, partidas, id_ente, tipo,  status, id_ejercicio FROM solicitud_dozavos";
     $result = $conexion->query($sql);
 
     if ($result->num_rows > 0) {
@@ -130,7 +130,7 @@ function consultarSolicitudPorId($data)
     }
 
     $id = $data['id'];
-    $sql = "SELECT id, numero_orden, numero_compromiso, descripcion, monto, fecha, partidas, id_ente FROM solicitud_dozavos WHERE id = ?";
+    $sql = "SELECT id, numero_orden, numero_compromiso, descripcion, monto, fecha, partidas, id_ente, status FROM solicitud_dozavos WHERE id = ?";
     $stmt = $conexion->prepare($sql);
     $stmt->bind_param("i", $id);
     $stmt->execute();

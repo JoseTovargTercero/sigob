@@ -128,12 +128,12 @@ export const pre_identificarCompromiso = ({
         let res = await acceptFunction(fieldList.codigo)
 
         if (res.success) {
+          closeCard()
+          reset()
           generarCompromisoPdf(
             res.compromiso.id_compromiso,
             res.compromiso.correlativo
           )
-          reset()
-          closeCard()
         }
       },
     })

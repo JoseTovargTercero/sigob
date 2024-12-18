@@ -140,6 +140,50 @@ const aceptarDozavo = async (id, codigo) => {
   }
 }
 
+const rechazarDozavo = async (id, codigo) => {
+  showLoader()
+  try {
+    let res = await fetch(solicitudesDozavosUrl, {
+      method: 'POST',
+      body: JSON.stringify({
+        accion: 'gestionar',
+        id,
+        accion_gestion: 'rechazar',
+        codigo,
+      }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    const clone = res.clone()
+    const text = await clone.text()
+
+    console.log(text)
+    const json = await res.json()
+
+    if (json.success) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.success,
+        message: json.success,
+      })
+      return json
+    }
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
+    return json
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al rechazar solicitud solicitudes',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
 const deleteSolicitudDozavo = async (id) => {
   showLoader()
   try {
@@ -181,4 +225,5 @@ export {
   deleteSolicitudDozavo,
   registrarSolicitudDozavo,
   aceptarDozavo,
+  rechazarDozavo,
 }
