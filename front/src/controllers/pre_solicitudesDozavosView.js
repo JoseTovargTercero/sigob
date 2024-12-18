@@ -28,6 +28,9 @@ export const validateSolicitudesDozavos = async () => {
   validateSolicitudesDozavosTable()
 
   d.addEventListener('click', async (e) => {
+    let formCard = d.getElementById('solicitud-ente-card')
+    if (formCard) formCard.remove()
+
     if (e.target.dataset.detalleid) {
       let solicitud = await getSolicitudesDozavos(e.target.dataset.detalleid)
       pre_solicitudDozavo_card({
