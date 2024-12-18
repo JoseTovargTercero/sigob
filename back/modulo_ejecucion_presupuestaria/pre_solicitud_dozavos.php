@@ -381,6 +381,20 @@ function gestionarSolicitudDozavos2($idSolicitud, $accion, $codigo)
                 // Volver a codificar el array a formato JSON
                 $nuevaDistribucion = json_encode($distribuciones);
 
+                $resultadoCompromiso = registrarCompromiso($idSolicitud, 'solicitud_dozavos', $descripcion, $id_ejercicio, $codigo);
+
+                if (isset($resultadoCompromiso['success']) && $resultadoCompromiso['success']) {
+                    return json_encode([
+                        "success" => "La solicitud ha sido aceptada, el compromiso se ha registrado y el presupuesto actualizado",
+                        "compromiso" => [
+                            "correlativo" => $resultadoCompromiso['correlativo'],
+                            "id_compromiso" => $resultadoCompromiso['id_compromiso']
+                        ]
+                    ]);
+                } else {
+                    throw new Exception("No se pudo registrar el compromiso");
+                }
+
                 // Actualizar el monto en distribucion_entes
                 $sqlUpdatePartida = "UPDATE distribucion_entes SET distribucion = ? WHERE id_ente = ? AND id_ejercicio = ?";
                 $stmtUpdatePartida = $conexion->prepare($sqlUpdatePartida);
@@ -399,19 +413,7 @@ function gestionarSolicitudDozavos2($idSolicitud, $accion, $codigo)
             $stmtUpdateSolicitud->execute();
 
             if ($stmtUpdateSolicitud->affected_rows > 0) {
-                $resultadoCompromiso = registrarCompromiso($idSolicitud, 'solicitud_dozavos', $descripcion, $id_ejercicio, $codigo);
-
-                if (isset($resultadoCompromiso['success']) && $resultadoCompromiso['success']) {
-                    return json_encode([
-                        "success" => "La solicitud ha sido aceptada, el compromiso se ha registrado y el presupuesto actualizado",
-                        "compromiso" => [
-                            "correlativo" => $resultadoCompromiso['correlativo'],
-                            "id_compromiso" => $resultadoCompromiso['id_compromiso']
-                        ]
-                    ]);
-                } else {
-                    throw new Exception("No se pudo registrar el compromiso");
-                }
+                
             } else {
                 throw new Exception("No se pudo actualizar la solicitud a aceptada");
             }
