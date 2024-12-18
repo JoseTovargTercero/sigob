@@ -274,6 +274,9 @@ function gestionarSolicitudDozavos2($idSolicitud, $accion, $codigo)
             throw new Exception("Faltan uno o más valores necesarios (idSolicitud, accion)");
         }
 
+        // Iniciar la transacción
+        $conexion->begin_transaction();
+
         // Consultar los detalles de la solicitud, incluyendo el campo partidas
         $sqlSolicitud = "SELECT numero_orden, numero_compromiso, descripcion, tipo, monto, id_ente, partidas, status, id_ejercicio FROM solicitud_dozavos WHERE id = ?";
         $stmtSolicitud = $conexion->prepare($sqlSolicitud);
@@ -341,7 +344,7 @@ function gestionarSolicitudDozavos2($idSolicitud, $accion, $codigo)
                 // Consultar el monto de distribución desde distribucion_entes
                 $sqlMontoDistribucion = "SELECT distribucion 
                                          FROM distribucion_entes 
-                                         WHERE id_ente = ? AND id_ejercicio = ?";
+                                         WHERE id_ente = ? AND id_ejercicio = ? AND distribucion LIKE '%\"id_distribucion\":\"$id_distribucion\"%'";
                 $stmtMontoDistribucion = $conexion->prepare($sqlMontoDistribucion);
                 $stmtMontoDistribucion->bind_param("ii", $id_ente, $id_ejercicio);
                 $stmtMontoDistribucion->execute();
@@ -381,24 +384,10 @@ function gestionarSolicitudDozavos2($idSolicitud, $accion, $codigo)
                 // Volver a codificar el array a formato JSON
                 $nuevaDistribucion = json_encode($distribuciones);
 
-                $resultadoCompromiso = registrarCompromiso($idSolicitud, 'solicitud_dozavos', $descripcion, $id_ejercicio, $codigo);
-
-                if (isset($resultadoCompromiso['success']) && $resultadoCompromiso['success']) {
-                    return json_encode([
-                        "success" => "La solicitud ha sido aceptada, el compromiso se ha registrado y el presupuesto actualizado",
-                        "compromiso" => [
-                            "correlativo" => $resultadoCompromiso['correlativo'],
-                            "id_compromiso" => $resultadoCompromiso['id_compromiso']
-                        ]
-                    ]);
-                } else {
-                    throw new Exception("No se pudo registrar el compromiso");
-                }
-
                 // Actualizar el monto en distribucion_entes
-                $sqlUpdatePartida = "UPDATE distribucion_entes SET distribucion = ? WHERE id_ente = ? AND id_ejercicio = ?";
+                $sqlUpdatePartida = "UPDATE distribucion_entes SET distribucion = ? WHERE id_ente = ? AND id_ejercicio = ? AND distribucion LIKE '%\"id_distribucion\":\"$id_distribucion\"%'";
                 $stmtUpdatePartida = $conexion->prepare($sqlUpdatePartida);
-                $stmtUpdatePartida->bind_param("sii", $nuevaDistribucion, $id_ente, $id_ejercicio,);
+                $stmtUpdatePartida->bind_param("sii", $nuevaDistribucion, $id_ente, $id_ejercicio);
                 $stmtUpdatePartida->execute();
 
                 if ($stmtUpdatePartida->affected_rows === 0) {
@@ -413,7 +402,21 @@ function gestionarSolicitudDozavos2($idSolicitud, $accion, $codigo)
             $stmtUpdateSolicitud->execute();
 
             if ($stmtUpdateSolicitud->affected_rows > 0) {
-                
+                $resultadoCompromiso = registrarCompromiso($idSolicitud, 'solicitud_dozavos', $descripcion, $id_ejercicio, $codigo);
+                if (isset($resultadoCompromiso['success']) && $resultadoCompromiso['success']) {
+                    // Confirmar la transacción
+                    $conexion->commit();
+
+                    return json_encode([
+                        "success" => "La solicitud ha sido aceptada, el compromiso se ha registrado y el presupuesto actualizado",
+                        "compromiso" => [
+                            "correlativo" => $resultadoCompromiso['correlativo'],
+                            "id_compromiso" => $resultadoCompromiso['id_compromiso']
+                        ]
+                    ]);
+                } else {
+                    throw new Exception("No se pudo registrar el compromiso");
+                }
             } else {
                 throw new Exception("No se pudo actualizar la solicitud a aceptada");
             }
@@ -425,6 +428,9 @@ function gestionarSolicitudDozavos2($idSolicitud, $accion, $codigo)
             $stmtUpdateSolicitud->execute();
 
             if ($stmtUpdateSolicitud->affected_rows > 0) {
+                // Confirmar la transacción
+                $conexion->commit();
+
                 return json_encode(["success" => "La solicitud ha sido rechazada"]);
             } else {
                 throw new Exception("No se pudo rechazar la solicitud");
@@ -433,10 +439,16 @@ function gestionarSolicitudDozavos2($idSolicitud, $accion, $codigo)
             throw new Exception("Acción no válida. Debe ser 'aceptar' o 'rechazar'.");
         }
     } catch (Exception $e) {
+        // Si ocurre algún error, deshacer todas las operaciones anteriores
+        $conexion->rollback();
         registrarError($e->getMessage());
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
+
+
+
 
 
 
