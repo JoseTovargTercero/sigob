@@ -48,7 +48,7 @@ function gestionarSolicitudDozavos($data)
             return eliminarSolicitudozavo($data);
         }
         if ($accion === 'gestionar') {
-            return gestionarSolicitudDozavos2($data["id"], $data["accion_gestion"], $data["codigo"]);
+            return gestionarSolicitudDozavos2($data["id"], $data["accion_gestion"], $data["codigo"] ?? '');
         }
 
         // Otras acciones...
@@ -64,7 +64,7 @@ function consultarSolicitudes()
 {
     global $conexion;
 
-    $sql = "SELECT id, numero_orden, numero_compromiso, descripcion, monto, fecha, partidas, id_ente FROM solicitud_dozavos";
+    $sql = "SELECT id, numero_orden, numero_compromiso, descripcion, monto, fecha, partidas, id_ente, status, id_ejercicio FROM solicitud_dozavos";
     $result = $conexion->query($sql);
 
     if ($result->num_rows > 0) {
@@ -188,7 +188,7 @@ function registrarSolicitudozavo($data)
 
     try {
         if (!isset($data['descripcion']) || !isset($data['monto']) || !isset($data['tipo']) || !isset($data['partidas']) || !isset($data['id_ente']) || !isset($data['id_ejercicio']) || !isset($data['mes'])) {
-            return ["error" => "Faltan datos obligatorios para registrar la solicitud."];
+            return json_encode(["error" => "Faltan datos obligatorios para registrar la solicitud."]);
         }
 
         // Iniciar una transacción
@@ -204,7 +204,7 @@ function registrarSolicitudozavo($data)
 
         if ($filaVerificar['total'] > 0) {
             $conexion->rollback();
-            return ["error" => "Ya existe una solicitud para este ente en el mismo mes."];
+            return json_encode(["error" => "Ya existe una solicitud para este ente en el mismo mes."]);
         }
 
         // Generar el numero_orden automáticamente
@@ -221,16 +221,16 @@ function registrarSolicitudozavo($data)
         if ($stmtInsertar->affected_rows > 0) {
             // Confirmar la transacción
             $conexion->commit();
-            return ["success" => "Registro exitoso"];
+            return json_encode(["success" => "Registro exitoso"]);
         } else {
             $conexion->rollback();
-            return ["error" => "No se pudo registrar la solicitud."];
+            return json_encode(["error" => "No se pudo registrar la solicitud."]);
         }
     } catch (Exception $e) {
         // Revertir transacción en caso de error
         $conexion->rollback();
         registrarError($e->getMessage());
-        return ["error" => $e->getMessage()];
+        return json_encode(["error" => $e->getMessage()]);
     }
 }
 
