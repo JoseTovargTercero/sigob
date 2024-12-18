@@ -21,15 +21,9 @@ function consultarDisponibilidad($id_partida, $id_ejercicio, $monto)
 
     // Paso 3: Verificar que el monto_actual sea mayor o igual que el monto solicitado
     if ($monto_actual < $monto) {
-        return [
-            'exito' => false,
-            'monto_actual' => $monto_actual
-        ];
+        return false;
     } else {
-        return [
-            'exito' => true,
-            'monto_actual' => $monto_actual
-        ];
+        return true;
     }
 }
 ?>
