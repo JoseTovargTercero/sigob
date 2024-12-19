@@ -308,37 +308,7 @@ function gestionarSolicitudDozavos2($idSolicitud, $accion, $codigo)
         if ($accion === "aceptar") {
             // Iterar sobre cada array de partidas
             foreach ($partidas as $partida) {
-                $id_partida = $partida['id'];
-                $monto = $partida['monto'];
-
-                // Obtener el valor de partida desde la tabla partidas_presupuestarias
-                $sqlPartidaValor = "SELECT partida FROM partidas_presupuestarias WHERE id = ?";
-                $stmtPartidaValor = $conexion->prepare($sqlPartidaValor);
-                $stmtPartidaValor->bind_param("i", $id_partida);
-                $stmtPartidaValor->execute();
-                $resultadoPartidaValor = $stmtPartidaValor->get_result();
-
-                if ($resultadoPartidaValor->num_rows === 0) {
-                    throw new Exception("No se encontró el valor de partida para el ID proporcionado");
-                }
-
-                $filaPartidaValor = $resultadoPartidaValor->fetch_assoc();
-                $partidaValor = $filaPartidaValor['partida'];
-
-                // Consultar disponibilidad presupuestaria de la partida
-                $sqlPartida = "SELECT id FROM distribucion_presupuestaria WHERE id_partida = ?";
-                $stmtPartida = $conexion->prepare($sqlPartida);
-                $stmtPartida->bind_param("i", $id_partida);
-                $stmtPartida->execute();
-                $resultadoPartida = $stmtPartida->get_result();
-
-                if ($resultadoPartida->num_rows === 0) {
-                    throw new Exception("No se encontró una partida con el ID proporcionado");
-                }
-
-                $filaPartida = $resultadoPartida->fetch_assoc();
-                $id_distribucion = $filaPartida['id'];
-
+                $id_distribucion = $partida['id'];
                 $monto = $partida['monto'];
 
                 // Consultar el monto de distribución desde distribucion_entes
