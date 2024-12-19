@@ -25,7 +25,7 @@ export const validateSolicitudesDozavos = async () => {
     elementToInsert: 'ejercicios-fiscales',
   })
 
-  validateSolicitudesDozavosTable(ejercicioFiscal.id)
+  validateSolicitudesDozavosTable(ejercicioFiscal ? ejercicioFiscal.id : null)
 
   d.addEventListener('click', async (e) => {
     if (e.target.dataset.detalleid) {
@@ -86,7 +86,7 @@ export const validateSolicitudesDozavos = async () => {
             ejercicioTarget: ejercicioFiscalElement,
           })
 
-          loadSolicitudesDozavosTable()
+          loadSolicitudesDozavosTable(ejercicioFiscal.id)
 
           const modalElemet = d.getElementById('card-solicitud-dozavo')
           if (modalElemet) modalElemet.remove()

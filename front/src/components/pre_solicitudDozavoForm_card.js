@@ -225,7 +225,7 @@ export const pre_solicitudGenerar_card = async ({
   let dependencias = asignacionEnte.dependencias
 
   let actividadesEnte = asignacionEnte.actividades_entes
-  console.log(asignacionEnte)
+  console.log(actividadesEnte)
 
   const listaDependencias = () => {
     let dozavoMontoTotal = 0
@@ -470,7 +470,7 @@ export const pre_solicitudGenerar_card = async ({
         distribucion.distribucion_partidas.forEach((partida) => {
           let monto = partida.monto / 12
           partidasDozavos.push({
-            id: Number(partida.id),
+            id: Number(partida.id_distribucion),
             monto: Number(monto.toFixed(2)),
           })
         })
