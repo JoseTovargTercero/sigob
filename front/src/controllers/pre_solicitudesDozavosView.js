@@ -28,10 +28,10 @@ export const validateSolicitudesDozavos = async () => {
   validateSolicitudesDozavosTable()
 
   d.addEventListener('click', async (e) => {
-    let formCard = d.getElementById('solicitud-ente-card')
-    if (formCard) formCard.remove()
-
     if (e.target.dataset.detalleid) {
+      let formCard = d.getElementById('solicitud-ente-card')
+      if (formCard) formCard.remove()
+
       let solicitud = await getSolicitudesDozavos(e.target.dataset.detalleid)
       pre_solicitudDozavo_card({
         elementToInsert: 'solicitudes-dozavos-view',
@@ -66,6 +66,8 @@ export const validateSolicitudesDozavos = async () => {
         elementToInsert: 'solicitudes-dozavos-view',
         acceptFunction: async function (codigo) {
           let res = await aceptarDozavo(e.target.dataset.confirmarid, codigo)
+          const modalElemet = d.getElementById('card-solicitud-dozavo')
+          if (modalElemet) modalElemet.remove()
           return res
         },
         reset: async function () {
