@@ -12,7 +12,7 @@ import {
   pre_solicitudGenerar_card,
 } from '../components/pre_solicitudDozavoForm_card.js'
 import { pre_solicitudDozavo_card } from '../components/pre_solicitudDozavo_card.js'
-import { confirmNotification } from '../helpers/helpers.js'
+import { confirmNotification, toastNotification } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 import {
   loadSolicitudesDozavosTable,
@@ -25,7 +25,7 @@ export const validateSolicitudesDozavos = async () => {
     elementToInsert: 'ejercicios-fiscales',
   })
 
-  validateSolicitudesDozavosTable()
+  validateSolicitudesDozavosTable(ejercicioFiscal.id)
 
   d.addEventListener('click', async (e) => {
     if (e.target.dataset.detalleid) {
@@ -40,8 +40,17 @@ export const validateSolicitudesDozavos = async () => {
     }
 
     if (e.target.id === 'solicitud-registrar') {
+      if (!ejercicioFiscal) {
+        toastNotification({
+          type: NOTIFICATIONS_TYPES.fail,
+          message: 'Seleccione un ejercicio fiscal',
+        })
+        return
+      }
+
       pre_solicitudEnte_card({
         elementToInsert: 'solicitudes-dozavos-view',
+        ejercicioId: ejercicioFiscal.id,
       })
     }
 
@@ -66,8 +75,7 @@ export const validateSolicitudesDozavos = async () => {
         elementToInsert: 'solicitudes-dozavos-view',
         acceptFunction: async function (codigo) {
           let res = await aceptarDozavo(e.target.dataset.confirmarid, codigo)
-          const modalElemet = d.getElementById('card-solicitud-dozavo')
-          if (modalElemet) modalElemet.remove()
+
           return res
         },
         reset: async function () {
@@ -79,6 +87,9 @@ export const validateSolicitudesDozavos = async () => {
           })
 
           loadSolicitudesDozavosTable()
+
+          const modalElemet = d.getElementById('card-solicitud-dozavo')
+          if (modalElemet) modalElemet.remove()
         },
       })
     }
@@ -88,7 +99,7 @@ export const validateSolicitudesDozavos = async () => {
       let formCard = d.getElementById('solicitud-ente-card')
       if (formCard) formCard.remove()
 
-      loadSolicitudesDozavosTable()
+      loadSolicitudesDozavosTable(e.target.dataset.ejercicioid)
       ejercicioFiscal = await validarEjercicioActual({
         ejercicioTarget: e.target,
       })

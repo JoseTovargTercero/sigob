@@ -43,7 +43,7 @@ const tableLanguage = {
   },
 }
 let solicitudesDozavosTable
-export async function validateSolicitudesDozavosTable() {
+export async function validateSolicitudesDozavosTable(id_ejercicio) {
   solicitudesDozavosTable = new DataTable('#solicitudes-dozavos-table', {
     columns: [
       { data: 'numero_orden' },
@@ -77,12 +77,14 @@ export async function validateSolicitudesDozavosTable() {
     },
   })
 
-  loadSolicitudesDozavosTable()
+  loadSolicitudesDozavosTable(id_ejercicio)
 }
 
-export async function loadSolicitudesDozavosTable() {
+export async function loadSolicitudesDozavosTable(id_ejercicio) {
   let solicitudes = await getSolicitudesDozavos()
   // console.log(solicitudes)
+
+  console.log(id_ejercicio)
 
   if (!Array.isArray(solicitudes)) return
 
@@ -91,7 +93,11 @@ export async function loadSolicitudesDozavosTable() {
   let datosOrdenados = [...solicitudes].sort((a, b) => a.id - b.id)
 
   let data = datosOrdenados
-    .filter((solicitud) => Number(solicitud.status) !== 3)
+    .filter(
+      (solicitud) =>
+        Number(solicitud.status) !== 3 &&
+        Number(id_ejercicio) === Number(solicitud.id_ejercicio)
+    )
     .map((solicitud) => {
       return {
         numero_orden: solicitud.numero_orden,

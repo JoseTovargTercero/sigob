@@ -18,7 +18,10 @@ import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 
 const d = document
 
-export const pre_solicitudEnte_card = async ({ elementToInsert }) => {
+export const pre_solicitudEnte_card = async ({
+  elementToInsert,
+  ejercicioId,
+}) => {
   let fieldList = { ejemplo: '' }
   let fieldListErrors = {
     ejemplo: {
@@ -42,7 +45,11 @@ export const pre_solicitudEnte_card = async ({ elementToInsert }) => {
   }
   const crearFilas = () => {
     let fila = distribucionEntes.fullInfo
-      .filter((distribucion) => Number(distribucion.status) === 1)
+      .filter(
+        (distribucion) =>
+          Number(distribucion.status) === 1 &&
+          Number(ejercicioId) === Number(distribucion.id_ejercicio)
+      )
       .map((distribucion) => {
         return `  <tr>
               <td>${distribucion.ente_nombre}</td>
