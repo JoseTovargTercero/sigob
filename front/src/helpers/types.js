@@ -23,4 +23,19 @@ const FRECUENCY_TYPES = {
   4: ['fecha_unica'],
 }
 
-export { NOTIFICATIONS_TYPES, FRECUENCY_TYPES, ALERT_TYPES }
+const meses = [
+  'Enero',
+  'Febrero',
+  'Marzo',
+  'Abril',
+  'Mayo',
+  'Junio',
+  'Julio',
+  'Agosto',
+  'Septiembre',
+  'Octubre',
+  'Noviembre',
+  'Diciembre',
+]
+
+export { NOTIFICATIONS_TYPES, FRECUENCY_TYPES, ALERT_TYPES, meses }

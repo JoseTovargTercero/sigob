@@ -1,5 +1,6 @@
 import { getPartidas } from '../api/partidas.js'
 import {
+  aceptarDozavo,
   deleteSolicitudDozavo,
   rechazarDozavo,
 } from '../api/pre_solicitudesDozavos.js'
@@ -9,7 +10,8 @@ import {
   separadorLocal,
   toastNotification,
 } from '../helpers/helpers.js'
-import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
+import { NOTIFICATIONS_TYPES, meses } from '../helpers/types.js'
+import { pre_identificarCompromiso } from './pre_identificarCompromiso.js'
 
 const tableLanguage = {
   decimal: '',
@@ -37,7 +39,11 @@ const tableLanguage = {
 }
 
 const d = document
-export const pre_solicitudDozavo_card = async ({ elementToInsert, data }) => {
+export const pre_solicitudDozavo_card = async ({
+  elementToInsert,
+  data,
+  reset,
+}) => {
   const modalElemet = d.getElementById('card-solicitud-dozavo')
   if (modalElemet) modalElemet.remove()
 
@@ -53,6 +59,7 @@ export const pre_solicitudDozavo_card = async ({ elementToInsert, data }) => {
     fecha,
     partidas,
     status,
+    mes,
   } = data
 
   let partidasLi = partidas
@@ -95,45 +102,41 @@ export const pre_solicitudDozavo_card = async ({ elementToInsert, data }) => {
       <div class='card-body text-center'>
         <div class='w-100 align-self-center fs-5'>
           <div class='row'>
-            <div class='col'>
+            <div class='col-sm'>
               <b>Ente: </b>
               <p>${ente.ente_nombre}</p>
             </div>
-            <div class='col'>
+            <div class='col-sm'>
               <b>Tipo de ente: </b>
               <p>${tipo_ente === 'J' ? 'Jurídico' : 'Descentralizado'}</p>
             </div>
-            <div class='col'>
+            <div class='col-sm'>
               <b>Monto total: </b>
               <p>${separadorLocal(monto)}</p>
             </div>
-            <div class='col'>
+            <div class='col-sm'>
               <b>Descripción: </b>
               <p>${descripcion}</p>
             </div>
           </div>
 
           <div class='row'>
-            <div class='col'>
-              <b>Fecha de orden: </b>
-              <p>${fecha}</p>
+            <div class='col-sm'>
+              <b>Fecha de orden / Mes: </b>
+              <p>${fecha} - ${meses[mes]}</p>
             </div>
-            <div class='col'>
+            <div class='col-sm'>
               <b>Orden: </b>
               <p>${numero_orden}</p>
             </div>
-            <div class='col'>
+            <div class='col-sm'>
               <b>Tipo: </b>
               <p>${tipo == 'A' ? 'Aumenta' : 'Disminuye'}</p>
             </div>
-            <div class='col'>
+            <div class='col-sm'>
               <b>Compromiso: </b>
               <p>
-                ${
-                  !Number(numero_compromiso)
-                    ? 'No registrado'
-                    : numero_compromiso
-                }
+                ${numero_compromiso}
               </p>
             </div>
           </div>
@@ -205,6 +208,23 @@ export const pre_solicitudDozavo_card = async ({ elementToInsert, data }) => {
   }
 
   function validateClick(e) {
+    if (e.target.dataset.confirmarid) {
+      console.log('hola')
+      pre_identificarCompromiso({
+        id: e.target.dataset.confirmarid,
+        elementToInsert: 'solicitudes-dozavos-view',
+        acceptFunction: async function (codigo) {
+          let res = await aceptarDozavo(e.target.dataset.confirmarid, codigo)
+
+          if (res.success) {
+            closeModalCard()
+          }
+          return res
+        },
+        reset,
+      })
+    }
+
     if (e.target.dataset.rechazarid) {
       let id = e.target.dataset.rechazarid
       confirmNotification({

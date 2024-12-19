@@ -28,17 +28,6 @@ export const validateSolicitudesDozavos = async () => {
   validateSolicitudesDozavosTable(ejercicioFiscal ? ejercicioFiscal.id : null)
 
   d.addEventListener('click', async (e) => {
-    if (e.target.dataset.detalleid) {
-      let formCard = d.getElementById('solicitud-ente-card')
-      if (formCard) formCard.remove()
-
-      let solicitud = await getSolicitudesDozavos(e.target.dataset.detalleid)
-      pre_solicitudDozavo_card({
-        elementToInsert: 'solicitudes-dozavos-view',
-        data: solicitud,
-      })
-    }
-
     if (e.target.id === 'solicitud-registrar') {
       if (!ejercicioFiscal) {
         toastNotification({
@@ -69,15 +58,14 @@ export const validateSolicitudesDozavos = async () => {
       })
     }
 
-    if (e.target.dataset.confirmarid) {
-      pre_identificarCompromiso({
-        id: e.target.dataset.confirmarid,
-        elementToInsert: 'solicitudes-dozavos-view',
-        acceptFunction: async function (codigo) {
-          let res = await aceptarDozavo(e.target.dataset.confirmarid, codigo)
+    if (e.target.dataset.detalleid) {
+      let formCard = d.getElementById('solicitud-ente-card')
+      if (formCard) formCard.remove()
 
-          return res
-        },
+      let solicitud = await getSolicitudesDozavos(e.target.dataset.detalleid)
+      pre_solicitudDozavo_card({
+        elementToInsert: 'solicitudes-dozavos-view',
+        data: solicitud,
         reset: async function () {
           let ejercicioFiscalElement = d.querySelector(
             `[data-ejercicioid="${ejercicioFiscal.id}"]`
@@ -87,9 +75,6 @@ export const validateSolicitudesDozavos = async () => {
           })
 
           loadSolicitudesDozavosTable(ejercicioFiscal.id)
-
-          const modalElemet = d.getElementById('card-solicitud-dozavo')
-          if (modalElemet) modalElemet.remove()
         },
       })
     }

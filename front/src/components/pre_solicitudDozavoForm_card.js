@@ -14,7 +14,7 @@ import {
   toastNotification,
   validateInput,
 } from '../helpers/helpers.js'
-import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
+import { NOTIFICATIONS_TYPES, meses } from '../helpers/types.js'
 
 const d = document
 
@@ -170,21 +170,6 @@ export const pre_solicitudEnte_card = async ({
 
 const mesesOptions = () => {
   let mesActual = new Date().getMonth()
-
-  const meses = [
-    'Enero',
-    'Febrero',
-    'Marzo',
-    'Abril',
-    'Mayo',
-    'Junio',
-    'Julio',
-    'Agosto',
-    'Septiembre',
-    'Octubre',
-    'Noviembre',
-    'Diciembre',
-  ]
 
   let mesesOptionsElement = meses.map((mes, index) => {
     if (index)
@@ -399,7 +384,7 @@ export const pre_solicitudGenerar_card = async ({
           </table>
         </div>
       </div>
-      <div class='card-footer'>
+      <div class='card-footer d-flex align-items-center justify-content-center gap-2 py-2'>
         <button class='btn btn-primary' id='solicitud-generar'>
           Generar solicitud
         </button>
@@ -523,7 +508,7 @@ export const pre_solicitudGenerar_card = async ({
         let res = await registrarSolicitudDozavo(data)
         if (res.success) {
           closeCard()
-          loadSolicitudesDozavosTable()
+          loadSolicitudesDozavosTable(ejercicioId)
         }
       },
     })

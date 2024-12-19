@@ -61,7 +61,7 @@ require_once '../../back/sistema_global/session.php';
                     <th>N° ORDEN</th>
                     <th>ENTES</th>
                     <th>N° COMPROMISO</th>
-                    <th>DESCRIPCION</th>
+                    <th>MESES</th>
                     <th>TIPO</th>
                     <th>MONTO</th>
                     <th>FECHA</th>

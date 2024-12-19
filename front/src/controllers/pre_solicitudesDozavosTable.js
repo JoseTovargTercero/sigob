@@ -13,7 +13,7 @@ import {
   toastNotification,
   validateInput,
 } from '../helpers/helpers.js'
-import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
+import { NOTIFICATIONS_TYPES, meses } from '../helpers/types.js'
 
 const d = document
 const w = window
@@ -56,7 +56,7 @@ export async function validateSolicitudesDozavosTable(id_ejercicio) {
         },
       },
       { data: 'numero_compromiso' },
-      { data: 'descripcion' },
+      { data: 'mes' },
       { data: 'tipo' },
       { data: 'monto' },
       { data: 'fecha' },
@@ -105,7 +105,7 @@ export async function loadSolicitudesDozavosTable(id_ejercicio) {
         numero_compromiso: !solicitud.numero_compromiso
           ? 'No registrado'
           : solicitud.numero_compromiso,
-        descripcion: solicitud.descripcion,
+        mes: meses[solicitud.mes],
         tipo: solicitud.tipo === 'D' ? 'Disminuye' : 'Aumenta',
         monto: separadorLocal(solicitud.monto),
         fecha: solicitud.fecha,
