@@ -1,8 +1,7 @@
 <nav class="pc-sidebar">
   <div class="navbar-wrapper">
     <div class="m-header">
-      <img src="../../src/assets/images/logo.png" width="40px" class="img-fluid logo-lg"
-        alt="logo">
+      <img src="../../src/assets/images/logo.png" width="40px" class="img-fluid logo-lg" alt="logo">
     </div>
     <div class="navbar-content">
       <ul class="pc-navbar">
@@ -15,7 +14,8 @@
           2 => 'Registro y control',
           3 => 'Relaciones laborales',
           4 => 'Formulación',
-          5 => 'Ejecución Presupuestaria'
+          5 => 'Ejecución Presupuestaria',
+          6 => 'Entes'
         ];
 
         echo ' <li class="pc-item pc-caption">
@@ -36,7 +36,7 @@
 
 
             $listar = ($_SESSION["u_nivel"] == 1 || isset($_SESSION['permisos'][$row['id']])); // Verificar tipo de usuario o nivel de acceso
-
+        
 
             if ($listar) { // Si tiene acceso
               // Configuración base para cada item o sub-item
@@ -133,11 +133,14 @@
               <span class="pc-mtext">Usuarios</span><span class="pc-arrow"><i class="ti ti-chevron-right"></i></span>
             </a>
             <ul class="pc-submenu">
-              <li class="pc-item"><a class="pc-link" href="<?php echo constant('URL') ?>front/mod_global/global_users">Nuevos</a>
+              <li class="pc-item"><a class="pc-link"
+                  href="<?php echo constant('URL') ?>front/mod_global/global_users">Nuevos</a>
               </li>
-              <li class="pc-item"><a class="pc-link" href="<?php echo constant('URL') ?>front/mod_global/global_users_access">Permisos</a>
+              <li class="pc-item"><a class="pc-link"
+                  href="<?php echo constant('URL') ?>front/mod_global/global_users_access">Permisos</a>
               </li>
-              <li class="pc-item"><a class="pc-link" href="<?php echo constant('URL') ?>front/mod_global/global_user_logs">Acciones</a>
+              <li class="pc-item"><a class="pc-link"
+                  href="<?php echo constant('URL') ?>front/mod_global/global_user_logs">Acciones</a>
               </li>
             </ul>
           </li>

@@ -188,7 +188,7 @@ export const pre_solicitudDozavo_card = async ({
       topStart: function () {
         let toolbar = document.createElement('div')
         toolbar.innerHTML = `
-        <h5 class="text-center">Lista de partidas</h5>
+        <h5 class="text-center">Lista de partidas afectadas</h5>
                   `
         return toolbar
       },

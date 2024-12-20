@@ -59,7 +59,7 @@ export const pre_solicitudEnte_card = async ({
               <td>
                 <button class='btn btn-secondary btn-sm' data-validarid="${
                   distribucion.id
-                }">Detalles</button>
+                }">Realizar solicitud</button>
               </td>
             </tr>`
       })
@@ -145,7 +145,14 @@ export const pre_solicitudEnte_card = async ({
     let entesTable = new DataTable('#entes-elegir-table', {
       scrollY: 200,
       colums: [
-        { data: 'entes_nombre' },
+        {
+          data: 'entes_nombre',
+          render: function (data) {
+            return `<div class="text-wrap">
+            ${data}
+          </div>`
+          },
+        },
         { data: 'entes_tipo' },
         { data: 'acciones' },
       ],
