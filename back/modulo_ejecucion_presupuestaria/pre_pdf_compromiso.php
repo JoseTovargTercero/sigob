@@ -140,13 +140,13 @@ $response = [
     $detallePartidas = [];
 
     foreach ($partidas as $partida) {
-        $id_partida = $partida['id'];
+        $id_distribucion = $partida['id'];
         $monto_partida = $partida['monto'];
 
         // Consultar la distribución presupuestaria asociada a la partida
-        $queryDistribucion = "SELECT * FROM distribucion_presupuestaria WHERE id_partida = ?";
+        $queryDistribucion = "SELECT * FROM distribucion_presupuestaria WHERE id = ?";
         $stmtDistribucion = $conexion->prepare($queryDistribucion);
-        $stmtDistribucion->bind_param('i', $id_partida);
+        $stmtDistribucion->bind_param('i', $id_distribucion);
         $stmtDistribucion->execute();
         $resultDistribucion = $stmtDistribucion->get_result();
         $dataDistribucion = $resultDistribucion->fetch_assoc();
@@ -165,7 +165,7 @@ $response = [
             if ($dataPartida) {
                 $detallePartidas[] = [
                     'partida' => [
-                        'id' => $id_partida,
+                        'id' => $dataDistribucion['id_partida'],
                         'monto' => $monto_partida
                     ],
                     'distribucion_presupuestaria' => $dataDistribucion,
@@ -178,7 +178,6 @@ $response = [
             die("No se encontró la distribución presupuestaria para el ID de la partida $id_partida.");
         }
     }
-    print_r($detallePartidas);
     // Resultado final con la información de la solicitud, las partidas y distribuciones presupuestarias
     $response = [
         'compromiso' => $dataCompromiso,
