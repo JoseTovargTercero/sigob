@@ -210,7 +210,6 @@ function consultarSolicitudPorId($data)
 }
 
 
-// Función para registrar solicitud dozavos
 function registrarSolicitudozavo($data)
 {
     global $conexion;
@@ -223,17 +222,41 @@ function registrarSolicitudozavo($data)
         // Iniciar una transacción
         $conexion->begin_transaction();
 
-        // Verificar que no exista más de un registro para el mismo id_ente en el mismo mes
-        $sqlVerificar = "SELECT COUNT(*) AS total FROM solicitud_dozavos WHERE id_ente = ? AND mes = ? AND id_ejercicio = ? AND status != '3'";
-        $stmtVerificar = $conexion->prepare($sqlVerificar);
-        $stmtVerificar->bind_param("iii", $data['id_ente'], $data['mes'], $data['id_ejercicio']);
-        $stmtVerificar->execute();
-        $resultadoVerificar = $stmtVerificar->get_result();
-        $filaVerificar = $resultadoVerificar->fetch_assoc();
+        $mesActual = date("n"); // Mes actual (1-12)
+        $mesSolicitado = $data['mes']; // Mes solicitado
+        $idEnte = $data['id_ente'];
+        $idEjercicio = $data['id_ejercicio'];
 
-        if ($filaVerificar['total'] > 0) {
+        // Verificar si ya existe una solicitud pendiente (status = 1)
+        $sqlPendiente = "SELECT COUNT(*) AS total FROM solicitud_dozavos WHERE id_ente = ? AND status = 1 AND id_ejercicio = ?";
+        $stmtPendiente = $conexion->prepare($sqlPendiente);
+        $stmtPendiente->bind_param("ii", $idEnte, $idEjercicio);
+        $stmtPendiente->execute();
+        $resultadoPendiente = $stmtPendiente->get_result();
+        $filaPendiente = $resultadoPendiente->fetch_assoc();
+
+        if ($filaPendiente['total'] > 0) {
             $conexion->rollback();
-            return json_encode(["error" => "Ya existe una solicitud para este ente en el mismo mes."]);
+            return json_encode(["error" => "No se puede registrar la solicitud porque hay una pendiente."]);
+        }
+
+        // Verificar la existencia de solicitudes para el mes actual
+        $sqlMesActual = "SELECT COUNT(*) AS total FROM solicitud_dozavos WHERE id_ente = ? AND mes = ? AND id_ejercicio = ? AND status != '3'";
+        $stmtMesActual = $conexion->prepare($sqlMesActual);
+        $stmtMesActual->bind_param("iii", $idEnte, $mesActual, $idEjercicio);
+        $stmtMesActual->execute();
+        $resultadoMesActual = $stmtMesActual->get_result();
+        $filaMesActual = $resultadoMesActual->fetch_assoc();
+        $existeMesActual = $filaMesActual['total'] > 0;
+
+        // Condiciones para permitir el registro
+        if ($mesSolicitado == $mesActual && !$existeMesActual) {
+            // Permitido registrar para el mes en curso si aún no existe
+        } elseif ($mesSolicitado == ($mesActual + 1) && $existeMesActual) {
+            // Permitido registrar para el siguiente mes si el mes actual ya existe
+        } else {
+            $conexion->rollback();
+            return json_encode(["error" => "No se puede registrar la solicitud. Condiciones no cumplidas."]);
         }
 
         // Generar el numero_orden automáticamente
@@ -244,7 +267,7 @@ function registrarSolicitudozavo($data)
         $sqlInsertar = "INSERT INTO solicitud_dozavos (numero_orden, numero_compromiso, descripcion, tipo, monto, fecha, partidas, id_ente, status, id_ejercicio, mes) VALUES (?, 0, ?, ?, ?, ?, ?, ?, 1, ?, ?)";
         $stmtInsertar = $conexion->prepare($sqlInsertar);
         $partidasJson = json_encode($data['partidas']); // Convertir partidas a formato JSON
-        $stmtInsertar->bind_param("sssssssss", $numero_orden, $data['descripcion'], $data['tipo'], $data['monto'], $fecha, $partidasJson, $data['id_ente'], $data['id_ejercicio'], $data['mes']);
+        $stmtInsertar->bind_param("sssssssss", $numero_orden, $data['descripcion'], $data['tipo'], $data['monto'], $fecha, $partidasJson, $idEnte, $idEjercicio, $mesSolicitado);
         $stmtInsertar->execute();
 
         if ($stmtInsertar->affected_rows > 0) {
@@ -262,6 +285,7 @@ function registrarSolicitudozavo($data)
         return json_encode(["error" => $e->getMessage()]);
     }
 }
+
 
 
 // Función para generar el número de orden
