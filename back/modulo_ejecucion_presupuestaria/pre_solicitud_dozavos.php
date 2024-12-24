@@ -222,8 +222,8 @@ function registrarSolicitudozavo($data)
         // Iniciar una transacción
         $conexion->begin_transaction();
 
-        $mesActual = date("n"); // Mes actual (1-12)
-        $mesSolicitado = $data['mes']; // Mes solicitado
+        $mesActual = date("n") - 1; // Mes actual (0-11)
+        $mesSolicitado = $data['mes']; // Mes solicitado (0-11)
         $idEnte = $data['id_ente'];
         $idEjercicio = $data['id_ejercicio'];
 
@@ -285,6 +285,7 @@ function registrarSolicitudozavo($data)
         return json_encode(["error" => $e->getMessage()]);
     }
 }
+
 
 
 
