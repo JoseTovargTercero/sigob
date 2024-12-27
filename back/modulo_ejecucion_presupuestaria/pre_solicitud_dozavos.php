@@ -64,13 +64,18 @@ function consultarSolicitudes()
 {
     global $conexion;
 
-    $sql = "SELECT id, numero_orden, numero_compromiso, descripcion, monto, fecha, partidas, id_ente, tipo, mes,  status, id_ejercicio FROM solicitud_dozavos";
+    $sql = "SELECT id, numero_orden, numero_compromiso, descripcion, monto, fecha, partidas, id_ente, tipo, mes, status, id_ejercicio FROM solicitud_dozavos";
     $result = $conexion->query($sql);
 
     if ($result->num_rows > 0) {
         $solicitudes = [];
 
         while ($row = $result->fetch_assoc()) {
+            // Validar el valor de numero_compromiso
+            if ($row['numero_compromiso'] == 0) {
+                $row['numero_compromiso'] = null;
+            }
+
             // Procesar las partidas asociadas
             $partidasArray = json_decode($row['partidas'], true);
 
@@ -85,12 +90,6 @@ function consultarSolicitudes()
                 $stmtPartida->close();
 
                 $id_partida = $id_partida2;
-
-
-
-
-
-
 
                 $sqlPartida = "SELECT partida, nombre, descripcion FROM partidas_presupuestarias WHERE id = ?";
                 $stmtPartida = $conexion->prepare($sqlPartida);
@@ -135,6 +134,7 @@ function consultarSolicitudes()
     }
 }
 
+
 // Función para consultar una solicitud por ID
 function consultarSolicitudPorId($data)
 {
@@ -155,6 +155,11 @@ function consultarSolicitudPorId($data)
 
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
+
+        // Validar el valor de numero_compromiso
+        if ($row['numero_compromiso'] == 0) {
+            $row['numero_compromiso'] = null;
+        }
 
         // Procesar las partidas asociadas
         $partidasArray = json_decode($row['partidas'], true);
@@ -208,6 +213,7 @@ function consultarSolicitudPorId($data)
         return json_encode(["error" => "No se encontró el registro con el ID especificado."]);
     }
 }
+
 
 
 function registrarSolicitudozavo($data)
