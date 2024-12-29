@@ -108,7 +108,7 @@ export const pre_solicitudDozavo_card = async ({
             </div>
             <div class='col-sm'>
               <b>Tipo de ente: </b>
-              <p>${tipo_ente === 'J' ? 'Jurídico' : 'Descentralizado'}</p>
+              <p>${ente.tipo_ente === 'J' ? 'Jurídico' : 'Descentralizado'}</p>
             </div>
             <div class='col-sm'>
               <b>Monto total: </b>
