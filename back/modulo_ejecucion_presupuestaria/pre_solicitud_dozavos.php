@@ -260,10 +260,13 @@ function registrarSolicitudozavo($data)
         $filaMesActual = $resultadoMesActual->fetch_assoc();
         $existeMesActual = $filaMesActual['total'] > 0;
 
+         // Calcular el mes siguiente correctamente
+        $mesSiguiente = ($mesActual + 1) % 12;
+
         // Condiciones para permitir el registro
         if ($mesSolicitado == $mesActual && !$existeMesActual) {
             // Permitido registrar para el mes en curso si aún no existe
-        } elseif ($mesSolicitado == ($mesActual + 1) && $existeMesActual) {
+        } elseif ($mesSolicitado == $mesSiguiente && $existeMesActual) {
             // Permitido registrar para el siguiente mes si el mes actual ya existe
         } else {
             $conexion->rollback();
