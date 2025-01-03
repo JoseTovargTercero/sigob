@@ -39,6 +39,11 @@ function gestionarSolicitudDozavos($data)
             return actualizarSolicitudozavo($data);
         }
 
+        // Acción: Actualizar un registro
+        if ($accion === 'update_status') {
+            return actualizarStatusSolicitud($data);
+        }
+
         // Acción: Eliminar un registro (rechazar)
         if ($accion === 'rechazar') {
             return rechazarSolicitud($data);
@@ -476,12 +481,38 @@ function gestionarSolicitudDozavos2($idSolicitud, $accion, $codigo)
     }
 }
 
+function actualizarStatusSolicitud($data)
+{
+    global $conexion;
 
+    if (!$idSolicitud) {
+        return json_encode(["error" => "No se ha especificado el ID de la solicitud."]);
+    }
 
+    try {
+        // Preparar la consulta para actualizar el status
+        $sql = "UPDATE solicitud_dozavos SET status = 4 WHERE id = ?";
+        $stmt = $conexion->prepare($sql);
 
+        if (!$stmt) {
+            throw new Exception("Error al preparar la consulta: " . $conexion->error);
+        }
 
+        $stmt->bind_param("i", $idSolicitud);
+        $stmt->execute();
 
-
+        // Verificar si se actualizó algún registro
+        if ($stmt->affected_rows > 0) {
+            $stmt->close();
+            return json_encode(["success" => "El status de la solicitud se actualizó correctamente."]);
+        } else {
+            $stmt->close();
+            return json_encode(["error" => "No se encontró la solicitud con el ID proporcionado o ya tenía el status 4."]);
+        }
+    } catch (Exception $e) {
+        return json_encode(["error" => "Error: " . $e->getMessage()]);
+    }
+}
 
 
 // Función para actualizar una solicitud
