@@ -81,6 +81,30 @@ export const pre_solicitudDozavo_card = async ({
         .join('')
     : `   <li>No posee partidas asociadas</li>`
 
+  const validateStatus = () => {
+    if (status === 0) {
+      return ` <span class='p-2 rounded text-white bg-green-600 text-bold'>
+              Comprometido
+            </span>  <button class='btn btn-sm btn-success' data-entregarid='${id}'>Entregar</button>`
+    }
+    if (status === 1) {
+      return `<span class='btn btn-sm btn-warning'>
+            En proceso
+          </span>
+         `
+    }
+    if (status === 3) {
+      return ` <span class='p-2 rounded text-white bg-red-600 text-bold'>
+              Rechazado
+            </span>`
+    }
+    if (status === 4) {
+      return ` <span class='p-2 rounded text-white bg-gray-600 text-bold'>
+              Entregado
+            </span>`
+    }
+  }
+
   let card = ` <div class='card slide-up-animation pb-2' id='card-solicitud-dozavo'>
       <div class='card-header d-flex justify-content-between'>
         <div class=''>
@@ -157,24 +181,7 @@ export const pre_solicitudDozavo_card = async ({
         </div>
       </div>
       <div class='card-footer d-flex align-items-center justify-content-center gap-2 py-0'>
-        ${
-          status === 0
-            ? ` <span class='p-2 rounded text-white bg-green-600 text-bold'>
-              Comprometido
-            </span>`
-            : ` <button
-            data-confirmarid='${id}'
-            class='btn btn-primary size-change-animation'
-          >
-            Aceptar
-          </button>
-          <button
-            data-rechazarid='${id}'
-            class='btn btn-danger size-change-animation'
-          >
-            Rechazar
-          </button>`
-        }
+        ${validateStatus()}
       </div>
     </div>`
 
