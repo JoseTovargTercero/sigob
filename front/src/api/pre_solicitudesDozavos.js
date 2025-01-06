@@ -6,8 +6,9 @@ import {
 } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 
-const solicitudesDozavosUrl =
-  '../../../../sigob/back/modulo_ejecucion_presupuestaria/pre_solicitud_dozavos.php'
+const solicitudesDozavosUrl = 'https://sigob.net/api/solicitudes'
+// const solicitudesDozavosUrl =
+// '../../../../sigob/back/modulo_ejecucion_presupuestaria/pre_solicitud_dozavos.php'
 
 const getSolicitudesDozavos = async (id) => {
   showLoader()
@@ -15,21 +16,29 @@ const getSolicitudesDozavos = async (id) => {
     let res
     if (id)
       res = await fetch(solicitudesDozavosUrl, {
-        method: 'POST',
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: '123456789asd',
+        },
         body: JSON.stringify({ accion: 'consulta_id', id }),
       })
     else
       res = await fetch(solicitudesDozavosUrl, {
-        method: 'POST',
-        body: JSON.stringify({ accion: 'consulta' }),
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: '123456789asd',
+        },
       })
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
+    console.log(res)
 
     const clone = res.clone()
     const text = await clone.text()
 
-    // console.log(text)
+    console.log(text)
 
     const json = await res.json()
 
