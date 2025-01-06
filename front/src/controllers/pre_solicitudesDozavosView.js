@@ -63,6 +63,7 @@ export const validateSolicitudesDozavos = async () => {
       if (formCard) formCard.remove()
 
       let solicitud = await getSolicitudesDozavos(e.target.dataset.detalleid)
+      if (!solicitud) return
       pre_solicitudDozavo_card({
         elementToInsert: 'solicitudes-dozavos-view',
         data: solicitud,

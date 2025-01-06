@@ -5,8 +5,9 @@ import {
   toastNotification,
 } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
+import { APP_URL, config } from './urlConfig.js'
 
-const solicitudesDozavosUrl = 'https://sigob.net/api/solicitudes'
+const solicitudesDozavosUrl = `${APP_URL}${config.MODULE_NAMES.EJECUCION}pre_solicitud_dozavos_api.php`
 // const solicitudesDozavosUrl =
 // '../../../../sigob/back/modulo_ejecucion_presupuestaria/pre_solicitud_dozavos.php'
 
@@ -14,26 +15,22 @@ const getSolicitudesDozavos = async (id) => {
   showLoader()
   try {
     let res
-    if (id)
+    if (id) {
+      console.log(id)
       res = await fetch(solicitudesDozavosUrl, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: '123456789asd',
-        },
+        method: 'post',
+
         body: JSON.stringify({ accion: 'consulta_id', id }),
       })
-    else
+    } else
       res = await fetch(solicitudesDozavosUrl, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: '123456789asd',
-        },
+        method: 'post',
+
+        body: JSON.stringify({ accion: 'consulta' }),
       })
 
-    if (!res.ok) throw { status: res.status, statusText: res.statusText }
     console.log(res)
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
 
     const clone = res.clone()
     const text = await clone.text()
@@ -45,6 +42,14 @@ const getSolicitudesDozavos = async (id) => {
     console.log(json)
 
     if (id) {
+      if (json.error) {
+        toastNotification({
+          type: NOTIFICATIONS_TYPES.fail,
+          message: json.error,
+        })
+        return
+      }
+
       return json.success
     }
 
@@ -53,6 +58,7 @@ const getSolicitudesDozavos = async (id) => {
     }
     if (json.error) {
       toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+      return
     }
     return json
   } catch (e) {

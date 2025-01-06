@@ -101,7 +101,7 @@ export async function loadSolicitudesDozavosTable(id_ejercicio) {
     .map((solicitud) => {
       return {
         numero_orden: solicitud.numero_orden,
-        entes: solicitud.ente.ente_nombre,
+        entes: solicitud.ente_nombre,
         numero_compromiso: !solicitud.numero_compromiso
           ? 'No registrado'
           : solicitud.numero_compromiso,
