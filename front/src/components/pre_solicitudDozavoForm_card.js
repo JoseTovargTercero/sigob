@@ -214,6 +214,8 @@ export const pre_solicitudGenerar_card = async ({
 
   let asignacionEnte = await getPreAsignacionEnte(enteId)
 
+  console.log(asignacionEnte)
+
   let dependencias = asignacionEnte.dependencias
 
   let actividadesEnte = asignacionEnte.actividades_entes

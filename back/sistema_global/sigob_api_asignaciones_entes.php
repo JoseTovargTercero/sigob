@@ -6,14 +6,14 @@ header('Content-Type: application/json');
 
 
 
-function gestionarSolicitudDozavos()
+function gestionarAsignaciones()
 {
     $method = $_SERVER['REQUEST_METHOD'];
     $params = $_GET;
 
     $paramsId = isset($params['id']) ? $params['id'] : null;
 
-    $url = "https://sigob.net/api/solicitudes";
+    $url = "https://sigob.net/api/asignaciones";
 
 
     try {
@@ -26,18 +26,19 @@ function gestionarSolicitudDozavos()
             } else {
                 return apiGet($url);
             }
-        } else if ($method == 'POST') {
-            $data = json_decode(file_get_contents("php://input"), true);
-
-            if (!isset($data['accion'])) {
-                return json_encode(["error" => "No se ha especificado acción."]);
-            }
-
-
-
-            return apiPost($url, $data);
-
         }
+        //  else if ($method == 'POST') {
+        //     $data = json_decode(file_get_contents("php://input"), true);
+
+        //     if (!isset($data['accion'])) {
+        //         return json_encode(["error" => "No se ha especificado acción."]);
+        //     }
+
+        //     $accion = $data['accion'];
+
+        //     return apiPost($url, $data);
+
+        // }
         return ['error' => "Método no soportado"];
 
 
@@ -81,13 +82,11 @@ function apiGet($url)
             throw new Exception("Error al decodificar JSON: " . json_last_error_msg());
         }
 
-
         if (array_key_exists('error', $datos)) {
             return ['status' => 200, 'error' => $datos['error']];
         } else {
             return ['status' => 200, 'success' => $datos['success']];
         }
-
 
     } catch (Exception $e) {
         return array("error" => $e->getMessage());
@@ -124,18 +123,18 @@ function apiPost($url, $data)
             throw new Exception("Error al decodificar JSON: " . json_last_error_msg());
         }
 
-        if (array_key_exists('error', $datos)) {
-            return ['status' => 200, 'error' => $datos['error']];
-        } else {
-            return ['status' => 200, 'success' => $datos['success']];
+        if (isset($data["error"])) {
+            throw new Exception($datos['error']);
         }
+
+        return ["success" => $datos['success']];
 
     } catch (Exception $e) {
         return ["error" => $e->getMessage()];
     }
 }
 
-$response = json_encode(gestionarSolicitudDozavos());
+$response = json_encode(gestionarAsignaciones());
 echo $response;
 
 

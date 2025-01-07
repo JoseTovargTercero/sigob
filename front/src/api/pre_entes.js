@@ -6,23 +6,24 @@ import {
   toastNotification,
 } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
+import { APP_URL, config } from './urlConfig.js'
 
-const entesDistribucionUrl =
-  '../../../../sigob/back/modulo_ejecucion_presupuestaria/pre_asignacion_entes.php'
+const entesDistribucionUrl = `${APP_URL}${config.MODULE_NAMES.GLOBAL}sigob_api_asignaciones_entes.php`
 
 const getPreAsignacionEntes = async () => {
   showLoader()
   try {
     let res = await fetch(entesDistribucionUrl, {
-      method: 'POST',
-      body: JSON.stringify({ accion: 'consultar' }),
+      method: 'GET',
     })
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
 
-    // const clone = res.clone()
+    const clone = res.clone()
 
-    // let text = await clone.text()
+    let text = await clone.text()
+
+    console.log(text)
 
     const json = await res.json()
 
@@ -56,16 +57,16 @@ const getPreAsignacionEntes = async () => {
 const getPreAsignacionEnte = async (id) => {
   showLoader()
   try {
-    let res = await fetch(entesDistribucionUrl, {
+    let res = await fetch(`${entesDistribucionUrl}?id=${id}`, {
       method: 'POST',
       body: JSON.stringify({ accion: 'consultar_por_id', id }),
     })
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
 
-    // const clone = res.clone()
+    const clone = res.clone()
 
-    // let text = await clone.text()
+    let text = await clone.text()
 
     const json = await res.json()
 
