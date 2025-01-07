@@ -58,8 +58,7 @@ const getPreAsignacionEnte = async (id) => {
   showLoader()
   try {
     let res = await fetch(`${entesDistribucionUrl}?id=${id}`, {
-      method: 'POST',
-      body: JSON.stringify({ accion: 'consultar_por_id', id }),
+      method: 'get',
     })
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
