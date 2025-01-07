@@ -497,6 +497,48 @@ function modificarPartida($partida1, $partida2, $monto)
 }
 
 
+
+function consultarDistribucionPresupuestaria($id_ejercicio)
+{
+    global $conexion;
+
+    try {
+        // Preparar la consulta SQL
+        $sql = "SELECT * FROM distribucion_presupuestaria WHERE monto_actual > 0 AND id_ejercicio = ?";
+        $stmt = $conexion->prepare($sql);
+
+        // Validar si se preparó correctamente
+        if (!$stmt) {
+            throw new Exception("Error al preparar la consulta: " . $conexion->error);
+        }
+
+        // Asociar parámetros
+        $stmt->bind_param("i", $id_ejercicio);
+
+        // Ejecutar la consulta
+        $stmt->execute();
+        $resultado = $stmt->get_result();
+
+        // Verificar si hay resultados
+        if ($resultado->num_rows > 0) {
+            // Convertir los resultados en un array asociativo
+            $datos = [];
+            while ($fila = $resultado->fetch_assoc()) {
+                $datos[] = $fila;
+            }
+            return json_encode(["success" => true, "data" => $datos]);
+        } else {
+            return json_encode(["success" => false, "message" => "No se encontraron registros."]);
+        }
+    } catch (Exception $e) {
+        // Manejo de errores
+        registrarError($e->getMessage());
+        return json_encode(["error" => $e->getMessage()]);
+    }
+}
+
+
+
 // Procesar la solicitud
 $data = json_decode(file_get_contents("php://input"), true);
 
@@ -528,6 +570,12 @@ if (isset($data["accion"])) {
             echo json_encode(['error' => "Debe proporcionar un ID para la consulta"]);
         } else {
             echo obtenerEjercicioFiscalPorId($data["id"]);
+        }
+    } elseif ($accion === "obtener_distribucion_positiva") {
+        if (empty($data["id_ejercicio"])) {
+            echo json_encode(['error' => "Debe proporcionar un ejercicio fiscal para la consulta"]);
+        } else {
+            echo consultarDistribucionPresupuestaria($data["id_ejercicio"]);
         }
     } elseif (isset($data["accion"]) && $data["accion"] === "modificar_partida") {
         if (empty($data["partida1"]) || empty($data["partida2"]) || empty($data["monto"])) {
