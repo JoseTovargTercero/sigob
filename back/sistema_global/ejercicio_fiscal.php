@@ -526,9 +526,9 @@ function consultarDistribucionPresupuestaria($id_ejercicio)
             while ($fila = $resultado->fetch_assoc()) {
                 $datos[] = $fila;
             }
-            return json_encode(["success" => true, "data" => $datos]);
+            return json_encode(["success" => $datos]);
         } else {
-            return json_encode(["success" => false, "message" => "No se encontraron registros."]);
+            return json_encode(["success" => []]);
         }
     } catch (Exception $e) {
         // Manejo de errores
