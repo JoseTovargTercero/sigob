@@ -49,35 +49,27 @@ require_once '../../back/sistema_global/session.php';
             <div class="row mb3">
 
                 <div class="col-lg-12 mb-3" id="gastos-view">
-                    <div class="card slide-up-animation" id="gastos-registrar-container">
-                        <div class="card-header">
-                            <div class="">
-                                <h5 class="mb-0">Lista de solicitudes de dozavos por entes</h5>
-                                <small class="mt-0 text-muted">Administre los gastos dado el presupuesto total</small>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="d-flex justify-content-center align-items-center gap-2">
 
-                                <button class="btn btn-success btn-sm" id="gastos-registrar">REGISTRAR GASTO</button>
-                            </div>
-
-                        </div>
-                    </div>
 
                     <div class="card">
-                        <div class="card-header">
+
+                        <div class="card-header d-flex justify-content-between">
                             <div class="">
                                 <h5 class="mb-0">Histórico de gastos realizados</h5>
                                 <small class="mt-0 text-muted">Visualice el historial de gastos de
                                     funcionamiento</small>
                             </div>
-                            <nav class="nav nav-pills nav-justified" id="request-table-options">
-                                <button class="nav-link active" data-tableid="gastos-table">Gastos realizados</button>
-                                <button class="nav-link" data-tableid="tipos-gastos-table">Tipos de gastos</button>
 
-                            </nav>
+
+                            <button class="btn btn-primary" id="gastos-registrar">REGISTRAR</button>
                         </div>
+                        <nav class="m-2 nav nav-pills nav-justified" id="request-table-options">
+                            <button class="nav-link active" data-tableid="gastos-table">Gastos realizados</button>
+                            <button class="nav-link" data-tableid="tipos-gastos-table">Tipos de gastos</button>
+
+                        </nav>
+
+
                         <div class="card-body">
                             <div class="d-block mb-2 mx-auto slide-up-animation" id="gastos-table-container">
                                 <table id="gastos-table" class="table table-striped" style="width:100%">

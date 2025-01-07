@@ -36,7 +36,6 @@ export const validateGastosView = async () => {
   validateTiposGastosTable()
 
   let gastosForm = d.getElementById('gastos-form')
-  let gastosRegistrarCointaner = d.getElementById('gastos-registrar-container')
 
   d.addEventListener('click', async (e) => {
     if (e.target.id === 'gastos-registrar') {
@@ -48,7 +47,6 @@ export const validateGastosView = async () => {
         return
       }
       scroll(0, 0)
-      gastosRegistrarCointaner.classList.add('hide')
 
       pre_gastos_form_card({
         elementToInsert: 'gastos-view',
@@ -77,10 +75,6 @@ export const validateGastosView = async () => {
 
     if (e.target.dataset.detallesid) {
       scroll(0, 0)
-      let gastosRegistrarCointaner = d.getElementById(
-        'gastos-registrar-container'
-      )
-      gastosRegistrarCointaner.classList.add('hide')
 
       let formCard = d.getElementById('gastos-form-card')
       if (formCard) formCard.remove()
@@ -124,7 +118,6 @@ export const validateGastosView = async () => {
       // QUITAR CARD SI SE CAMBIA EL AÑO FISCAL
       let formCard = d.getElementById('gastos-form-card')
       if (formCard) formCard.remove()
-      gastosRegistrarCointaner.classList.remove('hide')
 
       ejercicioFiscal = await validarEjercicioActual({
         ejercicioTarget: e.target,

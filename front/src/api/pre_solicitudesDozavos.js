@@ -17,16 +17,12 @@ const getSolicitudesDozavos = async (id) => {
     let res
     if (id) {
       console.log(id)
-      res = await fetch(solicitudesDozavosUrl, {
-        method: 'post',
-
-        body: JSON.stringify({ accion: 'consulta_id', id }),
+      res = await fetch(`${solicitudesDozavosUrl}?id=${id}`, {
+        method: 'get',
       })
     } else
       res = await fetch(solicitudesDozavosUrl, {
-        method: 'post',
-
-        body: JSON.stringify({ accion: 'consulta' }),
+        method: 'get',
       })
 
     console.log(res)
@@ -135,7 +131,7 @@ const aceptarDozavo = async (id, codigo) => {
     if (json.success) {
       toastNotification({
         type: NOTIFICATIONS_TYPES.done,
-        message: json.success,
+        message: json.mensaje,
       })
       return json
     }

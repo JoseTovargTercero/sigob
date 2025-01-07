@@ -1,4 +1,5 @@
 import { selectTables } from '../api/globalApi.js'
+import { obtenerDistribucionPositiva } from '../api/pre_distribucion.js'
 import {
   getTiposGastos,
   registrarGasto,
@@ -86,6 +87,12 @@ export const pre_gastos_form_card = async ({
 
     $('#search-select-tipo-gasto').trigger('chosen:updated')
   }
+
+  let partidasDisponibles = await obtenerDistribucionPositiva({
+    id_ejercicio: ejercicioFiscal.id,
+  })
+
+  console.log(partidasDisponibles)
 
   let card = `   <div class='card slide-up-animation' id='gastos-form-card'>
       <div class='card-header d-flex justify-content-between'>
@@ -207,20 +214,20 @@ export const pre_gastos_form_card = async ({
             </div>
           </div>
           <div class='row'>
-          <h6>Distribuciónes del ejercicio fiscal ${ejercicioFiscal.ano}</h6>
+          
             <div class='col-sm' id='distribuciones-container'>
             </div>
           </div>
-          <div class='row'>
-            <div class='form-group'>
+          <div class='row justify-content-center'>
+            
               <button
                 type='button'
                 class='btn btn-sm bg-brand-color-1 text-white'
                 id='add-row'
               >
-                <i class='bx bx-plus'></i>Agregar otra partida
+                <i class='bx bx-plus'></i> AGREGAR PARTIDA
               </button>
-            </div>
+            
           </div>
         </form>
       </div>
@@ -263,10 +270,6 @@ export const pre_gastos_form_card = async ({
   function validateClick(e) {
     if (e.target.dataset.close) {
       closeCard()
-      let gastosRegistrarCointaner = d.getElementById(
-        'gastos-registrar-container'
-      )
-      gastosRegistrarCointaner.classList.remove('hide')
     }
     if (e.target.id === 'add-tipo-gasto') {
       closeCard()
@@ -355,6 +358,14 @@ export const pre_gastos_form_card = async ({
         })
         return
       }
+
+      if (partidasDisponibles.length === 0) {
+        toastNotification({
+          type: NOTIFICATIONS_TYPES.fail,
+          message: 'No hay partidas con presupuesto disponible',
+        })
+        return
+      }
       addRow()
     }
 
@@ -405,16 +416,20 @@ export const pre_gastos_form_card = async ({
 
     let options = [`<option value=''>Elegir partida...</option>`]
 
-    ejercicioFiscal.distribucion_partidas.forEach((el) => {
-      let sppa = `${
-        el.sector_informacion ? el.sector_informacion.sector : '0'
-      }.${el.programa_informacion ? el.programa_informacion.programa : '0'}.${
-        el.proyecto_informacion == 0 ? '00' : el.proyecto_informacion.proyecto
-      }.${el.id_actividad == 0 ? '00' : el.id_actividad}`
+    ejercicioFiscal.distribucion_partidas
+      .filter((partida) =>
+        partidasDisponibles.some((par) => Number(par.id) === Number(partida.id))
+      )
+      .forEach((el) => {
+        let sppa = `${
+          el.sector_informacion ? el.sector_informacion.sector : '0'
+        }.${el.programa_informacion ? el.programa_informacion.programa : '0'}.${
+          el.proyecto_informacion == 0 ? '00' : el.proyecto_informacion.proyecto
+        }.${el.id_actividad == 0 ? '00' : el.id_actividad}`
 
-      let opt = `<option value="${el.id}">${sppa}.${el.partida}</option>`
-      options.push(opt)
-    })
+        let opt = `<option value="${el.id}">${sppa}.${el.partida}</option>`
+        options.push(opt)
+      })
 
     let partidasList = d.getElementById(`distribucion-${newNumRow}`)
     partidasList.innerHTML = ''

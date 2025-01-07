@@ -74,15 +74,16 @@ export const pre_solicitudDozavo_card = async ({
 
   const validateStatus = () => {
     if (status === 0) {
-      return ` <span class='p-2 rounded text-white bg-green-600 text-bold'>
+      return ` <span class='btn btn-secondary'>
               Comprometido
-            </span>  <button class='btn btn-sm btn-success' data-entregarid='${id}'>Entregar</button>`
+            </span>  
+            <button class='btn btn-warning' data-entregarid='${id}'>Entregar</button>
+            <button class='btn btn-success' data-entregarid='${id}'>Entregar</button>
+            `
     }
     if (status === 1) {
-      return `<span class='btn btn-sm btn-warning'>
-            En proceso
-          </span>
-         `
+      return `<button class="btn btn-danger" data-rechazarid="${id}">Rechazar</button>
+       <button class="btn btn-primary" data-confirmarid="${id}">aceptar</button>`
     }
     if (status === 3) {
       return ` <span class='p-2 rounded text-white bg-red-600 text-bold'>

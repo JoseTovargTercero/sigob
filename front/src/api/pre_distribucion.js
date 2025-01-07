@@ -301,9 +301,57 @@ const enviarDistribucionPresupuestariaEntes = async ({ data, tipo }) => {
   }
 }
 
+const obtenerDistribucionPositiva = async ({ id_ejercicio }) => {
+  showLoader()
+  try {
+    let res = await fetch(ejercicioFiscalUrl, {
+      method: 'POST',
+      body: JSON.stringify({
+        accion: 'obtener_distribucion_positiva',
+        id_ejercicio,
+      }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    const clone = res.clone()
+
+    let text = await clone.text()
+
+    console.log(text)
+
+    const json = await res.json()
+
+    console.log(json)
+
+    if (json.error) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.fail,
+        message: json.error,
+      })
+    }
+
+    if (json.success) {
+      return json.success
+    }
+
+    return json
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al enviar datos',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
 export {
   getEjecicio,
   getEjecicios,
+  obtenerDistribucionPositiva,
   enviarDistribucionPresupuestaria,
   modificarMontoDistribucion,
   enviarDistribucionPresupuestariaEntes,

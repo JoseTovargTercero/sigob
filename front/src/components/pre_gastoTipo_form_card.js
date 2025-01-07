@@ -78,10 +78,6 @@ export const pre_gastosTipo_form_card = async ({ elementToInsert, data }) => {
 
   const closeCard = () => {
     let cardElement = d.getElementById('gastos-tipo-form-card')
-    let gastosRegistrarCointaner = d.getElementById(
-      'gastos-registrar-container'
-    )
-    gastosRegistrarCointaner.classList.remove('hide')
 
     cardElement.remove()
     d.removeEventListener('click', validateClick)

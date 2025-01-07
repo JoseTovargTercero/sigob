@@ -9,42 +9,42 @@ require_once 'pre_compromisos.php';
 require_once 'pre_dispo_presupuestaria.php'; // Agregado
 // Función para gestionar la solicitud y compromisos
 
-function gestionarSolicitudDozavos($data)
+
+
+function gestionarSolicitudDozavos()
 {
+    $method = $_SERVER['REQUEST_METHOD'];
+    $params = $_GET;
+
+    $paramsId = isset($params['id']) ? $params['id'] : null;
+
     $url = "https://sigob.net/api/solicitudes";
     global $conexion;
 
     try {
-        if (!isset($data['accion'])) {
-            return json_encode(["error" => "No se ha especificado acción."]);
-        }
 
-        $accion = $data['accion'];
 
-        // Acción: Consultar todos los registros
-        if ($accion === 'consulta') {
+        if ($method == 'GET') {
 
-            return apiGet($url);
-        }
+            if ($paramsId) {
+                return apiGet("$url?id=$paramsId");
+            } else {
+                return apiGet($url);
+            }
+        } else if ($method == 'POST') {
+            $data = json_decode(file_get_contents("php://input"), true);
 
-        if ($accion === 'consulta_id') {
-            if (!isset($data['id'])) {
-                throw new Exception("No se ha colocado el id a buscar");
+            if (!isset($data['accion'])) {
+                return json_encode(["error" => "No se ha especificado acción."]);
             }
 
-            $id = $data['id'];
+            $accion = $data['accion'];
 
-
-            return apiGet("$url?id=$id");
-        }
-
-        if ($accion === 'registrar') {
             return apiPost($url, $data);
-        }
 
-        if ($accion === 'gestionar') {
-            return apiPost($url, $data);
         }
+        return ['error' => "Método no soportado"];
+
 
 
 
@@ -164,8 +164,8 @@ function apiPost($url, $data)
     }
 }
 
+$response = json_encode(gestionarSolicitudDozavos());
+echo $response;
 
-$data = json_decode(file_get_contents("php://input"), true);
-echo json_encode(gestionarSolicitudDozavos($data));
 
 ?>

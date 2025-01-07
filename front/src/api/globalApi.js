@@ -52,24 +52,4 @@ const selectTables = async (table, config = null) => {
   }
 }
 
-function dbh_select(tabla, config = null) {
-  return new Promise((resolve, reject) => {
-    $.ajax({
-      url: sistema.tablas,
-      type: 'POST',
-      contentType: 'application/json',
-      dataType: 'json',
-      data: JSON.stringify({
-        table: tabla,
-        config: config,
-      }),
-      success: resolve,
-      error: function (xhr, status, error) {
-        console.log(xhr.responseText)
-        reject(error)
-      },
-    })
-  })
-}
-
 export { selectTables }

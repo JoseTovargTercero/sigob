@@ -146,10 +146,7 @@ ${distribucionLista()}
 
   const closeCard = () => {
     // validateEditButtons()
-    let gastosRegistrarCointaner = d.getElementById(
-      'gastos-registrar-container'
-    )
-    gastosRegistrarCointaner.classList.remove('hide')
+
     cardElement.remove()
     cardElement.removeEventListener('click', validateClick)
     cardElement.removeEventListener('input', validateInputFunction)
