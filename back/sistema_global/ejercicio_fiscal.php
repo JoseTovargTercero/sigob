@@ -503,8 +503,18 @@ function consultarDistribucionPresupuestaria($id_ejercicio)
     global $conexion;
 
     try {
-        // Preparar la consulta SQL
-        $sql = "SELECT * FROM distribucion_presupuestaria WHERE monto_actual > 0 AND id_ejercicio = ?";
+        // Consulta SQL para obtener la información con los datos relacionados
+        $sql = "SELECT 
+                    dp.*, 
+                    se.sector AS sector_denominacion, 
+                    prg.programa AS programa_denominacion, 
+                    pr.proyecto AS proyecto_denominacion
+                FROM distribucion_presupuestaria dp
+                LEFT JOIN pl_sectores se ON dp.id_sector = se.id
+                LEFT JOIN pl_programas prg ON dp.id_programa = prg.id
+                LEFT JOIN pl_proyectos pr ON dp.id_proyecto = pr.id
+                WHERE dp.monto_actual > 0 AND dp.id_ejercicio = ?";
+
         $stmt = $conexion->prepare($sql);
 
         // Validar si se preparó correctamente
@@ -536,6 +546,7 @@ function consultarDistribucionPresupuestaria($id_ejercicio)
         return json_encode(["error" => $e->getMessage()]);
     }
 }
+
 
 
 
