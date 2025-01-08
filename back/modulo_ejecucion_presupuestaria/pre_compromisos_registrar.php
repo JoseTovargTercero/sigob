@@ -61,7 +61,7 @@ function registrarCompromiso($idRegistro, $nombreTabla, $descripcion, $id_ejerci
 
                 // Verificar si la actualización fue exitosa
                 if ($stmtUpdate->affected_rows > 0) {
-                    return ["success" => true, "correlativo" => $nuevoCorrelativo, "id_compromiso" => $idCompromiso];
+                    return ["success" => ["correlativo" => $nuevoCorrelativo, "id_compromiso" => $idCompromiso]];
                 } else {
                     return ["error" => "No se pudo actualizar el número de compromiso en la tabla $nombreTabla."];
                 }
