@@ -26,8 +26,6 @@ const getGastos = async () => {
     let clone = res.clone()
     let text = await clone.text()
 
-    console.log(text)
-
     const json = await res.json()
 
     if (json.success) {

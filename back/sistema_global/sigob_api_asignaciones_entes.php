@@ -12,6 +12,7 @@ function gestionarAsignaciones()
     $params = $_GET;
 
     $paramsId = isset($params['id']) ? $params['id'] : null;
+    $paramsEjercicioId = isset($params['id_ejercicio']) ? $params['id_ejercicio'] : null;
 
     $url = "https://sigob.net/api/asignaciones";
 
@@ -21,10 +22,14 @@ function gestionarAsignaciones()
 
         if ($method == 'GET') {
 
+            if (!$paramsEjercicioId) {
+                return ["error" => "Se necesita el ejercicio fiscal"];
+            }
+
             if ($paramsId) {
-                return apiGet("$url?id=$paramsId");
+                return apiGet("$url?id=$paramsId&id_ejercicio=$paramsEjercicioId");
             } else {
-                return apiGet($url);
+                return apiGet("$url?id_ejercicio=$paramsEjercicioId");
             }
         }
         //  else if ($method == 'POST') {

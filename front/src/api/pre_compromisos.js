@@ -20,8 +20,6 @@ const generarCompromisoPdf = async (id, nombreArchivo) => {
     let clone = res.clone()
     let text = await clone.text()
 
-    console.log(text)
-
     const blob = await res.blob()
     const url = URL.createObjectURL(blob)
 

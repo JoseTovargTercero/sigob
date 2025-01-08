@@ -33,9 +33,10 @@ export const pre_solicitudEnte_card = async ({
   const oldCardElement = d.getElementById('solicitud-ente-card')
   if (oldCardElement) oldCardElement.remove()
 
-  let distribucionEntes = await getPreAsignacionEntes()
+  let distribucionEntes = await getPreAsignacionEntes(ejercicioId)
 
   console.log(distribucionEntes)
+  if (!distribucionEntes) return
   if (distribucionEntes.fullInfo.length === 0) {
     toastNotification({
       type: NOTIFICATIONS_TYPES.fail,
@@ -212,7 +213,7 @@ export const pre_solicitudGenerar_card = async ({
   const oldCardElement = d.getElementById('solicitud-distribucion-form-card')
   if (oldCardElement) oldCardElement.remove()
 
-  let asignacionEnte = await getPreAsignacionEnte(enteId)
+  let asignacionEnte = await getPreAsignacionEnte(enteId, ejercicioId)
 
   console.log(asignacionEnte)
 

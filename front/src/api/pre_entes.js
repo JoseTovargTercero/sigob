@@ -10,12 +10,18 @@ import { APP_URL, config } from './urlConfig.js'
 
 const entesDistribucionUrl = `${APP_URL}${config.MODULE_NAMES.GLOBAL}sigob_api_asignaciones_entes.php`
 
-const getPreAsignacionEntes = async () => {
+const getPreAsignacionEntes = async (ejercicioId) => {
   showLoader()
   try {
-    let res = await fetch(entesDistribucionUrl, {
-      method: 'GET',
-    })
+    console.log(ejercicioId)
+
+    let res = await fetch(
+      `${entesDistribucionUrl}?id_ejercicio=${ejercicioId}`,
+      {
+        method: 'GET',
+      }
+    )
+    console.log(res)
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
 
@@ -39,8 +45,8 @@ const getPreAsignacionEntes = async () => {
     }
 
     if (json.error) {
-      return json
-      // toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+      return
     }
   } catch (e) {
     console.log(e)
@@ -54,18 +60,22 @@ const getPreAsignacionEntes = async () => {
   }
 }
 
-const getPreAsignacionEnte = async (id) => {
+const getPreAsignacionEnte = async (id, ejercicioId) => {
   showLoader()
   try {
-    let res = await fetch(`${entesDistribucionUrl}?id=${id}`, {
-      method: 'get',
-    })
+    let res = await fetch(
+      `${entesDistribucionUrl}?id_ejercicio=${ejercicioId}&id=${id}`,
+      {
+        method: 'get',
+      }
+    )
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
 
     const clone = res.clone()
 
     let text = await clone.text()
+    console.log(text)
 
     const json = await res.json()
 

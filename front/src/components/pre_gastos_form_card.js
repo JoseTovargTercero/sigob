@@ -27,7 +27,7 @@ export const pre_gastos_form_card = async ({
   const cardElement = d.getElementById('gastos-form-card')
   if (cardElement) cardElement.remove()
 
-  console.log(ejercicioFiscal.id)
+  console.log(ejercicioFiscal)
 
   let fieldList = {
     id_tipo: '',
@@ -64,7 +64,7 @@ export const pre_gastos_form_card = async ({
     fecha: {
       value: true,
       message: 'Coloque una fecha válida',
-      type: 'date',
+      type: 'textarea',
     },
     descripcion: {
       value: true,
@@ -92,9 +92,7 @@ export const pre_gastos_form_card = async ({
     id_ejercicio: ejercicioFiscal.id,
   })
 
-  console.log(partidasDisponibles)
-
-  let card = `   <div class='card slide-up-animation' id='gastos-form-card'>
+  let card = ` <div class='card slide-up-animation' id='gastos-form-card'>
       <div class='card-header d-flex justify-content-between'>
         <div class=''>
           <h5 class='mb-0'>Registro de nuevo gasto presupuestario</h5>
@@ -120,13 +118,11 @@ export const pre_gastos_form_card = async ({
                   Tipo de gasto
                 </label>
                 <div class='input-group'>
-                  <div class='w-80'>
-                    <select
-                      class='form-select gasto-input'
-                      name='id_tipo'
-                      id='search-select-tipo-gasto'
-                    ></select>
-                  </div>
+                  <select
+                    class='form-select gasto-input'
+                    name='id_tipo'
+                    id='search-select-tipo-gasto'
+                  ></select>
                   <div class='input-group-prepend'>
                     <button
                       type='button'
@@ -214,24 +210,20 @@ export const pre_gastos_form_card = async ({
             </div>
           </div>
           <div class='row'>
-          
-            <div class='col-sm' id='distribuciones-container'>
-            </div>
+            <div class='col-sm' id='distribuciones-container'></div>
           </div>
-          <div class='row justify-content-center'>
-            
-              <button
-                type='button'
-                class='btn btn-sm bg-brand-color-1 text-white'
-                id='add-row'
-              >
-                <i class='bx bx-plus'></i> AGREGAR PARTIDA
-              </button>
-            
+          <div class='text-center'>
+            <button
+              type='button'
+              class='btn btn-sm bg-brand-color-1 text-white'
+              id='add-row'
+            >
+              <i class='bx bx-plus'></i> AGREGAR PARTIDA
+            </button>
           </div>
         </form>
       </div>
-      <div class='card-footer'>
+      <div class='card-footer text-right'>
         <button class='btn btn-primary' id='gastos-guardar'>
           Guardar
         </button>
@@ -479,8 +471,6 @@ export const pre_gastos_form_card = async ({
         monto: formatearFloat(montoInput.value),
       }
     })
-
-    console.log(mappedPartidas)
 
     // Verificar si hay algun dato erróneo y cancelar envío
     if (mappedPartidas.some((el) => !el)) {
