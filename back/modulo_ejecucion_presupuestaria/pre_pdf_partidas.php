@@ -31,7 +31,6 @@ $gastos = $result_gastos->fetch_all(MYSQLI_ASSOC);
 // Procesar distribuciones en los registros de gastos
 $data = [];
 $totales_por_partida = [];
-$partidas_a_agrupadas = ['301', '302', '303', '304', '305', '306', '307', '308', '309', '310', '311', '312', '313', '400', '401', '402', '403', '404', '405', '406', '407', '408', '409', '410', '411', '412', '498'];
 
 foreach ($gastos as $gasto) {
     $distribuciones_json = $gasto['distribuciones'];
@@ -44,7 +43,7 @@ foreach ($gastos as $gasto) {
 
     foreach ($distribuciones_array as $distribucion) {
         $id_distribucion = $distribucion['id_distribucion'];
-        $monto = $distribucion['monto'];
+        $monto_actual = $distribucion['monto'];
 
         // Consultar distribucion_presupuestaria
         $query_distribucion = "SELECT * FROM distribucion_presupuestaria WHERE id = ? AND id_ejercicio = ?";
@@ -62,43 +61,67 @@ foreach ($gastos as $gasto) {
         $monto_inicial = $distribucion_presupuestaria['monto_inicial'] ?? 0;
         $id_partida = $distribucion_presupuestaria['id_partida'] ?? 0;
 
-        // Consultar partida y descripción
-        $query_partida = "SELECT partida, descripcion FROM partidas_presupuestarias WHERE id = ?";
-        $stmt_partida = $conexion->prepare($query_partida);
-        $stmt_partida->bind_param('i', $id_partida);
-        $stmt_partida->execute();
-        $result_partida = $stmt_partida->get_result();
-        $partida_data = $result_partida->fetch_assoc();
+// Consultar en partidas_presupuestarias
+$query_presupuestaria = "SELECT partida FROM partidas_presupuestarias WHERE id = ?";
+$stmt_presupuestaria = $conexion->prepare($query_presupuestaria);
+$stmt_presupuestaria->bind_param('i', $id_partida);
+$stmt_presupuestaria->execute();
+$result_presupuestaria = $stmt_presupuestaria->get_result();
+$presupuestaria_data = $result_presupuestaria->fetch_assoc();
+
+if (!$presupuestaria_data) {
+    echo "No se encontró registro en partidas_presupuestarias para id_partida: $id_partida<br>";
+    continue;
+}
+
+// Obtener el valor de partida desde partidas_presupuestarias
+$codigo_partida = substr($presupuestaria_data['partida'], 0, 3);
+
+// Consultar partida y descripción en pl_partidas
+$query_partida = "SELECT partida, denominacion FROM pl_partidas WHERE partida = ?";
+$stmt_partida = $conexion->prepare($query_partida);
+$stmt_partida->bind_param('s', $codigo_partida);
+$stmt_partida->execute();
+$result_partida = $stmt_partida->get_result();
+$partida_data = $result_partida->fetch_assoc();
+
+if (!$partida_data) {
+    echo "No se encontraron registros en pl_partidas para el código de partida: " . $codigo_partida . "<br>";
+    continue;
+}
+
+$denominacion = $partida_data['denominacion'] ?? 'N/A';
+
 
         if (!$partida_data) {
-            echo 'No se encontraron registros en partidas_presupuestarias para el id_partida: ' . $id_partida . "<br>";
+            echo 'No se encontraron registros en pl_partidas para el código de partida: ' . $codigo_partida . "<br>";
             continue;
         }
 
-        $partida = $partida_data['partida'] ?? 'N/A';
-        $descripcion = $partida_data['descripcion'] ?? 'N/A';
+        $denominacion = $partida_data['denominacion'] ?? 'N/A';
 
-        // Extraer el código de partida (los primeros 3 caracteres)
-        $codigo_partida = substr($partida, 0, 3);
-
-        // Agrupar datos por código de partida
-        if (in_array($codigo_partida, $partidas_a_agrupadas)) {
-            if (isset($data[$codigo_partida][$partida])) {
-                $data[$codigo_partida][$partida][3] += $monto_inicial;
-            } else {
-                $data[$codigo_partida][$partida] = [$partida, $descripcion, 0, $monto_inicial, 0, 0, $monto_inicial];
-            }
-
-            if (!isset($totales_por_partida[$codigo_partida])) {
-                $totales_por_partida[$codigo_partida] = 0;
-            }
-            $totales_por_partida[$codigo_partida] += $monto_inicial;
+        // Agrupar datos por los primeros 3 dígitos del código de partida
+        if (!isset($data[$codigo_partida])) {
+            $data[$codigo_partida] = [
+                $codigo_partida, // Código partida
+                $denominacion,  // Denominación
+                0,              // Sumatoria de monto_inicial
+                0,              // Placeholder para campo 0
+                0,              // Placeholder para campo 0
+                0,              // Placeholder para campo 0
+                0               // Sumatoria de monto_actual
+            ];
         }
+
+        $data[$codigo_partida][2] += $monto_inicial; // Sumar monto_inicial
+        $data[$codigo_partida][6] += $monto_actual; // Sumar monto_actual
     }
 }
 
-print_r($data);
+// Imprimir resultados
+print_r(array_values($data));
 ?>
+
 
 
 
@@ -300,114 +323,70 @@ print_r($data);
     </tr>
     </table>
 
+<table>
+    <thead>
+        <tr>
+            <th class="bt bl bb p-15" style="width: 10%">Partida</th>
+            <th class="bt bl bb p-15">Denominación</th>
+            <th class="bt bl bb p-15">Asignación Inicial</th>
+            <th class="bt bl bb p-15">Modificación</th>
+            <th class="bt bl bb p-15">Compromiso</th>
+            <th class="bt bl bb p-15">Causado</th>
+            <th class="bt bl bb p-15">Disponibilidad</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+        $total_asignacion_inicial = 0;
+        $total_modificacion = 0;
+        $total_compromiso = 0;
+        $total_causado = 0;
+        $total_disponibilidad = 0;
 
-    <table>
-        <thead>
-            <tr>
-                <th class="bt bl bb p-15" rowspan="3" style="width: 10%">Partida</th>
-                <th class="bt bl bb p-15" rowspan="3">Denominación</th>
-                <th class="bt bl bb br p-1" colspan="5">ASIGNACION PRESUPUESTARIA</th>
+        foreach ($data as $info_partida) {
+            // Asignar los valores usando índices numéricos
+            $codigo_partida = $info_partida[0] ?? 'N/A';
+            $denominacion = $info_partida[1] ?? 'N/A';
+            $asignacion_inicial = $info_partida[2] ?? 0;
+            $modificacion = $info_partida[3] ?? 0; // Si corresponde al índice [3]
+            $compromiso = $info_partida[4] ?? 0;   // Si corresponde al índice [4]
+            $causado = $info_partida[5] ?? 0;     // Si corresponde al índice [5]
+            $disponibilidad = $info_partida[6] ?? 0;
 
-            </tr>
-
-            <tr>
-                <th class="bb bl" rowspan="2" style="width: 10%">Ingresos Propios</th>
-                <th class="bb bl " colspan="2">Aporte legal</th>
-
-                <th class="bb br bl" rowspan="2" style="width: 10%">Otras Fuentes</th>
-                <th class="bb br" rowspan="2" style="width: 10%">Total</th>
-            </tr>
-
-            <tr>
-                <th class="bb bl" style="width: 10%;">Situado Estadal</th>
-                <th class="bb bl" style="width: 10%;">FCI</th>
-            </tr>
-        </thead>
-
-
-
-
-        <tbody>
-            <?php
-
-
-            $tt_ingreso_propio = 0;
-            $tt_situado_estada = 0;
-            $tt_fci = 0;
-            $tt_otras_fuentes = 0;
-            $tt_total = 0;
-
-
-
-
-            // Imprimir los registros agrupados y sus totales
-            foreach ($partidas_a_agrupadas as $codigo_agrupado) {
-                if (isset($data[$codigo_agrupado])) {
-
-                    $t_ingreso_propio = 0;
-                    $t_situado_estada = 0;
-                    $t_fci = 0;
-                    $t_otras_fuentes = 0;
-                    $t_total = 0;
-
-                    foreach ($data[$codigo_agrupado] as $row) {
-
-
-
-
-
-                        $t_ingreso_propio += $ingreso_propio = $row[2];
-                        $t_situado_estada += $situado_estada = $row[3];
-                        $t_fci += $fci = $row[4];
-                        $t_otras_fuentes += $otras_fuentes = $row[5];
-                        $t_total += $total = $situado_estada;
-
-
-
-                        $tt_ingreso_propio += $ingreso_propio;
-                        $tt_situado_estada += $situado_estada;
-                        $tt_fci += $fci;
-                        $tt_otras_fuentes += $otras_fuentes;
-                        $tt_total += $total;
-
-                        echo "<tr>
-                            <td class='fz-8 bl'>{$row[0]}</td>
-                            <td class='fz-8 bl text-left'>{$row[1]}</td>
-                            <td class='fz-8 bl'>" .  number_format($ingreso_propio, 2, ',', '.') . "</td>
-                            <td class='fz-8 bl'>" .  number_format($situado_estada, 2, ',', '.') . "</td>
-                            <td class='fz-8 bl'>" .  number_format($fci, 2, ',', '.') . "</td>
-                            <td class='fz-8 bl'>" .  number_format($otras_fuentes, 2, ',', '.') . "</td>
-                            <td class='fz-8 bl br'>" .  number_format($total, 2, ',', '.') . "</td>
-                        </tr>";
-                    }
-
-                    // Imprimir total por partida
-                    $monto_total = $totales_por_partida[$codigo_agrupado];
-                    echo "<tr>
-                            <td class='bl bb'></td>
-                            <td class='bl bb fw-bold total_text'>TOTAL POR PARTIDA $codigo_agrupado</td>
-                            <td class='bl bb fw-bold total_text'>" . number_format($t_ingreso_propio, 2, ',', '.') . "</td>
-                            <td class='bl bb fw-bold total_text'>" . number_format($t_situado_estada, 2, ',', '.') . "</td>
-                            <td class='bl bb fw-bold total_text'>" . number_format($t_fci, 2, ',', '.') . "</td>
-                            <td class='bl bb fw-bold total_text'>" . number_format($t_otras_fuentes, 2, ',', '.') . "</td>
-                            <td class='bl br bb fw-bold total_text'>" . number_format($monto_total, 2, ',', '.') . "</td>
-                    </tr >";
-                }
-            }
-
+            // Acumular totales
+            $total_asignacion_inicial += $asignacion_inicial;
+            $total_modificacion += $modificacion;
+            $total_compromiso += $compromiso;
+            $total_causado += $causado;
+            $total_disponibilidad += $disponibilidad;
 
             echo "<tr>
+                <td class='fz-8 bl'>{$codigo_partida}</td>
+                <td class='fz-8 bl text-left'>{$denominacion}</td>
+                <td class='fz-8 bl'>" . number_format($asignacion_inicial, 2, ',', '.') . "</td>
+                <td class='fz-8 bl'>" . number_format($modificacion, 2, ',', '.') . "</td>
+                <td class='fz-8 bl'>" . number_format($compromiso, 2, ',', '.') . "</td>
+                <td class='fz-8 bl'>" . number_format($causado, 2, ',', '.') . "</td>
+                <td class='fz-8 bl br'>" . number_format($disponibilidad, 2, ',', '.') . "</td>
+            </tr>";
+        }
+
+        // Totales generales
+        echo "<tr>
             <td class='bl bb'></td>
             <td class='bl bb fw-bold'>TOTALES</td>
-            <td class='bl bb fw-bold'>" . number_format($tt_ingreso_propio, 2, ',', '.') . "</td>
-            <td class='bl bb fw-bold'>" . number_format($tt_situado_estada, 2, ',', '.') . "</td>
-            <td class='bl bb fw-bold'>" . number_format($tt_fci, 2, ',', '.') . "</td>
-            <td class='bl bb fw-bold'>" . number_format($tt_otras_fuentes, 2, ',', '.') . "</td>
-            <td class='bl br bb fw-bold'>" . number_format($tt_total, 2, ',', '.') . "</td>
-    </tr >";
-            echo "</tbody >
-        </table>";
-            ?>
+            <td class='bl bb fw-bold'>" . number_format($total_asignacion_inicial, 2, ',', '.') . "</td>
+            <td class='bl bb fw-bold'>" . number_format($total_modificacion, 2, ',', '.') . "</td>
+            <td class='bl bb fw-bold'>" . number_format($total_compromiso, 2, ',', '.') . "</td>
+            <td class='bl bb fw-bold'>" . number_format($total_causado, 2, ',', '.') . "</td>
+            <td class='bl br bb fw-bold'>" . number_format($total_disponibilidad, 2, ',', '.') . "</td>
+        </tr>";
+        ?>
+    </tbody>
+</table>
+
+
+
 
 
 
