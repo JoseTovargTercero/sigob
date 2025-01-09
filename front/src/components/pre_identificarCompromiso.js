@@ -132,8 +132,6 @@ export const pre_identificarCompromiso = ({
         let res = await acceptFunction(fieldList.codigo)
 
         if (res.success) {
-          closeCard()
-          reset()
           if (registerCompromise) {
             let data = { ...registerCompromise, codigo: fieldList.codigo }
             let registrarRespuesta = await registrarCompromiso(data)
@@ -144,17 +142,22 @@ export const pre_identificarCompromiso = ({
               })
               return
             }
-
-            generarCompromisoPdf(
-              registrarRespuesta.success.compromiso.id_compromiso,
-              registrarRespuesta.success.compromiso.correlativo
+            let generarRespuesta = await generarCompromisoPdf(
+              registrarRespuesta.success.id_compromiso,
+              registrarRespuesta.success.correlativo
             )
+
+            closeCard()
+            reset()
             return
           }
           generarCompromisoPdf(
             res.success.compromiso.id_compromiso,
             res.success.compromiso.correlativo
           )
+
+          closeCard()
+          reset()
         }
       },
     })

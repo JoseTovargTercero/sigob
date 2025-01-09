@@ -211,7 +211,6 @@ export const pre_solicitudDozavo_card = async ({
 
   function validateClick(e) {
     if (e.target.dataset.confirmarid) {
-      console.log('hola')
       pre_identificarCompromiso({
         id: e.target.dataset.confirmarid,
         elementToInsert: 'solicitudes-dozavos-view',

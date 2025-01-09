@@ -16,7 +16,7 @@ const getSolicitudesDozavos = async (id) => {
   try {
     let res
     if (id) {
-      console.log(id)
+      // console.log(id)
       res = await fetch(`${solicitudesDozavosUrl}?id=${id}`, {
         method: 'get',
       })
@@ -35,7 +35,7 @@ const getSolicitudesDozavos = async (id) => {
 
     const json = await res.json()
 
-    console.log(json)
+    // console.log(json)
 
     if (id) {
       if (json.error) {
@@ -79,10 +79,10 @@ const registrarSolicitudDozavo = async (data) => {
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
 
-    const clone = res.clone()
-    const text = await clone.text()
+    // const clone = res.clone()
+    // const text = await clone.text()
 
-    console.log(text)
+    // console.log(text)
     const json = await res.json()
 
     if (json.success) {
@@ -125,13 +125,14 @@ const aceptarDozavo = async (id, codigo) => {
     const clone = res.clone()
     const text = await clone.text()
 
-    console.log(text)
+    // console.log(text)
     const json = await res.json()
+    console.log(json)
 
     if (json.success) {
       toastNotification({
         type: NOTIFICATIONS_TYPES.done,
-        message: json.mensaje,
+        message: json.success,
       })
       return json
     }

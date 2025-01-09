@@ -84,7 +84,7 @@ export async function loadSolicitudesDozavosTable(id_ejercicio) {
   let solicitudes = await getSolicitudesDozavos()
   // console.log(solicitudes)
 
-  console.log(id_ejercicio)
+  // console.log(id_ejercicio)
 
   if (!Array.isArray(solicitudes)) return
 
