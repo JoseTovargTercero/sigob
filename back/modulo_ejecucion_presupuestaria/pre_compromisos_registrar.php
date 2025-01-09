@@ -14,6 +14,20 @@ function registrarCompromiso($idRegistro, $nombreTabla, $descripcion, $id_ejerci
             return ["error" => "Faltan datos obligatorios para registrar el compromiso."];
         }
 
+        // Verificar si ya existe un compromiso con los mismos datos
+        $sqlCheck = "SELECT id FROM compromisos WHERE id_registro = ? AND tabla_registro = ? AND descripcion = ? AND id_ejercicio = ? AND numero_compromiso = ?";
+        $stmtCheck = $conexion->prepare($sqlCheck);
+        $stmtCheck->bind_param("issis", $idRegistro, $nombreTabla, $descripcion, $id_ejercicio, $codigo);
+        $stmtCheck->execute();
+        $stmtCheck->store_result();
+
+        if ($stmtCheck->num_rows > 0) {
+            // Si ya existe un compromiso con los mismos valores, retornar un mensaje indicando el duplicado
+            $stmtCheck->close();
+            return ["error" => "Ya existe un compromiso registrado con los mismos valores."];
+        }
+        $stmtCheck->close();
+
         // Obtener el año actual
         $yearActual = date("Y");
 
@@ -60,7 +74,7 @@ function registrarCompromiso($idRegistro, $nombreTabla, $descripcion, $id_ejerci
                 $stmtUpdate2->execute();
 
                 // Verificar si la actualización fue exitosa
-                if ($stmtUpdate->affected_rows > 0) {
+                if ($stmtUpdate->affected_rows >= 0 && $stmtUpdate2->affected_rows >= 0) {
                     return ["success" => ["correlativo" => $nuevoCorrelativo, "id_compromiso" => $idCompromiso]];
                 } else {
                     return ["error" => "No se pudo actualizar el número de compromiso en la tabla $nombreTabla."];
