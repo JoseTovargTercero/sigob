@@ -42,7 +42,7 @@ function registrarCompromiso($idRegistro, $nombreTabla, $descripcion, $id_ejerci
 
         // Incrementar el número de seguimiento
         if ($ultimoCorrelativo) {
-            $numeroSeguimiento = (int)substr($ultimoCorrelativo, 1, 5) + 1;
+            $numeroSeguimiento = (int) substr($ultimoCorrelativo, 1, 5) + 1;
         } else {
             $numeroSeguimiento = 1;
         }
@@ -93,9 +93,9 @@ function registrarCompromiso($idRegistro, $nombreTabla, $descripcion, $id_ejerci
 $data = json_decode(file_get_contents("php://input"), true);
 
 // Validar que los datos recibidos estén completos
-if (isset($data['idRegistro'], $data['nombreTabla'], $data['descripcion'], $data['id_ejercicio'], $data['codigo'])) {
-    $idRegistro = $data['idRegistro'];
-    $nombreTabla = $data['nombreTabla'];
+if (isset($data['id'], $data['nombre_tabla'], $data['descripcion'], $data['id_ejercicio'], $data['codigo'])) {
+    $idRegistro = $data['id'];
+    $nombreTabla = $data['nombre_tabla'];
     $descripcion = $data['descripcion'];
     $id_ejercicio = $data['id_ejercicio'];
     $codigo = $data['codigo'];

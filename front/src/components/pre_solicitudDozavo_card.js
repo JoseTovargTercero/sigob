@@ -1,3 +1,4 @@
+import { generarCompromisoPdf } from '../api/pre_compromisos.js'
 import { aceptarDozavo, rechazarDozavo } from '../api/pre_solicitudesDozavos.js'
 import { deleteSolicitudDozeavoRow } from '../controllers/pre_solicitudesDozavosTable.js'
 import { confirmNotification, separadorLocal } from '../helpers/helpers.js'
@@ -43,6 +44,7 @@ export const pre_solicitudDozavo_card = async ({
     numero_orden,
     numero_compromiso,
     ente,
+    id_ejercicio,
     tipo_ente,
     descripcion,
     tipo,
@@ -51,6 +53,7 @@ export const pre_solicitudDozavo_card = async ({
     partidas,
     status,
     mes,
+    informacion_compromiso,
   } = data
 
   let partidasLi = partidas
@@ -74,16 +77,16 @@ export const pre_solicitudDozavo_card = async ({
 
   const validateStatus = () => {
     if (status === 0) {
-      return ` <span class='btn btn-secondary'>
+      return ` <span class='btn btn-success'>
               Comprometido
             </span>  
-            <button class='btn btn-warning' data-entregarid='${id}'>Entregar</button>
+            <button class='btn btn-secondary' data-compromisoid='${id}'>Descargar compromiso</button>
             <button class='btn btn-success' data-entregarid='${id}'>Entregar</button>
             `
     }
     if (status === 1) {
       return `<button class="btn btn-danger" data-rechazarid="${id}">Rechazar</button>
-       <button class="btn btn-primary" data-confirmarid="${id}">aceptar</button>`
+       <button class="btn btn-primary" data-confirmarid="${id}">Aceptar</button>`
     }
     if (status === 3) {
       return ` <span class='p-2 rounded text-white bg-red-600 text-bold'>
@@ -91,9 +94,9 @@ export const pre_solicitudDozavo_card = async ({
             </span>`
     }
     if (status === 4) {
-      return ` <span class='p-2 rounded text-white bg-gray-600 text-bold'>
+      return ` <span class='btn btn-info'>
               Entregado
-            </span>`
+            </span> <button class='btn btn-secondary' data-descargarid='${id}'>Descargar compromiso</button>`
     }
   }
 
@@ -212,6 +215,12 @@ export const pre_solicitudDozavo_card = async ({
       pre_identificarCompromiso({
         id: e.target.dataset.confirmarid,
         elementToInsert: 'solicitudes-dozavos-view',
+        registerCompromise: {
+          id,
+          nombre_tabla: 'solicitud_dozavos',
+          descripcion,
+          id_ejercicio,
+        },
         acceptFunction: async function (codigo) {
           let res = await aceptarDozavo(e.target.dataset.confirmarid, codigo)
 
@@ -239,6 +248,14 @@ export const pre_solicitudDozavo_card = async ({
           }
         },
       })
+    }
+
+    if (e.target.dataset.compromisoid) {
+      console.log(e.target.dataset.compromisoid)
+      generarCompromisoPdf(
+        informacion_compromiso.id,
+        informacion_compromiso.correlativo
+      )
     }
 
     if (e.target.dataset.close) {

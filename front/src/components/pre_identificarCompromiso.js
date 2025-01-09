@@ -1,4 +1,7 @@
-import { generarCompromisoPdf } from '../api/pre_compromisos.js'
+import {
+  generarCompromisoPdf,
+  registrarCompromiso,
+} from '../api/pre_compromisos.js'
 import {
   confirmNotification,
   toastNotification,
@@ -11,6 +14,7 @@ const d = document
 export const pre_identificarCompromiso = ({
   elementToInsert,
   reset,
+  registerCompromise = false,
   acceptFunction,
 }) => {
   let fieldList = { codigo: '' }
@@ -130,6 +134,23 @@ export const pre_identificarCompromiso = ({
         if (res.success) {
           closeCard()
           reset()
+          if (registerCompromise) {
+            let data = { ...registerCompromise, codigo: fieldList.codigo }
+            let registrarRespuesta = await registrarCompromiso(data)
+            if (!registrarRespuesta || registrarRespuesta.error) {
+              toastNotification({
+                message:
+                  'No se pudo registrar el compromiso, vuelva a intentarlo',
+              })
+              return
+            }
+
+            generarCompromisoPdf(
+              registrarRespuesta.success.compromiso.id_compromiso,
+              registrarRespuesta.success.compromiso.correlativo
+            )
+            return
+          }
           generarCompromisoPdf(
             res.success.compromiso.id_compromiso,
             res.success.compromiso.correlativo

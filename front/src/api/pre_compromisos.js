@@ -10,9 +10,14 @@ import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 const compromisosPdfUrl =
   '../../../../sigob/back/modulo_ejecucion_presupuestaria/pre_compromisos_pdf.php'
 
+const compromisosUrl =
+  '../../../../sigob/back/modulo_ejecucion_presupuestaria/pre_compromisos_registrar.php'
+
 const generarCompromisoPdf = async (id, nombreArchivo) => {
   showLoader()
   try {
+    console.log(id)
+
     let res = await fetch(`${compromisosPdfUrl}?id_compromiso=${id}`)
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
@@ -55,4 +60,39 @@ const generarCompromisoPdf = async (id, nombreArchivo) => {
   }
 }
 
-export { generarCompromisoPdf }
+const registrarCompromiso = async (data) => {
+  showLoader()
+  try {
+    console.log(data)
+
+    let res = await fetch(compromisosUrl, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    const clone = res.clone()
+    const text = await clone.text()
+
+    console.log(text)
+    const json = await res.json()
+
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+      return
+    }
+    return json
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al aceptar solicitud solicitudes',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
+export { generarCompromisoPdf, registrarCompromiso }

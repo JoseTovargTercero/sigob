@@ -82,6 +82,8 @@ export const pre_gastosDetalles = ({
               ? ` <span class='btn btn-sm btn-secondary'>Pendiente</span>`
               : Number(data.status_gasto) === 1
               ? `<span class='btn btn-sm btn-success'>Procesado</span>`
+              : Number(data.status_gasto) === 3
+              ? `<span class='btn btn-sm btn-info'>Entregado</span>`
               : `<span class='btn btn-sm btn-danger'>Rechazado</span>`
           }
         </h6>
