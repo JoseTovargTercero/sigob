@@ -122,10 +122,10 @@ const aceptarDozavo = async (id, codigo) => {
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
 
-    // const clone = res.clone()
-    // const text = await clone.text()
+    const clone = res.clone()
+    const text = await clone.text()
 
-    // console.log(text)
+    console.log(text)
     const json = await res.json()
 
     if (json.success) {
