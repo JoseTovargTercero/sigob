@@ -14,6 +14,19 @@ function registrarCompromiso($idRegistro, $nombreTabla, $descripcion, $id_ejerci
             return ["error" => "Faltan datos obligatorios para registrar el compromiso."];
         }
 
+        // Verificar si ya existe un registro con los mismos datos
+        $sqlCheck = "SELECT id FROM compromisos WHERE id_registro = ? AND tabla_registro = ? AND descripcion = ? AND id_ejercicio = ? AND numero_compromiso = ?";
+        $stmtCheck = $conexion->prepare($sqlCheck);
+        $stmtCheck->bind_param("issis", $idRegistro, $nombreTabla, $descripcion, $id_ejercicio, $codigo);
+        $stmtCheck->execute();
+        $stmtCheck->store_result();
+
+        if ($stmtCheck->num_rows > 0) {
+            // Si ya existe un compromiso con los mismos valores, retornar un mensaje indicando el duplicado
+            return ["error" => "Ya existe un compromiso registrado con los mismos valores."];
+        }
+        $stmtCheck->close();
+
         // Obtener el año actual
         $yearActual = date("Y");
 
@@ -47,7 +60,7 @@ function registrarCompromiso($idRegistro, $nombreTabla, $descripcion, $id_ejerci
         if ($stmtInsert->affected_rows > 0) {
             $idCompromiso = $conexion->insert_id;
 
-            // Si la tabla es 'solicitud_dozavos', actualizar el número de compromiso en la tabla correspondiente
+            // Actualizar el número de compromiso en la tabla correspondiente
             if ($nombreTabla === 'solicitud_dozavos') {
                 $sqlUpdate = "UPDATE $nombreTabla SET numero_compromiso = ? WHERE id = ?";
                 $stmtUpdate = $conexion->prepare($sqlUpdate);
@@ -59,14 +72,12 @@ function registrarCompromiso($idRegistro, $nombreTabla, $descripcion, $id_ejerci
                 $stmtUpdate2->bind_param("si", $codigo, $idCompromiso);
                 $stmtUpdate2->execute();
 
-                // Verificar si la actualización fue exitosa
-                if ($stmtUpdate->affected_rows > 0) {
+                if ($stmtUpdate->affected_rows >= 0 && $stmtUpdate2->affected_rows >= 0) {
                     return ["success" => ["correlativo" => $nuevoCorrelativo, "id_compromiso" => $idCompromiso]];
                 } else {
-                    return ["error" => "No se pudo actualizar el número de compromiso en la tabla $nombreTabla."];
+                    return ["error" => "No se pudo actualizar el número de compromiso en la tabla $nombreTabla o compromisos."];
                 }
             } else {
-                // Si no es 'solicitud_dozavos', retornar el éxito
                 return ["success" => true, "correlativo" => $nuevoCorrelativo, "id_compromiso" => $idCompromiso];
             }
         } else {
