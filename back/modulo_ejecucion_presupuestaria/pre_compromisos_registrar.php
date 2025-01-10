@@ -63,18 +63,13 @@ function registrarCompromiso($idRegistro, $nombreTabla, $descripcion, $id_ejerci
 
             // Si la tabla es 'solicitud_dozavos', actualizar el número de compromiso en la tabla correspondiente
             if ($nombreTabla === 'solicitud_dozavos') {
-                $sqlUpdate = "UPDATE $nombreTabla SET numero_compromiso = ? WHERE id = ?";
-                $stmtUpdate = $conexion->prepare($sqlUpdate);
-                $stmtUpdate->bind_param("si", $codigo, $idRegistro);
-                $stmtUpdate->execute();
-
                 $sqlUpdate2 = "UPDATE compromisos SET numero_compromiso = ? WHERE id = ?";
                 $stmtUpdate2 = $conexion->prepare($sqlUpdate2);
                 $stmtUpdate2->bind_param("si", $codigo, $idCompromiso);
                 $stmtUpdate2->execute();
 
                 // Verificar si la actualización fue exitosa
-                if ($stmtUpdate->affected_rows >= 0 && $stmtUpdate2->affected_rows >= 0) {
+                if ($stmtUpdate2->affected_rows >= 0) {
                     return ["success" => ["correlativo" => $nuevoCorrelativo, "id_compromiso" => $idCompromiso]];
                 } else {
                     return ["error" => "No se pudo actualizar el número de compromiso en la tabla $nombreTabla."];
