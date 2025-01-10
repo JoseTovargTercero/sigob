@@ -34,17 +34,58 @@ $ano = $dataEjercicio['ano'];
 $tablaRegistro = $dataCompromiso['tabla_registro'];
 $idRegistro = $dataCompromiso['id_registro'];
 
-$queryRegistro = "SELECT * FROM $tablaRegistro WHERE id = ?";
-$stmtRegistro = $conexion->prepare($queryRegistro);
-$stmtRegistro->bind_param('i', $idRegistro);
-$stmtRegistro->execute();
-$resultRegistro = $stmtRegistro->get_result();
-$dataRegistro = $resultRegistro->fetch_assoc();
-$stmtRegistro->close();
+if ($tablaRegistro == "gastos") {
+    $queryRegistro = "SELECT * FROM $tablaRegistro WHERE id = ?";
+    $stmtRegistro = $conexion->prepare($queryRegistro);
+    $stmtRegistro->bind_param('i', $idRegistro);
+    $stmtRegistro->execute();
+    $resultRegistro = $stmtRegistro->get_result();
+    $dataRegistro = $resultRegistro->fetch_assoc();
+    $stmtRegistro->close();
 
-if (!$dataRegistro) {
-    die("No se encontró el registro en la tabla especificada.");
+    if (!$dataRegistro) {
+        die("No se encontró el registro en la tabla 'gastos'.");
+    }
+} elseif ($tablaRegistro == "solicitud_dozavos") {
+    // URL de la API
+    $api_url = "https://sigob.net/api/solicitudes";
+
+    // Configuración de la solicitud cURL
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $api_url . '?id=' . $idRegistro); // Agregar el ID a la URL
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // Retornar la respuesta como string
+    curl_setopt($ch, CURLOPT_HTTPGET, true); // Método GET
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Content-Type: application/json', // Encabezado de tipo de contenido
+        'Authorization: 123456789abcdef' // Sustituye con tu token si es necesario
+    ]);
+
+    // Ejecutar la solicitud
+    $response = curl_exec($ch);
+
+    // Manejar errores de cURL
+    if (curl_errno($ch)) {
+        die("Error en la solicitud: " . curl_error($ch));
+    }
+
+    // Cerrar el recurso cURL
+    curl_close($ch);
+
+    // Decodificar la respuesta JSON
+    $response_data = json_decode($response, true);
+
+    // Verificar si la respuesta es válida
+    if (isset($response_data['success']) && $response_data['success']) {
+        $dataRegistro = $response_data['success']; // Asignar los datos de la API
+    } else {
+        die("No se encontró el registro en 'solicitud_dozavos' o hubo un error en la API.");
+    }
+} else {
+    die("Tabla especificada no válida.");
 }
+
+
+
 
 
 if ($tablaRegistro == "gastos") {
@@ -107,32 +148,55 @@ $response = [
     'distribuciones' => $detalleDistribuciones
 ];
 }elseif ($tablaRegistro == "solicitud_dozavos") {
-    // Consultar la solicitud asociada al compromiso
-    $querySolicitud = "SELECT * FROM solicitud_dozavos WHERE id = ?";
-    $stmtSolicitud = $conexion->prepare($querySolicitud);
-    $stmtSolicitud->bind_param('i', $idRegistro);
-    $stmtSolicitud->execute();
-    $resultSolicitud = $stmtSolicitud->get_result();
-    $dataSolicitud = $resultSolicitud->fetch_assoc();
-    $stmtSolicitud->close();
+// URL de la API
+$api_url = "https://sigob.net/api/solicitudes";
 
-    $meses = array("ENERO","FEBRERO","MARZO","ABRIL","MAYO","JUNIO","JULIO","AGOSTO","SEPTIEMBRE","OCTUBRE","NOVIEMBRE","DICIEMBRE");
-    $date2 = $meses[$dataSolicitud['mes']];
-    
-    $queryEnte = "SELECT * FROM entes WHERE id = ?";
-    $stmtEnte = $conexion->prepare($queryEnte);
-    $stmtEnte->bind_param('i', $dataSolicitud["id_ente"]);
-    $stmtEnte->execute();
-    $resultEnte = $stmtEnte->get_result();
-    $dataEnte = $resultEnte->fetch_assoc();
-    $stmtEnte->close();
+// ID del registro del compromiso
 
-    if (!$dataSolicitud) {
-        die("No se encontró la solicitud asociada al compromiso.");
-    }
 
-    // Decodificar las partidas asociadas a la solicitud
-    $partidas = json_decode($dataSolicitud['partidas'], true);
+// Configuración de la solicitud cURL
+$ch = curl_init();
+
+// Configurar los parámetros de la solicitud
+curl_setopt($ch, CURLOPT_URL, $api_url . '?id=' . $idRegistro);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // Retornar la respuesta como string
+curl_setopt($ch, CURLOPT_HTTPGET, true); // Método GET
+curl_setopt($ch, CURLOPT_HTTPHEADER, [
+    'Content-Type: application/json', // Encabezado de tipo de contenido
+    'Authorization: 123456789abcdef' // Sustituye con tu token si es necesario
+]);
+
+// Ejecutar la solicitud
+$response = curl_exec($ch);
+
+// Manejar errores
+if (curl_errno($ch)) {
+    echo "Error en la solicitud: " . curl_error($ch);
+    curl_close($ch);
+    exit;
+}
+
+// Cerrar el recurso cURL
+curl_close($ch);
+
+// Decodificar la respuesta JSON
+$response_data = json_decode($response, true);
+
+if ($response_data) {
+    // Procesar los datos de la respuesta
+    echo "Respuesta de la API:\n";
+    print_r($response_data);
+
+    // Obtener el mes desde la respuesta
+    $meses = array("ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO", "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE");
+    $mesIndex = $response_data['success']['mes']; // Índice del mes obtenido de la API
+    $date2 = isset($meses[$mesIndex]) ? $meses[$mesIndex] : "MES NO ENCONTRADO";
+
+    // Consultar el ente desde la información de la API
+    $dataEnte = $response_data['success']['ente'];
+
+    // Verificar si existen partidas
+    $partidas = $response_data['success']['partidas'];
     if (empty($partidas)) {
         die("La solicitud no contiene partidas asociadas.");
     }
@@ -175,27 +239,30 @@ $response = [
                 die("No se encontró la información de la partida presupuestaria para el ID {$dataDistribucion['id_partida']}.");
             }
         } else {
-            die("No se encontró la distribución presupuestaria para el ID de la partida $id_partida.");
+            die("No se encontró la distribución presupuestaria para el ID de la partida $id_distribucion.");
         }
     }
+
     // Resultado final con la información de la solicitud, las partidas y distribuciones presupuestarias
     $response = [
-        'compromiso' => $dataCompromiso,
-        'registro_especifico' => $dataRegistro,
+        'compromiso' => $response_data['success']['informacion_compromiso'],
+        'registro_especifico' => $response_data['success'],
         'solicitud' => [
-            'id' => $dataSolicitud['id'],
-            'numero_orden' => $dataSolicitud['numero_orden'],
-            'numero_compromiso' => $dataSolicitud['numero_compromiso'],
-            'descripcion' => $dataSolicitud['descripcion'],
-            'tipo' => $dataSolicitud['tipo'],
-            'monto' => $dataSolicitud['monto'],
-            'fecha' => $dataSolicitud['fecha'],
-            'id_ente' => $dataSolicitud['id_ente'],
-            'status' => $dataSolicitud['status'],
-            'id_ejercicio' => $dataSolicitud['id_ejercicio'],
+            'id' => $response_data['success']['id'],
+            'numero_orden' => $response_data['success']['numero_orden'],
+            'numero_compromiso' => $response_data['success']['numero_compromiso'],
+            'descripcion' => $response_data['success']['descripcion'],
+            'tipo' => $response_data['success']['tipo'],
+            'monto' => $response_data['success']['monto'],
+            'fecha' => $response_data['success']['fecha'],
+            'id_ente' => $response_data['success']['id_ente'],
+            'status' => $response_data['success']['status'],
+            'id_ejercicio' => $response_data['success']['id_ejercicio'],
+            'mes' => $date2 // Incluir el mes en formato textual
         ],
         'partidas' => $detallePartidas
     ];
+}
 }
 
 
