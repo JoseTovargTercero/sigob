@@ -4,8 +4,8 @@ require_once '../sistema_global/conexion.php';
 $id_ejercicio = $_GET['id_ejercicio'];
 
 // Consultar ejercicio fiscal
-$query_sector = "SELECT * FROM ejercicio_fiscal WHERE id = ?";
-$stmt = $conexion->prepare($query_sector);
+$query_ejercicio = "SELECT * FROM ejercicio_fiscal WHERE id = ?";
+$stmt = $conexion->prepare($query_ejercicio);
 $stmt->bind_param('i', $id_ejercicio);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -59,44 +59,48 @@ foreach ($gastos as $gasto) {
 
         $monto_inicial = $distribucion_presupuestaria['monto_inicial'] ?? 0;
         $monto_disponible = $distribucion_presupuestaria['monto_actual'] ?? 0; // Monto disponible desde distribucion_presupuestaria
-        $id_partida = $distribucion_presupuestaria['id_partida'] ?? 0;
+        $id_sector = $distribucion_presupuestaria['id_sector'] ?? 0;
+        $id_programa = $distribucion_presupuestaria['id_programa'] ?? 0;
 
-        // Consultar en partidas_presupuestarias
-        $query_presupuestaria = "SELECT partida FROM partidas_presupuestarias WHERE id = ?";
-        $stmt_presupuestaria = $conexion->prepare($query_presupuestaria);
-        $stmt_presupuestaria->bind_param('i', $id_partida);
-        $stmt_presupuestaria->execute();
-        $result_presupuestaria = $stmt_presupuestaria->get_result();
-        $presupuestaria_data = $result_presupuestaria->fetch_assoc();
+        // Consultar sector en pl_sectores
+        $query_sector = "SELECT sector FROM pl_sectores WHERE id = ?";
+        $stmt_sector = $conexion->prepare($query_sector);
+        $stmt_sector->bind_param('i', $id_sector);
+        $stmt_sector->execute();
+        $result_sector = $stmt_sector->get_result();
+        $sector_data = $result_sector->fetch_assoc();
 
-        if (!$presupuestaria_data) {
-            echo "No se encontró registro en partidas_presupuestarias para id_partida: $id_partida<br>";
+        if (!$sector_data) {
+            echo "No se encontró registro en pl_sectores para id_sector: $id_sector<br>";
             continue;
         }
 
-        // Obtener el valor de partida desde partidas_presupuestarias
-        $codigo_partida = substr($presupuestaria_data['partida'], 0, 3);
+        $sector = $sector_data['sector'] ?? 'N/A';
 
-        // Consultar partida y descripción en pl_partidas
-        $query_partida = "SELECT partida, denominacion FROM pl_partidas WHERE partida = ?";
-        $stmt_partida = $conexion->prepare($query_partida);
-        $stmt_partida->bind_param('s', $codigo_partida);
-        $stmt_partida->execute();
-        $result_partida = $stmt_partida->get_result();
-        $partida_data = $result_partida->fetch_assoc();
+        // Consultar programa en pl_programas
+        $query_programa = "SELECT programa, denominacion FROM pl_programas WHERE id = ?";
+        $stmt_programa = $conexion->prepare($query_programa);
+        $stmt_programa->bind_param('i', $id_programa);
+        $stmt_programa->execute();
+        $result_programa = $stmt_programa->get_result();
+        $programa_data = $result_programa->fetch_assoc();
 
-        if (!$partida_data) {
-            echo "No se encontraron registros en pl_partidas para el código de partida: " . $codigo_partida . "<br>";
+        if (!$programa_data) {
+            echo "No se encontró registro en pl_programas para id_programa: $id_programa<br>";
             continue;
         }
 
-        $denominacion = $partida_data['denominacion'] ?? 'N/A';
+        $programa = $programa_data['programa'] ?? 'N/A';
+        $denominacion = $programa_data['denominacion'] ?? 'N/A';
 
-        // Agrupar datos por los primeros 3 dígitos del código de partida
-        if (!isset($data[$codigo_partida])) {
-            $data[$codigo_partida] = [
-                $codigo_partida, // Código partida
-                $denominacion,  // Denominación
+        // Formatear identificador como xx-xx
+        $identificador = sprintf("%s-%s", $sector, $programa);
+
+        // Agrupar datos por identificador
+        if (!isset($data[$identificador])) {
+            $data[$identificador] = [
+                $identificador,  // Sector y programa combinados
+                $denominacion,   // Denominación del programa
                 0,              // Sumatoria de monto_inicial
                 0,              // Sumatoria comprometido
                 0,              // Sumatoria causado
@@ -106,14 +110,14 @@ foreach ($gastos as $gasto) {
         }
 
         // Sumar montos al agrupamiento
-        $data[$codigo_partida][2] += $monto_inicial;      // Sumar monto_inicial
-        $data[$codigo_partida][6] += $monto_disponible;   // Sumar monto_actual (disponibilidad)
+        $data[$identificador][2] += $monto_inicial;      // Sumar monto_inicial
+        $data[$identificador][6] += $monto_disponible;   // Sumar monto_actual (disponibilidad)
 
         // Sumar comprometido o causado según el status del gasto
         if ($gasto['status'] == 0) { // Comprometido
-            $data[$codigo_partida][4] += $monto_actual;
+            $data[$identificador][4] += $monto_actual;
         } elseif ($gasto['status'] == 1) { // Causado
-            $data[$codigo_partida][5] += $monto_actual;
+            $data[$identificador][5] += $monto_actual;
         }
     }
 }
@@ -131,11 +135,12 @@ print_r(array_values($data));
 
 
 
+
 <!DOCTYPE html>
 <html>
 
 <head>
-    <title>RESUMEN GENERAL A NIVEL DE PARTIDAS</title>
+    <title>RESUMEN GENERAL A NIVEL DE SECTORES Y PROGRAMAS</title>
     <meta charset="UTF-8">
     <link rel="shortcut icon" type="image/png" href="img/favicon.png">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -329,7 +334,7 @@ print_r(array_values($data));
 <table>
     <thead>
         <tr>
-            <th class="bt bl bb p-15" style="width: 10%">Partida</th>
+            <th class="bt bl bb p-15" style="width: 10%">Codigo del Sector</th>
             <th class="bt bl bb p-15">Denominación</th>
             <th class="bt bl bb p-15">Asignación Inicial</th>
             <th class="bt bl bb p-15">Modificación</th>
