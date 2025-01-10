@@ -87,22 +87,71 @@ function registrarCompromiso($idRegistro, $nombreTabla, $descripcion, $id_ejerci
     }
 }
 
+// Función para consultar compromiso
+function consultarCompromiso($idRegistro, $tablaRegistro)
+{
+    global $conexion;
+
+    try {
+        // Consulta para obtener el compromiso
+        $sql = "SELECT * FROM compromisos WHERE id_registro = ? AND tabla_registro = ?";
+        $stmt = $conexion->prepare($sql);
+        $stmt->bind_param("is", $idRegistro, $tablaRegistro);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        // Verificar si existen resultados
+        if ($result->num_rows > 0) {
+            $compromisos = [];
+            while ($row = $result->fetch_assoc()) {
+                $compromisos[] = $row;
+            }
+            return ["success" => true, "data" => $compromisos];
+        } else {
+            return ["error" => "No se encontraron compromisos para los parámetros especificados."];
+        }
+    } catch (Exception $e) {
+        registrarError($e->getMessage());
+        return ["error" => $e->getMessage()];
+    }
+}
 // Procesar la solicitud
 $data = json_decode(file_get_contents("php://input"), true);
 
-// Validar que los datos recibidos estén completos
-if (isset($data['id'], $data['nombre_tabla'], $data['descripcion'], $data['id_ejercicio'], $data['codigo'])) {
-    $idRegistro = $data['id'];
-    $nombreTabla = $data['nombre_tabla'];
-    $descripcion = $data['descripcion'];
-    $id_ejercicio = $data['id_ejercicio'];
-    $codigo = $data['codigo'];
+// Verificar que se haya especificado una acción
+if (isset($data["accion"])) {
+    $accion = $data["accion"];
+    $idRegistro = $data["id"] ?? '';
+    $nombreTabla = $data["nombre_tabla"] ?? '';
+    $descripcion = $data["descripcion"] ?? '';
+    $id_ejercicio = $data["id_ejercicio"] ?? '';
+    $codigo = $data["codigo"] ?? '';
+    $id_registro = $data["id_registro"] ?? '';
+    $tabla_registro = $data["tabla_registro"] ?? '';
 
-    // Llamar a la función y devolver el resultado
-    $resultado = registrarCompromiso($idRegistro, $nombreTabla, $descripcion, $id_ejercicio, $codigo);
-    echo json_encode($resultado);
+    if ($accion === "insert") {
+        // Registrar compromiso
+        $response = registrarCompromiso($idRegistro, $nombreTabla, $descripcion, $id_ejercicio, $codigo);
+    } elseif ($accion === "update") {
+        // Actualizar compromiso
+        $response = actualizarCompromiso($idRegistro, $nombreTabla, $descripcion, $id_ejercicio, $codigo);
+    } elseif ($accion === "delete") {
+        // Eliminar compromiso
+        $response = eliminarCompromiso($idRegistro);
+    } elseif ($accion === "consultar") {
+        // Consultar todos los compromisos
+        $response = consultarCompromiso();
+    } elseif ($accion === "consultar_id") {
+        // Consultar compromiso por ID
+        $response = consultarCompromisoPorId($id_registro, $tabla_registro);
+    } else {
+        // Acción no aceptada
+        $response = json_encode(['error' => "Acción no aceptada"]);
+    }
 } else {
-    echo json_encode(["error" => "Faltan datos obligatorios en la solicitud."]);
+    // No se especificó ninguna acción
+    $response = json_encode(['error' => "No se especificó ninguna acción"]);
 }
 
-?>
+// Devolver la respuesta
+echo json_encode($response);
