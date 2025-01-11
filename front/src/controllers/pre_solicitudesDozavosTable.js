@@ -55,7 +55,6 @@ export async function validateSolicitudesDozavosTable(id_ejercicio) {
           </div>`
         },
       },
-      { data: 'numero_compromiso' },
       { data: 'mes' },
       { data: 'tipo' },
       { data: 'monto' },
@@ -102,9 +101,7 @@ export async function loadSolicitudesDozavosTable(id_ejercicio) {
       return {
         numero_orden: solicitud.numero_orden,
         entes: solicitud.ente_nombre,
-        numero_compromiso: !solicitud.numero_compromiso
-          ? 'No registrado'
-          : solicitud.numero_compromiso,
+
         mes: meses[solicitud.mes],
         tipo: solicitud.tipo === 'D' ? 'Disminuye' : 'Aumenta',
         monto: separadorLocal(solicitud.monto),
