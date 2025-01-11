@@ -1,6 +1,6 @@
 import {
   aceptarGasto,
-  eliminatTipoGasto,
+  eliminarTipoGasto,
   getGasto,
   getGastos,
   getTiposGastos,
@@ -102,7 +102,7 @@ export const validateGastosView = async () => {
         type: NOTIFICATIONS_TYPES.send,
         message: '¿Desea eliminar este tipo de gasto',
         successFunction: async function () {
-          let res = await eliminatTipoGasto(e.target.dataset.eliminarid)
+          let res = await eliminarTipoGasto(e.target.dataset.eliminarid)
           if (res.success) {
             let row = e.target.closest('tr')
             deleteTipoGasto({ row })
