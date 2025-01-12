@@ -67,7 +67,7 @@ const registrarCompromiso = async (data) => {
 
     let res = await fetch(compromisosUrl, {
       method: 'POST',
-      body: JSON.stringify(data),
+      body: JSON.stringify({ accion: 'insert', ...data }),
     })
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
@@ -90,11 +90,52 @@ const registrarCompromiso = async (data) => {
 
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
-      message: 'Error al aceptar solicitud solicitudes',
+      message: 'Error al registrar compromiso',
     })
   } finally {
     hideLoader()
   }
 }
 
-export { generarCompromisoPdf, registrarCompromiso }
+const consultarCompromiso = async (data) => {
+  showLoader()
+  try {
+    console.log(data)
+
+    let res = await fetch(compromisosUrl, {
+      method: 'POST',
+      body: JSON.stringify({ accion: 'consultar', ...data }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    // const clone = res.clone()
+    // const text = await clone.text()
+
+    // console.log(text)
+    const json = await res.json()
+
+    console.log(json)
+
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+      return
+    }
+
+    if (json.success) {
+      return json.success
+    }
+    return json
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al consultar compromiso',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
+export { generarCompromisoPdf, registrarCompromiso, consultarCompromiso }

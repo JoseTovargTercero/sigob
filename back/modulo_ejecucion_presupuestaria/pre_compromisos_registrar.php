@@ -102,13 +102,13 @@ function consultarCompromiso($idRegistro, $tablaRegistro)
 
         // Verificar si existen resultados
         if ($result->num_rows > 0) {
-            $compromisos = [];
+            $compromisos = null;
             while ($row = $result->fetch_assoc()) {
-                $compromisos[] = $row;
+                $compromisos = $row;
             }
-            return ["success" => true, "data" => $compromisos];
+            return ["success" => $compromisos];
         } else {
-            return ["error" => "No se encontraron compromisos para los parámetros especificados."];
+            return ["success" => false];
         }
     } catch (Exception $e) {
         registrarError($e->getMessage());
@@ -140,7 +140,7 @@ if (isset($data["accion"])) {
         $response = eliminarCompromiso($idRegistro);
     } elseif ($accion === "consultar") {
         // Consultar todos los compromisos
-        $response = consultarCompromiso();
+        $response = consultarCompromiso($id_registro, $nombreTabla);
     } elseif ($accion === "consultar_id") {
         // Consultar compromiso por ID
         $response = consultarCompromisoPorId($id_registro, $tabla_registro);

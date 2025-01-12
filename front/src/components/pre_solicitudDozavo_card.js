@@ -1,5 +1,12 @@
-import { generarCompromisoPdf } from '../api/pre_compromisos.js'
-import { aceptarDozavo, rechazarDozavo } from '../api/pre_solicitudesDozavos.js'
+import {
+  consultarCompromiso,
+  generarCompromisoPdf,
+} from '../api/pre_compromisos.js'
+import {
+  aceptarDozavo,
+  entregarSolicitud,
+  rechazarDozavo,
+} from '../api/pre_solicitudesDozavos.js'
 import { deleteSolicitudDozeavoRow } from '../controllers/pre_solicitudesDozavosTable.js'
 import { confirmNotification, separadorLocal } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES, meses } from '../helpers/types.js'
@@ -42,7 +49,6 @@ export const pre_solicitudDozavo_card = async ({
   let {
     id,
     numero_orden,
-    numero_compromiso,
     ente,
     id_ejercicio,
     tipo_ente,
@@ -53,8 +59,13 @@ export const pre_solicitudDozavo_card = async ({
     partidas,
     status,
     mes,
-    informacion_compromiso,
   } = data
+
+  let compromiso = await consultarCompromiso({
+    id_registro: id,
+    nombre_tabla: 'solicitud_dozavos',
+  })
+  console.log(compromiso)
 
   let partidasLi = partidas
     ? partidas
@@ -77,11 +88,9 @@ export const pre_solicitudDozavo_card = async ({
 
   const validateStatus = () => {
     if (status === 0) {
-      return ` <span class='btn btn-success'>
-              Comprometido
-            </span>  
+      return `  
             <button class='btn btn-secondary' data-compromisoid='${id}'>Descargar compromiso</button>
-            <button class='btn btn-success' data-entregarid='${id}'>Entregar</button>
+            <button class='btn btn-primary' data-entregarid='${id}'>Entregar</button>
             `
     }
     if (status === 1) {
@@ -96,7 +105,7 @@ export const pre_solicitudDozavo_card = async ({
     if (status === 4) {
       return ` <span class='btn btn-info'>
               Entregado
-            </span> <button class='btn btn-secondary' data-descargarid='${id}'>Descargar compromiso</button>`
+            </span> <button class='btn btn-secondary' data-compromisoid='${id}'>Descargar compromiso</button>`
     }
   }
 
@@ -155,7 +164,7 @@ export const pre_solicitudDozavo_card = async ({
             <div class='col-sm'>
               <b>Compromiso: </b>
               <p>
-                ${numero_compromiso}
+                ${compromiso ? compromiso.numero_compromiso : 'No registrado'}
               </p>
             </div>
           </div>
@@ -209,7 +218,7 @@ export const pre_solicitudDozavo_card = async ({
     return false
   }
 
-  function validateClick(e) {
+  async function validateClick(e) {
     if (e.target.dataset.confirmarid) {
       pre_identificarCompromiso({
         id: e.target.dataset.confirmarid,
@@ -250,11 +259,24 @@ export const pre_solicitudDozavo_card = async ({
     }
 
     if (e.target.dataset.compromisoid) {
-      console.log(e.target.dataset.compromisoid)
-      generarCompromisoPdf(
-        informacion_compromiso.id,
-        informacion_compromiso.correlativo
-      )
+      generarCompromisoPdf(compromiso.id, compromiso.correlativo)
+    }
+
+    if (e.target.dataset.entregarid) {
+      confirmNotification({
+        type: NOTIFICATIONS_TYPES.send,
+        message:
+          '¿Seguro de entregar la confirmación de esta solicitud al ente?',
+        successFunction: async function () {
+          let response = await entregarSolicitud(e.target.dataset.entregarid)
+
+          console.log(response)
+          if (response.success) {
+            closeModalCard()
+            reset()
+          }
+        },
+      })
     }
 
     if (e.target.dataset.close) {

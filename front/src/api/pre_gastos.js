@@ -41,7 +41,7 @@ const getGastos = async () => {
 
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
-      message: 'Error al obtener tipos de gatos',
+      message: 'Error al obtener tipos de gastos',
     })
   } finally {
     hideLoader()
@@ -82,7 +82,7 @@ const getGasto = async (id) => {
 
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
-      message: 'Error al obtener tipos de gatos',
+      message: 'Error al obtener gasto',
     })
   } finally {
     hideLoader()
@@ -127,7 +127,7 @@ const registrarGasto = async ({ data }) => {
 
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
-      message: 'Error al obtener tipos de gatos',
+      message: 'Error al registrar gasto',
     })
   } finally {
     hideLoader()
@@ -174,7 +174,7 @@ const aceptarGasto = async (id, codigo) => {
 
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
-      message: 'Error al obtener tipos de gatos',
+      message: 'Error al aceptar gasto',
     })
   } finally {
     hideLoader()
@@ -226,7 +226,7 @@ const rechazarGasto = async (id) => {
 
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
-      message: 'Error al obtener tipos de gatos',
+      message: 'Error al rechazar gasto',
     })
   } finally {
     hideLoader()
@@ -260,7 +260,7 @@ const getTiposGastos = async () => {
 
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
-      message: 'Error al obtener tipos de gatos',
+      message: 'Error al obtener tipos de gastos',
     })
   } finally {
     hideLoader()
@@ -297,7 +297,7 @@ const getTipoGasto = async (id) => {
 
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
-      message: 'Error al obtener tipos de gatos',
+      message: 'Error al obtener tipo de gasto',
     })
   } finally {
     hideLoader()
@@ -338,14 +338,14 @@ const registrarTipoGasto = async ({ nombre }) => {
 
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
-      message: 'Error al obtener tipos de gatos',
+      message: 'Error al registrar tipos de gasto',
     })
   } finally {
     hideLoader()
   }
 }
 
-const eliminatTipoGasto = async (id) => {
+const eliminarTipoGasto = async (id) => {
   showLoader()
   try {
     let res = await fetch(tipoGastosUrl, {
@@ -379,7 +379,7 @@ const eliminatTipoGasto = async (id) => {
 
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
-      message: 'Error al obtener tipos de gatos',
+      message: 'Error al eliminar tipos de gasto',
     })
   } finally {
     hideLoader()
@@ -395,5 +395,5 @@ export {
   getTiposGastos,
   getTipoGasto,
   registrarTipoGasto,
-  eliminatTipoGasto,
+  eliminarTipoGasto,
 }
