@@ -30,6 +30,7 @@ import { validateRequestForm } from './src/controllers/peticionesNominaForm.js'
 import { validateRequestNomForm } from './src/controllers/peticionesNominaReview.js'
 import { validateGastosTable } from './src/controllers/pre_gastosFuncionamientoTable.js'
 import { validateGastosView } from './src/controllers/pre_gastosFuncionamientoView.js'
+import { validateReportesView } from './src/controllers/pre_reportesView.js'
 import { validateSolicitudesDozavosTable } from './src/controllers/pre_solicitudesDozavosTable.js'
 import { validateSolicitudesDozavos } from './src/controllers/pre_solicitudesDozavosView.js'
 import { loadRegconRequestTable } from './src/controllers/regcon_peticionesTable.js'
@@ -59,6 +60,7 @@ d.addEventListener('DOMContentLoaded', (e) => {
   // EJECUCIÓN PRESUPUESTARIA
   const solicitudesDozavosView = d.getElementById('solicitudes-dozavos-view')
   const gastosView = d.getElementById('gastos-view')
+  const reportesView = d.getElementById('reportes-view')
   // Formulación
   const partidasView = d.getElementById('partidas-view')
   const distribucionView = d.getElementById('distribucion-view')
@@ -196,6 +198,10 @@ d.addEventListener('DOMContentLoaded', (e) => {
 
   if (gastosView) {
     validateGastosView()
+  }
+
+  if (reportesView) {
+    validateReportesView()
   }
 
   //  FORMULACIÓN

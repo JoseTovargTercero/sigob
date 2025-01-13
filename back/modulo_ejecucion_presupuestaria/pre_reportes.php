@@ -44,11 +44,11 @@ $pdf_files = [];
 $url_pdf = "{$base_url}pre_pdf_$tipo.php?id_ejercicio=" . $id_ejercicio;
 
 if ($tipo == 'sectores') {
-    $pdf_files["{$url_pdf}&id_ejercicio=$id_ejercicio"] = "SECTORES.pdf"; 
-}elseif ($tipo == 'partidas') {
-    $pdf_files["{$url_pdf}&id_ejercicio=$id_ejercicio"] = "PARTIDAS.pdf"; 
-}else {
-    $pdf_files["{$url_pdf}&id_ejercicio=$id_ejercicio"] = "SECTORES Y PROGRAMAS.pdf"; 
+    $pdf_files["{$url_pdf}&id_ejercicio=$id_ejercicio"] = "SECTORES.pdf";
+} elseif ($tipo == 'partidas') {
+    $pdf_files["{$url_pdf}&id_ejercicio=$id_ejercicio"] = "PARTIDAS.pdf";
+} else {
+    $pdf_files["{$url_pdf}&id_ejercicio=$id_ejercicio"] = "SECTORES Y PROGRAMAS.pdf";
 }
 
 $zip_filename = "Reportes.zip";
