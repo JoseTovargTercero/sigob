@@ -759,7 +759,7 @@ function unidad2($numuero)
         <!-- Tabla principal -->
         <table>
             <tr class="bb bt bb br bl">
-                <td class=" w-33"><b>Nro. de Compromiso:</b> <?php echo $dataCompromiso['numero_compromiso']; ?></td>
+                <td class=" w-33 br"><b>Nro. de Compromiso:</b> <?php echo $dataCompromiso['numero_compromiso']; ?></td>
                 <td class=" br w-33"><b>Tipo:</b> COMPROMISO PRESUPUESTARIO</td>
                 <td class=" br w-33"><b>Fecha:</b> <?php echo date('d/m/Y'); ?></td>
             </tr>
