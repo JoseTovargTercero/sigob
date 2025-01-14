@@ -508,7 +508,7 @@ function consultarDistribucionPresupuestaria($id_ejercicio)
                     dp.*, 
                     se.sector AS sector_denominacion, 
                     prg.programa AS programa_denominacion, 
-                    pr.proyecto AS proyecto_denominacion
+                    pr.denominacion AS proyecto_denominacion
                 FROM distribucion_presupuestaria dp
                 LEFT JOIN pl_sectores se ON dp.id_sector = se.id
                 LEFT JOIN pl_programas prg ON dp.id_programa = prg.id
