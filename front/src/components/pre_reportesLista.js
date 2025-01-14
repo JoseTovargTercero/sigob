@@ -123,20 +123,35 @@ export const pre_reporteDocumento = ({
     closeCard(oldCardElement)
   }
 
-  let card = ` <div class='card-body slide-up-animation' id="${nombreCard}-form-card">
-  ${
-    report
-      ? `  
+  let card = ` <div class='card slide-up-animation'>
+      <div class='card-header d-flex justify-content-between'>
+        <div class=''>
+          <h5 class='mb-0'>Histórico de gastos realizados</h5>
+          <small class='mt-0 text-muted'>
+            Visualice el historial de gastos de funcionamiento
+          </small>
+        </div>
+      </div>
+
+      <div class='card-body slide-up-animation' id='${nombreCard}-form-card'>
+        ${
+          report
+            ? `  
       <p class="text-center">${options[report].subtitulo}</p>
      <div class="mt-4 alert alert-success text-center"><p class="text-center">No se requiere mas información.</p>
      <button class='btn btn-secondary' id="${nombreCard}-descargar">Descargar</button></div>
       
   `
-      : ` <div class='alert alert-danger'>
-        <p class='text-center m-0'>Problema al generar reporte</p>
-      </div>`
-  }
-     
+            : ` <div
+          class='card-body d-flex justify-content-center align-items-center'
+          id='reportes-container'
+        >
+          <div class='alert alert-info'>
+            <p class='text-center m-0'>Elija alguno de los reportes disponibles</p>
+          </div>
+        </div>`
+        }
+      </div>
     </div>`
 
   d.getElementById(elementToInsert).insertAdjacentHTML('afterbegin', card)

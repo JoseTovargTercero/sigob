@@ -1,5 +1,5 @@
 <?php
-require_once '../sistema_global/session.php';
+// require_once '../sistema_global/session.php';
 require_once '../../vendor/autoload.php'; // Ajusta la ruta según la ubicación de mpdf
 require_once 'pdf_files_config.php'; // Incluir el archivo de configuración
 require '../modulo_pl_formulacion/lib/FPDI-2.6.0/src/autoload.php';
@@ -15,7 +15,7 @@ $id_compromiso = $_GET['id_compromiso'];
 
 $pdf_files = [];
 $url_pdf = "{$base_url}pre_pdf_compromiso.php?id=" . $id_compromiso;
-$pdf_files["{$url_pdf}"] =  "Compromiso.pdf";
+$pdf_files["{$url_pdf}"] = "Compromiso.pdf";
 
 
 $zip_filename = "Compromisos.zip";
@@ -30,14 +30,14 @@ if ($zip->open($zip_filename, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== TR
 foreach ($pdf_files as $url => $pdf_filename) {
     $html = file_get_contents($url);
 
-   $mpdf = new \Mpdf\Mpdf([
-    'mode' => 'utf-8',
-    'tempDir' => __DIR__ . '/temp/mpdf',
-    'margin_left' => 15,  // margen izquierdo estándar (en mm)
-    'margin_right' => 15, // margen derecho estándar (en mm)
-    'margin_top' => 16,   // margen superior estándar (en mm)
-    'margin_bottom' => 16 // margen inferior estándar (en mm)
-]);
+    $mpdf = new \Mpdf\Mpdf([
+        'mode' => 'utf-8',
+        'tempDir' => __DIR__ . '/temp/mpdf',
+        'margin_left' => 15,  // margen izquierdo estándar (en mm)
+        'margin_right' => 15, // margen derecho estándar (en mm)
+        'margin_top' => 16,   // margen superior estándar (en mm)
+        'margin_bottom' => 16 // margen inferior estándar (en mm)
+    ]);
     $mpdf->SetHTMLHeader('<div style="text-align: right;">Página {PAGENO} de {nb}</div>');
     $mpdf->WriteHTML($html);
     $mpdf->Output($pdf_filename, 'F');
@@ -46,7 +46,7 @@ foreach ($pdf_files as $url => $pdf_filename) {
 
 $zip->close();
 
-header('Content-Description: File Transfer');
+// header('Content-Description: File Transfer');
 header('Content-Type: application/zip');
 header('Content-Disposition: attachment; filename=' . basename($zip_filename));
 header('Content-Transfer-Encoding: binary');

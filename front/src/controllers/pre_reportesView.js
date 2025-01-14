@@ -22,6 +22,12 @@ export const validateReportesView = async () => {
 
   pre_reportesLista({ elementToInsert: 'reportes-lista' })
 
+  pre_reporteDocumento({
+    elementToInsert: reportesContainer.id,
+    report: false,
+    ejercicioId: ejercicioFiscal.id,
+  })
+
   d.addEventListener('click', async (e) => {
     if (e.target.dataset.ejercicioid) {
       ejercicioFiscal = await validarEjercicioActual({

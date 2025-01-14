@@ -53,23 +53,8 @@ require_once '../../back/sistema_global/session.php';
                         <div class="col-5" id="reportes-lista">
 
                         </div>
-                        <div class="col">
-                            <div class="card">
+                        <div class="col" id="reportes-container">
 
-                                <div class="card-header d-flex justify-content-between">
-                                    <div class="">
-                                        <h5 class="mb-0">Histórico de gastos realizados</h5>
-                                        <small class="mt-0 text-muted">Visualice el historial de gastos de
-                                            funcionamiento</small>
-                                    </div>
-                                </div>
-                                <div class="card-body d-flex justify-content-center align-items-center"
-                                    id="reportes-container">
-                                    <div class="alert alert-info"'>
-                                        <p class="text-center m-0">Elija alguno de los reportes</p>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
 
                     </div>

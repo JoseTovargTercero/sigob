@@ -48,7 +48,7 @@ export const pre_gastosDetalles = ({
     return filas.join('')
   }
 
-  let card = ` <div class='card slide-up-animation' id='${nombreCard}-form-card'>
+  let card = `    <div class='card slide-up-animation' id='${nombreCard}-form-card'>
       <div class='card-header d-flex justify-content-between'>
         <div class=''>
           <h5 class='mb-0'>Detalles de gasto de funcionamiento</h5>
@@ -65,43 +65,50 @@ export const pre_gastosDetalles = ({
           &times;
         </button>
       </div>
-      <div class='card-body text-center'>
-        <h3>Beneficiario:</h3>
-        <h6>Beneficiario: ${data.beneficiario}</h6>
-        <h6>Identificacion: ${data.identificador}</h6>
-        <h3>Informacion gasto de funcionamiento:</h3>
-        <h6>Compromiso: ${data.correlativo || 'No registrado'}</h6>
-        <h6>Tipo de gasto: ${data.nombre_tipo_gasto || 'No obtenido'}</h6>
-        <h6>Monto: ${separadorLocal(data.monto_gasto) || 'No obtenido'}</h6>
+      <div class='card-body'>
+        <div class='row'>
+          <div class='col-sm-4 d-flex flex-column align-items-center text-center' style="
+    border-right: 1px solid rgb(205 205 205);
+">
+            <h4>Beneficiario:</h4>
+            <h6>Nombre: ${data.beneficiario}</h6>
+            <h6>Identificacion: ${data.identificador}</h6>
+            <h6>Compromiso: ${data.correlativo || 'No registrado'}</h6>
+            <h6>Tipo de gasto: ${data.nombre_tipo_gasto || 'No obtenido'}</h6>
+            <h6>Monto: ${separadorLocal(data.monto_gasto) || 'No obtenido'}</h6>
 
-        <h6>Descripción: ${data.descripcion_gasto || 'No obtenido'}</h6>
-        <h6>Fecha: ${data.fecha || 'No obtenido'}</h6>
-        <h6>
-          Estado: ${
-            Number(data.status_gasto) === 0
-              ? ` <span class='btn btn-sm btn-secondary'>Pendiente</span>`
-              : Number(data.status_gasto) === 1
-              ? `<span class='btn btn-sm btn-success'>Procesado</span>`
-              : Number(data.status_gasto) === 3
-              ? `<span class='btn btn-sm btn-info'>Entregado</span>`
-              : `<span class='btn btn-sm btn-danger'>Rechazado</span>`
-          }
-        </h6>
-        
-        <h3 class="text-left mb-0">Partidas afectadas:</h3>
-        <div class="table-responsive">
-                                <table id="distribuciones-table" class="table table-striped" style="width:100%">
-                                    <thead class="w-100">
-                                        <th class="">S/P/P/A</th>
-                                        <th class="">Monto</th>
-                                        
-                                    </thead>
-<tbody>
-${distribucionLista()}
-</tbody>
-                                </table>
-                            </div>
-        
+            <h6>Descripción: ${data.descripcion_gasto || 'No obtenido'}</h6>
+            <h6>Fecha: ${data.fecha || 'No obtenido'}</h6>
+            <h6>
+             ${
+               Number(data.status_gasto) === 0
+                 ? ` <span class='btn btn-sm btn-secondary'>PENDIENTE</span>`
+                 : Number(data.status_gasto) === 1
+                 ? `<span class='btn btn-sm btn-success'>PROCESADO</span>`
+                 : Number(data.status_gasto) === 3
+                 ? `<span class='btn btn-sm btn-info'>ENTREGADO</span>`
+                 : `<span class='btn btn-sm btn-danger'>RECHAZADO</span>`
+             }
+            </h6>
+          </div>
+
+          <div class='col-sm-8'>
+            <h4 class='text-center mb-0'>Partidas afectadas:</h4>
+            <div class='table-responsive'>
+              <table
+                id='distribuciones-table'
+                class='table table-striped table-sm'
+                style='width:100%'
+              >
+                <thead class='w-100'>
+                  <th class=''>S/P/P/A</th>
+                  <th class=''>Monto</th>
+                </thead>
+                <tbody>${distribucionLista()}</tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
       <div class='card-footer d-flex justify-content-center gap-2'>
         ${
@@ -136,7 +143,7 @@ ${distribucionLista()}
       topStart: function () {
         let toolbar = document.createElement('div')
         toolbar.innerHTML = `
-              <h5 class="text-center">Lista de partidas afectadas por este gasto</h5>
+             
                         `
         return toolbar
       },
