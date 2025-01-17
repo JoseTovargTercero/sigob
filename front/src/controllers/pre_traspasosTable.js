@@ -1,53 +1,14 @@
 import { getSolicitudesDozavos } from '../api/pre_solicitudesDozavos.js'
 
-import { separadorLocal } from '../helpers/helpers.js'
+import { separadorLocal, tableLanguage } from '../helpers/helpers.js'
+import { meses } from '../helpers/types.js'
 
 const d = document
 const w = window
 
-const tableLanguage = {
-  decimal: '',
-  emptyTable: 'No hay datos disponibles en la tabla',
-  info: 'Mostrando _START_ a _END_ de _TOTAL_ entradas',
-  infoEmpty: 'Mostrando 0 a 0 de 0 entradas',
-  infoFiltered: '(filtrado de _MAX_ entradas totales)',
-  infoPostFix: '',
-  thousands: ',',
-  lengthMenu: 'Mostrar _MENU_',
-  loadingRecords: 'Cargando...',
-  processing: '',
-  search: 'Buscar:',
-  zeroRecords: 'No se encontraron registros coincidentes',
-  paginate: {
-    first: 'Primera',
-    last: 'Última',
-    next: 'Siguiente',
-    previous: 'Anterior',
-  },
-  aria: {
-    orderable: 'Ordenar por esta columna',
-    orderableReverse: 'Orden inverso de esta columna',
-  },
-}
 let solicitudesDozavosTable
-export async function validateSolicitudesDozavosTable(id_ejercicio) {
-  solicitudesDozavosTable = new DataTable('#solicitudes-dozavos-table', {
-    columns: [
-      { data: 'numero_orden' },
-      {
-        data: 'entes',
-        render: function (data) {
-          return `<div class="text-wrap">
-            ${data}
-          </div>`
-        },
-      },
-      { data: 'mes' },
-      { data: 'tipo' },
-      { data: 'monto' },
-      { data: 'fecha' },
-      { data: 'acciones' },
-    ],
+export async function validateTraspasosTable({ id_ejercicio }) {
+  solicitudesDozavosTable = new DataTable('#traspaso-table', {
     scrollY: 300,
     language: tableLanguage,
     layout: {
@@ -63,11 +24,11 @@ export async function validateSolicitudesDozavosTable(id_ejercicio) {
     },
   })
 
-  loadSolicitudesDozavosTable(id_ejercicio)
+  loadTraspasosTable(id_ejercicio)
 }
 
-export async function loadSolicitudesDozavosTable(id_ejercicio) {
-  let solicitudes = await getSolicitudesDozavos()
+export async function loadTraspasosTable(id_ejercicio) {
+  let solicitudes = []
   // console.log(solicitudes)
 
   // console.log(id_ejercicio)
@@ -116,6 +77,6 @@ export async function loadSolicitudesDozavosTable(id_ejercicio) {
   solicitudesDozavosTable.rows.add(data).draw()
 }
 
-export async function deleteSolicitudDozeavoRow({ id, row }) {
+export async function deleteTraspasoRow({ id, row }) {
   solicitudesDozavosTable.row(row).remove().draw()
 }

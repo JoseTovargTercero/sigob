@@ -33,6 +33,7 @@ import { validateGastosView } from './src/controllers/pre_gastosFuncionamientoVi
 import { validateReportesView } from './src/controllers/pre_reportesView.js'
 import { validateSolicitudesDozavosTable } from './src/controllers/pre_solicitudesDozavosTable.js'
 import { validateSolicitudesDozavos } from './src/controllers/pre_solicitudesDozavosView.js'
+import { validateTraspasosView } from './src/controllers/pre_TraspasosView.js'
 import { loadRegconRequestTable } from './src/controllers/regcon_peticionesTable.js'
 import { validateTabulatorForm } from './src/controllers/tabuladorForm.js'
 import { validateTasaActual } from './src/controllers/tasaView.js'
@@ -60,6 +61,7 @@ d.addEventListener('DOMContentLoaded', (e) => {
   // EJECUCIÓN PRESUPUESTARIA
   const solicitudesDozavosView = d.getElementById('solicitudes-dozavos-view')
   const gastosView = d.getElementById('gastos-view')
+  const traspasosView = d.getElementById('traspasos-view')
   const reportesView = d.getElementById('reportes-view')
   // Formulación
   const partidasView = d.getElementById('partidas-view')
@@ -198,6 +200,10 @@ d.addEventListener('DOMContentLoaded', (e) => {
 
   if (gastosView) {
     validateGastosView()
+  }
+
+  if (traspasosView) {
+    validateTraspasosView()
   }
 
   if (reportesView) {
