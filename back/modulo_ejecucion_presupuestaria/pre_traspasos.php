@@ -53,9 +53,9 @@ function registrarTraspasoPartida($data) {
             }
 
             // Registrar en `traspaso_informacion`
-            $sqlTraspasoInfo = "INSERT INTO traspaso_informacion (id_traspaso, id_distribucion, monto, tipo) VALUES (?, ?, ?, ?)";
+            $sqlTraspasoInfo = "INSERT INTO traspaso_informacion (id_traspaso, id_distribucion, monto, tipo) VALUES (?, ?, ?, "D")";
             $stmtTraspasoInfo = $conexion->prepare($sqlTraspasoInfo);
-            $stmtTraspasoInfo->bind_param("iids", $id_traspaso, $item['id_distribucion'], $item['monto'], $item['tipo']);
+            $stmtTraspasoInfo->bind_param("iid", $id_traspaso, $item['id_distribucion'], $item['monto']);
             $stmtTraspasoInfo->execute();
 
             if ($stmtTraspasoInfo->affected_rows === 0) {
@@ -76,9 +76,9 @@ function registrarTraspasoPartida($data) {
             }
 
             // Registrar en `traspaso_informacion`
-            $sqlTraspasoInfo = "INSERT INTO traspaso_informacion (id_traspaso, id_distribucion, monto, tipo) VALUES (?, ?, ?, ?)";
+            $sqlTraspasoInfo = "INSERT INTO traspaso_informacion (id_traspaso, id_distribucion, monto, tipo) VALUES (?, ?, ?, "A")";
             $stmtTraspasoInfo = $conexion->prepare($sqlTraspasoInfo);
-            $stmtTraspasoInfo->bind_param("iids", $id_traspaso, $item['id_distribucion'], $item['monto'], $item['tipo']);
+            $stmtTraspasoInfo->bind_param("iid", $id_traspaso, $item['id_distribucion'], $item['monto']);
             $stmtTraspasoInfo->execute();
 
             if ($stmtTraspasoInfo->affected_rows === 0) {
