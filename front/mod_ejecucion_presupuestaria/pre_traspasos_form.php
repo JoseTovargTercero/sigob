@@ -6,6 +6,9 @@ require_once '../../back/sistema_global/session.php';
 
 <head>
     <link rel="stylesheet" href="../src/styles/style.css">
+    <link rel="stylesheet" href="../../src/assets/css/chosen.min.css">
+
+    <script src="../../src/assets/js/chosen.jquery.min.js"></script>
 
     <title>Traspasos</title>
 </head>
@@ -53,7 +56,7 @@ require_once '../../back/sistema_global/session.php';
                                 <h5 class="mb-0">Lista de solicitudes de dozavos por entes</h5>
                                 <small class="mt-0 text-muted">Administre las solicitudes</small>
                             </div>
-                            <button class="btn btn-primary" id="traspaso-registrar">REGISTRAR</button>
+                            <button class="btn btn-primary" id="traspasos-registrar">REGISTRAR</button>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive p-1">
