@@ -13,7 +13,6 @@ const d = document
 // NOTAS
 // VALIDAR NO ELEGIR LA MISMA PARTIDA 2 VECES EN LA MISMA VISTA Y ENTRE VISTAS
 // VALIDAR SI LAS PARTIDAS VIENEN DE DISTRIBUCION PRESUPUESTARIA O DISTRIBUCION A ENTES
-// AÑADIR VISTA DE RESUMEN DE TRASPASOS
 
 export const pre_traspasosForm_card = ({
   elementToInsert,
@@ -94,8 +93,97 @@ export const pre_traspasosForm_card = ({
   }
 
   const resumenPartidas = () => {
+    let filasAumentar = informacion.añadir.map((el) => {
+      let partidaEncontrada = ejercicioFiscal.distribucion_partidas.find(
+        (partida) => Number(partida.id) === el.id
+      )
+
+      let sppa = `${
+        partidaEncontrada.sector_informacion
+          ? partidaEncontrada.sector_informacion.sector
+          : '0'
+      }.${
+        partidaEncontrada.programa_informacion
+          ? partidaEncontrada.programa_informacion.programa
+          : '0'
+      }.${
+        partidaEncontrada.proyecto_informacion == 0
+          ? '00'
+          : partidaEncontrada.proyecto_informacion.proyecto
+      }.${
+        partidaEncontrada.id_actividad == 0
+          ? '00'
+          : partidaEncontrada.id_actividad
+      }`
+
+      let montoFinal = Number(partidaEncontrada.monto_actual) + el.monto
+
+      return `  <tr>
+          <td>${sppa}.${partidaEncontrada.partida}</td>
+        <td>${separadorLocal(partidaEncontrada.monto_actual)}</td>
+          <td class="table-success">+${separadorLocal(el.monto)}</td>
+          <td class="table-primary">${separadorLocal(montoFinal)}</td>
+        </tr>`
+    })
+
+    let filasDisminuir = informacion.restar.map((el) => {
+      let partidaEncontrada = ejercicioFiscal.distribucion_partidas.find(
+        (partida) => Number(partida.id) === el.id
+      )
+
+      let sppa = `${
+        partidaEncontrada.sector_informacion
+          ? partidaEncontrada.sector_informacion.sector
+          : '0'
+      }.${
+        partidaEncontrada.programa_informacion
+          ? partidaEncontrada.programa_informacion.programa
+          : '0'
+      }.${
+        partidaEncontrada.proyecto_informacion == 0
+          ? '00'
+          : partidaEncontrada.proyecto_informacion.proyecto
+      }.${
+        partidaEncontrada.id_actividad == 0
+          ? '00'
+          : partidaEncontrada.id_actividad
+      }`
+
+      let montoFinal = Number(partidaEncontrada.monto_actual) - el.monto
+
+      return ` <tr>
+          <td>${sppa}.${partidaEncontrada.partida}</td>
+          <td>${separadorLocal(partidaEncontrada.monto_actual)}</td>
+          <td class="table-danger">-${separadorLocal(el.monto)}</td>
+          <td class="table-primary">${separadorLocal(montoFinal)}</td>
+        </tr>`
+    })
+
+    let tablaAumentar = `   <table class="table table-xs">
+        <thead>
+          <th class="w-50">Distribucion</th>
+          <th class="w-10">Monto actual</th>
+          <th class="w-10">Cambio</th>
+          <th class="w-50">Monto Final</th>
+        </thead>
+        <tbody>${filasDisminuir.join('')}${filasAumentar.join('')}</tbody>
+      </table>`
+
+    let tablaDisminuir = ` <table class="table table-xs">
+        <thead>
+          <th class="w-50">Distribucion</th>
+          <th class="w-10">Monto actual</th>
+          <th class="w-10">Decremento</th>
+          <th class="w-50">Monto final</th>
+        </thead>
+
+        <tbody>${filasDisminuir}</tbody>
+      </table>`
+
     return `<div id='card-body-part-3' class="slide-up-animation">
-        <h1>RESUMEN DE PARTIDAS</h1>
+        <h5 class='text-center text-blue-600 mb-4'>Resumen de partidas</h5>
+        ${tablaAumentar}
+        
       </div>`
   }
 
@@ -117,7 +205,7 @@ export const pre_traspasosForm_card = ({
         </button>
       </div>
       <div class='card-body' id='card-body-principal'>
-        <div id='header' class='row text-center'>
+        <div id='header' class='row text-center mb-4'>
           <div class='col'>
             <h6>
               Total a traspasar: <b id='total-sumado'>No asignado</b>
@@ -344,6 +432,14 @@ export const pre_traspasosForm_card = ({
 
     if (e.target === btnNext) {
       if (formFocus === 1) {
+        if (montos.totalSumar <= 0) {
+          toastNotification({
+            type: NOTIFICATIONS_TYPES.fail,
+            message: 'Se tiene que específicar un monto para avanzar',
+          })
+          return
+        }
+
         let result = validarPartidas('A')
         console.log(result)
         if (!result) return
@@ -366,6 +462,15 @@ export const pre_traspasosForm_card = ({
         return
       }
       if (formFocus === 2) {
+        if (montos.totalSumar !== montos.totalRestar) {
+          toastNotification({
+            type: NOTIFICATIONS_TYPES.fail,
+            message:
+              'El monto restado a partidas tiene que ser igual al monto a traspasar',
+          })
+          return
+        }
+
         let result = validarPartidas('D')
         console.log(result)
         if (!result) return
@@ -376,7 +481,7 @@ export const pre_traspasosForm_card = ({
         cardBodyPart2.classList.add('d-none')
 
         if (cardBodyPart3) {
-          cardBodyPart3.classList.remove('d-none')
+          cardBodyPart3.outerHTML = resumenPartidas()
         } else {
           cardBody.insertAdjacentHTML('beforeend', resumenPartidas())
         }
@@ -475,7 +580,7 @@ export const pre_traspasosForm_card = ({
       }
 
       return {
-        id_distribucion: partidaEncontrada.id,
+        id: partidaEncontrada.id,
         monto: formatearFloat(montoInput.value),
       }
     })
