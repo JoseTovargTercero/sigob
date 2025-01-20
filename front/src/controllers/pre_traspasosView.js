@@ -26,6 +26,15 @@ export const validateTraspasosView = async () => {
           type: NOTIFICATIONS_TYPES.fail,
           message: 'No hay un ejercicio fiscal seleccionado',
         })
+        return
+      }
+
+      if (ejercicioFiscal.distribucion_partidas.length < 1) {
+        toastNotification({
+          type: NOTIFICATIONS_TYPES.fail,
+          message: 'El ejercicio fiscal no posee una distribucion ',
+        })
+        return
       }
       pre_traspasosForm_card({
         elementToInsert: 'traspasos-view',

@@ -1,7 +1,9 @@
 import {
   confirmNotification,
+  formatearFloat,
   hideLoader,
   insertOptions,
+  separadorLocal,
   toastNotification,
   validateInput,
 } from '../helpers/helpers.js'
@@ -9,25 +11,37 @@ import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 const d = document
 
 // NOTAS
-// PENDIENTE VALIDAR EL FORM FOCUS DE FORMA CORRECTA PARA NO REHACER TODO AL MOMENTO DE IR ENTRE PASOS
+// VALIDAR NO ELEGIR LA MISMA PARTIDA 2 VECES EN LA MISMA VISTA Y ENTRE VISTAS
+// VALIDAR SI LAS PARTIDAS VIENEN DE DISTRIBUCION PRESUPUESTARIA O DISTRIBUCION A ENTES
+// AÑADIR VISTA DE RESUMEN DE TRASPASOS
 
 export const pre_traspasosForm_card = ({
   elementToInsert,
   ejercicioFiscal,
 }) => {
-  let fieldList = { ejemplo: '' }
+  let fieldList = { codigo: '' }
   let fieldListErrors = {
-    ejemplo: {
+    codigo: {
       value: true,
-      message: 'mensaje de error',
-      type: 'text',
+      message: 'Código inválido',
+      type: 'textarea',
     },
   }
+
+  let informacion = {
+    codigo: 0,
+    añadir: [],
+    restar: [],
+  }
+
+  console.log(ejercicioFiscal)
+
+  let montos = { totalSumar: 0, totalRestar: 0, acumulado: 0 }
 
   let fieldListPartidas = {}
   let fieldListErrorsPartidas = {}
 
-  let nombreCard = '${traspasos}'
+  let nombreCard = 'traspasos'
 
   const oldCardElement = d.getElementById(`${nombreCard}-form-card`)
   if (oldCardElement) {
@@ -35,10 +49,10 @@ export const pre_traspasosForm_card = ({
   }
 
   const informacionPrincipal = () => {
-    return ` <div id="card-body-part-1">
-        <form>
+    return ` <div id='card-body-part-1' class="slide-up-animation">
+        <form class="mb-2">
           <div class='form-group'>
-            <label class='form-label'>Código para traspaso</label>
+            <label for="codigo" class='form-label'>Código para traspaso</label>
             <input
               class='form-control'
               type='number'
@@ -47,30 +61,45 @@ export const pre_traspasosForm_card = ({
             ></input>
           </div>
         </form>
-        <div id='partidas-container'></div>
-        <button
-          type='button'
-          class='btn btn-sm bg-brand-color-1 text-white'
-          id='add-row'
-        >
-          <i class='bx bx-plus'></i> AGREGAR PARTIDA
-        </button>
+        <h5 class='text-center text-blue-600 mb-4'>Partidas a aumentar</h5>
+        <div id='partidas-container-aumentar'></div>
+        <div class='text-center'>
+          <button
+            type='button'
+            class='btn btn-sm bg-brand-color-1 text-white'
+            id='add-row'
+            data-tipo='A'
+          >
+            <i class='bx bx-plus'></i> AGREGAR PARTIDA
+          </button>
+        </div>
       </div>`
   }
 
   const partidasRestar = () => {
-    return `<div id="card-body-part-2">
-        <h1>PARTIDAS A RESTAR</h1>
+    return `<div id='card-body-part-2' class="slide-up-animation">
+    <h5 class='text-center text-blue-600 mb-4'>Partidas a restar</h5>
+        <div id='partidas-container-restar'></div>
+        <div class='text-center'>
+          <button
+            type='button'
+            class='btn btn-sm bg-brand-color-1 text-white'
+            id='add-row'
+            data-tipo='D'
+          >
+            <i class='bx bx-plus'></i> AGREGAR PARTIDA
+          </button>
+        </div>
       </div>`
   }
 
   const resumenPartidas = () => {
-    return `<div id='card-body-part-2¿3'>
+    return `<div id='card-body-part-3' class="slide-up-animation">
         <h1>RESUMEN DE PARTIDAS</h1>
       </div>`
   }
 
-  let card = `  <div class='card slide-up-animation' id='${nombreCard}-form-card'>
+  let card = `    <div class='card slide-up-animation' id='${nombreCard}-form-card'>
       <div class='card-header d-flex justify-content-between'>
         <div class=''>
           <h5 class='mb-0'>Formulario de traspasos</h5>
@@ -87,7 +116,21 @@ export const pre_traspasosForm_card = ({
           &times;
         </button>
       </div>
-      <div class='card-body' id="card-body-principal">${informacionPrincipal()}</div>
+      <div class='card-body' id='card-body-principal'>
+        <div id='header' class='row text-center'>
+          <div class='col'>
+            <h6>
+              Total a traspasar: <b id='total-sumado'>No asignado</b>
+            </h6>
+          </div>
+          <div class='col'>
+            <h6>
+              Total traspasado <b id='total-restado'>No asignado</b>
+            </h6>
+          </div>
+        </div>
+        ${informacionPrincipal()}
+      </div>
       <div class='card-footer text-center'>
         <button class='btn btn-secondary' id='btn-previus'>
           Atrás
@@ -142,6 +185,38 @@ export const pre_traspasosForm_card = ({
 
           if (row) numsRows--
           row.remove()
+
+          // ACTUALIZAR MONTOS
+
+          let inputsAumentar =
+            d.querySelectorAll('.distribucion-monto-aumentar') || []
+
+          montos.totalSumar = 0
+          inputsAumentar.forEach((input) => {
+            if (input.value === '' || isNaN(input.value)) {
+              input.value = 0
+              montos.totalSumar += Number(formatearFloat(input.value))
+              input.value = ''
+            } else {
+              montos.totalSumar += Number(formatearFloat(input.value))
+            }
+          })
+
+          let inputsRestar =
+            d.querySelectorAll('.distribucion-monto-restar') || []
+
+          montos.totalRestar = 0
+          inputsRestar.forEach((input) => {
+            if (input.value === '' || isNaN(input.value)) {
+              input.value = 0
+              montos.totalRestar += Number(formatearFloat(input.value))
+              input.value = ''
+            } else {
+              montos.totalRestar += Number(formatearFloat(input.value))
+            }
+          })
+
+          actualizarLabel()
         },
       })
     }
@@ -150,6 +225,51 @@ export const pre_traspasosForm_card = ({
   }
 
   async function validateInputFunction(e) {
+    if (e.target.classList.contains('distribucion-monto-aumentar')) {
+      let inputs = d.querySelectorAll('.distribucion-monto-aumentar')
+
+      montos.totalSumar = 0
+      inputs.forEach((input) => {
+        if (input.value === '' || isNaN(input.value)) {
+          input.value = 0
+          montos.totalSumar += Number(formatearFloat(input.value))
+          input.value = ''
+        } else {
+          montos.totalSumar += Number(formatearFloat(input.value))
+        }
+      })
+
+      console.log(montos)
+
+      actualizarLabel()
+
+      return
+    }
+
+    if (e.target.classList.contains('distribucion-monto-restar')) {
+      let totalSumarElement = d.getElementById('total-sumado')
+
+      let totalRestarElement = d.getElementById('total-restado')
+      let inputs = d.querySelectorAll('.distribucion-monto-restar')
+
+      montos.totalRestar = 0
+      inputs.forEach((input) => {
+        if (input.value === '' || isNaN(input.value)) {
+          input.value = 0
+          montos.totalRestar += Number(formatearFloat(input.value))
+          input.value = ''
+        } else {
+          montos.totalRestar += Number(formatearFloat(input.value))
+        }
+      })
+
+      console.log(montos)
+
+      actualizarLabel()
+
+      return
+    }
+
     fieldList = validateInput({
       target: e.target,
       fieldList,
@@ -167,6 +287,52 @@ export const pre_traspasosForm_card = ({
   cardElement.addEventListener('input', validateInputFunction)
   cardElement.addEventListener('click', validateClick)
 
+  function actualizarLabel() {
+    let totalSumarElement = d.getElementById('total-sumado')
+    let totalRestarElement = d.getElementById('total-restado')
+
+    let valorSumar, valorRestar
+
+    if (montos.totalSumar < 0) {
+      valorSumar = `<span class="px-2 rounded text-red-600 bg-red-100">${separadorLocal(
+        montos.totalSumar
+      )}</span>`
+    }
+    if (montos.totalSumar > 0) {
+      valorSumar = `<span class="px-2 rounded text-green-600 bg-green-100">${separadorLocal(
+        montos.totalSumar
+      )}</span>`
+    }
+    if (montos.totalSumar === 0) {
+      valorSumar = `<span class="class="px-2 rounded text-secondary">No asignado</span>`
+    }
+
+    // VALIDAR TOTAL RESTADO
+
+    if (montos.totalRestar > montos.totalSumar) {
+      valorRestar = `<span class="px-2 rounded text-red-600 bg-red-100">${separadorLocal(
+        montos.totalRestar
+      )}</span>`
+    }
+
+    if (montos.totalRestar < montos.totalSumar) {
+      valorRestar = `<span class="class="px-2 rounded text-secondary">${separadorLocal(
+        montos.totalRestar
+      )}</span>`
+    }
+
+    if (montos.totalRestar === montos.totalSumar) {
+      valorRestar = `<span class="px-2 rounded text-green-600 bg-green-100">${separadorLocal(
+        montos.totalRestar
+      )}</span>`
+    }
+    if (montos.totalRestar === 0) {
+      valorRestar = `<span class="class="px-2 rounded text-secondary">No asignado</span>`
+    }
+    totalSumarElement.innerHTML = valorSumar
+    totalRestarElement.innerHTML = valorRestar
+  }
+
   async function validateFormFocus(e) {
     let btnNext = d.getElementById('btn-next')
     let btnPrevius = d.getElementById('btn-previus')
@@ -178,34 +344,66 @@ export const pre_traspasosForm_card = ({
 
     if (e.target === btnNext) {
       if (formFocus === 1) {
+        let result = validarPartidas('A')
+        console.log(result)
+        if (!result) return
+
+        informacion.añadir = result
+        console.log(informacion)
+
         cardBodyPart1.classList.add('d-none')
 
         if (cardBodyPart2) {
           cardBodyPart2.classList.remove('d-none')
         } else {
-          cardBody.innerHTML += partidasRestar()
+          cardBody.insertAdjacentHTML('beforeend', partidasRestar())
         }
 
-        console.log('Parte 1')
+        if (btnPrevius.hasAttribute('disabled'))
+          btnPrevius.removeAttribute('disabled')
+
         formFocus++
         return
       }
       if (formFocus === 2) {
+        let result = validarPartidas('D')
+        console.log(result)
+        if (!result) return
+
+        informacion.restar = result
+        console.log(informacion)
+
         cardBodyPart2.classList.add('d-none')
 
         if (cardBodyPart3) {
           cardBodyPart3.classList.remove('d-none')
         } else {
-          cardBody.innerHTML += resumenPartidas()
+          cardBody.insertAdjacentHTML('beforeend', resumenPartidas())
         }
 
         formFocus++
+
         return
+      }
+
+      if (formFocus === 3) {
+        confirmNotification({
+          type: NOTIFICATIONS_TYPES.send,
+          message: '¿Está seguro de realizar esta solicitud de traspaso?',
+        })
       }
     }
 
     if (e.target === btnPrevius) {
       if (formFocus === 3) {
+        cardBodyPart2.classList.remove('d-none')
+
+        if (cardBodyPart3) {
+          cardBodyPart3.classList.add('d-none')
+        }
+
+        formFocus--
+        return
         // confirmNotification({
         //   type: NOTIFICATIONS_TYPES.send,
         //   message: 'Si continua se borrarán los cambios hechos aquí',
@@ -227,22 +425,87 @@ export const pre_traspasosForm_card = ({
         return
       }
       if (formFocus === 2) {
-        formFocusPart1()
+        cardBodyPart1.classList.remove('d-none')
+
+        if (cardBodyPart2) {
+          cardBodyPart2.classList.add('d-none')
+        }
+
         formFocus--
+
+        btnPrevius.setAttribute('disabled', true)
 
         return
       }
     }
   }
 
+  function validarPartidas(tipo) {
+    let rows
+    if (tipo === 'A') {
+      rows = d.querySelectorAll('[data-row-aumentar]')
+    } else {
+      rows = d.querySelectorAll('[data-row-restar]')
+    }
+    let rowsArray = Array.from(rows)
+
+    let montoRestante = 0
+
+    // VERIFICAR SI SE HAN SELECCIONADO PARTIDAS
+    if (rowsArray.length < 1) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.fail,
+        message: 'No se han añadido partidas',
+      })
+      return false
+    }
+
+    let mappedPartidas = rowsArray.map((el) => {
+      let partidaInput = el.querySelector(`#distribucion-${el.dataset.row}`)
+      let montoInput = el.querySelector(`#distribucion-monto-${el.dataset.row}`)
+
+      let partidaEncontrada = ejercicioFiscal.distribucion_partidas.find(
+        (partida) => Number(partida.id) === Number(partidaInput.value)
+      )
+
+      // Verificar si la partida introducida existe
+
+      if (!partidaEncontrada) {
+        return false
+      }
+
+      return {
+        id_distribucion: partidaEncontrada.id,
+        monto: formatearFloat(montoInput.value),
+      }
+    })
+
+    // Verificar si hay algun dato erróneo y cancelar envío
+    if (mappedPartidas.some((el) => !el)) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.fail,
+        message: 'Una o más partidas inválidas',
+      })
+      return false
+    }
+
+    return mappedPartidas
+  }
+
   async function addRow(tipo) {
     let newNumRow = numsRows + 1
     numsRows++
-
-    d.getElementById('partidas-container').insertAdjacentHTML(
-      'beforeend',
-      partidaRow(newNumRow, tipo)
-    )
+    if (tipo === 'A') {
+      d.getElementById('partidas-container-aumentar').insertAdjacentHTML(
+        'beforeend',
+        partidaRow(newNumRow, tipo)
+      )
+    } else {
+      d.getElementById('partidas-container-restar').insertAdjacentHTML(
+        'beforeend',
+        partidaRow(newNumRow, tipo)
+      )
+    }
 
     // AÑADIR ESTADO Y ERRORES A INPUTS
 
@@ -261,22 +524,19 @@ export const pre_traspasosForm_card = ({
 
     let options = [`<option value=''>Elegir partida...</option>`]
 
-    ejercicioFiscal.distribucion_partidas
-      .filter((partida) =>
-        partidasDisponibles.some((par) => Number(par.id) === Number(partida.id))
-      )
-      .forEach((el) => {
-        let sppa = `${
-          el.sector_informacion ? el.sector_informacion.sector : '0'
-        }.${el.programa_informacion ? el.programa_informacion.programa : '0'}.${
-          el.proyecto_informacion == 0 ? '00' : el.proyecto_informacion.proyecto
-        }.${el.id_actividad == 0 ? '00' : el.id_actividad}`
+    ejercicioFiscal.distribucion_partidas.forEach((el) => {
+      let sppa = `${
+        el.sector_informacion ? el.sector_informacion.sector : '0'
+      }.${el.programa_informacion ? el.programa_informacion.programa : '0'}.${
+        el.proyecto_informacion == 0 ? '00' : el.proyecto_informacion.proyecto
+      }.${el.id_actividad == 0 ? '00' : el.id_actividad}`
 
-        let opt = `<option value="${el.id}">${sppa}.${el.partida}</option>`
-        options.push(opt)
-      })
+      let opt = `<option value="${el.id}">${sppa}.${el.partida}</option>`
+      options.push(opt)
+    })
 
     let partidasList = d.getElementById(`distribucion-${newNumRow}`)
+
     partidasList.innerHTML = ''
 
     partidasList.innerHTML = options.join('')
@@ -284,7 +544,14 @@ export const pre_traspasosForm_card = ({
     $('.chosen-distribucion')
       .chosen()
       .change(function (obj, result) {
-        console.log('changed: %o', arguments)
+        let distribucionMontoActual = d.getElementById(
+          `distribucion-monto-actual-${newNumRow}`
+        )
+        let partida = ejercicioFiscal.distribucion_partidas.find(
+          (partida) => Number(partida.id) === Number(result.selected)
+        )
+
+        distribucionMontoActual.value = separadorLocal(partida.monto_actual)
       })
 
     return
@@ -309,16 +576,35 @@ function partidaRow(partidaNum, tipo) {
             ></select>
           </div>
         </div>
+
+        <div class='col-sm'>
+         <div class='form-group'>
+         <label for='distribucion-monto-actual' class='form-label'>Monto actual</label>
+          <input
+                  class='form-control distribucion-monto-actual-${
+                    tipo === 'A' ? 'aumentar' : 'restar'
+                  }'
+                  type='text'
+                  name='distribucion-monto-actual-${partidaNum}'
+                  id='distribucion-monto-actual-${partidaNum}'
+                  placeholder='Monto actual...'
+                  disabled
+                />
+         </div>
+        </div>
   
-        <div class='col'>
+        <div class='col-sm'>
           <div class='form-group'>
-            <label for='monto' class='form-label'>
-              Monto de partida
+            <label for='distribucion-monto-${partidaNum}' class='form-label'>
+            ${tipo === 'A' ? ' Monto a aumentar' : 'Monto a disminuir'}
+             
             </label>
             <div class='row'>
               <div class='col'>
                 <input
-                  class='form-control partida-input distribucion-monto'
+                  class='form-control partida-input distribucion-monto-${
+                    tipo === 'A' ? 'aumentar' : 'restar'
+                  }'
                   type='text'
                   name='distribucion-monto-${partidaNum}'
                   id='distribucion-monto-${partidaNum}'
