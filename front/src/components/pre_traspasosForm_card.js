@@ -656,7 +656,9 @@ export const pre_traspasosForm_card = ({
           (partida) => Number(partida.id) === Number(result.selected)
         )
 
-        distribucionMontoActual.value = separadorLocal(partida.monto_actual)
+        distribucionMontoActual.value = partida
+          ? separadorLocal(partida.monto_actual)
+          : 'No seleccionado'
       })
 
     return
