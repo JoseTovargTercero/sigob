@@ -101,14 +101,18 @@ function registrarTraspasoPartida($data)
 }
 
 
-function consultarTodosTraspasos()
+function consultarTodosTraspasos($id_ejercicio)
 {
     global $conexion;
 
-    // Consultar los traspasos principales
+    // Consultar los traspasos principales filtrando por id_ejercicio
     $sql = "SELECT t.id, t.n_orden, t.id_ejercicio, t.monto_total, t.fecha, t.status 
-            FROM traspasos t";
-    $resultado = $conexion->query($sql);
+            FROM traspasos t
+            WHERE t.id_ejercicio = ?";
+    $stmt = $conexion->prepare($sql);
+    $stmt->bind_param("i", $id_ejercicio);
+    $stmt->execute();
+    $resultado = $stmt->get_result();
 
     if ($resultado->num_rows > 0) {
         $traspasos = $resultado->fetch_all(MYSQLI_ASSOC);
@@ -397,7 +401,7 @@ if (isset($data["accion"])) {
             break;
 
         case 'consultar_todos':
-            echo consultarTodosTraspasos();
+            echo consultarTodosTraspasos($data["id_ejercicio"]);
             break;
 
         case 'consultar_por_id':
