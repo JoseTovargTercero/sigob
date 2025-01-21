@@ -153,17 +153,16 @@ function consultarSolicitudPorId($data)
 {
     global $conexion;
 
-    if (!isset($data['id']) || !isset($data['id_ejercicio'])) {
+    if (!isset($data['id'])) {
         return json_encode(["error" => "No se ha especificado ID o un Ejercicio Fiscal para consulta."]);
     }
 
     $id = $data['id'];
-    $id_ejercicio = $data['id_ejercicio'];
 
     // Consultar la solicitud principal
-    $sql = "SELECT id, numero_orden, numero_compromiso, descripcion, monto, fecha, partidas, id_ente, tipo, mes, status, id_ejercicio FROM solicitud_dozavos WHERE id = ?, id_ejercicio = ?";
+    $sql = "SELECT id, numero_orden, numero_compromiso, descripcion, monto, fecha, partidas, id_ente, tipo, mes, status, id_ejercicio FROM solicitud_dozavos WHERE id = ?";
     $stmt = $conexion->prepare($sql);
-    $stmt->bind_param("ii", $id, $id_ejercicio);
+    $stmt->bind_param("i", $id);
     $stmt->execute();
     $result = $stmt->get_result();
 

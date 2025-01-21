@@ -343,15 +343,15 @@ function obtenerGastos($id_ejercicio)
 
 
 
-function obtenerGastoPorId($id, $id_ejercicio)
+function obtenerGastoPorId($id)
 {
     global $conexion;
 
     try {
         // Consultar el registro de la tabla gastos por su ID
-        $sqlGasto = "SELECT id, id_tipo, descripcion, monto, status, distribuciones, fecha, beneficiario, identificador, id_ejercicio FROM gastos WHERE id = ? AND id_ejercicio = ?";
+        $sqlGasto = "SELECT id, id_tipo, descripcion, monto, status, distribuciones, fecha, beneficiario, identificador, id_ejercicio FROM gastos WHERE id = ?";
         $stmtGasto = $conexion->prepare($sqlGasto);
-        $stmtGasto->bind_param("ii", $id, $id_ejercicio);
+        $stmtGasto->bind_param("i", $id);
         $stmtGasto->execute();
         $resultadoGasto = $stmtGasto->get_result();
 
