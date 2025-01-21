@@ -1,3 +1,4 @@
+import { obtenerDistribucionPositiva } from '../api/pre_distribucion.js'
 import {
   confirmNotification,
   formatearFloat,
@@ -14,7 +15,7 @@ const d = document
 // VALIDAR NO ELEGIR LA MISMA PARTIDA 2 VECES EN LA MISMA VISTA Y ENTRE VISTAS
 // VALIDAR SI LAS PARTIDAS VIENEN DE DISTRIBUCION PRESUPUESTARIA O DISTRIBUCION A ENTES
 
-export const pre_traspasosForm_card = ({
+export const pre_traspasosForm_card = async ({
   elementToInsert,
   ejercicioFiscal,
 }) => {
@@ -27,13 +28,17 @@ export const pre_traspasosForm_card = ({
     },
   }
 
+  let distribucionesDisponibles = await obtenerDistribucionPositiva({
+    id_ejercicio: ejercicioFiscal.id,
+  })
+
   let informacion = {
     codigo: 0,
     añadir: [],
     restar: [],
   }
 
-  console.log(ejercicioFiscal)
+  console.log(distribucionesDisponibles)
 
   let montos = { totalSumar: 0, totalRestar: 0, acumulado: 0 }
 
@@ -444,6 +449,15 @@ export const pre_traspasosForm_card = ({
         console.log(result)
         if (!result) return
 
+        if (validarInputIguales('A')) {
+          toastNotification({
+            type: NOTIFICATIONS_TYPES.fail,
+            message:
+              'Está realizando una asignación a una partida 2 o más veces. Valide nuevamente por favor',
+          })
+          return
+        }
+
         informacion.añadir = result
         console.log(informacion)
 
@@ -474,6 +488,24 @@ export const pre_traspasosForm_card = ({
         let result = validarPartidas('D')
         console.log(result)
         if (!result) return
+
+        if (validarInputIguales('D')) {
+          toastNotification({
+            type: NOTIFICATIONS_TYPES.fail,
+            message:
+              'Está realizando una asignación a una partida 2 o más veces. Valide nuevamente por favor',
+          })
+          return
+        }
+
+        if (validarInputsEntreVistas()) {
+          toastNotification({
+            message:
+              'No se puede seleccionar la misma partida en ambas vistas. Valide nuevamente.',
+            type: NOTIFICATIONS_TYPES.fail,
+          })
+          return
+        }
 
         informacion.restar = result
         console.log(informacion)
@@ -598,6 +630,51 @@ export const pre_traspasosForm_card = ({
     return mappedPartidas
   }
 
+  function validarInputIguales(tipo) {
+    let inputs
+    if (tipo === 'A') {
+      inputs = Array.from(
+        d.querySelectorAll('[data-row-aumentar] .partida-partida')
+      )
+    } else {
+      inputs = Array.from(
+        d.querySelectorAll('[data-row-restar] .partida-partida')
+      )
+    }
+
+    const valores = inputs.map((input) => input.value)
+    const conteoValores = valores.reduce((conteo, valor) => {
+      conteo[valor] = (conteo[valor] || 0) + 1
+      return conteo
+    }, {})
+
+    for (let valor in conteoValores) {
+      if (conteoValores[valor] >= 2) {
+        return true
+      }
+    }
+    return false
+  }
+
+  function validarInputsEntreVistas() {
+    let inputs = Array.from(d.querySelectorAll('[data-row] .partida-partida'))
+
+    console.log(inputs)
+
+    const valores = inputs.map((input) => input.value)
+    const conteoValores = valores.reduce((conteo, valor) => {
+      conteo[valor] = (conteo[valor] || 0) + 1
+      return conteo
+    }, {})
+
+    for (let valor in conteoValores) {
+      if (conteoValores[valor] >= 2) {
+        return true
+      }
+    }
+    return false
+  }
+
   async function addRow(tipo) {
     let newNumRow = numsRows + 1
     numsRows++
@@ -630,16 +707,22 @@ export const pre_traspasosForm_card = ({
 
     let options = [`<option value=''>Elegir partida...</option>`]
 
-    ejercicioFiscal.distribucion_partidas.forEach((el) => {
-      let sppa = `${
-        el.sector_informacion ? el.sector_informacion.sector : '0'
-      }.${el.programa_informacion ? el.programa_informacion.programa : '0'}.${
-        el.proyecto_informacion == 0 ? '00' : el.proyecto_informacion.proyecto
-      }.${el.id_actividad == 0 ? '00' : el.id_actividad}`
+    ejercicioFiscal.distribucion_partidas
+      .filter((partida) =>
+        distribucionesDisponibles.some(
+          (par) => Number(par.id) === Number(partida.id)
+        )
+      )
+      .forEach((el) => {
+        let sppa = `${
+          el.sector_informacion ? el.sector_informacion.sector : '0'
+        }.${el.programa_informacion ? el.programa_informacion.programa : '0'}.${
+          el.proyecto_informacion == 0 ? '00' : el.proyecto_informacion.proyecto
+        }.${el.id_actividad == 0 ? '00' : el.id_actividad}`
 
-      let opt = `<option value="${el.id}">${sppa}.${el.partida}</option>`
-      options.push(opt)
-    })
+        let opt = `<option value="${el.id}">${sppa}.${el.partida}</option>`
+        options.push(opt)
+      })
 
     let partidasList = d.getElementById(`distribucion-${newNumRow}`)
 
