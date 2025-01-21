@@ -21,7 +21,7 @@ function gestionarSolicitudDozavos($data)
 
         // Acción: Consultar todos los registros
         if ($accion === 'consulta') {
-            return consultarSolicitudes();
+            return consultarSolicitudes($data);
         }
 
         // Acción: Consultar un registro por ID
@@ -65,12 +65,20 @@ function gestionarSolicitudDozavos($data)
 }
 
 // Función para consultar todas las solicitudes
-function consultarSolicitudes()
+function consultarSolicitudes($data)
 {
     global $conexion;
+    if (!isset($data['id_ejercicio'])) {
+        return json_encode(["error" => "No se ha especificado Un Ejercicio Fiscal para consulta."]);
+    }
 
-    $sql = "SELECT id, numero_orden, numero_compromiso, descripcion, monto, fecha, partidas, id_ente, tipo, mes, status, id_ejercicio FROM solicitud_dozavos";
-    $result = $conexion->query($sql);
+    $id_ejercicio = $data['id_ejercicio'];
+
+    $sql = "SELECT id, numero_orden, numero_compromiso, descripcion, monto, fecha, partidas, id_ente, tipo, mes, status, id_ejercicio FROM solicitud_dozavos WHERE id_ejercicio = ?";
+    $stmt = $conexion->prepare($sql);
+    $stmt->bind_param("i", $id_ejercicio);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
     if ($result->num_rows > 0) {
         $solicitudes = [];
@@ -145,16 +153,17 @@ function consultarSolicitudPorId($data)
 {
     global $conexion;
 
-    if (!isset($data['id'])) {
-        return json_encode(["error" => "No se ha especificado ID para consulta."]);
+    if (!isset($data['id']) || !isset($data['id_ejercicio'])) {
+        return json_encode(["error" => "No se ha especificado ID o un Ejercicio Fiscal para consulta."]);
     }
 
     $id = $data['id'];
+    $id_ejercicio = $data['id_ejercicio'];
 
     // Consultar la solicitud principal
-    $sql = "SELECT id, numero_orden, numero_compromiso, descripcion, monto, fecha, partidas, id_ente, tipo, mes, status, id_ejercicio FROM solicitud_dozavos WHERE id = ?";
+    $sql = "SELECT id, numero_orden, numero_compromiso, descripcion, monto, fecha, partidas, id_ente, tipo, mes, status, id_ejercicio FROM solicitud_dozavos WHERE id = ?, id_ejercicio = ?";
     $stmt = $conexion->prepare($sql);
-    $stmt->bind_param("i", $id);
+    $stmt->bind_param("ii", $id, $id_ejercicio);
     $stmt->execute();
     $result = $stmt->get_result();
 

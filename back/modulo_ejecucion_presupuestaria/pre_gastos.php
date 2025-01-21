@@ -197,14 +197,18 @@ function gestionarGasto($idGasto, $accion, $codigo)
 
 
 
-function obtenerGastos()
+function obtenerGastos($id_ejercicio)
 {
     global $conexion;
 
     try {
-        // Consultar todos los registros de la tabla gastos
-        $sql = "SELECT id, id_tipo, descripcion, monto, status, id_ejercicio, distribuciones, fecha, beneficiario, identificador FROM gastos";
-        $resultado = $conexion->query($sql);
+        $sql = "SELECT id, id_tipo, descripcion, monto, status, id_ejercicio, distribuciones, fecha, beneficiario, identificador 
+                FROM gastos 
+                WHERE id_ejercicio = ?";
+        $stmt = $conexion->prepare($sql);
+        $stmt->bind_param("i", $id_ejercicio);
+        $stmt->execute();
+        $resultado = $stmt->get_result();
 
         $gastos = [];
         while ($fila = $resultado->fetch_assoc()) {
@@ -339,15 +343,15 @@ function obtenerGastos()
 
 
 
-function obtenerGastoPorId($id)
+function obtenerGastoPorId($id, $id_ejercicio)
 {
     global $conexion;
 
     try {
         // Consultar el registro de la tabla gastos por su ID
-        $sqlGasto = "SELECT id, id_tipo, descripcion, monto, status, distribuciones, fecha, beneficiario, identificador, id_ejercicio FROM gastos WHERE id = ?";
+        $sqlGasto = "SELECT id, id_tipo, descripcion, monto, status, distribuciones, fecha, beneficiario, identificador, id_ejercicio FROM gastos WHERE id = ? AND id_ejercicio = ?";
         $stmtGasto = $conexion->prepare($sqlGasto);
-        $stmtGasto->bind_param("i", $id);
+        $stmtGasto->bind_param("ii", $id, $id_ejercicio);
         $stmtGasto->execute();
         $resultadoGasto = $stmtGasto->get_result();
 
@@ -542,11 +546,11 @@ if (isset($data["accion"])) {
             break;
 
         case 'obtener':
-            echo obtenerGastos();
+            echo obtenerGastos($data["id_ejercicio"]);
             break;
 
         case 'obtenerPorId':
-            echo obtenerGastoPorId($data["id"]);
+            echo obtenerGastoPorId($data["id"], $data["id_ejercicio"]);
             break;
 
         case 'actualizar':
