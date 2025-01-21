@@ -1,12 +1,9 @@
-import {
-  aceptarDozavo,
-  getSolicitudesDozavos,
-} from '../api/pre_solicitudesDozavos.js'
+import { getSolicitudDozavos } from '../api/pre_solicitudesDozavos.js'
 import {
   ejerciciosLista,
   validarEjercicioActual,
 } from '../components/form_ejerciciosLista.js'
-import { pre_identificarCompromiso } from '../components/pre_identificarCompromiso.js'
+
 import {
   pre_solicitudEnte_card,
   pre_solicitudGenerar_card,
@@ -62,7 +59,7 @@ export const validateSolicitudesDozavos = async () => {
       let formCard = d.getElementById('solicitud-ente-card')
       if (formCard) formCard.remove()
 
-      let solicitud = await getSolicitudesDozavos(e.target.dataset.detalleid)
+      let solicitud = await getSolicitudDozavos(e.target.dataset.detalleid)
       if (!solicitud) return
       pre_solicitudDozavo_card({
         elementToInsert: 'solicitudes-dozavos-view',

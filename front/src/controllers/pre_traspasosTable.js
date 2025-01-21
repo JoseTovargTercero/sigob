@@ -1,5 +1,4 @@
-import { getSolicitudesDozavos } from '../api/pre_solicitudesDozavos.js'
-
+import { getTraspasos } from '../api/pre_traspasos.js'
 import { separadorLocal, tableLanguage } from '../helpers/helpers.js'
 import { meses } from '../helpers/types.js'
 
@@ -28,7 +27,7 @@ export async function validateTraspasosTable({ id_ejercicio }) {
 }
 
 export async function loadTraspasosTable(id_ejercicio) {
-  let solicitudes = []
+  let solicitudes = await getTraspasos(id_ejercicio)
   // console.log(solicitudes)
 
   // console.log(id_ejercicio)
@@ -39,37 +38,31 @@ export async function loadTraspasosTable(id_ejercicio) {
 
   let datosOrdenados = [...solicitudes].sort((a, b) => a.id - b.id)
 
-  let data = datosOrdenados
-    .filter(
-      (solicitud) =>
-        Number(solicitud.status) !== 3 &&
-        Number(id_ejercicio) === Number(solicitud.id_ejercicio)
-    )
-    .map((solicitud) => {
-      return {
-        numero_orden: solicitud.numero_orden,
-        entes: solicitud.ente_nombre,
+  let data = datosOrdenados.map((solicitud) => {
+    return {
+      numero_orden: solicitud.numero_orden,
+      entes: solicitud.ente_nombre,
 
-        mes: meses[solicitud.mes],
-        tipo: solicitud.tipo === 'D' ? 'Disminuye' : 'Aumenta',
-        monto: separadorLocal(solicitud.monto),
-        fecha: solicitud.fecha,
-        acciones:
-          Number(solicitud.status) === 0
-            ? `<button
+      mes: meses[solicitud.mes],
+      tipo: solicitud.tipo === 'D' ? 'Disminuye' : 'Aumenta',
+      monto: separadorLocal(solicitud.monto),
+      fecha: solicitud.fecha,
+      acciones:
+        Number(solicitud.status) === 0
+          ? `<button
               class='btn btn-info btn-sm btn-view'
               data-detalleid='${solicitud.id}'
             >
               <i class='bx bx-detail me-1'></i>Detalles
             </button>`
-            : ` <button
+          : ` <button
               class='btn btn-secondary btn-sm btn-view'
               data-detalleid='${solicitud.id}'
             >
               <i class='bx bx-detail me-1'></i>Validar
             </button>`,
-      }
-    })
+    }
+  })
 
   solicitudesDozavosTable.clear().draw()
 

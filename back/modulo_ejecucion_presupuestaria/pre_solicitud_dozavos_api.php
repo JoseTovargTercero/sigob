@@ -12,6 +12,7 @@ function gestionarSolicitudDozavos()
     $params = $_GET;
 
     $paramsId = isset($params['id']) ? $params['id'] : null;
+    $paramsEjercicioId = isset($params['id_ejercicio']) ? $params['id_ejercicio'] : null;
 
     $url = "https://sigob.net/api/solicitudes";
 
@@ -24,7 +25,7 @@ function gestionarSolicitudDozavos()
             if ($paramsId) {
                 return apiGet("$url?id=$paramsId");
             } else {
-                return apiGet($url);
+                return apiGet("$url?id_ejercicio=$paramsEjercicioId");
             }
         } else if ($method == 'POST') {
             $data = json_decode(file_get_contents("php://input"), true);

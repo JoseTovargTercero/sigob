@@ -479,6 +479,7 @@ export const pre_traspasosForm_card = ({
         console.log(informacion)
 
         cardBodyPart2.classList.add('d-none')
+        btnNext.textContent = 'Enviar'
 
         if (cardBodyPart3) {
           cardBodyPart3.outerHTML = resumenPartidas()
@@ -487,7 +488,6 @@ export const pre_traspasosForm_card = ({
         }
 
         formFocus++
-
         return
       }
 
@@ -502,6 +502,7 @@ export const pre_traspasosForm_card = ({
     if (e.target === btnPrevius) {
       if (formFocus === 3) {
         cardBodyPart2.classList.remove('d-none')
+        btnNext.textContent = 'Siguiente'
 
         if (cardBodyPart3) {
           cardBodyPart3.classList.add('d-none')

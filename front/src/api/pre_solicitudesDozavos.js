@@ -11,19 +11,62 @@ const solicitudesDozavosUrl = `${APP_URL}${config.MODULE_NAMES.EJECUCION}pre_sol
 // const solicitudesDozavosUrl =
 // '../../../../sigob/back/modulo_ejecucion_presupuestaria/pre_solicitud_dozavos.php'
 
-const getSolicitudesDozavos = async (id) => {
+const getSolicitudesDozavos = async (id_ejercicio) => {
   showLoader()
   try {
-    let res
-    if (id) {
-      // console.log(id)
-      res = await fetch(`${solicitudesDozavosUrl}?id=${id}`, {
+    let res = await fetch(
+      `${solicitudesDozavosUrl}?id_ejercicio=${id_ejercicio}`,
+      {
         method: 'get',
+      }
+    )
+
+    // console.log(res)
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    // const clone = res.clone()
+    // const text = await clone.text()
+
+    // console.log(text)
+
+    const json = await res.json()
+
+    console.log(json)
+
+    if (json.error) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.fail,
+        message: json.error,
       })
-    } else
-      res = await fetch(solicitudesDozavosUrl, {
-        method: 'get',
-      })
+      return
+    }
+
+    if (json.success) {
+      return json.success
+    }
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+      return
+    }
+    return json
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener solicitudes',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
+const getSolicitudDozavos = async (id) => {
+  showLoader()
+  try {
+    let res = await fetch(`${solicitudesDozavosUrl}?id=${id}`, {
+      method: 'get',
+    })
 
     // console.log(res)
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
@@ -276,6 +319,7 @@ const deleteSolicitudDozavo = async (id) => {
 
 export {
   getSolicitudesDozavos,
+  getSolicitudDozavos,
   deleteSolicitudDozavo,
   registrarSolicitudDozavo,
   aceptarDozavo,

@@ -1,6 +1,7 @@
 import { getSolicitudesDozavos } from '../api/pre_solicitudesDozavos.js'
 
 import { separadorLocal } from '../helpers/helpers.js'
+import { meses } from '../helpers/types.js'
 
 const d = document
 const w = window
@@ -67,7 +68,7 @@ export async function validateSolicitudesDozavosTable(id_ejercicio) {
 }
 
 export async function loadSolicitudesDozavosTable(id_ejercicio) {
-  let solicitudes = await getSolicitudesDozavos()
+  let solicitudes = await getSolicitudesDozavos(id_ejercicio)
   // console.log(solicitudes)
 
   // console.log(id_ejercicio)
@@ -79,11 +80,7 @@ export async function loadSolicitudesDozavosTable(id_ejercicio) {
   let datosOrdenados = [...solicitudes].sort((a, b) => a.id - b.id)
 
   let data = datosOrdenados
-    .filter(
-      (solicitud) =>
-        Number(solicitud.status) !== 3 &&
-        Number(id_ejercicio) === Number(solicitud.id_ejercicio)
-    )
+    .filter((solicitud) => Number(solicitud.status) !== 3)
     .map((solicitud) => {
       return {
         numero_orden: solicitud.numero_orden,

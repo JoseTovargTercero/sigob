@@ -550,7 +550,7 @@ if (isset($data["accion"])) {
             break;
 
         case 'obtenerPorId':
-            echo obtenerGastoPorId($data["id"], $data["id_ejercicio"]);
+            echo obtenerGastoPorId($data["id"]);
             break;
 
         case 'actualizar':

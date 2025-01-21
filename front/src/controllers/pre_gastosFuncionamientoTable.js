@@ -1,14 +1,7 @@
 import { getPartidas } from '../api/partidas.js'
 import { getGastos, getTiposGastos } from '../api/pre_gastos.js'
-import { getSolicitudesDozavos } from '../api/pre_solicitudesDozavos.js'
 
-import {
-  confirmNotification,
-  separarMiles,
-  toastNotification,
-  validateInput,
-} from '../helpers/helpers.js'
-import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
+import { separarMiles } from '../helpers/helpers.js'
 
 const d = document
 const w = window
@@ -96,7 +89,7 @@ export async function validateTiposGastosTable() {
 }
 
 export async function loadGastosTable({ id_ejercicio }) {
-  let gastos = await getGastos()
+  let gastos = await getGastos(id_ejercicio)
 
   if (!Array.isArray(gastos)) return
 
@@ -104,30 +97,28 @@ export async function loadGastosTable({ id_ejercicio }) {
 
   let datosOrdenados = [...gastos].sort((a, b) => a.id - b.id)
 
-  let data = datosOrdenados
-    .filter((gastos) => Number(gastos.id_ejercicio) === Number(id_ejercicio))
-    .map((gastos) => {
-      // let sector_programa_proyecto = `${
-      //   el.sector_informacion ? el.sector_informacion.sector : '0'
-      // }.${el.programa_informacion ? el.programa_informacion.programa : '0'}.${
-      //   el.proyecto_informacion == 0 ? '00' : el.proyecto_informacion.proyecto
-      // }.${el.id_actividad == 0 ? '00' : el.id_actividad}`
+  let data = datosOrdenados.map((gastos) => {
+    // let sector_programa_proyecto = `${
+    //   el.sector_informacion ? el.sector_informacion.sector : '0'
+    // }.${el.programa_informacion ? el.programa_informacion.programa : '0'}.${
+    //   el.proyecto_informacion == 0 ? '00' : el.proyecto_informacion.proyecto
+    // }.${el.id_actividad == 0 ? '00' : el.id_actividad}`
 
-      return {
-        compromiso: gastos.correlativo || 'Pendiente',
+    return {
+      compromiso: gastos.correlativo || 'Pendiente',
 
-        tipo: gastos.nombre_tipo_gasto,
-        monto: `${separarMiles(gastos.monto_gasto)} Bs`,
-        fecha: gastos.fecha,
-        estado:
-          Number(gastos.status_gasto) === 0
-            ? ` <span class='btn btn-sm btn-secondary'>Pendiente</span>`
-            : Number(gastos.status_gasto) === 1
-            ? `<span class='btn btn-sm btn-success'>Procesado</span>`
-            : `<span class='btn btn-sm btn-danger'>Rechazado</span>`,
-        acciones: `<button class="btn btn-secondary btn-sm" data-detallesid="${gastos.id}">Detalles</button>`,
-      }
-    })
+      tipo: gastos.nombre_tipo_gasto,
+      monto: `${separarMiles(gastos.monto_gasto)} Bs`,
+      fecha: gastos.fecha,
+      estado:
+        Number(gastos.status_gasto) === 0
+          ? ` <span class='btn btn-sm btn-secondary'>Pendiente</span>`
+          : Number(gastos.status_gasto) === 1
+          ? `<span class='btn btn-sm btn-success'>Procesado</span>`
+          : `<span class='btn btn-sm btn-danger'>Rechazado</span>`,
+      acciones: `<button class="btn btn-secondary btn-sm" data-detallesid="${gastos.id}">Detalles</button>`,
+    }
+  })
 
   // <button class="btn btn-danger btn-sm" data-rechazarid="${gastos.id}">Rechazar</button>
   // <button class="btn btn-info btn-sm" data-aceptarid="${gastos.id}">Aceptar</button>

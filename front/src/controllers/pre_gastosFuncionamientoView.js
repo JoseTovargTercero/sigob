@@ -1,11 +1,4 @@
-import {
-  aceptarGasto,
-  eliminarTipoGasto,
-  getGasto,
-  getGastos,
-  getTiposGastos,
-  rechazarGasto,
-} from '../api/pre_gastos.js'
+import { eliminarTipoGasto, getGasto } from '../api/pre_gastos.js'
 import {
   ejerciciosLista,
   validarEjercicioActual,

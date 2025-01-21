@@ -1,7 +1,7 @@
 <?php
 
 require_once '../sistema_global/conexion.php';
-require_once '../sistema_global/session.php'; 
+require_once '../sistema_global/session.php';
 require_once '../sistema_global/notificaciones.php';
 require_once 'pre_compromisos.php'; // Agregado
 require_once 'pre_dispo_presupuestaria.php'; // Agregado
@@ -10,7 +10,8 @@ header('Content-Type: application/json');
 
 require_once '../sistema_global/errores.php';
 
-function registrarTraspasoPartida($data) {
+function registrarTraspasoPartida($data)
+{
     global $conexion;
 
     try {
@@ -53,7 +54,7 @@ function registrarTraspasoPartida($data) {
             }
 
             // Registrar en `traspaso_informacion`
-            $sqlTraspasoInfo = "INSERT INTO traspaso_informacion (id_traspaso, id_distribucion, monto, tipo) VALUES (?, ?, ?, "D")";
+            $sqlTraspasoInfo = "INSERT INTO traspaso_informacion (id_traspaso, id_distribucion, monto, tipo) VALUES (?, ?, ?, 'D')";
             $stmtTraspasoInfo = $conexion->prepare($sqlTraspasoInfo);
             $stmtTraspasoInfo->bind_param("iid", $id_traspaso, $item['id_distribucion'], $item['monto']);
             $stmtTraspasoInfo->execute();
@@ -76,7 +77,7 @@ function registrarTraspasoPartida($data) {
             }
 
             // Registrar en `traspaso_informacion`
-            $sqlTraspasoInfo = "INSERT INTO traspaso_informacion (id_traspaso, id_distribucion, monto, tipo) VALUES (?, ?, ?, "A")";
+            $sqlTraspasoInfo = "INSERT INTO traspaso_informacion (id_traspaso, id_distribucion, monto, tipo) VALUES (?, ?, ?, 'A')";
             $stmtTraspasoInfo = $conexion->prepare($sqlTraspasoInfo);
             $stmtTraspasoInfo->bind_param("iid", $id_traspaso, $item['id_distribucion'], $item['monto']);
             $stmtTraspasoInfo->execute();
@@ -100,7 +101,8 @@ function registrarTraspasoPartida($data) {
 }
 
 
-function consultarTodosTraspasos() {
+function consultarTodosTraspasos()
+{
     global $conexion;
 
     // Consultar los traspasos principales
@@ -135,7 +137,7 @@ function consultarTodosTraspasos() {
 
                     if ($resultadoDistribucion->num_rows > 0) {
                         $detalle['distribucion_presupuestaria'] = $resultadoDistribucion->fetch_assoc();
-                        
+
                         // Obtener la información de partidas_presupuestarias usando id_partida
                         $id_partida = $detalle['distribucion_presupuestaria']['id_partida'];
                         $sqlPartida = "SELECT pp.* 
@@ -161,14 +163,15 @@ function consultarTodosTraspasos() {
             }
         }
 
-        return json_encode($traspasos);
+        return json_encode(['success' => $traspasos]);
     } else {
-        return json_encode(["message" => "No se encontraron traspasos."]);
+        return json_encode(["success" => []]);
     }
 }
 
 
-function consultarTraspasoPorId($id) {
+function consultarTraspasoPorId($id)
+{
     global $conexion;
 
     // Consultar el traspaso principal por su ID
@@ -206,7 +209,7 @@ function consultarTraspasoPorId($id) {
 
                 if ($resultadoDistribucion->num_rows > 0) {
                     $detalle['distribucion_presupuestaria'] = $resultadoDistribucion->fetch_assoc();
-                    
+
                     // Obtener la información de partidas_presupuestarias usando id_partida
                     $id_partida = $detalle['distribucion_presupuestaria']['id_partida'];
                     $sqlPartida = "SELECT pp.* 
@@ -231,7 +234,7 @@ function consultarTraspasoPorId($id) {
             $traspaso['detalles'] = [];
         }
 
-        return json_encode($traspaso);
+        return json_encode(['success' => $traspaso]);
     } else {
         return json_encode(["error" => "No se encontró el traspaso."]);
     }
@@ -240,7 +243,8 @@ function consultarTraspasoPorId($id) {
 
 
 
-function actualizarTraspasoPartida($id_traspaso, $id_partida_t, $id_partida_r, $id_ejercicio, $monto) {
+function actualizarTraspasoPartida($id_traspaso, $id_partida_t, $id_partida_r, $id_ejercicio, $monto)
+{
     global $conexion;
 
     try {
@@ -324,7 +328,8 @@ function actualizarTraspasoPartida($id_traspaso, $id_partida_t, $id_partida_r, $
 }
 
 
-function eliminarTraspaso($id_traspaso) {
+function eliminarTraspaso($id_traspaso)
+{
     global $conexion;
 
     try {

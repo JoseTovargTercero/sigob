@@ -11,13 +11,14 @@ const gastosUrl =
 const tipoGastosUrl =
   '../../../../sigob/back/modulo_ejecucion_presupuestaria/pre_tipo_gastos.php'
 
-const getGastos = async () => {
+const getGastos = async (id_ejercicio) => {
   showLoader()
   try {
     let res = await fetch(gastosUrl, {
       method: 'POST',
       body: JSON.stringify({
         accion: 'obtener',
+        id_ejercicio,
       }),
     })
 
@@ -64,7 +65,7 @@ const getGasto = async (id) => {
     let clone = res.clone()
     let text = await clone.text()
 
-    // console.log(text)
+    console.log(text)
 
     const json = await res.json()
     // console.log(json)
