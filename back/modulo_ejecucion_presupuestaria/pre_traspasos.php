@@ -45,12 +45,12 @@ function registrarTraspasoPartida($data)
             $resultadoDistribucion = $stmtDistribucion->get_result();
 
             if ($resultadoDistribucion->num_rows === 0) {
-                throw new Exception("No se encontró la distribución presupuestaria con ID " . $item['id_distribucion']);
+                throw new Exception("No se encontro la distribucion presupuestaria con ID " . $item['id_distribucion']);
             }
 
             $filaDistribucion = $resultadoDistribucion->fetch_assoc();
             if ($filaDistribucion['monto_actual'] < $item['monto']) {
-                throw new Exception("El monto solicitado para restar excede el monto actual de la distribución con ID " . $item['id_distribucion']);
+                throw new Exception("El monto solicitado para restar excede el monto actual de la distribucion con ID " . $item['id_distribucion']);
             }
 
             // Registrar en `traspaso_informacion`
@@ -60,7 +60,7 @@ function registrarTraspasoPartida($data)
             $stmtTraspasoInfo->execute();
 
             if ($stmtTraspasoInfo->affected_rows === 0) {
-                throw new Exception("No se pudo registrar la información del traspaso en 'restar' con ID distribución " . $item['id_distribucion']);
+                throw new Exception("No se pudo registrar la informacion del traspaso en 'restar' con ID distribución " . $item['id_distribucion']);
             }
         }
 
@@ -73,7 +73,7 @@ function registrarTraspasoPartida($data)
             $resultadoDistribucion = $stmtDistribucion->get_result();
 
             if ($resultadoDistribucion->num_rows === 0) {
-                throw new Exception("No se encontró la distribución presupuestaria con ID " . $item['id_distribucion']);
+                throw new Exception("No se encontro la distribucion presupuestaria con ID " . $item['id_distribucion']);
             }
 
             // Registrar en `traspaso_informacion`
@@ -83,13 +83,13 @@ function registrarTraspasoPartida($data)
             $stmtTraspasoInfo->execute();
 
             if ($stmtTraspasoInfo->affected_rows === 0) {
-                throw new Exception("No se pudo registrar la información del traspaso en 'añadir' con ID distribución " . $item['id_distribucion']);
+                throw new Exception("No se pudo registrar la informacion del traspaso en 'añadir' con ID distribucion " . $item['id_distribucion']);
             }
         }
 
         // Confirmar la transacción
         $conexion->commit();
-        return json_encode(["success" => "El traspaso se registró correctamente."]);
+        return json_encode(["success" => "El traspaso se registro correctamente."]);
 
     } catch (Exception $e) {
         if ($conexion->in_transaction) {
@@ -348,7 +348,7 @@ function eliminarTraspaso($id_traspaso)
         $resultadoTraspasoInfo = $stmtTraspasoInfo->get_result();
 
         if ($resultadoTraspasoInfo->num_rows === 0) {
-            throw new Exception("No se encontró información de distribuciones para el traspaso proporcionado.");
+            throw new Exception("No se encontro informacion de distribuciones para el traspaso proporcionado.");
         }
 
         // Eliminar registros de traspaso_informacion
@@ -358,7 +358,7 @@ function eliminarTraspaso($id_traspaso)
         $stmtEliminarTraspasoInfo->execute();
 
         if ($stmtEliminarTraspasoInfo->affected_rows === 0) {
-            throw new Exception("No se pudo eliminar la información del traspaso.");
+            throw new Exception("No se pudo eliminar la informacion del traspaso.");
         }
 
         // Eliminar el traspaso
@@ -373,7 +373,7 @@ function eliminarTraspaso($id_traspaso)
 
         // Confirmar la transacción
         $conexion->commit();
-        return json_encode(["success" => "El traspaso se eliminó correctamente."]);
+        return json_encode(["success" => "El traspaso se elimino correctamente."]);
 
     } catch (Exception $e) {
         // Revertir la transacción en caso de error
