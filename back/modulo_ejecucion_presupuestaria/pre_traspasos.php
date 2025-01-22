@@ -92,9 +92,7 @@ function registrarTraspasoPartida($data)
         return json_encode(["success" => "El traspaso se registro correctamente."]);
 
     } catch (Exception $e) {
-        if ($conexion->in_transaction) {
-            $conexion->rollback();
-        }
+        $conexion->rollback();
         registrarError($e->getMessage());
         return json_encode(['error' => $e->getMessage()]);
     }
@@ -323,9 +321,7 @@ function actualizarTraspasoPartida($id_traspaso, $id_partida_t, $id_partida_r, $
             throw new Exception("No se pudo actualizar el traspaso.");
         }
     } catch (Exception $e) {
-        if ($conexion->in_transaction) {
             $conexion->rollback();
-        }
         registrarError($e->getMessage());
         return json_encode(['error' => $e->getMessage()]);
     }
@@ -376,10 +372,7 @@ function eliminarTraspaso($id_traspaso)
         return json_encode(["success" => "El traspaso se elimino correctamente."]);
 
     } catch (Exception $e) {
-        // Revertir la transacción en caso de error
-        if ($conexion->in_transaction) {
             $conexion->rollback();
-        }
         registrarError($e->getMessage());
         return json_encode(['error' => $e->getMessage()]);
     }
