@@ -68,20 +68,6 @@ export const pre_traspasosForm_card = async ({
           <div class='row'>
             <div class='col'>
               <div class='form-group'>
-                <label for='codigo' class='form-label'>
-                  Código para traspaso
-                </label>
-                <input
-                  class='form-control traslado-input'
-                  type='number'
-                  name='codigo'
-                  id='codigo'
-                  placeholder='Código de traspaso'
-                />
-              </div>
-            </div>
-            <div class='col'>
-              <div class='form-group'>
                 <label for='tipo' class='form-label'>
                   Tipo de registro
                 </label>
@@ -96,20 +82,17 @@ export const pre_traspasosForm_card = async ({
                 </select>
               </div>
             </div>
-          </div>
-          <div class='row'>
-            <div class='col order-last'>
+            <div class='col'>
               <div class='form-group'>
-                <label for='tipo' class='form-label'>
-                  Correaltivo de ultima orden
+                <label for='codigo' class='form-label'>
+                  Código para traspaso
                 </label>
                 <input
                   class='form-control traslado-input'
                   type='text'
-                  name='ultima-orden'
-                  id='ultima-orden'
-                  placeholder='Correlativo de ultima orden...'
-                  disabled
+                  name='codigo'
+                  id='codigo'
+                  placeholder='Código de traspaso'
                 />
               </div>
             </div>
@@ -242,7 +225,7 @@ export const pre_traspasosForm_card = async ({
       </div>`
   }
 
-  let card = `    <div class='card slide-up-animation' id='${nombreCard}-form-card'>
+  let card = `  <div class='card slide-up-animation' id='${nombreCard}-form-card'>
       <div class='card-header d-flex justify-content-between'>
         <div class=''>
           <h5 class='mb-0'>Formulario de traspasos</h5>
@@ -261,15 +244,29 @@ export const pre_traspasosForm_card = async ({
       </div>
       <div class='card-body' id='card-body-principal'>
         <div id='header' class='row text-center mb-4'>
-          <div class='col'>
-            <h6>
-              Total a traspasar: <b id='total-sumado'>No asignado</b>
-            </h6>
+          <div class='row'>
+            <div class='col'>
+              <h6>
+                Total a traspasar: <b id='total-sumado'>No asignado</b>
+              </h6>
+            </div>
+            <div class='col'>
+              <h6>
+                Total traspasado <b id='total-restado'>No asignado</b>
+              </h6>
+            </div>
           </div>
-          <div class='col'>
-            <h6>
-              Total traspasado <b id='total-restado'>No asignado</b>
-            </h6>
+          <div class='row'>
+            <div class='col'>
+              <h6>
+               Ultima orden: <b id='ultima-orden'>Seleccione un tipo</b>
+              </h6>
+            </div>
+            <div class='col'>
+              <h6>
+                Se guardará como: <b id='label-codigo'>Seleccione un tipo</b>
+              </h6>
+            </div>
           </div>
         </div>
         ${informacionPrincipal()}
@@ -413,26 +410,48 @@ export const pre_traspasosForm_card = async ({
       return
     }
 
+    if (e.target.id === 'codigo') {
+      let labelCodigo = d.getElementById('label-codigo')
+
+      if (Number(fieldList.tipo) === 1) {
+        labelCodigo.textContent = `T${ejercicioFiscal.ano}-${e.target.value}`
+      }
+
+      if (Number(fieldList.tipo) === 2) {
+        labelCodigo.textContent = `${
+          ultimosRegistros.ultimo_traspaso
+            ? ultimosRegistros.ultimo_traspaso + '-'
+            : ''
+        }${e.target.value}`
+      }
+    }
+
     if (e.target.id === 'tipo') {
-      let input = d.getElementById('ultima-orden')
+      let ultimaOrden = d.getElementById('ultima-orden')
+      let labelCodigo = d.getElementById('label-codigo')
       if (Number(e.target.value) === 1) {
         if (ultimosRegistros.ultimo_traslado === null) {
-          input.value = 'No hay registro de traslado'
+          ultimaOrden.textContent = 'No hay registro de traslado'
+          labelCodigo.textContent = ''
         } else {
-          input.value = ultimosRegistros.ultimo_traslado
+          ultimaOrden.textContent = ultimosRegistros.ultimo_traslado
+          labelCodigo.textContent = `T${ejercicioFiscal.ano}`
         }
       }
 
       if (Number(e.target.value) === 2) {
         if (ultimosRegistros.ultimo_traspaso === null) {
-          input.value = 'No hay registro de traspasos'
+          ultimaOrden.textContent = 'No hay registro de traspasos'
+          labelCodigo.textContent = ''
         } else {
-          input.value = ultimosRegistros.ultimo_traspaso
+          ultimaOrden.textContent = ultimosRegistros.ultimo_traspaso
+          labelCodigo.textContent = ultimosRegistros.ultimo_traspaso
         }
       }
 
-      if (!e.target.value) {
-        input.value = 'Correlativo de última orden...'
+      if (!e.target.textContent) {
+        ultimaOrden.textContent = 'Correlativo de última orden...'
+        labelCodigo.textContent = ''
       }
     }
 

@@ -338,11 +338,11 @@ function gestionarTraspaso($id, $accion)
         }
 
         if ($accion === 'aceptar') {
-            return json_encode(["success" => "Se ha actualizado el registro correctamente."]);
+            return json_encode(["success" => "Se ha aceptado el registro correctamente."]);
         }
 
         if ($accion === 'rechazar') {
-            return json_encode(["success" => "Se ha actualizado el registro correctamente."]);
+            return json_encode(["success" => "Se ha rechazado el registro correctamente."]);
         }
 
     } catch (Exception $e) {
