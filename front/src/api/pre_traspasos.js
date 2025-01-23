@@ -22,12 +22,14 @@ const getTraspasos = async (id_ejercicio) => {
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
 
-    let clone = res.clone()
-    let text = await clone.text()
+    // let clone = res.clone()
+    // let text = await clone.text()
 
-    console.log(text)
+    // console.log(text)
 
     const json = await res.json()
+
+    console.log(json)
 
     if (json.success) {
       return json.success
@@ -87,4 +89,47 @@ const getTraspaso = async (id) => {
   }
 }
 
-export { getTraspasos, getTraspaso }
+const registrarTraspaso = async (informacion) => {
+  showLoader()
+  try {
+    let res = await fetch(traspasoUrl, {
+      method: 'POST',
+      body: JSON.stringify({
+        accion: 'registrar',
+        ...informacion,
+      }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    let clone = res.clone()
+    let text = await clone.text()
+
+    console.log(text)
+
+    const json = await res.json()
+
+    if (json.success) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.done,
+        message: json.success,
+      })
+    }
+
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
+    return json
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener traspasos',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
+export { getTraspasos, getTraspaso, registrarTraspaso }

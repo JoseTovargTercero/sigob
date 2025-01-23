@@ -10,6 +10,14 @@ export async function validateTraspasosTable({ id_ejercicio }) {
   solicitudesDozavosTable = new DataTable('#traspaso-table', {
     scrollY: 300,
     language: tableLanguage,
+    columns: [
+      { data: 'numero_orden' },
+
+      { data: 'monto' },
+      { data: 'fecha' },
+      { data: 'status' },
+      { data: 'acciones' },
+    ],
     layout: {
       topEnd: function () {
         let toolbar = document.createElement('div')
@@ -40,13 +48,11 @@ export async function loadTraspasosTable(id_ejercicio) {
 
   let data = datosOrdenados.map((solicitud) => {
     return {
-      numero_orden: solicitud.numero_orden,
-      entes: solicitud.ente_nombre,
+      numero_orden: solicitud.n_orden,
 
-      mes: meses[solicitud.mes],
-      tipo: solicitud.tipo === 'D' ? 'Disminuye' : 'Aumenta',
-      monto: separadorLocal(solicitud.monto),
+      monto: separadorLocal(solicitud.monto_total),
       fecha: solicitud.fecha,
+      status: solicitud.status === 0 ? 'Pendiente' : 'Aceptado',
       acciones:
         Number(solicitud.status) === 0
           ? `<button

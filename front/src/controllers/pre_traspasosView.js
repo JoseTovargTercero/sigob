@@ -1,7 +1,9 @@
+import { getTraspaso } from '../api/pre_traspasos.js'
 import {
   ejerciciosLista,
   validarEjercicioActual,
 } from '../components/form_ejerciciosLista.js'
+import { pre_traspasosCard } from '../components/pre_traspasosCard.js'
 import { pre_traspasosForm_card } from '../components/pre_traspasosForm_card.js'
 import { toastNotification } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
@@ -38,6 +40,24 @@ export const validateTraspasosView = async () => {
       }
       pre_traspasosForm_card({
         elementToInsert: 'traspasos-view',
+        ejercicioFiscal,
+        recargarEjercicio: async function () {
+          let ejercicioFiscalElement = d.querySelector(
+            `[data-ejercicioid="${ejercicioFiscal.id}"]`
+          )
+          ejercicioFiscal = await validarEjercicioActual({
+            ejercicioTarget: ejercicioFiscalElement,
+          })
+
+          loadGastosTable({ id_ejercicio: ejercicioFiscal.id })
+        },
+      })
+    }
+
+    if (e.target.dataset.detalleid) {
+      pre_traspasosCard({
+        elementToInsert: 'traspasos-view',
+        data: await getTraspaso(e.target.dataset.detalleid),
         ejercicioFiscal,
       })
     }

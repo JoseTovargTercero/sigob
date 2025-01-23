@@ -62,13 +62,15 @@ require_once '../../back/sistema_global/session.php';
                             <div class="table-responsive p-1">
                                 <table id="traspaso-table" class="table table-striped" style="width:100%">
                                     <thead class="w-100">
-                                        <th>N° ORDEN</th>
-                                        <th>N° COMPROMISO</th>
-                                        <th>MESES</th>
-                                        <th>TIPO</th>
+
+
+                                        <th>N° Orden</th>
+
                                         <th>MONTO</th>
-                                        <th>FECHA</th>
-                                        <th>ACCIONES</th>
+                                        <th>fecha</th>
+                                        <th>Estado</th>
+
+                                        <th>Acciones</th>
                                     </thead>
 
                                 </table>

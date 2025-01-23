@@ -1,4 +1,5 @@
 import { obtenerDistribucionPositiva } from '../api/pre_distribucion.js'
+import { registrarTraspaso } from '../api/pre_traspasos.js'
 import {
   confirmNotification,
   formatearFloat,
@@ -18,13 +19,19 @@ const d = document
 export const pre_traspasosForm_card = async ({
   elementToInsert,
   ejercicioFiscal,
+  recargarEjercicio,
 }) => {
-  let fieldList = { codigo: '' }
+  let fieldList = { codigo: '', tipo: '' }
   let fieldListErrors = {
     codigo: {
       value: true,
       message: 'Código inválido',
       type: 'textarea',
+    },
+    tipo: {
+      value: true,
+      message: 'Tipo inválido',
+      type: 'number',
     },
   }
 
@@ -33,7 +40,6 @@ export const pre_traspasosForm_card = async ({
   })
 
   let informacion = {
-    codigo: 0,
     añadir: [],
     restar: [],
   }
@@ -53,16 +59,36 @@ export const pre_traspasosForm_card = async ({
   }
 
   const informacionPrincipal = () => {
-    return ` <div id='card-body-part-1' class="slide-up-animation">
-        <form class="mb-2">
-          <div class='form-group'>
-            <label for="codigo" class='form-label'>Código para traspaso</label>
-            <input
-              class='form-control'
-              type='number'
-              name='codigo'
-              id='codigo'
-            ></input>
+    return ` <div id='card-body-part-1' class='slide-up-animation'>
+        <form class='mb-2'>
+          <div class='row'>
+            <div class='col'>
+              <div class='form-group'>
+                <label for='codigo' class='form-label'>
+                  Código para traspaso
+                </label>
+                <input
+                  class='form-control traslado-input'
+                  type='number'
+                  name='codigo'
+                  id='codigo'
+                  placeholder='Código de traspaso'
+                />
+              </div>
+            </div>
+            <div class='col'>
+              <div class='form-group'>
+                <label for='tipo' class='form-label'>
+                  Tipo de registro
+                </label>
+                <select class='form-select traslado-input' name='tipo' id='tipo'>
+                  <option value=''>Elegir</option>
+                  <option value='1'>Traslado</option>
+                  <option value='2'>Traspaso</option>
+                </select>
+              
+              </div>
+            </div>
           </div>
         </form>
         <h5 class='text-center text-blue-600 mb-4'>Partidas a aumentar</h5>
@@ -100,7 +126,7 @@ export const pre_traspasosForm_card = async ({
   const resumenPartidas = () => {
     let filasAumentar = informacion.añadir.map((el) => {
       let partidaEncontrada = ejercicioFiscal.distribucion_partidas.find(
-        (partida) => Number(partida.id) === el.id
+        (partida) => Number(partida.id) === el.id_distribucion
       )
 
       let sppa = `${
@@ -133,7 +159,7 @@ export const pre_traspasosForm_card = async ({
 
     let filasDisminuir = informacion.restar.map((el) => {
       let partidaEncontrada = ejercicioFiscal.distribucion_partidas.find(
-        (partida) => Number(partida.id) === el.id
+        (partida) => Number(partida.id) === el.id_distribucion
       )
 
       let sppa = `${
@@ -373,7 +399,24 @@ export const pre_traspasosForm_card = async ({
 
   // CARGAR LISTA DE PARTIDAS
 
-  function enviarInformacion(data) {}
+  async function enviarInformacion() {
+    let mappedInformacion = {
+      info: {
+        n_orden: fieldList.codigo,
+        id_ejercicio: ejercicioFiscal.id,
+        monto_total: montos.totalSumar,
+      },
+      añadir: informacion.añadir,
+      restar: informacion.restar,
+    }
+    console.log(mappedInformacion)
+
+    let res = await registrarTraspaso(mappedInformacion)
+    if (res.success) {
+      recargarEjercicio()
+      closeCard(cardElement)
+    }
+  }
 
   //   formElement.addEventListener('submit', (e) => e.preventDefault())
 
@@ -437,6 +480,25 @@ export const pre_traspasosForm_card = async ({
 
     if (e.target === btnNext) {
       if (formFocus === 1) {
+        let trasladoInputs = d.querySelectorAll('.traslado-input')
+
+        trasladoInputs.forEach((input) => {
+          validateInput({
+            target: input,
+            fieldList,
+            fieldListErrors,
+            type: fieldListErrors[input.name].type,
+          })
+        })
+
+        if (Object.values(fieldListErrors).some((el) => el.value)) {
+          toastNotification({
+            type: NOTIFICATIONS_TYPES.fail,
+            message: 'Hay mensajes inválidos',
+          })
+          return
+        }
+
         if (montos.totalSumar <= 0) {
           toastNotification({
             type: NOTIFICATIONS_TYPES.fail,
@@ -527,6 +589,9 @@ export const pre_traspasosForm_card = async ({
         confirmNotification({
           type: NOTIFICATIONS_TYPES.send,
           message: '¿Está seguro de realizar esta solicitud de traspaso?',
+          successFunction: function () {
+            enviarInformacion(informacion)
+          },
         })
       }
     }
@@ -613,7 +678,7 @@ export const pre_traspasosForm_card = async ({
       }
 
       return {
-        id: partidaEncontrada.id,
+        id_distribucion: partidaEncontrada.id,
         monto: formatearFloat(montoInput.value),
       }
     })
