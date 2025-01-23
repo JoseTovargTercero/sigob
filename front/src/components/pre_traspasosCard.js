@@ -1,3 +1,5 @@
+import { aceptarTraspaso, rechazarTraspaso } from '../api/pre_traspasos.js'
+import { loadTraspasosTable } from '../controllers/pre_traspasosTable.js'
 import {
   confirmNotification,
   hideLoader,
@@ -34,6 +36,8 @@ export const pre_traspasosCard = ({
     añadir: [],
     restar: [],
   }
+
+  const documentoLabel = data.tipo === 1 ? 'Traslado' : 'Traspaso'
 
   const resumenPartidas = () => {
     data.detalles.forEach((distribucion) => {
@@ -127,11 +131,28 @@ export const pre_traspasosCard = ({
       </div>`
   }
 
+  let validarFooter = () => {
+    if (data.status === 0) {
+      return `  <button class='btn btn-danger' id='btn-rechazar'>
+      Rechazar
+    </button>
+    <button class='btn btn-primary' id='btn-aceptar'>
+      Aceptar
+    </button>`
+    }
+    if (data.status === 1) {
+      return `<span class='btn btn-success'>Aceptado</span>`
+    }
+    if (data.status === 2) {
+      return `<span class='btn btn-danger'>Rechazado</span>`
+    }
+  }
+
   let card = `<div class='card slide-up-animation' id='${nombreCard}-form-card'>
           <div class='card-header d-flex justify-content-between'>
             <div class=''>
-              <h5 class='mb-0'>Detalles de CAMBIAR SEGÚN TIPO</h5>
-              <small class='mt-0 text-muted'>Visualice los detalles del {TIPO}</small>
+              <h5 class='mb-0'>Detalles de ${documentoLabel}</h5>
+              <small class='mt-0 text-muted'>Visualice los detalles del ${documentoLabel}</small>
             </div>
             <button
               data-close='btn-close'
@@ -142,14 +163,19 @@ export const pre_traspasosCard = ({
               &times;
             </button>
           </div>
-          <div class='card-body'>${resumenPartidas()}</div>
+          <div class='card-body'>
+          
+          <h6>Numero de documento: <b>${data.n_orden}</b></h6>
+          <h6>Fecha de creación del documento: <b>${data.fecha
+            .split('-')
+            .reverse()
+            .join('/')}</b></h6>
+          ${resumenPartidas()}
+          </div>
           <div class='card-footer text-center'>
-        <button class='btn btn-danger' id='btn-rechazar'>
-          Rechazar
-        </button>
-        <button class='btn btn-primary' id='btn-aceptar'>
-          Aceptar
-        </button>
+
+          
+       ${validarFooter()}
       </div>
         </div>`
 
@@ -172,10 +198,30 @@ export const pre_traspasosCard = ({
       closeCard(cardElement)
     }
     if (e.target.id === 'btn-aceptar') {
-      console.log('aceptar')
+      confirmNotification({
+        type: NOTIFICATIONS_TYPES.send,
+        message: '¿Está seguro de aceptar el traspaso?',
+        successFunction: async () => {
+          let res = await aceptarTraspaso(data.id)
+          if (res.success) {
+            closeCard(cardElement)
+            loadTraspasosTable(ejercicioFiscal.id)
+          }
+        },
+      })
     }
     if (e.target.id === 'btn-rechazar') {
-      console.log('rechazar')
+      confirmNotification({
+        type: NOTIFICATIONS_TYPES.send,
+        message: '¿Está seguro de aceptar el traspaso?',
+        successFunction: async () => {
+          let res = await rechazarTraspaso(data.id)
+          if (res.success) {
+            closeCard(cardElement)
+            loadTraspasosTable(ejercicioFiscal.id)
+          }
+        },
+      })
     }
   }
 

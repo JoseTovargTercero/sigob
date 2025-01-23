@@ -11,6 +11,7 @@ export async function validateTraspasosTable({ id_ejercicio }) {
     scrollY: 300,
     language: tableLanguage,
     columns: [
+      { data: 'tipo' },
       { data: 'numero_orden' },
 
       { data: 'monto' },
@@ -48,24 +49,30 @@ export async function loadTraspasosTable(id_ejercicio) {
 
   let data = datosOrdenados.map((solicitud) => {
     return {
+      tipo: Number(solicitud.tipo) === 1 ? 'Traslado' : 'Traspaso',
       numero_orden: solicitud.n_orden,
 
       monto: separadorLocal(solicitud.monto_total),
       fecha: solicitud.fecha,
-      status: solicitud.status === 0 ? 'Pendiente' : 'Aceptado',
+      status:
+        Number(solicitud.status) === 0
+          ? `<span class="btn btn-warning btn-sm">Pendiente</span>`
+          : Number(solicitud.status) === 1
+          ? `<span class='btn btn-success btn-sm'>Aceptado</span>`
+          : `<span class="btn btn-danger btn-sm">Rechazado</span>`,
       acciones:
         Number(solicitud.status) === 0
           ? `<button
-              class='btn btn-info btn-sm btn-view'
-              data-detalleid='${solicitud.id}'
-            >
-              <i class='bx bx-detail me-1'></i>Detalles
-            </button>`
-          : ` <button
               class='btn btn-secondary btn-sm btn-view'
               data-detalleid='${solicitud.id}'
             >
               <i class='bx bx-detail me-1'></i>Validar
+            </button>`
+          : ` <button
+              class='btn btn-info btn-sm btn-view'
+              data-detalleid='${solicitud.id}'
+            >
+              <i class='bx bx-detail me-1'></i>Detalles
             </button>`,
     }
   })

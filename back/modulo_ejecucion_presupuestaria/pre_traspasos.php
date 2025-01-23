@@ -90,13 +90,13 @@ function registrarTraspasoPartida($data)
             } else {
                 $nOrden = "T" . $anoEjercicio . "-" . $info['n_orden'];
             }
-        }elseif ($tipo == 2) {
-             if (!$esValido) {
+        } elseif ($tipo == 2) {
+            if (!$esValido) {
                 $nOrden = $info['n_orden'];
             } else {
                 throw new Exception("Un Traspaso no puede ser menor al 20 por ciento de la agrupacion de las partidas seleccionadas");
             }
-        }else {
+        } else {
             throw new Exception("Tipo inválido: " . $tipo);
         }
 
@@ -337,13 +337,19 @@ function gestionarTraspaso($id, $accion)
             throw new Exception("No se encontró el traspaso con ID $id o no se pudo actualizar el estado.");
         }
 
-        return json_encode(["success" => "El traspaso con ID $id se actualizó correctamente al estado $nuevoStatus."]);
+        if ($accion === 'aceptar') {
+            return json_encode(["success" => "Se ha actualizado el registro correctamente."]);
+        }
+
+        if ($accion === 'rechazar') {
+            return json_encode(["success" => "Se ha actualizado el registro correctamente."]);
+        }
 
     } catch (Exception $e) {
         return json_encode(['error' => $e->getMessage()]);
     }
 }
- 
+
 
 
 
@@ -497,7 +503,7 @@ function actualizarTraspasoPartida($id_traspaso, $id_partida_t, $id_partida_r, $
             throw new Exception("No se pudo actualizar el traspaso.");
         }
     } catch (Exception $e) {
-            $conexion->rollback();
+        $conexion->rollback();
         registrarError($e->getMessage());
         return json_encode(['error' => $e->getMessage()]);
     }
@@ -548,7 +554,7 @@ function eliminarTraspaso($id_traspaso)
         return json_encode(["success" => "El traspaso se elimino correctamente."]);
 
     } catch (Exception $e) {
-            $conexion->rollback();
+        $conexion->rollback();
         registrarError($e->getMessage());
         return json_encode(['error' => $e->getMessage()]);
     }
@@ -577,8 +583,12 @@ if (isset($data["accion"])) {
             echo obtenerUltimosOrdenes($data["id_ejercicio"]);
             break;
 
-        case 'gestionar':
-            echo obtenerUltimosOrdenes($data["id"],$data["accion"]);
+        case 'aceptar':
+            echo gestionarTraspaso($data["id"], 'aceptar');
+            break;
+
+        case 'rechazar':
+            echo gestionarTraspaso($data["id"], 'rechazar');
             break;
 
         case 'consultar_por_id':

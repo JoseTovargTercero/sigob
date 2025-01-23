@@ -8,7 +8,10 @@ import { pre_traspasosForm_card } from '../components/pre_traspasosForm_card.js'
 import { toastNotification } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 
-import { validateTraspasosTable } from './pre_traspasosTable.js'
+import {
+  loadTraspasosTable,
+  validateTraspasosTable,
+} from './pre_traspasosTable.js'
 
 const d = document
 const w = window
@@ -49,7 +52,7 @@ export const validateTraspasosView = async () => {
             ejercicioTarget: ejercicioFiscalElement,
           })
 
-          loadGastosTable({ id_ejercicio: ejercicioFiscal.id })
+          loadTraspasosTable(ejercicioFiscal.id)
         },
       })
     }

@@ -1,5 +1,5 @@
 import { obtenerDistribucionPositiva } from '../api/pre_distribucion.js'
-import { registrarTraspaso } from '../api/pre_traspasos.js'
+import { registrarTraspaso, ultimosTraspasos } from '../api/pre_traspasos.js'
 import {
   confirmNotification,
   formatearFloat,
@@ -39,6 +39,10 @@ export const pre_traspasosForm_card = async ({
     id_ejercicio: ejercicioFiscal.id,
   })
 
+  let ultimosRegistros = await ultimosTraspasos(ejercicioFiscal.id)
+
+  console.log(ultimosRegistros)
+
   let informacion = {
     añadir: [],
     restar: [],
@@ -59,7 +63,7 @@ export const pre_traspasosForm_card = async ({
   }
 
   const informacionPrincipal = () => {
-    return ` <div id='card-body-part-1' class='slide-up-animation'>
+    return `    <div id='card-body-part-1' class='slide-up-animation'>
         <form class='mb-2'>
           <div class='row'>
             <div class='col'>
@@ -81,12 +85,32 @@ export const pre_traspasosForm_card = async ({
                 <label for='tipo' class='form-label'>
                   Tipo de registro
                 </label>
-                <select class='form-select traslado-input' name='tipo' id='tipo'>
+                <select
+                  class='form-select traslado-input'
+                  name='tipo'
+                  id='tipo'
+                >
                   <option value=''>Elegir</option>
                   <option value='1'>Traslado</option>
                   <option value='2'>Traspaso</option>
                 </select>
-              
+              </div>
+            </div>
+          </div>
+          <div class='row'>
+            <div class='col order-last'>
+              <div class='form-group'>
+                <label for='tipo' class='form-label'>
+                  Correaltivo de ultima orden
+                </label>
+                <input
+                  class='form-control traslado-input'
+                  type='text'
+                  name='ultima-orden'
+                  id='ultima-orden'
+                  placeholder='Correlativo de ultima orden...'
+                  disabled
+                />
               </div>
             </div>
           </div>
@@ -389,12 +413,36 @@ export const pre_traspasosForm_card = async ({
       return
     }
 
+    if (e.target.id === 'tipo') {
+      let input = d.getElementById('ultima-orden')
+      if (Number(e.target.value) === 1) {
+        if (ultimosRegistros.ultimo_traslado === null) {
+          input.value = 'No hay registro de traslado'
+        } else {
+          input.value = ultimosRegistros.ultimo_traslado
+        }
+      }
+
+      if (Number(e.target.value) === 2) {
+        if (ultimosRegistros.ultimo_traspaso === null) {
+          input.value = 'No hay registro de traspasos'
+        } else {
+          input.value = ultimosRegistros.ultimo_traspaso
+        }
+      }
+
+      if (!e.target.value) {
+        input.value = 'Correlativo de última orden...'
+      }
+    }
+
     fieldList = validateInput({
       target: e.target,
       fieldList,
       fieldListErrors,
       type: fieldListErrors[e.target.name].type,
     })
+    console.log(fieldList)
   }
 
   // CARGAR LISTA DE PARTIDAS
@@ -405,6 +453,7 @@ export const pre_traspasosForm_card = async ({
         n_orden: fieldList.codigo,
         id_ejercicio: ejercicioFiscal.id,
         monto_total: montos.totalSumar,
+        tipo: fieldList.tipo,
       },
       añadir: informacion.añadir,
       restar: informacion.restar,
