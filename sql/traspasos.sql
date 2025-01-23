@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 18-01-2025 a las 02:48:38
+-- Tiempo de generación: 23-01-2025 a las 04:03:46
 -- Versión del servidor: 10.4.27-MariaDB
 -- Versión de PHP: 7.4.33
 
@@ -33,7 +33,8 @@ CREATE TABLE `traspasos` (
   `id_ejercicio` int(255) NOT NULL,
   `monto_total` varchar(255) DEFAULT NULL,
   `fecha` varchar(255) DEFAULT NULL,
-  `status` int(255) NOT NULL
+  `status` int(255) NOT NULL,
+  `tipo` int(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --

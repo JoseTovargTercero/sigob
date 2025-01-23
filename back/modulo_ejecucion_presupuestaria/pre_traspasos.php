@@ -22,12 +22,89 @@ function registrarTraspasoPartida($data)
         $info = $data['info'];
         $añadir = $data['añadir'];
         $restar = $data['restar'];
+        $tipo = $info['tipo'];
+
+        // Obtener el año del ejercicio fiscal
+        $sqlEjercicio = "SELECT ano FROM ejercicio_fiscal WHERE id = ?";
+        $stmtEjercicio = $conexion->prepare($sqlEjercicio);
+        $stmtEjercicio->bind_param("i", $info['id_ejercicio']);
+        $stmtEjercicio->execute();
+        $resultadoEjercicio = $stmtEjercicio->get_result();
+
+        if ($resultadoEjercicio->num_rows === 0) {
+            throw new Exception("No se encontró el ejercicio fiscal con ID " . $info['id_ejercicio']);
+        }
+
+        $anoEjercicio = $resultadoEjercicio->fetch_assoc()['ano'];
+
+        // Procesar los datos de `restar` para verificar el 20%
+        $partidaMontos = [];
+        foreach ($restar as $item) {
+            $sqlDistribucion = "SELECT id_partida, monto_actual FROM distribucion_presupuestaria WHERE id = ?";
+            $stmtDistribucion = $conexion->prepare($sqlDistribucion);
+            $stmtDistribucion->bind_param("i", $item['id_distribucion']);
+            $stmtDistribucion->execute();
+            $resultadoDistribucion = $stmtDistribucion->get_result();
+
+            if ($resultadoDistribucion->num_rows === 0) {
+                throw new Exception("No se encontró la distribución presupuestaria con ID " . $item['id_distribucion']);
+            }
+
+            $filaDistribucion = $resultadoDistribucion->fetch_assoc();
+            $idPartida = $filaDistribucion['id_partida'];
+
+            $sqlPartida = "SELECT partida FROM partidas_presupuestarias WHERE id = ?";
+            $stmtPartida = $conexion->prepare($sqlPartida);
+            $stmtPartida->bind_param("i", $idPartida);
+            $stmtPartida->execute();
+            $resultadoPartida = $stmtPartida->get_result();
+
+            if ($resultadoPartida->num_rows === 0) {
+                throw new Exception("No se encontró la partida presupuestaria con ID " . $idPartida);
+            }
+
+            $partida = $resultadoPartida->fetch_assoc()['partida'];
+            $clavePartida = substr($partida, 0, 3);
+
+            if (!isset($partidaMontos[$clavePartida])) {
+                $partidaMontos[$clavePartida] = 0;
+            }
+
+            $partidaMontos[$clavePartida] += $filaDistribucion['monto_actual'];
+        }
+
+        // Calcular el 20% del monto total agrupado por los primeros tres dígitos de la partida
+        $esValido = false;
+        foreach ($partidaMontos as $clave => $montoTotal) {
+            $limite = $montoTotal * 0.2;
+            if ($info['monto_total'] <= $limite) {
+                $esValido = true;
+                break;
+            }
+        }
+
+        // Determinar el formato de n_orden
+        if ($tipo == 1) {
+            if (!$esValido) {
+                throw new Exception("Un traslado no puede ser mayor al 20 por ciento de la agrupacion de las partidas seleccionadas");
+            } else {
+                $nOrden = "T" . $anoEjercicio . "-" . $info['n_orden'];
+            }
+        }elseif ($tipo == 2) {
+             if (!$esValido) {
+                $nOrden = $info['n_orden'];
+            } else {
+                throw new Exception("Un Traspaso no puede ser menor al 20 por ciento de la agrupacion de las partidas seleccionadas");
+            }
+        }else {
+            throw new Exception("Tipo inválido: " . $tipo);
+        }
 
         // Insertar el registro principal en la tabla `traspasos`
-        $sqlTraspaso = "INSERT INTO traspasos (n_orden, id_ejercicio, monto_total, fecha, status) VALUES (?, ?, ?, ?, 0)";
+        $sqlTraspaso = "INSERT INTO traspasos (n_orden, id_ejercicio, monto_total, fecha, status, tipo) VALUES (?, ?, ?, ?, 0, ?)";
         $stmtTraspaso = $conexion->prepare($sqlTraspaso);
         $fecha_actual = date("Y-m-d");
-        $stmtTraspaso->bind_param("sids", $info['n_orden'], $info['id_ejercicio'], $info['monto_total'], $fecha_actual);
+        $stmtTraspaso->bind_param("sidsi", $nOrden, $info['id_ejercicio'], $info['monto_total'], $fecha_actual, $tipo);
         $stmtTraspaso->execute();
 
         if ($stmtTraspaso->affected_rows === 0) {
@@ -36,60 +113,32 @@ function registrarTraspasoPartida($data)
 
         $id_traspaso = $conexion->insert_id;
 
-        // Procesar los datos de `restar`
+        // Registrar información de traspasos en `traspaso_informacion`
         foreach ($restar as $item) {
-            $sqlDistribucion = "SELECT monto_actual FROM distribucion_presupuestaria WHERE id = ?";
-            $stmtDistribucion = $conexion->prepare($sqlDistribucion);
-            $stmtDistribucion->bind_param("i", $item['id_distribucion']);
-            $stmtDistribucion->execute();
-            $resultadoDistribucion = $stmtDistribucion->get_result();
-
-            if ($resultadoDistribucion->num_rows === 0) {
-                throw new Exception("No se encontro la distribucion presupuestaria con ID " . $item['id_distribucion']);
-            }
-
-            $filaDistribucion = $resultadoDistribucion->fetch_assoc();
-            if ($filaDistribucion['monto_actual'] < $item['monto']) {
-                throw new Exception("El monto solicitado para restar excede el monto actual de la distribucion con ID " . $item['id_distribucion']);
-            }
-
-            // Registrar en `traspaso_informacion`
             $sqlTraspasoInfo = "INSERT INTO traspaso_informacion (id_traspaso, id_distribucion, monto, tipo) VALUES (?, ?, ?, 'D')";
             $stmtTraspasoInfo = $conexion->prepare($sqlTraspasoInfo);
             $stmtTraspasoInfo->bind_param("iid", $id_traspaso, $item['id_distribucion'], $item['monto']);
             $stmtTraspasoInfo->execute();
 
             if ($stmtTraspasoInfo->affected_rows === 0) {
-                throw new Exception("No se pudo registrar la informacion del traspaso en 'restar' con ID distribución " . $item['id_distribucion']);
+                throw new Exception("No se pudo registrar la información del traspaso en 'restar' con ID distribución " . $item['id_distribucion']);
             }
         }
 
-        // Procesar los datos de `añadir`
         foreach ($añadir as $item) {
-            $sqlDistribucion = "SELECT monto_actual FROM distribucion_presupuestaria WHERE id = ?";
-            $stmtDistribucion = $conexion->prepare($sqlDistribucion);
-            $stmtDistribucion->bind_param("i", $item['id_distribucion']);
-            $stmtDistribucion->execute();
-            $resultadoDistribucion = $stmtDistribucion->get_result();
-
-            if ($resultadoDistribucion->num_rows === 0) {
-                throw new Exception("No se encontro la distribucion presupuestaria con ID " . $item['id_distribucion']);
-            }
-
-            // Registrar en `traspaso_informacion`
             $sqlTraspasoInfo = "INSERT INTO traspaso_informacion (id_traspaso, id_distribucion, monto, tipo) VALUES (?, ?, ?, 'A')";
             $stmtTraspasoInfo = $conexion->prepare($sqlTraspasoInfo);
             $stmtTraspasoInfo->bind_param("iid", $id_traspaso, $item['id_distribucion'], $item['monto']);
             $stmtTraspasoInfo->execute();
 
             if ($stmtTraspasoInfo->affected_rows === 0) {
-                throw new Exception("No se pudo registrar la informacion del traspaso en 'añadir' con ID distribucion " . $item['id_distribucion']);
+                throw new Exception("No se pudo registrar la información del traspaso en 'añadir' con ID distribución " . $item['id_distribucion']);
             }
         }
 
         // Confirmar la transacción
         $conexion->commit();
-        return json_encode(["success" => "El traspaso se registro correctamente."]);
+        return json_encode(["success" => "El traspaso se registró correctamente."]);
 
     } catch (Exception $e) {
         $conexion->rollback();
@@ -170,6 +219,80 @@ function consultarTodosTraspasos($id_ejercicio)
         return json_encode(["success" => []]);
     }
 }
+
+function obtenerUltimosOrdenes($id_ejercicio)
+{
+    global $conexion;
+
+    try {
+        // Consultar el último n_orden para tipo 1 (traslado)
+        $sqlTraslado = "SELECT n_orden 
+                        FROM traspasos 
+                        WHERE id_ejercicio = ? AND tipo = 1 
+                        ORDER BY id DESC LIMIT 1";
+        $stmtTraslado = $conexion->prepare($sqlTraslado);
+        $stmtTraslado->bind_param("i", $id_ejercicio);
+        $stmtTraslado->execute();
+        $resultadoTraslado = $stmtTraslado->get_result();
+        $traslado = $resultadoTraslado->num_rows > 0 ? $resultadoTraslado->fetch_assoc()['n_orden'] : null;
+
+        // Consultar el último n_orden para tipo 2 (traspaso)
+        $sqlTraspaso = "SELECT n_orden 
+                        FROM traspasos 
+                        WHERE id_ejercicio = ? AND tipo = 2 
+                        ORDER BY id DESC LIMIT 1";
+        $stmtTraspaso = $conexion->prepare($sqlTraspaso);
+        $stmtTraspaso->bind_param("i", $id_ejercicio);
+        $stmtTraspaso->execute();
+        $resultadoTraspaso = $stmtTraspaso->get_result();
+        $traspaso = $resultadoTraspaso->num_rows > 0 ? $resultadoTraspaso->fetch_assoc()['n_orden'] : null;
+
+        // Devolver los resultados
+        return json_encode([
+            "ultimo_traslado" => $traslado,
+            "ultimo_traspaso" => $traspaso
+        ]);
+
+    } catch (Exception $e) {
+        return json_encode(['error' => $e->getMessage()]);
+    }
+}
+
+function gestionarTraspaso($id, $accion)
+{
+    global $conexion;
+
+    try {
+        // Validar la acción
+        $nuevoStatus = null;
+        if ($accion === 'aceptar') {
+            $nuevoStatus = 1;
+        } elseif ($accion === 'rechazar') {
+            $nuevoStatus = 2;
+        } else {
+            throw new Exception("Acción inválida: $accion");
+        }
+
+        // Preparar la consulta de actualización
+        $sql = "UPDATE traspasos SET status = ? WHERE id = ?";
+        $stmt = $conexion->prepare($sql);
+        $stmt->bind_param("ii", $nuevoStatus, $id);
+
+        // Ejecutar la consulta
+        $stmt->execute();
+
+        if ($stmt->affected_rows === 0) {
+            throw new Exception("No se encontró el traspaso con ID $id o no se pudo actualizar el estado.");
+        }
+
+        return json_encode(["success" => "El traspaso con ID $id se actualizó correctamente al estado $nuevoStatus."]);
+
+    } catch (Exception $e) {
+        return json_encode(['error' => $e->getMessage()]);
+    }
+}
+
+
 
 
 function consultarTraspasoPorId($id)
@@ -395,6 +518,14 @@ if (isset($data["accion"])) {
 
         case 'consultar_todos':
             echo consultarTodosTraspasos($data["id_ejercicio"]);
+            break;
+
+        case 'ultima_orden':
+            echo obtenerUltimosOrdenes($data["id_ejercicio"]);
+            break;
+
+        case 'gestionar':
+            echo obtenerUltimosOrdenes($data["id"],$data["accion"]);
             break;
 
         case 'consultar_por_id':
