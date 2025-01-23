@@ -153,7 +153,7 @@ function consultarTodosTraspasos($id_ejercicio)
     global $conexion;
 
     // Consultar los traspasos principales filtrando por id_ejercicio
-    $sql = "SELECT t.id, t.n_orden, t.id_ejercicio, t.monto_total, t.fecha, t.status 
+    $sql = "SELECT t.id, t.n_orden, t.id_ejercicio, t.monto_total, t.fecha, t.status, t.tipo 
             FROM traspasos t
             WHERE t.id_ejercicio = ?";
     $stmt = $conexion->prepare($sql);
@@ -273,7 +273,59 @@ function gestionarTraspaso($id, $accion)
             throw new Exception("Acción inválida: $accion");
         }
 
-        // Preparar la consulta de actualización
+        if ($nuevoStatus === 1) {
+            // Consultar los registros de la tabla `traspaso_informacion` asociados al `id_traspaso`
+            $sqlInfo = "SELECT id_distribucion, monto, tipo FROM traspaso_informacion WHERE id_traspaso = ?";
+            $stmtInfo = $conexion->prepare($sqlInfo);
+            $stmtInfo->bind_param("i", $id);
+            $stmtInfo->execute();
+            $resultInfo = $stmtInfo->get_result();
+
+            if ($resultInfo->num_rows === 0) {
+                throw new Exception("No se encontraron registros en `traspaso_informacion` para el traspaso con ID $id.");
+            }
+
+            // Procesar cada registro
+            while ($row = $resultInfo->fetch_assoc()) {
+                $idDistribucion = $row['id_distribucion'];
+                $monto = $row['monto'];
+                $tipo = $row['tipo'];
+
+                // Consultar la tabla `distribucion_presupuestaria` para obtener el registro correspondiente
+                $sqlDistribucion = "SELECT monto_actual FROM distribucion_presupuestaria WHERE id = ?";
+                $stmtDistribucion = $conexion->prepare($sqlDistribucion);
+                $stmtDistribucion->bind_param("i", $idDistribucion);
+                $stmtDistribucion->execute();
+                $resultDistribucion = $stmtDistribucion->get_result();
+
+                if ($resultDistribucion->num_rows === 0) {
+                    throw new Exception("No se encontró la distribución presupuestaria con ID $idDistribucion.");
+                }
+
+                $montoActual = $resultDistribucion->fetch_assoc()['monto_actual'];
+
+                // Actualizar el `monto_actual` en función del tipo
+                if ($tipo === 'D') {
+                    $nuevoMonto = $montoActual - $monto;
+                } elseif ($tipo === 'A') {
+                    $nuevoMonto = $montoActual + $monto;
+                } else {
+                    throw new Exception("Tipo inválido: $tipo.");
+                }
+
+                // Actualizar el monto en la tabla `distribucion_presupuestaria`
+                $sqlUpdateDistribucion = "UPDATE distribucion_presupuestaria SET monto_actual = ? WHERE id = ?";
+                $stmtUpdate = $conexion->prepare($sqlUpdateDistribucion);
+                $stmtUpdate->bind_param("di", $nuevoMonto, $idDistribucion);
+                $stmtUpdate->execute();
+
+                if ($stmtUpdate->affected_rows === 0) {
+                    throw new Exception("No se pudo actualizar el monto para la distribución con ID $idDistribucion.");
+                }
+            }
+        }
+
+        // Preparar la consulta de actualización para el `status`
         $sql = "UPDATE traspasos SET status = ? WHERE id = ?";
         $stmt = $conexion->prepare($sql);
         $stmt->bind_param("ii", $nuevoStatus, $id);
@@ -291,6 +343,7 @@ function gestionarTraspaso($id, $accion)
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+ 
 
 
 
@@ -300,7 +353,7 @@ function consultarTraspasoPorId($id)
     global $conexion;
 
     // Consultar el traspaso principal por su ID
-    $sql = "SELECT t.id, t.n_orden, t.id_ejercicio, t.monto_total, t.fecha, t.status 
+    $sql = "SELECT t.id, t.n_orden, t.id_ejercicio, t.monto_total, t.fecha, t.status, t.tipo 
             FROM traspasos t 
             WHERE t.id = ?";
     $stmt = $conexion->prepare($sql);
