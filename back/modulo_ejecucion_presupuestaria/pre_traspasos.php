@@ -38,7 +38,7 @@ function registrarTraspasoPartida($data)
         $anoEjercicio = $resultadoEjercicio->fetch_assoc()['ano'];
 
         // Validación adicional para los `id_distribucion` en `añadir`
-        foreach ($añadir as $item) {
+      foreach ($añadir as $item) {
     $sqlValidacion = "
         SELECT 
             ti.id_distribucion, 
@@ -53,7 +53,9 @@ function registrarTraspasoPartida($data)
         JOIN 
             partidas_presupuestarias pp ON dp.id_partida = pp.id
         WHERE 
-            ti.id_distribucion = ? AND t.id_ejercicio = ?";
+            ti.id_distribucion = ? 
+            AND t.id_ejercicio = ?
+            AND ti.tipo = 'D'";
     
     $stmtValidacion = $conexion->prepare($sqlValidacion);
     $stmtValidacion->bind_param("ii", $item['id_distribucion'], $info['id_ejercicio']);
@@ -65,6 +67,7 @@ function registrarTraspasoPartida($data)
         throw new Exception("La partida " . $filaValidacion['partida'] . " no está disponible para recibir dinero porque anteriormente traspasó dinero.");
     }
 }
+
 
 
         // Procesar los datos de `restar` para verificar el 20%
