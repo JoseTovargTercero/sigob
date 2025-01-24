@@ -100,6 +100,38 @@ function registrarTraspasoPartida($data)
             throw new Exception("Tipo inválido: " . $tipo);
         }
 
+        // Validar las partidas en `añadir`
+        foreach ($añadir as $item) {
+            $sqlDistribucion = "SELECT id_partida FROM distribucion_presupuestaria WHERE id = ?";
+            $stmtDistribucion = $conexion->prepare($sqlDistribucion);
+            $stmtDistribucion->bind_param("i", $item['id_distribucion']);
+            $stmtDistribucion->execute();
+            $resultadoDistribucion = $stmtDistribucion->get_result();
+
+            if ($resultadoDistribucion->num_rows === 0) {
+                throw new Exception("No se encontró la distribución presupuestaria con ID " . $item['id_distribucion']);
+            }
+
+            $idPartida = $resultadoDistribucion->fetch_assoc()['id_partida'];
+
+            $sqlPartida = "SELECT partida, status FROM partidas_presupuestarias WHERE id = ?";
+            $stmtPartida = $conexion->prepare($sqlPartida);
+            $stmtPartida->bind_param("i", $idPartida);
+            $stmtPartida->execute();
+            $resultadoPartida = $stmtPartida->get_result();
+
+            if ($resultadoPartida->num_rows === 0) {
+                throw new Exception("No se encontró la partida presupuestaria con ID " . $idPartida);
+            }
+
+            $filaPartida = $resultadoPartida->fetch_assoc();
+            $status = $filaPartida['status'];
+
+            if ($status == 1) {
+                throw new Exception("La partida " . $filaPartida['partida'] . " no está disponible para recibir dinero porque anteriormente traspasó dinero.");
+            }
+        }
+
         // Insertar el registro principal en la tabla `traspasos`
         $sqlTraspaso = "INSERT INTO traspasos (n_orden, id_ejercicio, monto_total, fecha, status, tipo) VALUES (?, ?, ?, ?, 0, ?)";
         $stmtTraspaso = $conexion->prepare($sqlTraspaso);
@@ -146,6 +178,7 @@ function registrarTraspasoPartida($data)
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 
 function consultarTodosTraspasos($id_ejercicio)
@@ -292,7 +325,7 @@ function gestionarTraspaso($id, $accion)
                 $tipo = $row['tipo'];
 
                 // Consultar la tabla `distribucion_presupuestaria` para obtener el registro correspondiente
-                $sqlDistribucion = "SELECT monto_actual FROM distribucion_presupuestaria WHERE id = ?";
+                $sqlDistribucion = "SELECT monto_actual, id_partida FROM distribucion_presupuestaria WHERE id = ?";
                 $stmtDistribucion = $conexion->prepare($sqlDistribucion);
                 $stmtDistribucion->bind_param("i", $idDistribucion);
                 $stmtDistribucion->execute();
@@ -302,11 +335,23 @@ function gestionarTraspaso($id, $accion)
                     throw new Exception("No se encontró la distribución presupuestaria con ID $idDistribucion.");
                 }
 
-                $montoActual = $resultDistribucion->fetch_assoc()['monto_actual'];
+                $distribucionData = $resultDistribucion->fetch_assoc();
+                $montoActual = $distribucionData['monto_actual'];
+                $idPartida = $distribucionData['id_partida'];
 
                 // Actualizar el `monto_actual` en función del tipo
                 if ($tipo === 'D') {
                     $nuevoMonto = $montoActual - $monto;
+
+                    // Cambiar el `status` a 1 en `partidas_presupuestaria` para el `id_partida` correspondiente
+                    $sqlUpdatePartida = "UPDATE partidas_presupuestaria SET status = 1 WHERE id = ?";
+                    $stmtPartida = $conexion->prepare($sqlUpdatePartida);
+                    $stmtPartida->bind_param("i", $idPartida);
+                    $stmtPartida->execute();
+
+                    if ($stmtPartida->affected_rows === 0) {
+                        throw new Exception("No se pudo actualizar el estado en la tabla `partidas_presupuestaria` para el ID $idPartida.");
+                    }
                 } elseif ($tipo === 'A') {
                     $nuevoMonto = $montoActual + $monto;
                 } else {
@@ -349,6 +394,7 @@ function gestionarTraspaso($id, $accion)
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 
 
