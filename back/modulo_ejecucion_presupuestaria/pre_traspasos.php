@@ -37,6 +37,36 @@ function registrarTraspasoPartida($data)
 
         $anoEjercicio = $resultadoEjercicio->fetch_assoc()['ano'];
 
+        // Validación adicional para los `id_distribucion` en `añadir`
+        foreach ($añadir as $item) {
+    $sqlValidacion = "
+        SELECT 
+            ti.id_distribucion, 
+            t.id_ejercicio, 
+            pp.partida 
+        FROM 
+            traspaso_informacion ti
+        JOIN 
+            traspasos t ON ti.id_traspaso = t.id
+        JOIN 
+            distribucion_presupuestaria dp ON ti.id_distribucion = dp.id
+        JOIN 
+            partidas_presupuestarias pp ON dp.id_partida = pp.id
+        WHERE 
+            ti.id_distribucion = ? AND t.id_ejercicio = ?";
+    
+    $stmtValidacion = $conexion->prepare($sqlValidacion);
+    $stmtValidacion->bind_param("ii", $item['id_distribucion'], $info['id_ejercicio']);
+    $stmtValidacion->execute();
+    $resultadoValidacion = $stmtValidacion->get_result();
+
+    if ($resultadoValidacion->num_rows > 0) {
+        $filaValidacion = $resultadoValidacion->fetch_assoc();
+        throw new Exception("La partida " . $filaValidacion['partida'] . " no está disponible para recibir dinero porque anteriormente traspasó dinero.");
+    }
+}
+
+
         // Procesar los datos de `restar` para verificar el 20%
         $partidaMontos = [];
         foreach ($restar as $item) {
@@ -86,7 +116,7 @@ function registrarTraspasoPartida($data)
         // Determinar el formato de n_orden
         if ($tipo == 1) {
             if (!$esValido) {
-                throw new Exception("Un traslado no puede ser mayor al 20 por ciento de la agrupacion de las partidas seleccionadas");
+                throw new Exception("Un traslado no puede ser mayor al 20 por ciento de la agrupación de las partidas seleccionadas");
             } else {
                 $nOrden = "T" . $anoEjercicio . "-" . $info['n_orden'];
             }
@@ -94,42 +124,10 @@ function registrarTraspasoPartida($data)
             if (!$esValido) {
                 $nOrden = $info['n_orden'];
             } else {
-                throw new Exception("Un Traspaso no puede ser menor al 20 por ciento de la agrupacion de las partidas seleccionadas");
+                throw new Exception("Un Traspaso no puede ser menor al 20 por ciento de la agrupación de las partidas seleccionadas");
             }
         } else {
             throw new Exception("Tipo inválido: " . $tipo);
-        }
-
-        // Validar las partidas en `añadir`
-        foreach ($añadir as $item) {
-            $sqlDistribucion = "SELECT id_partida FROM distribucion_presupuestaria WHERE id = ?";
-            $stmtDistribucion = $conexion->prepare($sqlDistribucion);
-            $stmtDistribucion->bind_param("i", $item['id_distribucion']);
-            $stmtDistribucion->execute();
-            $resultadoDistribucion = $stmtDistribucion->get_result();
-
-            if ($resultadoDistribucion->num_rows === 0) {
-                throw new Exception("No se encontró la distribución presupuestaria con ID " . $item['id_distribucion']);
-            }
-
-            $idPartida = $resultadoDistribucion->fetch_assoc()['id_partida'];
-
-            $sqlPartida = "SELECT partida, status FROM partidas_presupuestarias WHERE id = ?";
-            $stmtPartida = $conexion->prepare($sqlPartida);
-            $stmtPartida->bind_param("i", $idPartida);
-            $stmtPartida->execute();
-            $resultadoPartida = $stmtPartida->get_result();
-
-            if ($resultadoPartida->num_rows === 0) {
-                throw new Exception("No se encontró la partida presupuestaria con ID " . $idPartida);
-            }
-
-            $filaPartida = $resultadoPartida->fetch_assoc();
-            $status = $filaPartida['status'];
-
-            if ($status == 1) {
-                throw new Exception("La partida " . $filaPartida['partida'] . " no está disponible para recibir dinero porque anteriormente traspasó dinero.");
-            }
         }
 
         // Insertar el registro principal en la tabla `traspasos`
@@ -325,7 +323,7 @@ function gestionarTraspaso($id, $accion)
                 $tipo = $row['tipo'];
 
                 // Consultar la tabla `distribucion_presupuestaria` para obtener el registro correspondiente
-                $sqlDistribucion = "SELECT monto_actual, id_partida FROM distribucion_presupuestaria WHERE id = ?";
+                $sqlDistribucion = "SELECT monto_actual FROM distribucion_presupuestaria WHERE id = ?";
                 $stmtDistribucion = $conexion->prepare($sqlDistribucion);
                 $stmtDistribucion->bind_param("i", $idDistribucion);
                 $stmtDistribucion->execute();
@@ -335,23 +333,11 @@ function gestionarTraspaso($id, $accion)
                     throw new Exception("No se encontró la distribución presupuestaria con ID $idDistribucion.");
                 }
 
-                $distribucionData = $resultDistribucion->fetch_assoc();
-                $montoActual = $distribucionData['monto_actual'];
-                $idPartida = $distribucionData['id_partida'];
+                $montoActual = $resultDistribucion->fetch_assoc()['monto_actual'];
 
                 // Actualizar el `monto_actual` en función del tipo
                 if ($tipo === 'D') {
                     $nuevoMonto = $montoActual - $monto;
-
-                    // Cambiar el `status` a 1 en `partidas_presupuestaria` para el `id_partida` correspondiente
-                    $sqlUpdatePartida = "UPDATE partidas_presupuestaria SET status = 1 WHERE id = ?";
-                    $stmtPartida = $conexion->prepare($sqlUpdatePartida);
-                    $stmtPartida->bind_param("i", $idPartida);
-                    $stmtPartida->execute();
-
-                    if ($stmtPartida->affected_rows === 0) {
-                        throw new Exception("No se pudo actualizar el estado en la tabla `partidas_presupuestaria` para el ID $idPartida.");
-                    }
                 } elseif ($tipo === 'A') {
                     $nuevoMonto = $montoActual + $monto;
                 } else {
@@ -394,7 +380,6 @@ function gestionarTraspaso($id, $accion)
         return json_encode(['error' => $e->getMessage()]);
     }
 }
-
 
 
 
