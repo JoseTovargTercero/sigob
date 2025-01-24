@@ -10,8 +10,6 @@ import { APP_URL, config } from './urlConfig.js'
 const traspasoUrl = `${APP_URL}${config.MODULE_NAMES.EJECUCION}/pre_traspasos.php`
 
 const getTraspasos = async (id_ejercicio) => {
-  console.log(id_ejercicio)
-
   showLoader()
   try {
     let res = await fetch(traspasoUrl, {
@@ -31,7 +29,7 @@ const getTraspasos = async (id_ejercicio) => {
 
     const json = await res.json()
 
-    console.log(json)
+    // console.log(json)
 
     if (json.success) {
       return json.success
