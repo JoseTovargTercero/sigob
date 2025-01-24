@@ -339,6 +339,61 @@ function obtenerGastos($id_ejercicio)
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+function obtenerSumatoriaPorTrimestre($id_ejercicio)
+{
+    global $conexion;
+
+    try {
+        // Inicializar las sumatorias por trimestre
+        $trimestres = [
+            'T1' => 0, // Enero a Marzo
+            'T2' => 0, // Abril a Junio
+            'T3' => 0, // Julio a Septiembre
+            'T4' => 0  // Octubre a Diciembre
+        ];
+
+        // Consultar los montos de la tabla `gastos` para el ejercicio especificado
+        $sql = "SELECT monto, fecha FROM gastos WHERE id_ejercicio = ?";
+        $stmt = $conexion->prepare($sql);
+        $stmt->bind_param("i", $id_ejercicio);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows === 0) {
+            throw new Exception("No se encontraron registros para el ejercicio con ID $id_ejercicio.");
+        }
+
+        // Procesar los resultados
+        while ($row = $result->fetch_assoc()) {
+            $monto = $row['monto'];
+            $fecha = $row['fecha'];
+            $mes = (int)date('m', strtotime($fecha)); // Extraer el mes de la fecha
+
+            // Determinar el trimestre y sumar el monto
+            if ($mes >= 1 && $mes <= 3) {
+                $trimestres['T1'] += $monto;
+            } elseif ($mes >= 4 && $mes <= 6) {
+                $trimestres['T2'] += $monto;
+            } elseif ($mes >= 7 && $mes <= 9) {
+                $trimestres['T3'] += $monto;
+            } elseif ($mes >= 10 && $mes <= 12) {
+                $trimestres['T4'] += $monto;
+            }
+        }
+
+        return json_encode([
+            "success" => true,
+            "data" => $trimestres
+        ]);
+
+    } catch (Exception $e) {
+        return json_encode([
+            "success" => false,
+            "error" => $e->getMessage()
+        ]);
+    }
+}
+
 
 
 
@@ -547,6 +602,10 @@ if (isset($data["accion"])) {
 
         case 'obtener':
             echo obtenerGastos($data["id_ejercicio"]);
+            break;
+
+        case 'obtener_trimestre':
+            echo obtenerSumatoriaPorTrimestre($data["id_ejercicio"]);
             break;
 
         case 'obtenerPorId':
