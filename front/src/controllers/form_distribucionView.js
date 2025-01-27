@@ -7,7 +7,7 @@ import {
   ejerciciosLista,
   validarEjercicioActual,
 } from '../components/form_ejerciciosLista.js'
-import { confirmNotification } from '../helpers/helpers.js'
+import { confirmNotification, toastNotification } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 
 import {
@@ -28,10 +28,27 @@ export const validateDistribucionView = async () => {
 
   validateDistribucionTable({
     partidas: ejercicioFiscal ? ejercicioFiscal.distribucion_partidas : [],
+    ejercicioStatus: ejercicioFiscal ? ejercicioFiscal.status : false,
   })
 
   d.addEventListener('click', async (e) => {
     if (e.target.id === 'distribucion-registrar') {
+      if (!ejercicioFiscal) {
+        toastNotification({
+          type: NOTIFICATIONS_TYPES.fail,
+          message: 'Seleccione un ejercicio fiscal',
+        })
+        return
+      }
+
+      if (Number(ejercicioFiscal.status) === 0) {
+        toastNotification({
+          type: NOTIFICATIONS_TYPES.fail,
+          message: 'Ejercicio fiscal cerrado',
+        })
+        return
+      }
+
       form_distribucion_form_card({
         elementToInset: 'distribucion-view',
         ejercicioFiscal,

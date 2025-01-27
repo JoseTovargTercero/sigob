@@ -23,6 +23,7 @@ function registrarTraspasoPartida($data)
         $añadir = $data['añadir'];
         $restar = $data['restar'];
         $tipo = $info['tipo'];
+        $fecha_actual = date("Y-m-d");
 
         // Obtener el año del ejercicio fiscal
         $sqlEjercicio = "SELECT ano FROM ejercicio_fiscal WHERE id = ?";
@@ -36,6 +37,46 @@ function registrarTraspasoPartida($data)
         }
 
         $anoEjercicio = $resultadoEjercicio->fetch_assoc()['ano'];
+
+        // Validación adicional para los `id_distribucion` en `añadir`
+     foreach ($añadir as $item) {
+    // Obtener el mes actual
+    $mesActual = (int)$fecha_actual->format('m'); // Mes actual en número
+
+    // Solo validar si el mes está entre enero (1) y septiembre (9)
+    if ($mesActual >= 1 && $mesActual <= 9) {
+        $sqlValidacion = "
+            SELECT 
+                ti.id_distribucion, 
+                t.id_ejercicio, 
+                pp.partida 
+            FROM 
+                traspaso_informacion ti
+            JOIN 
+                traspasos t ON ti.id_traspaso = t.id
+            JOIN 
+                distribucion_presupuestaria dp ON ti.id_distribucion = dp.id
+            JOIN 
+                partidas_presupuestarias pp ON dp.id_partida = pp.id
+            WHERE 
+                ti.id_distribucion = ? 
+                AND t.id_ejercicio = ?
+                AND ti.tipo = 'D'";
+        
+        $stmtValidacion = $conexion->prepare($sqlValidacion);
+        $stmtValidacion->bind_param("ii", $item['id_distribucion'], $info['id_ejercicio']);
+        $stmtValidacion->execute();
+        $resultadoValidacion = $stmtValidacion->get_result();
+
+        if ($resultadoValidacion->num_rows > 0) {
+            $filaValidacion = $resultadoValidacion->fetch_assoc();
+            throw new Exception("La partida " . $filaValidacion['partida'] . " no está disponible para recibir dinero porque anteriormente traspasó dinero.");
+        }
+    }
+}
+
+
+
 
         // Procesar los datos de `restar` para verificar el 20%
         $partidaMontos = [];
@@ -86,7 +127,7 @@ function registrarTraspasoPartida($data)
         // Determinar el formato de n_orden
         if ($tipo == 1) {
             if (!$esValido) {
-                throw new Exception("Un traslado no puede ser mayor al 20 por ciento de la agrupacion de las partidas seleccionadas");
+                throw new Exception("Un traslado no puede ser mayor al 20 por ciento de la agrupación de las partidas seleccionadas");
             } else {
                 $nOrden = "T" . $anoEjercicio . "-" . $info['n_orden'];
             }
@@ -94,7 +135,7 @@ function registrarTraspasoPartida($data)
             if (!$esValido) {
                 $nOrden = $info['n_orden'];
             } else {
-                throw new Exception("Un Traspaso no puede ser menor al 20 por ciento de la agrupacion de las partidas seleccionadas");
+                throw new Exception("Un Traspaso no puede ser menor al 20 por ciento de la agrupación de las partidas seleccionadas");
             }
         } else {
             throw new Exception("Tipo inválido: " . $tipo);
@@ -103,7 +144,7 @@ function registrarTraspasoPartida($data)
         // Insertar el registro principal en la tabla `traspasos`
         $sqlTraspaso = "INSERT INTO traspasos (n_orden, id_ejercicio, monto_total, fecha, status, tipo) VALUES (?, ?, ?, ?, 0, ?)";
         $stmtTraspaso = $conexion->prepare($sqlTraspaso);
-        $fecha_actual = date("Y-m-d");
+        
         $stmtTraspaso->bind_param("sidsi", $nOrden, $info['id_ejercicio'], $info['monto_total'], $fecha_actual, $tipo);
         $stmtTraspaso->execute();
 
@@ -146,6 +187,7 @@ function registrarTraspasoPartida($data)
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 
 function consultarTodosTraspasos($id_ejercicio)

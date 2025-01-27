@@ -20,6 +20,8 @@ export const validateTraspasosView = async () => {
     elementToInsert: 'ejercicios-fiscales',
   })
 
+  console.log(ejercicioFiscal)
+
   validateTraspasosTable({
     id_ejercicio: ejercicioFiscal ? ejercicioFiscal.id : null,
   })

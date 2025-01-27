@@ -41,14 +41,10 @@ export const pre_traspasosForm_card = async ({
 
   let ultimosRegistros = await ultimosTraspasos(ejercicioFiscal.id)
 
-  console.log(ultimosRegistros)
-
   let informacion = {
     añadir: [],
     restar: [],
   }
-
-  console.log(distribucionesDisponibles)
 
   let montos = { totalSumar: 0, totalRestar: 0, acumulado: 0 }
 
@@ -379,7 +375,7 @@ export const pre_traspasosForm_card = async ({
         }
       })
 
-      console.log(montos)
+      // console.log(montos)
 
       actualizarLabel()
 
@@ -402,8 +398,6 @@ export const pre_traspasosForm_card = async ({
           montos.totalRestar += Number(formatearFloat(input.value))
         }
       })
-
-      console.log(montos)
 
       actualizarLabel()
 
@@ -461,7 +455,7 @@ export const pre_traspasosForm_card = async ({
       fieldListErrors,
       type: fieldListErrors[e.target.name].type,
     })
-    console.log(fieldList)
+    // console.log(fieldList)
   }
 
   // CARGAR LISTA DE PARTIDAS
@@ -477,7 +471,6 @@ export const pre_traspasosForm_card = async ({
       añadir: informacion.añadir,
       restar: informacion.restar,
     }
-    console.log(mappedInformacion)
 
     let res = await registrarTraspaso(mappedInformacion)
     if (res.success) {
@@ -576,7 +569,7 @@ export const pre_traspasosForm_card = async ({
         }
 
         let result = validarPartidas('A')
-        console.log(result)
+
         if (!result) return
 
         if (validarInputIguales('A')) {
@@ -589,7 +582,6 @@ export const pre_traspasosForm_card = async ({
         }
 
         informacion.añadir = result
-        console.log(informacion)
 
         cardBodyPart1.classList.add('d-none')
 
@@ -616,7 +608,7 @@ export const pre_traspasosForm_card = async ({
         }
 
         let result = validarPartidas('D')
-        console.log(result)
+
         if (!result) return
 
         if (validarInputIguales('D')) {
@@ -638,7 +630,6 @@ export const pre_traspasosForm_card = async ({
         }
 
         informacion.restar = result
-        console.log(informacion)
 
         cardBodyPart2.classList.add('d-none')
         btnNext.textContent = 'Enviar'
@@ -792,8 +783,6 @@ export const pre_traspasosForm_card = async ({
   function validarInputsEntreVistas() {
     let inputs = Array.from(d.querySelectorAll('[data-row] .partida-partida'))
 
-    console.log(inputs)
-
     const valores = inputs.map((input) => input.value)
     const conteoValores = valores.reduce((conteo, valor) => {
       conteo[valor] = (conteo[valor] || 0) + 1
@@ -946,35 +935,4 @@ function partidaRow(partidaNum, tipo) {
       </div>`
 
   return row
-}
-
-function chosenSelect() {
-  let select = ` <div class='form-group'>
-          <label for='search-select-${nombreCard}' class='form-label'>
-            Seleccione el sector
-          </label>
-          <select
-            class='form-select ${nombreCard}-input chosen-select'
-            name='id_sector'
-            id='search-select-${nombreCard}'
-          >
-            <option>Elegir...</option>
-          </select>
-        </div>`
-
-  let options = [`<option>Elegir...</option>`]
-  let data
-
-  data.fullInfo.forEach((sector) => {
-    let option = `<option value='${sector.id}'>${sector.sector}.${sector.programa}.${sector.proyecto} - ${sector.nombre}</option>`
-    options.push(option)
-  })
-
-  selectEjercicio.innerHTML = options.join('')
-
-  $('.chosen-select')
-    .chosen()
-    .change(function (obj, result) {
-      console.log('changed: %o', arguments)
-    })
 }

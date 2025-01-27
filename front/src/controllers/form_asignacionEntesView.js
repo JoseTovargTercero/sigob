@@ -100,6 +100,14 @@ export const validateAsignacionEntesView = async () => {
           message: 'Cree o seleccione un ejercicio fiscal',
         })
 
+      if (Number(ejercicioFiscal.status) === 0) {
+        toastNotification({
+          type: NOTIFICATIONS_TYPES.fail,
+          message: 'Ejercicio fiscal cerrado',
+        })
+        return
+      }
+
       form_asignacion_entes_card({
         elementToInset: 'asignacion-entes-view',
         ejercicioFiscal,
