@@ -144,7 +144,7 @@ function obtenerTodosEjerciciosFiscales()
                 $situado = $row['situado'];
 
                 // Calcular la sumatoria de los montos iniciales en distribucion_presupuestaria
-                $sqlSum = "SELECT id, id_partida, monto_inicial, monto_actual, id_sector, id_programa, id_proyecto, id_actividad FROM distribucion_presupuestaria WHERE id_ejercicio=$id_ejercicio";
+                $sqlSum = "SELECT id, id_partida, monto_inicial, monto_actual, id_sector, id_programa, id_proyecto, id_actividad, secretaria FROM distribucion_presupuestaria WHERE id_ejercicio=$id_ejercicio";
                 $stmtSum = $conexion->prepare($sqlSum);
                 if (!$stmtSum) {
                     throw new Exception("Error en la preparación de la consulta SQL para distribucion_presupuestaria: " . $conexion->error);
@@ -225,6 +225,7 @@ function obtenerTodosEjerciciosFiscales()
                                 'programa_informacion' => $programaInformacion,
                                 'proyecto_informacion' => $proyectoInformacion,
                                 'id_actividad' => $sumRow['id_actividad'],
+                                'secretaria' => $sumRow['secretaria'],
                             ];
                         }
                         $stmtPartida->close();
@@ -264,6 +265,116 @@ function obtenerTodosEjerciciosFiscales()
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+function obtenerDistribucionPositiva($id_ejercicio)
+{
+    global $conexion;
+
+    try {
+        if (empty($id_ejercicio)) {
+            return json_encode(['error' => "Debe proporcionar un ID para la consulta"]);
+        }
+
+            // Consulta para obtener los registros de distribucion_presupuestaria y sumar los montos iniciales
+            $sqlDistribucion = "SELECT id, id_partida, monto_inicial, monto_actual, id_sector, id_programa, id_proyecto, id_actividad, secretaria 
+                                FROM distribucion_presupuestaria 
+                                WHERE id_ejercicio = ?";
+            $stmtDistribucion = $conexion->prepare($sqlDistribucion);
+            if (!$stmtDistribucion) {
+                throw new Exception("Error en la preparación de la consulta SQL: " . $conexion->error);
+            }
+            $stmtDistribucion->bind_param("i", $id_ejercicio);
+            $stmtDistribucion->execute();
+            $resultDistribucion = $stmtDistribucion->get_result();
+
+            $totalMontoInicial = 0;
+            $distribucionPartidas = [];
+
+            if ($resultDistribucion->num_rows > 0) {
+                while ($rowDistribucion = $resultDistribucion->fetch_assoc()) {
+                    $montoInicial = isset($rowDistribucion['monto_inicial']) ? (float) $rowDistribucion['monto_inicial'] : 0;
+                    $totalMontoInicial += $montoInicial;
+
+                    // Obtener el valor de partida de la tabla partidas_presupuestarias
+                    $sqlPartida = "SELECT id, partida, nombre, descripcion FROM partidas_presupuestarias WHERE id = ?";
+                    $stmtPartida = $conexion->prepare($sqlPartida);
+                    if (!$stmtPartida) {
+                        throw new Exception("Error en la preparación de la consulta SQL: " . $conexion->error);
+                    }
+                    $stmtPartida->bind_param("i", $rowDistribucion['id_partida']);
+                    $stmtPartida->execute();
+                    $resultPartida = $stmtPartida->get_result();
+                    $stmtPartida->close();
+
+                    if ($resultPartida->num_rows > 0) {
+                        $partidaRow = $resultPartida->fetch_assoc();
+
+                        // Consultas para sector, programa, y proyecto
+                        $sqlSector = "SELECT * FROM pl_sectores WHERE id = ?";
+                        $stmtSector = $conexion->prepare($sqlSector);
+                        if (!$stmtSector) {
+                            throw new Exception("Error en la preparación de la consulta SQL: " . $conexion->error);
+                        }
+                        $stmtSector->bind_param("i", $rowDistribucion['id_sector']);
+                        $stmtSector->execute();
+                        $resultSector = $stmtSector->get_result();
+                        $sectorInformacion = $resultSector->num_rows > 0 ? $resultSector->fetch_assoc() : null;
+                        $stmtSector->close();
+
+                        $sqlPrograma = "SELECT * FROM pl_programas WHERE id = ?";
+                        $stmtPrograma = $conexion->prepare($sqlPrograma);
+                        if (!$stmtPrograma) {
+                            throw new Exception("Error en la preparación de la consulta SQL: " . $conexion->error);
+                        }
+                        $stmtPrograma->bind_param("i", $rowDistribucion['id_programa']);
+                        $stmtPrograma->execute();
+                        $resultPrograma = $stmtPrograma->get_result();
+                        $programaInformacion = $resultPrograma->num_rows > 0 ? $resultPrograma->fetch_assoc() : null;
+                        $stmtPrograma->close();
+
+                        $proyectoInformacion = 0;
+                        if ($rowDistribucion['id_proyecto'] != 0) {
+                            $sqlProyecto = "SELECT * FROM pl_proyectos WHERE id = ?";
+                            $stmtProyecto = $conexion->prepare($sqlProyecto);
+                            if (!$stmtProyecto) {
+                                throw new Exception("Error en la preparación de la consulta SQL: " . $conexion->error);
+                            }
+                            $stmtProyecto->bind_param("i", $rowDistribucion['id_proyecto']);
+                            $stmtProyecto->execute();
+                            $resultProyecto = $stmtProyecto->get_result();
+                            $proyectoInformacion = $resultProyecto->num_rows > 0 ? $resultProyecto->fetch_assoc() : 0;
+                            $stmtProyecto->close();
+                        }
+
+                        $distribucionPartidas[] = [
+                            'id' => $rowDistribucion['id'],
+                            'id_partida' => $partidaRow['id'],
+                            'partida' => $partidaRow['partida'],
+                            'nombre' => $partidaRow['nombre'],
+                            'descripcion' => $partidaRow['descripcion'],
+                            'monto_inicial' => $rowDistribucion['monto_inicial'],
+                            'monto_actual' => $rowDistribucion['monto_actual'],
+                            'sector_informacion' => $sectorInformacion,
+                            'programa_informacion' => $programaInformacion,
+                            'proyecto_informacion' => $proyectoInformacion,
+                            'id_actividad' => $rowDistribucion['id_actividad'],
+                            'secretaria' => $rowDistribucion['secretaria'],
+                        ];
+                    }
+                }
+            }
+            $stmtDistribucion->close();
+
+
+            return json_encode(["success" => $distribucionPartidas]);
+        } else {
+            return json_encode(["error" => "No se encontró un registro con el ID proporcionado."]);
+        }
+    } catch (Exception $e) {
+        registrarError($e->getMessage());
+        return json_encode(['error' => $e->getMessage()]);
+    }
+}
+
 
 
 
@@ -294,7 +405,7 @@ function obtenerEjercicioFiscalPorId($id)
             $ejercicio = $result->fetch_assoc();
 
             // Consulta para obtener los registros de distribucion_presupuestaria y sumar los montos iniciales
-            $sqlDistribucion = "SELECT id, id_partida, monto_inicial, monto_actual, id_sector, id_programa, id_proyecto, id_actividad 
+            $sqlDistribucion = "SELECT id, id_partida, monto_inicial, monto_actual, id_sector, id_programa, id_proyecto, id_actividad, secretaria 
                                 FROM distribucion_presupuestaria 
                                 WHERE id_ejercicio = ?";
             $stmtDistribucion = $conexion->prepare($sqlDistribucion);
@@ -376,6 +487,7 @@ function obtenerEjercicioFiscalPorId($id)
                             'programa_informacion' => $programaInformacion,
                             'proyecto_informacion' => $proyectoInformacion,
                             'id_actividad' => $rowDistribucion['id_actividad'],
+                            'secretaria' => $rowDistribucion['secretaria'],
                         ];
                     }
                 }
@@ -576,6 +688,8 @@ if (isset($data["accion"])) {
         }
     } elseif ($accion === "obtener_todos") {
         echo obtenerTodosEjerciciosFiscales();
+    }elseif ($accion === "obtener_positiva") {
+        echo obtenerDistribucionPositiva();
     } elseif ($accion === "obtener_por_id") {
         if (empty($data["id"])) {
             echo json_encode(['error' => "Debe proporcionar un ID para la consulta"]);
