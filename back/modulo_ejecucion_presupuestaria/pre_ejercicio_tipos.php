@@ -301,13 +301,6 @@ function obtenerSumatoriaPorActividad($ejercicio)
     }
 }
 
-
-
-
-
-
-
-
 // Función auxiliar para obtener el índice del tipo en la partida
 function obtenerIndiceTipo($tipo)
 {
