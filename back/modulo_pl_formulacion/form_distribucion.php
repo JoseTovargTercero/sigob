@@ -16,7 +16,7 @@ function guardarDistribucionPresupuestaria($dataArray)
         }
 
         foreach ($dataArray as $registro) {
-            if (count($registro) !== 7) { // Actualizado para incluir id_actividad
+            if (count($registro) !== 8) { // Actualizado para incluir id_actividad
                 throw new Exception("El formato del array no es válido");
             }
 
@@ -27,6 +27,7 @@ function guardarDistribucionPresupuestaria($dataArray)
             $id_programa = $registro[4];
             $id_proyecto = empty($registro[5]) ? 0 : $registro[5]; // Si id_proyecto está vacío, asigna 0
             $id_actividad = empty($registro[6]) ? 0 : $registro[6]; // Si id_actividad está vacío, asigna 0
+            $secretaria = empty($registro[7]) ? 0 : $registro[7]; // Si id_actividad está vacío, asigna 0
 
             // Validar que no existan duplicados con el mismo id_partida, id_ejercicio, id_sector, id_programa, id_proyecto
             $verificarSql = "SELECT PP.partida FROM distribucion_presupuestaria AS DP 
@@ -65,10 +66,10 @@ function guardarDistribucionPresupuestaria($dataArray)
             }
 
             // Insertar los datos en la tabla, ahora con id_actividad e id_proyecto asignados como 0 si están vacíos
-            $sql = "INSERT INTO distribucion_presupuestaria (id_partida, monto_inicial, id_ejercicio, monto_actual, id_sector, id_programa, id_proyecto, id_actividad, status) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1)";
+            $sql = "INSERT INTO distribucion_presupuestaria (id_partida, monto_inicial, id_ejercicio, monto_actual, id_sector, id_programa, id_proyecto, id_actividad, status, secretaria) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1, ?)";
             $stmt = $conexion->prepare($sql);
-            $stmt->bind_param("isisiiii", $id_partida, $monto_inicial, $id_ejercicio, $monto_actual, $id_sector, $id_programa, $id_proyecto, $id_actividad);
+            $stmt->bind_param("isisiiiii", $id_partida, $monto_inicial, $id_ejercicio, $monto_actual, $id_sector, $id_programa, $id_proyecto, $id_actividad, $secretaria);
             $stmt->execute();
 
             if ($stmt->affected_rows <= 0) {
@@ -141,7 +142,7 @@ function obtenerDistribucionPorId($id)
 
 
 // Función para actualizar un registro, incluyendo id_sector, id_programa, id_proyecto y id_actividad
-function actualizarDistribucion($id, $id_partida, $monto_inicial, $id_ejercicio, $id_sector, $id_programa, $id_proyecto, $id_actividad)
+function actualizarDistribucion($id, $id_partida, $monto_inicial, $id_ejercicio, $id_sector, $id_programa, $id_proyecto, $id_actividad, $secretaria)
 {
     global $conexion;
 
@@ -179,10 +180,10 @@ function actualizarDistribucion($id, $id_partida, $monto_inicial, $id_ejercicio,
 
         // Actualizar el registro en la tabla distribucion_presupuestaria
         $sql = "UPDATE distribucion_presupuestaria 
-                SET id_partida = ?, monto_inicial = ?, id_ejercicio = ?, id_sector = ?, id_programa = ?, id_proyecto = ?, id_actividad = ?
+                SET id_partida = ?, monto_inicial = ?, id_ejercicio = ?, id_sector = ?, id_programa = ?, id_proyecto = ?, id_actividad = ?, secretaria = ?
                 WHERE id = ?";
         $stmt = $conexion->prepare($sql);
-        $stmt->bind_param("isiiiiii", $id_partida, $monto_inicial, $id_ejercicio, $id_sector, $id_programa, $id_proyecto, $id_actividad, $id);
+        $stmt->bind_param("isiiiiiii", $id_partida, $monto_inicial, $id_ejercicio, $id_sector, $id_programa, $id_proyecto, $id_actividad, $secretaria, $id);
         $stmt->execute();
 
         if ($stmt->affected_rows > 0) {
@@ -361,6 +362,7 @@ if (isset($data["accion"])) {
                 $data["id_sector"],
                 $data["id_programa"],
                 $data["id_proyecto"],
+                $data["secretaria"]
             );
             break;
 
