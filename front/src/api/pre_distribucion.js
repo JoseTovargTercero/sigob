@@ -6,6 +6,7 @@ import {
   toastNotification,
 } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
+import { APP_URL, config } from './urlConfig.js'
 
 const ejercicioFiscalUrl =
   '../../../../sigob/back/sistema_global/ejercicio_fiscal.php'
@@ -15,6 +16,7 @@ const distribucionPresupuestariaUrl =
 
 const distribucionPresupuestariaEntesUrl =
   '../../../../sigob/back/modulo_pl_formulacion/form_distribucion_entes.php'
+
 const getEjecicios = async (id) => {
   showLoader()
   try {

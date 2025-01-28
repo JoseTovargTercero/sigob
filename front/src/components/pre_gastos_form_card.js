@@ -1,11 +1,5 @@
-import { selectTables } from '../api/globalApi.js'
-import { obtenerDistribucionPositiva } from '../api/pre_distribucion.js'
-import {
-  getTiposGastos,
-  registrarGasto,
-  registrarTipoGasto,
-} from '../api/pre_gastos.js'
-import { loadGastosTable } from '../controllers/pre_gastosFuncionamientoTable.js'
+import { obtenerDistribucionSecretaria } from '../api/pre_entes.js'
+import { getTiposGastos, registrarGasto } from '../api/pre_gastos.js'
 
 import {
   confirmNotification,
@@ -88,7 +82,7 @@ export const pre_gastos_form_card = async ({
     $('#search-select-tipo-gasto').trigger('chosen:updated')
   }
 
-  let partidasDisponibles = await obtenerDistribucionPositiva({
+  let partidasDisponibles = await obtenerDistribucionSecretaria({
     id_ejercicio: ejercicioFiscal.id,
   })
 

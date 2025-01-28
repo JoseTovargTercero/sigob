@@ -28,7 +28,7 @@ export const validateGastosView = async () => {
   })
   validateTiposGastosTable()
 
-  let gastosForm = d.getElementById('gastos-form')
+  console.log(ejercicioFiscal)
 
   d.addEventListener('click', async (e) => {
     if (e.target.id === 'gastos-registrar') {

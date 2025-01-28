@@ -10,6 +10,8 @@ import { APP_URL, config } from './urlConfig.js'
 
 const entesDistribucionUrl = `${APP_URL}${config.MODULE_NAMES.GLOBAL}sigob_api_asignaciones_entes.php`
 
+const asignacionEntesUrl = `${APP_URL}${config.MODULE_NAMES.EJECUCION}/pre_asignacion_entes.php`
+
 const getPreAsignacionEntes = async (ejercicioId) => {
   showLoader()
   try {
@@ -100,4 +102,54 @@ const getPreAsignacionEnte = async (id, ejercicioId) => {
   }
 }
 
-export { getPreAsignacionEntes, getPreAsignacionEnte }
+const obtenerDistribucionSecretaria = async ({ id_ejercicio }) => {
+  showLoader()
+  try {
+    let res = await fetch(asignacionEntesUrl, {
+      method: 'POST',
+      body: JSON.stringify({
+        accion: 'consultar_secretarias',
+      }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    const clone = res.clone()
+
+    let text = await clone.text()
+
+    console.log(text)
+
+    const json = await res.json()
+
+    console.log(json)
+
+    if (json.error) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.fail,
+        message: json.error,
+      })
+    }
+
+    if (json.success) {
+      return json.success
+    }
+
+    return json
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al enviar datos',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
+export {
+  getPreAsignacionEntes,
+  getPreAsignacionEnte,
+  obtenerDistribucionSecretaria,
+}
