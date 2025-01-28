@@ -144,7 +144,7 @@ function obtenerTodosEjerciciosFiscales()
                 $situado = $row['situado'];
 
                 // Calcular la sumatoria de los montos iniciales en distribucion_presupuestaria
-                $sqlSum = "SELECT id, id_partida, monto_inicial, monto_actual, id_sector, id_programa, id_proyecto, id_actividad, secretaria FROM distribucion_presupuestaria WHERE id_ejercicio=$id_ejercicio";
+                $sqlSum = "SELECT id, id_partida, monto_inicial, monto_actual, id_sector, id_programa, id_proyecto, id_actividad FROM distribucion_presupuestaria WHERE id_ejercicio=$id_ejercicio";
                 $stmtSum = $conexion->prepare($sqlSum);
                 if (!$stmtSum) {
                     throw new Exception("Error en la preparación de la consulta SQL para distribucion_presupuestaria: " . $conexion->error);
@@ -225,7 +225,6 @@ function obtenerTodosEjerciciosFiscales()
                                 'programa_informacion' => $programaInformacion,
                                 'proyecto_informacion' => $proyectoInformacion,
                                 'id_actividad' => $sumRow['id_actividad'],
-                                'secretaria' => $sumRow['secretaria'],
                             ];
                         }
                         $stmtPartida->close();
@@ -275,7 +274,7 @@ function obtenerDistribucionPositiva($id_ejercicio)
         }
 
             // Consulta para obtener los registros de distribucion_presupuestaria y sumar los montos iniciales
-            $sqlDistribucion = "SELECT id, id_partida, monto_inicial, monto_actual, id_sector, id_programa, id_proyecto, id_actividad, secretaria 
+            $sqlDistribucion = "SELECT id, id_partida, monto_inicial, monto_actual, id_sector, id_programa, id_proyecto, id_actividad 
                                 FROM distribucion_presupuestaria 
                                 WHERE id_ejercicio = ?";
             $stmtDistribucion = $conexion->prepare($sqlDistribucion);
@@ -357,7 +356,6 @@ function obtenerDistribucionPositiva($id_ejercicio)
                             'programa_informacion' => $programaInformacion,
                             'proyecto_informacion' => $proyectoInformacion,
                             'id_actividad' => $rowDistribucion['id_actividad'],
-                            'secretaria' => $rowDistribucion['secretaria'],
                         ];
                     }
                 }
@@ -405,7 +403,7 @@ function obtenerEjercicioFiscalPorId($id)
             $ejercicio = $result->fetch_assoc();
 
             // Consulta para obtener los registros de distribucion_presupuestaria y sumar los montos iniciales
-            $sqlDistribucion = "SELECT id, id_partida, monto_inicial, monto_actual, id_sector, id_programa, id_proyecto, id_actividad, secretaria 
+            $sqlDistribucion = "SELECT id, id_partida, monto_inicial, monto_actual, id_sector, id_programa, id_proyecto, id_actividad
                                 FROM distribucion_presupuestaria 
                                 WHERE id_ejercicio = ?";
             $stmtDistribucion = $conexion->prepare($sqlDistribucion);
@@ -487,7 +485,6 @@ function obtenerEjercicioFiscalPorId($id)
                             'programa_informacion' => $programaInformacion,
                             'proyecto_informacion' => $proyectoInformacion,
                             'id_actividad' => $rowDistribucion['id_actividad'],
-                            'secretaria' => $rowDistribucion['secretaria'],
                         ];
                     }
                 }
