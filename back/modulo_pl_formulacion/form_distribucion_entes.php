@@ -20,6 +20,7 @@ function insertarDistribuciones($distribuciones)
             $distribucion = $distribucionData['distribuciones'];
             $id_ejercicio = $distribucionData['id_ejercicio'];
             $id_asignacion = $distribucionData['id_asignacion'];
+            $secretaria = $distribucionData['secretaria'];
             $status = 1;
             $comentario = "";
 
@@ -70,13 +71,13 @@ function insertarDistribuciones($distribuciones)
                 throw new Exception("Error al convertir el array de distribución a JSON.");
             }
 
-            $sqlInsert = "INSERT INTO distribucion_entes (id_ente, actividad_id, distribucion, monto_total, status, id_ejercicio, comentario, fecha, id_asignacion) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $sqlInsert = "INSERT INTO distribucion_entes (id_ente, actividad_id, distribucion, monto_total, status, id_ejercicio, comentario, fecha, id_asignacion, secretaria) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $stmtInsert = $conexion->prepare($sqlInsert);
 
             if ($actividad_id === null) {
-                $stmtInsert->bind_param("ississssi", $id_ente, $actividad_id, $distribucion_json, $monto_total, $status, $id_ejercicio, $comentario, $fecha, $id_asignacion);
+                $stmtInsert->bind_param("ississssis", $id_ente, $actividad_id, $distribucion_json, $monto_total, $status, $id_ejercicio, $comentario, $fecha, $id_asignacion, $secretaria);
             } else {
-                $stmtInsert->bind_param("iisissssi", $id_ente, $actividad_id, $distribucion_json, $monto_total, $status, $id_ejercicio, $comentario, $fecha, $id_asignacion);
+                $stmtInsert->bind_param("iisissssis", $id_ente, $actividad_id, $distribucion_json, $monto_total, $status, $id_ejercicio, $comentario, $fecha, $id_asignacion, $secretaria);
             }
 
             $stmtInsert->execute();
@@ -161,7 +162,7 @@ function actualizarEstadoDistribucionPorAsignacion($id_asignacion, $status, $com
 
 
 // Función para actualizar un registro en la tabla distribucion_entes
-function actualizarDistribucionEntes($id, $id_ente, $actividad_id, $distribucion, $id_ejercicio)
+function actualizarDistribucionEntes($id, $id_ente, $actividad_id, $distribucion, $id_ejercicio, $secretaria)
 {
     global $conexion;
     $conexion->begin_transaction();
@@ -171,9 +172,9 @@ function actualizarDistribucionEntes($id, $id_ente, $actividad_id, $distribucion
         $distribucionFormateada = json_encode($distribucion);
 
         // Actualizar el registro en la tabla distribucion_entes, incluyendo actividad_id
-        $sqlUpdate = "UPDATE distribucion_entes SET id_ente = ?, actividad_id = ?, distribucion = ?, id_ejercicio = ? WHERE id = ?";
+        $sqlUpdate = "UPDATE distribucion_entes SET id_ente = ?, actividad_id = ?, distribucion = ?, id_ejercicio = ?, secretaria = ? WHERE id = ?";
         $stmtUpdate = $conexion->prepare($sqlUpdate);
-        $stmtUpdate->bind_param("iisii", $id_ente, $actividad_id, $distribucionFormateada, $id_ejercicio, $id);
+        $stmtUpdate->bind_param("iisisi", $id_ente, $actividad_id, $distribucionFormateada, $id_ejercicio, $secretaria, $id);
         $stmtUpdate->execute();
 
         if ($stmtUpdate->affected_rows > 0) {
@@ -236,7 +237,7 @@ function consultarDistribucionPorId($id)
 {
     global $conexion;
 
-    $sqlSelectById = "SELECT id, id_ente, distribucion, monto_total, status, id_ejercicio, id_asignacion, actividad_id FROM distribucion_entes WHERE id = ?";
+    $sqlSelectById = "SELECT id, id_ente, distribucion, monto_total, status, id_ejercicio, id_asignacion, actividad_id, secretaria FROM distribucion_entes WHERE id = ?";
     $stmtSelectById = $conexion->prepare($sqlSelectById);
     $stmtSelectById->bind_param("i", $id);
     $stmtSelectById->execute();
@@ -377,7 +378,7 @@ function consultarTodasDistribuciones()
 {
     global $conexion;
 
-    $sqlSelectAll = "SELECT id, id_ente, distribucion, monto_total, status, id_ejercicio, id_asignacion, actividad_id FROM distribucion_entes";
+    $sqlSelectAll = "SELECT id, id_ente, distribucion, monto_total, status, id_ejercicio, id_asignacion, actividad_id, secretaria FROM distribucion_entes";
     $resultado = $conexion->query($sqlSelectAll);
 
     if ($resultado->num_rows > 0) {
@@ -528,15 +529,16 @@ if (isset($data["accion"])) {
         echo insertarDistribuciones($distribuciones);
 
         // Actualizar datos
-    } elseif ($accion === "update" && isset($data["id"]) && isset($data["id_ente"]) && isset($data["actividad_id"]) && isset($data["distribuciones"]) && isset($data["id_ejercicio"])) {
+    } elseif ($accion === "update" && isset($data["id"]) && isset($data["id_ente"]) && isset($data["actividad_id"]) && isset($data["distribuciones"]) && isset($data["id_ejercicio"]) && isset($data["secretaria"])) {
         $id = $data["id"];
         $id_ente = $data["id_ente"];
         $actividad_id = $data["actividad_id"];
         $distribuciones = $data["distribuciones"]; // Asumimos que 'distribuciones' es un array de arrays con 'id_distribucion' y 'monto'
         $id_ejercicio = $data["id_ejercicio"];
+        $secretaria = $data["secretaria"];
 
         // Llamar a la función de actualización de distribuciones
-        echo actualizarDistribucionEntes($id, $id_ente, $actividad_id, $distribuciones, $id_ejercicio);
+        echo actualizarDistribucionEntes($id, $id_ente, $actividad_id, $distribuciones, $id_ejercicio, $secretaria);
 
         // Eliminar datos
     } elseif ($accion === "delete" && isset($data["id"])) {
