@@ -468,13 +468,14 @@ if (isset($data["accion"])) {
         echo consultarTodasAsignaciones();
 
         // Acción no válida o faltan datos
-    }elseif ($accion === "consultar_secretarias") {
-        echo consultarAsignacionesSecretaria();
+    } elseif ($accion === "consultar_secretarias") {
+        $id_ejercicio = $data["id_ejercicio"];
+        echo consultarAsignacionesSecretaria($id_ejercicio);
 
         // Acción no válida o faltan datos
-    }elseif ($accion === "consultar_secretarias_id") {
+    } elseif ($accion === "consultar_secretarias_id") {
         echo consultarAsignacionSecretariaPorId($id);
-        
+
         // Acción no válida o faltan datos
     } else {
         echo json_encode(['error' => "Acción no válida o faltan datos"]);

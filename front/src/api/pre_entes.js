@@ -109,6 +109,7 @@ const obtenerDistribucionSecretaria = async ({ id_ejercicio }) => {
       method: 'POST',
       body: JSON.stringify({
         accion: 'consultar_secretarias',
+        id_ejercicio,
       }),
     })
 
