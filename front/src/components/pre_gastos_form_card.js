@@ -402,20 +402,21 @@ export const pre_gastos_form_card = async ({
 
     let options = [`<option value=''>Elegir partida...</option>`]
 
-    ejercicioFiscal.distribucion_partidas
-      .filter((partida) =>
-        partidasDisponibles.some((par) => Number(par.id) === Number(partida.id))
-      )
-      .forEach((el) => {
-        let sppa = `${
-          el.sector_informacion ? el.sector_informacion.sector : '0'
-        }.${el.programa_informacion ? el.programa_informacion.programa : '0'}.${
-          el.proyecto_informacion == 0 ? '00' : el.proyecto_informacion.proyecto
-        }.${el.id_actividad == 0 ? '00' : el.id_actividad}`
+    partidasDisponibles.forEach((partida) => {
+      let sppa = `
+      ${partida.sector_denominacion ? partida.sector_denominacion : '00'}.${
+        partida.programa_denominacion ? partida.programa_denominacion : '00'
+      }.${
+        partida.proyecto_denominacion ? partida.proyecto_denominacion : '00'
+      }.${partida.actividad ? partida.actividad : '00'}`
 
-        let opt = `<option value="${el.id}">${sppa}.${el.partida}</option>`
-        options.push(opt)
-      })
+      let opt = `<option value="${partida.id}">${sppa}.${
+        partida.partida
+      } - ${partida.ente_nombre[0].toUpperCase()}${partida.ente_nombre
+        .substr(1, partida.ente_nombre.length - 1)
+        .toLowerCase()}</option>`
+      options.push(opt)
+    })
 
     let partidasList = d.getElementById(`distribucion-${newNumRow}`)
     partidasList.innerHTML = ''
