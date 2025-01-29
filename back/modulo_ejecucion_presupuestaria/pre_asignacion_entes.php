@@ -287,16 +287,13 @@ function consultarAsignacionesSecretaria($idEjercicio)
                         $idDistribucion = $distribucionItem['id_distribucion'];
 
                         // Consulta para obtener detalles de la distribución presupuestaria
-                        $sqlDetalles = "SELECT dp.id_partida, dp.id_sector, dp.id_programa, 
-                                               ps.denominacion AS sector_denominacion,
-                                               pp.denominacion AS programa_denominacion,
-                                               pr.denominacion AS proyecto_denominacion,
-                                               pp_descripcion.descripcion AS partida_descripcion
+                        $sqlDetalles = "SELECT dp.id_partida, dp.id_sector, dp.id_programa, dp.id_proyecto, pp.partida AS codigo_partida, pp.descripcion AS partida_descripcion, 
+                                               ps.sector AS sector_denominacion, pg.programa AS programa_denominacion, pr.proyecto_id AS proyecto_denominacion
                                         FROM distribucion_presupuestaria dp
+                                        LEFT JOIN partidas_presupuestarias pp ON dp.id_partida = pp.id
                                         LEFT JOIN pl_sectores ps ON dp.id_sector = ps.id
-                                        LEFT JOIN pl_programas pp ON dp.id_programa = pp.id
+                                        LEFT JOIN pl_programas pg ON dp.id_programa = pg.id
                                         LEFT JOIN pl_proyectos pr ON dp.id_proyecto = pr.id
-                                        LEFT JOIN partidas_presupuestarias pp_descripcion ON dp.id_partida = pp_descripcion.id
                                         WHERE dp.id = ?";
                         $stmtDetalles = $conexion->prepare($sqlDetalles);
                         $stmtDetalles->bind_param("i", $idDistribucion);
@@ -307,7 +304,7 @@ function consultarAsignacionesSecretaria($idEjercicio)
                             $detalles = $resultDetalles->fetch_assoc();
 
                             $asignaciones[] = [
-                                'partida' => sprintf("%02d.%02d.%03d.%03d", $detalles['id_sector'], $detalles['id_programa'], $detalles['id_partida'], $idDistribucion),
+                                'partida' =>  $detalles['codigo_partida'],
                                 'partida_descripcion' => $detalles['partida_descripcion'],
                                 'sector_denominacion' => $detalles['sector_denominacion'],
                                 'programa_denominacion' => $detalles['programa_denominacion'],
@@ -354,8 +351,8 @@ function consultarAsignacionSecretariaPorId($id)
                     $idDistribucion = $distribucion['id_distribucion'];
 
                     // Consultar detalles de la distribución presupuestaria
-                    $sqlDistribucion = "SELECT dp.id_partida, dp.id_sector, dp.id_programa, dp.id_proyecto, pp.partida, pp.descripcion AS partida_descripcion, 
-                                               ps.denominacion AS sector_denominacion, pg.denominacion AS programa_denominacion, pr.denominacion AS proyecto_denominacion
+                    $sqlDistribucion = "SELECT dp.id_partida, dp.id_sector, dp.id_programa, dp.id_proyecto, pp.partida AS codigo_partida, pp.descripcion AS partida_descripcion, 
+                                               ps.sector AS sector_denominacion, pg.programa AS programa_denominacion, pr.proyecto_id AS proyecto_denominacion
                                         FROM distribucion_presupuestaria dp
                                         LEFT JOIN partidas_presupuestarias pp ON dp.id_partida = pp.id
                                         LEFT JOIN pl_sectores ps ON dp.id_sector = ps.id
@@ -372,7 +369,7 @@ function consultarAsignacionSecretariaPorId($id)
 
                         // Formatear datos de salida según lo solicitado
                         $actividad = [
-                            "partida" => $detallesDistribucion['partida'],
+                            "partida" => $detallesDistribucion['codigo_partida'],
                             "partida_descripcion" => $detallesDistribucion['partida_descripcion'],
                             "sector_denominacion" => $detallesDistribucion['sector_denominacion'],
                             "programa_denominacion" => $detallesDistribucion['programa_denominacion'],
