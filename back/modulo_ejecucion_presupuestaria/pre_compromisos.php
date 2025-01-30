@@ -9,32 +9,27 @@ function registrarCompromiso($idRegistro, $nombreTabla, $descripcion, $id_ejerci
 
     try {
         // Validar que los campos obligatorios no estén vacíos
-        if (!isset($idRegistro) || !isset($nombreTabla) || !isset($descripcion) || !isset($id_ejercicio) || !isset($codigo)) {
+        if (!isset($idRegistro, $nombreTabla, $descripcion, $id_ejercicio, $codigo)) {
             return ["error" => "Faltan datos obligatorios para registrar el compromiso."];
         }
 
-        // Obtener el año actual
-        $yearActual = date("Y");
-
-        // Buscar el último correlativo con el formato 'C-%-YYYY'
-        $sql = "SELECT correlativo FROM compromisos WHERE correlativo LIKE ? ORDER BY correlativo DESC LIMIT 1";
-        $correlativoLike = "C%-$yearActual";
+        // Obtener el último correlativo registrado en la base de datos
+        $sql = "SELECT correlativo FROM compromisos ORDER BY correlativo DESC LIMIT 1";
         $stmt = $conexion->prepare($sql);
-        $stmt->bind_param("s", $correlativoLike);
         $stmt->execute();
         $stmt->bind_result($ultimoCorrelativo);
         $stmt->fetch();
         $stmt->close();
 
-        // Incrementar el número de seguimiento
+        // Determinar el nuevo correlativo
         if ($ultimoCorrelativo) {
-            $numeroSeguimiento = (int)substr($ultimoCorrelativo, 1, 5) + 1;
+            $numeroSeguimiento = (int) $ultimoCorrelativo + 1;
         } else {
             $numeroSeguimiento = 1;
         }
 
-        // Crear el nuevo correlativo
-        $nuevoCorrelativo = 'C' . str_pad($numeroSeguimiento, 5, '0', STR_PAD_LEFT) . '-' . $yearActual;
+        // Formatear el nuevo correlativo con 8 dígitos
+        $nuevoCorrelativo = str_pad($numeroSeguimiento, 8, '0', STR_PAD_LEFT);
 
         // Insertar el nuevo compromiso en la base de datos
         $sqlInsert = "INSERT INTO compromisos (correlativo, descripcion, id_registro, id_ejercicio, tabla_registro, numero_compromiso) VALUES (?, ?, ?, ?, ?, ?)";
@@ -65,7 +60,6 @@ function registrarCompromiso($idRegistro, $nombreTabla, $descripcion, $id_ejerci
                     return ["error" => "No se pudo actualizar el número de compromiso en la tabla $nombreTabla."];
                 }
             } else {
-                // Si no es 'solicitud_dozavos', retornar el éxito
                 return ["success" => true, "correlativo" => $nuevoCorrelativo, "id_compromiso" => $idCompromiso];
             }
         } else {
@@ -76,9 +70,3 @@ function registrarCompromiso($idRegistro, $nombreTabla, $descripcion, $id_ejerci
         return ["error" => $e->getMessage()];
     }
 }
-
-
-
-
-
-
