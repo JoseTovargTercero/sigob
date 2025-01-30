@@ -173,7 +173,11 @@ function obtenerSumatoriaPorActividad($ejercicio)
             throw new Exception("Debe proporcionar un ejercicio válido");
         }
 
-        // Consulta con JOIN para simplificar la obtención de datos
+        if (!$conexion) {
+            throw new Exception("Error en la conexión a la base de datos");
+        }
+
+        // Consulta corregida SIN JSON_TABLE para compatibilidad con MariaDB
         $sql = "SELECT 
                     dp.id_actividad, 
                     dp.monto_inicial, 
@@ -183,10 +187,14 @@ function obtenerSumatoriaPorActividad($ejercicio)
                     ed.juridico, 
                     ps.sector AS sector_valor
                 FROM distribucion_entes de
-                JOIN JSON_TABLE(de.distribucion, '$[*]' COLUMNS (id_distribucion INT PATH '$.id_distribucion')) AS dist_json
-                    ON dist_json.id_distribucion = de.id
+                JOIN (
+                    SELECT 
+                        id, 
+                        JSON_UNQUOTE(JSON_EXTRACT(distribucion, '$[0].id_distribucion')) AS id_distribucion
+                    FROM distribucion_entes
+                ) AS de_json ON de_json.id = de.id
                 JOIN distribucion_presupuestaria dp 
-                    ON dp.id = dist_json.id_distribucion
+                    ON dp.id = de_json.id_distribucion
                 JOIN entes_dependencias ed 
                     ON de.actividad_id = ed.id
                 LEFT JOIN pl_sectores ps 
@@ -194,6 +202,11 @@ function obtenerSumatoriaPorActividad($ejercicio)
                 WHERE dp.id_ejercicio = ?";
 
         $stmt = $conexion->prepare($sql);
+
+        if (!$stmt) {
+            throw new Exception("Error en la preparación de la consulta: " . $conexion->error);
+        }
+
         $stmt->bind_param("i", $ejercicio);
         $stmt->execute();
         $resultadoDistribucion = $stmt->get_result();
@@ -226,6 +239,7 @@ function obtenerSumatoriaPorActividad($ejercicio)
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 
 
