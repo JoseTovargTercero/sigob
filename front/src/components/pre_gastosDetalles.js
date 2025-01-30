@@ -226,25 +226,12 @@ export const pre_gastosDetalles = ({
                     </div>
                 </div>
             </li>
-
         </ul>
-
-
-
             <div class="mt-3">
-
                <div class="mt-3">
-        
             <b>Descripción:</b> ${data.descripcion_gasto || "No obtenido"}
-Lorem ipsum dolor sit amet consectetur adipisicing elit. Officiis repellendus veniam eaque atque explicabo distinctio non vero fugit accusantium iste perferendis dolores optio id beatae, autem soluta. Error, eaque autem?
-            
         </div>
-
-
-
         </div>
-         
-        
           </div>
 
           <div class='col-sm-8'>
