@@ -1,72 +1,72 @@
-import { getPartidas } from '../api/partidas.js'
-import { getGastos, getTiposGastos } from '../api/pre_gastos.js'
+import { getPartidas } from "../api/partidas.js";
+import { getGastos, getTiposGastos } from "../api/pre_gastos.js";
 
-import { separarMiles } from '../helpers/helpers.js'
+import { separarMiles } from "../helpers/helpers.js";
 
-const d = document
-const w = window
+const d = document;
+const w = window;
 
 const tableLanguage = {
-  decimal: '',
-  emptyTable: 'No hay datos disponibles en la tabla',
-  info: 'Mostrando _START_ a _END_ de _TOTAL_ entradas',
-  infoEmpty: 'Mostrando 0 a 0 de 0 entradas',
-  infoFiltered: '(filtrado de _MAX_ entradas totales)',
-  infoPostFix: '',
-  thousands: ',',
-  lengthMenu: 'Mostrar _MENU_',
-  loadingRecords: 'Cargando...',
-  processing: '',
-  search: 'Buscar:',
-  zeroRecords: 'No se encontraron registros coincidentes',
+  decimal: "",
+  emptyTable: "No hay datos disponibles en la tabla",
+  info: "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+  infoEmpty: "Mostrando 0 a 0 de 0 entradas",
+  infoFiltered: "(filtrado de _MAX_ entradas totales)",
+  infoPostFix: "",
+  thousands: ",",
+  lengthMenu: "Mostrar _MENU_",
+  loadingRecords: "Cargando...",
+  processing: "",
+  search: "Buscar:",
+  zeroRecords: "No se encontraron registros coincidentes",
   paginate: {
-    first: 'Primera',
-    last: 'Última',
-    next: 'Siguiente',
-    previous: 'Anterior',
+    first: "Primera",
+    last: "Última",
+    next: "Siguiente",
+    previous: "Anterior",
   },
   aria: {
-    orderable: 'Ordenar por esta columna',
-    orderableReverse: 'Orden inverso de esta columna',
+    orderable: "Ordenar por esta columna",
+    orderableReverse: "Orden inverso de esta columna",
   },
-}
-let gastosTable, tipoGastosTable
+};
+let gastosTable, tipoGastosTable;
 export async function validateGastosTable(id_ejercicio) {
-  gastosTable = new DataTable('#gastos-table', {
+  gastosTable = new DataTable("#gastos-table", {
     columns: [
-      { data: 'compromiso' },
+      { data: "compromiso" },
 
-      { data: 'tipo' },
-      { data: 'monto' },
-      { data: 'fecha' },
-      { data: 'estado' },
-      { data: 'acciones' },
+      { data: "tipo" },
+      { data: "monto" },
+      { data: "fecha" },
+      { data: "estado" },
+      { data: "acciones" },
     ],
     responsive: true,
     scrollY: 300,
     language: tableLanguage,
     layout: {
       topEnd: function () {
-        let toolbar = document.createElement('div')
+        let toolbar = document.createElement("div");
         toolbar.innerHTML = `
-                  `
-        return toolbar
+                  `;
+        return toolbar;
       },
-      topStart: { search: { placeholder: 'Buscar...' } },
-      bottomStart: 'info',
-      bottomEnd: 'paging',
+      topStart: { search: { placeholder: "Buscar..." } },
+      bottomStart: "info",
+      bottomEnd: "paging",
     },
-  })
+  });
 
-  loadGastosTable(id_ejercicio)
+  loadGastosTable(id_ejercicio);
 }
 
 export async function validateTiposGastosTable() {
-  tipoGastosTable = new DataTable('#tipos-gastos-table', {
+  tipoGastosTable = new DataTable("#tipos-gastos-table", {
     columns: [
-      { data: 'nombre' },
+      { data: "nombre" },
 
-      { data: 'acciones' },
+      { data: "acciones" },
       // { data: 'partida_descripcion' },
     ],
     responsive: true,
@@ -74,28 +74,28 @@ export async function validateTiposGastosTable() {
     language: tableLanguage,
     layout: {
       topEnd: function () {
-        let toolbar = document.createElement('div')
+        let toolbar = document.createElement("div");
         toolbar.innerHTML = `
-                  `
-        return toolbar
+                  `;
+        return toolbar;
       },
-      topStart: { search: { placeholder: 'Buscar...' } },
-      bottomStart: 'info',
-      bottomEnd: 'paging',
+      topStart: { search: { placeholder: "Buscar..." } },
+      bottomStart: "info",
+      bottomEnd: "paging",
     },
-  })
+  });
 
-  loadTipoGastosTable()
+  loadTipoGastosTable();
 }
 
 export async function loadGastosTable({ id_ejercicio }) {
-  let gastos = await getGastos(id_ejercicio)
+  let gastos = await getGastos(id_ejercicio);
 
-  if (!Array.isArray(gastos)) return
+  if (!Array.isArray(gastos)) return;
 
-  if (!gastos || gastos.error) return
+  if (!gastos || gastos.error) return;
 
-  let datosOrdenados = [...gastos].sort((a, b) => a.id - b.id)
+  let datosOrdenados = [...gastos].sort((a, b) => a.id - b.id);
 
   let data = datosOrdenados.map((gastos) => {
     // let sector_programa_proyecto = `${
@@ -105,7 +105,7 @@ export async function loadGastosTable({ id_ejercicio }) {
     // }.${el.id_actividad == 0 ? '00' : el.id_actividad}`
 
     return {
-      compromiso: gastos.correlativo || 'Pendiente',
+      compromiso: gastos.correlativo || "Pendiente",
 
       tipo: gastos.nombre_tipo_gasto,
       monto: `${separarMiles(gastos.monto_gasto)} Bs`,
@@ -116,29 +116,30 @@ export async function loadGastosTable({ id_ejercicio }) {
           : Number(gastos.status_gasto) === 1
           ? `<span class='btn btn-sm btn-success'>Procesado</span>`
           : `<span class='btn btn-sm btn-danger'>Rechazado</span>`,
-      acciones: `<button class="btn btn-secondary btn-sm" data-detallesid="${gastos.id}">Detalles</button>`,
-    }
-  })
+      acciones: `<button class="btn btn-info btn-sm btn-detail" data-detallesid="${gastos.id}"></button>`,
+    };
+  });
+  //
 
   // <button class="btn btn-danger btn-sm" data-rechazarid="${gastos.id}">Rechazar</button>
   // <button class="btn btn-info btn-sm" data-aceptarid="${gastos.id}">Aceptar</button>
 
-  gastosTable.clear().draw()
+  gastosTable.clear().draw();
 
   // console.log(datosOrdenados)
-  gastosTable.rows.add(data).draw()
+  gastosTable.rows.add(data).draw();
 }
 
 export async function loadTipoGastosTable() {
-  let tipoGastos = await getTiposGastos()
+  let tipoGastos = await getTiposGastos();
 
-  if (!Array.isArray(tipoGastos)) return
+  if (!Array.isArray(tipoGastos)) return;
 
-  if (!tipoGastos || tipoGastos.error) return
+  if (!tipoGastos || tipoGastos.error) return;
 
-  console.log(tipoGastos)
+  console.log(tipoGastos);
 
-  let datosOrdenados = [...tipoGastos].sort((a, b) => a.id - b.id)
+  let datosOrdenados = [...tipoGastos].sort((a, b) => a.id - b.id);
 
   let data = datosOrdenados.map((gastos) => {
     return {
@@ -146,19 +147,19 @@ export async function loadTipoGastosTable() {
 
       acciones: `<button class="btn btn-danger btn-sm" data-eliminarid="${gastos.id}">Eliminar</button>`,
       // partida_descripcion: partidaEncontrada.descripcion,
-    }
-  })
+    };
+  });
 
-  tipoGastosTable.clear().draw()
+  tipoGastosTable.clear().draw();
 
   // console.log(datosOrdenados)
-  tipoGastosTable.rows.add(data).draw()
+  tipoGastosTable.rows.add(data).draw();
 }
 
 export async function deleteGasto({ id, row }) {
-  gastosTable.row(row).remove().draw()
+  gastosTable.row(row).remove().draw();
 }
 
 export async function deleteTipoGasto({ id, row }) {
-  tipoGastosTable.row(row).remove().draw()
+  tipoGastosTable.row(row).remove().draw();
 }

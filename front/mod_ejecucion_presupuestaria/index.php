@@ -661,16 +661,14 @@ $stmt->close();
               }),
             })
             .done(function(resultado) {
+              console.log(resultado)
 
               try {
-
                 var data = [];
                 // Procesar el resultado
                 resultado.forEach(element => {
                   addData(element.fecha, element.monto_gasto);
                 });
-
-
               } catch (error) {
                 console.error('Error procesando los datos:', error);
               }
@@ -680,18 +678,14 @@ $stmt->close();
               //  alert('Hubo un problema al obtener los datos. Por favor, inténtalo de nuevo.');
             })
             .always(function(res) {});
-
-
         }
 
         obtenerGastos()
-
-
         series.appear(1000);
         chart.appear(1000, 100);
       }); // end am5.ready()
 
-  
+
 
 
       $.ajax({
@@ -930,21 +924,14 @@ $stmt->close();
                   let value = element.value;
                   let restante = element.total_restante;
                   let total_inicial = element.total_inicial;
-
-                  if (restante != 0) {
-
-                    data.push({
-                      "country": value,
-                      "incial": total_inicial,
-                      "restante": restante
-                    });
-
-                    let porcentaje_restante = restante * 100 / total_inicial
-                    let porcentaje_restante_redondeado = Math.round(porcentaje_restante * 100) / 100
-
-                    data_tabla.push([contandor++, value, total_inicial + '<small>Bs</small>', restante + '<small>Bs</small>', porcentaje_restante_redondeado + '<small>%</small>'])
-                  }
-
+                  data.push({
+                    "country": value,
+                    "incial": total_inicial,
+                    "restante": restante
+                  });
+                  let porcentaje_restante = restante * 100 / total_inicial
+                  let porcentaje_restante_redondeado = Math.round(porcentaje_restante * 100) / 100
+                  data_tabla.push([contandor++, value, total_inicial + '<small>Bs</small>', restante + '<small>Bs</small>', porcentaje_restante_redondeado + '<small>%</small>'])
                 });
 
                 DataTable.rows.add(data_tabla).draw()
@@ -953,7 +940,6 @@ $stmt->close();
                 data.sort((a, b) => b.value - a.value);
 
                 // Actualizar el gráfico o visualización
-
                 xAxis.data.setAll([]);
                 xAxis.data.setAll(data);
 

@@ -60,8 +60,7 @@ require_once '../../back/sistema_global/session.php';
                                     funcionamiento</small>
                             </div>
 
-
-                            <button class="btn btn-primary" id="gastos-registrar">REGISTRAR</button>
+                            <button class="btn btn-primary btn-sm" id="gastos-registrar">REGISTRAR</button>
                         </div>
                         <nav class="m-2 nav nav-pills nav-justified" id="request-table-options">
                             <button class="nav-link active" data-tableid="gastos-table">Gastos realizados</button>
@@ -80,7 +79,7 @@ require_once '../../back/sistema_global/session.php';
                                         <th>MONTO</th>
                                         <th>FECHA</th>
                                         <th>ESTADO</th>
-                                        <th>ACCIONES</th>
+                                        <th>DETALLES</th>
                                     </thead>
                                 </table>
                             </div>

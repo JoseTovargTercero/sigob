@@ -1,5 +1,5 @@
-import { generarCompromisoPdf } from '../api/pre_compromisos.js'
-import { aceptarGasto, rechazarGasto } from '../api/pre_gastos.js'
+import { generarCompromisoPdf } from "../api/pre_compromisos.js";
+import { aceptarGasto, rechazarGasto } from "../api/pre_gastos.js";
 import {
   confirmNotification,
   hideLoader,
@@ -8,9 +8,9 @@ import {
   tableLanguage,
   toastNotification,
   validateInput,
-} from '../helpers/helpers.js'
-import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
-const d = document
+} from "../helpers/helpers.js";
+import { NOTIFICATIONS_TYPES } from "../helpers/types.js";
+const d = document;
 
 export const pre_gastosDetalles = ({
   elementToInsert,
@@ -18,7 +18,7 @@ export const pre_gastosDetalles = ({
   data,
   recargarEjercicio,
 }) => {
-  console.log(data)
+  console.log(data);
 
   // let sector_programa_proyecto = `${
   //   data.informacion_distribucion ? data.informacion_distribucion.sector : '0'
@@ -30,10 +30,10 @@ export const pre_gastosDetalles = ({
   //     : data.informacion_distribucion.id_actividad
   // }`
 
-  let nombreCard = 'gastos-detalles'
+  let nombreCard = "gastos-detalles";
 
-  const oldCardElement = d.getElementById(`${nombreCard}-form-card`)
-  if (oldCardElement) oldCardElement.remove()
+  const oldCardElement = d.getElementById(`${nombreCard}-form-card`);
+  if (oldCardElement) oldCardElement.remove();
 
   const distribucionLista = () => {
     let filas = data.informacion_distribuciones.map((el) => {
@@ -42,11 +42,11 @@ export const pre_gastosDetalles = ({
             ${el.sector}.${el.programa}.${el.sector}.${el.partida}
           </td>
           <td>${separadorLocal(el.monto)}</td>
-        </tr>`
-    })
+        </tr>`;
+    });
 
-    return filas.join('')
-  }
+    return filas.join("");
+  };
 
   let card = `    <div class='card slide-up-animation' id='${nombreCard}-form-card'>
       <div class='card-header d-flex justify-content-between'>
@@ -67,29 +67,184 @@ export const pre_gastosDetalles = ({
       </div>
       <div class='card-body'>
         <div class='row'>
-          <div class='col-sm-4 d-flex flex-column align-items-center text-center' style="
-    border-right: 1px solid rgb(205 205 205);
-">
-            <h4>Beneficiario:</h4>
-            <h6>Nombre: ${data.beneficiario}</h6>
-            <h6>Identificacion: ${data.identificador}</h6>
-            <h6>Compromiso: ${data.correlativo || 'No registrado'}</h6>
-            <h6>Tipo de gasto: ${data.nombre_tipo_gasto || 'No obtenido'}</h6>
-            <h6>Monto: ${separadorLocal(data.monto_gasto) || 'No obtenido'}</h6>
 
-            <h6>Descripción: ${data.descripcion_gasto || 'No obtenido'}</h6>
-            <h6>Fecha: ${data.fecha || 'No obtenido'}</h6>
-            <h6>
-             ${
-               Number(data.status_gasto) === 0
-                 ? ` <span class='btn btn-sm btn-secondary'>PENDIENTE</span>`
-                 : Number(data.status_gasto) === 1
-                 ? `<span class='btn btn-sm btn-success'>PROCESADO</span>`
-                 : Number(data.status_gasto) === 3
-                 ? `<span class='btn btn-sm btn-info'>ENTREGADO</span>`
-                 : `<span class='btn btn-sm btn-danger'>RECHAZADO</span>`
-             }
-            </h6>
+
+        <div class='col-sm-4 d-flex flex-column align-items-center text-center'>
+        <ul class="list-group list-group-flush w-100" style="max-height: 100vh !important">
+        <li class="list-group-item px-0">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <div class="avtar avtar-s border">
+                        <i class='bx bx-user' ></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <div class="row g-1">
+                            <div class="col-6">
+                                <h6 class="mb-0 text-left">Beneficiario</h6>
+                            </div>
+                            <div class="col-6 text-end">
+                                <h6 class="mb-1">${data.beneficiario}</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+                    <li class="list-group-item px-0">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <div class="avtar avtar-s border">
+                        <i class='bx bx-id-card' ></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <div class="row g-1">
+                            <div class="col-6">
+                                <h6 class="mb-0 text-left">Identificacion</h6>
+                            </div>
+                            <div class="col-6 text-end">
+                                <h6 class="mb-1">${data.identificador}</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        <li class="list-group-item px-0">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <div class="avtar avtar-s border">
+                        <i class='bx bx-paperclip' ></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <div class="row g-1">
+                            <div class="col-6">
+                                <h6 class="mb-0 text-left">Compromiso</h6>
+                            </div>
+                            <div class="col-6 text-end">
+                                <h6 class="mb-1">${
+                                  data.correlativo || "No registrado"
+                                }</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+
+                    <li class="list-group-item px-0">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <div class="avtar avtar-s border">
+                        <i class='bx bx-collection' ></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <div class="row g-1">
+                            <div class="col-6">
+                                <h6 class="mb-0 text-left">Tipo de gasto</h6>
+                            </div>
+                            <div class="col-6 text-end">
+                                <h6 class="mb-1">${
+                                  data.nombre_tipo_gasto || "No obtenido"
+                                }</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+
+
+                    <li class="list-group-item px-0">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <div class="avtar avtar-s border">
+                        <i class='bx bx-purchase-tag-alt' ></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <div class="row g-1">
+                            <div class="col-6">
+                                <h6 class="mb-0 text-left">Monto</h6>
+                            </div>
+                            <div class="col-6 text-end">
+                                <h6 class="mb-1">${
+                                  separadorLocal(data.monto_gasto) ||
+                                  "No obtenido"
+                                }</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+
+                    <li class="list-group-item px-0">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <div class="avtar avtar-s border">
+                        <i class='bx bx-calendar-alt' ></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <div class="row g-1">
+                            <div class="col-6">
+                                <h6 class="mb-0 text-left">Fecha</h6>
+                            </div>
+                            <div class="col-6 text-end">
+                                <h6 class="mb-1">${
+                                  data.fecha || "No obtenido"
+                                }</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+
+        <li class="list-group-item px-0">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <div class="avtar avtar-s border">
+                        <i class='bx bx-check-double' ></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <div class="row g-1">
+                            <div class="col-6">
+                                <h6 class="mb-0 text-left">Estatus</h6>
+                            </div>
+                            <div class="col-6 text-end">
+                                <h6 class="mb-1">  ${
+                                  Number(data.status_gasto) === 0
+                                    ? ` <span class='badge badge-sm bg-secondary'>Pendiente</span>`
+                                    : Number(data.status_gasto) === 1
+                                    ? `<span class='badge badge-sm bg-success'>Procesado</span>`
+                                    : Number(data.status_gasto) === 3
+                                    ? `<span class='badge badge-sm bg-info'>Entregado</span>`
+                                    : `<span class='badge badge-sm bg-danger'>Rechazado</span>`
+                                }</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+
+        </ul>
+
+
+
+            <div class="mt-3">
+
+               <div class="mt-3">
+        
+            <b>Descripción:</b> ${data.descripcion_gasto || "No obtenido"}
+Lorem ipsum dolor sit amet consectetur adipisicing elit. Officiis repellendus veniam eaque atque explicabo distinctio non vero fugit accusantium iste perferendis dolores optio id beatae, autem soluta. Error, eaque autem?
+            
+        </div>
+
+
+
+        </div>
+         
+        
           </div>
 
           <div class='col-sm-8'>
@@ -128,73 +283,73 @@ export const pre_gastosDetalles = ({
         </button>`
         }
       </div>
-    </div>`
+    </div>`;
 
-  d.getElementById(elementToInsert).insertAdjacentHTML('afterbegin', card)
+  d.getElementById(elementToInsert).insertAdjacentHTML("afterbegin", card);
 
-  let cardElement = d.getElementById(`${nombreCard}-form-card`)
-  let formElement = d.getElementById(`${nombreCard}-form`)
+  let cardElement = d.getElementById(`${nombreCard}-form-card`);
+  let formElement = d.getElementById(`${nombreCard}-form`);
 
-  let personaTable = new DataTable('#distribuciones-table', {
+  let personaTable = new DataTable("#distribuciones-table", {
     responsive: true,
     scrollY: 100,
     language: tableLanguage,
     layout: {
       topStart: function () {
-        let toolbar = document.createElement('div')
+        let toolbar = document.createElement("div");
         toolbar.innerHTML = `
              
-                        `
-        return toolbar
+                        `;
+        return toolbar;
       },
-      topEnd: { search: { placeholder: 'Buscar...' } },
-      bottomStart: 'info',
-      bottomEnd: 'paging',
+      topEnd: { search: { placeholder: "Buscar..." } },
+      bottomStart: "info",
+      bottomEnd: "paging",
     },
-  })
+  });
 
   const closeCard = () => {
     // validateEditButtons()
 
-    cardElement.remove()
-    cardElement.removeEventListener('click', validateClick)
-    cardElement.removeEventListener('input', validateInputFunction)
+    cardElement.remove();
+    cardElement.removeEventListener("click", validateClick);
+    cardElement.removeEventListener("input", validateInputFunction);
 
-    return false
-  }
+    return false;
+  };
 
   function validateClick(e) {
     if (e.target.dataset.close) {
-      closeCard()
+      closeCard();
     }
     if (e.target.dataset.compromisoid) {
-      console.log(e.target.dataset.compromisoid)
-      generarCompromisoPdf(e.target.dataset.compromisoid, data.correlativo)
+      console.log(e.target.dataset.compromisoid);
+      generarCompromisoPdf(e.target.dataset.compromisoid, data.correlativo);
     }
 
     if (e.target.dataset.aceptarid) {
       form_aceptarGasto({
-        elementToInsert: 'gastos-view',
+        elementToInsert: "gastos-view",
         id: data.id,
         reset: function () {
-          closeCard()
-          recargarEjercicio()
+          closeCard();
+          recargarEjercicio();
         },
-      })
+      });
     }
     if (e.target.dataset.rechazarid) {
       confirmNotification({
         type: NOTIFICATIONS_TYPES.send,
         message:
-          'Rechazar este gasto hará que se elimine y reintegre el monto al presupuesto ¿Desea continuar?',
+          "Rechazar este gasto hará que se elimine y reintegre el monto al presupuesto ¿Desea continuar?",
         successFunction: async function () {
-          let res = await rechazarGasto(data.id)
+          let res = await rechazarGasto(data.id);
           if (res.success) {
-            recargarEjercicio()
-            closeCard()
+            recargarEjercicio();
+            closeCard();
           }
         },
-      })
+      });
     }
   }
 
@@ -204,33 +359,33 @@ export const pre_gastosDetalles = ({
       fieldList,
       fieldListErrors,
       type: fieldListErrors[e.target.name].type,
-    })
+    });
   }
 
   // CARGAR LISTA DE PARTIDAS
 
   function enviarInformacion(data) {}
 
-  cardElement.addEventListener('submit', (e) => e.preventDefault())
+  cardElement.addEventListener("submit", (e) => e.preventDefault());
 
-  cardElement.addEventListener('input', validateInputFunction)
-  cardElement.addEventListener('click', validateClick)
-}
+  cardElement.addEventListener("input", validateInputFunction);
+  cardElement.addEventListener("click", validateClick);
+};
 
 export const form_aceptarGasto = ({ elementToInsert, id, reset }) => {
-  let fieldList = { codigo: '' }
+  let fieldList = { codigo: "" };
   let fieldListErrors = {
     codigo: {
       value: true,
-      message: 'El compromiso necesita una identificación',
-      type: 'textarea',
+      message: "El compromiso necesita una identificación",
+      type: "textarea",
     },
-  }
+  };
 
-  let nombreCard = 'aceptar-gasto'
+  let nombreCard = "aceptar-gasto";
 
-  const oldCardElement = d.getElementById(`${nombreCard}-form-card`)
-  if (oldCardElement) oldCardElement.remove()
+  const oldCardElement = d.getElementById(`${nombreCard}-form-card`);
+  if (oldCardElement) oldCardElement.remove();
 
   let card = `    <div class='card slide-up-animation' id='${nombreCard}-form-card'>
       <div class='card-header d-flex justify-content-between'>
@@ -267,49 +422,49 @@ export const form_aceptarGasto = ({ elementToInsert, id, reset }) => {
           </button>
         </div>
       </div>
-    </div>`
+    </div>`;
 
   let modal = `  <div class='modal-window' id='${nombreCard}-form-card'>
       <div class=' slide-up-animation'>${card}</div>
-    </div>`
+    </div>`;
 
-  d.getElementById(elementToInsert).insertAdjacentHTML('afterbegin', modal)
+  d.getElementById(elementToInsert).insertAdjacentHTML("afterbegin", modal);
 
-  let cardElement = d.getElementById(`${nombreCard}-form-card`)
-  let formElement = d.getElementById(`${nombreCard}-form`)
+  let cardElement = d.getElementById(`${nombreCard}-form-card`);
+  let formElement = d.getElementById(`${nombreCard}-form`);
 
   const closeCard = () => {
     // validateEditButtons()
-    cardElement.remove()
-    cardElement.removeEventListener('click', validateClick)
+    cardElement.remove();
+    cardElement.removeEventListener("click", validateClick);
     // cardElement.removeEventListener('input', validateInputFunction)
 
-    return false
-  }
+    return false;
+  };
 
   function validateClick(e) {
     if (e.target.dataset.close) {
-      closeCard()
+      closeCard();
     }
 
     if (e.target.id === `${nombreCard}-guardar`) {
-      let input = d.getElementById('codigo')
+      let input = d.getElementById("codigo");
       fieldList = validateInput({
         target: input,
         fieldList,
         fieldListErrors,
         type: fieldListErrors[input.name].type,
-      })
+      });
 
       if (fieldListErrors.codigo.value) {
         toastNotification({
           type: NOTIFICATIONS_TYPES.fail,
-          message: 'Campo invalido',
-        })
-        return
+          message: "Campo invalido",
+        });
+        return;
       }
 
-      enviarInformacion()
+      enviarInformacion();
     }
   }
 
@@ -319,7 +474,7 @@ export const form_aceptarGasto = ({ elementToInsert, id, reset }) => {
       fieldList,
       fieldListErrors,
       type: fieldListErrors[e.target.name].type,
-    })
+    });
   }
 
   // CARGAR LISTA DE PARTIDAS
@@ -328,25 +483,25 @@ export const form_aceptarGasto = ({ elementToInsert, id, reset }) => {
     confirmNotification({
       type: NOTIFICATIONS_TYPES.send,
       message:
-        'Al aceptar este gasto se descontará del presupuesto actual ¿Desea continuar?',
+        "Al aceptar este gasto se descontará del presupuesto actual ¿Desea continuar?",
       successFunction: async function () {
-        console.log(id)
+        console.log(id);
 
-        let res = await aceptarGasto(id, fieldList.codigo)
+        let res = await aceptarGasto(id, fieldList.codigo);
         if (res.success) {
           generarCompromisoPdf(
             res.compromiso.id_compromiso,
             res.compromiso.correlativo
-          )
-          reset()
-          closeCard()
+          );
+          reset();
+          closeCard();
         }
       },
-    })
+    });
   }
 
-  formElement.addEventListener('submit', (e) => e.preventDefault())
+  formElement.addEventListener("submit", (e) => e.preventDefault());
 
-  cardElement.addEventListener('input', validateInputFunction)
-  cardElement.addEventListener('click', validateClick)
-}
+  cardElement.addEventListener("input", validateInputFunction);
+  cardElement.addEventListener("click", validateClick);
+};
