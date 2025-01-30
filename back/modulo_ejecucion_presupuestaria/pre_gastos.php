@@ -75,7 +75,7 @@ function crearGasto($id_tipo, $descripcion, $monto, $id_ejercicio, $beneficiario
 
 
 
-function gestionarGasto($idGasto, $accion, $codigo)
+function gestionarGasto($idGasto, $accion)
 {
     global $conexion;
 
@@ -154,7 +154,7 @@ function gestionarGasto($idGasto, $accion, $codigo)
             $stmtUpdateGasto->execute();
 
             if ($stmtUpdateGasto->affected_rows > 0) {
-                $resultadoCompromiso = registrarCompromiso($idGasto, 'gastos', $descripcion, $id_ejercicio, $codigo);
+                $resultadoCompromiso = registrarCompromiso($idGasto, 'gastos', $descripcion, $id_ejercicio, '');
 
                 if (isset($resultadoCompromiso['success']) && $resultadoCompromiso['success']) {
                     return json_encode([
@@ -367,7 +367,7 @@ function obtenerSumatoriaPorTrimestre($id_ejercicio)
         while ($row = $result->fetch_assoc()) {
             $monto = $row['monto'];
             $fecha = $row['fecha'];
-            $mes = (int)date('m', strtotime($fecha)); // Extraer el mes de la fecha
+            $mes = (int) date('m', strtotime($fecha)); // Extraer el mes de la fecha
 
             // Determinar el trimestre y sumar el monto
             if ($mes >= 1 && $mes <= 3) {
@@ -631,7 +631,8 @@ if (isset($data["accion"])) {
             break;
 
         case 'gestionar':  // Nueva opción para aceptar o rechazar
-            echo gestionarGasto($data["id"], $data["accion_gestion"], $data["codigo"]);
+
+            echo gestionarGasto($data["id"], $data["accion_gestion"]);
             break;
 
         default:

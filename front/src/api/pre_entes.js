@@ -10,7 +10,7 @@ import { APP_URL, config } from './urlConfig.js'
 
 const entesDistribucionUrl = `${APP_URL}${config.MODULE_NAMES.GLOBAL}sigob_api_asignaciones_entes.php`
 
-const asignacionEntesUrl = `${APP_URL}${config.MODULE_NAMES.EJECUCION}/pre_asignacion_entes.php`
+const asignacionEntesUrl = `${APP_URL}${config.MODULE_NAMES.EJECUCION}pre_asignacion_entes.php`
 
 const getPreAsignacionEntes = async (ejercicioId) => {
   showLoader()
@@ -105,7 +105,7 @@ const getPreAsignacionEnte = async (id, ejercicioId) => {
 const obtenerDistribucionSecretaria = async ({ id_ejercicio }) => {
   showLoader()
   try {
-    let res = await fetch(asignacionEntesUrl, {
+    let res = await fetch(`${entesDistribucionUrl}`, {
       method: 'POST',
       body: JSON.stringify({
         accion: 'consultar_secretarias',
