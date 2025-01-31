@@ -403,6 +403,8 @@ export const pre_gastos_form_card = async ({
     let options = [`<option value=''>Elegir partida...</option>`]
 
     partidasDisponibles.forEach((partida) => {
+      console.log(partida)
+
       let sppa = `
       ${partida.sector_denominacion ? partida.sector_denominacion : '00'}.${
         partida.programa_denominacion ? partida.programa_denominacion : '00'
@@ -410,7 +412,7 @@ export const pre_gastos_form_card = async ({
         partida.proyecto_denominacion ? partida.proyecto_denominacion : '00'
       }.${partida.actividad ? partida.actividad : '00'}`
 
-      let opt = `<option value="${partida.id}">${sppa}.${
+      let opt = `<option value="${partida.id_distribucion}">${sppa}.${
         partida.partida
       } - ${partida.ente_nombre[0].toUpperCase()}${partida.ente_nombre
         .substr(1, partida.ente_nombre.length - 1)
@@ -466,6 +468,8 @@ export const pre_gastos_form_card = async ({
         monto: formatearFloat(montoInput.value),
       }
     })
+
+    console.log(mappedPartidas)
 
     // Verificar si hay algun dato erróneo y cancelar envío
     if (mappedPartidas.some((el) => !el)) {

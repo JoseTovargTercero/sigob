@@ -32,6 +32,19 @@ function gestionarAsignaciones()
                 return apiGet("$url?id_ejercicio=$paramsEjercicioId");
             }
         }
+
+        if ($method == 'POST') {
+            $data = json_decode(file_get_contents("php://input"), true);
+
+            if (!isset($data['accion'])) {
+                return json_encode(["error" => "No se ha especificado acción."]);
+            }
+
+            $accion = $data['accion'];
+
+            return apiPost($url, $data);
+
+        }
         //  else if ($method == 'POST') {
         //     $data = json_decode(file_get_contents("php://input"), true);
 
