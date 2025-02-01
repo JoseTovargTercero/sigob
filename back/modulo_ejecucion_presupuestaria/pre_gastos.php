@@ -27,30 +27,19 @@ function crearGasto($id_tipo, $descripcion, $monto, $id_ejercicio, $beneficiario
             throw new Exception("El formato de distribuciones no es válido");
         }
 
-        // Verificar cada distribución presupuestaria y si el presupuesto es suficiente
-        foreach ($distribucionesArray as $distribucion) {
-            $id_distribucion = $distribucion['id_distribucion'];
-            $monto_distribucion = $distribucion['monto'];
 
-            // Paso 1: Buscar id_partida en la tabla distribucion_presupuestaria usando id_distribucion
-            $sqlDistribucionPresupuestaria = "SELECT id_partida FROM distribucion_presupuestaria WHERE id = ?";
-            $stmtDistribucionPresupuestaria = $conexion->prepare($sqlDistribucionPresupuestaria);
-            $stmtDistribucionPresupuestaria->bind_param("i", $id_distribucion);
-            $stmtDistribucionPresupuestaria->execute();
-            $resultadoDistribucionPresupuestaria = $stmtDistribucionPresupuestaria->get_result();
+        require_once '../sistema_global/sigob_api.php';
+        $disponible = consultarDisponibilidadApi($distribuciones, $id_ejercicio);
 
-            if ($resultadoDistribucionPresupuestaria->num_rows === 0) {
-                throw new Exception("No existe una distribución presupuestaria con el ID proporcionado: $id_distribucion");
-            }
+        if (isset($disponible['error'])) {
+            throw new Exception($disponible['error']);
+        }
+        if (!isset($disponible['success'])) {
+            throw new Exception('Error al acceder a la respuesta');
+        }
 
-            $filaDistribucionPresupuestaria = $resultadoDistribucionPresupuestaria->fetch_assoc();
-            $id_partida = $filaDistribucionPresupuestaria['id_partida'];
-
-            // Verificar si el presupuesto es suficiente para cada distribución
-            $disponible = consultarDisponibilidad($id_partida, $id_ejercicio, $monto_distribucion);
-            if (!$disponible) {
-                throw new Exception("El presupuesto actual es insuficiente para el monto del gasto en la distribución con ID: $id_distribucion");
-            }
+        if (!$disponible) {
+            throw new Exception('No se pudo verificar la disponibilidad presupuestaria');
         }
 
         // Insertar el gasto si el presupuesto es suficiente para todas las distribuciones
