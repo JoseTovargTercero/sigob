@@ -389,7 +389,6 @@ function obtenerGastoPorId($id)
     global $conexion;
 
     try {
-        // Consultar el registro de la tabla gastos por su ID
         $sqlGasto = "SELECT id, id_tipo, descripcion, monto, status, distribuciones, fecha, beneficiario, identificador, id_ejercicio FROM gastos WHERE id = ?";
         $stmtGasto = $conexion->prepare($sqlGasto);
         $stmtGasto->bind_param("i", $id);
@@ -408,7 +407,6 @@ function obtenerGastoPorId($id)
             $id_ejercicio = $gasto['id_ejercicio'];
             $distribuciones = json_decode($gasto['distribuciones'], true);
 
-            // Consultar la tabla tipo_gastos para obtener el nombre del tipo de gasto
             $sqlTipoGasto = "SELECT nombre FROM tipo_gastos WHERE id = ?";
             $stmtTipoGasto = $conexion->prepare($sqlTipoGasto);
             $stmtTipoGasto->bind_param("i", $id_tipo);
@@ -416,87 +414,95 @@ function obtenerGastoPorId($id)
             $resultadoTipoGasto = $stmtTipoGasto->get_result();
             $nombreTipoGasto = $resultadoTipoGasto->fetch_assoc()['nombre'] ?? null;
 
-            // Procesar las distribuciones para obtener información detallada de cada distribución
             $informacionDistribuciones = [];
             foreach ($distribuciones as $distribucion) {
                 $id_distribucion = $distribucion['id_distribucion'];
-                $montoDistribucion = $distribucion['monto'];
 
-                $sqlDistribucion = "SELECT id, id_partida, id_sector, id_programa FROM distribucion_presupuestaria WHERE id = ?";
-                $stmtDistribucion = $conexion->prepare($sqlDistribucion);
-                $stmtDistribucion->bind_param("i", $id_distribucion);
-                $stmtDistribucion->execute();
-                $resultadoDistribucion = $stmtDistribucion->get_result();
-                $distribucionInfo = $resultadoDistribucion->fetch_assoc();
+                $sqlDistribucionEnte = "SELECT id, distribucion FROM distribucion_entes WHERE id_ejercicio = ? AND distribucion LIKE ?";
+                $likePattern = '%"id_distribucion":"' . $id_distribucion . '"%';
+                $stmtDistribucionEnte = $conexion->prepare($sqlDistribucionEnte);
+                $stmtDistribucionEnte->bind_param("is", $id_ejercicio, $likePattern);
+                $stmtDistribucionEnte->execute();
+                $resultadoDistribucionEnte = $stmtDistribucionEnte->get_result();
+                
+                if ($distribucionEnte = $resultadoDistribucionEnte->fetch_assoc()) {
+                    $id_distribucion_ente = $distribucionEnte['id'];
+                    $distribucionData = json_decode($distribucionEnte['distribucion'], true);
+                    
+                    foreach ($distribucionData as $dist) {
+                        if ($dist['id_distribucion'] == $id_distribucion) {
+                            $montoDistribucion = $dist['monto'];
+                            break;
+                        }
+                    }
 
-                if ($distribucionInfo) {
-                    $id_partida = $distribucionInfo['id_partida'];
-                    $id_sector = $distribucionInfo['id_sector'];
-                    $id_programa = $distribucionInfo['id_programa'];
+                    $sqlDistribucion = "SELECT id_partida, id_sector, id_programa FROM distribucion_presupuestaria WHERE id = ?";
+                    $stmtDistribucion = $conexion->prepare($sqlDistribucion);
+                    $stmtDistribucion->bind_param("i", $id_distribucion);
+                    $stmtDistribucion->execute();
+                    $resultadoDistribucion = $stmtDistribucion->get_result();
+                    $distribucionInfo = $resultadoDistribucion->fetch_assoc();
 
-                    // Obtener detalles de la partida
-                    $sqlPartida = "SELECT partida, nombre, descripcion FROM partidas_presupuestarias WHERE id = ?";
-                    $stmtPartida = $conexion->prepare($sqlPartida);
-                    $stmtPartida->bind_param("i", $id_partida);
-                    $stmtPartida->execute();
-                    $resultadoPartida = $stmtPartida->get_result();
-                    $partidaInfo = $resultadoPartida->fetch_assoc();
+                    if ($distribucionInfo) {
+                        $id_partida = $distribucionInfo['id_partida'];
+                        $id_sector = $distribucionInfo['id_sector'];
+                        $id_programa = $distribucionInfo['id_programa'];
 
-                    // Obtener el sector desde pl_sectores
-                    $sqlSector = "SELECT sector AS sector_numero FROM pl_sectores WHERE id = ?";
-                    $stmtSector = $conexion->prepare($sqlSector);
-                    $stmtSector->bind_param("i", $id_sector);
-                    $stmtSector->execute();
-                    $resultadoSector = $stmtSector->get_result();
-                    $sectorInfo = $resultadoSector->fetch_assoc();
+                        $sqlPartida = "SELECT partida, nombre, descripcion FROM partidas_presupuestarias WHERE id = ?";
+                        $stmtPartida = $conexion->prepare($sqlPartida);
+                        $stmtPartida->bind_param("i", $id_partida);
+                        $stmtPartida->execute();
+                        $resultadoPartida = $stmtPartida->get_result();
+                        $partidaInfo = $resultadoPartida->fetch_assoc();
 
-                    // Obtener el programa desde pl_programas
-                    $sqlPrograma = "SELECT programa AS programa_numero FROM pl_programas WHERE id = ?";
-                    $stmtPrograma = $conexion->prepare($sqlPrograma);
-                    $stmtPrograma->bind_param("i", $id_programa);
-                    $stmtPrograma->execute();
-                    $resultadoPrograma = $stmtPrograma->get_result();
-                    $programaInfo = $resultadoPrograma->fetch_assoc();
+                        $sqlSector = "SELECT sector AS sector_numero FROM pl_sectores WHERE id = ?";
+                        $stmtSector = $conexion->prepare($sqlSector);
+                        $stmtSector->bind_param("i", $id_sector);
+                        $stmtSector->execute();
+                        $resultadoSector = $stmtSector->get_result();
+                        $sectorInfo = $resultadoSector->fetch_assoc();
 
-                    // Agregar información completa de la distribución al array de resultados
-                    $informacionDistribuciones[] = [
-                        'id_distribucion' => $id_distribucion,
-                        'monto' => $montoDistribucion,
-                        'partida' => $partidaInfo['partida'] ?? null,
-                        'nombre_partida' => $partidaInfo['nombre'] ?? null,
-                        'descripcion_partida' => $partidaInfo['descripcion'] ?? null,
-                        'sector' => $sectorInfo['sector_numero'] ?? null,
-                        'programa' => $programaInfo['programa_numero'] ?? null
-                    ];
+                        $sqlPrograma = "SELECT programa AS programa_numero FROM pl_programas WHERE id = ?";
+                        $stmtPrograma = $conexion->prepare($sqlPrograma);
+                        $stmtPrograma->bind_param("i", $id_programa);
+                        $stmtPrograma->execute();
+                        $resultadoPrograma = $stmtPrograma->get_result();
+                        $programaInfo = $resultadoPrograma->fetch_assoc();
+
+                        $informacionDistribuciones[] = [
+                            'id_distribucion' => $id_distribucion_ente,
+                            'monto' => $montoDistribucion,
+                            'partida' => $partidaInfo['partida'] ?? null,
+                            'nombre_partida' => $partidaInfo['nombre'] ?? null,
+                            'descripcion_partida' => $partidaInfo['descripcion'] ?? null,
+                            'sector' => $sectorInfo['sector_numero'] ?? null,
+                            'programa' => $programaInfo['programa_numero'] ?? null
+                        ];
+                    }
                 }
             }
 
-            // Buscar el registro en la tabla compromisos
             $sqlCompromiso = "SELECT id, correlativo, numero_compromiso FROM compromisos WHERE id_registro = ? AND tabla_registro = 'gastos'";
             $stmtCompromiso = $conexion->prepare($sqlCompromiso);
             $stmtCompromiso->bind_param("i", $id);
             $stmtCompromiso->execute();
             $resultadoCompromiso = $stmtCompromiso->get_result();
             $compromiso = $resultadoCompromiso->fetch_assoc();
-            $idCompromiso = $compromiso['id'] ?? null;
-            $correlativo = $compromiso['correlativo'] ?? null;
-            $numero_compromiso = $compromiso['numero_compromiso'] ?? null;
 
-            // Construir el array con los datos obtenidos
             $resultado = [
                 'id' => $id_gasto,
                 'nombre_tipo_gasto' => $nombreTipoGasto,
                 'descripcion_gasto' => $descripcion,
                 'monto_gasto' => $monto,
                 'fecha' => $fecha,
-                'correlativo' => $correlativo,
-                'numero_compromiso' => $numero_compromiso,
+                'correlativo' => $compromiso['correlativo'] ?? null,
+                'numero_compromiso' => $compromiso['numero_compromiso'] ?? null,
                 'status_gasto' => $status,
                 'beneficiario' => $beneficiario,
                 'identificador' => $identificador,
-                'id_compromiso' => $idCompromiso,
+                'id_compromiso' => $compromiso['id'] ?? null,
                 'id_ejercicio' => $id_ejercicio,
-                'informacion_distribuciones' => $informacionDistribuciones // Distribuciones con detalles
+                'informacion_distribuciones' => $informacionDistribuciones
             ];
 
             return json_encode($resultado);
