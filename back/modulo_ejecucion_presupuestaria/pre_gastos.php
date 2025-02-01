@@ -114,7 +114,7 @@ function gestionarGasto($idGasto, $accion)
                 throw new Exception('No se pudo verificar la disponibilidad presupuestaria');
             }
 
-            $actualizar = actualizarDistribucion($distribuciones, $id_ejercicio);
+            $actualizar = actualizarDistribucionApi($distribuciones, $id_ejercicio);
             if (isset($actualizar['error'])) {
                 throw new Exception($actualizar['error']);
             }
@@ -424,11 +424,11 @@ function obtenerGastoPorId($id)
                 $stmtDistribucionEnte->bind_param("is", $id_ejercicio, $likePattern);
                 $stmtDistribucionEnte->execute();
                 $resultadoDistribucionEnte = $stmtDistribucionEnte->get_result();
-                
+
                 if ($distribucionEnte = $resultadoDistribucionEnte->fetch_assoc()) {
                     $id_distribucion_ente = $distribucionEnte['id'];
                     $distribucionData = json_decode($distribucionEnte['distribucion'], true);
-                    
+
                     foreach ($distribucionData as $dist) {
                         if ($dist['id_distribucion'] == $id_distribucion) {
                             $montoDistribucion = $dist['monto'];

@@ -4,7 +4,6 @@ require_once '../sistema_global/conexion.php';
 
 header('Content-Type: application/json');
 
-
 function apiGet($url)
 {
     try {
@@ -99,7 +98,7 @@ function consultarDisponibilidadApi($distribuciones, $id_ejercicio)
     return $response;
 }
 
-function actualizarDistribucion($distribuciones, $id_ejercicio)
+function actualizarDistribucionApi($distribuciones, $id_ejercicio)
 {
     $data = ["accion" => "actualizar_distribucion", "distribuciones" => $distribuciones, "id_ejercicio" => $id_ejercicio];
     $url = "https://sigob.net/api/asignaciones";
@@ -109,3 +108,53 @@ function actualizarDistribucion($distribuciones, $id_ejercicio)
     return $response;
 }
 
+function actualizarTablasApi($id_ejercicio)
+{
+    global $conexion;
+
+    try {
+        $conexion->begin_transaction();
+        $url = "https://sigob.net/api/ejercicio_fiscal";
+        $ejerciciosRegistros = consultarTablas('ejercicio_fiscal', 'id', $id_ejercicio);
+        $distribucionesRegistros = consultarTablas('distribucion_presupuestaria', 'id_ejercicio', $id_ejercicio);
+        $distribucionesEntesRegistros = consultarTablas('distribucion_entes', 'id_ejercicio', $id_ejercicio);
+
+        $informacion = [
+            ["tabla" => "ejercicio_fiscal", "datos" => $ejerciciosRegistros],
+            ["tabla" => "distribucion_presupuestaria", "datos" => $distribucionesRegistros],
+            ["tabla" => "distribucion_entes", "datos" => $distribucionesEntesRegistros],
+
+        ];
+
+        return json_encode($informacion, true);
+
+    } catch (Exception $e) {
+        return ["error" => $e->getMessage()];
+    }
+}
+
+function consultarTablas($tablaName, $param, $paramValue)
+{
+    global $conexion;
+    $sql = "select * from $tablaName where $param = ?";
+    $stmt = $conexion->prepare($sql);
+    $stmt->bind_param('i', $paramValue);
+    $stmt->execute();
+
+    if (!$stmt) {
+        throw new Exception("Error al consultar la tabla $tablaName");
+    }
+
+    $result = $stmt->get_result();
+    $data = [];
+    while ($row = $result->fetch_assoc()) {
+        $data[] = $row;
+    }
+
+    return $data;
+
+}
+
+if ($_SERVER["REQUEST_METHOD"] == 'GET') {
+    echo actualizarTablasApi(3);
+}
