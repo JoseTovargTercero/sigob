@@ -68,6 +68,8 @@ function gestionarGasto($idGasto, $accion)
 {
     global $conexion;
 
+    $conexion->begin_transaction();
+
     try {
         if (empty($idGasto) || empty($accion)) {
             throw new Exception("Faltan uno o más valores necesarios (idGasto, accion)");
@@ -97,44 +99,35 @@ function gestionarGasto($idGasto, $accion)
         }
 
         if ($accion === "aceptar") {
-            // Iterar sobre cada distribución en el array `distribuciones`
-            foreach ($distribuciones as $distribucion) {
-                $id_distribucion = $distribucion['id_distribucion'];
-                $monto = $distribucion['monto'];
 
-                // Consultar `id_partida` en `distribucion_presupuestaria` usando `id_distribucion`
-                $sqlDistribucionPresupuestaria = "SELECT id_partida, monto_actual FROM distribucion_presupuestaria WHERE id = ?";
-                $stmtDistribucionPresupuestaria = $conexion->prepare($sqlDistribucionPresupuestaria);
-                $stmtDistribucionPresupuestaria->bind_param("i", $id_distribucion);
-                $stmtDistribucionPresupuestaria->execute();
-                $resultadoDistribucionPresupuestaria = $stmtDistribucionPresupuestaria->get_result();
+            require_once '../sistema_global/sigob_api.php';
+            $disponible = consultarDisponibilidadApi($distribuciones, $id_ejercicio);
 
-                if ($resultadoDistribucionPresupuestaria->num_rows === 0) {
-                    throw new Exception("No se encontró una distribución presupuestaria con el ID proporcionado");
-                }
-
-                $filaDistribucionPresupuestaria = $resultadoDistribucionPresupuestaria->fetch_assoc();
-                $id_partida = $filaDistribucionPresupuestaria['id_partida'];
-                $monto_actual = $filaDistribucionPresupuestaria['monto_actual'];
-
-                // Consultar disponibilidad presupuestaria para esta distribución
-                $disponible = consultarDisponibilidad($id_partida, $id_ejercicio, $monto);
-
-                if (!$disponible) {
-                    throw new Exception("El presupuesto actual es insuficiente para el monto de la distribución con ID $id_distribucion");
-                }
-
-                // Calcular y actualizar el monto disponible en `distribucion_presupuestaria`
-                $nuevoMontoActual = (float) $monto_actual - (float) $monto;
-                $sqlUpdateDistribucion = "UPDATE distribucion_presupuestaria SET monto_actual = ? WHERE id = ?";
-                $stmtUpdateDistribucion = $conexion->prepare($sqlUpdateDistribucion);
-                $stmtUpdateDistribucion->bind_param("di", $nuevoMontoActual, $id_distribucion);
-                $stmtUpdateDistribucion->execute();
-
-                if ($stmtUpdateDistribucion->affected_rows === 0) {
-                    throw new Exception("No se pudo actualizar el monto actual para la distribución con ID $id_distribucion");
-                }
+            if (isset($disponible['error'])) {
+                throw new Exception($disponible['error']);
             }
+            if (!isset($disponible['success'])) {
+                throw new Exception('Error al acceder a la respuesta');
+            }
+
+            if (!$disponible) {
+                throw new Exception('No se pudo verificar la disponibilidad presupuestaria');
+            }
+
+            $actualizar = actualizarDistribucion($distribuciones, $id_ejercicio);
+            if (isset($actualizar['error'])) {
+                throw new Exception($actualizar['error']);
+            }
+
+            if (!isset($actualizar['success'])) {
+                throw new Exception('Error al acceder a la respuesta al actualizar monto');
+            }
+
+            if (!$actualizar) {
+                throw new Exception('No se pudo actualizar el mondo en la distribucion');
+            }
+
+
 
             // Actualizar el estado del gasto a aceptado
             $sqlUpdateGasto = "UPDATE gastos SET status = 1 WHERE id = ?";
@@ -146,6 +139,7 @@ function gestionarGasto($idGasto, $accion)
                 $resultadoCompromiso = registrarCompromiso($idGasto, 'gastos', $descripcion, $id_ejercicio, '');
 
                 if (isset($resultadoCompromiso['success']) && $resultadoCompromiso['success']) {
+                    $conexion->commit();
                     return json_encode([
                         "success" => "El gasto ha sido aceptado, el compromiso se ha registrado y el presupuesto actualizado",
                         "compromiso" => [
@@ -168,6 +162,8 @@ function gestionarGasto($idGasto, $accion)
             $stmtUpdateGasto->execute();
 
             if ($stmtUpdateGasto->affected_rows > 0) {
+
+                $conexion->commit();
                 return json_encode(["success" => "El gasto ha sido rechazado"]);
             } else {
                 throw new Exception("No se pudo rechazar el gasto");
@@ -178,6 +174,7 @@ function gestionarGasto($idGasto, $accion)
         }
 
     } catch (Exception $e) {
+        $conexion->rollback();
         registrarError($e->getMessage());
         return json_encode(['error' => $e->getMessage()]);
     }

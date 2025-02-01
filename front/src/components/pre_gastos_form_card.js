@@ -453,8 +453,9 @@ export const pre_gastos_form_card = async ({
       let partidaInput = el.querySelector(`#distribucion-${el.dataset.row}`)
       let montoInput = el.querySelector(`#distribucion-monto-${el.dataset.row}`)
 
-      let partidaEncontrada = ejercicioFiscal.distribucion_partidas.find(
-        (partida) => Number(partida.id) === Number(partidaInput.value)
+      let partidaEncontrada = partidasDisponibles.find(
+        (partida) =>
+          Number(partida.id_distribucion) === Number(partidaInput.value)
       )
 
       // Verificar si la partida introducida existe
@@ -464,7 +465,7 @@ export const pre_gastos_form_card = async ({
       }
 
       return {
-        id_distribucion: partidaEncontrada.id,
+        id_distribucion: partidaEncontrada.id_distribucion,
         monto: formatearFloat(montoInput.value),
       }
     })

@@ -98,3 +98,14 @@ function consultarDisponibilidadApi($distribuciones, $id_ejercicio)
 
     return $response;
 }
+
+function actualizarDistribucion($distribuciones, $id_ejercicio)
+{
+    $data = ["accion" => "actualizar_distribucion", "distribuciones" => $distribuciones, "id_ejercicio" => $id_ejercicio];
+    $url = "https://sigob.net/api/asignaciones";
+
+    $response = apiPost($url, $data);
+
+    return $response;
+}
+
