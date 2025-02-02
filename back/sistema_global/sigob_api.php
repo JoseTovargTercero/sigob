@@ -154,7 +154,3 @@ function consultarTablas($tablaName, $param, $paramValue)
     return $data;
 
 }
-
-if ($_SERVER["REQUEST_METHOD"] == 'GET') {
-    echo actualizarTablasApi(3);
-}

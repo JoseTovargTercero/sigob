@@ -65,7 +65,7 @@ export const pre_solicitudEnte_card = async ({
             </tr>`
       })
 
-    return fila
+    return fila.join('')
   }
 
   let card = ` <div class='card slide-up-animation' id='solicitud-ente-card'>
