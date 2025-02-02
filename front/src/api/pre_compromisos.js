@@ -122,7 +122,7 @@ const consultarCompromiso = async (data) => {
       return
     }
 
-    if (json.success) {
+    if (json.hasOwnProperty('success')) {
       return json.success
     }
     return json

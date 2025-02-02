@@ -4,15 +4,16 @@ require_once '../sistema_global/conexion.php';
 require_once '../sistema_global/errores.php';
 
 // Función para registrar compromiso
-function registrarCompromiso($idRegistro, $nombreTabla, $descripcion, $id_ejercicio, $codigo)
+function registrarCompromiso($idRegistro, $nombreTabla, $descripcion, $id_ejercicio, $codigo = '')
 {
     global $conexion;
 
     try {
         // Validar que los campos obligatorios no estén vacíos
-        if (empty($idRegistro) || empty($nombreTabla) || empty($descripcion) || empty($id_ejercicio) || empty($codigo)) {
+        if (empty($idRegistro) || empty($nombreTabla) || empty($descripcion) || empty($id_ejercicio)) {
             return ["error" => "Faltan datos obligatorios para registrar el compromiso."];
         }
+
 
         // Verificar si ya existe un compromiso con los mismos datos
         $sqlCheck = "SELECT id FROM compromisos WHERE id_registro = ? AND tabla_registro = ? AND descripcion = ? AND id_ejercicio = ? AND numero_compromiso = ?";

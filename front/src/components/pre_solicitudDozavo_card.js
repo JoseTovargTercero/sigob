@@ -65,6 +65,7 @@ export const pre_solicitudDozavo_card = async ({
     id_registro: id,
     nombre_tabla: 'solicitud_dozavos',
   })
+
   console.log(compromiso)
 
   let partidasLi = partidas

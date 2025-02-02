@@ -1,3 +1,4 @@
+import { registrarCompromiso } from '../api/pre_compromisos.js'
 import { obtenerDistribucionSecretaria } from '../api/pre_entes.js'
 import { getTiposGastos, registrarGasto } from '../api/pre_gastos.js'
 
@@ -510,6 +511,12 @@ export const pre_gastos_form_card = async ({
       successFunction: async function () {
         let res = await registrarGasto({ data: fieldList })
         if (res.success) {
+          registrarCompromiso({
+            id: fieldList.id_ejercicio,
+            nombre_tabla: 'gastos',
+            descripcion: fieldList.descripcion,
+            id_ejercicio,
+          })
           closeCard()
           recargarEjercicio()
         }
