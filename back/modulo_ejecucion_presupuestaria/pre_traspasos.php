@@ -39,13 +39,14 @@ function registrarTraspasoPartida($data)
         $anoEjercicio = $resultadoEjercicio->fetch_assoc()['ano'];
 
         // Validación adicional para los `id_distribucion` en `añadir`
-     foreach ($añadir as $item) {
-    // Obtener el mes actual
-    $mesActual = (int)$fecha_actual->format('m'); // Mes actual en número
+        foreach ($añadir as $item) {
+            // Obtener el mes actual
+            $fecha_actual_dt = new DateTime($fecha_actual);
+            $mesActual = (int) $fecha_actual_dt->format('m'); // Mes actual en número
 
-    // Solo validar si el mes está entre enero (1) y septiembre (9)
-    if ($mesActual >= 1 && $mesActual <= 9) {
-        $sqlValidacion = "
+            // Solo validar si el mes está entre enero (1) y septiembre (9)
+            if ($mesActual >= 1 && $mesActual <= 9) {
+                $sqlValidacion = "
             SELECT 
                 ti.id_distribucion, 
                 t.id_ejercicio, 
@@ -62,18 +63,18 @@ function registrarTraspasoPartida($data)
                 ti.id_distribucion = ? 
                 AND t.id_ejercicio = ?
                 AND ti.tipo = 'D'";
-        
-        $stmtValidacion = $conexion->prepare($sqlValidacion);
-        $stmtValidacion->bind_param("ii", $item['id_distribucion'], $info['id_ejercicio']);
-        $stmtValidacion->execute();
-        $resultadoValidacion = $stmtValidacion->get_result();
 
-        if ($resultadoValidacion->num_rows > 0) {
-            $filaValidacion = $resultadoValidacion->fetch_assoc();
-            throw new Exception("La partida " . $filaValidacion['partida'] . " no está disponible para recibir dinero porque anteriormente traspasó dinero.");
+                $stmtValidacion = $conexion->prepare($sqlValidacion);
+                $stmtValidacion->bind_param("ii", $item['id_distribucion'], $info['id_ejercicio']);
+                $stmtValidacion->execute();
+                $resultadoValidacion = $stmtValidacion->get_result();
+
+                if ($resultadoValidacion->num_rows > 0) {
+                    $filaValidacion = $resultadoValidacion->fetch_assoc();
+                    throw new Exception("La partida " . $filaValidacion['partida'] . " no está disponible para recibir dinero porque anteriormente traspasó dinero.");
+                }
+            }
         }
-    }
-}
 
 
 
@@ -144,7 +145,7 @@ function registrarTraspasoPartida($data)
         // Insertar el registro principal en la tabla `traspasos`
         $sqlTraspaso = "INSERT INTO traspasos (n_orden, id_ejercicio, monto_total, fecha, status, tipo) VALUES (?, ?, ?, ?, 0, ?)";
         $stmtTraspaso = $conexion->prepare($sqlTraspaso);
-        
+
         $stmtTraspaso->bind_param("sidsi", $nOrden, $info['id_ejercicio'], $info['monto_total'], $fecha_actual, $tipo);
         $stmtTraspaso->execute();
 
