@@ -27,7 +27,6 @@ function crearGasto($id_tipo, $descripcion, $monto, $id_ejercicio, $beneficiario
             throw new Exception("El formato de distribuciones no es válido");
         }
 
-
         require_once '../sistema_global/sigob_api.php';
         $disponible = consultarDisponibilidadApi($distribuciones, $id_ejercicio);
 
@@ -50,7 +49,8 @@ function crearGasto($id_tipo, $descripcion, $monto, $id_ejercicio, $beneficiario
         $stmtInsertGasto->execute();
 
         if ($stmtInsertGasto->affected_rows > 0) {
-            return json_encode(["success" => "Gasto registrado correctamente"]);
+            $id_insertado = $stmtInsertGasto->insert_id; // Obtener el ID insertado
+            return json_encode(["success" => "Gasto registrado correctamente", "id" => $id_insertado]);
         } else {
             throw new Exception("No se pudo registrar el gasto");
         }
@@ -61,6 +61,7 @@ function crearGasto($id_tipo, $descripcion, $monto, $id_ejercicio, $beneficiario
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 
 
