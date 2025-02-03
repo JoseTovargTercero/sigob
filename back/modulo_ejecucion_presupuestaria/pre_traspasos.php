@@ -44,7 +44,7 @@ function registrarTraspasoPartida($data)
             $fecha_actual_dt = new DateTime($fecha_actual);
             $mesActual = (int) $fecha_actual_dt->format('m'); // Mes actual en número
 
-            // Solo validar si el mes está entre enero (1) y septiembre (9)
+            // Solo validar si el mes está entre enero (1) y septiembre (8)
             if ($mesActual >= 1 && $mesActual <= 9) {
                 $sqlValidacion = "
             SELECT 

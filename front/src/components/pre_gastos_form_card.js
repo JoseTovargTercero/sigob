@@ -1,6 +1,9 @@
-import { registrarCompromiso } from '../api/pre_compromisos.js'
+import {
+  generarCompromisoPdf,
+  registrarCompromiso,
+} from '../api/pre_compromisos.js'
 import { obtenerDistribucionSecretaria } from '../api/pre_entes.js'
-import { getTiposGastos, registrarGasto } from '../api/pre_gastos.js'
+import { getGasto, getTiposGastos, registrarGasto } from '../api/pre_gastos.js'
 
 import {
   confirmNotification,
@@ -18,6 +21,7 @@ export const pre_gastos_form_card = async ({
   elementToInsert,
   ejercicioFiscal,
   recargarEjercicio,
+  id,
 }) => {
   const cardElement = d.getElementById('gastos-form-card')
   if (cardElement) cardElement.remove()
@@ -33,6 +37,48 @@ export const pre_gastos_form_card = async ({
     descripcion: '',
     id_ejercicio: ejercicioFiscal.id,
     distribuciones: [],
+  }
+
+  if (id) {
+    let gasto = await getGasto(id)
+    console.log(gasto)
+
+    fieldList = {
+      id_tipo: gasto.id_tipo,
+      monto: gasto.monto_gasto,
+      beneficiario: gasto.beneficiario,
+      identificador: gasto.identificador,
+      fecha: gasto.fecha,
+      descripcion: gasto.descripcion_gasto,
+      id_ejercicio: ejercicioFiscal.id,
+      distribuciones: gasto.informacion_distribuciones,
+    }
+
+    let object = {
+      id: 6,
+      nombre_tipo_gasto: '123',
+      descripcion_gasto: '123',
+      monto_gasto: '123',
+      fecha: '2025-02-19',
+      correlativo: 'C00002-2025',
+      numero_compromiso: '',
+      status_gasto: 0,
+      beneficiario: '123',
+      identificador: '123',
+      id_compromiso: 6,
+      id_ejercicio: 1,
+      informacion_distribuciones: [
+        {
+          id_distribucion: 114,
+          monto: 20000,
+          partida: '401.05.01.00.0000',
+          nombre_partida: null,
+          descripcion_partida: 'Aguinaldos al personal empleado',
+          sector: '01',
+          programa: '04',
+        },
+      ],
+    }
   }
 
   let fieldListPartidas = {}
@@ -239,6 +285,14 @@ export const pre_gastos_form_card = async ({
   cargarTiposGastos()
 
   // cargarBeneficiarios()
+
+  if (id) {
+    let inputs = d.querySelectorAll('.gasto-input')
+
+    inputs.forEach((input) => {
+      input.value = fieldList[input.name]
+    })
+  }
 
   let distribucionesContainer = d.getElementById('distribuciones-container')
 
@@ -505,23 +559,50 @@ export const pre_gastos_form_card = async ({
   function enviarInformacion() {
     console.log(fieldList)
 
-    confirmNotification({
-      type: NOTIFICATIONS_TYPES.send,
-      message: '¿Desea registrar este gasto?',
-      successFunction: async function () {
-        let res = await registrarGasto({ data: fieldList })
-        if (res.success) {
-          registrarCompromiso({
-            id: fieldList.id_ejercicio,
-            nombre_tabla: 'gastos',
-            descripcion: fieldList.descripcion,
-            id_ejercicio,
-          })
-          closeCard()
-          recargarEjercicio()
-        }
-      },
-    })
+    if (id) {
+      confirmNotification({
+        type: NOTIFICATIONS_TYPES.send,
+        message: '¿Desea actualizar este gasto?',
+        successFunction: async function () {
+          let res = await actualizarGasto({ data: fieldList })
+          if (res.success) {
+            if (registrado.success) {
+              generarCompromisoPdf(
+                registrado.id_compromiso,
+                registrado.correlativo
+              )
+            }
+            closeCard()
+            recargarEjercicio()
+          }
+        },
+      })
+    } else {
+      confirmNotification({
+        type: NOTIFICATIONS_TYPES.send,
+        message: '¿Desea registrar este gasto?',
+        successFunction: async function () {
+          let res = await registrarGasto({ data: fieldList })
+          if (res.success) {
+            let registrado = await registrarCompromiso({
+              id: res.id,
+              nombre_tabla: 'gastos',
+              descripcion: fieldList.descripcion,
+              id_ejercicio: fieldList.id_ejercicio,
+            })
+
+            if (registrado.success) {
+              generarCompromisoPdf(
+                registrado.id_compromiso,
+                registrado.correlativo
+              )
+            }
+            closeCard()
+            recargarEjercicio()
+          }
+        },
+      })
+    }
   }
 
   function validateInputFunction(e) {

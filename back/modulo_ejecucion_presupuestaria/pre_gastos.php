@@ -408,12 +408,14 @@ function obtenerGastoPorId($id)
             $id_ejercicio = $gasto['id_ejercicio'];
             $distribuciones = json_decode($gasto['distribuciones'], true);
 
-            $sqlTipoGasto = "SELECT nombre FROM tipo_gastos WHERE id = ?";
+            $sqlTipoGasto = "SELECT id, nombre FROM tipo_gastos WHERE id = ?";
             $stmtTipoGasto = $conexion->prepare($sqlTipoGasto);
             $stmtTipoGasto->bind_param("i", $id_tipo);
             $stmtTipoGasto->execute();
             $resultadoTipoGasto = $stmtTipoGasto->get_result();
-            $nombreTipoGasto = $resultadoTipoGasto->fetch_assoc()['nombre'] ?? null;
+            $tipoGastoFila = $resultadoTipoGasto->fetch_assoc();
+            $idTipoGasto = $tipoGastoFila['id'] ?? null;
+            $nombreTipoGasto = $tipoGastoFila['nombre'] ?? null;
 
             $informacionDistribuciones = [];
             foreach ($distribuciones as $distribucion) {
@@ -432,7 +434,7 @@ function obtenerGastoPorId($id)
 
                     foreach ($distribucionData as $dist) {
                         if ($dist['id_distribucion'] == $id_distribucion) {
-                            $montoDistribucion = $dist['monto'];
+                            $montoDistribucion = $distribucion['monto'];
                             break;
                         }
                     }
@@ -493,6 +495,7 @@ function obtenerGastoPorId($id)
             $resultado = [
                 'id' => $id_gasto,
                 'nombre_tipo_gasto' => $nombreTipoGasto,
+                'id_tipo' => $idTipoGasto,
                 'descripcion_gasto' => $descripcion,
                 'monto_gasto' => $monto,
                 'fecha' => $fecha,
@@ -533,10 +536,11 @@ function actualizarGasto($id, $id_tipo, $descripcion, $monto, $status, $id_ejerc
         // Convertir el array de distribuciones en JSON
         $distribuciones_json = json_encode($distribuciones);
 
+        $sqlInsertGasto = "INSERT INTO gastos (id_tipo, descripcion, monto, status, id_ejercicio, beneficiario, identificador, distribuciones, fecha) VALUES (?, ?, ?, 0, ?, ?, ?, ?, ?)";
         // Actualizar el registro en la tabla 'gastos' con los campos adicionales
-        $sql = "UPDATE gastos SET id_tipo = ?, descripcion = ?, monto = ?, status = ?, id_ejercicio = ?, beneficiario = ?, identificador = ?, distribuciones = ? WHERE id = ?";
+        $sql = "UPDATE gastos SET id_tipo = ?, descripcion = ?, monto = ?, status = 0, id_ejercicio = ?, beneficiario = ?, identificador = ?, distribuciones = ? WHERE id = ?";
         $stmt = $conexion->prepare($sql);
-        $stmt->bind_param("isdiisssi", $id_tipo, $descripcion, $monto, $status, $id_ejercicio, $beneficiario, $identificador, $distribuciones_json, $id);
+        $stmt->bind_param("isdiisssi", $id_tipo, $descripcion, $monto, $id_ejercicio, $beneficiario, $identificador, $distribuciones_json, $id);
 
         if ($stmt->execute()) {
             return json_encode(['success' => 'Gasto actualizado exitosamente']);

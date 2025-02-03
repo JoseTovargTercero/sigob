@@ -10,6 +10,7 @@ import {
   validateInput,
 } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
+import { pre_gastos_form_card } from './pre_gastos_form_card.js'
 const d = document
 
 export const pre_gastosDetalles = ({
@@ -55,7 +56,12 @@ export const pre_gastosDetalles = ({
 </button>
  <button class='btn btn-primary' data-aceptarid="${data.id}">
   Confirmar
-</button>`
+</button>
+<button class='btn btn-secondary'
+    data-compromisoid='${data.id_compromiso}'>
+    Descargar compromiso
+  </button>
+`
       : Number(data.status_gasto) === 1
       ? ` <button class='btn btn-secondary'
     data-compromisoid='${data.id_compromiso}'>
@@ -63,7 +69,12 @@ export const pre_gastosDetalles = ({
   </button>`
       : Number(data.status_gasto) === 3
       ? `<span class='btn btn-success'>Entregado</span>`
-      : `<span class='btn btn-danger'>Rechazado</span>`
+      : ` <button class='btn btn-danger' data-eliminarid='${data.id}'>
+          Eliminar
+        </button>
+        <button class='btn btn-warning' data-editar='${data.id}'>
+          Editar
+        </button>`
   }
 
   let card = `    <div class='card slide-up-animation' id='${nombreCard}-form-card'>
@@ -325,10 +336,10 @@ export const pre_gastosDetalles = ({
         successFunction: async function () {
           let res = await aceptarGasto(data.id)
           if (res.success) {
-            generarCompromisoPdf(
-              res.compromiso.id_compromiso,
-              res.compromiso.correlativo
-            )
+            // generarCompromisoPdf(
+            //   res.compromiso.id_compromiso,
+            //   res.compromiso.correlativo
+            // )
             recargarEjercicio()
             closeCard()
           }
@@ -347,6 +358,15 @@ export const pre_gastosDetalles = ({
             closeCard()
           }
         },
+      })
+    }
+
+    if (e.target.dataset.editar) {
+      pre_gastos_form_card({
+        elementToInsert,
+        id: e.target.dataset.editar,
+        recargarEjercicio,
+        ejercicioFiscal,
       })
     }
   }
@@ -370,7 +390,7 @@ export const pre_gastosDetalles = ({
   cardElement.addEventListener('click', validateClick)
 }
 
-export const form_aceptarGasto = ({ elementToInsert, id, reset }) => {
+const form_aceptarGasto = ({ elementToInsert, id, reset }) => {
   let fieldList = { codigo: '' }
   let fieldListErrors = {
     codigo: {
