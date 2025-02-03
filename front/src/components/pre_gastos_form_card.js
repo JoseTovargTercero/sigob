@@ -126,7 +126,9 @@ export const pre_gastos_form_card = async ({
 
     selectTiposGastos.innerHTML = options.join('')
 
-    $('#search-select-tipo-gasto').trigger('chosen:updated')
+    $('#search-select-tipo-gasto')
+      .val(fieldList.id_tipo)
+      .trigger('chosen:updated')
   }
 
   let partidasDisponibles = await obtenerDistribucionSecretaria({
@@ -264,9 +266,9 @@ export const pre_gastos_form_card = async ({
           </div>
         </form>
       </div>
-      <div class='card-footer text-right'>
+      <div class='card-footer text-center'>
         <button class='btn btn-primary' id='gastos-guardar'>
-          Guardar
+          ${id ? 'Actualizar' : 'Guardar'}
         </button>
       </div>
     </div>`
@@ -275,16 +277,20 @@ export const pre_gastos_form_card = async ({
 
   let numsRows = 0
 
-  $('#search-select-tipo-gasto')
-    .chosen()
-    .change(function (obj, result) {
-      let value = result.selected
-      fieldList.id_tipo = value
-    })
+  let tipoGastoSelect = $('#search-select-tipo-gasto')
+
+  tipoGastoSelect.chosen().change(function (obj, result) {
+    let value = result.selected
+    fieldList.id_tipo = value
+  })
 
   cargarTiposGastos()
 
   // cargarBeneficiarios()
+
+  let distribucionesContainer = d.getElementById('distribuciones-container')
+
+  const formElement = d.getElementById('gastos-form')
 
   if (id) {
     let inputs = d.querySelectorAll('.gasto-input')
@@ -292,11 +298,30 @@ export const pre_gastos_form_card = async ({
     inputs.forEach((input) => {
       input.value = fieldList[input.name]
     })
+
+    inputs.forEach((input) => {
+      if (input.name === 'id_tipo') {
+      } else {
+        fieldList = validateInput({
+          target: input,
+          fieldList,
+          fieldListErrors,
+          type: fieldListErrors[input.name].type,
+        })
+      }
+    })
+
+    if (fieldList.distribuciones.length > 0) {
+      fieldList.distribuciones.forEach((distribucion, index) => {
+        addRow()
+        let row = d.querySelector(`[data-row="${index + 1}"]`)
+        row.querySelector(`#distribucion-${index + 1}`).value =
+          distribucion.id_distribucion
+        row.querySelector(`#distribucion-monto-${index + 1}`).value =
+          distribucion.monto
+      })
+    }
   }
-
-  let distribucionesContainer = d.getElementById('distribuciones-container')
-
-  const formElement = d.getElementById('gastos-form')
 
   const closeCard = () => {
     let cardElement = d.getElementById('gastos-form-card')
@@ -330,18 +355,20 @@ export const pre_gastos_form_card = async ({
         })
       })
 
-      if (Object.values(fieldListErrors).some((el) => el.value)) {
-        toastNotification({
-          type: NOTIFICATIONS_TYPES.fail,
-          message: 'Hay campos inválidos',
-        })
-        return
-      }
+      console.log(fieldList, fieldListErrors)
 
       if (Object.values(fieldList).some((el) => !el)) {
         toastNotification({
           type: NOTIFICATIONS_TYPES.fail,
           message: 'No se ha completado la información necesaria',
+        })
+        return
+      }
+
+      if (Object.values(fieldListErrors).some((el) => el.value)) {
+        toastNotification({
+          type: NOTIFICATIONS_TYPES.fail,
+          message: 'Hay campos inválidos',
         })
         return
       }

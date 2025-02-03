@@ -34,7 +34,7 @@ export const pre_gastosDetalles = ({
   let nombreCard = 'gastos-detalles'
 
   const oldCardElement = d.getElementById(`${nombreCard}-form-card`)
-  if (oldCardElement) oldCardElement.remove()
+  if (oldCardElement) closeCard(oldCardElement)
 
   const distribucionLista = () => {
     let filas = data.informacion_distribuciones.map((el) => {
@@ -309,19 +309,19 @@ export const pre_gastosDetalles = ({
     },
   })
 
-  const closeCard = () => {
+  function closeCard(card) {
     // validateEditButtons()
 
-    cardElement.remove()
-    cardElement.removeEventListener('click', validateClick)
-    cardElement.removeEventListener('input', validateInputFunction)
+    card.remove()
+    card.removeEventListener('click', validateClick)
+    card.removeEventListener('input', validateInputFunction)
 
     return false
   }
 
   function validateClick(e) {
     if (e.target.dataset.close) {
-      closeCard()
+      closeCard(cardElement)
     }
     if (e.target.dataset.compromisoid) {
       console.log(e.target.dataset.compromisoid)
@@ -341,7 +341,7 @@ export const pre_gastosDetalles = ({
             //   res.compromiso.correlativo
             // )
             recargarEjercicio()
-            closeCard()
+            closeCard(cardElement)
           }
         },
       })
@@ -355,13 +355,14 @@ export const pre_gastosDetalles = ({
           let res = await rechazarGasto(data.id)
           if (res.success) {
             recargarEjercicio()
-            closeCard()
+            closeCard(cardElement)
           }
         },
       })
     }
 
     if (e.target.dataset.editar) {
+      closeCard(cardElement)
       pre_gastos_form_card({
         elementToInsert,
         id: e.target.dataset.editar,
