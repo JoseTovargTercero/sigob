@@ -19,4 +19,9 @@ function clear($campo){
 	$campo = htmlspecialchars($campo);
 	return $campo;
 }
+
+
+
+$local_db = new mysqli('localhost', 'root', '', 'sigob');
+$remote_db = new mysqli('sigob.net', 'sigobnet_userroot', ']n^VmqjqCD1k', 'sigobnet_sigob_entes');
 ?>

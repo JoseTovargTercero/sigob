@@ -8,10 +8,10 @@ require_once '../sistema_global/errores.php';
 // Definir divisor como una variable
 $divisor = 12;
 
-// Función para guardar en la tabla ejercicio_fiscal
+// Función para guardar en la tabla ejercicio_fiscal en ambas bases de datos
 function guardarEjercicioFiscal($ano, $situado, $divisor)
 {
-    global $conexion;
+    global $conexion, $remote_db;
 
     try {
         // Validar que todos los campos no estén vacíos
@@ -19,22 +19,31 @@ function guardarEjercicioFiscal($ano, $situado, $divisor)
             throw new Exception("Faltaron uno o más valores (ano, situado)");
         }
 
-        // Insertar los datos en la tabla
+        // Preparar la consulta SQL
         $sql = "INSERT INTO ejercicio_fiscal (ano, situado, divisor) VALUES (?, ?, ?)";
-        $stmt = $conexion->prepare($sql);
-        $stmt->bind_param("sss", $ano, $situado, $divisor);
-        $stmt->execute();
 
-        if ($stmt->affected_rows > 0) {
-            return json_encode(["success" => "Datos de ejercicio fiscal guardados correctamente"]);
+        // Insertar en la base de datos local
+        $stmt_local = $conexion->prepare($sql);
+        $stmt_local->bind_param("sss", $ano, $situado, $divisor);
+        $stmt_local->execute();
+
+        // Insertar en la base de datos remota
+        $stmt_remote = $remote_db->prepare($sql);
+        $stmt_remote->bind_param("sss", $ano, $situado, $divisor);
+        $stmt_remote->execute();
+
+        // Verificar si ambas inserciones fueron exitosas
+        if ($stmt_local->affected_rows > 0 && $stmt_remote->affected_rows > 0) {
+            return json_encode(["success" => "Datos de ejercicio fiscal guardados correctamente en ambas bases de datos"]);
         } else {
-            throw new Exception("No se pudo guardar los datos de ejercicio fiscal");
+            throw new Exception("No se pudo guardar los datos de ejercicio fiscal en una o ambas bases de datos");
         }
     } catch (Exception $e) {
         registrarError($e->getMessage());
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 // Función para actualizar los datos en la tabla ejercicio_fiscal
 function actualizarEjercicioFiscal($id, $ano, $situado, $divisor, $status)

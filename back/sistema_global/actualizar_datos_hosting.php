@@ -1,9 +1,8 @@
 <?php
 set_time_limit(10000000); // 5 minutos
+require_once 'conexion.php';
 
-// Configurar conexiones a las bases de datos
-$local_db = new mysqli('localhost', 'root', '', 'sigob');
-$remote_db = new mysqli('sigob.net', 'sigobnet_userroot', ']n^VmqjqCD1k', 'sigobnet_sigob_entes');
+
 
 if ($local_db->connect_error || $remote_db->connect_error) {
     die(json_encode(["error" => "Error de conexión a la base de datos"]));
