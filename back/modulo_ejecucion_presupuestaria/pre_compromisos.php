@@ -13,8 +13,8 @@ function registrarCompromiso($idRegistro, $nombreTabla, $descripcion, $id_ejerci
             return ["error" => "Faltan datos obligatorios para registrar el compromiso."];
         }
 
-        // Obtener el último correlativo registrado en la base de datos
-        $sql = "SELECT correlativo FROM compromisos ORDER BY correlativo DESC LIMIT 1";
+         // Obtener el último correlativo registrado en la base de datos
+        $sql = "SELECT MAX(correlativo) FROM compromisos";
         $stmt = $conexion->prepare($sql);
         $stmt->execute();
         $stmt->bind_result($ultimoCorrelativo);
@@ -22,15 +22,10 @@ function registrarCompromiso($idRegistro, $nombreTabla, $descripcion, $id_ejerci
         $stmt->close();
 
         // Determinar el nuevo correlativo
-        if ($ultimoCorrelativo) {
-            $numeroSeguimiento = (int) $ultimoCorrelativo + 1;
-        } else {
-            $numeroSeguimiento = 1;
-        }
+        $numeroSeguimiento = $ultimoCorrelativo ? (int)$ultimoCorrelativo + 1 : 1;
 
         // Formatear el nuevo correlativo con 8 dígitos
         $nuevoCorrelativo = str_pad($numeroSeguimiento, 8, '0', STR_PAD_LEFT);
-
         // Insertar el nuevo compromiso en la base de datos
         $sqlInsert = "INSERT INTO compromisos (correlativo, descripcion, id_registro, id_ejercicio, tabla_registro, numero_compromiso) VALUES (?, ?, ?, ?, ?, ?)";
         $stmtInsert = $conexion->prepare($sqlInsert);

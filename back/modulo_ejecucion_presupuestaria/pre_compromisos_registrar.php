@@ -3,7 +3,6 @@
 require_once '../sistema_global/conexion.php';
 require_once '../sistema_global/errores.php';
 
-// Función para registrar compromiso
 function registrarCompromiso($idRegistro, $nombreTabla, $descripcion, $id_ejercicio, $codigo = '')
 {
     global $conexion;
@@ -13,7 +12,6 @@ function registrarCompromiso($idRegistro, $nombreTabla, $descripcion, $id_ejerci
         if (empty($idRegistro) || empty($nombreTabla) || empty($descripcion) || empty($id_ejercicio)) {
             return ["error" => "Faltan datos obligatorios para registrar el compromiso."];
         }
-
 
         // Verificar si ya existe un compromiso con los mismos datos
         $sqlCheck = "SELECT id FROM compromisos WHERE id_registro = ? AND tabla_registro = ? AND descripcion = ? AND id_ejercicio = ? AND numero_compromiso = ?";
@@ -29,8 +27,8 @@ function registrarCompromiso($idRegistro, $nombreTabla, $descripcion, $id_ejerci
         }
         $stmtCheck->close();
 
-   // Obtener el último correlativo registrado en la base de datos
-        $sql = "SELECT correlativo FROM compromisos ORDER BY correlativo DESC LIMIT 1";
+        // Obtener el último correlativo registrado en la base de datos
+        $sql = "SELECT MAX(correlativo) FROM compromisos";
         $stmt = $conexion->prepare($sql);
         $stmt->execute();
         $stmt->bind_result($ultimoCorrelativo);
@@ -38,11 +36,7 @@ function registrarCompromiso($idRegistro, $nombreTabla, $descripcion, $id_ejerci
         $stmt->close();
 
         // Determinar el nuevo correlativo
-        if ($ultimoCorrelativo) {
-            $numeroSeguimiento = (int) $ultimoCorrelativo + 1;
-        } else {
-            $numeroSeguimiento = 1;
-        }
+        $numeroSeguimiento = $ultimoCorrelativo ? (int)$ultimoCorrelativo + 1 : 1;
 
         // Formatear el nuevo correlativo con 8 dígitos
         $nuevoCorrelativo = str_pad($numeroSeguimiento, 8, '0', STR_PAD_LEFT);
@@ -83,6 +77,7 @@ function registrarCompromiso($idRegistro, $nombreTabla, $descripcion, $id_ejerci
     }
 }
 
+
 // Función para consultar compromiso
 function consultarCompromiso($idRegistro, $tablaRegistro)
 {
@@ -111,6 +106,34 @@ function consultarCompromiso($idRegistro, $tablaRegistro)
         return ["error" => $e->getMessage()];
     }
 }
+function consultarCompromisoEjercicio($idEjercicio)
+{
+    global $conexion;
+
+    try {
+        // Consulta para obtener el compromiso con filtro por id_ejercicio
+        $sql = "SELECT * FROM compromisos WHERE id_ejercicio = ?";
+        $stmt = $conexion->prepare($sql);
+        $stmt->bind_param("i", $idEjercicio);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        // Verificar si existen resultados
+        if ($result->num_rows > 0) {
+            $compromisos = null;
+            while ($row = $result->fetch_assoc()) {
+                $compromisos = $row;
+            }
+            return ["success" => $compromisos];
+        } else {
+            return ["success" => false];
+        }
+    } catch (Exception $e) {
+        registrarError($e->getMessage());
+        return ["error" => $e->getMessage()];
+    }
+}
+
 // Procesar la solicitud
 $data = json_decode(file_get_contents("php://input"), true);
 
@@ -140,6 +163,9 @@ if (isset($data["accion"])) {
     } elseif ($accion === "consultar_id") {
         // Consultar compromiso por ID
         $response = consultarCompromisoPorId($id_registro, $tabla_registro);
+    }elseif ($accion === "consultar_id_ejercicio") {
+        // Consultar compromiso por ID
+        $response = consultarCompromisoEjercicio($id_ejercicio);
     } else {
         // Acción no aceptada
         $response = json_encode(['error' => "Acción no aceptada"]);
