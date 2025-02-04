@@ -1,35 +1,24 @@
 import { generarReporte } from '../api/pre_reportes.js'
-import {
-  confirmNotification,
-  hideLoader,
-  insertOptions,
-  toastNotification,
-  validateInput,
-} from '../helpers/helpers.js'
-import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
+import { validateInput } from '../helpers/helpers.js'
+
 const d = document
 let options = {
-  sectores: {
-    titulo: 'SECTORES',
-    subtitulo: 'Resumen de sectores',
-    tipo: 'sectores',
-    nombre_archivo: 'Reporte de sectores',
-  },
-  partidas: {
-    titulo: 'PARTIDAS',
-    subtitulo: 'Resumen de partidas',
-    tipo: 'partidas',
+  dozavos: {
+    titulo: 'DOZAVOS',
+    subtitulo: 'Compromisos de dozavos',
+    tipo: 'dozavos',
     nombre_archivo: 'Reporte de partidas',
   },
-  secpro: {
-    titulo: 'SECTORES Y PROGRAMAS',
-    subtitulo: 'Resumen de sectores y programas',
-    tipo: 'secpro',
+  gastos: {
+    titulo: 'GASTOS',
+    subtitulo: 'Compromisos de gastos',
+    tipo: 'gastos',
 
     nombre_archivo: 'Reporte de programas y partidas',
   },
 }
-export const pre_reportesLista = ({ elementToInsert }) => {
+
+export const pre_compromisosLista = ({ elementToInsert }) => {
   let nombreCard = 'reporte-list'
 
   const oldCardElement = d.getElementById(`${nombreCard}-form-card`)
@@ -54,8 +43,8 @@ export const pre_reportesLista = ({ elementToInsert }) => {
       <div class='card-header d-flex justify-content-between'>
         
            <div class="">
-               <h5 class="mb-0">Visualización de reporte</h5>
-               <small class="mt-0 text-muted">Verifique el reporte a descargar</small>
+               <h5 class="mb-0">Visualización de reporte de compromisos</h5>
+               <small class="mt-0 text-muted">Verifique el tipo del compromiso a descargar</small>
            </div>
         
        
@@ -102,7 +91,7 @@ export const pre_reportesLista = ({ elementToInsert }) => {
   cardElement.addEventListener('click', validateClick)
 }
 
-export const pre_reporteDocumento = ({
+export const pre_compromisoDocumento = ({
   elementToInsert,
   report,
   ejercicioId,

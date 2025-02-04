@@ -138,4 +138,50 @@ const consultarCompromiso = async (data) => {
   }
 }
 
-export { generarCompromisoPdf, registrarCompromiso, consultarCompromiso }
+const consultarCompromisos = async (id_ejercicio) => {
+  showLoader()
+  try {
+    console.log(id_ejercicio)
+
+    let res = await fetch(compromisosUrl, {
+      method: 'POST',
+      body: JSON.stringify({ accion: 'consultar_id_ejercicio', id_ejercicio }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    const clone = res.clone()
+    const text = await clone.text()
+
+    console.log(text)
+    const json = await res.json()
+
+    console.log(json)
+
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+      return
+    }
+
+    if (json.hasOwnProperty('success')) {
+      return json.success
+    }
+    return json
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al consultar compromiso',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
+export {
+  generarCompromisoPdf,
+  registrarCompromiso,
+  consultarCompromiso,
+  consultarCompromisos,
+}

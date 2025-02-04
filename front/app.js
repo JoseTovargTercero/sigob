@@ -28,6 +28,7 @@ import { loadRequestTableHistorico } from './src/controllers/peticionesHistorico
 import { validateRequestForm } from './src/controllers/peticionesNominaForm.js'
 
 import { validateRequestNomForm } from './src/controllers/peticionesNominaReview.js'
+import { validateCompromisosView } from './src/controllers/pre_compromisosVIEW.js'
 import { validateGastosTable } from './src/controllers/pre_gastosFuncionamientoTable.js'
 import { validateGastosView } from './src/controllers/pre_gastosFuncionamientoView.js'
 import { validateReportesView } from './src/controllers/pre_reportesView.js'
@@ -63,6 +64,7 @@ d.addEventListener('DOMContentLoaded', (e) => {
   const gastosView = d.getElementById('gastos-view')
   const traspasosView = d.getElementById('traspasos-view')
   const reportesView = d.getElementById('reportes-view')
+  const compromisosView = d.getElementById('compromisos-view')
   // Formulación
   const partidasView = d.getElementById('partidas-view')
   const distribucionView = d.getElementById('distribucion-view')
@@ -208,6 +210,9 @@ d.addEventListener('DOMContentLoaded', (e) => {
 
   if (reportesView) {
     validateReportesView()
+  }
+  if (compromisosView) {
+    validateCompromisosView()
   }
 
   //  FORMULACIÓN

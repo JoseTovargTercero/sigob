@@ -36,7 +36,7 @@ function registrarCompromiso($idRegistro, $nombreTabla, $descripcion, $id_ejerci
         $stmt->close();
 
         // Determinar el nuevo correlativo
-        $numeroSeguimiento = $ultimoCorrelativo ? (int)$ultimoCorrelativo + 1 : 1;
+        $numeroSeguimiento = $ultimoCorrelativo ? (int) $ultimoCorrelativo + 1 : 1;
 
         // Formatear el nuevo correlativo con 8 dígitos
         $nuevoCorrelativo = str_pad($numeroSeguimiento, 8, '0', STR_PAD_LEFT);
@@ -126,7 +126,7 @@ function consultarCompromisoEjercicio($idEjercicio)
             }
             return ["success" => $compromisos];
         } else {
-            return ["success" => false];
+            return ["success" => []];
         }
     } catch (Exception $e) {
         registrarError($e->getMessage());
@@ -163,7 +163,7 @@ if (isset($data["accion"])) {
     } elseif ($accion === "consultar_id") {
         // Consultar compromiso por ID
         $response = consultarCompromisoPorId($id_registro, $tabla_registro);
-    }elseif ($accion === "consultar_id_ejercicio") {
+    } elseif ($accion === "consultar_id_ejercicio") {
         // Consultar compromiso por ID
         $response = consultarCompromisoEjercicio($id_ejercicio);
     } else {
