@@ -108,10 +108,16 @@ function sincronizarBasesDeDatos($local_db, $remote_db) {
 }
 
 $resultado = sincronizarBasesDeDatos($local_db, $remote_db);
+
 header('Content-Type: application/json');
-if (!empty($resultado)) {
-    echo json_encode(["sucess" => "Las Base de datos fueron sincronizadas correctamente"]);
+
+if (!isset($resultado['errores']) || empty($resultado['errores'])) {
+    echo json_encode(["success" => "Las bases de datos fueron sincronizadas correctamente"]);
 } else {
-    echo json_encode(["error" => "Hubo un error al sincronizar las base de datos"]);
+    echo json_encode([
+        "error" => "Hubo un error al sincronizar las bases de datos",
+        "detalles" => $resultado['errores']
+    ]);
 }
+
 ?>
