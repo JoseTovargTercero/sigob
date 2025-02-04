@@ -112,39 +112,13 @@ function sincronizarDistribucionEnte($local_db, $remote_db) {
         $index_remoto[$fila['id']] = $fila;
     }
 
-    $actualizaciones = [];
     $nuevos = [];
 
     foreach ($datos_local as $fila_local) {
         $id = $fila_local['id'];
-        if (isset($index_remoto[$id])) {
-            // Comparar solo `id_ente` y `actividad_id`
-            $diferencias = [];
-            if ($fila_local['id_ente'] !== $index_remoto[$id]['id_ente']) {
-                $diferencias['id_ente'] = $fila_local['id_ente'];
-            }
-            if ($fila_local['actividad_id'] !== $index_remoto[$id]['actividad_id']) {
-                $diferencias['actividad_id'] = $fila_local['actividad_id'];
-            }
-
-            if (!empty($diferencias)) {
-                $actualizaciones[$id] = $diferencias;
-            }
-        } else {
-            // Si no existe en la base de datos remota, agregar como nuevo
+        // Si no existe en la base de datos remota, agregar como nuevo
+        if (!isset($index_remoto[$id])) {
             $nuevos[] = $fila_local;
-        }
-    }
-
-    // Realizar actualizaciones (solo campos `id_ente` y `actividad_id`)
-    foreach ($actualizaciones as $id => $campos) {
-        $set = [];
-        foreach ($campos as $columna => $valor) {
-            $set[] = "`$columna` = '" . $remote_db->real_escape_string($valor) . "'";
-        }
-        $query = "UPDATE `$tabla` SET " . implode(", ", $set) . " WHERE `id` = '" . $id . "'";
-        if (!$remote_db->query($query)) {
-            echo "Error al actualizar el registro con ID $id: " . $remote_db->error . "\n";
         }
     }
 
