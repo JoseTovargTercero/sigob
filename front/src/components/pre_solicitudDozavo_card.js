@@ -66,7 +66,7 @@ export const pre_solicitudDozavo_card = async ({
     nombre_tabla: 'solicitud_dozavos',
   })
 
-  console.log(compromiso)
+  console.log(data)
 
   let partidasLi = partidas
     ? partidas

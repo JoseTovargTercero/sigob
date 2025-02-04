@@ -106,6 +106,51 @@ const registrarGasto = async ({ data }) => {
     let clone = res.clone()
     let text = await clone.text()
 
+    // console.log(text)
+
+    const json = await res.json()
+    console.log(json)
+
+    if (json.success) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.done,
+        message: json.success,
+      })
+      return json
+    }
+
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
+    return json
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al registrar gasto',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
+const actualizarGasto = async ({ data }) => {
+  showLoader()
+  try {
+    let res = await fetch(gastosUrl, {
+      method: 'POST',
+      body: JSON.stringify({
+        accion: 'actualizar',
+        ...data,
+      }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    let clone = res.clone()
+    let text = await clone.text()
+
     console.log(text)
 
     const json = await res.json()
@@ -391,6 +436,7 @@ export {
   getGastos,
   getGasto,
   registrarGasto,
+  actualizarGasto,
   aceptarGasto,
   rechazarGasto,
   getTiposGastos,

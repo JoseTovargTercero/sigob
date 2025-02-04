@@ -3,7 +3,12 @@ import {
   registrarCompromiso,
 } from '../api/pre_compromisos.js'
 import { obtenerDistribucionSecretaria } from '../api/pre_entes.js'
-import { getGasto, getTiposGastos, registrarGasto } from '../api/pre_gastos.js'
+import {
+  actualizarGasto,
+  getGasto,
+  getTiposGastos,
+  registrarGasto,
+} from '../api/pre_gastos.js'
 
 import {
   confirmNotification,
@@ -134,6 +139,8 @@ export const pre_gastos_form_card = async ({
   let partidasDisponibles = await obtenerDistribucionSecretaria({
     id_ejercicio: ejercicioFiscal.id,
   })
+
+  console.log(partidasDisponibles)
 
   let card = ` <div class='card slide-up-animation' id='gastos-form-card'>
       <div class='card-header d-flex justify-content-between'>
@@ -312,12 +319,11 @@ export const pre_gastos_form_card = async ({
     })
 
     if (fieldList.distribuciones.length > 0) {
-      fieldList.distribuciones.forEach((distribucion, index) => {
-        addRow()
-        let row = d.querySelector(`[data-row="${index + 1}"]`)
-        row.querySelector(`#distribucion-${index + 1}`).value =
-          distribucion.id_distribucion
-        row.querySelector(`#distribucion-monto-${index + 1}`).value =
+      fieldList.distribuciones.forEach((distribucion) => {
+        addRow(distribucion.id_distribucion)
+        let row = d.querySelector(`[data-row="${numsRows}"]`)
+
+        row.querySelector(`#distribucion-monto-${numsRows}`).value =
           distribucion.monto
       })
     }
@@ -458,7 +464,7 @@ export const pre_gastos_form_card = async ({
     }
   }
 
-  async function addRow() {
+  async function addRow(defaultOptionValue) {
     let newNumRow = numsRows + 1
     numsRows++
 
@@ -482,11 +488,9 @@ export const pre_gastos_form_card = async ({
       type: 'number3',
     }
 
-    let options = [`<option value=''>Elegir partida...</option>`]
+    let options = [`<option value='0'>Elegir partida...</option>`]
 
     partidasDisponibles.forEach((partida) => {
-      console.log(partida)
-
       let sppa = `
       ${partida.sector_denominacion ? partida.sector_denominacion : '00'}.${
         partida.programa_denominacion ? partida.programa_denominacion : '00'
@@ -494,7 +498,7 @@ export const pre_gastos_form_card = async ({
         partida.proyecto_denominacion ? partida.proyecto_denominacion : '00'
       }.${partida.actividad ? partida.actividad : '00'}`
 
-      let opt = `<option value="${partida.id_distribucion}">${sppa}.${
+      let opt = `<option value='${partida.id_distribucion}'>${sppa}.${
         partida.partida
       } - ${partida.ente_nombre[0].toUpperCase()}${partida.ente_nombre
         .substr(1, partida.ente_nombre.length - 1)
@@ -507,12 +511,24 @@ export const pre_gastos_form_card = async ({
 
     partidasList.innerHTML = options.join('')
 
-    $('.chosen-distribucion')
-      .chosen()
-      .change(function (obj, result) {
+    console.log(options)
+
+    if (defaultOptionValue) {
+      console.log(defaultOptionValue)
+      let distribucionSelect = $(`#distribucion-${numsRows}`)
+
+      distribucionSelect.chosen().change(function (obj, result) {
         console.log('changed: %o', arguments)
       })
 
+      distribucionSelect.val(defaultOptionValue).trigger('chosen:updated')
+    } else {
+      $('.chosen-distribucion')
+        .chosen()
+        .change(function (obj, result) {
+          console.log('changed: %o', arguments)
+        })
+    }
     return
   }
 
@@ -591,14 +607,8 @@ export const pre_gastos_form_card = async ({
         type: NOTIFICATIONS_TYPES.send,
         message: '¿Desea actualizar este gasto?',
         successFunction: async function () {
-          let res = await actualizarGasto({ data: fieldList })
+          let res = await actualizarGasto({ data: { id, ...fieldList } })
           if (res.success) {
-            if (registrado.success) {
-              generarCompromisoPdf(
-                registrado.id_compromiso,
-                registrado.correlativo
-              )
-            }
             closeCard()
             recargarEjercicio()
           }

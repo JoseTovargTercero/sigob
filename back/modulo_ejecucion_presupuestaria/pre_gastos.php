@@ -439,7 +439,7 @@ function obtenerGastoPorId($id)
                         }
                     }
 
-                    $sqlDistribucion = "SELECT id_partida, id_sector, id_programa FROM distribucion_presupuestaria WHERE id = ?";
+                    $sqlDistribucion = "SELECT id, id_partida, id_sector, id_programa FROM distribucion_presupuestaria WHERE id = ?";
                     $stmtDistribucion = $conexion->prepare($sqlDistribucion);
                     $stmtDistribucion->bind_param("i", $id_distribucion);
                     $stmtDistribucion->execute();
@@ -473,7 +473,7 @@ function obtenerGastoPorId($id)
                         $programaInfo = $resultadoPrograma->fetch_assoc();
 
                         $informacionDistribuciones[] = [
-                            'id_distribucion' => $id_distribucion_ente,
+                            'id_distribucion' => $distribucionInfo["id"],
                             'monto' => $montoDistribucion,
                             'partida' => $partidaInfo['partida'] ?? null,
                             'nombre_partida' => $partidaInfo['nombre'] ?? null,
@@ -523,24 +523,24 @@ function obtenerGastoPorId($id)
 
 
 
-function actualizarGasto($id, $id_tipo, $descripcion, $monto, $status, $id_ejercicio, $beneficiario, $identificador, $distribuciones)
+function actualizarGasto($id, $id_tipo, $descripcion, $monto, $id_ejercicio, $beneficiario, $identificador, $distribuciones)
 {
     global $conexion;
 
     try {
         // Validar que los campos obligatorios no estén vacíos
-        if (empty($id) || empty($id_tipo) || empty($descripcion) || empty($monto) || empty($status) || empty($id_ejercicio) || empty($beneficiario) || empty($identificador) || empty($distribuciones)) {
+        if (empty($id) || empty($id_tipo) || empty($descripcion) || empty($monto) || empty($id_ejercicio) || empty($beneficiario) || empty($identificador) || empty($distribuciones)) {
             throw new Exception("Todos los campos son obligatorios.");
         }
 
         // Convertir el array de distribuciones en JSON
         $distribuciones_json = json_encode($distribuciones);
 
-        $sqlInsertGasto = "INSERT INTO gastos (id_tipo, descripcion, monto, status, id_ejercicio, beneficiario, identificador, distribuciones, fecha) VALUES (?, ?, ?, 0, ?, ?, ?, ?, ?)";
+
         // Actualizar el registro en la tabla 'gastos' con los campos adicionales
         $sql = "UPDATE gastos SET id_tipo = ?, descripcion = ?, monto = ?, status = 0, id_ejercicio = ?, beneficiario = ?, identificador = ?, distribuciones = ? WHERE id = ?";
         $stmt = $conexion->prepare($sql);
-        $stmt->bind_param("isdiisssi", $id_tipo, $descripcion, $monto, $id_ejercicio, $beneficiario, $identificador, $distribuciones_json, $id);
+        $stmt->bind_param("isdiissi", $id_tipo, $descripcion, $monto, $id_ejercicio, $beneficiario, $identificador, $distribuciones_json, $id);
 
         if ($stmt->execute()) {
             return json_encode(['success' => 'Gasto actualizado exitosamente']);
@@ -615,7 +615,6 @@ if (isset($data["accion"])) {
                 $data["id_tipo"],
                 $data["descripcion"],
                 $data["monto"],
-                $data["status"],
                 $data["id_ejercicio"],
                 $data["beneficiario"], // Se pasa beneficiario
                 $data["identificador"], // Se pasa identificador
