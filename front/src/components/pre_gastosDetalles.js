@@ -1,5 +1,9 @@
 import { generarCompromisoPdf } from '../api/pre_compromisos.js'
-import { aceptarGasto, rechazarGasto } from '../api/pre_gastos.js'
+import {
+  aceptarGasto,
+  eliminarGasto,
+  rechazarGasto,
+} from '../api/pre_gastos.js'
 import {
   confirmNotification,
   hideLoader,
@@ -69,7 +73,7 @@ export const pre_gastosDetalles = ({
   </button>`
       : Number(data.status_gasto) === 3
       ? `<span class='btn btn-success'>Entregado</span>`
-      : ` <button class='btn btn-danger' data-eliminarid='${data.id}'>
+      : ` <button class='btn btn-danger' data-eliminar='${data.id}'>
           Eliminar
         </button>
         <button class='btn btn-warning' data-editar='${data.id}'>
@@ -368,6 +372,21 @@ export const pre_gastosDetalles = ({
         id: e.target.dataset.editar,
         recargarEjercicio,
         ejercicioFiscal,
+      })
+    }
+
+    if (e.target.dataset.eliminar) {
+      confirmNotification({
+        type: NOTIFICATIONS_TYPES.send,
+        message:
+          'Rechazar este gasto hará que se elimine y reintegre el monto al presupuesto ¿Desea continuar?',
+        successFunction: async function () {
+          let res = await eliminarGasto(data.id)
+          if (res.success) {
+            recargarEjercicio()
+            closeCard(cardElement)
+          }
+        },
       })
     }
   }

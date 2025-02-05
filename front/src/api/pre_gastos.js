@@ -432,6 +432,47 @@ const eliminarTipoGasto = async (id) => {
   }
 }
 
+const eliminarGasto = async (id) => {
+  showLoader()
+  try {
+    let res = await fetch(gastosUrl, {
+      method: 'POST',
+      body: JSON.stringify({
+        accion: 'eliminar',
+        id,
+      }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+    console.log(res)
+    const json = await res.json()
+
+    console.log(json)
+
+    if (json.success) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.done,
+        message: json.success,
+      })
+      return json
+    }
+
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
+    return json
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al eliminar tipos de gasto',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
 export {
   getGastos,
   getGasto,
@@ -443,4 +484,5 @@ export {
   getTipoGasto,
   registrarTipoGasto,
   eliminarTipoGasto,
+  eliminarGasto,
 }
