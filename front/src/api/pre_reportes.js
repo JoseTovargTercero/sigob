@@ -10,12 +10,12 @@ import { APP_URL, config } from './urlConfig.js'
 
 const reportesPdfUrl = `${APP_URL}${config.MODULE_NAMES.EJECUCION}pre_reportes.php`
 
-const generarReporte = async ({ ejercicio_fiscal, tipo, nombreArchivo }) => {
+const generarReporte = async (data) => {
   showLoader()
   try {
     let res = await fetch(reportesPdfUrl, {
       method: 'POST',
-      body: JSON.stringify({ data: { ejercicio_fiscal, tipo } }),
+      body: JSON.stringify({ data }),
     })
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
@@ -31,7 +31,7 @@ const generarReporte = async ({ ejercicio_fiscal, tipo, nombreArchivo }) => {
     // Crear un enlace temporal
     const enlace = document.createElement('a')
     enlace.href = url
-    enlace.download = nombreArchivo
+    enlace.download = data.nombreArchivo
 
     // Simular un clic en el enlace para iniciar la descarga
     document.body.appendChild(enlace)
