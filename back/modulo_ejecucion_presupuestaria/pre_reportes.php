@@ -11,6 +11,12 @@ use Mpdf\Mpdf;
 $data = json_decode(file_get_contents('php://input'), true)['data'];
 $id_ejercicio = $data['ejercicio_fiscal'];
 $tipo = $data['tipo'];
+if ($tipo == "compromiso") {
+    $tipo_tabla = $data['tipo_tabla'];
+    $tipo_fecha = $data['tipo_fecha'];
+    $fecha = $data['fecha'];
+}
+
 
 if ($tipo == '' || !isset($data['tipo'])) {
     throw new Exception("No se ha recibido una solicitud valida.", 1);
@@ -38,15 +44,24 @@ $reportes = [
         'nombre' => 'SECTORES Y PROGRAMAS',
         'formato' => 'A4-L'
     ],
+    'compromiso' => [
+        'nombre' => 'REPORTE COMPROMISO',
+        'formato' => 'A4-L'
+    ],
 ];
 
 $pdf_files = [];
 $url_pdf = "{$base_url}pre_pdf_$tipo.php?id_ejercicio=" . $id_ejercicio;
+if ($tipo == "compromiso") {
+    $url_pdf = "{$base_url}pre_compromisos_reporte.php";
+}
 
 if ($tipo == 'sectores') {
     $pdf_files["{$url_pdf}&id_ejercicio=$id_ejercicio"] = "SECTORES.pdf";
 } elseif ($tipo == 'partidas') {
     $pdf_files["{$url_pdf}&id_ejercicio=$id_ejercicio"] = "PARTIDAS.pdf";
+}elseif($tipo == 'compromiso'){
+    $pdf_files["{$url_pdf}&id_ejercicio=$id_ejercicio&tipo=$tipo_tabla&tipo_fecha=$tipo_fecha&fecha=$fecha"] = "Compromiso.pdf";
 } else {
     $pdf_files["{$url_pdf}&id_ejercicio=$id_ejercicio"] = "SECTORES Y PROGRAMAS.pdf";
 }
