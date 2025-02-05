@@ -561,22 +561,37 @@ function eliminarGasto($id)
     global $conexion;
 
     try {
-        // Eliminar el registro de la tabla 'gastos'
-        $sql = "DELETE FROM gastos WHERE id = ?";
-        $stmt = $conexion->prepare($sql);
-        $stmt->bind_param("i", $id);
+        // Iniciar una transacción para asegurar la integridad de los datos
+        $conexion->begin_transaction();
 
-        if ($stmt->execute()) {
-            return json_encode(['success' => 'Gasto eliminado exitosamente']);
-        } else {
+        // Eliminar el registro de la tabla 'compromisos'
+        $sqlCompromisos = "DELETE FROM compromisos WHERE id_registro = ? AND tabla_registro = 'gastos'";
+        $stmtCompromisos = $conexion->prepare($sqlCompromisos);
+        $stmtCompromisos->bind_param("i", $id);
+        if (!$stmtCompromisos->execute()) {
+            throw new Exception("Error al eliminar el compromiso asociado.");
+        }
+
+        // Eliminar el registro de la tabla 'gastos'
+        $sqlGastos = "DELETE FROM gastos WHERE id = ?";
+        $stmtGastos = $conexion->prepare($sqlGastos);
+        $stmtGastos->bind_param("i", $id);
+        if (!$stmtGastos->execute()) {
             throw new Exception("Error al eliminar el gasto.");
         }
 
+        // Confirmar la transacción
+        $conexion->commit();
+
+        return json_encode(['success' => 'Gasto y compromiso asociado eliminados exitosamente']);
     } catch (Exception $e) {
+        // Revertir la transacción en caso de error
+        $conexion->rollback();
         registrarError($e->getMessage());
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 /// Procesar la solicitud
 $data = json_decode(file_get_contents("php://input"), true);
