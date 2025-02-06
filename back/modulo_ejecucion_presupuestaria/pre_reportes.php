@@ -27,7 +27,6 @@ if ($tipo == '' || !isset($data['tipo'])) {
 }
 
 
-$fecha = date('d-m-y');
 
 /*
 $id_ejercicio = '1';

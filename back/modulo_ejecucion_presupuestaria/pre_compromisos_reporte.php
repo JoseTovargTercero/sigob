@@ -17,7 +17,12 @@ function procesarDatos($tipo, $tipo_fecha, $fecha, $local_db, $remote_db, $id_ej
 
     try {
         // Seleccionar la base de datos en función del tipo
-        $db = ($tipo === 'gastos') ? $local_db : $remote_db;
+        if ($tipo === "gastos") {
+            $db = $local_db;
+        }elseif($tipo === "solicitud_dozavos"){
+            $db = $remote_db;
+        }
+        
 
         // Consultar el ejercicio fiscal
         $query_ejercicio = "SELECT * FROM ejercicio_fiscal WHERE id = ?";
@@ -59,11 +64,12 @@ function procesarDatos($tipo, $tipo_fecha, $fecha, $local_db, $remote_db, $id_ej
 
         $data = [];
 
+
         foreach ($compromisos as $compromiso) {
             $id_registro = $compromiso['id_registro'];
             $mes = null;
 
-            if ($tipo === 'dozavos') {
+            if ($tipo === 'solicitud_dozavos') {
                 // Consultar la tabla solicitud_dozavos
                 $query_solicitud = "SELECT mes FROM solicitud_dozavos WHERE id = ?";
                 $stmt_solicitud = $db->prepare($query_solicitud);
@@ -78,10 +84,11 @@ function procesarDatos($tipo, $tipo_fecha, $fecha, $local_db, $remote_db, $id_ej
                 }
                 $solicitud = $result_solicitud->fetch_assoc();
                 $stmt_solicitud->close();
-
                 if (!$solicitud) continue;
-                $mes = (int)$solicitud['mes'];
-            } else if ($tipo === 'gastos') {
+                $mes = $solicitud['mes']-1;
+                
+
+            }elseif ($tipo === 'gastos') {
                 // Consultar la tabla gastos
                 $query_gasto = "SELECT fecha FROM gastos WHERE id = ?";
                 $stmt_gasto = $db->prepare($query_gasto);
@@ -98,20 +105,24 @@ function procesarDatos($tipo, $tipo_fecha, $fecha, $local_db, $remote_db, $id_ej
                 $stmt_gasto->close();
 
                 if (!$gasto) continue;
-                $mes = (int)date('n', strtotime($gasto['fecha'])) - 1;
+                $mes = (int)date('n', strtotime($gasto['fecha']))-1;
+         
             }
 
-          
-
+            // Validar si el mes pertenece al trimestre especificado
             if ($tipo_fecha === 'trimestre') {
                 $trimestre = (int)$fecha;
-                $rango_trimestre = [
-                    1 => [0, 1, 2],
-                    2 => [3, 4, 5],
-                    3 => [6, 7, 8],
-                    4 => [9, 10, 11]
-                ];
-                if (!in_array($mes, $rango_trimestre[$trimestre])) {
+
+                $inicio_trimestre = ($trimestre - 1) * 3 + 1; // Mes inicial del trimestre
+                $fin_trimestre = $inicio_trimestre + 2;       // Mes final del trimestre
+             
+
+                if ($mes < $inicio_trimestre OR $mes > $fin_trimestre) {
+                    continue;
+                }
+            }else{
+              
+                if ($mes < $fecha OR $mes > $fecha) {
                     continue;
                 }
             }
@@ -137,7 +148,7 @@ function procesarDatos($tipo, $tipo_fecha, $fecha, $local_db, $remote_db, $id_ej
 // Variables de entrada
 $tipo = $_GET['tipo'] ?? '';
 $tipo_fecha = $_GET['tipo_fecha'] ?? '';
-$fecha = isset($_GET['fecha']) ? (int)$_GET['fecha'] : 0;
+$fecha = $_GET['fecha'] ?? '';
 $id_ejercicio = $_GET['id_ejercicio'] ?? null;
 
 // Validación de entrada
@@ -148,9 +159,9 @@ if (!$id_ejercicio) {
 // Procesar los datos
 $data = procesarDatos($tipo, $tipo_fecha, $fecha, $local_db, $remote_db, $id_ejercicio);
 
-
 echo json_encode($data);
 ?>
+
 
 
 
