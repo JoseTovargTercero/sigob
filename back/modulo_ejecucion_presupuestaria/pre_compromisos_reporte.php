@@ -1,122 +1,156 @@
 <?php
 require_once '../sistema_global/conexion.php';
+
 global $ano_ejercicio, $situado_ejercicio;
-function procesarDatos($tipo, $tipo_fecha, $fecha, $local_db, $remote_db, $id_ejercicio) {
-    global $ano_ejercicio, $situado_ejercicio;
-    // Seleccionar la base de datos en función del tipo
-    $db = ($tipo === 'gastos') ? $local_db : $remote_db;
 
-    // Consultar el ejercicio fiscal
-    $query_ejercicio = "SELECT * FROM ejercicio_fiscal WHERE id = ?";
-    $stmt_ejercicio = $db->prepare($query_ejercicio);
-    $stmt_ejercicio->bind_param('i', $id_ejercicio);
-    $stmt_ejercicio->execute();
-    $result_ejercicio = $stmt_ejercicio->get_result();
-    $ejercicio = $result_ejercicio->fetch_assoc();
-    $stmt_ejercicio->close();
-
-    if (!$ejercicio) {
-        die("No se encontró el ejercicio fiscal para el ID proporcionado.");
+// Función para manejar errores
+function manejarError($mensaje, $db = null) {
+    if ($db && $db->error) {
+        $mensaje .= " Error en la base de datos: " . $db->error;
     }
-
-    // Variables del ejercicio fiscal
-    $ano_ejercicio = $ejercicio['ano'];
-    $situado_ejercicio = $ejercicio['situado'];
-
-    // Consultar la tabla compromisos
-    $query_compromisos = "SELECT * FROM compromisos WHERE tabla_registro = ?";
-    $stmt = $db->prepare($query_compromisos);
-    $stmt->bind_param('s', $tipo);
-    $stmt->execute();
-    $result_compromisos = $stmt->get_result();
-    $compromisos = $result_compromisos->fetch_all(MYSQLI_ASSOC);
-    $stmt->close();
-
-    $data = [];
-
-    foreach ($compromisos as $compromiso) {
-        $id_registro = $compromiso['id_registro'];
-
-        // Inicializar el mes como nulo
-        $mes = null;
-
-        if ($tipo === 'solicitud_dozavos') {
-            // Consultar la tabla solicitud_dozavos
-            $query_solicitud = "SELECT mes FROM solicitud_dozavos WHERE id = ?";
-            $stmt_solicitud = $db->prepare($query_solicitud);
-            $stmt_solicitud->bind_param('i', $id_registro);
-            $stmt_solicitud->execute();
-            $result_solicitud = $stmt_solicitud->get_result();
-            $solicitud = $result_solicitud->fetch_assoc();
-            $stmt_solicitud->close();
-
-            if (!$solicitud) continue;
-
-            $mes = (int)$solicitud['mes'];
-        } else if ($tipo === 'gastos') {
-            // Consultar la tabla gastos
-            $query_gasto = "SELECT fecha FROM gastos WHERE id = ?";
-            $stmt_gasto = $db->prepare($query_gasto);
-            $stmt_gasto->bind_param('i', $id_registro);
-            $stmt_gasto->execute();
-            $result_gasto = $stmt_gasto->get_result();
-            $gasto = $result_gasto->fetch_assoc();
-            $stmt_gasto->close();
-
-            if (!$gasto) continue;
-
-            // Convertir la fecha al mes
-            $mes = (int)date('n', strtotime($gasto['fecha'])) - 1; // Restar 1 para que sea 0-indexado
-        }
-
-        // Verificar condiciones de mes o trimestre
-        if ($tipo_fecha === 'mensual' && $mes !== $fecha) {
-            continue;
-        }
-
-        if ($tipo_fecha === 'trimestre') {
-            $trimestre = (int)$fecha;
-            $rango_trimestre = [
-                1 => [0, 1, 2],
-                2 => [3, 4, 5],
-                3 => [6, 7, 8],
-                4 => [9, 10, 11]
-            ];
-
-            if (!in_array($mes, $rango_trimestre[$trimestre])) {
-                continue;
-            }
-        }
-
-        // Agregar información completa del compromiso al array
-        $data[] = [
-            'id' => $compromiso['id'],
-            'correlativo' => $compromiso['correlativo'],
-            'descripcion' => $compromiso['descripcion'],
-            'id_registro' => $compromiso['id_registro'],
-            'id_ejercicio' => $compromiso['id_ejercicio'],
-            'tabla_registro' => $compromiso['tabla_registro'],
-            'numero_compromiso' => $compromiso['numero_compromiso'],
-        ];
-    }
-
-    return $data;
+    error_log($mensaje); // Registra el error en el log del servidor
+    die(json_encode(["error" => $mensaje])); // Respuesta con error en formato JSON
 }
 
+function procesarDatos($tipo, $tipo_fecha, $fecha, $local_db, $remote_db, $id_ejercicio) {
+    global $ano_ejercicio, $situado_ejercicio;
+
+    try {
+        // Seleccionar la base de datos en función del tipo
+        $db = ($tipo === 'gastos') ? $local_db : $remote_db;
+
+        // Consultar el ejercicio fiscal
+        $query_ejercicio = "SELECT * FROM ejercicio_fiscal WHERE id = ?";
+        $stmt_ejercicio = $db->prepare($query_ejercicio);
+        if (!$stmt_ejercicio) {
+            manejarError("Fallo al preparar la consulta del ejercicio fiscal.", $db);
+        }
+        $stmt_ejercicio->bind_param('i', $id_ejercicio);
+        $stmt_ejercicio->execute();
+        $result_ejercicio = $stmt_ejercicio->get_result();
+        if (!$result_ejercicio) {
+            manejarError("Fallo al ejecutar la consulta del ejercicio fiscal.", $db);
+        }
+        $ejercicio = $result_ejercicio->fetch_assoc();
+        $stmt_ejercicio->close();
+
+        if (!$ejercicio) {
+            manejarError("No se encontró el ejercicio fiscal para el ID proporcionado.");
+        }
+
+        // Variables del ejercicio fiscal
+        $ano_ejercicio = $ejercicio['ano'];
+        $situado_ejercicio = $ejercicio['situado'];
+
+        // Consultar la tabla compromisos
+        $query_compromisos = "SELECT * FROM compromisos WHERE tabla_registro = ?";
+        $stmt = $db->prepare($query_compromisos);
+        if (!$stmt) {
+            manejarError("Fallo al preparar la consulta de compromisos.", $db);
+        }
+        $stmt->bind_param('s', $tipo);
+        $stmt->execute();
+        $result_compromisos = $stmt->get_result();
+        if (!$result_compromisos) {
+            manejarError("Fallo al ejecutar la consulta de compromisos.", $db);
+        }
+        $compromisos = $result_compromisos->fetch_all(MYSQLI_ASSOC);
+        $stmt->close();
+
+        $data = [];
+
+        foreach ($compromisos as $compromiso) {
+            $id_registro = $compromiso['id_registro'];
+            $mes = null;
+
+            if ($tipo === 'dozavos') {
+                // Consultar la tabla solicitud_dozavos
+                $query_solicitud = "SELECT mes FROM solicitud_dozavos WHERE id = ?";
+                $stmt_solicitud = $db->prepare($query_solicitud);
+                if (!$stmt_solicitud) {
+                    manejarError("Fallo al preparar la consulta de solicitud_dozavos.", $db);
+                }
+                $stmt_solicitud->bind_param('i', $id_registro);
+                $stmt_solicitud->execute();
+                $result_solicitud = $stmt_solicitud->get_result();
+                if (!$result_solicitud) {
+                    manejarError("Fallo al ejecutar la consulta de solicitud_dozavos.", $db);
+                }
+                $solicitud = $result_solicitud->fetch_assoc();
+                $stmt_solicitud->close();
+
+                if (!$solicitud) continue;
+                $mes = (int)$solicitud['mes'];
+            } else if ($tipo === 'gastos') {
+                // Consultar la tabla gastos
+                $query_gasto = "SELECT fecha FROM gastos WHERE id = ?";
+                $stmt_gasto = $db->prepare($query_gasto);
+                if (!$stmt_gasto) {
+                    manejarError("Fallo al preparar la consulta de gastos.", $db);
+                }
+                $stmt_gasto->bind_param('i', $id_registro);
+                $stmt_gasto->execute();
+                $result_gasto = $stmt_gasto->get_result();
+                if (!$result_gasto) {
+                    manejarError("Fallo al ejecutar la consulta de gastos.", $db);
+                }
+                $gasto = $result_gasto->fetch_assoc();
+                $stmt_gasto->close();
+
+                if (!$gasto) continue;
+                $mes = (int)date('n', strtotime($gasto['fecha'])) - 1;
+            }
+
+          
+
+            if ($tipo_fecha === 'trimestre') {
+                $trimestre = (int)$fecha;
+                $rango_trimestre = [
+                    1 => [0, 1, 2],
+                    2 => [3, 4, 5],
+                    3 => [6, 7, 8],
+                    4 => [9, 10, 11]
+                ];
+                if (!in_array($mes, $rango_trimestre[$trimestre])) {
+                    continue;
+                }
+            }
+
+            $data[] = [
+                'id' => $compromiso['id'],
+                'correlativo' => $compromiso['correlativo'],
+                'descripcion' => $compromiso['descripcion'],
+                'id_registro' => $compromiso['id_registro'],
+                'id_ejercicio' => $compromiso['id_ejercicio'],
+                'tabla_registro' => $compromiso['tabla_registro'],
+                'numero_compromiso' => $compromiso['numero_compromiso'],
+            ];
+        }
+
+        return $data;
+
+    } catch (Exception $e) {
+        manejarError("Ocurrió un error inesperado: " . $e->getMessage());
+    }
+}
 
 // Variables de entrada
-$tipo = $_GET['tipo']; // 'gastos' o 'solicitud_dozavos'
-$tipo_fecha = $_GET['tipo_fecha']; // 'mensual' o 'trimestre'
-$fecha = (int)$_GET['fecha']; // 0-11 para mensual o 1-4 para trimestre
-$id_ejercicio = $_GET['id_ejercicio'];
+$tipo = $_GET['tipo'] ?? '';
+$tipo_fecha = $_GET['tipo_fecha'] ?? '';
+$fecha = isset($_GET['fecha']) ? (int)$_GET['fecha'] : 0;
+$id_ejercicio = $_GET['id_ejercicio'] ?? null;
 
-
+// Validación de entrada
+if (!$id_ejercicio) {
+    manejarError("El parámetro 'id_ejercicio' es obligatorio.");
+}
 
 // Procesar los datos
 $data = procesarDatos($tipo, $tipo_fecha, $fecha, $local_db, $remote_db, $id_ejercicio);
 
-?>
 
+echo json_encode($data);
+?>
 
 
 
