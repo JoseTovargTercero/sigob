@@ -22,6 +22,6 @@ function clear($campo){
 
 
 
-$local_db = new mysqli('localhost', 'root', '', 'sigob');
+$local_db = $conexion;
 $remote_db = new mysqli('sigob.net', 'sigobnet_userroot', ']n^VmqjqCD1k', 'sigobnet_sigob_entes');
 ?>
