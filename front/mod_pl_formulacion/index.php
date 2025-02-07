@@ -18,7 +18,7 @@ function contar($table, $condicion)
 if (isset($_GET["ejercicio"])) {
   $annio = $_GET["ejercicio"];
 } else {
-  $annio = '2025';
+  $annio = date('Y');
 }
 
 

@@ -18,7 +18,7 @@ function contar($table, $condicion)
 if (isset($_GET["ejercicio"])) {
   $annio = $_GET["ejercicio"];
 } else {
-  $annio = '2025';
+  $annio = date('Y');
 }
 
 
@@ -697,6 +697,8 @@ $stmt->close();
           },
         })
         .done(function(response) {
+
+          console.log(response)
           // Verifica si el estado de la respuesta es 200
           if (response.status === 200) {
             // Calcula el total de elementos en el array "success"

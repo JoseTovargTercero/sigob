@@ -623,7 +623,7 @@ export const pre_traspasosForm_card = async ({
         if (validarInputsEntreVistas()) {
           toastNotification({
             message:
-              'No se puede seleccionar la misma partida en ambas vistas. Valide nuevamente.',
+              'Una o mas partidas se repiten, verifique el paso anterior.',
             type: NOTIFICATIONS_TYPES.fail,
           })
           return
