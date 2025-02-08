@@ -228,7 +228,7 @@ foreach ($partidaMontos as $clave => $montoTotal) {
 
 function consultarTodosTraspasos($id_ejercicio)
 {
-     global $conexion;
+    global $conexion;
     global $remote_db;
 
     $conexion = $remote_db;
@@ -287,6 +287,22 @@ function consultarTodosTraspasos($id_ejercicio)
                         }
                     } else {
                         $detalle['distribucion_presupuestaria'] = [];
+                    }
+
+                    // Consultar la información de distribucion_entes usando id_distribucion y id_ejercicio
+                    $sqlDistribucionEnte = "SELECT de.* 
+                                            FROM distribucion_entes de 
+                                            WHERE de.distribucion LIKE ? AND de.id_ejercicio = ?";
+                    $likePattern = '%"id_distribucion":"' . $detalle['id_distribucion'] . '"%';
+                    $stmtDistribucionEnte = $conexion->prepare($sqlDistribucionEnte);
+                    $stmtDistribucionEnte->bind_param("si", $likePattern, $id_ejercicio);
+                    $stmtDistribucionEnte->execute();
+                    $resultadoDistribucionEnte = $stmtDistribucionEnte->get_result();
+
+                    if ($resultadoDistribucionEnte->num_rows > 0) {
+                        $detalle['distribucion_entes'] = $resultadoDistribucionEnte->fetch_assoc();
+                    } else {
+                        $detalle['distribucion_entes'] = [];
                     }
                 }
                 $traspaso['detalles'] = $detalles;
@@ -473,11 +489,9 @@ function gestionarTraspaso($id, $accion)
 
 
 
-
-
 function consultarTraspasoPorId($id)
 {
-     global $conexion;
+    global $conexion;
     global $remote_db;
 
     $conexion = $remote_db;
@@ -536,6 +550,22 @@ function consultarTraspasoPorId($id)
                 } else {
                     $detalle['distribucion_presupuestaria'] = [];
                 }
+
+                // Consultar la información de distribucion_entes usando id_distribucion y id_ejercicio
+                $sqlDistribucionEnte = "SELECT de.* 
+                                        FROM distribucion_entes de 
+                                        WHERE de.distribucion LIKE ? AND de.id_ejercicio = ?";
+                $likePattern = '%"id_distribucion":"' . $detalle['id_distribucion'] . '"%';
+                $stmtDistribucionEnte = $conexion->prepare($sqlDistribucionEnte);
+                $stmtDistribucionEnte->bind_param("si", $likePattern, $traspaso['id_ejercicio']);
+                $stmtDistribucionEnte->execute();
+                $resultadoDistribucionEnte = $stmtDistribucionEnte->get_result();
+
+                if ($resultadoDistribucionEnte->num_rows > 0) {
+                    $detalle['distribucion_entes'] = $resultadoDistribucionEnte->fetch_assoc();
+                } else {
+                    $detalle['distribucion_entes'] = [];
+                }
             }
             $traspaso['detalles'] = $detalles;
         } else {
@@ -547,6 +577,7 @@ function consultarTraspasoPorId($id)
         return json_encode(["error" => "No se encontró el traspaso."]);
     }
 }
+
 
 
 
