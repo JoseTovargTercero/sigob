@@ -258,42 +258,35 @@ function consultarTodosTraspasos($id_ejercicio)
             if ($resultadoInfo->num_rows > 0) {
                 $detalles = $resultadoInfo->fetch_all(MYSQLI_ASSOC);
                 foreach ($detalles as &$detalle) {
-                    // Obtener la información de distribucion_presupuestaria
-                    $sqlDistribucion = "SELECT dp.* 
-                                        FROM distribucion_presupuestaria dp 
+                    $idDistribucion = $detalle['id_distribucion'];
+
+                    // Obtener información de distribucion_presupuestaria
+                    $sqlDistribucion = "SELECT dp.id AS id_distribucion_, dp.id_partida, dp.id_sector, dp.id_programa, dp.id_proyecto, 
+                                               pp.partida AS codigo_partida, pp.descripcion AS partida_descripcion, 
+                                               ps.sector AS sector_denominacion, pg.programa AS programa_denominacion, 
+                                               pr.proyecto_id AS proyecto_denominacion
+                                        FROM distribucion_presupuestaria dp
+                                        LEFT JOIN partidas_presupuestarias pp ON dp.id_partida = pp.id
+                                        LEFT JOIN pl_sectores ps ON dp.id_sector = ps.id
+                                        LEFT JOIN pl_programas pg ON dp.id_programa = pg.id
+                                        LEFT JOIN pl_proyectos pr ON dp.id_proyecto = pr.id
                                         WHERE dp.id = ?";
                     $stmtDistribucion = $conexion->prepare($sqlDistribucion);
-                    $stmtDistribucion->bind_param("i", $detalle['id_distribucion']);
+                    $stmtDistribucion->bind_param("i", $idDistribucion);
                     $stmtDistribucion->execute();
                     $resultadoDistribucion = $stmtDistribucion->get_result();
 
                     if ($resultadoDistribucion->num_rows > 0) {
                         $detalle['distribucion_presupuestaria'] = $resultadoDistribucion->fetch_assoc();
-
-                        // Obtener la información de partidas_presupuestarias usando id_partida
-                        $id_partida = $detalle['distribucion_presupuestaria']['id_partida'];
-                        $sqlPartida = "SELECT pp.* 
-                                       FROM partidas_presupuestarias pp 
-                                       WHERE pp.id = ?";
-                        $stmtPartida = $conexion->prepare($sqlPartida);
-                        $stmtPartida->bind_param("i", $id_partida);
-                        $stmtPartida->execute();
-                        $resultadoPartida = $stmtPartida->get_result();
-
-                        if ($resultadoPartida->num_rows > 0) {
-                            $detalle['distribucion_presupuestaria']['partida_presupuestaria'] = $resultadoPartida->fetch_assoc();
-                        } else {
-                            $detalle['distribucion_presupuestaria']['partida_presupuestaria'] = [];
-                        }
                     } else {
                         $detalle['distribucion_presupuestaria'] = [];
                     }
 
-                    // Consultar la información de distribucion_entes usando id_distribucion y id_ejercicio
-                    $sqlDistribucionEnte = "SELECT de.* 
+                    // Consultar la información de distribucion_entes
+                    $sqlDistribucionEnte = "SELECT de.id AS id_distribucion_ente, de.monto_total, de.distribucion, de.id_ejercicio, de.actividad_id 
                                             FROM distribucion_entes de 
                                             WHERE de.distribucion LIKE ? AND de.id_ejercicio = ?";
-                    $likePattern = '%"id_distribucion":"' . $detalle['id_distribucion'] . '"%';
+                    $likePattern = '%"id_distribucion":"' . $idDistribucion . '"%';
                     $stmtDistribucionEnte = $conexion->prepare($sqlDistribucionEnte);
                     $stmtDistribucionEnte->bind_param("si", $likePattern, $id_ejercicio);
                     $stmtDistribucionEnte->execute();
@@ -316,6 +309,7 @@ function consultarTodosTraspasos($id_ejercicio)
         return json_encode(["success" => []]);
     }
 }
+
 
 function obtenerUltimosOrdenes($id_ejercicio)
 {
@@ -520,42 +514,13 @@ function consultarTraspasoPorId($id)
         if ($resultadoInfo->num_rows > 0) {
             $detalles = $resultadoInfo->fetch_all(MYSQLI_ASSOC);
             foreach ($detalles as &$detalle) {
-                // Obtener la información de distribucion_presupuestaria
-                $sqlDistribucion = "SELECT dp.* 
-                                    FROM distribucion_presupuestaria dp 
-                                    WHERE dp.id = ?";
-                $stmtDistribucion = $conexion->prepare($sqlDistribucion);
-                $stmtDistribucion->bind_param("i", $detalle['id_distribucion']);
-                $stmtDistribucion->execute();
-                $resultadoDistribucion = $stmtDistribucion->get_result();
+                $idDistribucion = $detalle['id_distribucion'];
 
-                if ($resultadoDistribucion->num_rows > 0) {
-                    $detalle['distribucion_presupuestaria'] = $resultadoDistribucion->fetch_assoc();
-
-                    // Obtener la información de partidas_presupuestarias usando id_partida
-                    $id_partida = $detalle['distribucion_presupuestaria']['id_partida'];
-                    $sqlPartida = "SELECT pp.* 
-                                   FROM partidas_presupuestarias pp 
-                                   WHERE pp.id = ?";
-                    $stmtPartida = $conexion->prepare($sqlPartida);
-                    $stmtPartida->bind_param("i", $id_partida);
-                    $stmtPartida->execute();
-                    $resultadoPartida = $stmtPartida->get_result();
-
-                    if ($resultadoPartida->num_rows > 0) {
-                        $detalle['distribucion_presupuestaria']['partida_presupuestaria'] = $resultadoPartida->fetch_assoc();
-                    } else {
-                        $detalle['distribucion_presupuestaria']['partida_presupuestaria'] = [];
-                    }
-                } else {
-                    $detalle['distribucion_presupuestaria'] = [];
-                }
-
-                // Consultar la información de distribucion_entes usando id_distribucion y id_ejercicio
-                $sqlDistribucionEnte = "SELECT de.* 
+                // Obtener información de distribucion_entes
+                $sqlDistribucionEnte = "SELECT de.id AS id_distribucion_ente, de.monto_total, de.distribucion, de.id_ejercicio, de.actividad_id 
                                         FROM distribucion_entes de 
                                         WHERE de.distribucion LIKE ? AND de.id_ejercicio = ?";
-                $likePattern = '%"id_distribucion":"' . $detalle['id_distribucion'] . '"%';
+                $likePattern = '%"id_distribucion":"' . $idDistribucion . '"%';
                 $stmtDistribucionEnte = $conexion->prepare($sqlDistribucionEnte);
                 $stmtDistribucionEnte->bind_param("si", $likePattern, $traspaso['id_ejercicio']);
                 $stmtDistribucionEnte->execute();
@@ -565,6 +530,28 @@ function consultarTraspasoPorId($id)
                     $detalle['distribucion_entes'] = $resultadoDistribucionEnte->fetch_assoc();
                 } else {
                     $detalle['distribucion_entes'] = [];
+                }
+
+                // Consulta para obtener detalles de la distribución presupuestaria
+                $sqlDistribucion = "SELECT dp.id_partida, dp.id AS id_distribucion_, dp.id_sector, dp.id_programa, dp.id_proyecto, 
+                                           pp.partida AS codigo_partida, pp.descripcion AS partida_descripcion, 
+                                           ps.sector AS sector_denominacion, pg.programa AS programa_denominacion, 
+                                           pr.proyecto_id AS proyecto_denominacion
+                                    FROM distribucion_presupuestaria dp
+                                    LEFT JOIN partidas_presupuestarias pp ON dp.id_partida = pp.id
+                                    LEFT JOIN pl_sectores ps ON dp.id_sector = ps.id
+                                    LEFT JOIN pl_programas pg ON dp.id_programa = pg.id
+                                    LEFT JOIN pl_proyectos pr ON dp.id_proyecto = pr.id
+                                    WHERE dp.id = ?";
+                $stmtDistribucion = $conexion->prepare($sqlDistribucion);
+                $stmtDistribucion->bind_param("i", $idDistribucion);
+                $stmtDistribucion->execute();
+                $resultadoDistribucion = $stmtDistribucion->get_result();
+
+                if ($resultadoDistribucion->num_rows > 0) {
+                    $detalle['distribucion_presupuestaria'] = $resultadoDistribucion->fetch_assoc();
+                } else {
+                    $detalle['distribucion_presupuestaria'] = [];
                 }
             }
             $traspaso['detalles'] = $detalles;
@@ -577,6 +564,8 @@ function consultarTraspasoPorId($id)
         return json_encode(["error" => "No se encontró el traspaso."]);
     }
 }
+
+
 
 
 
