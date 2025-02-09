@@ -129,66 +129,60 @@ export const pre_traspasosForm_card = async ({
 
   const resumenPartidas = () => {
     let filasAumentar = informacion.añadir.map((el) => {
-      let partidaEncontrada = ejercicioFiscal.distribucion_partidas.find(
-        (partida) => Number(partida.id) === el.id_distribucion
+      let partidaEncontrada = distribucionesSecretarias.find(
+        (partida) => Number(partida.id_distribucion) === el.id_distribucion
       )
 
-      let sppa = `${
-        partidaEncontrada.sector_informacion
-          ? partidaEncontrada.sector_informacion.sector
-          : '0'
+      let sppa = `
+      ${
+        partidaEncontrada.sector_denominacion
+          ? partidaEncontrada.sector_denominacion
+          : '00'
       }.${
-        partidaEncontrada.programa_informacion
-          ? partidaEncontrada.programa_informacion.programa
-          : '0'
+        partidaEncontrada.programa_denominacion
+          ? partidaEncontrada.programa_denominacion
+          : '00'
       }.${
-        partidaEncontrada.proyecto_informacion == 0
-          ? '00'
-          : partidaEncontrada.proyecto_informacion.proyecto
-      }.${
-        partidaEncontrada.id_actividad == 0
-          ? '00'
-          : partidaEncontrada.id_actividad
-      }`
+        partidaEncontrada.proyecto_denominacion
+          ? partidaEncontrada.proyecto_denominacion
+          : '00'
+      }.${partidaEncontrada.actividad ? partidaEncontrada.actividad : '00'}`
 
-      let montoFinal = Number(partidaEncontrada.monto_actual) + el.monto
+      let montoFinal = Number(partidaEncontrada.monto) + el.monto
 
       return `  <tr>
           <td>${sppa}.${partidaEncontrada.partida}</td>
-        <td>${separadorLocal(partidaEncontrada.monto_actual)}</td>
+        <td>${separadorLocal(partidaEncontrada.monto)}</td>
           <td class="table-success">+${separadorLocal(el.monto)}</td>
           <td class="table-primary">${separadorLocal(montoFinal)}</td>
         </tr>`
     })
 
     let filasDisminuir = informacion.restar.map((el) => {
-      let partidaEncontrada = ejercicioFiscal.distribucion_partidas.find(
-        (partida) => Number(partida.id) === el.id_distribucion
+      let partidaEncontrada = distribucionesSecretarias.find(
+        (partida) => Number(partida.id_distribucion) === el.id_distribucion
       )
 
-      let sppa = `${
-        partidaEncontrada.sector_informacion
-          ? partidaEncontrada.sector_informacion.sector
-          : '0'
+      let sppa = `
+      ${
+        partidaEncontrada.sector_denominacion
+          ? partidaEncontrada.sector_denominacion
+          : '00'
       }.${
-        partidaEncontrada.programa_informacion
-          ? partidaEncontrada.programa_informacion.programa
-          : '0'
+        partidaEncontrada.programa_denominacion
+          ? partidaEncontrada.programa_denominacion
+          : '00'
       }.${
-        partidaEncontrada.proyecto_informacion == 0
-          ? '00'
-          : partidaEncontrada.proyecto_informacion.proyecto
-      }.${
-        partidaEncontrada.id_actividad == 0
-          ? '00'
-          : partidaEncontrada.id_actividad
-      }`
+        partidaEncontrada.proyecto_denominacion
+          ? partidaEncontrada.proyecto_denominacion
+          : '00'
+      }.${partidaEncontrada.actividad ? partidaEncontrada.actividad : '00'}`
 
-      let montoFinal = Number(partidaEncontrada.monto_actual) - el.monto
+      let montoFinal = Number(partidaEncontrada.monto) - el.monto
 
       return ` <tr>
           <td>${sppa}.${partidaEncontrada.partida}</td>
-          <td>${separadorLocal(partidaEncontrada.monto_actual)}</td>
+          <td>${separadorLocal(partidaEncontrada.monto)}</td>
           <td class="table-danger">-${separadorLocal(el.monto)}</td>
           <td class="table-primary">${separadorLocal(montoFinal)}</td>
         </tr>`
@@ -286,6 +280,9 @@ export const pre_traspasosForm_card = async ({
 
   let formFocus = 1
   let numsRows = 0
+
+  // AÑADIR FILA PARA AUMENTAR
+  addRow('A')
 
   function closeCard(card) {
     // validateEditButtons()
@@ -590,6 +587,7 @@ export const pre_traspasosForm_card = async ({
           cardBodyPart2.classList.remove('d-none')
         } else {
           cardBody.insertAdjacentHTML('beforeend', partidasRestar())
+          addRow('D')
         }
 
         if (btnPrevius.hasAttribute('disabled'))

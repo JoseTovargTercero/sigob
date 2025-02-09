@@ -47,70 +47,39 @@ export const pre_traspasosCard = ({
         informacion.restar.push(distribucion)
       }
     })
-
-    let filasAumentar = informacion.añadir.map((el) => {
-      let partidaEncontrada = ejercicioFiscal.distribucion_partidas.find(
-        (partida) => Number(partida.id) === el.id_distribucion
-      )
-
-      let sppa = `${
-        partidaEncontrada.sector_informacion
-          ? partidaEncontrada.sector_informacion.sector
-          : '0'
+    let filasAumentar = informacion.añadir.map((partida) => {
+      let sppa = `
+      ${partida.sector_denominacion ? partida.sector_denominacion : '00'}.${
+        partida.programa_denominacion ? partida.programa_denominacion : '00'
       }.${
-        partidaEncontrada.programa_informacion
-          ? partidaEncontrada.programa_informacion.programa
-          : '0'
-      }.${
-        partidaEncontrada.proyecto_informacion == 0
-          ? '00'
-          : partidaEncontrada.proyecto_informacion.proyecto
-      }.${
-        partidaEncontrada.id_actividad == 0
-          ? '00'
-          : partidaEncontrada.id_actividad
-      }`
+        partida.proyecto_denominacion ? partida.proyecto_denominacion : '00'
+      }.${partida.actividad ? partida.actividad : '00'}`
 
-      let montoFinal = Number(partidaEncontrada.monto_actual) + el.monto
+      let montoFinal = Number(partida.monto) + Number(partida.monto_traspaso)
 
       return `  <tr>
-          <td>${sppa}.${partidaEncontrada.partida}</td>
-        <td>${separadorLocal(partidaEncontrada.monto_actual)}</td>
-          <td class="table-success">+${separadorLocal(el.monto)}</td>
+          <td>${sppa}.${partida.partida}</td>
+        <td>${separadorLocal(partida.monto)}</td>
+          <td class="table-success">+${separadorLocal(partida.monto)}</td>
           <td class="table-primary">${separadorLocal(montoFinal)}</td>
         </tr>`
     })
 
-    let filasDisminuir = informacion.restar.map((el) => {
-      let partidaEncontrada = ejercicioFiscal.distribucion_partidas.find(
-        (partida) => Number(partida.id) === el.id_distribucion
-      )
+    let filasDisminuir = informacion.restar.map((partida) => {
+      let sppa = `
+      ${partida.sector_denominacion ? partida.sector_denominacion : '00'}.${
+        partida.programa_denominacion ? partida.programa_denominacion : '00'
+      }.${
+        partida.proyecto_denominacion ? partida.proyecto_denominacion : '00'
+      }.${partida.actividad ? partida.actividad : '00'}`
 
-      let sppa = `${
-        partidaEncontrada.sector_informacion
-          ? partidaEncontrada.sector_informacion.sector
-          : '0'
-      }.${
-        partidaEncontrada.programa_informacion
-          ? partidaEncontrada.programa_informacion.programa
-          : '0'
-      }.${
-        partidaEncontrada.proyecto_informacion == 0
-          ? '00'
-          : partidaEncontrada.proyecto_informacion.proyecto
-      }.${
-        partidaEncontrada.id_actividad == 0
-          ? '00'
-          : partidaEncontrada.id_actividad
-      }`
-
-      let montoFinal = Number(partidaEncontrada.monto_actual) - el.monto
+      let montoFinal = Number(partida.monto) - Number(partida.monto_traspaso)
 
       return ` <tr>
-          <td>${sppa}.${partidaEncontrada.partida}</td>
-          <td>${separadorLocal(partidaEncontrada.monto_actual)} Bs</td>
-          <td class="table-danger">-${separadorLocal(el.monto)} Bs</td>
-          <td class="table-primary">${separadorLocal(montoFinal)} Bs</td>
+          <td>${sppa}.${partida.partida}</td>
+          <td>${separadorLocal(partida.monto)}</td>
+          <td class="table-danger">-${separadorLocal(partida.monto)}</td>
+          <td class="table-primary">${separadorLocal(montoFinal)}</td>
         </tr>`
     })
 
@@ -125,7 +94,7 @@ export const pre_traspasosCard = ({
       </table>`
 
     return `<div id='card-body-part-3' class="slide-up-animation">
-        <h5 class='text-center text-blue-600 mb-4'>Lista de partidas</h5>
+        <h5 class='text-center text-blue-600 mb-4'>Resumen de partidas</h5>
         ${tablaAumentar}
         
       </div>`
@@ -213,7 +182,7 @@ export const pre_traspasosCard = ({
     if (e.target.id === 'btn-rechazar') {
       confirmNotification({
         type: NOTIFICATIONS_TYPES.send,
-        message: '¿Está seguro de aceptar el traspaso?',
+        message: '¿Está seguro de rechazar el traspaso?',
         successFunction: async () => {
           let res = await rechazarTraspaso(data.id)
           if (res.success) {

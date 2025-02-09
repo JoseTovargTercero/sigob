@@ -12,7 +12,7 @@ require_once '../sistema_global/errores.php';
 
 function registrarTraspasoPartida($data)
 {
-     global $conexion;
+    global $conexion;
     global $remote_db;
 
     $conexion = $remote_db;
@@ -86,144 +86,144 @@ function registrarTraspasoPartida($data)
         $partidaMontos = [];
         foreach ($restar as $item) {
 
-         // Consulta en distribucion_entes para obtener el monto
-$id_distribucion = $item['id_distribucion'];
-$sqlDistribucionEnte = "SELECT id, distribucion FROM distribucion_entes WHERE id_ejercicio = ? AND distribucion LIKE ?";
-$likePattern = '%"id_distribucion":"' . $id_distribucion . '"%';
-$stmtDistribucionEnte = $conexion->prepare($sqlDistribucionEnte);
-$stmtDistribucionEnte->bind_param("is", $info['id_ejercicio'], $likePattern);
-$stmtDistribucionEnte->execute();
-$resultadoDistribucionEnte = $stmtDistribucionEnte->get_result();
+            // Consulta en distribucion_entes para obtener el monto
+            $id_distribucion = $item['id_distribucion'];
+            $sqlDistribucionEnte = "SELECT id, distribucion FROM distribucion_entes WHERE id_ejercicio = ? AND distribucion LIKE ?";
+            $likePattern = '%"id_distribucion":"' . $id_distribucion . '"%';
+            $stmtDistribucionEnte = $conexion->prepare($sqlDistribucionEnte);
+            $stmtDistribucionEnte->bind_param("is", $info['id_ejercicio'], $likePattern);
+            $stmtDistribucionEnte->execute();
+            $resultadoDistribucionEnte = $stmtDistribucionEnte->get_result();
 
-if ($distribucionEnte = $resultadoDistribucionEnte->fetch_assoc()) {
-    $id_distribucion_ente = $distribucionEnte['id'];
-    $distribucionData = json_decode($distribucionEnte['distribucion'], true);
+            if ($distribucionEnte = $resultadoDistribucionEnte->fetch_assoc()) {
+                $id_distribucion_ente = $distribucionEnte['id'];
+                $distribucionData = json_decode($distribucionEnte['distribucion'], true);
 
-    $montoDistribucion = 0; // Inicializar monto
-    foreach ($distribucionData as $dist) {
-        if ($dist['id_distribucion'] == $id_distribucion) {
-            $montoDistribucion = $dist['monto']; // Asignar monto encontrado
-            break;
-        }
-    }
-}
+                $montoDistribucion = 0; // Inicializar monto
+                foreach ($distribucionData as $dist) {
+                    if ($dist['id_distribucion'] == $id_distribucion) {
+                        $montoDistribucion = $dist['monto']; // Asignar monto encontrado
+                        break;
+                    }
+                }
+            }
 
-// Si no se encuentra el monto en distribucion_entes, se puede manejar una excepción o asignar un valor predeterminado
-if ($montoDistribucion === 0) {
-    throw new Exception("No se encontró la distribución correspondiente al ID " . $id_distribucion . " en distribucion_entes.");
-}
+            // Si no se encuentra el monto en distribucion_entes, se puede manejar una excepción o asignar un valor predeterminado
+            if ($montoDistribucion === 0) {
+                throw new Exception("No se encontró la distribución correspondiente al ID " . $id_distribucion . " en distribucion_entes.");
+            }
 
-// Continuar con la consulta en distribucion_presupuestaria para obtener id_partida
-$sqlDistribucion = "SELECT id_partida FROM distribucion_presupuestaria WHERE id = ?";
-$stmtDistribucion = $conexion->prepare($sqlDistribucion);
-$stmtDistribucion->bind_param("i", $id_distribucion);
-$stmtDistribucion->execute();
-$resultadoDistribucion = $stmtDistribucion->get_result();
+            // Continuar con la consulta en distribucion_presupuestaria para obtener id_partida
+            $sqlDistribucion = "SELECT id_partida FROM distribucion_presupuestaria WHERE id = ?";
+            $stmtDistribucion = $conexion->prepare($sqlDistribucion);
+            $stmtDistribucion->bind_param("i", $id_distribucion);
+            $stmtDistribucion->execute();
+            $resultadoDistribucion = $stmtDistribucion->get_result();
 
-if ($resultadoDistribucion->num_rows === 0) {
-    throw new Exception("No se encontró la distribución presupuestaria con ID " . $id_distribucion);
-}
+            if ($resultadoDistribucion->num_rows === 0) {
+                throw new Exception("No se encontró la distribución presupuestaria con ID " . $id_distribucion);
+            }
 
-$filaDistribucion = $resultadoDistribucion->fetch_assoc();
-$idPartida = $filaDistribucion['id_partida'];
+            $filaDistribucion = $resultadoDistribucion->fetch_assoc();
+            $idPartida = $filaDistribucion['id_partida'];
 
-// Consulta la partida presupuestaria para obtener su clave
-$sqlPartida = "SELECT partida FROM partidas_presupuestarias WHERE id = ?";
-$stmtPartida = $conexion->prepare($sqlPartida);
-$stmtPartida->bind_param("i", $idPartida);
-$stmtPartida->execute();
-$resultadoPartida = $stmtPartida->get_result();
+            // Consulta la partida presupuestaria para obtener su clave
+            $sqlPartida = "SELECT partida FROM partidas_presupuestarias WHERE id = ?";
+            $stmtPartida = $conexion->prepare($sqlPartida);
+            $stmtPartida->bind_param("i", $idPartida);
+            $stmtPartida->execute();
+            $resultadoPartida = $stmtPartida->get_result();
 
-if ($resultadoPartida->num_rows === 0) {
-    throw new Exception("No se encontró la partida presupuestaria con ID " . $idPartida);
-}
+            if ($resultadoPartida->num_rows === 0) {
+                throw new Exception("No se encontró la partida presupuestaria con ID " . $idPartida);
+            }
 
-$partida = $resultadoPartida->fetch_assoc()['partida'];
-$clavePartida = substr($partida, 0, 3);
+            $partida = $resultadoPartida->fetch_assoc()['partida'];
+            $clavePartida = substr($partida, 0, 3);
 
-// Agrupar los montos por clave de partida
-if (!isset($partidaMontos[$clavePartida])) {
-    $partidaMontos[$clavePartida] = 0;
-}
+            // Agrupar los montos por clave de partida
+            if (!isset($partidaMontos[$clavePartida])) {
+                $partidaMontos[$clavePartida] = 0;
+            }
 
-// Usar el monto obtenido de distribucion_entes en lugar del monto_actual de distribucion_presupuestaria
-$partidaMontos[$clavePartida] += $montoDistribucion;
+            // Usar el monto obtenido de distribucion_entes en lugar del monto_actual de distribucion_presupuestaria
+            $partidaMontos[$clavePartida] += $montoDistribucion;
 
-// Calcular el 20% del monto total agrupado por los primeros tres dígitos de la partida
-$esValido = false;
-foreach ($partidaMontos as $clave => $montoTotal) {
-    $limite = $montoTotal * 0.2;
-    if ($info['monto_total'] <= $limite) {
-        $esValido = true;
-        break;
-    }
-}
+            // Calcular el 20% del monto total agrupado por los primeros tres dígitos de la partida
+            $esValido = false;
+            foreach ($partidaMontos as $clave => $montoTotal) {
+                $limite = $montoTotal * 0.2;
+                if ($info['monto_total'] <= $limite) {
+                    $esValido = true;
+                    break;
+                }
+            }
 
 
-        // Determinar el formato de n_orden
-        if ($tipo == 1) {
-            if (!$esValido) {
-                throw new Exception("Un traslado no puede ser mayor al 20 por ciento de la agrupación de las partidas seleccionadas");
+            // Determinar el formato de n_orden
+            if ($tipo == 1) {
+                if (!$esValido) {
+                    throw new Exception("Un traslado no puede ser mayor al 20 por ciento de la agrupación de las partidas seleccionadas");
+                } else {
+                    $nOrden = "T" . $anoEjercicio . "-" . $info['n_orden'];
+                }
+            } elseif ($tipo == 2) {
+                if (!$esValido) {
+                    $nOrden = $info['n_orden'];
+                } else {
+                    throw new Exception("Un Traspaso no puede ser menor al 20 por ciento de la agrupación de las partidas seleccionadas");
+                }
             } else {
-                $nOrden = "T" . $anoEjercicio . "-" . $info['n_orden'];
+                throw new Exception("Tipo inválido: " . $tipo);
             }
-        } elseif ($tipo == 2) {
-            if (!$esValido) {
-                $nOrden = $info['n_orden'];
-            } else {
-                throw new Exception("Un Traspaso no puede ser menor al 20 por ciento de la agrupación de las partidas seleccionadas");
+
+            // Insertar el registro principal en la tabla `traspasos`
+            $sqlTraspaso = "INSERT INTO traspasos (n_orden, id_ejercicio, monto_total, fecha, status, tipo) VALUES (?, ?, ?, ?, 0, ?)";
+            $stmtTraspaso = $conexion->prepare($sqlTraspaso);
+
+            $stmtTraspaso->bind_param("sidsi", $nOrden, $info['id_ejercicio'], $info['monto_total'], $fecha_actual, $tipo);
+            $stmtTraspaso->execute();
+
+            if ($stmtTraspaso->affected_rows === 0) {
+                throw new Exception("No se pudo registrar el traspaso principal.");
             }
-        } else {
-            throw new Exception("Tipo inválido: " . $tipo);
-        }
 
-        // Insertar el registro principal en la tabla `traspasos`
-        $sqlTraspaso = "INSERT INTO traspasos (n_orden, id_ejercicio, monto_total, fecha, status, tipo) VALUES (?, ?, ?, ?, 0, ?)";
-        $stmtTraspaso = $conexion->prepare($sqlTraspaso);
+            $id_traspaso = $conexion->insert_id;
 
-        $stmtTraspaso->bind_param("sidsi", $nOrden, $info['id_ejercicio'], $info['monto_total'], $fecha_actual, $tipo);
-        $stmtTraspaso->execute();
+            // Registrar información de traspasos en `traspaso_informacion`
+            foreach ($restar as $item) {
+                $sqlTraspasoInfo = "INSERT INTO traspaso_informacion (id_traspaso, id_distribucion, monto, tipo) VALUES (?, ?, ?, 'D')";
+                $stmtTraspasoInfo = $conexion->prepare($sqlTraspasoInfo);
+                $stmtTraspasoInfo->bind_param("iid", $id_traspaso, $item['id_distribucion'], $item['monto']);
+                $stmtTraspasoInfo->execute();
 
-        if ($stmtTraspaso->affected_rows === 0) {
-            throw new Exception("No se pudo registrar el traspaso principal.");
-        }
-
-        $id_traspaso = $conexion->insert_id;
-
-        // Registrar información de traspasos en `traspaso_informacion`
-        foreach ($restar as $item) {
-            $sqlTraspasoInfo = "INSERT INTO traspaso_informacion (id_traspaso, id_distribucion, monto, tipo) VALUES (?, ?, ?, 'D')";
-            $stmtTraspasoInfo = $conexion->prepare($sqlTraspasoInfo);
-            $stmtTraspasoInfo->bind_param("iid", $id_traspaso, $item['id_distribucion'], $item['monto']);
-            $stmtTraspasoInfo->execute();
-
-            if ($stmtTraspasoInfo->affected_rows === 0) {
-                throw new Exception("No se pudo registrar la información del traspaso en 'restar' con ID distribución " . $item['id_distribucion']);
+                if ($stmtTraspasoInfo->affected_rows === 0) {
+                    throw new Exception("No se pudo registrar la información del traspaso en 'restar' con ID distribución " . $item['id_distribucion']);
+                }
             }
-        }
 
-        foreach ($añadir as $item) {
-            $sqlTraspasoInfo = "INSERT INTO traspaso_informacion (id_traspaso, id_distribucion, monto, tipo) VALUES (?, ?, ?, 'A')";
-            $stmtTraspasoInfo = $conexion->prepare($sqlTraspasoInfo);
-            $stmtTraspasoInfo->bind_param("iid", $id_traspaso, $item['id_distribucion'], $item['monto']);
-            $stmtTraspasoInfo->execute();
+            foreach ($añadir as $item) {
+                $sqlTraspasoInfo = "INSERT INTO traspaso_informacion (id_traspaso, id_distribucion, monto, tipo) VALUES (?, ?, ?, 'A')";
+                $stmtTraspasoInfo = $conexion->prepare($sqlTraspasoInfo);
+                $stmtTraspasoInfo->bind_param("iid", $id_traspaso, $item['id_distribucion'], $item['monto']);
+                $stmtTraspasoInfo->execute();
 
-            if ($stmtTraspasoInfo->affected_rows === 0) {
-                throw new Exception("No se pudo registrar la información del traspaso en 'añadir' con ID distribución " . $item['id_distribucion']);
+                if ($stmtTraspasoInfo->affected_rows === 0) {
+                    throw new Exception("No se pudo registrar la información del traspaso en 'añadir' con ID distribución " . $item['id_distribucion']);
+                }
             }
+
+            // Confirmar la transacción
+            $conexion->commit();
+            return json_encode(["success" => "El traspaso se registró correctamente."]);
+
         }
-
-        // Confirmar la transacción
-        $conexion->commit();
-        return json_encode(["success" => "El traspaso se registró correctamente."]);
-
     } catch (Exception $e) {
         $conexion->rollback();
         registrarError($e->getMessage());
         return json_encode(['error' => $e->getMessage()]);
     }
 }
-
 
 
 function consultarTodosTraspasos($id_ejercicio)
@@ -258,35 +258,42 @@ function consultarTodosTraspasos($id_ejercicio)
             if ($resultadoInfo->num_rows > 0) {
                 $detalles = $resultadoInfo->fetch_all(MYSQLI_ASSOC);
                 foreach ($detalles as &$detalle) {
-                    $idDistribucion = $detalle['id_distribucion'];
-
-                    // Obtener información de distribucion_presupuestaria
-                    $sqlDistribucion = "SELECT dp.id AS id_distribucion_, dp.id_partida, dp.id_sector, dp.id_programa, dp.id_proyecto, 
-                                               pp.partida AS codigo_partida, pp.descripcion AS partida_descripcion, 
-                                               ps.sector AS sector_denominacion, pg.programa AS programa_denominacion, 
-                                               pr.proyecto_id AS proyecto_denominacion
-                                        FROM distribucion_presupuestaria dp
-                                        LEFT JOIN partidas_presupuestarias pp ON dp.id_partida = pp.id
-                                        LEFT JOIN pl_sectores ps ON dp.id_sector = ps.id
-                                        LEFT JOIN pl_programas pg ON dp.id_programa = pg.id
-                                        LEFT JOIN pl_proyectos pr ON dp.id_proyecto = pr.id
+                    // Obtener la información de distribucion_presupuestaria
+                    $sqlDistribucion = "SELECT dp.* 
+                                        FROM distribucion_presupuestaria dp 
                                         WHERE dp.id = ?";
                     $stmtDistribucion = $conexion->prepare($sqlDistribucion);
-                    $stmtDistribucion->bind_param("i", $idDistribucion);
+                    $stmtDistribucion->bind_param("i", $detalle['id_distribucion']);
                     $stmtDistribucion->execute();
                     $resultadoDistribucion = $stmtDistribucion->get_result();
 
                     if ($resultadoDistribucion->num_rows > 0) {
                         $detalle['distribucion_presupuestaria'] = $resultadoDistribucion->fetch_assoc();
+
+                        // Obtener la información de partidas_presupuestarias usando id_partida
+                        $id_partida = $detalle['distribucion_presupuestaria']['id_partida'];
+                        $sqlPartida = "SELECT pp.* 
+                                       FROM partidas_presupuestarias pp 
+                                       WHERE pp.id = ?";
+                        $stmtPartida = $conexion->prepare($sqlPartida);
+                        $stmtPartida->bind_param("i", $id_partida);
+                        $stmtPartida->execute();
+                        $resultadoPartida = $stmtPartida->get_result();
+
+                        if ($resultadoPartida->num_rows > 0) {
+                            $detalle['distribucion_presupuestaria']['partida_presupuestaria'] = $resultadoPartida->fetch_assoc();
+                        } else {
+                            $detalle['distribucion_presupuestaria']['partida_presupuestaria'] = [];
+                        }
                     } else {
                         $detalle['distribucion_presupuestaria'] = [];
                     }
 
-                    // Consultar la información de distribucion_entes
-                    $sqlDistribucionEnte = "SELECT de.id AS id_distribucion_ente, de.monto_total, de.distribucion, de.id_ejercicio, de.actividad_id 
+                    // Consultar la información de distribucion_entes usando id_distribucion y id_ejercicio
+                    $sqlDistribucionEnte = "SELECT de.* 
                                             FROM distribucion_entes de 
                                             WHERE de.distribucion LIKE ? AND de.id_ejercicio = ?";
-                    $likePattern = '%"id_distribucion":"' . $idDistribucion . '"%';
+                    $likePattern = '%"id_distribucion":"' . $detalle['id_distribucion'] . '"%';
                     $stmtDistribucionEnte = $conexion->prepare($sqlDistribucionEnte);
                     $stmtDistribucionEnte->bind_param("si", $likePattern, $id_ejercicio);
                     $stmtDistribucionEnte->execute();
@@ -310,10 +317,9 @@ function consultarTodosTraspasos($id_ejercicio)
     }
 }
 
-
 function obtenerUltimosOrdenes($id_ejercicio)
 {
-     global $conexion;
+    global $conexion;
     global $remote_db;
 
     $conexion = $remote_db;
@@ -350,6 +356,8 @@ function obtenerUltimosOrdenes($id_ejercicio)
     } catch (Exception $e) {
         return json_encode(['error' => $e->getMessage()]);
     }
+}
+
 function gestionarTraspaso($id, $accion)
 {
     global $conexion;
@@ -456,31 +464,31 @@ function gestionarTraspaso($id, $accion)
                 }
             }
 
-        // Preparar la consulta de actualización para el `status`
-        $sql = "UPDATE traspasos SET status = ? WHERE id = ?";
-        $stmt = $conexion->prepare($sql);
-        $stmt->bind_param("ii", $nuevoStatus, $id);
+            // Preparar la consulta de actualización para el `status`
+            $sql = "UPDATE traspasos SET status = ? WHERE id = ?";
+            $stmt = $conexion->prepare($sql);
+            $stmt->bind_param("ii", $nuevoStatus, $id);
 
-        // Ejecutar la consulta
-        $stmt->execute();
+            // Ejecutar la consulta
+            $stmt->execute();
 
-        if ($stmt->affected_rows === 0) {
-            throw new Exception("No se encontró el traspaso con ID $id o no se pudo actualizar el estado.");
+            if ($stmt->affected_rows === 0) {
+                throw new Exception("No se encontró el traspaso con ID $id o no se pudo actualizar el estado.");
+            }
+
+            if ($accion === 'aceptar') {
+                return json_encode(["success" => "Se ha aceptado el registro correctamente."]);
+            }
+
+            if ($accion === 'rechazar') {
+                return json_encode(["success" => "Se ha rechazado el registro correctamente."]);
+            }
+
         }
-
-        if ($accion === 'aceptar') {
-            return json_encode(["success" => "Se ha aceptado el registro correctamente."]);
-        }
-
-        if ($accion === 'rechazar') {
-            return json_encode(["success" => "Se ha rechazado el registro correctamente."]);
-        }
-
     } catch (Exception $e) {
         return json_encode(['error' => $e->getMessage()]);
     }
 }
-
 
 
 function consultarTraspasoPorId($id)
@@ -525,16 +533,16 @@ function consultarTraspasoPorId($id)
                 $stmtDistribucionEnte->bind_param("si", $likePattern, $traspaso['id_ejercicio']);
                 $stmtDistribucionEnte->execute();
                 $resultadoDistribucionEnte = $stmtDistribucionEnte->get_result();
+                $informacionDistribucionEnte = $resultadoDistribucionEnte->fetch_assoc();
 
-                if ($resultadoDistribucionEnte->num_rows > 0) {
-                    $detalle['distribucion_entes'] = $resultadoDistribucionEnte->fetch_assoc();
-                } else {
-                    $detalle['distribucion_entes'] = [];
-                }
+
+                $distribucionPartidas = json_decode($informacionDistribucionEnte["distribucion"], true);
+
+
 
                 // Consulta para obtener detalles de la distribución presupuestaria
-                $sqlDistribucion = "SELECT dp.id_partida, dp.id AS id_distribucion_, dp.id_sector, dp.id_programa, dp.id_proyecto, 
-                                           pp.partida AS codigo_partida, pp.descripcion AS partida_descripcion, 
+                $sqlDistribucion = "SELECT dp.id_partida, dp.id AS id_distribucion_, dp.id_sector, dp.id_programa, dp.id_proyecto, dp.id_actividad,
+                                           pp.partida AS partida, pp.descripcion AS partida_descripcion, 
                                            ps.sector AS sector_denominacion, pg.programa AS programa_denominacion, 
                                            pr.proyecto_id AS proyecto_denominacion
                                     FROM distribucion_presupuestaria dp
@@ -549,9 +557,26 @@ function consultarTraspasoPorId($id)
                 $resultadoDistribucion = $stmtDistribucion->get_result();
 
                 if ($resultadoDistribucion->num_rows > 0) {
-                    $detalle['distribucion_presupuestaria'] = $resultadoDistribucion->fetch_assoc();
+                    $informacionDistribucion = $resultadoDistribucion->fetch_assoc();
+                    $detalle['sector_denominacion'] = $informacionDistribucion["sector_denominacion"];
+                    $detalle['programa_denominacion'] = $informacionDistribucion["programa_denominacion"];
+                    $detalle['programa_denominacion'] = $informacionDistribucion["programa_denominacion"];
+                    $detalle['proyecto_denominacion'] = $informacionDistribucion["proyecto_denominacion"];
+                    $detalle['partida'] = $informacionDistribucion["partida"];
+                    $detalle['partida_descripcion'] = $informacionDistribucion["partida_descripcion"];
+                    $detalle['id_actividad'] = $informacionDistribucion["id_actividad"];
+                    $detalle['monto_traspaso'] = $detalle['monto'];
+
+
+                    foreach ($distribucionPartidas as $distribucionItem) {
+                        if ($idDistribucion == $distribucionItem['id_distribucion']) {
+                            $detalle['monto'] = $distribucionItem['monto'];
+                        }
+
+                    }
+
                 } else {
-                    $detalle['distribucion_presupuestaria'] = [];
+                    $detalle = [];
                 }
             }
             $traspaso['detalles'] = $detalles;
@@ -569,11 +594,9 @@ function consultarTraspasoPorId($id)
 
 
 
-
-
 function actualizarTraspasoPartida($id_traspaso, $id_partida_t, $id_partida_r, $id_ejercicio, $monto)
 {
-     global $conexion;
+    global $conexion;
     global $remote_db;
 
     $conexion = $remote_db;
@@ -659,7 +682,7 @@ function actualizarTraspasoPartida($id_traspaso, $id_partida_t, $id_partida_r, $
 
 function eliminarTraspaso($id_traspaso)
 {
-     global $conexion;
+    global $conexion;
     global $remote_db;
 
     $conexion = $remote_db;
