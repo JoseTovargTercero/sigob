@@ -463,6 +463,7 @@ function gestionarTraspaso($id, $accion)
                     throw new Exception("No se pudo actualizar el monto en la distribución con ID $idDistribucion y el ID de ejercicio $idEjercicio.");
                 }
             }
+}
 
             // Preparar la consulta de actualización para el `status`
             $sql = "UPDATE traspasos SET status = ? WHERE id = ?";
@@ -484,11 +485,12 @@ function gestionarTraspaso($id, $accion)
                 return json_encode(["success" => "Se ha rechazado el registro correctamente."]);
             }
 
-        }
+        
+    }
     } catch (Exception $e) {
         return json_encode(['error' => $e->getMessage()]);
     }
-}
+
 
 
 function consultarTraspasoPorId($id)
