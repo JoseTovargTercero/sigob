@@ -59,9 +59,14 @@ export const pre_traspasosCard = ({
 
       return `  <tr>
           <td>${sppa}.${partida.partida}</td>
-        <td>${separadorLocal(partida.monto)}</td>
+        
+        ${data.status === 1 ? '' : `<td>${separadorLocal(partida.monto)}</td>`}
           <td class="table-success">+${separadorLocal(partida.monto)}</td>
-          <td class="table-primary">${separadorLocal(montoFinal)}</td>
+          <td class="table-primary">${
+            data.status === 1
+              ? `${separadorLocal(partida.monto)} Bs`
+              : `${separadorLocal(montoFinal)} Bs`
+          }</td>
         </tr>`
     })
 
@@ -77,16 +82,25 @@ export const pre_traspasosCard = ({
 
       return ` <tr>
           <td>${sppa}.${partida.partida}</td>
-          <td>${separadorLocal(partida.monto)}</td>
+          ${
+            data.status === 1 ? '' : `<td>${separadorLocal(partida.monto)}</td>`
+          }
+          
           <td class="table-danger">-${separadorLocal(partida.monto)}</td>
-          <td class="table-primary">${separadorLocal(montoFinal)}</td>
+           
+          <td class="table-primary">${
+            data.status === 1
+              ? `${separadorLocal(partida.monto)} Bs`
+              : `${separadorLocal(montoFinal)} Bs`
+          }</td>
         </tr>`
     })
 
     let tablaAumentar = `   <table class="table table-xs">
         <thead>
           <th class="w-50">Distribucion</th>
-          <th class="w-10">Monto actual</th>
+          ${data.status === 1 ? '' : `<th class="w-10">Monto actual</th>`}
+          
           <th class="w-10">Cambio</th>
           <th class="w-50">Monto Final</th>
         </thead>

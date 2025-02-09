@@ -365,6 +365,8 @@ function gestionarTraspaso($id, $accion)
 
     $conexion = $remote_db;
 
+    $conexion->begin_transaction();
+
 
     try {
         // Validar la acción
@@ -463,34 +465,37 @@ function gestionarTraspaso($id, $accion)
                     throw new Exception("No se pudo actualizar el monto en la distribución con ID $idDistribucion y el ID de ejercicio $idEjercicio.");
                 }
             }
-}
+        }
 
-            // Preparar la consulta de actualización para el `status`
-            $sql = "UPDATE traspasos SET status = ? WHERE id = ?";
-            $stmt = $conexion->prepare($sql);
-            $stmt->bind_param("ii", $nuevoStatus, $id);
+        // Preparar la consulta de actualización para el `status`
+        $sql = "UPDATE traspasos SET status = ? WHERE id = ?";
+        $stmt = $conexion->prepare($sql);
+        $stmt->bind_param("ii", $nuevoStatus, $id);
 
-            // Ejecutar la consulta
-            $stmt->execute();
+        // Ejecutar la consulta
+        $stmt->execute();
 
-            if ($stmt->affected_rows === 0) {
-                throw new Exception("No se encontró el traspaso con ID $id o no se pudo actualizar el estado.");
-            }
+        if ($stmt->affected_rows === 0) {
+            throw new Exception("No se encontró el traspaso con ID $id o no se pudo actualizar el estado.");
+        }
 
-            if ($accion === 'aceptar') {
-                return json_encode(["success" => "Se ha aceptado el registro correctamente."]);
-            }
+        if ($accion === 'aceptar') {
+            $conexion->commit();
+            return json_encode(["success" => "Se ha aceptado el registro correctamente."]);
+        }
 
-            if ($accion === 'rechazar') {
-                return json_encode(["success" => "Se ha rechazado el registro correctamente."]);
-            }
+        if ($accion === 'rechazar') {
+            $conexion->commit();
+            return json_encode(["success" => "Se ha rechazado el registro correctamente."]);
+        }
 
-        
-    }
+
     } catch (Exception $e) {
+        $conexion->rollback();
         return json_encode(['error' => $e->getMessage()]);
     }
 
+}
 
 
 function consultarTraspasoPorId($id)
