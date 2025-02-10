@@ -28,7 +28,7 @@ import { loadRequestTableHistorico } from './src/controllers/peticionesHistorico
 import { validateRequestForm } from './src/controllers/peticionesNominaForm.js'
 
 import { validateRequestNomForm } from './src/controllers/peticionesNominaReview.js'
-import { validateCompromisosView } from './src/controllers/pre_compromisosVIEW.js'
+import { validateCompromisosView } from './src/controllers/pre_compromisosView.js'
 import { validateGastosTable } from './src/controllers/pre_gastosFuncionamientoTable.js'
 import { validateGastosView } from './src/controllers/pre_gastosFuncionamientoView.js'
 import { validateReportesView } from './src/controllers/pre_reportesView.js'
