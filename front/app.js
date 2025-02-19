@@ -2,6 +2,7 @@ import { validateCategoriaForm } from './src/controllers/categoriasForm.js'
 import { loadCategoriasTable } from './src/controllers/categoriasTable.js'
 import { validateDependenciaForm } from './src/controllers/dependenciasForm.js'
 import { loadDependenciaTable } from './src/controllers/dependenciasTable.js'
+import { validatePlanOperativoView } from './src/controllers/form_planOperativoView.js'
 import { validateSolicitudEntesView } from './src/controllers/entes_solicitudView.js'
 // import { validateEmployeeForm } from './src/controllers/empleadosForm - no usar.js'
 // import { validateEmployeeTable } from './src/controllers/empleadosTable.js'
@@ -76,6 +77,7 @@ d.addEventListener('DOMContentLoaded', (e) => {
   const personaView = d.getElementById('persona-view')
   const titulo1View = d.getElementById('titulo-1-view')
   const descripcionProgramaView = d.getElementById('descripcion-programa-view')
+  const planOperativoView = d.getElementById('form-plan-operativo-view')
 
   // ENTES
   const solicitudEntesView = d.getElementById('solicitudes-entes-dozavos-view')
@@ -253,6 +255,10 @@ d.addEventListener('DOMContentLoaded', (e) => {
 
   if (userLogsView) {
     validateUserLogs()
+  }
+
+  if (planOperativoView) {
+    validatePlanOperativoView()
   }
 
   if (solicitudEntesView) {
