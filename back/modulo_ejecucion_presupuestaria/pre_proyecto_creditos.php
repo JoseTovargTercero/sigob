@@ -34,6 +34,10 @@ function gestionarCreditosAdicionales($data)
             return registrarCreditoAdicional($data);
         }
 
+        if ($accion === 'subir_decreto') {
+            return procesarCreditoAdicional($data);
+        }
+
         // Acción: Actualizar un registro
         if ($accion === 'update') {
             return actualizarCredito($data);
@@ -146,8 +150,8 @@ function registrarCreditoAdicional($data)
         }
 
         // Insertar en credito_adicional
-        $sqlCredito = "INSERT INTO credito_adicional (id_ente, id_ejercicio, monto, fecha, descripcion_credito, tipo_credito) 
-                       VALUES (?, ?, ?, ?, ?, ?)";
+        $sqlCredito = "INSERT INTO credito_adicional (id_ente, id_ejercicio, monto, fecha, descripcion_credito, tipo_credito, status) 
+                       VALUES (?, ?, ?, ?, ?, ?, 0)";
         $stmtCredito = $conexion->prepare($sqlCredito);
         $stmtCredito->bind_param("iidssi", $id_ente, $id_ejercicio, $monto, $fecha, $descripcion_credito, $tipo_credito);
         $stmtCredito->execute();
@@ -159,8 +163,8 @@ function registrarCreditoAdicional($data)
         $id_credito = $conexion->insert_id;
 
         // Insertar en proyecto_credito
-        $sqlProyecto = "INSERT INTO proyecto_credito (id_credito, tipo_proyecto, descripcion_proyecto, distribuciones, decreto) 
-                        VALUES (?, ?, ?, ?, NULL)";
+        $sqlProyecto = "INSERT INTO proyecto_credito (id_credito, tipo_proyecto, descripcion_proyecto, distribuciones, decreto, status) 
+                        VALUES (?, ?, ?, ?, NULL, 0)";
         $stmtProyecto = $conexion->prepare($sqlProyecto);
         $distribuciones_json = json_encode($distribuciones);
         $stmtProyecto->bind_param("isss", $id_credito, $tipo_proyecto, $descripcion_proyecto, $distribuciones_json);
@@ -414,6 +418,154 @@ function actualizarCredito($data)
     }
 }
 
+function procesarCreditoAdicional($data) {
+    global $conexion;
+    global $remote_db;
+
+    try {
+        $archivo = $data['archivo'];
+        $id_credito = $data['id_credito'];
+        
+        // Validar que el archivo sea un PDF
+        if ($archivo['type'] !== 'application/pdf') {
+            throw new Exception("El archivo debe ser un PDF.");
+        }
+
+        // Crear un nombre aleatorio para el archivo
+        $nombreArchivo = uniqid('decreto_', true) . '.pdf';
+        $rutaDestino = __DIR__ . '/decretos/' . $nombreArchivo;
+
+        // Mover el archivo a la carpeta decretos
+        if (!move_uploaded_file($archivo['tmp_name'], $rutaDestino)) {
+            throw new Exception("Error al guardar el archivo PDF.");
+        }
+
+        // Actualizar la tabla proyecto_credito con el nombre del archivo
+        $sqlUpdateProyecto = "UPDATE proyecto_credito SET decreto = ? WHERE id_credito = ?";
+        $stmtUpdateProyecto = $conexion->prepare($sqlUpdateProyecto);
+        $stmtUpdateProyecto->bind_param("si", $nombreArchivo, $id_credito);
+        $stmtUpdateProyecto->execute();
+
+        if ($stmtUpdateProyecto->affected_rows === 0) {
+            throw new Exception("No se pudo actualizar el decreto en proyecto_credito.");
+        }
+
+        // Consultar distribuciones de proyecto_credito
+        $sqlDistribuciones = "SELECT distribuciones, tipo_proyecto, descripcion_proyecto FROM proyecto_credito WHERE id_credito = ?";
+        $stmtDistribuciones = $conexion->prepare($sqlDistribuciones);
+        $stmtDistribuciones->bind_param("i", $id_credito);
+        $stmtDistribuciones->execute();
+        $resultadoDistribuciones = $stmtDistribuciones->get_result();
+
+        if ($resultadoDistribuciones->num_rows === 0) {
+            throw new Exception("No se encontró el registro en proyecto_credito.");
+        }
+
+        $filaDistribuciones = $resultadoDistribuciones->fetch_assoc();
+        $distribuciones = json_decode($filaDistribuciones['distribuciones'], true);
+        $tipo_proyecto = $filaDistribuciones['tipo_proyecto'];
+        $descripcion_proyecto = $filaDistribuciones['descripcion_proyecto'];
+
+        // Consultar distribuciones de credito_adicional
+        $sqlDistribuciones2 = "SELECT id_ejercicio FROM credito_adicional WHERE id = ?";
+        $stmtDistribuciones2 = $conexion->prepare($sqlDistribuciones2);
+        $stmtDistribuciones2->bind_param("i", $id_credito);
+        $stmtDistribuciones2->execute();
+        $resultadoDistribuciones2 = $stmtDistribuciones2->get_result();
+
+        if ($resultadoDistribuciones2->num_rows === 0) {
+            throw new Exception("No se encontró el registro en credito_adicional.");
+        }
+
+        $filaDistribuciones2 = $resultadoDistribuciones2->fetch_assoc();
+        $id_ejercicio = $filaDistribuciones2['id_ejercicio'];
+
+        // Validar montos de distribuciones
+        foreach ($distribuciones as $partida) {
+            $id_distribucion = $partida['id_distribucion'];
+            $monto_solicitado = $partida['monto'];
+
+            $sqlMontoDistribucion = "SELECT distribucion FROM distribucion_entes WHERE distribucion LIKE ?";
+            $likePattern = '%"id_distribucion":"' . $id_distribucion . '"%';
+            $stmtMontoDistribucion = $remote_db->prepare($sqlMontoDistribucion);
+            $stmtMontoDistribucion->bind_param("s", $likePattern);
+            $stmtMontoDistribucion->execute();
+            $resultadoMontoDistribucion = $stmtMontoDistribucion->get_result();
+
+            if ($resultadoMontoDistribucion->num_rows === 0) {
+                throw new Exception("El ID de distribución $id_distribucion no se encuentra en distribucion_entes.");
+            }
+
+            $filaMontoDistribucion = $resultadoMontoDistribucion->fetch_assoc();
+            $distribucionesData = json_decode($filaMontoDistribucion['distribucion'], true);
+
+            $montoDistribucion = null;
+            foreach ($distribucionesData as &$distribucion) {
+                if ($distribucion['id_distribucion'] == $id_distribucion) {
+                    $montoDistribucion = (float) $distribucion['monto'];
+                    break;
+                }
+            }
+
+            if ($montoDistribucion === null) {
+                throw new Exception("No se encontró el monto para el ID de distribución $id_distribucion.");
+            }
+
+            if ($montoDistribucion < $monto_solicitado) {
+                throw new Exception("El presupuesto en distribucion_entes es insuficiente para el ID de distribución $id_distribucion.");
+            }
+        }
+
+        // Si el monto es suficiente, registrar el compromiso
+        $resultadoCompromiso = registrarCompromiso($id_credito, 'proyecto_credito', $descripcion_proyecto, $id_ejercicio, '');
+        if (isset($resultadoCompromiso['success']) && $resultadoCompromiso['success']) {
+            $conexion->commit();
+
+            // Si tipo_proyecto es 1, actualizar monto en distribucion_entes
+            if ($tipo_proyecto == 1) {
+                foreach ($distribuciones as $partida) {
+                    $idDistribucion = $partida['id_distribucion'];
+                    $montoSolicitado = $partida['monto'];
+
+                    foreach ($distribucionesData as &$dist) {
+                        if ($dist['id_distribucion'] == $idDistribucion) {
+                            $dist['monto'] -= $montoSolicitado;
+                        }
+                    }
+
+                    $nuevoDistribucionJSON = json_encode($distribucionesData);
+                    $sqlUpdateDistribucionEnte = "UPDATE distribucion_entes SET distribucion = ? WHERE distribucion LIKE ?";
+                    $stmtUpdateDistribucionEnte = $conexion->prepare($sqlUpdateDistribucionEnte);
+                    $stmtUpdateDistribucionEnte->bind_param("ss", $nuevoDistribucionJSON, $likePattern);
+                    $stmtUpdateDistribucionEnte->execute();
+                }
+            }
+
+            // Actualizar el campo "status" en proyecto_credito
+            $sqlUpdateProyectoStatus = "UPDATE proyecto_credito SET status = 1 WHERE id_credito = ?";
+            $stmtUpdateProyectoStatus = $conexion->prepare($sqlUpdateProyectoStatus);
+            $stmtUpdateProyectoStatus->bind_param("i", $id_credito);
+            $stmtUpdateProyectoStatus->execute();
+
+            // Actualizar el campo "status" en credito_adicional
+            $sqlUpdateCreditoAdicionalStatus = "UPDATE credito_adicional SET status = 1 WHERE id = ?";
+            $stmtUpdateCreditoAdicionalStatus = $conexion->prepare($sqlUpdateCreditoAdicionalStatus);
+            $stmtUpdateCreditoAdicionalStatus->bind_param("i", $id_credito);
+            $stmtUpdateCreditoAdicionalStatus->execute();
+
+            return json_encode([
+                "success" => "El proyecto ha sido aceptado, el compromiso se ha registrado, el presupuesto actualizado, el estado actualizado y el decreto ha sido subido.",
+                "compromiso" => [
+                    "correlativo" => $resultadoCompromiso['correlativo'],
+                    "id_compromiso" => $resultadoCompromiso['id_compromiso']
+                ]
+            ]);
+        }
+    } catch (Exception $e) {
+        $conexion->rollback();
+        return json_encode(["error" => $e->getMessage()]);
+    }
+}
 
 
 

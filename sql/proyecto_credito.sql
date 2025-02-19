@@ -33,7 +33,8 @@ CREATE TABLE `proyecto_credito` (
   `tipo_proyecto` int(255) NOT NULL,
   `descripcion_proyecto` longtext NOT NULL,
   `distribuciones` longtext NOT NULL,
-  `decreto` longtext NOT NULL
+  `decreto` longtext NOT NULL,
+  `status` int(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
