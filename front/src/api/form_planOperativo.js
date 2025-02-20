@@ -10,12 +10,12 @@ import { config, APP_URL } from './urlConfig.js'
 
 const entesPlanOperativoUrl = `${APP_URL}${config.MODULE_NAMES.FORMULACION}form_plan_operativo.php`
 
-const getEntePlanOperativo = async (id_ejercicio) => {
+const getEntePlanOperativo = async (id_ente, id_ejercicio) => {
   showLoader()
   try {
     let res = await fetch(entesPlanOperativoUrl, {
       method: 'POST',
-      body: JSON.stringify({ accion: 'consulta', id_ejercicio }),
+      body: JSON.stringify({ accion: 'consulta', id_ente, id_ejercicio }),
     })
 
     const clone = res.clone()
@@ -36,6 +36,8 @@ const getEntePlanOperativo = async (id_ejercicio) => {
       toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
       return json
     }
+
+    return json
   } catch (e) {
     console.log(e)
 
@@ -56,10 +58,10 @@ const getEntePlanOperativos = async (id_ejercicio) => {
       body: JSON.stringify({ accion: 'consulta_todos', id_ejercicio }),
     })
 
-    const clone = res.clone()
+    // const clone = res.clone()
 
-    let text = await clone.text()
-    console.log(text)
+    // let text = await clone.text()
+    // console.log(text)
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
 
@@ -96,10 +98,10 @@ const getEntePlanOperativoId = async (id) => {
       body: JSON.stringify({ accion: 'consulta_id', id }),
     })
 
-    const clone = res.clone()
+    // const clone = res.clone()
 
-    let text = await clone.text()
-    console.log(text)
+    // let text = await clone.text()
+    // console.log(text)
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
 

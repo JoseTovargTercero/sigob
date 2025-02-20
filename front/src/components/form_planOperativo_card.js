@@ -182,22 +182,6 @@ export const form_planOperativo_card = ({
 
     if (e.target.dataset.editarid) {
       closeCard(cardElement)
-      // entes_planOperativo_form_card({
-      //   elementToInsert: 'plan-operativo-view',
-      //   id: data.plan_operativo.id,
-      //   ejercicioId: data.plan_operativo.id_ejercicio,
-      //   reset: async function () {
-      //     let plan = await getEntePlanOperativo(
-      //       data.plan_operativo.id_ejercicio
-      //     )
-
-      //     form_planOperativo_card({
-      //       elementToInsert: 'plan-operativo-view',
-      //       data: plan,
-      //       closed: false,
-      //     })
-      //   },
-      // })
     }
   }
 

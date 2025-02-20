@@ -132,12 +132,15 @@ function registrarPlanOperativo($data)
 function consultarPlanesOperativos($data)
 {
     global $conexion;
+    global $remote_db;
+
+    $conexion = $remote_db;
 
     if (!isset($data['id_ejercicio'])) {
         return json_encode(["error" => "No se ha especificado el ID del ejercicio."]);
     }
 
-    $idEnte = $_SESSION["id_ente"];
+    $idEnte = $data["id_ente"];
     $idEjercicio = $data['id_ejercicio'];
 
     try {

@@ -4,6 +4,10 @@ import {
   getDistribucionEnte,
   getEntesPlan,
 } from '../api/form_entes.js'
+import {
+  getEntePlanOperativo,
+  getEntePlanOperativos,
+} from '../api/form_planOperativo.js'
 
 import { form_asignacion_entes_card } from '../components/form_asignacion_entes_card.js'
 
@@ -42,7 +46,6 @@ export const validateAsignacionEntesView = async () => {
             'Realice la distribucion presupuestaria del ejercicio seleccionado',
         })
 
-      // let plan = await getEntesPlan(Number(e.target.dataset.validarid))
       scroll(0, 0)
       let asignacion = await getAsignacionesEnte(e.target.dataset.validarid)
       form_asignacion_entes_form_card({
@@ -115,6 +118,19 @@ export const validateAsignacionEntesView = async () => {
     }
 
     if (e.target.dataset.asignarid) {
+      let plan = await getEntePlanOperativo(
+        e.target.dataset.asignarid,
+        ejercicioFiscal.id
+      )
+
+      if (!plan) {
+        toastNotification({
+          message: 'No se encontró plan operativo para este ente',
+          type: NOTIFICATIONS_TYPES.fail,
+        })
+        return
+      }
+
       form_asignacion_entes_monto_card({
         elementToInset: 'asignacion-entes-view',
         enteId: e.target.dataset.asignarid,

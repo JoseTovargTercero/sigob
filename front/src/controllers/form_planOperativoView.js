@@ -1,7 +1,4 @@
-import {
-  getEntePlanOperativo,
-  getEntePlanOperativoId,
-} from '../api/form_planOperativo.js'
+import { getEntePlanOperativoId } from '../api/form_planOperativo.js'
 
 import {
   ejerciciosLista,
@@ -37,9 +34,6 @@ export const validatePlanOperativoView = async () => {
     return
   }
 
-  // let data = await getEntePlanOperativo(ejercicioFiscal.id)
-  // console.log(data)
-
   d.addEventListener('click', async (e) => {
     if (e.target.id === 'plan-operativo-registrar') {
       if (!ejercicioFiscal) {
@@ -49,20 +43,6 @@ export const validatePlanOperativoView = async () => {
         })
         return
       }
-
-      // entes_planOperativo_form_card({
-      //   elementToInsert: 'plan-operativo-view',
-      //   ejercicioId: ejercicioFiscal ? ejercicioFiscal.id : null,
-      //   reset: function () {
-      //     getEntePlanOperativos(ejercicioFiscal.id).then((data) => {
-      //       form_planOperativo_card({
-      //         elementToInsert: 'plan-operativo-view',
-      //         data,
-      //         closed: false,
-      //       })
-      //     })
-      //   },
-      // })
     }
 
     if (e.target.dataset.detalleid) {
