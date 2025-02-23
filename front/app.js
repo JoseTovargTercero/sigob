@@ -8,11 +8,7 @@ import { validateSolicitudEntesView } from './src/controllers/entes_solicitudVie
 // import { validateEmployeeTable } from './src/controllers/empleadosTable.js'
 import { validateAsignacionEntesView } from './src/controllers/form_asignacionEntesView.js'
 import { validateDistribucionView } from './src/controllers/form_distribucionView.js'
-import {
-  validateContraloriaTable,
-  validateDescripcionProgramaTable,
-  validateGobernacionTable,
-} from './src/controllers/form_informacionTables.js'
+
 import {
   validateConsejoView,
   validateContraloriaView,
@@ -40,6 +36,7 @@ import { loadRegconRequestTable } from './src/controllers/regcon_peticionesTable
 import { validateTabulatorForm } from './src/controllers/tabuladorForm.js'
 import { validateTasaActual } from './src/controllers/tasaView.js'
 import { validateModal } from './src/helpers/helpers.js'
+import { validateProyectosView } from './src/controllers/pre_proyectosView.js'
 const d = document
 
 // const requestForm2 = d.getElementById('request-form2')
@@ -66,6 +63,7 @@ d.addEventListener('DOMContentLoaded', (e) => {
   const traspasosView = d.getElementById('traspasos-view')
   const reportesView = d.getElementById('reportes-view')
   const compromisosView = d.getElementById('compromisos-view')
+  const proyectosView = d.getElementById('proyectos-view')
   // Formulación
   const partidasView = d.getElementById('partidas-view')
   const distribucionView = d.getElementById('distribucion-view')
@@ -215,6 +213,10 @@ d.addEventListener('DOMContentLoaded', (e) => {
   }
   if (compromisosView) {
     validateCompromisosView()
+  }
+
+  if (proyectosView) {
+    validateProyectosView()
   }
 
   //  FORMULACIÓN
