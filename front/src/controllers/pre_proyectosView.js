@@ -18,8 +18,6 @@ export const validateProyectosView = async () => {
     elementToInsert: 'ejercicios-fiscales',
   })
 
-  console.log(ejercicioFiscal)
-
   validateProyectosTable()
 
   loadProyectosTable(ejercicioFiscal.id)
@@ -41,8 +39,12 @@ export const validateProyectosView = async () => {
         })
         return
       }
+      console.log(ejercicioFiscal)
 
-      pre_proyectosForm_card({ elementToInsert: 'proyectos-view' })
+      pre_proyectosForm_card({
+        elementToInsert: 'proyectos-view',
+        ejercicioFiscal: ejercicioFiscal,
+      })
 
       // pre_traspasosForm_card({
       //   elementToInsert: 'traspasos-view',
