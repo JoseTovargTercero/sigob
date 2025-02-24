@@ -2,6 +2,7 @@ import {
   ejerciciosLista,
   validarEjercicioActual,
 } from '../components/form_ejerciciosLista.js'
+import { pre_proyectosForm_card } from '../components/pre_proyectosForm_card.js'
 
 import { toastNotification } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
@@ -24,7 +25,7 @@ export const validateProyectosView = async () => {
   loadProyectosTable(ejercicioFiscal.id)
 
   d.addEventListener('click', async (e) => {
-    if (e.target.id === 'traspasos-registrar') {
+    if (e.target.id === 'proyectos-registrar') {
       if (!ejercicioFiscal) {
         toastNotification({
           type: NOTIFICATIONS_TYPES.fail,
@@ -40,6 +41,9 @@ export const validateProyectosView = async () => {
         })
         return
       }
+
+      pre_proyectosForm_card({ elementToInsert: 'proyectos-view' })
+
       // pre_traspasosForm_card({
       //   elementToInsert: 'traspasos-view',
       //   ejercicioFiscal,
