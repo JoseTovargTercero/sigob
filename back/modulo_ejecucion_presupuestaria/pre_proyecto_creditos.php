@@ -79,6 +79,11 @@ function registrarCreditoAdicional($data)
         $descripcion_proyecto = $data['descripcion_proyecto'];
         $distribuciones = $data['distribuciones']; 
 
+
+        if ($data['id_ente'] == "" OR $data['id_ejercicio'] == "" OR $data['monto'] == "" OR $data['fecha'] == "" OR $data['descripcion_credito'] == "" OR $data['tipo_credito'] == "" OR $data['tipo_proyecto'] == "" OR $data['descripcion_proyecto'] == "" OR $data['distribuciones'] == "") {
+            throw new Exception("No se han enviado todos los valores para el registro.");
+        }
+
         // Validación de montos en distribucion_entes
         foreach ($distribuciones as $partida) {
             $id_distribucion = $partida['id_distribucion'];
@@ -177,7 +182,11 @@ function registrarCreditoAdicional($data)
         // Confirmar la transacción
         $conexion->commit();
 
-        return json_encode(["success" => "El crédito adicional y su proyecto se registraron correctamente."]);
+        if ($stmtProyecto->affected_rows != 0 AND $stmtCredito->affected_rows != 0) {
+            return json_encode(["success" => "El crédito adicional y su proyecto se registraron correctamente."]);
+        }
+
+        
 
     } catch (Exception $e) {
         $conexion->rollback();
@@ -192,6 +201,10 @@ function obtenerCreditoPorId($data)
 {
     global $conexion;
     $id_credito = $data['id_credito'];
+     if ($data['id_credito'] == "") {
+            return json_encode(["error" => "No se ha enviado el credito a consultar"]);
+        }
+
     $sql = "SELECT 
                 ca.*, 
                 pc.*, 
@@ -255,6 +268,11 @@ function eliminarCredito($data)
     $conexion->begin_transaction();
 
     try {
+
+         if ($data['id_credito'] == "") {
+            throw new Exception("No se han enviado todos los valores para la eliminacion.");
+        }
+
         $id_credito = $data['id_credito'];
         // Eliminar primero el registro en proyecto_credito
         $sqlProyecto = "DELETE FROM proyecto_credito WHERE id_credito = ?";
@@ -296,6 +314,11 @@ function actualizarCredito($data)
     $conexion->begin_transaction();
 
     try {
+
+         if ($data['id_ente'] == "" OR $data['id_ejercicio'] == "" OR $data['monto'] == "" OR $data['fecha'] == "" OR $data['descripcion_credito'] == "" OR $data['tipo_credito'] == "" OR $data['tipo_proyecto'] == "" OR $data['descripcion_proyecto'] == "" OR $data['distribuciones'] == "") {
+            throw new Exception("No se han enviado todos los valores para el registro.");
+        }
+
 
         $distribuciones = $data['distribuciones'];
         // Validación de montos en distribucion_entes
@@ -425,6 +448,10 @@ function procesarCreditoAdicional($data) {
     try {
         $archivo = $data['archivo'];
         $id_credito = $data['id_credito'];
+         if ($data['archivo'] == "" OR $data['id_credito'] == "") {
+            throw new Exception("No se han enviado todos los valores para el registro del decreto");
+        }
+
         
         // Validar que el archivo sea un PDF
         if ($archivo['type'] !== 'application/pdf') {
