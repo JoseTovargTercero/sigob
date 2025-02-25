@@ -1,14 +1,18 @@
+import { getPreAsignacionEntes } from '../api/pre_entes.js'
+import { registrarCredito } from '../api/pre_proyectos.js'
 import {
   confirmNotification,
+  formatearFloat,
   hideLoader,
   insertOptions,
+  separadorLocal,
   toastNotification,
   validateInput,
 } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 const d = document
 
-export const pre_proyectosForm_card = ({
+export const pre_proyectosForm_card = async ({
   elementToInsert,
   ejercicioFiscal,
 }) => {
@@ -19,17 +23,24 @@ export const pre_proyectosForm_card = ({
     'tipo-credito': { value: true, message: 'Tipo inválido', type: 'text' },
   }
 
-  let fieldListProyecto = { 'proyecto-descripcion': '' }
+  let fieldListProyecto = { 'proyecto-descripcion': '', 'tipo-proyecto': '' }
   let fieldListErrorsProyecto = {
     'proyecto-descripcion': {
       value: true,
       message: 'Descripción inválida',
       type: 'textarea',
     },
+    'tipo-proyecto': {
+      value: true,
+      message: 'Descripción inválida',
+      type: 'text',
+    },
   }
 
   let fieldListPartidas = {}
   let fieldListErrorsPartidas = {}
+
+  let montos = { totalCredito: 0, totalAcreditado: 0 }
 
   let nombreCard = '${nombreCard}'
 
@@ -37,6 +48,9 @@ export const pre_proyectosForm_card = ({
   if (oldCardElement) {
     closeCard(oldCardElement)
   }
+
+  let distribuciones = await getPreAsignacionEntes(ejercicioFiscal.id)
+  console.log(distribuciones)
 
   let creditosForm = () => {
     return `      <div class='row slide-up-animation' id='card-body-part-1'>
@@ -73,8 +87,8 @@ export const pre_proyectosForm_card = ({
             id='tipo-credito'
           >
             <option value=''>Elegir...</option>
-            <option value='FCI'>FCI</option>
-            <option value='VB'>Venezuela Bella</option>
+            <option value='0'>FCI</option>
+            <option value='1'>Venezuela Bella</option>
           </select>
         </div>
 
@@ -83,22 +97,23 @@ export const pre_proyectosForm_card = ({
 
   let proyectoForm = () => {
     return `      <div class='row slide-up-animation' id='card-body-part-2'>
-        <div id='header' class='row text-center mb-4'>
-          <div class='row'>
-            <div class='col'>
-              <h6>
-                Total a acreditar: <b id='total-sumado'>No asignado</b>
-              </h6>
-            </div>
-            <div class='col'>
-              <h6>
-                Total total creditado <b id='total-restado'>No asignado</b>
-              </h6>
-            </div>
-          </div>
-        </div>
+        
 
         <div class='row'>
+          <div class='form-group'>
+          <label for='tipo-proyecto' class='form-label'>
+            Tipo de proyecto
+          </label>
+          <select
+            class='form-select proyecto-input-2'
+            name='tipo-proyecto'
+            id='tipo-proyecto'
+          >
+            <option value=''>Elegir...</option>
+            <option value='0'>Transferencia</option>
+            <option value='1'>Compra</option>
+          </select>
+        </div>
           <div class='form-group'>
           <label class="form-label" for="proyecto-descripcion">Descripción de proyecto</label>
             <textarea
@@ -138,7 +153,22 @@ export const pre_proyectosForm_card = ({
           &times;
         </button>
       </div>
-      <div class='card-body' id="card-body">${creditosForm()}</div>
+      <div class='card-body' id="card-body">
+      <div id='header' class='row text-center mb-4'>
+          <div class='row'>
+            <div class='col'>
+              <h6>
+                Total a acreditar: <b id='total-credito'>No asignado</b>
+              </h6>
+            </div>
+            <div class='col'>
+              <h6>
+                Total total creditado <b id='total-acreditado'>No asignado</b>
+              </h6>
+            </div>
+          </div>
+        </div>
+      ${creditosForm()}</div>
       <div class='card-footer'>
         <div class='card-footer text-center'>
           <button class='btn btn-secondary' id='btn-previus'>
@@ -178,16 +208,95 @@ export const pre_proyectosForm_card = ({
       addRow()
     }
 
+    if (e.target.dataset.deleteRow) {
+      let id = e.target.dataset.deleteRow
+      confirmNotification({
+        type: NOTIFICATIONS_TYPES.send,
+        message:
+          'Al eliminar esta fila se actualizará el monto restante ¿Desea continuar?',
+        successFunction: function () {
+          let row = d.querySelector(`[data-row="${id}"]`)
+
+          // ELIMINAR ESTADO Y ERRORES DE INPUTS
+
+          delete fieldListPartidas[`distribucion-monto-${id}`]
+          delete fieldListErrorsPartidas[`distribucion-monto-${id}`]
+
+          if (row) numsRows--
+          row.remove()
+
+          // ACTUALIZAR MONTOS
+
+          let inputsProyecto = d.querySelectorAll('.proyecto-monto') || []
+
+          montos.totalAcreditado = 0
+          inputsProyecto.forEach((input) => {
+            if (input.value === '' || isNaN(input.value)) {
+              input.value = 0
+              montos.totalAcreditado += Number(formatearFloat(input.value))
+              input.value = ''
+            } else {
+              montos.totalAcreditado += Number(formatearFloat(input.value))
+            }
+          })
+
+          actualizarLabel()
+        },
+      })
+    }
+
     validateFormFocus(e)
   }
 
   async function validateInputFunction(e) {
-    fieldList = validateInput({
-      target: e.target,
-      fieldList,
-      fieldListErrors,
-      type: fieldListErrors[e.target.name].type,
-    })
+    if (e.target.classList.contains('proyecto-input')) {
+      fieldList = validateInput({
+        target: e.target,
+        fieldList,
+        fieldListErrors,
+        type: fieldListErrors[e.target.name].type,
+      })
+    }
+
+    if (e.target.id === 'monto') {
+      montos.totalCredito = formatearFloat(e.target.value)
+      actualizarLabel()
+    }
+
+    if (e.target.classList.contains('proyecto-input-2')) {
+      fieldListProyecto = validateInput({
+        target: e.target,
+        fieldList: fieldListProyecto,
+        fieldListErrors: fieldListErrorsProyecto,
+        type: fieldListErrorsProyecto[e.target.name].type,
+      })
+    }
+
+    if (e.target.classList.contains('proyecto-monto')) {
+      fieldListPartidas = validateInput({
+        target: e.target,
+        fieldList: fieldListPartidas,
+        fieldListErrors: fieldListErrorsPartidas,
+        type: fieldListErrorsPartidas[e.target.name].type,
+      })
+
+      let inputs = d.querySelectorAll('.proyecto-monto')
+
+      montos.totalAcreditado = 0
+      inputs.forEach((input) => {
+        if (input.value === '' || isNaN(input.value)) {
+          input.value = 0
+          montos.totalAcreditado += Number(formatearFloat(input.value))
+          input.value = ''
+        } else {
+          montos.totalAcreditado += Number(formatearFloat(input.value))
+        }
+      })
+
+      actualizarLabel()
+
+      return
+    }
   }
 
   async function validateFormFocus(e) {
@@ -238,8 +347,6 @@ export const pre_proyectosForm_card = ({
       if (formFocus === 2) {
         let proyectoInputs = d.querySelectorAll('.proyecto-input-2')
 
-        console.log(proyectoInputs)
-
         proyectoInputs.forEach((input) => {
           fieldListProyecto = validateInput({
             target: input,
@@ -256,11 +363,58 @@ export const pre_proyectosForm_card = ({
           })
           return
         }
-        // let data = validarInformacion()
+
+        let partidaInputsMonto = d.querySelectorAll('.proyecto-monto')
+
+        partidaInputsMonto.forEach((input) => {
+          fieldListPartidas = validateInput({
+            target: input,
+            fieldList: fieldListPartidas,
+            fieldListErrors: fieldListErrorsPartidas,
+            type: fieldListErrorsPartidas[input.name].type,
+          })
+        })
+
+        if (Object.values(fieldListErrorsPartidas).some((el) => el.value)) {
+          toastNotification({
+            type: NOTIFICATIONS_TYPES.fail,
+            message: 'Hay montos de partidas inválidos',
+          })
+          return
+        }
+
+        let partidasIguales = validarInputIguales()
+
+        console.log(partidasIguales)
+
+        if (partidasIguales) {
+          toastNotification({
+            type: NOTIFICATIONS_TYPES.fail,
+            message:
+              'Está realizando una asignación a una partida 2 o más veces. Valide nuevamente por favor',
+          })
+          return
+        }
+
+        let data = validarInformacion()
+
+        if (!data) return
 
         console.log(data)
 
-        enviarInformacion(data)
+        let informacion = {
+          id_ente: 1,
+          monto: fieldList.monto,
+          fecha: fieldList.fecha,
+          id_ejercicio: ejercicioFiscal.id,
+          descripcion_credito: 'descripcion credito',
+          distribuciones: data,
+          tipo_credito: fieldList['tipo-credito'],
+          tipo_proyecto: fieldListProyecto['tipo-proyecto'],
+          descripcion_proyecto: fieldListErrorsProyecto['proyecto-descripcion'],
+        }
+
+        enviarInformacion(informacion)
       }
     }
 
@@ -310,6 +464,73 @@ export const pre_proyectosForm_card = ({
     }
   }
 
+  function validarInformacion(tipo) {
+    let rows = d.querySelectorAll('[data-row]')
+
+    let rowsArray = Array.from(rows)
+
+    let montoRestante = 0
+
+    // VERIFICAR SI SE HAN SELECCIONADO PARTIDAS
+    if (rowsArray.length < 1) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.fail,
+        message: 'No se han añadido partidas',
+      })
+      return false
+    }
+
+    let mappedPartidas = rowsArray.map((el) => {
+      let partidaInput = el.querySelector(`#distribucion-${el.dataset.row}`)
+      let montoInput = el.querySelector(`#distribucion-monto-${el.dataset.row}`)
+
+      let partidaEncontrada = ejercicioFiscal.distribucion_partidas.find(
+        (partida) => Number(partida.id) === Number(partidaInput.value)
+      )
+
+      // Verificar si la partida introducida existe
+
+      if (!partidaEncontrada) {
+        return false
+      }
+
+      return {
+        id_distribucion: partidaEncontrada.id,
+        monto: formatearFloat(montoInput.value),
+      }
+    })
+
+    // Verificar si hay algun dato erróneo y cancelar envío
+    if (mappedPartidas.some((el) => !el)) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.fail,
+        message: 'Una o más partidas inválidas',
+      })
+      return false
+    }
+
+    return mappedPartidas
+  }
+
+  function validarInputIguales() {
+    console.log('validando')
+
+    let inputs = Array.from(d.querySelectorAll('[data-row] .proyecto-partida'))
+
+    const valores = inputs.map((input) => input.value)
+    const conteoValores = valores.reduce((conteo, valor) => {
+      conteo[valor] = (conteo[valor] || 0) + 1
+      return conteo
+    }, {})
+
+    for (let valor in conteoValores) {
+      if (conteoValores[valor] >= 2) {
+        return true
+      }
+    }
+    return false
+  }
+
   async function addRow() {
     let newNumRow = numsRows + 1
     numsRows++
@@ -350,7 +571,7 @@ export const pre_proyectosForm_card = ({
           : '00'
       }.${partida.id_actividad ? partida.id_actividad : '00'}`
 
-      let opt = `<option value="${partida.id_distribucion}">${sppa}.${partida.partida}</option>`
+      let opt = `<option value="${partida.id}">${sppa}.${partida.partida}</option>`
       options.push(opt)
     })
 
@@ -368,69 +589,84 @@ export const pre_proyectosForm_card = ({
     $('.chosen-distribucion')
       .chosen()
       .change(function (obj, result) {
-        let distribucionMontoActual = d.getElementById(
-          `distribucion-monto-actual-${newNumRow}`
-        )
-        let partida = ejercicioFiscal.distribucion_partidas.find(
-          (partida) => Number(partida.id) === Number(result.selected)
-        )
-
-        distribucionMontoActual.value = partida
-          ? `${separadorLocal(partida.monto)} Bs`
-          : 'No seleccionado'
+        // let distribucionMontoActual = d.getElementById(
+        //   `distribucion-monto-actual-${newNumRow}`
+        // )
+        // console.log(result.selected)
+        // let partida = ejercicioFiscal.distribucion_partidas.find(
+        //   (partida) => Number(partida.id) === Number(result.selected)
+        // )
+        // console.log(partida)
+        // distribucionMontoActual.value = partida
+        //   ? `${separadorLocal(partida.monto)} Bs`
+        //   : 'No seleccionado'
       })
 
     return
   }
 
   function actualizarLabel() {
-    let totalSumarElement = d.getElementById('total-sumado')
-    let totalRestarElement = d.getElementById('total-restado')
+    let totalCredito = d.getElementById('total-credito')
+    let totalAcreditado = d.getElementById('total-acreditado')
 
-    let valorSumar, valorRestar
+    let valorCredito, valorAcreditar
 
-    if (montos.totalSumar < 0) {
-      valorSumar = `<span class="px-2 rounded text-red-600 bg-red-100">${separadorLocal(
-        montos.totalSumar
+    if (montos.totalCredito < 0) {
+      valorCredito = `<span class="px-2 rounded text-red-600 bg-red-100">${separadorLocal(
+        montos.totalCredito
       )}</span>`
     }
-    if (montos.totalSumar > 0) {
-      valorSumar = `<span class="px-2 rounded text-green-600 bg-green-100">${separadorLocal(
-        montos.totalSumar
+    if (montos.totalCredito > 0) {
+      valorCredito = `<span class="px-2 rounded text-green-600 bg-green-100">${separadorLocal(
+        montos.totalCredito
       )}</span>`
     }
-    if (montos.totalSumar === 0) {
-      valorSumar = `<span class="class="px-2 rounded text-secondary">No asignado</span>`
+    if (montos.totalCredito === 0) {
+      valorCredito = `<span class="class="px-2 rounded text-secondary">No asignado</span>`
     }
 
     // VALIDAR TOTAL RESTADO
 
-    if (montos.totalRestar > montos.totalSumar) {
-      valorRestar = `<span class="px-2 rounded text-red-600 bg-red-100">${separadorLocal(
-        montos.totalRestar
+    if (montos.totalAcreditado > montos.totalCredito) {
+      valorAcreditar = `<span class="px-2 rounded text-red-600 bg-red-100">${separadorLocal(
+        montos.totalAcreditado
       )}</span>`
     }
 
-    if (montos.totalRestar < montos.totalSumar) {
-      valorRestar = `<span class="class="px-2 rounded text-secondary">${separadorLocal(
-        montos.totalRestar
+    if (montos.totalAcreditado < montos.totalCredito) {
+      valorAcreditar = `<span class="class="px-2 rounded text-secondary">${separadorLocal(
+        montos.totalAcreditado
       )}</span>`
     }
 
-    if (montos.totalRestar === montos.totalSumar) {
-      valorRestar = `<span class="px-2 rounded text-green-600 bg-green-100">${separadorLocal(
-        montos.totalRestar
+    if (montos.totalAcreditado === montos.totalCredito) {
+      valorAcreditar = `<span class="px-2 rounded text-green-600 bg-green-100">${separadorLocal(
+        montos.totalAcreditado
       )}</span>`
     }
-    if (montos.totalRestar === 0) {
-      valorRestar = `<span class="class="px-2 rounded text-secondary">No asignado</span>`
+    if (montos.totalAcreditado === 0) {
+      valorAcreditar = `<span class="class="px-2 rounded text-secondary">No asignado</span>`
     }
-    totalSumarElement.innerHTML = valorSumar
-    totalRestarElement.innerHTML = valorRestar
+    totalCredito.innerHTML = valorCredito
+    totalAcreditado.innerHTML = valorAcreditar
   }
   // CARGAR LISTA DE PARTIDAS
 
-  function enviarInformacion(data) {}
+  function enviarInformacion(data) {
+    console.log(data)
+
+    confirmNotification({
+      type: NOTIFICATIONS_TYPES.send,
+      message: '¿Desea enviar la información?',
+      successFunction: async function () {
+        let res = await registrarCredito(data)
+        if (res.success) {
+          closeCard(cardElement)
+          // reset()
+        }
+      },
+    })
+  }
 
   // formElement.addEventListener('submit', (e) => e.preventDefault())
 
@@ -470,6 +706,21 @@ function chosenSelect() {
 }
 
 function partidaRow(partidaNum) {
+  // input monto actual
+  /* <div class='col-sm'>
+<div class='form-group'>
+<label for='distribucion-monto-actual' class='form-label'>Monto actual</label>
+ <input
+         class='form-control distribucion-monto-actual
+         type='text'
+         name='distribucion-monto-actual-${partidaNum}'
+         id='distribucion-monto-actual-${partidaNum}'
+         placeholder='Monto actual...'
+         disabled
+       />
+</div>
+</div> */
+
   let row = `<div class='row slide-up-animation' data-row="${partidaNum}">
         <div class='col-sm'>
           <div class='form-group'>
@@ -486,19 +737,6 @@ function partidaRow(partidaNum) {
           </div>
         </div>
 
-        <div class='col-sm'>
-         <div class='form-group'>
-         <label for='distribucion-monto-actual' class='form-label'>Monto actual</label>
-          <input
-                  class='form-control distribucion-monto-actual
-                  type='text'
-                  name='distribucion-monto-actual-${partidaNum}'
-                  id='distribucion-monto-actual-${partidaNum}'
-                  placeholder='Monto actual...'
-                  disabled
-                />
-         </div>
-        </div>
   
         <div class='col-sm'>
           <div class='form-group'>
