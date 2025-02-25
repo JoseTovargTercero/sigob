@@ -535,6 +535,57 @@ function obtenerEjercicioFiscalPorId($id)
     }
 }
 
+function obtenerDistribucionEntesPorEjercicio($id_ejercicio)
+{
+    global $remote_db;
+
+    $conexion = $remote_db;
+    $sql = "SELECT 
+                de.*, 
+                e.* 
+            FROM distribucion_entes de
+            JOIN entes e ON de.id_ente = e.id
+            WHERE de.id_ejercicio = ?";
+
+    $stmt = $conexion->prepare($sql);
+    $stmt->bind_param("i", $id_ejercicio);
+    $stmt->execute();
+    $resultado = $stmt->get_result();
+
+    if ($resultado->num_rows === 0) {
+        return json_encode(["error" => "No se encontraron registros en distribucion_entes para el id_ejercicio proporcionado."]);
+    }
+
+    return json_encode($resultado->fetch_all(MYSQLI_ASSOC));
+}
+
+
+function obtenerTodosLosEntes()
+{
+    global $remote_db;
+
+    $conexion = $remote_db;
+    $sql = "SELECT 
+                e.*, 
+                s.*, 
+                p.*, 
+                a.*, 
+                pr.*
+            FROM entes e
+            LEFT JOIN pl_sectores s ON e.id_sector = s.id
+            LEFT JOIN pl_programas p ON e.id_programa = p.id
+            LEFT JOIN pl_actividades a ON e.id_actividad = a.id
+            LEFT JOIN pl_proyectos pr ON e.id_proyecto = pr.id";
+
+    $resultado = $conexion->query($sql);
+
+    if ($resultado->num_rows === 0) {
+        return json_encode(["error" => "No se encontraron registros en la tabla entes."]);
+    }
+
+    return json_encode($resultado->fetch_all(MYSQLI_ASSOC));
+}
+
 
 
 
@@ -693,6 +744,16 @@ if (isset($data["accion"])) {
         }
     } elseif ($accion === "obtener_todos") {
         echo obtenerTodosEjerciciosFiscales();
+    }
+    elseif ($accion === "obtener_distribuciones_entes") {
+        if (empty($data["id_ejercicio"])) {
+            echo json_encode(['error' => "Debe proporcionar un ejercicio fiscal para la consulta"]);
+        } else {
+            echo obtenerDistribucionEntesPorEjercicio($data["id_ejercicio"]);
+        }
+    }
+    elseif ($accion === "obtener_entes") {
+        echo obtenerTodosLosEntes();
     } elseif ($accion === "obtener_positiva") {
         echo obtenerDistribucionPositiva();
     } elseif ($accion === "obtener_por_id") {
