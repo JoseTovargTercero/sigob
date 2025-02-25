@@ -8,7 +8,7 @@ import {
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 import { config, APP_URL } from './urlConfig.js'
 
-const proyectosUrl = `${APP_URL}${config.MODULE_NAMES.EJECUCION}pre_proyectos_creditos.php`
+const proyectosUrl = `${APP_URL}${config.MODULE_NAMES.EJECUCION}pre_proyecto_creditos.php`
 
 const getProyectos = async (id_ente, id_ejercicio) => {
   showLoader()
@@ -90,4 +90,48 @@ const getProyecto = async () => {
   }
 }
 
-export { getProyecto, getProyectos }
+const registrarCredito = async (data) => {
+  showLoader()
+  try {
+    let res = await fetch(proyectosUrl, {
+      method: 'POST',
+      body: JSON.stringify({ accion: 'registrar', ...data }),
+    })
+
+    const clone = res.clone()
+
+    let text = await clone.text()
+    console.log(text)
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    const json = await res.json()
+
+    console.log(json)
+    if (json.hasOwnProperty('success')) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.done,
+        message: json.success,
+      })
+      return json
+    }
+
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+      return json
+    }
+
+    return json
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al registrar crédito',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
+export { getProyecto, getProyectos, registrarCredito }

@@ -31,7 +31,7 @@ const getPreAsignacionEntes = async (ejercicioId) => {
 
     let text = await clone.text()
 
-    console.log(text)
+    // console.log(text)
 
     const json = await res.json()
 
