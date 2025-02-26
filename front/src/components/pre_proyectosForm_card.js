@@ -1,3 +1,4 @@
+import { obtenerDistribucionEntes } from '../api/pre_distribucion.js'
 import { getPreAsignacionEntes } from '../api/pre_entes.js'
 import { registrarCredito } from '../api/pre_proyectos.js'
 import {
@@ -49,11 +50,11 @@ export const pre_proyectosForm_card = async ({
     closeCard(oldCardElement)
   }
 
-  let distribuciones = await getPreAsignacionEntes(ejercicioFiscal.id)
+  let distribuciones = await obtenerDistribucionEntes(ejercicioFiscal.id)
   console.log(distribuciones)
 
   let creditosForm = () => {
-    return `      <div class='row slide-up-animation' id='card-body-part-1'>
+    return `<div class='row slide-up-animation' id='card-body-part-1'>
         <div class='col'>
           <div class='form-group'>
             <label class='form-label' for='monto'></label>
@@ -96,9 +97,7 @@ export const pre_proyectosForm_card = async ({
   }
 
   let proyectoForm = () => {
-    return `      <div class='row slide-up-animation' id='card-body-part-2'>
-        
-
+    return `<div class='row slide-up-animation' id='card-body-part-2'>
         <div class='row'>
           <div class='form-group'>
           <label for='tipo-proyecto' class='form-label'>
@@ -185,6 +184,11 @@ export const pre_proyectosForm_card = async ({
 
   let cardElement = d.getElementById(`${nombreCard}-form-card`)
   let cardBody = d.getElementById(`card-body`)
+  $('.chosen-select-ente')
+    .chosen()
+    .change(function (obj, result) {
+      console.log('changed: %o', arguments)
+    })
   //   let formElement = d.getElementById(`${nombreCard}-form`)
 
   let formFocus = 1
@@ -698,7 +702,7 @@ function chosenSelect() {
 
   selectEjercicio.innerHTML = options.join('')
 
-  $('.chosen-select')
+  $('.chosen-select-ente')
     .chosen()
     .change(function (obj, result) {
       console.log('changed: %o', arguments)

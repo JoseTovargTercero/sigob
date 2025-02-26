@@ -547,16 +547,28 @@ function obtenerDistribucionEntesPorEjercicio($id_ejercicio)
             JOIN entes e ON de.id_ente = e.id
             WHERE de.id_ejercicio = ?";
 
+
     $stmt = $conexion->prepare($sql);
     $stmt->bind_param("i", $id_ejercicio);
     $stmt->execute();
     $resultado = $stmt->get_result();
 
+
+
+
     if ($resultado->num_rows === 0) {
         return json_encode(["error" => "No se encontraron registros en distribucion_entes para el id_ejercicio proporcionado."]);
     }
 
-    return json_encode($resultado->fetch_all(MYSQLI_ASSOC));
+    $informacion = $resultado->fetch_all(MYSQLI_ASSOC);
+    foreach ($informacion as &$registro) {
+        $decoded = json_decode($registro['distribucion'], true);
+
+        $registro['distribucion'] = $decoded;
+
+    }
+
+    return json_encode(['success' => $informacion]);
 }
 
 
@@ -744,15 +756,13 @@ if (isset($data["accion"])) {
         }
     } elseif ($accion === "obtener_todos") {
         echo obtenerTodosEjerciciosFiscales();
-    }
-    elseif ($accion === "obtener_distribuciones_entes") {
+    } elseif ($accion === "obtener_distribuciones_entes") {
         if (empty($data["id_ejercicio"])) {
             echo json_encode(['error' => "Debe proporcionar un ejercicio fiscal para la consulta"]);
         } else {
             echo obtenerDistribucionEntesPorEjercicio($data["id_ejercicio"]);
         }
-    }
-    elseif ($accion === "obtener_entes") {
+    } elseif ($accion === "obtener_entes") {
         echo obtenerTodosLosEntes();
     } elseif ($accion === "obtener_positiva") {
         echo obtenerDistribucionPositiva();
