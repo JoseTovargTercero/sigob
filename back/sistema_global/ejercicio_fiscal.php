@@ -584,10 +584,10 @@ function obtenerTodosLosEntes()
                 a.*, 
                 pr.* 
             FROM entes e
-            LEFT JOIN pl_sectores s ON e.id_sector = s.id
-            LEFT JOIN pl_programas p ON e.id_programa = p.id
-            LEFT JOIN pl_actividades a ON e.id_actividad = a.id
-            LEFT JOIN pl_proyectos pr ON e.id_proyecto = pr.id";
+            LEFT JOIN pl_sectores s ON e.sector = s.id
+            LEFT JOIN pl_programas p ON e.programa = p.id
+            LEFT JOIN pl_actividades a ON e.actividad = a.id
+            LEFT JOIN pl_proyectos pr ON e.proyecto = pr.id";
 
     $resultado = $conexion->query($sql);
 
