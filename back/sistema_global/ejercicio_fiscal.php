@@ -540,8 +540,23 @@ function obtenerDistribucionEntesPorEjercicio($id_ejercicio, $id_ente)
     global $remote_db;
     $conexion = $remote_db;
 
-    // Consulta solo la tabla distribucion_entes con el id_ente e id_ejercicio
-    $sql = "SELECT distribucion FROM distribucion_entes WHERE id_ejercicio = ? AND id_ente = ?";
+    // Consulta principal con todos los datos necesarios
+    $sql = "SELECT 
+                de.*, 
+                e.id AS ente_id, e.ente_nombre, e.sector AS ente_sector, e.programa AS ente_programa, 
+                e.actividad AS ente_actividad, e.proyecto AS ente_proyecto, e.tipo_ente,
+                s.id AS sector_id, s.denominacion AS sector_nombre, s.sector AS sector_numero,
+                p.id AS programa_id, p.denominacion AS programa_nombre, p.programa AS programa_numero,
+                a.id AS actividad_id, a.denominacion AS actividad_nombre, a.actividad AS actividad_numero,
+                pr.id AS proyecto_id, pr.denominacion AS proyecto_nombre, pr.proyecto_id AS proyecto_numero
+            FROM distribucion_entes de
+            JOIN entes e ON de.id_ente = e.id
+            LEFT JOIN pl_sectores s ON e.sector = s.id
+            LEFT JOIN pl_programas p ON e.programa = p.id
+            LEFT JOIN pl_actividades a ON e.actividad = a.id
+            LEFT JOIN pl_proyectos pr ON e.proyecto = pr.id
+            WHERE de.id_ejercicio = ? AND de.id_ente = ?";
+
     $stmt = $conexion->prepare($sql);
     $stmt->bind_param("ii", $id_ejercicio, $id_ente);
     $stmt->execute();
@@ -551,15 +566,17 @@ function obtenerDistribucionEntesPorEjercicio($id_ejercicio, $id_ente)
         return json_encode(["error" => "No se encontraron registros en distribucion_entes para el id_ejercicio y id_ente proporcionados."]);
     }
 
-    $infoArray = [];  // Array donde se almacenarán todas las distribuciones
+    $informacion = [];
 
     while ($row = $resultado->fetch_assoc()) {
+        // Procesar el campo distribucion si existe
         if (!empty($row['distribucion'])) {
             $decoded = json_decode($row['distribucion'], true);
+
             foreach ($decoded as &$distribucion) {
                 $id_distribucion = $distribucion['id_distribucion'];
 
-                // Consulta la distribucion_presupuestaria solo para la distribución específica
+                // Consulta específica para obtener la partida presupuestaria
                 $sql_partida = "SELECT dp.id_partida, pp.* 
                                 FROM distribucion_presupuestaria dp
                                 JOIN partidas_presupuestarias pp ON dp.id_partida = pp.id
@@ -574,14 +591,17 @@ function obtenerDistribucionEntesPorEjercicio($id_ejercicio, $id_ente)
                 } else {
                     $distribucion['partida_presupuestaria'] = null;
                 }
-
-                $infoArray[] = $distribucion; // Agrega la distribución al array final
             }
+
+            $row['distribucion'] = $decoded;  // Reemplazar la distribución con los datos completos
         }
+
+        $informacion[] = $row;  // Agregar toda la fila con la información procesada
     }
 
-    return json_encode(['success' => $infoArray]);
+    return json_encode(['success' => $informacion]);
 }
+
 
 
 
