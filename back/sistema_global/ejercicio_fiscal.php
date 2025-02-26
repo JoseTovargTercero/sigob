@@ -569,12 +569,30 @@ function obtenerDistribucionEntesPorEjercicio($id_ejercicio)
     foreach ($informacion as &$registro) {
         if (!empty($registro['distribucion'])) {
             $decoded = json_decode($registro['distribucion'], true);
+            foreach ($decoded as &$distribucion) {
+                $id_distribucion = $distribucion['id_distribucion'];
+                
+                $sql_partida = "SELECT dp.id_partida, pp.* FROM distribucion_presupuestaria dp
+                                JOIN partidas_presupuestarias pp ON dp.id_partida = pp.id
+                                WHERE dp.id = ?";
+                $stmt_partida = $conexion->prepare($sql_partida);
+                $stmt_partida->bind_param("i", $id_distribucion);
+                $stmt_partida->execute();
+                $resultado_partida = $stmt_partida->get_result();
+                
+                if ($resultado_partida->num_rows > 0) {
+                    $distribucion['partida_presupuestaria'] = $resultado_partida->fetch_assoc();
+                } else {
+                    $distribucion['partida_presupuestaria'] = null;
+                }
+            }
             $registro['distribucion'] = $decoded;
         }
     }
 
     return json_encode(['success' => $informacion]);
 }
+
 
 
 
