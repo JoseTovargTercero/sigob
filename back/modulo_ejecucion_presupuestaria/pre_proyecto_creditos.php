@@ -89,21 +89,18 @@ function registrarCreditoAdicional($data)
             $id_distribucion = $partida['id_distribucion'];
             $monto_solicitado = $partida['monto'];
 
-            // Consultar monto de distribución en distribucion_entes
-            $sqlMontoDistribucion = "SELECT distribucion 
-                                     FROM distribucion_entes 
-                                     WHERE id_ente = ? 
-                                     AND id_ejercicio = ? 
-                                     AND distribucion LIKE ?";
-            $likePattern = '%"id_distribucion":"' . $id_distribucion . '"%';
-            $stmtMontoDistribucion = $remote_db->prepare($sqlMontoDistribucion);
-            $stmtMontoDistribucion->bind_param("iis", $id_ente, $id_ejercicio, $likePattern);
-            $stmtMontoDistribucion->execute();
-            $resultadoMontoDistribucion = $stmtMontoDistribucion->get_result();
+          // Consultar el monto de distribución desde distribucion_entes
+                $sqlMontoDistribucion = "SELECT distribucion 
+                                         FROM distribucion_entes 
+                                         WHERE id_ente = ? AND id_ejercicio = ? AND distribucion LIKE '%\"id_distribucion\":\"$id_distribucion\"%'";
+                $stmtMontoDistribucion = $conexion->prepare($sqlMontoDistribucion);
+                $stmtMontoDistribucion->bind_param("ii", $id_ente, $id_ejercicio);
+                $stmtMontoDistribucion->execute();
+                $resultadoMontoDistribucion = $stmtMontoDistribucion->get_result();
 
-            if ($resultadoMontoDistribucion->num_rows === 0) {
-                throw new Exception("El ID de distribución $id_distribucion no se encuentra en distribucion_entes.");
-            }
+                if ($resultadoMontoDistribucion->num_rows === 0) {
+                    throw new Exception("El ID de distribución no se encuentra en el campo 'distribucion' de distribucion_entes");
+                }
 
             $filaMontoDistribucion = $resultadoMontoDistribucion->fetch_assoc();
             $distribucionesData = json_decode($filaMontoDistribucion['distribucion'], true);
