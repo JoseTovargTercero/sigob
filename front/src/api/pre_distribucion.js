@@ -428,7 +428,7 @@ const obtenerDistribucionEntes = async (id_ejercicio, id_ente) => {
     }
 
     if (json.success) {
-      return json.success
+      return json.success[0]
     }
 
     return json

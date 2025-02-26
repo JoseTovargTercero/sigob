@@ -20,12 +20,27 @@ export const pre_proyectosForm_card = async ({
   elementToInsert,
   ejercicioFiscal,
 }) => {
-  let fieldList = { monto: '', fecha: '', 'tipo-credito': '', id_ente: '' }
+  let fieldList = {
+    monto: '',
+    fecha: '',
+    'tipo-credito': '',
+    id_ente: '',
+    descripcion_credito: '',
+  }
   let fieldListErrors = {
     id_ente: { value: true, message: 'Ente inválido', type: 'number3' },
     monto: { value: true, message: 'Monto inválido', type: 'number3' },
     fecha: { value: true, message: 'Fecha inválida', type: 'text' },
-    'tipo-credito': { value: true, message: 'Tipo inválido', type: 'text' },
+    'tipo-credito': {
+      value: true,
+      message: 'Tipo inválido',
+      type: 'text',
+      descripcion_credito: {
+        value: true,
+        message: 'Descripción inválida',
+        type: 'textarea',
+      },
+    },
   }
 
   let fieldListProyecto = { 'proyecto-descripcion': '', 'tipo-proyecto': '' }
@@ -58,7 +73,7 @@ export const pre_proyectosForm_card = async ({
   let distribuciones = []
 
   const entesOptions = () => {
-    let options = [`option value=''>0Elegir...</option>`]
+    let options = [`<option value=''>Elegir...</option>`]
     entes.forEach((ente) => {
       let option = `<option value='${ente.ente.id}'>${ente.ente.nombre}</option>`
       options.push(option)
@@ -306,8 +321,6 @@ export const pre_proyectosForm_card = async ({
         fieldListErrors,
         type: fieldListErrors[e.target.name].type,
       })
-
-      console.log(fieldList)
     }
 
     if (e.target.id === 'monto') {
@@ -392,18 +405,27 @@ export const pre_proyectosForm_card = async ({
         cardBodyPart1.classList.add('d-none')
 
         if (cardBodyPart2) {
+          if (fieldList.id_ente_anterior !== fieldList.id_ente) {
+            distribuciones = await obtenerDistribucionEntes(
+              ejercicioFiscal.id,
+              fieldList.id_ente
+            )
+            fieldList.id_ente_anterior = fieldList.id_ente
+          }
+
           cardBodyPart2.classList.remove('d-none')
         } else {
           cardBody.insertAdjacentHTML('beforeend', proyectoForm())
+
+          fieldList.id_ente_anterior = fieldList.id_ente
 
           distribuciones = await obtenerDistribucionEntes(
             ejercicioFiscal.id,
             fieldList.id_ente
           )
-
-          console.log(distribuciones)
         }
 
+        console.log(distribuciones)
         if (btnPrevius.hasAttribute('disabled'))
           btnPrevius.removeAttribute('disabled')
 
@@ -452,8 +474,6 @@ export const pre_proyectosForm_card = async ({
 
         let partidasIguales = validarInputIguales()
 
-        console.log(partidasIguales)
-
         if (partidasIguales) {
           toastNotification({
             type: NOTIFICATIONS_TYPES.fail,
@@ -467,8 +487,6 @@ export const pre_proyectosForm_card = async ({
 
         if (!data) return
 
-        console.log(data)
-
         let informacion = {
           id_ente: fieldList.id_ente,
           monto: formatearFloat(fieldList.monto),
@@ -478,7 +496,7 @@ export const pre_proyectosForm_card = async ({
           distribuciones: data,
           tipo_credito: fieldList['tipo-credito'],
           tipo_proyecto: fieldListProyecto['tipo-proyecto'],
-          descripcion_proyecto: fieldListErrorsProyecto['proyecto-descripcion'],
+          descripcion_proyecto: fieldListProyecto['proyecto-descripcion'],
         }
 
         enviarInformacion(informacion)
@@ -551,10 +569,10 @@ export const pre_proyectosForm_card = async ({
       let partidaInput = el.querySelector(`#distribucion-${el.dataset.row}`)
       let montoInput = el.querySelector(`#distribucion-monto-${el.dataset.row}`)
 
-      let partidaEncontrada = distribuciones.find(
-        (partida) => Number(partida.id) === Number(partidaInput.value)
+      let partidaEncontrada = distribuciones.distribucion.find(
+        (partida) =>
+          Number(partida.id_distribucion) === Number(partidaInput.value)
       )
-      console.log(partidaInput.value)
 
       // Verificar si la partida introducida existe
 
@@ -563,7 +581,7 @@ export const pre_proyectosForm_card = async ({
       }
 
       return {
-        id_distribucion: partidaEncontrada.id,
+        id_distribucion: partidaEncontrada.id_distribucion,
         monto: formatearFloat(montoInput.value),
       }
     })
@@ -581,8 +599,6 @@ export const pre_proyectosForm_card = async ({
   }
 
   function validarInputIguales() {
-    console.log('validando')
-
     let inputs = Array.from(d.querySelectorAll('[data-row] .proyecto-partida'))
 
     const valores = inputs.map((input) => input.value)
@@ -633,21 +649,17 @@ export const pre_proyectosForm_card = async ({
 
     let options = [`<option value=''>Elegir partida...</option>`]
 
-    distribuciones
-      .filter(
-        (partida) => Number(partida.id_ente) === Number(fieldList.id_ente)
-      )
-      .forEach((partida) => {
-        let sppa = `
-        ${partida.sector_numero ? partida.sector_numero : '00'}.${
-          partida.programa_numero ? partida.programa_numero : '00'
-        }.${partida.proyecto_numero ? partida.proyecto_numero : '00'}.${
-          partida.actividad_id ? partida.actividad_id : '00'
-        }`
+    let sppa = `
+    ${distribuciones.sector_numero || '00'}.${
+      distribuciones.programa_numero || '00'
+    }.${distribuciones.proyecto_numero || '00'}.${
+      distribuciones.actividad_id || '51'
+    }`
 
-        let opt = `<option value="${partida.id}">${sppa}.${partida.id}</option>`
-        options.push(opt)
-      })
+    distribuciones.distribucion.forEach((partida) => {
+      let opt = `<option value="${partida.id_distribucion}">${sppa}.${partida.partida_presupuestaria.partida} - ${partida.partida_presupuestaria.descripcion} </option>`
+      options.push(opt)
+    })
 
     // Nombre de ente
     // - ${partida.ente_nombre[0].toUpperCase()}${partida.ente_nombre

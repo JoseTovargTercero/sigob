@@ -21,7 +21,7 @@ export const pre_proyectoCredito_card = ({ elementToInsert, data = null }) => {
         <div class='card-header d-flex justify-content-between'>
             <div class=''>
                 <h5 class='mb-0'>Información del credito y su distribución asociada</h5>
-                <small class='mt-0 text-muted'>Gesgione la información del crédito registrado y su decreto</small>
+                <small class='mt-0 text-muted'>GesTione la información del crédito registrado y su decreto</small>
             </div>
             <button
                 data-close='btn-close'
@@ -33,15 +33,27 @@ export const pre_proyectoCredito_card = ({ elementToInsert, data = null }) => {
             </button>
         </div>
         <div class='card-body'>
+        <div class="row">
+        <p>
+        <span class="badge bg-secondary">Tipo de crédito: <b>${
+          Number(data.tipo_credito) === 0 ? 'FCI' : 'Venezuela Bella'
+        }</b></span>
+         <span class="badge bg-secondary">Tipo de proyecto: <b>${
+           Number(data.tipo_proyecto) === 0 ? 'Transferencia' : 'Compra'
+         }</b></span>
+         </p>
+        </div>
+        <div class="row">
             ${
-              data
+              decreto
                 ? '<iframe id="decreto-iframe" style="width: 100%; height: 500px;"></iframe>'
-                : '<input type="file" id="decreto-file" accept="application/pdf" class="form-control"><p id="decreto-file-error" class="text-danger mt-2" style="display: none;">Error: Archivo inválido.</p>'
+                : '<input type="file" id="decreto-file" accept="application/pdf" class="form-control"><p id="decreto-file-error" class="text-danger slide-up-animation mt-2" style="display: none;">Error: Archivo inválido.</p>'
             }
+            </div>
         </div>
         <div class='card-footer'>
             ${
-              data
+              decreto
                 ? ''
                 : '<button class="btn btn-primary" id="${nombreCard}-guardar">Subir Decreto</button>'
             }
