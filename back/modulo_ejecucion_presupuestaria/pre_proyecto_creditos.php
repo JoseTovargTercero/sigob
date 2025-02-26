@@ -58,6 +58,7 @@ function gestionarCreditosAdicionales($data)
 }
 
 
+
 function registrarCreditoAdicional($data)
 {
 
@@ -156,7 +157,9 @@ function registrarCreditoAdicional($data)
                        VALUES (?, ?, ?, ?, ?, ?, 0)";
         $stmtCredito = $conexion->prepare($sqlCredito);
         $stmtCredito->bind_param("iidssi", $id_ente, $id_ejercicio, $monto, $fecha, $descripcion_credito, $tipo_credito);
-        $stmtCredito->execute();
+         if (!$stmtCredito->execute()) {
+            throw new Exception("Error en credito_adicional: " . $stmtCredito->error);
+        }
 
         if ($stmtCredito->affected_rows === 0) {
             throw new Exception("No se pudo registrar el crédito adicional.");
@@ -171,10 +174,9 @@ function registrarCreditoAdicional($data)
         $stmtProyecto = $conexion->prepare($sqlProyecto);
         $distribuciones_json = json_encode($distribuciones);
         $stmtProyecto->bind_param("issss", $id_credito, $tipo_proyecto, $descripcion_proyecto, $distribuciones_json, $decreto);
-        $stmtProyecto->execute();
         if (!$stmtProyecto->execute()) {
-    throw new Exception("Error en proyecto_credito: " . $stmtProyecto->error);
-}
+            throw new Exception("Error en proyecto_credito: " . $stmtProyecto->error);
+        }
 
 
         if ($stmtProyecto->affected_rows === 0) {
