@@ -582,7 +582,7 @@ function obtenerTodosLosEntes()
                 s.*, 
                 p.*, 
                 a.*, 
-                pr.*
+                pr.* 
             FROM entes e
             LEFT JOIN pl_sectores s ON e.id_sector = s.id
             LEFT JOIN pl_programas p ON e.id_programa = p.id
@@ -590,6 +590,11 @@ function obtenerTodosLosEntes()
             LEFT JOIN pl_proyectos pr ON e.id_proyecto = pr.id";
 
     $resultado = $conexion->query($sql);
+
+    // Si hay error en la consulta, mostrarlo
+    if (!$resultado) {
+        return json_encode(["error" => "Error en la consulta: " . $conexion->error]);
+    }
 
     if ($resultado->num_rows === 0) {
         return json_encode(["error" => "No se encontraron registros en la tabla entes."]);
