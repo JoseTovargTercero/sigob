@@ -576,32 +576,68 @@ function obtenerTodosLosEntes()
 {
     global $remote_db;
 
-    $conexion = $remote_db;
     $sql = "SELECT 
-                e.*, 
-                s.*, 
-                p.*, 
-                a.*, 
-                pr.* 
+                e.id AS ente_id, e.ente_nombre AS ente_nombre, e.sector AS ente_sector, e.programa AS ente_programa, 
+                e.actividad AS ente_actividad, e.proyecto AS ente_proyecto, e.tipo_ente AS tipo_ente,
+                s.id AS sector_id, s.denominacion AS sector_nombre, s.sector AS sector_numero,
+                p.id AS programa_id, p.denominacion AS programa_nombre, p.programa AS programa_numero,
+                a.id AS actividad_id, a.denominacion AS actividad_nombre, a.actividad AS actividad_numero,
+                pr.id AS proyecto_id, pr.denominacion AS proyecto_nombre, pr.proyecto_id AS proyecto_numero
             FROM entes e
             LEFT JOIN pl_sectores s ON e.sector = s.id
             LEFT JOIN pl_programas p ON e.programa = p.id
             LEFT JOIN pl_actividades a ON e.actividad = a.id
             LEFT JOIN pl_proyectos pr ON e.proyecto = pr.id";
 
-    $resultado = $conexion->query($sql);
+    $resultado = $remote_db->query($sql);
 
-    // Si hay error en la consulta, mostrarlo
     if (!$resultado) {
-        return json_encode(["error" => "Error en la consulta: " . $conexion->error]);
+        return json_encode(["error" => "Error en la consulta: " . $remote_db->error]);
     }
 
     if ($resultado->num_rows === 0) {
-        return json_encode(["error" => "No se encontraron registros en la tabla entes."]);
+        return json_encode(["success" => "No se encontraron registros en entes."]);
     }
 
-    return json_encode($resultado->fetch_all(MYSQLI_ASSOC));
+    $entes = [];
+
+    while ($row = $resultado->fetch_assoc()) {
+        $entes[] = [
+            "ente" => [
+                "id" => $row['ente_id'],
+                "nombre" => $row['ente_nombre'],
+                "sector" => $row['ente_sector'],
+                "programa" => $row['ente_programa'],
+                "actividad" => $row['ente_actividad'],
+                "proyecto" => $row['ente_proyecto'],
+                "tipo" => $row['tipo_ente'] // Se agregó el tipo de ente
+            ],
+            "sector" => [
+                "id" => $row['sector_id'],
+                "nombre" => $row['sector_nombre'],
+                "numero" => $row['sector_numero'] // Corregido, antes hacía referencia a "sector_descripcion"
+            ],
+            "programa" => [
+                "id" => $row['programa_id'],
+                "nombre" => $row['programa_nombre'],
+                "numero" => $row['programa_numero'] // Corregido, antes hacía referencia a "programa_descripcion"
+            ],
+            "actividad" => [
+                "id" => $row['actividad_id'],
+                "nombre" => $row['actividad_nombre'],
+                "numero" => $row['actividad_numero'] // Corregido, antes hacía referencia a "actividad_descripcion"
+            ],
+            "proyecto" => [
+                "id" => $row['proyecto_id'],
+                "nombre" => $row['proyecto_nombre'],
+                "numero" => $row['proyecto_numero'] // Corregido, antes hacía referencia a "proyecto_descripcion"
+            ]
+        ];
+    }
+
+    return json_encode(["success" => $entes]);
 }
+
 
 
 
