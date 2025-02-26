@@ -18,10 +18,10 @@ const getProyectos = async (id_ente, id_ejercicio) => {
       body: JSON.stringify({ accion: 'consulta', id_ejercicio }),
     })
 
-    const clone = res.clone()
+    // const clone = res.clone()
 
-    let text = await clone.text()
-    console.log(text)
+    // let text = await clone.text()
+    // console.log(text)
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
 
@@ -50,18 +50,18 @@ const getProyectos = async (id_ente, id_ejercicio) => {
   }
 }
 
-const getProyecto = async () => {
+const getProyecto = async (id) => {
   showLoader()
   try {
     let res = await fetch(proyectosUrl, {
       method: 'POST',
-      body: JSON.stringify({ accion: 'consulta_id', id }),
+      body: JSON.stringify({ accion: 'consulta_id', id_credito: id }),
     })
 
-    const clone = res.clone()
+    // const clone = res.clone()
 
-    let text = await clone.text()
-    console.log(text)
+    // let text = await clone.text()
+    // console.log(text)
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
 

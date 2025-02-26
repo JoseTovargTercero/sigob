@@ -1,17 +1,25 @@
-import { hideLoader, toastNotification } from '../helpers/helpers.js'
+import {
+  hideLoader,
+  separadorLocal,
+  toastNotification,
+} from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 
 const d = document
 
-export const pre_proyectoCredito_card = ({ elementToInsert, data = null }) => {
+export const pre_proyectoCredito_card = ({
+  elementToInsert = null,
+  data = null,
+  close = false,
+}) => {
   let decretoFile = null
   const maxFileSize = 5 * 1024 * 1024 // 5 MB (ajusta según tus necesidades)
   const allowedFileTypes = ['application/pdf']
 
-  let nombreCard = 'decretoCard' // Nombre único para la card
+  let nombreCard = 'credito-detalle' // Nombre único para la card
 
   const oldCardElement = d.getElementById(`${nombreCard}-form-card`)
-  if (oldCardElement) {
+  if (oldCardElement || close) {
     closeCard(oldCardElement)
   }
 
@@ -41,7 +49,13 @@ export const pre_proyectoCredito_card = ({ elementToInsert, data = null }) => {
          <span class="badge bg-secondary">Tipo de proyecto: <b>${
            Number(data.tipo_proyecto) === 0 ? 'Transferencia' : 'Compra'
          }</b></span>
+          <span class="badge bg-success">Monto total: <b>${separadorLocal(
+            data.monto
+          )} Bs</b></span>
          </p>
+
+         <p><b>Descripción credito: </b>${data.descripcion_credito}<p>
+         <p><b>Descripción proyecto: </b>${data.descripcion_proyecto}<p>
         </div>
         <div class="row">
             ${
@@ -71,13 +85,13 @@ export const pre_proyectoCredito_card = ({ elementToInsert, data = null }) => {
   function closeCard(card) {
     card.remove()
     card.removeEventListener('click', validateClick)
-    if (fileInput) {
-      fileInput.removeEventListener('change', validateFile)
-    }
-    if (guardarButton) {
-      guardarButton.removeEventListener('click', subirDecreto)
-    }
-    return false
+    card.removeEventListener('change', validateFile)
+    card.removeEventListener('click', subirDecreto)
+    // if (fileInput) {
+    // }
+    // if (guardarButton) {
+    // }
+    // return false
   }
 
   function validateClick(e) {
@@ -170,10 +184,10 @@ export const pre_proyectoCredito_card = ({ elementToInsert, data = null }) => {
   }
 
   if (fileInput) {
-    fileInput.addEventListener('change', validateFile)
+    cardElement.addEventListener('change', validateFile)
   }
   if (guardarButton) {
-    guardarButton.addEventListener('click', subirDecreto)
+    cardElement.addEventListener('click', subirDecreto)
   }
   cardElement.addEventListener('click', validateClick)
 }

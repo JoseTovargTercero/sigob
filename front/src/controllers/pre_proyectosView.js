@@ -1,3 +1,4 @@
+import { getProyecto } from '../api/pre_proyectos.js'
 import {
   ejerciciosLista,
   validarEjercicioActual,
@@ -15,28 +16,6 @@ import {
 const d = document
 const w = window
 
-let dataEjemplo = {
-  id_ente: '9',
-  monto: '123',
-  fecha: '2025-12-31',
-  id_ejercicio: '1',
-  descripcion_credito: 'descripcion credito',
-  distribuciones: [
-    {
-      id_distribucion: 103,
-      monto: 123,
-    },
-  ],
-  tipo_credito: '0',
-  tipo_proyecto: '0',
-  descripcion_proyecto: {
-    value: false,
-    message: 'Descripción inválida',
-    type: 'textarea',
-  },
-  decreto: false,
-}
-
 export const validateProyectosView = async () => {
   let ejercicioFiscal = await ejerciciosLista({
     elementToInsert: 'ejercicios-fiscales',
@@ -45,11 +24,6 @@ export const validateProyectosView = async () => {
   validateProyectosTable()
 
   loadProyectosTable(ejercicioFiscal.id)
-
-  pre_proyectoCredito_card({
-    elementToInsert: 'proyectos-view',
-    data: dataEjemplo,
-  })
 
   d.addEventListener('click', async (e) => {
     if (e.target.id === 'proyectos-registrar') {
@@ -92,6 +66,13 @@ export const validateProyectosView = async () => {
     }
 
     if (e.target.dataset.detalleid) {
+      let data = await getProyecto(e.target.dataset.detalleid)
+
+      pre_proyectoCredito_card({
+        elementToInsert: 'proyectos-view',
+        data,
+      })
+
       // pre_traspasosCard({
       //   elementToInsert: 'traspasos-view',
       //   data: await getTraspaso(e.target.dataset.detalleid),
@@ -102,6 +83,13 @@ export const validateProyectosView = async () => {
       ejercicioFiscal = await validarEjercicioActual({
         ejercicioTarget: e.target,
       })
+
+      if (d.getElementById('proyectos-form-card')) {
+        pre_proyectosForm_card({ close: true })
+      }
+      if (d.getElementById('credito-detalle-form-card')) {
+        pre_proyectoCredito_card({ close: true })
+      }
     }
   })
 }

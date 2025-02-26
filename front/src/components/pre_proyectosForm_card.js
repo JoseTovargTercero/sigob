@@ -17,8 +17,9 @@ import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 const d = document
 
 export const pre_proyectosForm_card = async ({
-  elementToInsert,
-  ejercicioFiscal,
+  elementToInsert = null,
+  ejercicioFiscal = null,
+  close = false,
 }) => {
   let fieldList = {
     monto: '',
@@ -62,10 +63,10 @@ export const pre_proyectosForm_card = async ({
 
   let montos = { totalCredito: 0, totalAcreditado: 0 }
 
-  let nombreCard = '${nombreCard}'
+  let nombreCard = 'proyectos'
 
   const oldCardElement = d.getElementById(`${nombreCard}-form-card`)
-  if (oldCardElement) {
+  if (oldCardElement || close) {
     closeCard(oldCardElement)
   }
 
@@ -324,7 +325,15 @@ export const pre_proyectosForm_card = async ({
     }
 
     if (e.target.id === 'monto') {
-      montos.totalCredito = formatearFloat(e.target.value)
+      montos.totalAcreditado = 0
+
+      if (e.target.value === '' || isNaN(e.target.value)) {
+        e.target.value = 0
+        montos.totalCredito = Number(formatearFloat(e.target.value))
+        e.target.value = ''
+      } else {
+        montos.totalCredito = Number(formatearFloat(e.target.value))
+      }
       actualizarLabel()
     }
 
@@ -377,22 +386,22 @@ export const pre_proyectosForm_card = async ({
       if (formFocus === 1) {
         let creditoInput = d.querySelectorAll('.proyecto-input')
 
-        // creditoInput.forEach((input) => {
-        //   fieldList = validateInput({
-        //     target: input,
-        //     fieldList,
-        //     fieldListErrors,
-        //     type: fieldListErrors[input.name].type,
-        //   })
-        // })
+        creditoInput.forEach((input) => {
+          fieldList = validateInput({
+            target: input,
+            fieldList,
+            fieldListErrors,
+            type: fieldListErrors[input.name].type,
+          })
+        })
 
-        // if (Object.values(fieldListErrors).some((el) => el.value)) {
-        //   toastNotification({
-        //     type: NOTIFICATIONS_TYPES.fail,
-        //     message: 'Hay campos inválidos',
-        //   })
-        //   return
-        // }
+        if (Object.values(fieldListErrors).some((el) => el.value)) {
+          toastNotification({
+            type: NOTIFICATIONS_TYPES.fail,
+            message: 'Hay campos inválidos',
+          })
+          return
+        }
 
         if (fieldList.id_ente === '') {
           toastNotification({
@@ -492,7 +501,7 @@ export const pre_proyectosForm_card = async ({
           monto: formatearFloat(fieldList.monto),
           fecha: fieldList.fecha,
           id_ejercicio: ejercicioFiscal.id,
-          descripcion_credito: 'descripcion credito',
+          descripcion_credito: fieldList.descripcion_credito,
           distribuciones: data,
           tipo_credito: fieldList['tipo-credito'],
           tipo_proyecto: fieldListProyecto['tipo-proyecto'],

@@ -60,21 +60,21 @@ require_once '../../back/sistema_global/session.php';
                         </div>
                         <div class="card-body">
                             <div class="table-responsive p-1">
-                                <!-- <table id="proyecto-table" class="table table-striped" style="width:100%">
+                                <table id="proyecto-table" class="table table-striped" style="width:100%">
                                     <thead class="w-100">
 
 
-                                        <th>Tipo</th>
-                                        <th>N° Orden</th>
+                                        <th>Tipo c´redito</th>
+                                        <th>Tipo proyecto</th>
 
-                                        <th>MONTO</th>
+                                        <th>Monto</th>
                                         <th>Fecha</th>
                                         <th>Estado</th>
 
                                         <th>Acciones</th>
                                     </thead>
 
-                                </table> -->
+                                </table>
                             </div>
                         </div>
                     </div>
