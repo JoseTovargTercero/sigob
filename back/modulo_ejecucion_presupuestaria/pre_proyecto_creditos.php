@@ -177,11 +177,11 @@ function registrarCreditoAdicional($data)
         }
 
         if ($stmtProyecto->affected_rows > 0 AND $stmtCredito->affected_rows > 0) {
+            $conexion->commit();
             return json_encode(["success" => "El crédito adicional y su proyecto se registraron correctamente."]);
         }
 
-        // Confirmar la transacción
-        $conexion->commit();
+        
 
         
 
