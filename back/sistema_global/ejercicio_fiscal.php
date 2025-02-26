@@ -535,7 +535,7 @@ function obtenerEjercicioFiscalPorId($id)
     }
 }
 
-function obtenerDistribucionEntesPorEjercicio($id_ejercicio)
+function obtenerDistribucionEntesPorEjercicio($id_ejercicio, $id_ente)
 {
     global $remote_db;
     $conexion = $remote_db;
@@ -554,15 +554,15 @@ function obtenerDistribucionEntesPorEjercicio($id_ejercicio)
             LEFT JOIN pl_programas p ON e.programa = p.id
             LEFT JOIN pl_actividades a ON e.actividad = a.id
             LEFT JOIN pl_proyectos pr ON e.proyecto = pr.id
-            WHERE de.id_ejercicio = ?";
+            WHERE de.id_ejercicio = ? AND de.id_ente = ?";
 
     $stmt = $conexion->prepare($sql);
-    $stmt->bind_param("i", $id_ejercicio);
+    $stmt->bind_param("ii", $id_ejercicio, $id_ente);  // Se agrega un segundo parámetro para id_ente
     $stmt->execute();
     $resultado = $stmt->get_result();
 
     if ($resultado->num_rows === 0) {
-        return json_encode(["error" => "No se encontraron registros en distribucion_entes para el id_ejercicio proporcionado."]);
+        return json_encode(["error" => "No se encontraron registros en distribucion_entes para el id_ejercicio y id_ente proporcionados."]);
     }
 
     $informacion = $resultado->fetch_all(MYSQLI_ASSOC);
@@ -592,6 +592,7 @@ function obtenerDistribucionEntesPorEjercicio($id_ejercicio)
 
     return json_encode(['success' => $informacion]);
 }
+
 
 
 
@@ -822,10 +823,10 @@ if (isset($data["accion"])) {
     } elseif ($accion === "obtener_todos") {
         echo obtenerTodosEjerciciosFiscales();
     } elseif ($accion === "obtener_distribuciones_entes") {
-        if (empty($data["id_ejercicio"])) {
-            echo json_encode(['error' => "Debe proporcionar un ejercicio fiscal para la consulta"]);
+        if (empty($data["id_ejercicio"]) OR empty($data["id_ente"])) {
+            echo json_encode(['error' => "Debe proporcionar un ejercicio fiscal o un ente para la consulta"]);
         } else {
-            echo obtenerDistribucionEntesPorEjercicio($data["id_ejercicio"]);
+            echo obtenerDistribucionEntesPorEjercicio($data["id_ejercicio"], $data["id_ente"]);
         }
     } elseif ($accion === "obtener_entes") {
         echo obtenerTodosLosEntes();
