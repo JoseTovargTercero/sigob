@@ -163,23 +163,29 @@ function registrarCreditoAdicional($data)
         }
 
         $id_credito = $conexion->insert_id;
+        $decreto = "";
 
         // Insertar en proyecto_credito
         $sqlProyecto = "INSERT INTO proyecto_credito (id_credito, tipo_proyecto, descripcion_proyecto, distribuciones, decreto, status) 
-                        VALUES (?, ?, ?, ?, NULL, 0)";
+                        VALUES (?, ?, ?, ?, ?, 0)";
         $stmtProyecto = $conexion->prepare($sqlProyecto);
         $distribuciones_json = json_encode($distribuciones);
-        $stmtProyecto->bind_param("isss", $id_credito, $tipo_proyecto, $descripcion_proyecto, $distribuciones_json);
+        $stmtProyecto->bind_param("issss", $id_credito, $tipo_proyecto, $descripcion_proyecto, $distribuciones_json, $decreto);
         $stmtProyecto->execute();
+        if (!$stmtProyecto->execute()) {
+    throw new Exception("Error en proyecto_credito: " . $stmtProyecto->error);
+}
+
 
         if ($stmtProyecto->affected_rows === 0) {
             throw new Exception("No se pudo registrar el proyecto de crédito.");
         }
 
-        if ($stmtProyecto->affected_rows > 0 AND $stmtCredito->affected_rows > 0) {
-            $conexion->commit();
-            return json_encode(["success" => "El crédito adicional y su proyecto se registraron correctamente."]);
-        }
+       if ($stmtProyecto->affected_rows > 0 AND $stmtCredito->affected_rows > 0) {
+    $conexion->commit();  // Primero confirmar la transacción
+    return json_encode(["success" => "El credito adicional y su proyecto se registraron correctamente."]);
+}
+
 
         
 
@@ -193,6 +199,8 @@ function registrarCreditoAdicional($data)
         return json_encode(["error" => $e->getMessage()]);
     }
 }
+
+
 
 
 
