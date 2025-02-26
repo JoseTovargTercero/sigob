@@ -1,4 +1,7 @@
-import { obtenerDistribucionEntes } from '../api/pre_distribucion.js'
+import {
+  obtenerDistribucionEntes,
+  obtenerEntes,
+} from '../api/pre_distribucion.js'
 import { getPreAsignacionEntes } from '../api/pre_entes.js'
 import { registrarCredito } from '../api/pre_proyectos.js'
 import {
@@ -17,8 +20,9 @@ export const pre_proyectosForm_card = async ({
   elementToInsert,
   ejercicioFiscal,
 }) => {
-  let fieldList = { monto: '', fecha: '', 'tipo-credito': '' }
+  let fieldList = { monto: '', fecha: '', 'tipo-credito': '', id_ente: '' }
   let fieldListErrors = {
+    id_ente: { value: true, message: 'Ente inválido', type: 'number3' },
     monto: { value: true, message: 'Monto inválido', type: 'number3' },
     fecha: { value: true, message: 'Fecha inválida', type: 'text' },
     'tipo-credito': { value: true, message: 'Tipo inválido', type: 'text' },
@@ -50,11 +54,31 @@ export const pre_proyectosForm_card = async ({
     closeCard(oldCardElement)
   }
 
-  let distribuciones = await obtenerDistribucionEntes(ejercicioFiscal.id)
-  console.log(distribuciones)
+  let entes = await obtenerEntes()
+  let distribuciones = []
+
+  const entesOptions = () => {
+    let options = [`option value=''>0Elegir...</option>`]
+    entes.forEach((ente) => {
+      let option = `<option value='${ente.ente.id}'>${ente.ente.nombre}</option>`
+      options.push(option)
+    })
+
+    return options.join('')
+  }
 
   let creditosForm = () => {
     return `<div class='row slide-up-animation' id='card-body-part-1'>
+     <div class='form-group'>
+            <label class='form-label' for='id_ente'></label>
+            <select
+              class='form-select proyecto-input'
+              name='id_ente'
+              id='id_ente'  
+            >
+            ${entesOptions()}
+            </select>
+          </div>
         <div class='col'>
           <div class='form-group'>
             <label class='form-label' for='monto'></label>
@@ -92,7 +116,6 @@ export const pre_proyectosForm_card = async ({
             <option value='1'>Venezuela Bella</option>
           </select>
         </div>
-
       </div>`
   }
 
@@ -254,12 +277,37 @@ export const pre_proyectosForm_card = async ({
 
   async function validateInputFunction(e) {
     if (e.target.classList.contains('proyecto-input')) {
+      if (e.target.name === 'id_ente') {
+        if (d.getElementById('card-body-part-2')) {
+          let partidasContainer = d.getElementById('partidas-container')
+          partidasContainer.innerHTML = ''
+
+          toastNotification({
+            type: NOTIFICATIONS_TYPES.done,
+            message:
+              'Al cambiar el ente se actualizarán las partidas a acreditar',
+          })
+
+          fieldList = validateInput({
+            target: e.target,
+            fieldList,
+            fieldListErrors,
+            type: fieldListErrors[e.target.name].type,
+          })
+          numsRows = 0
+          montos.totalAcreditado = 0
+
+          actualizarLabel()
+        }
+      }
       fieldList = validateInput({
         target: e.target,
         fieldList,
         fieldListErrors,
         type: fieldListErrors[e.target.name].type,
       })
+
+      console.log(fieldList)
     }
 
     if (e.target.id === 'monto') {
@@ -316,19 +364,27 @@ export const pre_proyectosForm_card = async ({
       if (formFocus === 1) {
         let creditoInput = d.querySelectorAll('.proyecto-input')
 
-        creditoInput.forEach((input) => {
-          fieldList = validateInput({
-            target: input,
-            fieldList,
-            fieldListErrors,
-            type: fieldListErrors[input.name].type,
-          })
-        })
+        // creditoInput.forEach((input) => {
+        //   fieldList = validateInput({
+        //     target: input,
+        //     fieldList,
+        //     fieldListErrors,
+        //     type: fieldListErrors[input.name].type,
+        //   })
+        // })
 
-        if (Object.values(fieldListErrors).some((el) => el.value)) {
+        // if (Object.values(fieldListErrors).some((el) => el.value)) {
+        //   toastNotification({
+        //     type: NOTIFICATIONS_TYPES.fail,
+        //     message: 'Hay campos inválidos',
+        //   })
+        //   return
+        // }
+
+        if (fieldList.id_ente === '') {
           toastNotification({
             type: NOTIFICATIONS_TYPES.fail,
-            message: 'Hay campos inválidos',
+            message: 'Seleccione un ente',
           })
           return
         }
@@ -339,6 +395,13 @@ export const pre_proyectosForm_card = async ({
           cardBodyPart2.classList.remove('d-none')
         } else {
           cardBody.insertAdjacentHTML('beforeend', proyectoForm())
+
+          distribuciones = await obtenerDistribucionEntes(
+            ejercicioFiscal.id,
+            fieldList.id_ente
+          )
+
+          console.log(distribuciones)
         }
 
         if (btnPrevius.hasAttribute('disabled'))
@@ -407,8 +470,8 @@ export const pre_proyectosForm_card = async ({
         console.log(data)
 
         let informacion = {
-          id_ente: 1,
-          monto: fieldList.monto,
+          id_ente: fieldList.id_ente,
+          monto: formatearFloat(fieldList.monto),
           fecha: fieldList.fecha,
           id_ejercicio: ejercicioFiscal.id,
           descripcion_credito: 'descripcion credito',
@@ -488,9 +551,10 @@ export const pre_proyectosForm_card = async ({
       let partidaInput = el.querySelector(`#distribucion-${el.dataset.row}`)
       let montoInput = el.querySelector(`#distribucion-monto-${el.dataset.row}`)
 
-      let partidaEncontrada = ejercicioFiscal.distribucion_partidas.find(
+      let partidaEncontrada = distribuciones.find(
         (partida) => Number(partida.id) === Number(partidaInput.value)
       )
+      console.log(partidaInput.value)
 
       // Verificar si la partida introducida existe
 
@@ -536,6 +600,14 @@ export const pre_proyectosForm_card = async ({
   }
 
   async function addRow() {
+    if (!fieldList.id_ente) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.fail,
+        message: 'Seleccione un ente',
+      })
+      return
+    }
+
     let newNumRow = numsRows + 1
     numsRows++
 
@@ -561,23 +633,21 @@ export const pre_proyectosForm_card = async ({
 
     let options = [`<option value=''>Elegir partida...</option>`]
 
-    ejercicioFiscal.distribucion_partidas.forEach((partida) => {
-      let sppa = `
-      ${
-        partida.sector_informacion ? partida.sector_informacion.sector : '00'
-      }.${
-        partida.programa_informacion
-          ? partida.programa_informacion.programa
-          : '00'
-      }.${
-        partida.proyecto_informacion
-          ? partida.proyecto_informacion.proyecto
-          : '00'
-      }.${partida.id_actividad ? partida.id_actividad : '00'}`
+    distribuciones
+      .filter(
+        (partida) => Number(partida.id_ente) === Number(fieldList.id_ente)
+      )
+      .forEach((partida) => {
+        let sppa = `
+        ${partida.sector_numero ? partida.sector_numero : '00'}.${
+          partida.programa_numero ? partida.programa_numero : '00'
+        }.${partida.proyecto_numero ? partida.proyecto_numero : '00'}.${
+          partida.actividad_id ? partida.actividad_id : '00'
+        }`
 
-      let opt = `<option value="${partida.id}">${sppa}.${partida.partida}</option>`
-      options.push(opt)
-    })
+        let opt = `<option value="${partida.id}">${sppa}.${partida.id}</option>`
+        options.push(opt)
+      })
 
     // Nombre de ente
     // - ${partida.ente_nombre[0].toUpperCase()}${partida.ente_nombre

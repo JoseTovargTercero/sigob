@@ -2,6 +2,7 @@ import {
   ejerciciosLista,
   validarEjercicioActual,
 } from '../components/form_ejerciciosLista.js'
+import { pre_proyectoCredito_card } from '../components/pre_proyectoCredito_card.js'
 import { pre_proyectosForm_card } from '../components/pre_proyectosForm_card.js'
 
 import { toastNotification } from '../helpers/helpers.js'
@@ -13,6 +14,29 @@ import {
 
 const d = document
 const w = window
+
+let dataEjemplo = {
+  id_ente: '9',
+  monto: '123',
+  fecha: '2025-12-31',
+  id_ejercicio: '1',
+  descripcion_credito: 'descripcion credito',
+  distribuciones: [
+    {
+      id_distribucion: 103,
+      monto: 123,
+    },
+  ],
+  tipo_credito: '0',
+  tipo_proyecto: '0',
+  descripcion_proyecto: {
+    value: false,
+    message: 'Descripción inválida',
+    type: 'textarea',
+  },
+  decreto: false,
+}
+
 export const validateProyectosView = async () => {
   let ejercicioFiscal = await ejerciciosLista({
     elementToInsert: 'ejercicios-fiscales',
@@ -21,6 +45,11 @@ export const validateProyectosView = async () => {
   validateProyectosTable()
 
   loadProyectosTable(ejercicioFiscal.id)
+
+  pre_proyectoCredito_card({
+    elementToInsert: 'proyectos-view',
+    data: dataEjemplo,
+  })
 
   d.addEventListener('click', async (e) => {
     if (e.target.id === 'proyectos-registrar') {
