@@ -93,7 +93,7 @@ function registrarCreditoAdicional($data)
                 $sqlMontoDistribucion = "SELECT distribucion 
                                          FROM distribucion_entes 
                                          WHERE id_ente = ? AND id_ejercicio = ? AND distribucion LIKE '%\"id_distribucion\":\"$id_distribucion\"%'";
-                $stmtMontoDistribucion = $conexion->prepare($sqlMontoDistribucion);
+                $stmtMontoDistribucion = $remote_db->prepare($sqlMontoDistribucion);
                 $stmtMontoDistribucion->bind_param("ii", $id_ente, $id_ejercicio);
                 $stmtMontoDistribucion->execute();
                 $resultadoMontoDistribucion = $stmtMontoDistribucion->get_result();
@@ -122,7 +122,7 @@ function registrarCreditoAdicional($data)
             if ($montoDistribucion < $monto_solicitado) {
                 // Obtener id_partida desde distribucion_presupuestaria
                 $sqlDistribucion = "SELECT id_partida FROM distribucion_presupuestaria WHERE id = ?";
-                $stmtDistribucion = $conexion->prepare($sqlDistribucion);
+                $stmtDistribucion = $remote_db->prepare($sqlDistribucion);
                 $stmtDistribucion->bind_param("i", $id_distribucion);
                 $stmtDistribucion->execute();
                 $resultadoDistribucion = $stmtDistribucion->get_result();
@@ -136,7 +136,7 @@ function registrarCreditoAdicional($data)
 
                 // Obtener la clave de partida
                 $sqlPartida = "SELECT partida FROM partidas_presupuestarias WHERE id = ?";
-                $stmtPartida = $conexion->prepare($sqlPartida);
+                $stmtPartida = $remote_db->prepare($sqlPartida);
                 $stmtPartida->bind_param("i", $idPartida);
                 $stmtPartida->execute();
                 $resultadoPartida = $stmtPartida->get_result();
@@ -176,12 +176,14 @@ function registrarCreditoAdicional($data)
             throw new Exception("No se pudo registrar el proyecto de crédito.");
         }
 
-        // Confirmar la transacción
-        $conexion->commit();
-
         if ($stmtProyecto->affected_rows != 0 AND $stmtCredito->affected_rows != 0) {
             return json_encode(["success" => "El crédito adicional y su proyecto se registraron correctamente."]);
         }
+
+        // Confirmar la transacción
+        $conexion->commit();
+
+        
 
         
 
