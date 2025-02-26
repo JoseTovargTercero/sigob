@@ -350,24 +350,23 @@ const obtenerDistribucionPositiva = async ({ id_ejercicio }) => {
   }
 }
 
-const obtenerEntes = async ({ id_ejercicio }) => {
+const obtenerEntes = async () => {
   showLoader()
   try {
     let res = await fetch(ejercicioFiscalUrl, {
       method: 'POST',
       body: JSON.stringify({
         accion: 'obtener_entes',
-        id_ejercicio,
       }),
     })
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
 
-    const clone = res.clone()
+    // const clone = res.clone()
 
-    let text = await clone.text()
+    // let text = await clone.text()
 
-    console.log(text)
+    // console.log(text)
 
     const json = await res.json()
 
@@ -390,14 +389,14 @@ const obtenerEntes = async ({ id_ejercicio }) => {
 
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
-      message: 'Error al enviar datos',
+      message: 'Error al obtener entes',
     })
   } finally {
     hideLoader()
   }
 }
 
-const obtenerDistribucionEntes = async (id_ejercicio) => {
+const obtenerDistribucionEntes = async (id_ejercicio, id_ente) => {
   showLoader()
   try {
     let res = await fetch(ejercicioFiscalUrl, {
@@ -405,16 +404,17 @@ const obtenerDistribucionEntes = async (id_ejercicio) => {
       body: JSON.stringify({
         accion: 'obtener_distribuciones_entes',
         id_ejercicio,
+        id_ente,
       }),
     })
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
 
-    const clone = res.clone()
+    // const clone = res.clone()
 
-    let text = await clone.text()
+    // let text = await clone.text()
 
-    console.log(text)
+    // console.log(text)
 
     const json = await res.json()
 
