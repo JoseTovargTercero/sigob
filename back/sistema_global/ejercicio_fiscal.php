@@ -538,23 +538,28 @@ function obtenerEjercicioFiscalPorId($id)
 function obtenerDistribucionEntesPorEjercicio($id_ejercicio)
 {
     global $remote_db;
-
     $conexion = $remote_db;
+
     $sql = "SELECT 
                 de.*, 
-                e.* 
+                e.id AS ente_id, e.ente_nombre, e.sector AS ente_sector, e.programa AS ente_programa, 
+                e.actividad AS ente_actividad, e.proyecto AS ente_proyecto, e.tipo_ente,
+                s.id AS sector_id, s.denominacion AS sector_nombre, s.sector AS sector_numero,
+                p.id AS programa_id, p.denominacion AS programa_nombre, p.programa AS programa_numero,
+                a.id AS actividad_id, a.denominacion AS actividad_nombre, a.actividad AS actividad_numero,
+                pr.id AS proyecto_id, pr.denominacion AS proyecto_nombre, pr.proyecto_id AS proyecto_numero
             FROM distribucion_entes de
             JOIN entes e ON de.id_ente = e.id
+            LEFT JOIN pl_sectores s ON e.sector = s.id
+            LEFT JOIN pl_programas p ON e.programa = p.id
+            LEFT JOIN pl_actividades a ON e.actividad = a.id
+            LEFT JOIN pl_proyectos pr ON e.proyecto = pr.id
             WHERE de.id_ejercicio = ?";
-
 
     $stmt = $conexion->prepare($sql);
     $stmt->bind_param("i", $id_ejercicio);
     $stmt->execute();
     $resultado = $stmt->get_result();
-
-
-
 
     if ($resultado->num_rows === 0) {
         return json_encode(["error" => "No se encontraron registros en distribucion_entes para el id_ejercicio proporcionado."]);
@@ -562,14 +567,15 @@ function obtenerDistribucionEntesPorEjercicio($id_ejercicio)
 
     $informacion = $resultado->fetch_all(MYSQLI_ASSOC);
     foreach ($informacion as &$registro) {
-        $decoded = json_decode($registro['distribucion'], true);
-
-        $registro['distribucion'] = $decoded;
-
+        if (!empty($registro['distribucion'])) {
+            $decoded = json_decode($registro['distribucion'], true);
+            $registro['distribucion'] = $decoded;
+        }
     }
 
     return json_encode(['success' => $informacion]);
 }
+
 
 
 function obtenerTodosLosEntes()
