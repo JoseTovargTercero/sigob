@@ -176,7 +176,7 @@ function registrarCreditoAdicional($data)
             throw new Exception("No se pudo registrar el proyecto de crédito.");
         }
 
-        if ($stmtProyecto->affected_rows != 0 AND $stmtCredito->affected_rows != 0) {
+        if ($stmtProyecto->affected_rows > 0 AND $stmtCredito->affected_rows > 0) {
             return json_encode(["success" => "El crédito adicional y su proyecto se registraron correctamente."]);
         }
 
