@@ -554,10 +554,10 @@ function obtenerDistribucionEntesPorEjercicio($id_ejercicio, $id_ente)
             LEFT JOIN pl_programas p ON e.programa = p.id
             LEFT JOIN pl_actividades a ON e.actividad = a.id
             LEFT JOIN pl_proyectos pr ON e.proyecto = pr.id
-            WHERE de.id_ejercicio = ? AND de.id_ente = ?";
+            WHERE de.id_ejercicio = ? AND de.id_ente = ? AND e.id = ?";
 
     $stmt = $conexion->prepare($sql);
-    $stmt->bind_param("ii", $id_ejercicio, $id_ente);  // Se agrega un segundo parámetro para id_ente
+    $stmt->bind_param("iii", $id_ejercicio, $id_ente, $id_ente);  // Se agrega un segundo parámetro para id_ente
     $stmt->execute();
     $resultado = $stmt->get_result();
 
