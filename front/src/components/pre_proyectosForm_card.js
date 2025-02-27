@@ -220,7 +220,7 @@ export const pre_proyectosForm_card = async ({
       ${creditosForm()}</div>
       <div class='card-footer'>
         <div class='card-footer text-center'>
-          <button class='btn btn-secondary' id='btn-previus'>
+          <button class='btn btn-secondary' id='btn-previus' disabled>
             Atrás
           </button>
           <button class='btn btn-primary' id='btn-next'>
@@ -449,6 +449,7 @@ export const pre_proyectosForm_card = async ({
         if (btnPrevius.hasAttribute('disabled'))
           btnPrevius.removeAttribute('disabled')
 
+        btnNext.textContent = 'Enviar'
         formFocus++
         return
       }
@@ -507,6 +508,23 @@ export const pre_proyectosForm_card = async ({
 
         if (!data) return
 
+        if (montos.totalCredito < montos.totalAcreditado) {
+          toastNotification({
+            type: NOTIFICATIONS_TYPES.fail,
+            message:
+              'El monto a acreditar supera el monto total del crédito. Si desea seguir modifique el monto a acreditar.',
+          })
+          return
+        }
+
+        if (montos.totalCredito > montos.totalAcreditado) {
+          toastNotification({
+            type: NOTIFICATIONS_TYPES.fail,
+            message: 'No se ha consumido el monto total de crédito.',
+          })
+          return
+        }
+
         let informacion = {
           id_ente: fieldList.id_ente,
           monto: formatearFloat(fieldList.monto),
@@ -562,6 +580,7 @@ export const pre_proyectosForm_card = async ({
 
         formFocus--
 
+        btnNext.textContent = 'Siguiente'
         btnPrevius.setAttribute('disabled', true)
 
         return

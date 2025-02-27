@@ -29,53 +29,81 @@ export const pre_proyectoCredito_card = ({
 
   let { decreto } = data
 
-  let card = `<div class='card slide-up-animation' id='${nombreCard}-form-card'>
-        <div class='card-header d-flex justify-content-between'>
-            <div class=''>
-                <h5 class='mb-0'>Información del credito y su distribución asociada</h5>
-                <small class='mt-0 text-muted'>GesTione la información del crédito registrado y su decreto</small>
-            </div>
-            <button
-                data-close='btn-close'
-                type='button'
-                class='btn btn-danger'
-                aria-label='Close'
-            >
-                &times;
-            </button>
+  let card = `  <div class='card slide-up-animation' id='${nombreCard}-form-card'>
+      <div class='card-header d-flex justify-content-between'>
+        <div class=''>
+          <h5 class='mb-0'>
+            Información del credito y su distribución asociada
+          </h5>
+          <small class='mt-0 text-muted'>
+            GesTione la información del crédito registrado y su decreto
+          </small>
         </div>
-        <div class='card-body'>
-        <div class="row">
-        <p>
-        <span class="badge bg-secondary">Tipo de crédito: <b>${
-          Number(data.tipo_credito) === 0 ? 'FCI' : 'Venezuela Bella'
-        }</b></span>
-         <span class="badge bg-secondary">Tipo de proyecto: <b>${
-           Number(data.tipo_proyecto) === 0 ? 'Transferencia' : 'Compra'
-         }</b></span>
-          <span class="badge bg-success">Monto total: <b>${separadorLocal(
-            data.monto
-          )} Bs</b></span>
-         </p>
-
-         <p><b>Descripción credito: </b>${data.descripcion_credito}<p>
-         <p><b>Descripción proyecto: </b>${data.descripcion_proyecto}<p>
+        <button
+          data-close='btn-close'
+          type='button'
+          class='btn btn-danger'
+          aria-label='Close'
+        >
+          &times;
+        </button>
+      </div>
+      <div class='card-body'>
+        <div class='row mb-4'>
+          <p>
+            <span class='badge bg-secondary'>
+              Tipo de crédito:
+              <b>
+                ${Number(data.tipo_credito) === 0 ? 'FCI' : 'Venezuela Bella'}
+              </b>
+            </span>
+            <span class='badge bg-secondary'>
+              Tipo de proyecto:
+              <b>
+                ${Number(data.tipo_proyecto) === 0 ? 'Transferencia' : 'Compra'}
+              </b>
+            </span>
+             <span class='badge bg-secondary'>
+              Fecha: <b>
+                ${
+                  data.fecha
+                    ? data.fecha.split('-').reverse().join('-')
+                    : 'Compra'
+                }
+              </b>
+            </span>
+            <span class='badge bg-success'>
+              Monto total: <b>${separadorLocal(data.monto)} Bs</b>
+            </span>
+          </p>
         </div>
-        <div class="row">
-            ${
-              decreto
-                ? '<iframe id="decreto-iframe" style="width: 100%; height: 500px;"></iframe>'
-                : '<input type="file" id="decreto-file" accept="application/pdf" class="form-control"><p id="decreto-file-error" class="text-danger slide-up-animation mt-2" style="display: none;">Error: Archivo inválido.</p>'
-            }
-            </div>
+        <div class='row mb-4'>
+          <div class='col'>
+            <p>
+              <b>Descripción credito: </b>${data.descripcion_credito}
+            </p>
+          </div>
+          <div class='col'>
+            <p>
+              <b>Descripción proyecto: </b>${data.descripcion_proyecto}
+            </p>
+          </div>
         </div>
-        <div class='card-footer'>
-            ${
-              decreto
-                ? ''
-                : `<button class="btn btn-primary" id="${nombreCard}-guardar">Subir Decreto</button>`
-            }
+        <div class='row'>
+          ${
+            decreto
+              ? '<iframe id="decreto-iframe" style="width: 100%; height: 500px;"></iframe>'
+              : '<input type="file" id="decreto-file" accept="application/pdf" class="form-control"><p id="decreto-file-error" class="text-danger slide-up-animation mt-2" style="display: none;">Error: Archivo inválido.</p>'
+          }
         </div>
+      </div>
+      <div class='card-footer'>
+        ${
+          decreto
+            ? ''
+            : `<button class="btn btn-primary" id="${nombreCard}-guardar">Subir Decreto</button>`
+        }
+      </div>
     </div>`
 
   d.getElementById(elementToInsert).insertAdjacentHTML('afterbegin', card)
