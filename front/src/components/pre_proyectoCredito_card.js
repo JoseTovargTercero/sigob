@@ -1,4 +1,6 @@
+import { registrarCredito, registrarDecreto } from '../api/pre_proyectos.js'
 import {
+  confirmNotification,
   hideLoader,
   separadorLocal,
   toastNotification,
@@ -69,7 +71,7 @@ export const pre_proyectoCredito_card = ({
             ${
               decreto
                 ? ''
-                : '<button class="btn btn-primary" id="${nombreCard}-guardar">Subir Decreto</button>'
+                : `<button class="btn btn-primary" id="${nombreCard}-guardar">Subir Decreto</button>`
             }
         </div>
     </div>`
@@ -82,11 +84,13 @@ export const pre_proyectoCredito_card = ({
   let guardarButton = d.getElementById(`${nombreCard}-guardar`)
   let decretoIframe = d.getElementById('decreto-iframe')
 
+  let base64Archivo = null
+
   function closeCard(card) {
     card.remove()
     card.removeEventListener('click', validateClick)
     card.removeEventListener('change', validateFile)
-    card.removeEventListener('click', subirDecreto)
+
     // if (fileInput) {
     // }
     // if (guardarButton) {
@@ -97,6 +101,10 @@ export const pre_proyectoCredito_card = ({
   function validateClick(e) {
     if (e.target.dataset.close) {
       closeCard(cardElement)
+    }
+
+    if (e.target === guardarButton) {
+      subirDecreto()
     }
   }
 
@@ -122,63 +130,60 @@ export const pre_proyectoCredito_card = ({
     }
 
     fileError.style.display = 'none'
+
+    // Convertir a base64
+
+    // const archivo = decretoFile
+    // let datos = {}
+
+    if (decretoFile) {
+      const reader = new FileReader()
+      reader.onloadend = async (e) => {
+        // Agregamos el parámetro 'e' para el evento
+        base64Archivo = e.target.result.split(',')[1]
+      }
+      reader.readAsDataURL(decretoFile) // Iniciamos la lectura del archivo
+    }
   }
 
   async function subirDecreto() {
     if (!decretoFile) {
-      toastNotification(
-        'Seleccione un archivo PDF.',
-        NOTIFICATIONS_TYPES.WARNING
-      )
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.fail,
+        message: 'Seleccione un archivo PDF.',
+      })
       return
     }
 
     if (fileError.style.display === 'block') {
-      toastNotification(
-        'Corrija los errores en el archivo.',
-        NOTIFICATIONS_TYPES.WARNING
-      )
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.fail,
+        message: 'Corrija los errores en el archivo.',
+      })
+
       return
     }
 
-    const formData = new FormData()
-    formData.append('decreto', decretoFile)
-
-    try {
-      // Aquí iría tu lógica para subir el archivo al servidor
-      // Ejemplo con fetch:
-      /*
-            const response = await fetch('/tu-ruta-de-subida', {
-                method: 'POST',
-                body: formData,
-            });
-
-            if (response.ok) {
-                toastNotification('Decreto subido correctamente.', NOTIFICATIONS_TYPES.SUCCESS);
-                closeCard(cardElement);
-            } else {
-                toastNotification('Error al subir el decreto.', NOTIFICATIONS_TYPES.ERROR);
-            }
-            */
-
-      //Simulacion de subida Exitosa.
-      setTimeout(() => {
-        toastNotification(
-          'Decreto subido correctamente.',
-          NOTIFICATIONS_TYPES.SUCCESS
-        )
-        closeCard(cardElement)
-      }, 1000)
-    } catch (error) {
-      toastNotification(
-        'Error al subir el decreto: ' + error.message,
-        NOTIFICATIONS_TYPES.ERROR
-      )
+    let datos = {
+      id_credito: data.id_credito,
+      archivoBase64: base64Archivo,
+      tipo: 'application/pdf',
     }
+
+    confirmNotification({
+      type: NOTIFICATIONS_TYPES.send,
+      message: '¿Desea registrar el decreto?',
+      successFunction: async () => {
+        let res = await registrarDecreto(datos)
+        if (res.success) {
+          closeCard(cardElement)
+        }
+      },
+    })
   }
 
   // Manejo de datos recibidos (blob PDF)
-  if (data && data.decretoBlob) {
+  if (data && data.decreto) {
     const pdfUrl = URL.createObjectURL(data.decretoBlob)
     decretoIframe.src = pdfUrl
   }
@@ -186,8 +191,6 @@ export const pre_proyectoCredito_card = ({
   if (fileInput) {
     cardElement.addEventListener('change', validateFile)
   }
-  if (guardarButton) {
-    cardElement.addEventListener('click', subirDecreto)
-  }
+
   cardElement.addEventListener('click', validateClick)
 }

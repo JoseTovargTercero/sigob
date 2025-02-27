@@ -78,10 +78,10 @@ function registrarCreditoAdicional($data)
         $tipo_credito = $data['tipo_credito'];
         $tipo_proyecto = $data['tipo_proyecto'];
         $descripcion_proyecto = $data['descripcion_proyecto'];
-        $distribuciones = $data['distribuciones']; 
+        $distribuciones = $data['distribuciones'];
 
 
-        if ($data['id_ente'] == "" OR $data['id_ejercicio'] == "" OR $data['monto'] == "" OR $data['fecha'] == "" OR $data['descripcion_credito'] == "" OR $data['tipo_credito'] == "" OR $data['tipo_proyecto'] == "" OR $data['descripcion_proyecto'] == "" OR $data['distribuciones'] == "") {
+        if ($data['id_ente'] == "" or $data['id_ejercicio'] == "" or $data['monto'] == "" or $data['fecha'] == "" or $data['descripcion_credito'] == "" or $data['tipo_credito'] == "" or $data['tipo_proyecto'] == "" or $data['descripcion_proyecto'] == "" or $data['distribuciones'] == "") {
             throw new Exception("No se han enviado todos los valores para el registro.");
         }
 
@@ -90,18 +90,18 @@ function registrarCreditoAdicional($data)
             $id_distribucion = $partida['id_distribucion'];
             $monto_solicitado = $partida['monto'];
 
-          // Consultar el monto de distribución desde distribucion_entes
-                $sqlMontoDistribucion = "SELECT distribucion 
+            // Consultar el monto de distribución desde distribucion_entes
+            $sqlMontoDistribucion = "SELECT distribucion 
                                          FROM distribucion_entes 
                                          WHERE id_ente = ? AND id_ejercicio = ? AND distribucion LIKE '%\"id_distribucion\":\"$id_distribucion\"%'";
-                $stmtMontoDistribucion = $remote_db->prepare($sqlMontoDistribucion);
-                $stmtMontoDistribucion->bind_param("ii", $id_ente, $id_ejercicio);
-                $stmtMontoDistribucion->execute();
-                $resultadoMontoDistribucion = $stmtMontoDistribucion->get_result();
+            $stmtMontoDistribucion = $remote_db->prepare($sqlMontoDistribucion);
+            $stmtMontoDistribucion->bind_param("ii", $id_ente, $id_ejercicio);
+            $stmtMontoDistribucion->execute();
+            $resultadoMontoDistribucion = $stmtMontoDistribucion->get_result();
 
-                if ($resultadoMontoDistribucion->num_rows === 0) {
-                    throw new Exception("El ID de distribución no se encuentra en el campo 'distribucion' de distribucion_entes");
-                }
+            if ($resultadoMontoDistribucion->num_rows === 0) {
+                throw new Exception("El ID de distribución no se encuentra en el campo 'distribucion' de distribucion_entes");
+            }
 
             $filaMontoDistribucion = $resultadoMontoDistribucion->fetch_assoc();
             $distribucionesData = json_decode($filaMontoDistribucion['distribucion'], true);
@@ -157,7 +157,7 @@ function registrarCreditoAdicional($data)
                        VALUES (?, ?, ?, ?, ?, ?, 0)";
         $stmtCredito = $conexion->prepare($sqlCredito);
         $stmtCredito->bind_param("iidssi", $id_ente, $id_ejercicio, $monto, $fecha, $descripcion_credito, $tipo_credito);
-         if (!$stmtCredito->execute()) {
+        if (!$stmtCredito->execute()) {
             throw new Exception("Error en credito_adicional: " . $stmtCredito->error);
         }
 
@@ -183,17 +183,17 @@ function registrarCreditoAdicional($data)
             throw new Exception("No se pudo registrar el proyecto de crédito.");
         }
 
-       if ($stmtProyecto->affected_rows > 0 AND $stmtCredito->affected_rows > 0) {
-    $conexion->commit();  // Primero confirmar la transacción
-    return json_encode(["success" => "El credito adicional y su proyecto se registraron correctamente."]);
-}
+        if ($stmtProyecto->affected_rows > 0 and $stmtCredito->affected_rows > 0) {
+            $conexion->commit();  // Primero confirmar la transacción
+            return json_encode(["success" => "El credito adicional y su proyecto se registraron correctamente."]);
+        }
 
 
-        
 
-        
 
-        
+
+
+
 
     } catch (Exception $e) {
         $conexion->rollback();
@@ -210,9 +210,9 @@ function obtenerCreditoPorId($data)
 {
     global $conexion;
     $id_credito = $data['id_credito'];
-     if ($data['id_credito'] == "") {
-            return json_encode(["error" => "No se ha enviado el credito a consultar"]);
-        }
+    if ($data['id_credito'] == "") {
+        return json_encode(["error" => "No se ha enviado el credito a consultar"]);
+    }
 
     $sql = "SELECT 
                 ca.*, 
@@ -278,7 +278,7 @@ function eliminarCredito($data)
 
     try {
 
-         if ($data['id_credito'] == "") {
+        if ($data['id_credito'] == "") {
             throw new Exception("No se han enviado todos los valores para la eliminacion.");
         }
 
@@ -324,7 +324,7 @@ function actualizarCredito($data)
 
     try {
 
-         if ($data['id_ente'] == "" OR $data['id_ejercicio'] == "" OR $data['monto'] == "" OR $data['fecha'] == "" OR $data['descripcion_credito'] == "" OR $data['tipo_credito'] == "" OR $data['tipo_proyecto'] == "" OR $data['descripcion_proyecto'] == "" OR $data['distribuciones'] == "") {
+        if ($data['id_ente'] == "" or $data['id_ejercicio'] == "" or $data['monto'] == "" or $data['fecha'] == "" or $data['descripcion_credito'] == "" or $data['tipo_credito'] == "" or $data['tipo_proyecto'] == "" or $data['descripcion_proyecto'] == "" or $data['distribuciones'] == "") {
             throw new Exception("No se han enviado todos los valores para el registro.");
         }
 
@@ -407,13 +407,14 @@ function actualizarCredito($data)
                        WHERE id = ?";
 
         $stmtCredito = $conexion->prepare($sqlCredito);
-        $stmtCredito->bind_param("iidsssi", 
-            $data['id_ente'], 
-            $data['id_ejercicio'], 
-            $data['monto'], 
-            $data['fecha'], 
-            $data['descripcion_credito'], 
-            $data['tipo_credito'], 
+        $stmtCredito->bind_param(
+            "iidsssi",
+            $data['id_ente'],
+            $data['id_ejercicio'],
+            $data['monto'],
+            $data['fecha'],
+            $data['descripcion_credito'],
+            $data['tipo_credito'],
             $data['id_credito']
         );
 
@@ -427,10 +428,11 @@ function actualizarCredito($data)
                         WHERE id_credito = ?";
 
         $stmtProyecto = $conexion->prepare($sqlProyecto);
-        $stmtProyecto->bind_param("sssi", 
-            $data['tipo_proyecto'], 
-            $data['descripcion_proyecto'], 
-            $data['distribuciones'], 
+        $stmtProyecto->bind_param(
+            "sssi",
+            $data['tipo_proyecto'],
+            $data['descripcion_proyecto'],
+            $data['distribuciones'],
             $data['id_credito']
         );
 
@@ -450,41 +452,53 @@ function actualizarCredito($data)
     }
 }
 
-function procesarCreditoAdicional($data) {
+function procesarCreditoAdicional($data)
+{
     global $conexion;
     global $remote_db;
 
     try {
-        $archivo = $data['archivo'];
         $id_credito = $data['id_credito'];
-         if ($data['archivo'] == "" OR $data['id_credito'] == "") {
+        $archivoBase64 = $data['archivoBase64'];
+        $nombreArchivo = $data['nombreArchivo'] ?? 'decreto.pdf'; // Usar nombre proporcionado o uno por defecto
+        $tipoArchivo = $data['tipoArchivo'] ?? 'application/pdf'; // Usar tipo proporcionado o uno por defecto
+
+        if ($data['archivoBase64'] == "" or $data['id_credito'] == "") {
             throw new Exception("No se han enviado todos los valores para el registro del decreto");
         }
 
-        
-        // Validar que el archivo sea un PDF
-        if ($archivo['type'] !== 'application/pdf') {
+        // Validar que el contenido base64 corresponde a un PDF (opcional)
+        if ($tipoArchivo !== 'application/pdf') {
             throw new Exception("El archivo debe ser un PDF.");
         }
 
-        // Crear un nombre aleatorio para el archivo
-        $nombreArchivo = uniqid('decreto_', true) . '.pdf';
-        $rutaDestino = __DIR__ . '/decretos/' . $nombreArchivo;
+        // Decodificar el base64
+        $archivoDecodificado = base64_decode($archivoBase64);
 
-        // Mover el archivo a la carpeta decretos
-        if (!move_uploaded_file($archivo['tmp_name'], $rutaDestino)) {
+        if ($archivoDecodificado === false) {
+            throw new Exception("Error al decodificar el archivo base64.");
+        }
+
+        // Crear un nombre de archivo único
+        $nombreArchivoUnico = uniqid('decreto_', true) . '.pdf';
+        $rutaDestino = __DIR__ . ".." . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . 'decretos' . DIRECTORY_SEPARATOR . $nombreArchivoUnico;
+
+        // Guardar el archivo
+        if (file_put_contents($rutaDestino, $archivoDecodificado) === false) {
             throw new Exception("Error al guardar el archivo PDF.");
         }
 
         // Actualizar la tabla proyecto_credito con el nombre del archivo
         $sqlUpdateProyecto = "UPDATE proyecto_credito SET decreto = ? WHERE id_credito = ?";
         $stmtUpdateProyecto = $conexion->prepare($sqlUpdateProyecto);
-        $stmtUpdateProyecto->bind_param("si", $nombreArchivo, $id_credito);
+        $stmtUpdateProyecto->bind_param("si", $nombreArchivoUnico, $id_credito);
         $stmtUpdateProyecto->execute();
 
         if ($stmtUpdateProyecto->affected_rows === 0) {
             throw new Exception("No se pudo actualizar el decreto en proyecto_credito.");
         }
+
+
 
         // Consultar distribuciones de proyecto_credito
         $sqlDistribuciones = "SELECT distribuciones, tipo_proyecto, descripcion_proyecto FROM proyecto_credito WHERE id_credito = ?";
@@ -621,4 +635,4 @@ echo gestionarCreditosAdicionales($data);
 
 
 
- ?>
+?>
