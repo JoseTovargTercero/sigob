@@ -47,6 +47,9 @@ export const validateProyectosView = async () => {
       pre_proyectosForm_card({
         elementToInsert: 'proyectos-view',
         ejercicioFiscal: ejercicioFiscal,
+        reset: () => {
+          loadProyectosTable(ejercicioFiscal.id)
+        },
       })
 
       // pre_traspasosForm_card({
@@ -71,6 +74,9 @@ export const validateProyectosView = async () => {
       pre_proyectoCredito_card({
         elementToInsert: 'proyectos-view',
         data,
+        reset: () => {
+          loadProyectosTable(ejercicioFiscal.id)
+        },
       })
 
       // pre_traspasosCard({

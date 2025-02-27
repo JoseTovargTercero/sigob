@@ -1,4 +1,5 @@
 import { registrarCredito, registrarDecreto } from '../api/pre_proyectos.js'
+import { APP_URL, DECRETOS_URL } from '../api/urlConfig.js'
 import {
   confirmNotification,
   hideLoader,
@@ -13,6 +14,7 @@ export const pre_proyectoCredito_card = ({
   elementToInsert = null,
   data = null,
   close = false,
+  reset,
 }) => {
   let decretoFile = null
   const maxFileSize = 5 * 1024 * 1024 // 5 MB (ajusta según tus necesidades)
@@ -177,6 +179,7 @@ export const pre_proyectoCredito_card = ({
         let res = await registrarDecreto(datos)
         if (res.success) {
           closeCard(cardElement)
+          reset()
         }
       },
     })
@@ -184,8 +187,7 @@ export const pre_proyectoCredito_card = ({
 
   // Manejo de datos recibidos (blob PDF)
   if (data && data.decreto) {
-    const pdfUrl = URL.createObjectURL(data.decretoBlob)
-    decretoIframe.src = pdfUrl
+    decretoIframe.src = `${DECRETOS_URL}/${data.decreto}`
   }
 
   if (fileInput) {

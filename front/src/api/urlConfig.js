@@ -15,6 +15,7 @@ const config = {
   BASE_URL: validateUrl(),
   APP_NAME: isLocalhost() ? 'sigob/' : '',
   DIR: 'back/',
+  DECRETOS: 'decretos/',
   MODULE_NAMES: {
     ENTES: 'modulo_entes/',
     GLOBAL: 'sistema_global/',
@@ -25,4 +26,6 @@ const config = {
 
 const APP_URL = `${config.BASE_URL}${config.APP_NAME}${config.DIR}`
 
-export { APP_URL, config }
+const DECRETOS_URL = `${config.BASE_URL}${config.APP_NAME}${config.DECRETOS}`
+
+export { APP_URL, config, DECRETOS_URL }

@@ -20,13 +20,14 @@ export const pre_proyectosForm_card = async ({
   elementToInsert = null,
   ejercicioFiscal = null,
   close = false,
+  reset,
 }) => {
   let fieldList = {
     monto: '',
     fecha: '',
     'tipo-credito': '',
     id_ente: '',
-    descripcion_credito: '',
+    'descripcion-credito': '',
   }
   let fieldListErrors = {
     id_ente: { value: true, message: 'Ente inválido', type: 'number3' },
@@ -36,11 +37,11 @@ export const pre_proyectosForm_card = async ({
       value: true,
       message: 'Tipo inválido',
       type: 'text',
-      descripcion_credito: {
-        value: true,
-        message: 'Descripción inválida',
-        type: 'textarea',
-      },
+    },
+    'descripcion-credito': {
+      value: true,
+      message: 'Descripción inválida',
+      type: 'textarea',
     },
   }
 
@@ -84,17 +85,17 @@ export const pre_proyectosForm_card = async ({
   }
 
   let creditosForm = () => {
-    return `<div class='row slide-up-animation' id='card-body-part-1'>
-     <div class='form-group'>
-            <label class='form-label' for='id_ente'></label>
-            <select
-              class='form-select proyecto-input'
-              name='id_ente'
-              id='id_ente'  
-            >
+    return ` <div class='row slide-up-animation' id='card-body-part-1'>
+        <div class='form-group'>
+          <label class='form-label' for='id_ente'></label>
+          <select
+            class='form-select proyecto-input'
+            name='id_ente'
+            id='id_ente'
+          >
             ${entesOptions()}
-            </select>
-          </div>
+          </select>
+        </div>
         <div class='col'>
           <div class='form-group'>
             <label class='form-label' for='monto'></label>
@@ -131,6 +132,16 @@ export const pre_proyectosForm_card = async ({
             <option value='0'>FCI</option>
             <option value='1'>Venezuela Bella</option>
           </select>
+        </div>
+        <div class='form-group'>
+          <label class='form-label' for='credito-descripcion'>
+            Descripción de credito
+          </label>
+          <textarea
+            class='form-control proyecto-input'
+            name='descripcion-credito'
+            id='descripcion-credito'
+          ></textarea>
         </div>
       </div>`
   }
@@ -501,7 +512,7 @@ export const pre_proyectosForm_card = async ({
           monto: formatearFloat(fieldList.monto),
           fecha: fieldList.fecha,
           id_ejercicio: ejercicioFiscal.id,
-          descripcion_credito: fieldList.descripcion_credito,
+          descripcion_credito: fieldList['descripcion-credito'],
           distribuciones: data,
           tipo_credito: fieldList['tipo-credito'],
           tipo_proyecto: fieldListProyecto['tipo-proyecto'],
@@ -757,7 +768,7 @@ export const pre_proyectosForm_card = async ({
         let res = await registrarCredito(data)
         if (res.success) {
           closeCard(cardElement)
-          // reset()
+          reset()
         }
       },
     })

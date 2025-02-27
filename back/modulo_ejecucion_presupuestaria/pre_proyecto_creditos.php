@@ -480,13 +480,38 @@ function procesarCreditoAdicional($data)
         }
 
         // Crear un nombre de archivo único
+        // $nombreArchivoUnico = uniqid('decreto_', true) . '.pdf';
+        // $rutaDestino = __DIR__ . ".." . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . 'decretos' . DIRECTORY_SEPARATOR . $nombreArchivoUnico;
+
+        // // Guardar el archivo
+        // if (file_put_contents($rutaDestino, $archivoDecodificado) === false) {
+        //     throw new Exception("Error al guardar el archivo PDF.");
+        // }
+
+
+
+
+        // Crear un nombre de archivo único
         $nombreArchivoUnico = uniqid('decreto_', true) . '.pdf';
-        $rutaDestino = __DIR__ . ".." . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . 'decretos' . DIRECTORY_SEPARATOR . $nombreArchivoUnico;
+        $rutaDestino = __DIR__ . ".." . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . 'decretos' . DIRECTORY_SEPARATOR . $nombreArchivoUnico;
+
+        // Verificar si la carpeta 'decretos' existe, si no, crearla
+        $rutaCarpeta = dirname($rutaDestino);
+        if (!file_exists($rutaCarpeta)) {
+            if (!mkdir($rutaCarpeta, 0755, true)) {
+                throw new Exception("Error al crear la carpeta '$rutaCarpeta'.");
+            }
+        }
 
         // Guardar el archivo
         if (file_put_contents($rutaDestino, $archivoDecodificado) === false) {
             throw new Exception("Error al guardar el archivo PDF.");
         }
+
+
+
+
+
 
         // Actualizar la tabla proyecto_credito con el nombre del archivo
         $sqlUpdateProyecto = "UPDATE proyecto_credito SET decreto = ? WHERE id_credito = ?";
