@@ -242,7 +242,7 @@ if ($tablaRegistro == "gastos") {
     // Resultado final con la información del proyecto de crédito, entes y distribuciones presupuestarias
     $response = [
         'compromiso' => $dataCompromiso,
-        'registro_especifico' => $dataProyecto,
+        'registro_especifico' => $dataRegistro,
         'proyecto_credito' => $dataProyecto,
         'ente' => $dataEnte,
         'distribuciones' => $detalleDistribuciones
