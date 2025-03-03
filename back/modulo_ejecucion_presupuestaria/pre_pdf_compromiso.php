@@ -46,7 +46,7 @@ if ($tablaRegistro == "gastos") {
     if (!$dataRegistro) {
         die("No se encontró el registro en la tabla 'gastos'.");
     }
-}elseif ($tablaRegistro == "proyecto_credito") {
+} elseif ($tablaRegistro == "proyecto_credito") {
     // Consultar la tabla proyecto_credito uniendo con credito_adicional
     $queryRegistro = "
         SELECT pc.*, ca.* 
@@ -67,7 +67,7 @@ if ($tablaRegistro == "gastos") {
     if (!$dataRegistro) {
         die("No se encontró el registro en la tabla 'proyecto_credito'.");
     }
-}elseif ($tablaRegistro == "solicitud_dozavos") {
+} elseif ($tablaRegistro == "solicitud_dozavos") {
     // URL de la API
     $api_url = "https://sigob.net/api/solicitudes";
 
@@ -168,7 +168,7 @@ if ($tablaRegistro == "gastos") {
         'gastos' => $dataGastos,
         'distribuciones' => $detalleDistribuciones
     ];
-}elseif ($tablaRegistro == "proyecto_credito") {
+} elseif ($tablaRegistro == "proyecto_credito") {
     // Consultar el proyecto de crédito y unirlo con crédito adicional
     $queryProyecto = "
         SELECT pc.*, ca.*
@@ -247,7 +247,7 @@ if ($tablaRegistro == "gastos") {
         'ente' => $dataEnte,
         'distribuciones' => $detalleDistribuciones
     ];
-}elseif ($tablaRegistro == "solicitud_dozavos") {
+} elseif ($tablaRegistro == "solicitud_dozavos") {
     // URL de la API
     $api_url = "https://sigob.net/api/solicitudes";
 
@@ -887,15 +887,15 @@ function unidad2($numuero)
                     </tr>
                     <?php
                 }
-            }elseif ($tablaRegistro === 'proyecto_credito') {
-                    ?>
-                    <tr>
-                        <td class="bl bt bb w-100"><b>Solicitante:</b> <?php echo $dataEnte['ente_nombre'] ?? ''; ?></td>
-                        <td class="bl bt bb br w-100"></td>
-                    </tr>
-                    <?php
-                }
+            } elseif ($tablaRegistro === 'proyecto_credito') {
+                ?>
+                <tr>
+                    <td class="bl bt bb w-100"><b>Solicitante:</b> <?php echo $dataEnte['ente_nombre'] ?? ''; ?></td>
+                    <td class="bl bt bb br w-100"></td>
+                </tr>
+                <?php
             }
+
             ?>
 
             <tr class="bl bt bb br">
@@ -919,34 +919,34 @@ function unidad2($numuero)
             </tr>
 
             <!-- Mostrar distribuciones según la tablaRegistro -->
-       <?php
-if (($tablaRegistro === 'gastos' || $tablaRegistro === 'proyecto_credito') && !empty($detalleDistribuciones)) {
-    foreach ($detalleDistribuciones as $distribucion) {
-        $partidaPresupuestaria = $distribucion['partida_presupuestaria'];
-        ?>
-        <tr>
-            <td class="bl bt bb"><?php echo $partidaPresupuestaria['partida'] ?? ''; ?></td>
-            <td class="bl bt bb br"><?php echo $partidaPresupuestaria['descripcion'] ?? ''; ?></td>
-            <td class="bl bt bb br">
-                <?php echo number_format($distribucion['distribucion']['monto'], 2, ',', '.'); ?>
-            </td>
-        </tr>
-        <?php
-    }
-} elseif ($tablaRegistro === 'solicitud_dozavos' && !empty($dataSolicitud)) {
-    $partidas = json_decode($dataRegistro['partidas'], true); // Decodificar las partidas asociadas
-    ?>
-    <?php foreach ($detallePartidas as $detalle): ?>
-        <tr>
-            <td class="bl bt bb"><?php echo $detalle['partida_presupuestaria']['partida']; ?></td>
-            <td class="bl bt bb"><?php echo htmlspecialchars($detalle['partida_presupuestaria']['descripcion']); ?>
-            </td>
-            <td class="bl bt bb"><?php echo number_format($detalle['partida']['monto'], 2, ',', '.'); ?></td>
-        </tr>
-    <?php endforeach; ?>
-    <?php
-}
-?>
+            <?php
+            if (($tablaRegistro === 'gastos' || $tablaRegistro === 'proyecto_credito') && !empty($detalleDistribuciones)) {
+                foreach ($detalleDistribuciones as $distribucion) {
+                    $partidaPresupuestaria = $distribucion['partida_presupuestaria'];
+                    ?>
+                    <tr>
+                        <td class="bl bt bb"><?php echo $partidaPresupuestaria['partida'] ?? ''; ?></td>
+                        <td class="bl bt bb br"><?php echo $partidaPresupuestaria['descripcion'] ?? ''; ?></td>
+                        <td class="bl bt bb br">
+                            <?php echo number_format($distribucion['distribucion']['monto'], 2, ',', '.'); ?>
+                        </td>
+                    </tr>
+                    <?php
+                }
+            } elseif ($tablaRegistro === 'solicitud_dozavos' && !empty($dataSolicitud)) {
+                $partidas = json_decode($dataRegistro['partidas'], true); // Decodificar las partidas asociadas
+                ?>
+                <?php foreach ($detallePartidas as $detalle): ?>
+                    <tr>
+                        <td class="bl bt bb"><?php echo $detalle['partida_presupuestaria']['partida']; ?></td>
+                        <td class="bl bt bb"><?php echo htmlspecialchars($detalle['partida_presupuestaria']['descripcion']); ?>
+                        </td>
+                        <td class="bl bt bb"><?php echo number_format($detalle['partida']['monto'], 2, ',', '.'); ?></td>
+                    </tr>
+                <?php endforeach; ?>
+                <?php
+            }
+            ?>
 
         </table>
 

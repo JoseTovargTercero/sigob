@@ -16,14 +16,14 @@ const compromisosUrl =
 const generarCompromisoPdf = async (id, nombreArchivo) => {
   showLoader()
   try {
-    console.log(id)
+    console.log(id, nombreArchivo)
 
     let res = await fetch(`${compromisosPdfUrl}?id_compromiso=${id}`)
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
 
-    let clone = res.clone()
-    let text = await clone.text()
+    // let clone = res.clone()
+    // let text = await clone.text()
 
     const blob = await res.blob()
     const url = URL.createObjectURL(blob)

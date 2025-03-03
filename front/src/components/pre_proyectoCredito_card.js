@@ -28,7 +28,7 @@ export const pre_proyectoCredito_card = ({
     closeCard(oldCardElement)
   }
 
-  let { decreto, id_compromiso, compromiso_correlativo } = data
+  let { decreto, id_compromiso, correlativo_compromiso } = data
 
   let card = `  <div class='card slide-up-animation' id='${nombreCard}-form-card'>
       <div class='card-header d-flex justify-content-between'>
@@ -101,7 +101,7 @@ export const pre_proyectoCredito_card = ({
       <div class='card-footer text-center'>
         ${
           id_compromiso
-            ? `<button class='btn btn-secondary' data-compromisoid="${data.id_compromiso}">
+            ? `<button class='btn btn-secondary' data-compromisoid="${data.id_credito}">
               Descargar Compromiso
             </button>`
             : !decreto
@@ -145,7 +145,7 @@ export const pre_proyectoCredito_card = ({
     if (e.target.dataset.compromisoid) {
       generarCompromisoPdf(
         e.target.dataset.compromisoid,
-        compromiso_correlativo
+        correlativo_compromiso
       )
     }
   }
