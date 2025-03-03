@@ -101,7 +101,7 @@ export const pre_proyectoCredito_card = ({
       <div class='card-footer text-center'>
         ${
           id_compromiso
-            ? `<button class='btn btn-secondary' data-compromisoid="${data.id_credito}">
+            ? `<button class='btn btn-secondary' data-compromisoid="${id_compromiso}">
               Descargar Compromiso
             </button>`
             : !decreto
