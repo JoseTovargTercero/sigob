@@ -891,7 +891,7 @@ function unidad2($numuero)
                 ?>
                 <tr>
                     <td class="bl bt bb w-100"><b>Solicitante:</b> <?php echo $dataEnte['ente_nombre'] ?? ''; ?></td>
-                    <td class="bl bt bb br w-100"></td>
+                    
                 </tr>
                 <?php
             }
