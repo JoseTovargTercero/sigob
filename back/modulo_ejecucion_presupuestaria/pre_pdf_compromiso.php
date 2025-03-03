@@ -52,7 +52,7 @@ if ($tablaRegistro == "gastos") {
         SELECT pc.*, ca.* 
         FROM proyecto_credito pc
         JOIN credito_adicional ca ON pc.id_credito = ca.id
-        WHERE pc.id = ?
+        WHERE pc.id_credito = ?
     ";
     $stmtRegistro = $conexion->prepare($queryRegistro);
     if (!$stmtRegistro) {
@@ -174,7 +174,7 @@ if ($tablaRegistro == "gastos") {
         SELECT pc.*, ca.*
         FROM proyecto_credito pc
         JOIN credito_adicional ca ON pc.id_credito = ca.id
-        WHERE pc.id = ?
+        WHERE pc.id_credito = ?
     ";
     $stmtProyecto = $conexion->prepare($queryProyecto);
     $stmtProyecto->bind_param('i', $idRegistro);
