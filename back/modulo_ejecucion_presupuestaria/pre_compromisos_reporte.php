@@ -21,6 +21,8 @@ function procesarDatos($tipo, $tipo_fecha, $fecha, $local_db, $remote_db, $id_ej
             $db = $local_db;
         }elseif($tipo === "solicitud_dozavos"){
             $db = $remote_db;
+        }else{
+            $db = $local_db;
         }
         
 
@@ -107,7 +109,31 @@ function procesarDatos($tipo, $tipo_fecha, $fecha, $local_db, $remote_db, $id_ej
                 if (!$gasto) continue;
                 $mes = (int)date('n', strtotime($gasto['fecha']))-1;
          
-            }
+            }elseif ($tipo === 'proyecto_credito') {
+    // Consultar la tabla credito_adicional uniendo con proyecto_credito
+    $query_gasto = "
+        SELECT ca.fecha 
+        FROM proyecto_credito pc
+        JOIN credito_adicional ca ON pc.id_credito = ca.id
+        WHERE pc.id = ?
+    ";
+    $stmt_gasto = $db->prepare($query_gasto);
+    if (!$stmt_gasto) {
+        manejarError("Fallo al preparar la consulta de crédito adicional.", $db);
+    }
+    $stmt_gasto->bind_param('i', $id_registro);
+    $stmt_gasto->execute();
+    $result_gasto = $stmt_gasto->get_result();
+    if (!$result_gasto) {
+        manejarError("Fallo al ejecutar la consulta de crédito adicional.", $db);
+    }
+    $gasto = $result_gasto->fetch_assoc();
+    $stmt_gasto->close();
+
+    if (!$gasto) continue;
+    $mes = (int)date('n', strtotime($gasto['fecha'])) - 1;
+}
+
 
             // Validar si el mes pertenece al trimestre especificado
             if ($tipo_fecha === 'trimestre') {

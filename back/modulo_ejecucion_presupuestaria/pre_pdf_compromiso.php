@@ -46,7 +46,28 @@ if ($tablaRegistro == "gastos") {
     if (!$dataRegistro) {
         die("No se encontró el registro en la tabla 'gastos'.");
     }
-} elseif ($tablaRegistro == "solicitud_dozavos") {
+}elseif ($tablaRegistro == "proyecto_credito") {
+    // Consultar la tabla proyecto_credito uniendo con credito_adicional
+    $queryRegistro = "
+        SELECT pc.*, ca.* 
+        FROM proyecto_credito pc
+        JOIN credito_adicional ca ON pc.id_credito = ca.id
+        WHERE pc.id = ?
+    ";
+    $stmtRegistro = $conexion->prepare($queryRegistro);
+    if (!$stmtRegistro) {
+        die("Fallo al preparar la consulta de proyecto_credito y credito_adicional.");
+    }
+    $stmtRegistro->bind_param('i', $idRegistro);
+    $stmtRegistro->execute();
+    $resultRegistro = $stmtRegistro->get_result();
+    $dataRegistro = $resultRegistro->fetch_assoc();
+    $stmtRegistro->close();
+
+    if (!$dataRegistro) {
+        die("No se encontró el registro en la tabla 'proyecto_credito'.");
+    }
+}elseif ($tablaRegistro == "solicitud_dozavos") {
     // URL de la API
     $api_url = "https://sigob.net/api/solicitudes";
 
@@ -147,7 +168,86 @@ if ($tablaRegistro == "gastos") {
         'gastos' => $dataGastos,
         'distribuciones' => $detalleDistribuciones
     ];
-} elseif ($tablaRegistro == "solicitud_dozavos") {
+}elseif ($tablaRegistro == "proyecto_credito") {
+    // Consultar el proyecto de crédito y unirlo con crédito adicional
+    $queryProyecto = "
+        SELECT pc.*, ca.*
+        FROM proyecto_credito pc
+        JOIN credito_adicional ca ON pc.id_credito = ca.id
+        WHERE pc.id = ?
+    ";
+    $stmtProyecto = $conexion->prepare($queryProyecto);
+    $stmtProyecto->bind_param('i', $idRegistro);
+    $stmtProyecto->execute();
+    $resultProyecto = $stmtProyecto->get_result();
+    $dataProyecto = $resultProyecto->fetch_assoc();
+    $stmtProyecto->close();
+
+    if (!$dataProyecto) {
+        die("No se encontró el registro en la tabla 'proyecto_credito'.");
+    }
+
+    // Consultar la información del ente usando el id_ente de credito_adicional
+    $id_ente = $dataProyecto['id_ente']; // Asumimos que `id_ente` viene de `credito_adicional`
+    $queryEnte = "SELECT * FROM entes WHERE id = ?";
+    $stmtEnte = $conexion->prepare($queryEnte);
+    $stmtEnte->bind_param('i', $id_ente);
+    $stmtEnte->execute();
+    $resultEnte = $stmtEnte->get_result();
+    $dataEnte = $resultEnte->fetch_assoc();
+    $stmtEnte->close();
+
+    if (!$dataEnte) {
+        die("No se encontró el registro en la tabla 'entes'.");
+    }
+
+    // Consultar los detalles de la distribución presupuestaria usando el campo `distribuciones`
+    $distribuciones = json_decode($dataProyecto['distribuciones'], true);
+    $detalleDistribuciones = [];
+
+    foreach ($distribuciones as $distribucion) {
+        $id_distribucion = $distribucion['id_distribucion'];
+        $queryDistribucion = "SELECT id_partida FROM distribucion_presupuestaria WHERE id = ?";
+        $stmtDistribucion = $conexion->prepare($queryDistribucion);
+        $stmtDistribucion->bind_param('i', $id_distribucion);
+        $stmtDistribucion->execute();
+        $resultDistribucion = $stmtDistribucion->get_result();
+        $dataDistribucion = $resultDistribucion->fetch_assoc();
+        $stmtDistribucion->close();
+
+        if ($dataDistribucion) {
+            // Consultar los datos de la partida presupuestaria
+            $id_partida = $dataDistribucion['id_partida'];
+            $queryPartida = "SELECT * FROM partidas_presupuestarias WHERE id = ?";
+            $stmtPartida = $conexion->prepare($queryPartida);
+            $stmtPartida->bind_param('i', $id_partida);
+            $stmtPartida->execute();
+            $resultPartida = $stmtPartida->get_result();
+            $dataPartida = $resultPartida->fetch_assoc();
+            $stmtPartida->close();
+
+            if ($dataPartida) {
+                $detalleDistribuciones[] = [
+                    'distribucion' => $distribucion,
+                    'partida_presupuestaria' => $dataPartida
+                ];
+            } else {
+                die("No se encontró la partida presupuestaria correspondiente.");
+            }
+        } else {
+            die("No se encontró la distribución presupuestaria correspondiente.");
+        }
+    }
+
+    // Resultado final con la información del proyecto de crédito, entes y distribuciones presupuestarias
+    $response = [
+        'compromiso' => $dataCompromiso,
+        'registro_especifico' => $dataProyecto,
+        'proyecto_credito' => $dataProyecto,
+        'ente' => $dataEnte,
+        'distribuciones' => $detalleDistribuciones
+    ];
+}elseif ($tablaRegistro == "solicitud_dozavos") {
     // URL de la API
     $api_url = "https://sigob.net/api/solicitudes";
 
@@ -787,6 +887,14 @@ function unidad2($numuero)
                     </tr>
                     <?php
                 }
+            }elseif ($tablaRegistro === 'proyecto_credito') {
+                    ?>
+                    <tr>
+                        <td class="bl bt bb w-100"><b>Solicitante:</b> <?php echo $dataEnte['ente_nombre'] ?? ''; ?></td>
+                        <td class="bl bt bb br w-100"></td>
+                    </tr>
+                    <?php
+                }
             }
             ?>
 
@@ -811,34 +919,35 @@ function unidad2($numuero)
             </tr>
 
             <!-- Mostrar distribuciones según la tablaRegistro -->
-            <?php
-            if ($tablaRegistro === 'gastos' && !empty($detalleDistribuciones)) {
-                foreach ($detalleDistribuciones as $distribucion) {
-                    $partidaPresupuestaria = $distribucion['partida_presupuestaria'];
-                    ?>
-                    <tr>
-                        <td class="bl bt bb"><?php echo $partidaPresupuestaria['partida'] ?? ''; ?></td>
-                        <td class="bl bt bb br"><?php echo $partidaPresupuestaria['descripcion'] ?? ''; ?></td>
-                        <td class="bl bt bb br">
-                            <?php echo number_format($distribucion['distribucion']['monto'], 2, ',', '.'); ?>
-                        </td>
-                    </tr>
-                    <?php
-                }
-            } elseif ($tablaRegistro === 'solicitud_dozavos' && !empty($dataSolicitud)) {
-                $partidas = json_decode($dataRegistro['partidas'], true); // Decodificar las partidas asociadas
-                ?>
-                <?php foreach ($detallePartidas as $detalle): ?>
-                    <tr>
-                        <td class="bl bt bb"><?php echo $detalle['partida_presupuestaria']['partida']; ?></td>
-                        <td class="bl bt bb"><?php echo htmlspecialchars($detalle['partida_presupuestaria']['descripcion']); ?>
-                        </td>
-                        <td class="bl bt bb"><?php echo number_format($detalle['partida']['monto'], 2, ',', '.'); ?></td>
-                    </tr>
-                <?php endforeach; ?>
-                <?php
-            }
-            ?>
+       <?php
+if (($tablaRegistro === 'gastos' || $tablaRegistro === 'proyecto_credito') && !empty($detalleDistribuciones)) {
+    foreach ($detalleDistribuciones as $distribucion) {
+        $partidaPresupuestaria = $distribucion['partida_presupuestaria'];
+        ?>
+        <tr>
+            <td class="bl bt bb"><?php echo $partidaPresupuestaria['partida'] ?? ''; ?></td>
+            <td class="bl bt bb br"><?php echo $partidaPresupuestaria['descripcion'] ?? ''; ?></td>
+            <td class="bl bt bb br">
+                <?php echo number_format($distribucion['distribucion']['monto'], 2, ',', '.'); ?>
+            </td>
+        </tr>
+        <?php
+    }
+} elseif ($tablaRegistro === 'solicitud_dozavos' && !empty($dataSolicitud)) {
+    $partidas = json_decode($dataRegistro['partidas'], true); // Decodificar las partidas asociadas
+    ?>
+    <?php foreach ($detallePartidas as $detalle): ?>
+        <tr>
+            <td class="bl bt bb"><?php echo $detalle['partida_presupuestaria']['partida']; ?></td>
+            <td class="bl bt bb"><?php echo htmlspecialchars($detalle['partida_presupuestaria']['descripcion']); ?>
+            </td>
+            <td class="bl bt bb"><?php echo number_format($detalle['partida']['monto'], 2, ',', '.'); ?></td>
+        </tr>
+    <?php endforeach; ?>
+    <?php
+}
+?>
+
         </table>
 
 
