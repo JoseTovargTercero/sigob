@@ -858,97 +858,77 @@ function unidad2($numuero)
 
         <!-- Tabla principal -->
         <table>
-            <tr class="bb bt bb br bl">
-                <td class=" w-33 br"><b>Nro. de Compromiso:</b> <?php echo $dataCompromiso['numero_compromiso']; ?></td>
-                <td class=" br w-33"><b>Tipo:</b> COMPROMISO PRESUPUESTARIO</td>
-                <td class=" br w-33"><b>Fecha:</b> <?php echo date('d/m/Y'); ?></td>
+    <tr class="bb bt bb br bl">
+        <td class="w-33 br"><b>Nro. de Compromiso:</b> <?php echo $dataCompromiso['numero_compromiso'] ?? 'No disponible'; ?></td>
+        <td class="br w-33"><b>Tipo:</b> COMPROMISO PRESUPUESTARIO</td>
+        <td class="br w-33"><b>Fecha:</b> <?php echo date('d/m/Y'); ?></td>
+    </tr>
+
+    <!-- Mostrar Beneficiario o Solicitante según la tablaRegistro -->
+    <?php if (!empty($dataRegistro)) : ?>
+        <?php if ($tablaRegistro === 'gastos') : ?>
+            <tr>
+                <td class="bl bt bb" colspan="2"><b>Beneficiario:</b> <?php echo $dataRegistro['beneficiario'] ?? 'No especificado'; ?></td>
+                <td class="bl bt bb br"><b>RIF:</b> <?php echo $dataRegistro['identificador'] ?? 'No disponible'; ?></td>
             </tr>
+        <?php elseif ($tablaRegistro === 'solicitud_dozavos') : ?>
+            <tr>
+                <td class="bl bt bb w-50"><b>Solicitante:</b> <?php echo $dataEnte['ente_nombre'] ?? 'No disponible'; ?></td>
+                <td class="bl bt bb br w-50"><b>Motivo:</b> SOLICITUD DE DOZAVO CORRESPONDIENTE AL MES DE <?php echo $date2 ?? 'No definido'; ?></td>
+            </tr>
+        <?php elseif ($tablaRegistro === 'proyecto_credito') : ?>
+            <tr>
+                <td class="bl bt bb w-100"><b>Solicitante:</b> <?php echo $dataEnte['ente_nombre'] ?? 'No disponible'; ?></td>
+            </tr>
+        <?php endif; ?>
+    <?php endif; ?>
 
-            <!-- Mostrar Beneficiario o Solicitante según la tablaRegistro -->
-            <?php
-            if (!empty($dataRegistro)) {
-                if ($tablaRegistro === 'gastos') {
-                    ?>
-                    <tr>
-                        <td class="bl bt bb" colspan="2"><b>Beneficiario:</b> <?php echo $dataRegistro['beneficiario'] ?? ''; ?>
-                        </td>
-                        <td class="bl bt bb br"><b>RIF:</b> <?php echo $dataRegistro['identificador'] ?? ''; ?></td>
+    <tr class="bl bt bb br">
+        <td colspan="3" class="text-left"><b>Concepto:</b> <?php echo $dataCompromiso['descripcion'] ?? 'Sin descripción'; ?></td>
+    </tr>
+    <tr class="bl bt bb br">
+        <td colspan="3" class="text-left"><b>Bolívares:</b>
+            <?php echo number_format($dataRegistro['monto'] ?? 0, 2, ',', '.'); ?> Bs
+        </td>
+    </tr>
+    <tr class="bl bt bb br">
+        <td colspan="3"><b>Monto en letras:</b>
+            <?php echo isset($dataRegistro['monto']) ? convertirNumeroLetra2($dataRegistro['monto']) : 'No disponible'; ?>
+        </td>
+    </tr>
+    <tr class="bl bt bb br">
+        <td class="br fw-bold">CÓDIGO PRESUPUESTARIO:<br>ST-PG-PY-AC-PAR-GE-ES-SE-AUXI</td>
+        <td class="br fw-bold">DENOMINACIÓN:</td>
+        <td class="fw-bold">MONTO:</td>
+    </tr>
 
-                    </tr>
-                    <?php
-                } elseif ($tablaRegistro === 'solicitud_dozavos') {
-                    ?>
-                    <tr>
-                        <td class="bl bt bb w-100"><b>Solicitante:</b> <?php echo $dataEnte['ente_nombre'] ?? ''; ?></td>
-                        <td class="bl bt bb br w-100"><b>Motivo:</b> SOLICITUD DE DOZAVO CORRESPONDIENTE AL MES DE
-                            <?php echo $date2; ?>
-                        </td>
-                        <td class="bl bt bb br w-100"></td>
-                    </tr>
-                    <?php
-                }
-            } elseif ($tablaRegistro === 'proyecto_credito') {
-                ?>
-                <tr>
-                    <td class="bl bt bb w-100"><b>Solicitante:</b> <?php echo $dataEnte['ente_nombre'] ?? ''; ?></td>
-                    
-                </tr>
-                <?php
-            }
-
+    <!-- Mostrar distribuciones según la tablaRegistro -->
+    <?php if (($tablaRegistro === 'gastos' || $tablaRegistro === 'proyecto_credito') && !empty($detalleDistribuciones) && is_array($detalleDistribuciones)) : ?>
+        <?php foreach ($detalleDistribuciones as $distribucion) : 
+            $partidaPresupuestaria = $distribucion['partida_presupuestaria'] ?? null;
             ?>
-
-            <tr class="bl bt bb br">
-                <td colspan="3" class="text-left"><b>Concepto:</b> <?php echo $dataCompromiso['descripcion']; ?>
+            <tr>
+                <td class="bl bt bb"><?php echo $partidaPresupuestaria['partida'] ?? 'N/A'; ?></td>
+                <td class="bl bt bb br"><?php echo $partidaPresupuestaria['descripcion'] ?? 'Sin descripción'; ?></td>
+                <td class="bl bt bb br">
+                    <?php echo number_format($distribucion['distribucion']['monto'] ?? 0, 2, ',', '.'); ?>
                 </td>
             </tr>
-            <tr class="bl bt bb br">
-                <td colspan="3" class="text-left"><b>Bolívares:</b>
-                    <?php echo number_format($dataRegistro['monto'], 2, ',', '.'); ?> Bs
-                </td>
+        <?php endforeach; ?>
+    <?php elseif ($tablaRegistro === 'solicitud_dozavos' && !empty($dataSolicitud)) : ?>
+        <?php 
+        $partidas = !empty($dataRegistro['partidas']) ? json_decode($dataRegistro['partidas'], true) : [];
+        ?>
+        <?php foreach ($detallePartidas as $detalle) : ?>
+            <tr>
+                <td class="bl bt bb"><?php echo $detalle['partida_presupuestaria']['partida'] ?? 'N/A'; ?></td>
+                <td class="bl bt bb"><?php echo htmlspecialchars($detalle['partida_presupuestaria']['descripcion'] ?? 'Sin descripción'); ?></td>
+                <td class="bl bt bb"><?php echo number_format($detalle['partida']['monto'] ?? 0, 2, ',', '.'); ?></td>
             </tr>
-            <tr class="bl bt bb br">
-                <td colspan="3"><b>Monto en letras:</b>
-                    <?php echo convertirNumeroLetra2($dataRegistro['monto']); ?>
-                </td>
-            </tr>
-            <tr class="bl bt bb br ">
-                <td class="br fw-bold">CÓDIGO PRESUPUESTARIO:<br>ST-PG-PY-AC-PAR-GE-ES-SE-AUXI</td>
-                <td class="br fw-bold">DENOMINACIÓN:</td>
-                <td class="fw-bold">MONTO:</td>
-            </tr>
+        <?php endforeach; ?>
+    <?php endif; ?>
+</table>
 
-            <!-- Mostrar distribuciones según la tablaRegistro -->
-            <?php
-            if (($tablaRegistro === 'gastos' || $tablaRegistro === 'proyecto_credito') && !empty($detalleDistribuciones)) {
-                foreach ($detalleDistribuciones as $distribucion) {
-                    $partidaPresupuestaria = $distribucion['partida_presupuestaria'];
-                    ?>
-                    <tr>
-                        <td class="bl bt bb"><?php echo $partidaPresupuestaria['partida'] ?? ''; ?></td>
-                        <td class="bl bt bb br"><?php echo $partidaPresupuestaria['descripcion'] ?? ''; ?></td>
-                        <td class="bl bt bb br">
-                            <?php echo number_format($distribucion['distribucion']['monto'], 2, ',', '.'); ?>
-                        </td>
-                    </tr>
-                    <?php
-                }
-            } elseif ($tablaRegistro === 'solicitud_dozavos' && !empty($dataSolicitud)) {
-                $partidas = json_decode($dataRegistro['partidas'], true); // Decodificar las partidas asociadas
-                ?>
-                <?php foreach ($detallePartidas as $detalle): ?>
-                    <tr>
-                        <td class="bl bt bb"><?php echo $detalle['partida_presupuestaria']['partida']; ?></td>
-                        <td class="bl bt bb"><?php echo htmlspecialchars($detalle['partida_presupuestaria']['descripcion']); ?>
-                        </td>
-                        <td class="bl bt bb"><?php echo number_format($detalle['partida']['monto'], 2, ',', '.'); ?></td>
-                    </tr>
-                <?php endforeach; ?>
-                <?php
-            }
-            ?>
-
-        </table>
 
 
 
