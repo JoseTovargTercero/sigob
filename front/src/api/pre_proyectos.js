@@ -58,10 +58,10 @@ const getProyecto = async (id) => {
       body: JSON.stringify({ accion: 'consulta_id', id_credito: id }),
     })
 
-    // const clone = res.clone()
+    const clone = res.clone()
 
-    // let text = await clone.text()
-    // console.log(text)
+    let text = await clone.text()
+    console.log(text)
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
 

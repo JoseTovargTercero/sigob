@@ -1,3 +1,4 @@
+import { generarCompromisoPdf } from '../api/pre_compromisos.js'
 import { registrarCredito, registrarDecreto } from '../api/pre_proyectos.js'
 import { APP_URL, DECRETOS_URL } from '../api/urlConfig.js'
 import {
@@ -27,7 +28,7 @@ export const pre_proyectoCredito_card = ({
     closeCard(oldCardElement)
   }
 
-  let { decreto } = data
+  let { decreto, id_compromiso, compromiso_correlativo } = data
 
   let card = `  <div class='card slide-up-animation' id='${nombreCard}-form-card'>
       <div class='card-header d-flex justify-content-between'>
@@ -92,16 +93,20 @@ export const pre_proyectoCredito_card = ({
         <div class='row'>
           ${
             decreto
-              ? '<iframe id="decreto-iframe" style="width: 100%; height: 500px;"></iframe>'
+              ? '<iframe id="decreto-iframe" style="width: 100%; height: 400px;"></iframe>'
               : '<input type="file" id="decreto-file" accept="application/pdf" class="form-control"><p id="decreto-file-error" class="text-danger slide-up-animation mt-2" style="display: none;">Error: Archivo inválido.</p>'
           }
         </div>
       </div>
-      <div class='card-footer'>
+      <div class='card-footer text-center'>
         ${
-          decreto
-            ? ''
-            : `<button class="btn btn-primary" id="${nombreCard}-guardar">Subir Decreto</button>`
+          id_compromiso
+            ? `<button class='btn btn-secondary' data-compromisoid="${data.id_compromiso}">
+              Descargar Compromiso
+            </button>`
+            : !decreto
+            ? `<button class="btn btn-primary" id="${nombreCard}-guardar">Subir Decreto</button>`
+            : ''
         }
       </div>
     </div>`
@@ -135,6 +140,13 @@ export const pre_proyectoCredito_card = ({
 
     if (e.target === guardarButton) {
       subirDecreto()
+    }
+
+    if (e.target.dataset.compromisoid) {
+      generarCompromisoPdf(
+        e.target.dataset.compromisoid,
+        compromiso_correlativo
+      )
     }
   }
 

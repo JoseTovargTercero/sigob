@@ -234,11 +234,24 @@ function obtenerCreditoPorId($data)
     $stmt->execute();
     $resultado = $stmt->get_result();
 
+    $informacion = $resultado->fetch_assoc();
+
+    $sqlCompromiso = "SELECT id as id_compromiso, correlativo FROM compromisos WHERE id_registro = ? AND tabla_registro = 'proyecto_credito'";
+    $stmtCompromiso = $conexion->prepare($sqlCompromiso);
+    $stmtCompromiso->bind_param("i", $informacion['id_credito']);
+    $stmtCompromiso->execute();
+    $resultadoCompromiso = $stmtCompromiso->get_result();
+    $compromiso = $resultadoCompromiso->fetch_assoc();
+
     if ($resultado->num_rows === 0) {
         return json_encode(["error" => "No se encontró el crédito adicional con ID " . $id_credito]);
     }
 
-    return json_encode($resultado->fetch_assoc());
+
+    $informacion['id_compromiso'] = $compromiso['id_compromiso'] ?? null;
+    $informacion['correlativo_compromiso'] = $compromiso['correlativo'] ?? null;
+
+    return json_encode(['success' => $informacion]);
 }
 
 function obtenerTodosLosCreditos()
@@ -260,6 +273,8 @@ function obtenerTodosLosCreditos()
             LEFT JOIN pl_proyectos pr ON e.proyecto = pr.id";
 
     $resultado = $conexion->query($sql);
+
+
 
     if ($resultado->num_rows === 0) {
         return json_encode(["error" => "No se encontraron créditos adicionales registrados."]);
