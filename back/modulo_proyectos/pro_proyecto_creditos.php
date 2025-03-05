@@ -5,7 +5,7 @@ require_once '../sistema_global/conexion.php';
 require_once '../sistema_global/notificaciones.php';
 header('Content-Type: application/json');
 require_once '../sistema_global/errores.php';
-require_once 'pre_compromisos.php';
+require_once '../modulo_ejecucion_presupuestaria/pre_compromisos.php';
 
 // Función para gestionar la solicitud y compromisos
 function gestionarCreditosAdicionales($data)
