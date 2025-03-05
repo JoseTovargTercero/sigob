@@ -8,7 +8,7 @@ import {
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 import { config, APP_URL } from './urlConfig.js'
 
-const proyectosUrl = `${APP_URL}${config.MODULE_NAMES.EJECUCION}pre_proyecto_creditos.php`
+const proyectosUrl = `${APP_URL}${config.MODULE_NAMES.PROYECTOS}pre_proyecto_creditos.php`
 
 const getProyectos = async (id_ente, id_ejercicio) => {
   showLoader()
