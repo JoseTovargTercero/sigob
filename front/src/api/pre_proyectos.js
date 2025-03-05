@@ -8,7 +8,7 @@ import {
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 import { config, APP_URL } from './urlConfig.js'
 
-const proyectosUrl = `${APP_URL}${config.MODULE_NAMES.PROYECTOS}pre_proyecto_creditos.php`
+const proyectosUrl = `${APP_URL}${config.MODULE_NAMES.PROYECTOS}pro_proyecto_creditos.php`
 
 const getProyectos = async (id_ente, id_ejercicio) => {
   showLoader()
@@ -18,10 +18,10 @@ const getProyectos = async (id_ente, id_ejercicio) => {
       body: JSON.stringify({ accion: 'consulta', id_ejercicio }),
     })
 
-    // const clone = res.clone()
+    const clone = res.clone()
 
-    // let text = await clone.text()
-    // console.log(text)
+    let text = await clone.text()
+    console.log(text)
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
 
