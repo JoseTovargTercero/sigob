@@ -51,9 +51,6 @@
 
                 $stmt->close();
               }
-
-
-
               ?>
             </span>
           </a>
@@ -63,6 +60,20 @@
     </div>
     <div class="ms-auto">
       <ul class="list-unstyled">
+
+
+
+        <li class="pc-h-item me-2">
+          <div class="custom-dropdown custom-dropdown-toggle" id="remoteDbError">
+
+
+          </div>
+        </li>
+
+
+
+
+
         <li class="pc-h-item">
           <div class="custom-dropdown custom-dropdown-toggle">
             <i data-feather="bell"></i>

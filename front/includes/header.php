@@ -19,6 +19,7 @@
 
   <link href='../src/assets/datatables/datatables.min.css' rel='stylesheet'>
   <script src="../src/assets/datatables/datatables.min.js"></script>
+  <script src="../../src/assets/js/checkRemoteDB.js"></script>
   <div id="cargando">
     <span class="cafe"></span>
   </div>
