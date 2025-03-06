@@ -1,5 +1,6 @@
 <?php
 require_once '../sistema_global/conexion.php';
+require_once '../sistema_global/conexion_remota.php';
 
 // Obtener el ID de compromiso mediante GET
 $id_compromiso = $_GET["id"];

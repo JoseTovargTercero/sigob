@@ -20,5 +20,3 @@ function clear($campo)
 }
 
 $local_db = $conexion;
-// Conexión remota
-require_once 'conexion_remota.php';

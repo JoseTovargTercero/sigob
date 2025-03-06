@@ -1,6 +1,7 @@
 <?php
 
-require_once '../sistema_global/conexion.php';
+require_once '../sistema_global/conexion.php'
+require_once '../sistema_global/conexion_remota.php';;
 
 require_once '../sistema_global/notificaciones.php';
 header('Content-Type: application/json');

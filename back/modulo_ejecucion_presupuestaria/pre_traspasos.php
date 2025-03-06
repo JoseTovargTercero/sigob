@@ -1,6 +1,7 @@
 <?php
 
 require_once '../sistema_global/conexion.php';
+require_once '../sistema_global/conexion_remota.php';
 require_once '../sistema_global/session.php';
 require_once '../sistema_global/notificaciones.php';
 require_once 'pre_compromisos.php'; // Agregado
