@@ -7,6 +7,9 @@ require_once '../../back/sistema_global/session.php';
 <head>
   <link rel="stylesheet" href="../src/styles/style.css">
 
+  <script src="../../src/assets/js/checkRemoteDB.js"></script>
+
+
   <title>Solicitudes Dozavos</title>
 </head>
 

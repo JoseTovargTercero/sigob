@@ -11,6 +11,9 @@ require_once '../../back/sistema_global/session.php';
     <script src="../../src/assets/js/chosen.jquery.min.js"></script>
 
     <title>Gastos de funcionamiento</title>
+
+    <script src="../../src/assets/js/checkRemoteDB.js"></script>
+
 </head>
 
 <body>
