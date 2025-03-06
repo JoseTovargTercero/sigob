@@ -21,6 +21,7 @@ if (!@$_SESSION["u_oficina"]) {
 		4 => '_pl_formulacion/',
 		5 => '_ejecucion_presupuestaria/',
 		6 => '_entes/',
+		7 => '_proyectos/',
 	);
 
 	// Verificar si la URL contiene 'mod_global' para permitir el acceso a todos los usuarios
