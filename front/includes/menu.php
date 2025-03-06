@@ -15,7 +15,8 @@
           3 => 'Relaciones laborales',
           4 => 'Formulación',
           5 => 'Ejecución Presupuestaria',
-          6 => 'Entes'
+          6 => 'Entes',
+          7 => 'Proyectos'
         ];
 
         echo ' <li class="pc-item pc-caption">
