@@ -1,7 +1,7 @@
 <?php
 
-require_once '../sistema_global/conexion.php'
-require_once '../sistema_global/conexion_remota.php';;
+require_once '../sistema_global/conexion.php';
+require_once '../sistema_global/conexion_remota.php';
 
 require_once '../sistema_global/notificaciones.php';
 header('Content-Type: application/json');
@@ -188,14 +188,6 @@ function registrarCreditoAdicional($data)
             $conexion->commit();  // Primero confirmar la transacción
             return json_encode(["success" => "El credito adicional y su proyecto se registraron correctamente."]);
         }
-
-
-
-
-
-
-
-
     } catch (Exception $e) {
         $conexion->rollback();
         registrarError($e->getMessage());
@@ -321,7 +313,6 @@ function eliminarCredito($data)
         $conexion->commit();
 
         return json_encode(["success" => "Crédito adicional eliminado correctamente"]);
-
     } catch (Exception $e) {
         // Revertir la transacción en caso de error
         $conexion->rollback();
@@ -460,7 +451,6 @@ function actualizarCredito($data)
         $conexion->commit();
 
         return json_encode(["success" => "Crédito adicional actualizado correctamente"]);
-
     } catch (Exception $e) {
         // Revertir la transacción en caso de error
         $conexion->rollback();
@@ -667,13 +657,3 @@ function procesarCreditoAdicional($data)
 // Ejecutar la función principal
 $data = json_decode(file_get_contents("php://input"), true);
 echo gestionarCreditosAdicionales($data);
-
-
-
-
-
-
-
-
-
-?>
