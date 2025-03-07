@@ -75,14 +75,13 @@ function registrarCreditoAdicional($data)
         $id_ejercicio = $data['id_ejercicio'];
         $monto = $data['monto'];
         $fecha = $data['fecha'];
-        $descripcion_credito = $data['descripcion_credito'];
         $tipo_credito = $data['tipo_credito'];
         $tipo_proyecto = $data['tipo_proyecto'];
         $descripcion_proyecto = $data['descripcion_proyecto'];
         $distribuciones = $data['distribuciones'];
 
 
-        if ($data['id_ente'] == "" or $data['id_ejercicio'] == "" or $data['monto'] == "" or $data['fecha'] == "" or $data['descripcion_credito'] == "" or $data['tipo_credito'] == "" or $data['tipo_proyecto'] == "" or $data['descripcion_proyecto'] == "" or $data['distribuciones'] == "") {
+        if ($data['id_ente'] == "" or $data['id_ejercicio'] == "" or $data['monto'] == "" or $data['fecha'] == "" or $data['tipo_credito'] == "" or $data['tipo_proyecto'] == "" or $data['descripcion_proyecto'] == "" or $data['distribuciones'] == "") {
             throw new Exception("No se han enviado todos los valores para el registro.");
         }
 
@@ -154,10 +153,10 @@ function registrarCreditoAdicional($data)
         }
 
         // Insertar en credito_adicional
-        $sqlCredito = "INSERT INTO credito_adicional (id_ente, id_ejercicio, monto, fecha, descripcion_credito, tipo_credito, status) 
-                       VALUES (?, ?, ?, ?, ?, ?, 0)";
+        $sqlCredito = "INSERT INTO credito_adicional (id_ente, id_ejercicio, monto, fecha, tipo_credito, status) 
+                       VALUES (?, ?, ?, ?, ?, 0)";
         $stmtCredito = $conexion->prepare($sqlCredito);
-        $stmtCredito->bind_param("iidssi", $id_ente, $id_ejercicio, $monto, $fecha, $descripcion_credito, $tipo_credito);
+        $stmtCredito->bind_param("iidsi", $id_ente, $id_ejercicio, $monto, $fecha, $tipo_credito);
         if (!$stmtCredito->execute()) {
             throw new Exception("Error en credito_adicional: " . $stmtCredito->error);
         }
@@ -331,7 +330,7 @@ function actualizarCredito($data)
 
     try {
 
-        if ($data['id_ente'] == "" or $data['id_ejercicio'] == "" or $data['monto'] == "" or $data['fecha'] == "" or $data['descripcion_credito'] == "" or $data['tipo_credito'] == "" or $data['tipo_proyecto'] == "" or $data['descripcion_proyecto'] == "" or $data['distribuciones'] == "") {
+        if ($data['id_ente'] == "" or $data['id_ejercicio'] == "" or $data['monto'] == "" or $data['fecha'] == "" or  $data['tipo_credito'] == "" or $data['tipo_proyecto'] == "" or $data['descripcion_proyecto'] == "" or $data['distribuciones'] == "") {
             throw new Exception("No se han enviado todos los valores para el registro.");
         }
 
@@ -409,18 +408,16 @@ function actualizarCredito($data)
 
         // Actualizar los datos en la tabla credito_adicional
         $sqlCredito = "UPDATE credito_adicional SET 
-                        id_ente = ?, id_ejercicio = ?, monto = ?, fecha = ?, 
-                        descripcion_credito = ?, tipo_credito = ? 
+                        id_ente = ?, id_ejercicio = ?, monto = ?, fecha = ?,  tipo_credito = ? 
                        WHERE id = ?";
 
         $stmtCredito = $conexion->prepare($sqlCredito);
         $stmtCredito->bind_param(
-            "iidsssi",
+            "iidssi",
             $data['id_ente'],
             $data['id_ejercicio'],
             $data['monto'],
             $data['fecha'],
-            $data['descripcion_credito'],
             $data['tipo_credito'],
             $data['id_credito']
         );

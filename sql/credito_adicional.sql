@@ -33,7 +33,6 @@ CREATE TABLE `credito_adicional` (
   `id_ejercicio` int(255) NOT NULL,
   `monto` longtext NOT NULL,
   `fecha` date NOT NULL,
-  `descripcion_credito` longtext NOT NULL,
   `tipo_credito` int(255) NOT NULL,
   `status` int(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
