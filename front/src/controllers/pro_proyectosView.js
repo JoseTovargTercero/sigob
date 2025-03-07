@@ -11,12 +11,12 @@ import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 import {
   loadProyectosTable,
   validateProyectosTable,
-} from './pre_proyectosTable.js'
+} from './pro_proyectosTable.js'
 
 const d = document
 const w = window
 
-export const validatePreProyectosView = async () => {
+export const validateProProyectosView = async () => {
   let ejercicioFiscal = await ejerciciosLista({
     elementToInsert: 'ejercicios-fiscales',
   })
@@ -45,9 +45,8 @@ export const validatePreProyectosView = async () => {
       console.log(ejercicioFiscal)
 
       pre_proyectosForm_card({
-        elementToInsert: 'pre-proyectos-view',
+        elementToInsert: 'pro-proyectos-view',
         ejercicioFiscal: ejercicioFiscal,
-
         reset: () => {
           loadProyectosTable(ejercicioFiscal.id)
         },
@@ -73,9 +72,8 @@ export const validatePreProyectosView = async () => {
       let data = await getProyecto(e.target.dataset.detalleid)
 
       pre_proyectoCredito_card({
-        elementToInsert: 'pre-proyectos-view',
+        elementToInsert: 'pro-proyectos-view',
         data,
-        details: true,
         reset: () => {
           loadProyectosTable(ejercicioFiscal.id)
         },

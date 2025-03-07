@@ -1,14 +1,13 @@
-import { getProyectos } from '../api/pre_proyectos.js'
-import { getTraspasos } from '../api/pre_traspasos.js'
+import { getProyectos } from '../api/pro_proyectos.js'
+
 import { separadorLocal, tableLanguage } from '../helpers/helpers.js'
-import { meses } from '../helpers/types.js'
 
 const d = document
 const w = window
 
 let proyectoTable
 export async function validateProyectosTable() {
-  proyectoTable = new DataTable('#pre-proyecto-table', {
+  proyectoTable = new DataTable('#pro-proyecto-table', {
     scrollY: 300,
     language: tableLanguage,
     columns: [
