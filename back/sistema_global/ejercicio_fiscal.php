@@ -1,6 +1,7 @@
 <?php
 
 require_once '../sistema_global/conexion.php';
+require_once '../sistema_global/conexion_remota.php';
 header('Content-Type: application/json');
 require_once '../sistema_global/session.php';
 require_once '../sistema_global/errores.php';
@@ -834,7 +835,7 @@ if (isset($data["accion"])) {
     } elseif ($accion === "obtener_todos") {
         echo obtenerTodosEjerciciosFiscales();
     } elseif ($accion === "obtener_distribuciones_entes") {
-        if (empty($data["id_ejercicio"]) OR empty($data["id_ente"])) {
+        if (empty($data["id_ejercicio"]) or empty($data["id_ente"])) {
             echo json_encode(['error' => "Debe proporcionar un ejercicio fiscal o un ente para la consulta"]);
         } else {
             echo obtenerDistribucionEntesPorEjercicio($data["id_ejercicio"], $data["id_ente"]);
