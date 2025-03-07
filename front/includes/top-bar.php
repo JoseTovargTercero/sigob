@@ -64,10 +64,7 @@
 
 
         <li class="pc-h-item me-2">
-          <div class="custom-dropdown custom-dropdown-toggle" id="remoteDbError">
-
-
-          </div>
+          <span id="remoteDbError"></span>
         </li>
 
 
