@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.0
+-- version 5.0.2
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 09-11-2024 a las 02:33:42
--- Versión del servidor: 10.4.27-MariaDB
--- Versión de PHP: 7.4.33
+-- Tiempo de generación: 09-03-2025 a las 15:33:57
+-- Versión del servidor: 10.4.13-MariaDB
+-- Versión de PHP: 7.4.8
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -28,14 +28,91 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `asignacion_ente` (
-  `id` int(255) NOT NULL,
-  `id_ente` int(255) NOT NULL,
+  `id` int(11) NOT NULL,
+  `id_ente` int(11) NOT NULL,
   `monto_total` varchar(255) DEFAULT NULL,
-  `id_ejercicio` int(255) NOT NULL,
+  `id_ejercicio` int(11) NOT NULL,
   `fecha` varchar(255) DEFAULT NULL,
   `status` varchar(255) DEFAULT NULL,
-  `status_cerrar` int(255) DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `status_cerrar` int(255) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `asignacion_ente`
+--
+
+INSERT INTO `asignacion_ente` (`id`, `id_ente`, `monto_total`, `id_ejercicio`, `fecha`, `status`, `status_cerrar`) VALUES
+(3, 54, '3000000', 1, '2024-11-14', '1', 0),
+(4, 29, '160000', 1, '2024-11-14', '1', 0),
+(5, 39, '100000', 1, '2024-11-14', '1', 0),
+(6, 56, '3000000', 1, '2024-11-14', '1', 0),
+(7, 38, '400000', 1, '2024-11-14', '1', 0),
+(8, 59, '3000000', 1, '2024-11-14', '1', 0),
+(9, 57, '3000000', 1, '2024-11-14', '1', 0),
+(10, 67, '3000000', 1, '2024-11-14', '1', 0),
+(11, 68, '1200000', 1, '2024-11-14', '1', 0),
+(12, 65, '3000000', 1, '2024-11-14', '1', 0),
+(14, 32, '200000', 1, '2024-11-14', '1', 0),
+(15, 62, '100000', 1, '2024-11-14', '1', 0),
+(16, 64, '3000000', 1, '2024-11-14', '1', 0),
+(17, 43, '4500000', 1, '2024-11-14', '1', 0),
+(18, 49, '3000000', 1, '2024-11-14', '1', 0),
+(19, 31, '300000', 1, '2024-11-14', '1', 0),
+(20, 48, '2800000', 1, '2024-11-14', '1', 0),
+(21, 30, '300000', 1, '2024-11-14', '1', 0),
+(22, 47, '1600000', 1, '2024-11-14', '1', 0),
+(23, 51, '3000000', 1, '2024-11-14', '1', 0),
+(24, 42, '2000000', 1, '2024-11-14', '1', 0),
+(25, 33, '1000000', 1, '2024-11-14', '1', 0),
+(26, 63, '3000000', 1, '2024-11-14', '1', 0),
+(27, 55, '3000000', 1, '2024-11-14', '1', 0),
+(28, 44, '1200000', 1, '2024-11-14', '1', 0),
+(29, 52, '3000000', 1, '2024-11-14', '1', 0),
+(30, 50, '3000000', 1, '2024-11-14', '1', 0),
+(31, 36, '3000000', 1, '2024-11-14', '1', 0),
+(32, 53, '3000000', 1, '2024-11-14', '1', 0),
+(33, 35, '160000', 1, '2024-11-14', '1', 0),
+(34, 58, '3000000', 1, '2024-11-14', '1', 0),
+(35, 60, '3000000', 1, '2024-11-14', '1', 0),
+(36, 46, '2800000', 1, '2024-11-14', '1', 0),
+(37, 34, '800000', 1, '2024-11-14', '1', 0),
+(38, 37, '300000', 1, '2024-11-14', '1', 0),
+(39, 41, '309200', 1, '2024-11-14', '1', 0),
+(40, 40, '900000', 1, '2024-11-14', '1', 0),
+(41, 70, '160000', 1, '2024-11-14', '1', 0),
+(42, 78, '800000', 1, '2024-11-14', '1', 0),
+(43, 77, '2000000', 1, '2024-11-14', '1', 0),
+(44, 16, '3984143', 1, '2024-11-18', '1', 0),
+(45, 26, '262048469', 1, '2024-11-18', '1', 0),
+(46, 23, '43945000', 1, '2024-11-21', '1', 0),
+(47, 2, '8286116', 1, '2024-11-21', '1', 0),
+(48, 15, '3917184', 1, '2024-11-21', '1', 0),
+(49, 11, '2845952', 1, '2024-11-21', '1', 0),
+(50, 9, '4595061', 1, '2024-11-21', '1', 0),
+(51, 8, '135011356', 1, '2024-11-21', '1', 0),
+(52, 24, '3684314', 1, '2024-11-21', '1', 0),
+(53, 5, '18648300', 1, '2024-11-21', '1', 0),
+(54, 10, '2231476', 1, '2024-11-21', '1', 0),
+(56, 6, '10241693', 1, '2024-11-21', '1', 0),
+(58, 7, '11487210', 1, '2024-11-21', '1', 0),
+(59, 22, '17984748', 1, '2024-11-21', '1', 0),
+(60, 21, '2207582', 1, '2024-11-21', '1', 0),
+(61, 19, '16192598', 1, '2024-11-21', '1', 0),
+(62, 18, '5193342', 1, '2024-11-21', '1', 0),
+(63, 14, '1339418', 1, '2024-11-21', '1', 0),
+(65, 1, '10429175', 1, '2024-11-22', '1', 0),
+(66, 61, '3000000', 1, '2024-11-28', '1', 0),
+(68, 45, '650000', 1, '2024-11-28', '1', 0),
+(69, 66, '20000000', 1, '2024-11-28', '1', 0),
+(70, 3, '4143058', 1, '2024-11-28', '1', 0),
+(71, 4, '35721737', 1, '2024-11-29', '1', 0),
+(73, 13, '2483200', 1, '2024-11-29', '1', 0),
+(74, 81, '675000', 1, '2024-11-29', '1', 0),
+(76, 80, '5796456', 1, '2024-11-29', '1', 0),
+(77, 79, '6828454', 1, '2024-11-29', '1', 0),
+(78, 12, '4954508', 1, '2024-11-29', '1', 0),
+(79, 82, '54873062', 1, '2024-11-29', '1', 0),
+(80, 25, '2465770', 1, '2024-11-29', '1', 0);
 
 -- --------------------------------------------------------
 
@@ -51,7 +128,7 @@ CREATE TABLE `audit_logs` (
   `affected_rows` int(11) DEFAULT NULL,
   `user_id` int(11) DEFAULT NULL,
   `timestamp` datetime DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `audit_logs`
@@ -93,7 +170,157 @@ INSERT INTO `audit_logs` (`id`, `action_type`, `table_name`, `situation`, `affec
 (33, 'DELETE', 'pl_actividades', 'id= ?', 1, 35, '2024-11-05 08:41:27'),
 (34, 'DELETE', 'descripcion_programas', 'id= ?', 1, 35, '2024-11-05 08:43:43'),
 (35, 'DELETE', 'descripcion_programas', 'id= ?', 1, 35, '2024-11-05 08:44:07'),
-(36, 'DELETE', 'descripcion_programas', 'id= ?', 1, 35, '2024-11-05 11:46:30');
+(36, 'DELETE', 'descripcion_programas', 'id= ?', 1, 35, '2024-11-05 11:46:30'),
+(37, 'DELETE', 'pl_programas', 'id= ?', 1, 35, '2024-11-05 15:20:36'),
+(38, 'UPDATE', 'pl_metas', 'id = 1', 1, 35, '2024-11-06 14:50:01'),
+(39, 'UPDATE', 'pl_metas', 'id = 1', 1, 35, '2024-11-06 14:50:07'),
+(40, 'DELETE', 'pl_metas', 'id= ?', 1, 35, '2024-11-06 14:50:09'),
+(41, 'UPDATE', 'informacion_gobernacion', 'id = 1', 1, 35, '2024-11-07 09:45:47'),
+(42, 'UPDATE', 'pl_metas', 'id = 1', 0, 40, '2024-11-07 11:49:31'),
+(43, 'UPDATE', 'pl_metas', 'id = 1', 1, 40, '2024-11-07 13:21:21'),
+(44, 'UPDATE', 'pl_metas', 'id = 1', 1, 40, '2024-11-07 13:22:00'),
+(45, 'UPDATE', 'pl_metas', 'id = 1', 1, 40, '2024-11-11 10:07:25'),
+(46, 'UPDATE', 'pl_metas', 'id = 1', 1, 40, '2024-11-11 10:07:30'),
+(47, 'DELETE', 'pl_metas', 'id= ?', 1, 40, '2024-11-11 10:08:00'),
+(48, 'DELETE', 'asignacion_ente - distribucion_entes', 'id=1', 1, 35, '2024-11-11 10:12:22'),
+(49, 'DELETE', 'asignacion_ente - distribucion_entes', 'id=2', 3, 35, '2024-11-11 10:13:52'),
+(50, 'UPDATE', 'pl_metas', 'id = 1', 0, 40, '2024-11-11 10:21:20'),
+(51, 'UPDATE', 'pl_metas', 'id = 1', 0, 40, '2024-11-11 10:21:39'),
+(52, 'UPDATE', 'pl_metas', 'id = 1', 1, 40, '2024-11-11 10:28:14'),
+(53, 'UPDATE', 'pl_metas', 'id = 4', 1, 40, '2024-11-11 10:28:27'),
+(54, 'DELETE', 'pl_metas', 'id= ?', 1, 40, '2024-11-11 10:29:44'),
+(55, 'UPDATE', 'pl_metas', 'id = 5', 1, 40, '2024-11-11 10:30:27'),
+(56, 'DELETE', 'distribucion_presupuestaria', 'id=3', 1, 35, '2024-11-11 11:05:01'),
+(57, 'DELETE', 'distribucion_presupuestaria', 'id=2', 1, 35, '2024-11-11 11:05:03'),
+(58, 'DELETE', 'distribucion_presupuestaria', 'id=1', 1, 35, '2024-11-11 11:05:05'),
+(59, 'UPDATE', 'pl_metas', 'id = 11', 0, 40, '2024-11-11 11:10:11'),
+(60, 'UPDATE', 'pl_metas', 'id = 21', 1, 40, '2024-11-11 12:29:39'),
+(61, 'UPDATE', 'pl_metas', 'id = 22', 0, 40, '2024-11-11 12:34:52'),
+(62, 'UPDATE', 'pl_metas', 'id = 22', 1, 40, '2024-11-11 12:38:01'),
+(63, 'UPDATE', 'pl_metas', 'id = 22', 1, 40, '2024-11-11 12:39:50'),
+(64, 'UPDATE', 'pl_metas', 'id = 60', 1, 40, '2024-11-11 14:22:49'),
+(65, 'UPDATE', 'pl_metas', 'id = 61', 1, 40, '2024-11-11 14:26:09'),
+(66, 'UPDATE', 'descripcion_programas', 'id = 4', 1, 40, '2024-11-12 10:19:55'),
+(67, 'UPDATE', 'descripcion_programas', 'id = 2', 1, 40, '2024-11-12 10:20:32'),
+(68, 'UPDATE', 'descripcion_programas', 'id = 3', 1, 40, '2024-11-12 10:21:43'),
+(69, 'UPDATE', 'descripcion_programas', 'id = 4', 1, 40, '2024-11-12 10:24:26'),
+(70, 'UPDATE', 'descripcion_programas', 'id = 5', 1, 40, '2024-11-12 10:25:44'),
+(71, 'UPDATE', 'descripcion_programas', 'id = 5', 1, 40, '2024-11-12 10:26:41'),
+(72, 'UPDATE', 'descripcion_programas', 'id = 6', 1, 40, '2024-11-12 10:27:08'),
+(73, 'UPDATE', 'descripcion_programas', 'id = 7', 1, 40, '2024-11-12 10:28:08'),
+(74, 'UPDATE', 'descripcion_programas', 'id = 8', 1, 40, '2024-11-12 10:28:58'),
+(75, 'UPDATE', 'descripcion_programas', 'id = 9', 1, 40, '2024-11-12 10:29:41'),
+(76, 'UPDATE', 'descripcion_programas', 'id = 11', 1, 40, '2024-11-12 10:30:28'),
+(77, 'UPDATE', 'descripcion_programas', 'id = 12', 1, 40, '2024-11-12 10:31:26'),
+(78, 'UPDATE', 'descripcion_programas', 'id = 19', 1, 40, '2024-11-12 10:33:27'),
+(79, 'UPDATE', 'descripcion_programas', 'id = 13', 1, 40, '2024-11-12 10:34:50'),
+(80, 'UPDATE', 'descripcion_programas', 'id = 13', 1, 40, '2024-11-12 10:35:32'),
+(81, 'UPDATE', 'descripcion_programas', 'id = 19', 1, 40, '2024-11-12 10:37:01'),
+(82, 'UPDATE', 'descripcion_programas', 'id = 14', 1, 40, '2024-11-12 10:37:55'),
+(83, 'UPDATE', 'descripcion_programas', 'id = 15', 1, 40, '2024-11-12 10:38:35'),
+(84, 'UPDATE', 'descripcion_programas', 'id = 16', 1, 40, '2024-11-12 10:39:13'),
+(85, 'UPDATE', 'descripcion_programas', 'id = 17', 1, 40, '2024-11-12 10:40:20'),
+(86, 'UPDATE', 'descripcion_programas', 'id = 18', 1, 40, '2024-11-12 10:43:32'),
+(87, 'UPDATE', 'descripcion_programas', 'id = 20', 1, 40, '2024-11-12 10:44:31'),
+(88, 'UPDATE', 'descripcion_programas', 'id = 20', 0, 40, '2024-11-12 10:47:28'),
+(89, 'UPDATE', 'descripcion_programas', 'id = 21', 1, 40, '2024-11-12 10:56:01'),
+(90, 'UPDATE', 'descripcion_programas', 'id = 22', 1, 40, '2024-11-12 10:59:10'),
+(91, 'UPDATE', 'descripcion_programas', 'id = 23', 1, 40, '2024-11-12 11:00:25'),
+(92, 'UPDATE', 'descripcion_programas', 'id = 24', 1, 40, '2024-11-12 11:01:47'),
+(93, 'UPDATE', 'descripcion_programas', 'id = 25', 1, 40, '2024-11-12 11:04:12'),
+(94, 'UPDATE', 'descripcion_programas', 'id = 26', 1, 40, '2024-11-12 11:05:37'),
+(95, 'UPDATE', 'descripcion_programas', 'id = 27', 1, 40, '2024-11-12 11:07:30'),
+(96, 'UPDATE', 'descripcion_programas', 'id = 28', 1, 40, '2024-11-12 11:09:26'),
+(97, 'UPDATE', 'descripcion_programas', 'id = 29', 1, 40, '2024-11-12 11:10:35'),
+(98, 'UPDATE', 'descripcion_programas', 'id = 30', 1, 40, '2024-11-12 11:15:51'),
+(99, 'UPDATE', 'descripcion_programas', 'id = 31', 1, 40, '2024-11-12 11:17:03'),
+(100, 'UPDATE', 'descripcion_programas', 'id = 32', 1, 40, '2024-11-12 11:18:55'),
+(101, 'DELETE', 'descripcion_programas', 'id= ?', 1, 40, '2024-11-12 11:19:08'),
+(102, 'DELETE', 'descripcion_programas', 'id= ?', 1, 40, '2024-11-12 11:31:14'),
+(103, 'DELETE', 'descripcion_programas', 'id= ?', 1, 40, '2024-11-12 11:36:39'),
+(104, 'UPDATE', 'descripcion_programas', 'id = 29', 1, 40, '2024-11-12 11:38:45'),
+(105, 'UPDATE', 'descripcion_programas', 'id = 30', 1, 40, '2024-11-12 11:41:05'),
+(106, 'UPDATE', 'descripcion_programas', 'id = 30', 0, 40, '2024-11-12 11:50:44'),
+(107, 'DELETE', 'descripcion_programas', 'id= ?', 1, 1, '2024-11-12 12:09:26'),
+(108, 'UPDATE', 'pl_programas', 'id = 21', 1, 1, '2024-11-12 13:12:37'),
+(109, 'UPDATE', 'pl_programas', 'id = 15', 1, 1, '2024-11-12 14:33:13'),
+(110, 'UPDATE', 'pl_programas', 'id = 14', 1, 1, '2024-11-12 14:34:19'),
+(111, 'UPDATE', 'pl_programas', 'id = 27', 1, 1, '2024-11-12 14:39:21'),
+(112, 'DELETE', 'descripcion_programas', 'id= ?', 1, 1, '2024-11-12 15:49:29'),
+(113, 'DELETE', 'descripcion_programas', 'id= ?', 1, 1, '2024-11-12 15:50:13'),
+(114, 'DELETE', 'descripcion_programas', 'id= ?', 1, 1, '2024-11-12 15:50:40'),
+(115, 'DELETE', 'descripcion_programas', 'id= ?', 1, 1, '2024-11-12 15:50:52'),
+(116, 'DELETE', 'descripcion_programas', 'id= ?', 1, 1, '2024-11-12 15:51:05'),
+(117, 'DELETE', 'descripcion_programas', 'id= ?', 1, 1, '2024-11-12 15:53:02'),
+(118, 'DELETE', 'descripcion_programas', 'id= ?', 1, 1, '2024-11-12 15:57:05'),
+(119, 'DELETE', 'descripcion_programas', 'id= ?', 1, 1, '2024-11-12 15:59:18'),
+(120, 'DELETE', 'descripcion_programas', 'id= ?', 1, 1, '2024-11-12 15:59:38'),
+(121, 'DELETE', 'descripcion_programas', 'id= ?', 1, 1, '2024-11-12 16:01:56'),
+(122, 'UPDATE', 'descripcion_programas', 'id = 48', 1, 1, '2024-11-12 16:02:28'),
+(123, 'UPDATE', 'descripcion_programas', 'id = 48', 1, 1, '2024-11-12 16:02:49'),
+(124, 'DELETE', 'distribucion_presupuestaria', 'id=6', 1, 1, '2024-11-12 16:11:08'),
+(125, 'DELETE', 'distribucion_presupuestaria', 'id=5', 1, 1, '2024-11-12 16:11:10'),
+(126, 'DELETE', 'distribucion_presupuestaria', 'id=4', 1, 1, '2024-11-12 16:11:12'),
+(127, 'DELETE', 'distribucion_presupuestaria', 'id=13', 1, 1, '2024-11-12 16:27:00'),
+(128, 'DELETE', 'distribucion_presupuestaria', 'id=37', 1, 1, '2024-11-12 16:29:47'),
+(129, 'DELETE', 'pl_metas', 'id= ?', 1, 40, '2024-11-13 10:29:35'),
+(130, 'DELETE', 'pl_metas', 'id= ?', 1, 40, '2024-11-13 10:30:44'),
+(131, 'DELETE', 'pl_metas', 'id= ?', 1, 40, '2024-11-13 10:30:55'),
+(132, 'DELETE', 'pl_metas', 'id= ?', 1, 40, '2024-11-13 10:31:03'),
+(133, 'DELETE', 'pl_metas', 'id= ?', 1, 40, '2024-11-13 10:31:13'),
+(134, 'DELETE', 'pl_metas', 'id= ?', 1, 40, '2024-11-13 10:31:32'),
+(135, 'DELETE', 'pl_metas', 'id= ?', 1, 40, '2024-11-13 10:31:43'),
+(136, 'DELETE', 'pl_metas', 'id= ?', 1, 40, '2024-11-13 10:31:51'),
+(137, 'DELETE', 'asignacion_ente - distribucion_entes', 'id=1', 1, 40, '2024-11-14 12:40:33'),
+(138, 'DELETE', 'partidas_presupuestarias', 'id=2118', 1, 40, '2024-11-14 16:19:00'),
+(139, 'DELETE', 'distribucion_presupuestaria', 'id=737', 1, 1, '2024-11-15 11:22:03'),
+(140, 'DELETE', 'partidas_presupuestarias', 'id=2154', 1, 1, '2024-11-15 12:41:34'),
+(141, 'DELETE', 'partidas_presupuestarias', 'id=2156', 1, 1, '2024-11-15 12:45:59'),
+(142, 'DELETE', 'distribucion_presupuestaria', 'id=969', 1, 42, '2024-11-15 13:50:40'),
+(143, 'DELETE', 'distribucion_presupuestaria', 'id=1006', 1, 42, '2024-11-15 14:08:34'),
+(144, 'DELETE', 'distribucion_presupuestaria', 'id=1008', 1, 42, '2024-11-15 14:08:37'),
+(145, 'DELETE', 'distribucion_presupuestaria', 'id=1029', 1, 1, '2024-11-15 15:06:24'),
+(146, 'DELETE', 'distribucion_presupuestaria', 'id=1131', 1, 1, '2024-11-15 15:11:26'),
+(147, 'DELETE', 'distribucion_presupuestaria', 'id=1132', 1, 1, '2024-11-15 15:14:29'),
+(148, 'DELETE', 'distribucion_presupuestaria', 'id=1133', 1, 1, '2024-11-15 15:30:15'),
+(149, 'DELETE', 'distribucion_presupuestaria', 'id=1134', 1, 1, '2024-11-15 15:42:03'),
+(150, 'DELETE', 'distribucion_presupuestaria', 'id=700', 1, 1, '2024-11-15 15:46:03'),
+(151, 'DELETE', 'distribucion_presupuestaria', 'id=1159', 1, 1, '2024-11-19 15:16:43'),
+(152, 'UPDATE', 'pl_sectores', 'id = 8', 0, 1, '2024-11-21 14:40:36'),
+(153, 'UPDATE', 'informacion_contraloria', 'id = 1', 1, 1, '2024-11-22 13:23:17'),
+(154, 'UPDATE', 'informacion_contraloria', 'id = 1', 0, 1, '2024-11-22 13:23:22'),
+(155, 'DELETE', 'asignacion_ente - distribucion_entes', 'id=13', 1, 1, '2024-11-27 13:20:50'),
+(156, 'DELETE', 'distribucion_presupuestaria', 'id=916', 1, 1, '2024-11-28 08:53:38'),
+(157, 'DELETE', 'distribucion_presupuestaria', 'id=567', 1, 1, '2024-11-28 09:02:25'),
+(158, 'DELETE', 'distribucion_presupuestaria', 'id=584', 1, 1, '2024-11-28 09:05:36'),
+(159, 'DELETE', 'distribucion_presupuestaria', 'id=623', 1, 1, '2024-11-28 09:12:47'),
+(160, 'DELETE', 'distribucion_presupuestaria', 'id=39', 1, 1, '2024-11-28 09:14:57'),
+(161, 'DELETE', 'distribucion_presupuestaria', 'id=1488', 1, 1, '2024-11-28 09:56:37'),
+(162, 'DELETE', 'distribucion_presupuestaria', 'id=1489', 1, 1, '2024-11-28 09:58:04'),
+(163, 'DELETE', 'distribucion_presupuestaria', 'id=1490', 1, 1, '2024-11-28 10:00:09'),
+(164, 'DELETE', 'distribucion_presupuestaria', 'id=32', 1, 1, '2024-11-28 10:08:20'),
+(165, 'DELETE', 'distribucion_presupuestaria', 'id=35', 1, 1, '2024-11-28 10:09:22'),
+(166, 'DELETE', 'distribucion_presupuestaria', 'id=36', 1, 1, '2024-11-28 10:10:49'),
+(167, 'DELETE', 'asignacion_ente - distribucion_entes', 'id=2', 1, 35, '2024-11-28 14:35:15'),
+(168, 'DELETE', 'asignacion_ente - distribucion_entes', 'id=55', 1, 1, '2024-11-29 09:41:25'),
+(169, 'DELETE', 'asignacion_ente - distribucion_entes', 'id=64', 3, 1, '2024-11-29 10:09:08'),
+(170, 'DELETE', 'asignacion_ente - distribucion_entes', 'id=57', 2, 1, '2024-11-29 10:09:15'),
+(171, 'DELETE', 'asignacion_ente - distribucion_entes', 'id=72', 2, 1, '2024-11-29 11:06:55'),
+(172, 'UPDATE', 'personal_directivo', 'id = 1', 1, 1, '2024-11-29 11:26:06'),
+(173, 'UPDATE', 'personal_directivo', 'id = 2', 1, 1, '2024-11-29 11:41:14'),
+(174, 'UPDATE', 'personal_directivo', 'id = 1', 1, 1, '2024-11-29 11:41:28'),
+(175, 'UPDATE', 'personal_directivo', 'id = 3', 1, 1, '2024-11-29 11:47:48'),
+(176, 'UPDATE', 'personal_directivo', 'id = 3', 1, 1, '2024-11-29 12:03:15'),
+(177, 'DELETE', 'asignacion_ente - distribucion_entes', 'id=67', 4, 1, '2024-11-29 13:35:27'),
+(178, 'DELETE', 'asignacion_ente - distribucion_entes', 'id=75', 2, 1, '2024-11-29 13:43:49'),
+(179, 'UPDATE', 'personal_directivo', 'id = 4', 1, 1, '2024-11-29 14:18:51'),
+(180, 'UPDATE', 'personal_directivo', 'id = 1', 1, 1, '2024-11-30 11:28:21'),
+(181, 'UPDATE', 'personal_directivo', 'id = 2', 1, 1, '2024-11-30 11:29:39'),
+(182, 'UPDATE', 'personal_directivo', 'id = 3', 1, 1, '2024-11-30 11:30:23'),
+(183, 'UPDATE', 'personal_directivo', 'id = 4', 1, 1, '2024-11-30 11:31:33'),
+(184, 'UPDATE', 'informacion_consejo', 'id = 1', 1, 1, '2024-11-30 11:57:41'),
+(185, 'UPDATE', 'informacion_personas', 'id = 2', 1, 1, '2024-11-30 11:58:20'),
+(186, 'UPDATE', 'informacion_contraloria', 'id = 1', 1, 1, '2024-11-30 12:00:15');
 
 -- --------------------------------------------------------
 
@@ -104,8 +331,8 @@ INSERT INTO `audit_logs` (`id`, `action_type`, `table_name`, `situation`, `affec
 CREATE TABLE `backups` (
   `id` int(11) NOT NULL,
   `user` int(11) NOT NULL,
-  `fecha` varchar(20) DEFAULT NULL,
-  `tablas` varchar(255) DEFAULT NULL
+  `fecha` varchar(20) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `tablas` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 --
@@ -126,10 +353,10 @@ INSERT INTO `backups` (`id`, `user`, `fecha`, `tablas`) VALUES
 
 CREATE TABLE `bancos` (
   `id` int(11) NOT NULL,
-  `prefijo` varchar(50) DEFAULT NULL,
-  `nombre` varchar(255) DEFAULT NULL,
-  `matriz` varchar(255) DEFAULT NULL,
-  `afiliado` varchar(20) DEFAULT NULL
+  `prefijo` varchar(50) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `nombre` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `matriz` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `afiliado` varchar(20) COLLATE latin1_spanish_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 --
@@ -151,7 +378,7 @@ CREATE TABLE `cargos_grados` (
   `cargo` varchar(255) DEFAULT NULL,
   `cod_cargo` varchar(5) DEFAULT NULL,
   `grado` varchar(2) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Volcado de datos para la tabla `cargos_grados`
@@ -704,7 +931,7 @@ CREATE TABLE `categorias` (
   `id` int(11) NOT NULL,
   `categoria` varchar(255) DEFAULT NULL,
   `categoria_nombre` longtext DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `categorias`
@@ -805,11 +1032,14 @@ INSERT INTO `categorias` (`id`, `categoria`, `categoria_nombre`) VALUES
 --
 
 CREATE TABLE `compromisos` (
-  `id` int(255) NOT NULL,
+  `id` int(11) NOT NULL,
   `correlativo` varchar(255) DEFAULT NULL,
   `tipo` varchar(255) DEFAULT NULL,
-  `id_registro` int(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `id_registro` int(11) NOT NULL,
+  `id_ejercicio` int(255) NOT NULL,
+  `tabla_registro` longtext NOT NULL,
+  `numero_compromiso` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -823,12 +1053,12 @@ CREATE TABLE `conceptos` (
   `nom_concepto` varchar(255) DEFAULT NULL,
   `cod_partida` varchar(255) DEFAULT NULL,
   `tipo_concepto` varchar(2) DEFAULT NULL,
-  `tipo_calculo` int(1) NOT NULL,
+  `tipo_calculo` int(11) NOT NULL,
   `valor` varchar(255) DEFAULT NULL,
-  `maxval` int(1) NOT NULL DEFAULT 0,
+  `maxval` int(11) NOT NULL DEFAULT 0,
   `tipo_calculo_origen` int(11) NOT NULL DEFAULT 0,
   `codigo_concepto` varchar(50) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Volcado de datos para la tabla `conceptos`
@@ -860,7 +1090,7 @@ INSERT INTO `conceptos` (`id`, `nomina_grupo`, `nom_concepto`, `cod_partida`, `t
 --
 
 CREATE TABLE `conceptos_aplicados` (
-  `id` int(255) NOT NULL,
+  `id` int(11) NOT NULL,
   `concepto_id` varchar(255) DEFAULT NULL,
   `nom_concepto` varchar(255) DEFAULT NULL,
   `fecha_aplicar` longtext DEFAULT NULL,
@@ -873,7 +1103,7 @@ CREATE TABLE `conceptos_aplicados` (
   `nomina_restar` varchar(255) DEFAULT NULL,
   `multiplicador` varchar(255) DEFAULT NULL,
   `otra_nomina` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `conceptos_aplicados`
@@ -912,9 +1142,9 @@ INSERT INTO `conceptos_aplicados` (`id`, `concepto_id`, `nom_concepto`, `fecha_a
 
 CREATE TABLE `conceptos_formulacion` (
   `id` int(11) NOT NULL,
-  `tipo_calculo` varchar(10) DEFAULT NULL,
-  `condicion` varchar(255) DEFAULT NULL,
-  `valor` varchar(50) DEFAULT NULL,
+  `tipo_calculo` varchar(10) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `condicion` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `valor` varchar(50) COLLATE latin1_spanish_ci DEFAULT NULL,
   `concepto_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
@@ -939,7 +1169,7 @@ CREATE TABLE `correcciones` (
   `fecha_correccion` date NOT NULL,
   `status` int(11) NOT NULL,
   `peticion_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `correcciones`
@@ -951,15 +1181,32 @@ INSERT INTO `correcciones` (`id`, `usuario_id`, `movimiento_id`, `descripcion`, 
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `credito_adicional`
+--
+
+CREATE TABLE `credito_adicional` (
+  `id` int(255) NOT NULL,
+  `id_ente` int(255) NOT NULL,
+  `id_ejercicio` int(255) NOT NULL,
+  `monto` longtext NOT NULL,
+  `fecha` date NOT NULL,
+  `descripcion_credito` longtext NOT NULL,
+  `tipo_credito` int(255) NOT NULL,
+  `status` int(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `dependencias`
 --
 
 CREATE TABLE `dependencias` (
-  `id_dependencia` int(255) NOT NULL,
+  `id_dependencia` int(11) NOT NULL,
   `dependencia` varchar(255) DEFAULT NULL,
   `cod_dependencia` varchar(10) DEFAULT NULL,
   `id_categoria` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `dependencias`
@@ -1060,48 +1307,47 @@ INSERT INTO `dependencias` (`id_dependencia`, `dependencia`, `cod_dependencia`, 
 --
 
 CREATE TABLE `descripcion_programas` (
-  `id` int(255) NOT NULL,
-  `id_sector` int(255) NOT NULL,
-  `id_programa` int(255) NOT NULL,
+  `id` int(11) NOT NULL,
+  `id_sector` int(11) NOT NULL,
+  `id_programa` int(11) NOT NULL,
   `descripcion` longtext NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `descripcion_programas`
 --
 
 INSERT INTO `descripcion_programas` (`id`, `id_sector`, `id_programa`, `descripcion`) VALUES
-(2, 1, 2, 'La Contraloría del Estado Amazonas,  es el órgano de control, vigilancia y fiscalización de los ingresos, gastos y bienes públicos del Estado y a tal efecto goza de autonomía orgánica y funcional,  de conformidad con lo establecido en el articulo 163 de la Constitución de la República Bolivariana de Venezuela, sin menoscabo de la función de control, seguimiento y evaluación de la Contraloría General de la República. \r\n \r\nLa Contraloría del Estado Amazonas, ahora como órgano integrante del Sistema Nacional de Control Fiscal, el cual es un conjunto de órganos, estructuras, recursos y procesos que integrados bajo la rectoría de la Contraloría General de la República, interactúan coordinadamente a fin de lograr la unidad de dirección de los sistemas y procedimientos de control  que coadyuven al logro de los objetivos generales de los distintos entes y organismos sujetos a control fiscal, así como también al buen funcionamiento de la administración pública; cuyos objetivos son:\r\n \r\n* Fortalecer la capacidad del Estado para ejecutar eficazmente su función de gobierno.\r\n\r\n* Lograr la transparencia y la eficiencia en el manejo de los recursos del sector público   y así contribuir a optimizar la calidad de vida de la ciudadanía.\r\n\r\n* Establecer las responsabilidades por la comisión de irregularidades relacionadas con la gestión  de las entidades públicas.\r\n'),
-(3, 1, 3, 'Le corresponde representar y amparar judicial y extrajudicialmente, conforme a las instrucciones emanadas del Ejecutivo Regional o del Consejo Legislativo los intereses del Estado, sus bienes, su patrimonio, rentas y derechos, redactar y suscribir conforme a las instrucciones que le fueren comunicadas por el Ejecutivo Regional, por el Consejo Legislativo, los documentos contentivos de actos, negocio o contratos que conciernan al Estado; además prestar asesoría jurídica a los órganos y dependencia del Estado.\r\n	\r\nAsistir en representación del Estado a las discusiones de los Contratos Colectivos que el Ejecutivo regional, Consejo Legislativo y sus dependencias, órganos auxiliares y conexos tengan a bien suscribir con sus trabajadores.\r\n\r\nLlevar un inventario permanente de los bienes inmuebles del Estado,  velar por el estricto  cumplimiento de las leyes, en el ámbito del estado y pedir por ante los organismos jurisdiccionales competentes la nulidad de leyes, decretos, ordenanzas, acuerdos y resoluciones dictadas en el Estado.\r\n \r\nPresentar proyectos de leyes ante el Consejo Legislativo Regional y solicitar la reforma parcial de las ya existentes, cuando ella sea pertinente a los intereses del Estado y la Nación.\r\n \r\nElaborar su propio Presupuesto de Gastos a fin de ser incluidos en el Presupuesto General de Ingresos y Gastos del Estado, y ordenar traslados de partidas y otros movimientos contables dentro de su propio presupuesto anual de gasto, conforme a lo establecido en la Ley orgánica de Administración del Estado, Ley Orgánica de Presupuesto y la Ley Orgánica de Régimen presupuestario del Estado y demás normativa vigente.\r\n'),
-(4, 1, 4, 'El Gobernador del estado como Jefe del Ejecutivo Regional y Agente del Ejecutivo Nacional, tendrá las facultades previstas en la Constitución de la República, la Ley sobre Elección y Remoción de Gobernadores, Ley Orgánica de Descentralización, Delimitación y Transferencia de competencia del poder público, la Constitución del Estado Amazonas y las otras normativas legales vigentes.\r\n \r\n \r\nEl propósito de este programa, es responder en el más alto nivel, el estricto cumplimiento de todas las actividades que sean necesarias para Gobernar el Estado Amazonas y para coordinar acciones administrativas y sociales, en función del desarrollo económico y social sustentable del Estado.\r\n'),
-(5, 1, 6, 'Es el órgano directo e inmediato del Gobernador a cuyo cargo esta la supervisión de las actividades administrativas del Ejecutivo del Estado Amazonas, conforme a las directrices que le imparta el Gobernador. El Secretario Ejecutivo Regional, en lo político y administrativo, tanto en el ámbito interno como municipal.\r\n \r\nDentro de las funciones del Secretario Ejecutivo de Coordinación, esta en velar por el estricto cumplimiento de todas las normas que rige la administración y vigilancia del patrimonio del Estado.\r\n \r\nSon atribuciones además, del Secretario Ejecutivo de Coordinación, mantener relaciones institucionales con el Consejo legislativo, las autoridades Municipales, los órganos de la Administración Nacional, el Clero, las Organizaciones Políticas, Sindicales, Gerencia e Empresariales y en General con todo los Sectores representativos de las comunidades que conforman el Estado en representación del Gobierno.\r\n \r\nEs de su competencia, coordinar el trabajo de las secretarías del Ejecutivo, oficinas auxiliares del Despacho de la Gobernación y las actividades de los Comisionados y las Comisiones que el Gobernador designe conforme a la Ley.\r\n \r\nConducir los procesos de ajuste de la estructura organizativa de la Gobernación, en procura de elevar la eficiencia de su gestión.\r\n'),
-(6, 1, 6, 'Este programa tiene como atribuciones, la aplicación de las normas y principios que rigen la administración del personal, como elemento fundamental de funcionamiento del Gobierno Estadal.\r\n \r\n \r\nAdministra la Ejecución de los Contratos Colectivos, coordinando las relaciones obreros patronales, en el cumplimiento de las cláusulas y convenios, así como la aplicación de las Leyes y Reglamentos que rigen las normas y procedimientos administrativos en lo concerniente a la materia de recursos humanos.\r\n'),
-(7, 1, 7, 'Asistir y asesorar al Gobernador del Estado, en todo lo concerniente a la Planificación y Administración Presupuestaria de la Gestión, e igualmente a las diferentes secretarías y oficinas dependientes del Ejecutivo Regional y demás poderes públicos, cuando estos lo soliciten. \r\n \r\nFormular en coordinación con la estructura del Ejecutivo Regional el proyecto de Ley de Presupuesto. \r\n \r\nEjercer la Secretaría Técnica del Comité de Planificación y Coordinación de Políticas Públicas e integrar las comisiones de trabajo a las cuales sea designado por el Gobernador para la elaboración del Plan Operativo Anual y Plan Estadal de Desarrollo Estadal.  \r\n'),
-(8, 1, 8, 'El programa Servicios de Administración, se encarga de ejecutar en el marco de la norma financiera el presupuesto del Estado.\r\n \r\n \r\nCoordinar los servicios de compras de bienes y servicios; el registro del patrimonio de la Gobernación y de reproducción e imprenta.\r\n \r\n \r\nAdelantar la contabilidad fiscal del Ejecutivo Regional, de acuerdo a las pautas establecidas en la Ley.\r\n'),
-(9, 1, 9, 'El objeto de este programa, es el registro, control y cancelación de los  compromisos adquiridos por la Gobernación del Estado, a través de sistemas que aseguren el adecuado manejo del Tesoro Público; así como también, el control de valores en custodia, la existencia del Tesoro y la recaudación de los fondos provenientes de la renta de diversas índoles, cumpliendo con lo dispuesto en la ley Orgánica de régimen Presupuestario, Ley General de Venta y  Gastos públicos del Estado, Ley Orgánica de Contraloría General del Estado y demás normativas vigentes de este Estado.\r\n \r\n \r\nRealiza además, todo los pagos ejecutado por Gobernación, a través de las diferentes cuentas habilitadas, Promueve actividades laborales para organizar todas las operaciones de recaudación,  custodia de valores y velar por el fiel cumplimiento de acuerdo a las disposiciones legales vigentes.\r\n'),
-(11, 1, 10, 'Elaborar el programa anual de política indigenista, previa consulta con las comunidades, pueblos y grupos étnicos indígenas orientados al mejoramiento de las condiciones de vidas, trabajo y salud, así como su nivel educativo.\r\n \r\nSupervisar  y hacer cumplir las directrices de las políticas indigenistas.\r\n \r\nOrientar a la población indígena, sobre su organización y el establecimiento de cooperativa de producción y consumo.\r\n \r\nDefender y hacer respetar los derechos de los indígenas consagrados en la Constitución Nacional, Constitución Estadal, Leyes Nacionales y en tratados Internacionales ratificados por Venezuela.\r\n \r\nCoordinar los recursos y las acciones dirigidas a promover en las poblaciones indígenas del Estado Amazonas\r\n \r\nEstablecer nexos con los entes públicos, Nacionales  y Regionales, que hacen vida activa en el Estado Amazonas, a fin  de coordinar acciones a favor de las comunidades indígenas, a través de los diferentes Institutos Crediticios Nacionales y Estadales. \r\n\r\nDesarrollar acciones en las comunidades indígenas que contribuyan al desarrollo socio-económico y la autogestión\r\n'),
-(12, 1, 13, 'Funciones de la Secretaria Ejecutiva de bienes y servicios:\r\n Dirigir, coordinar y establecer estrategia de recepción, entrega y movilización de bienes muebles adquiridos por la Gobernación para el equipamiento de las unidades administrativas.\r\nRealizar y Ejecutar periódicamente programa de actualización de inventarios de bienes asignados a distintas oficinas, tanto en las unidades administrativas dependientes como en los entes coordinados.\r\nDiseñar, controlar y supervisar, la vigilancia y resguardo de los bienes e instalaciones que son propiedades patrimoniales de la Gobernación.\r\nLlevar registro y control de bienes muebles e inmuebles, así como rendir informe a la administración y tesorería sobre el registro contable para el ajuste periódico a la hacienda pública del estado.\r\nRealizar el control perceptivo, que permita captar la veracidad, exactitud y calidad de obras, bienes y servicios. Para así verificar la sinceridad y correcta realización de las operaciones administrativas, a través de comprobación in situ.\r\n'),
-(13, 1, 11, 'Los servicios de Control y Gestión comprenden el plan de organización, las políticas, normas, métodos y procedimientos adaptados dentro de un ente u organismo, sujeto a la Ley del Estatuto de la función pública, para  salvaguardar sus recursos, verificar su exactitud y veracidad de la información financiera y administrativa y promover la eficiencia económica y la calidad en sus operaciones. Estimular la observancia de las políticas, presentar y lograr el cumplimiento de misión, objetivos y metas.\r\n \r\nRealizar actividades de coordinar y dirigir los programas de auditoria a efectuarse en los organismos públicos, centralizados, dependientes financiera y presupuestariamente de la Gobernación del Estado Amazonas.\r\n \r\nEn materia de asuntos legales, el Auditor Interno de acuerdo a los casos presentados y a las situaciones que se origen en el ámbito administrativo y financiero, ordenará las aperturas, investigaciones y averiguaciones administrativas que amerite el caso.\r\n'),
-(14, 2, 14, 'En este programa se desarrollan acciones tendentes para el rescate y mejora de la imagen institucional, mediante la ejecución de todas las actividades en lo referente a seguridad, defensa y orden público en primer orden y en otro sentido, en lo que al aspecto administrativo se refiere; cumpliendo eficientemente con la misión encomendada por el Despacho Superior durante todo el año, apoyando el plan de equipamiento general, con el adiestramiento y capacitación de todo el personal policial, técnicos,  administrativos y obreros e igualmente con los recursos logísticos y financieros necesarios para su completa confiabilidad.\r\n'),
-(15, 2, 15, 'Esta unidad ejecutora tiene como finalidad la coordinación de programas dirigidos a resguardar la seguridad y orden público, cumplir y hacer cumplir los decretos, ordenanzas, resoluciones y demás disposiciones que la Gobernación imparta de acuerdo a la ley.\r\n \r\nCoordinar con los organismos competentes la implantación de medidas de resguardo de la colectividad afectada por calamidades públicas, el servir de enlace entre el Ejecutivo y las Fuerzas Armadas Policiales y demás organismos de Seguridad del Estado.\r\n \r\nEn otro orden de acción también se dedica  a la administración de asuntos civiles y preparar el personal policial, profesional técnico y obreros para coadyuvar al cumplimiento del orden público.  \r\n'),
-(16, 2, 16, 'El objetivo primordial de este programa se puede resumir en tres funciones principales:\r\n \r\n- Actuar cordialmente para reducir al mínimo las  calamidades públicas por causas naturales.\r\n \r\n- Coordinar acciones preventivas y asistenciales.\r\n \r\n- Coordinar operativos en épocas festivas y de asueto para evitar perdida de vida.\r\n'),
-(17, 2, 17, 'El Cuerpo de Bomberos del Estado Amazonas, tiene como finalidad prestar sus servicios encaminados a la seguridad en lo referente a la prevención, protección, combate, extinción de incendios y otros siniestros, así como también, la investigación de las causas y su origen, la atención de emergencias pre-hospitalaria, los servicios de rescate y salvamento y la participación en los programas para la atención de emergencias o desastre dirigida a la formación de la comunidad.\r\n \r\nLos Bomberos utilizan métodos para proteger mercancías, objetos y el interior de edificios de los daños que puedan sufrir por fuego y el agua, los objetos se cubren con material impermeable y el agua se evacua con aspiradores de agua, sumideros y bombas portátiles. La mayoría de las unidades de bomberos disponen de equipos de salvaguardia.\r\n'),
-(18, 3, 18, 'La Secretaría de turismo, es el órgano ejecutor de la política turística y recreativa del Estado, a través de la cual contribuirá al desarrollo económico y social de la región, proponiendo el uso racional de los atractivos turísticos que existen en el Estado.\r\n \r\nLa riqueza y abundancia de paisajes naturales presentes en el Estado, define una amplia potencialidad turística, recreacional y contemplativa.\r\n \r\nPor lo que corresponden a este sector  la planificación y realización de programas y acciones para  que la actividad turística se convierta en una de las fuentes fundamentales para propiciar  el desarrollo económico, social y cultural del  Estado Amazonas.\r\n \r\nEn tal sentido las acciones concretas a desarrollar serán destinadas a delimitar y promover las áreas de  mayor porvenir turismo, así como la creación y mantenimiento de la infraestructura necesaria para su desarrollo. Además, dentro de estas acciones están comprendidas, velar por el mantenimiento y conservación de las instalaciones ya existentes y coordinar acciones con los organismos responsables de administrar las zonas  ABRAE del Estado con el objetivo de incorporarlas al patrimonio de uso  turístico.\r\n'),
-(19, 4, 19, 'Esta Unidad programática tiene como función garantizar el cumplimiento  del proceso educativo, para el logro de la educación Integral de los ciudadanos  del procedo educativo, para el logro de  la Educación Integral de los ciudadanos del Estado.\r\n \r\nPropicia y estimula la modernización de los sistemas administrativos, con el  fin de lograr los objetivos deseados en el sector educativo.\r\n \r\nEstablece convenios con los institutos que hacen vida activa en la región, a fin de implementar procedimientos que permitan capacitar y orientar al docente.\r\n'),
-(20, 4, 20, 'Este programa comprende el área de la docencia y el apoyo técnico que imparte  en los centros educacionales urbanos y rurales del Estado. A través del mismo, se mantiene el servicio de educación pre-escolar y básica, además de la coordinación de comedores escolares.\r\n \r\nEn esta unidad programática, se reflejan los beneficios que por Contratación Colectiva reciben los trabajadores de la enseñanza dependiente del Ejecutivo Regional, con la intención de mejorar la calidad de la educación en el Estado Amazonas. También se llevan a cabo programas de asistencia al indígena de alfabetización. También se lleva a cabo programas de asistencia al indígena de alfabetización, asistencia integral a los centros educacionales y de supervisión, igualmente se le brinda apoyo a la Zona Educativa.\r\n'),
-(21, 5, 22, 'La Secretaria de Información y Comunicación SICOAMA tiene como objetivo principal lograr que  el pueblo sea el  vocero principal de la gestión de gobierno Pueblo-Gobierno a través de la creación innovadora y permanente de canales de comunicación con énfasis en la retroalimentación que sirvan para la consolidación de una nueva forma de gobierno que rompa los paradigmas de la democracia representativa resolviendo los problemas que le impiden a Amazonas lograr su desarrollo político, económico y social. Entre sus funciones:\r\n \r\nDiseñar la política comunicacional del Gobierno de Amazonas, de acuerdo a los lineamientos establecidos por el Gobernador.\r\nPlanificar y ejecutar las acciones destinadas a consolidar la política comunicacional del Gobierno de Amazonas.\r\nCoordinar la acción conjunta de los medios oficiales para el cumplimiento de los lineamientos comunicacionales previstos por los niveles de gobierno nacional y regional.\r\nDiseñar, ejecutar y hacer seguimiento del Plan Operativo Anual de la Secretaría de Información y Comunicación del estado Amazonas.\r\n'),
-(22, 5, 23, 'La  Biblioteca Nacional de Venezuela, ha desarrollado el sistema de Biblioteca pública como parte de una estrategia orientada a brindar a la población, el más amplio acceso a la  información que requiere.\r\n\r\nPartiendo de esta concepción y para optimizar el uso de los recursos disponibles se  ha desarrollo un modelo de redes Estadales cuya estructura medular la constituye la Biblioteca Pública Central.\r\n \r\nLos servicios Bibliotecarios públicos representan los medios eficaces para lograr la atención y satisfacción de las necesidades de información, aprendizaje y recreación de la población. La cobertura de la red en el Estado amazonas cubre todos los municipios, teniendo como objetivo principal:\r\n\r\n- Dotar a la entidad de una infraestructura de servicios bibliotecarios, dirigida a tender necesidades básicas de información, conocimiento y recreación de la comunidad.\r\n\r\n- Formar adecuadamente a los usuarios para que obtengan mejores beneficios de la información.\r\n\r\n- Promover el uso de la lectura y de la información como instrumento para el desarrollo individual y colectivo.\r\n\r\n- Apoyar a la educación en todos sus niveles y en especial, la educación y la investigación. \r\n'),
-(23, 5, 24, 'La Secretaría de Cultura y Comunicación, es la encargada de promover, fomentar y conservar los valores culturales de la región. A través de la Dirección y Coordinación de la Cultura de la Gobernación del Estado Amazonas, se formulan y ejecutan acciones de desarrollo cultural orientadas principalmente a la investigación, difusión de actividades autóctonas y rescate  de los valores culturales propios de nuestro Estado.\r\n'),
-(24, 5, 25, 'Tiene como objetivo la coordinación de los mecanismos tecnológicos que desarrolle la ciencia a través del uso y aplicación de los medios electrónicos , informáticos y telemáticos para la organización y funcionamiento institucional.\r\n \r\nTambién tiene como fin planificar, promover y aplicar las políticas públicas en materia de las tecnologías de información y comunicación de la Gobernación del Estado Amazonas y organismos adscritos.\r\n'),
-(25, 6, 27, 'Coordinar la ejecucion de obras del Fondo de Compensacion Interterritorial, asi como tambien la formulacion y evaluacion de proyectos relacionados con obras dirigidas al bienestar de  la colectividad Amazonense.\r\n'),
-(26, 6, 26, 'Tiene como objetivo la coordinacion, mejoramiento fomento, direccion y control de actividades relacionadas con la vivienda, desarrollo urbano y los servicios conexos. de la misma manera, formular proyectos de acondicionamiento de servicios basicos, de mantenimiento de obras y del transporte.\r\n\r\n     Coordinar la ejecucion de obras del Fondo de Compensaci{on Interterritorial, asi como tambien la formulacion y evaluacion de proyectos relacionados con obras dirigidas al bienestar de  la colectividad Amazonense.\r\n'),
-(27, 7, 28, 'La implementación de este programa persigue de manera esencial lograr los objetivos de la política sanitaria y asistencial del Estado. En este sentido se lleva a cabo la ejecución de actividades tendentes a mejorar la atención médica, programa de información y orientación ciudadana e igualmente fortalecer las acciones destinadas al funcionamiento y operación de las instalaciones de los servicios de salud.\r\n'),
-(28, 8, 29, 'A través de la Secretaría de Desarrollo Social, se velará por la seguridad social en el Estado Amazonas; por ende este programa tiene como objetivo general, promover el desarrollo social en la región, en coordinación con los organismos nacionales estadales públicos y privados, mediante la ejecución de actividad y programas dirigidos al mejoramiento del nivel económico, social y cultura de la comunidades indígenas, rurales y urbanas. Corresponde a la Secretaría, las siguientes funciones:\r\n \r\n- Ejecutar la política social del Gobierno Estadal.\r\n\r\n- Asistencia de las comunidades en situación de emergencia.\r\n\r\n- Apoyar la Creación y organización de cooperativas y demás instituciones destinadas a mejorar la economía popular, así como la protección de las asociaciones, sociedades y comunidades que tenga como objetivo el mejor desarrollo socio económico del Estado.\r\n\r\n- Lo relativo a la asistencia y bienestar social a cargo de la Gobernación.\r\n\r\n- Realizar actividades de promoción, coordinación y supervisión de proyectos y mantenimiento de obras comunales.\r\n'),
-(29, 8, 30, 'la Secretaria Ejecutiva de Participaciòn popular, cuyo objetivo es liderar el proceso de fortalecimiento de las organizaciones comunales y sociales y la implementacion de un Sistema de Participaciòn Popular, a los fines del ejercicio del control social y la intervencion de las politicas publicas que permitan la incidencia efectiva de las comunidades en las decisiones, la transformacion de las conciencias en el interior de las masas oprimidas que conlleven a que nuestro pueblo sea constructor de su propio destino, por cuanto desde esta perspectiva, se concibe a la persona como ser social producto de las realaciones sociales, que permite que la actividad social sea un proceso como reflejo de la realidad y resultado de la reflexion consciente de esa realidad\r\n'),
-(30, 8, 31, 'Este programa tiene como objetivo incluir a las personas con discapacidad para brindar atención integral a la población con vulnerabilidad para introducirlo en el ámbito laboral, en el cumplimiento de las políticas relacionadas con la discapacidad.                                              \r\n   Esta unidad programática tiene como función:\r\n- Participar en la formulación de lineamientos, políticas, planes, proyectos y estrategias en materia de atención a personas con limitaciones físicas.\r\n- Promover la participación ciudadana en lo social y en lo económico a través de los comités comunitarios, asociaciones, cooperativas, empresas comunitarias y de cogestión y autogestión,en función de la organización de las personas con discapacidad, que conlleve a una mejor articulación e identificación con los organos y entes de la administración pública nacional, estadal y municipal, así como también a las personas naturales y jurídicas    de derecho privado.\r\n- La prestación de servicios asistenciales en materia jurídica, social y cultural a las personas con discapacidad. \r\n- Conocer sobre situaciones de discriminación a las personas con discapacidad y tramitarlas ante las autoridades competentes.\r\n'),
-(31, 8, 32, 'A través de atención integral a la mujer, familia e igualdad de genero , se garantizará la igualdad de oportunidades de la mujer, para promover la participación protagónica de la mujer en los ámbitos políticos, económicos y sociales tanto a nivel regional como nacional. Entre sus funciones principales se encuentran:\r\n- Participar, planificar e instrumentar lineamientos, políticas, planes, proyectos y estrategias en materia de atención integral a la mujer, familia e igualdad de genero, dirigido al empoderamiento de las mujeres en materia jurídica, social, cultural, política, económica y recreativa, especialmente de las mujeres indígenas, campesinas, afrodescientes, pescadoras, obreras, con discapacidad, en situaciones de indigencia, desplazadas, las privadas de libertad, las amas de casa, la tercera edad, las niñas y adolescentes para garantizarles el pleno ejercicio de su libertad y el desarrolllo de sus capacidades y destrezas en una sociedad democrática, participativa, protagónica, igualitaria y socialista.\r\n- Atender y orientar a través de programas de rehabilitación a los hombres procesados en materia de violencia de genero, coordinadamente con la fiscalía del Ministerio Público, la unidad de atención a la victima y los tribunales penales en materia de violencia de genero.\r\n- Conocer sobre situaciones de discriminación contra las mujeres y tramitarlas a las autoridades competentes.\r\n'),
-(32, 9, 33, 'Este programa tiene entre sus funciones: planificar, coordinar y administrar con objetividad las políticas destinadas a la seguridad social del personal activo de la Gobernación del Estado. De acuerdo a las normativas laborales y otras leyes vigente para tal fin.\r\n'),
-(33, 10, 34, 'Controla de manera idónea los créditos presupuestarios asignados a las partidas de Compromisos Pendientes de Ejercicios anteriores, rectificaciones al presupuesto y otras transferencias a entes descentralizados necesarias para el mejor desenvolvimiento de la gestión pública.\r\n');
+(2, 1, 1, 'CON ESTE PROGRAMA SE SATISFACEN LAS NECESIDADES LEGISLATIVAS DEL ESTADO, SE ELABORAN NUEVAS LEYES Y SE REFORMAN LAS QUE LO AMERITAN, ASÍ COMO RESOLUCIONES PARA OBTENCIÓN DE MEDIDAS SEGURAS PARA EL BUEN EJERCICIO DE LA ENTIDAD, EN BENEFICIO DE LA COMUNIDAD AMAZONENSE; ATENDIENDO NECESIDADES TANTO DEL SECTOR PÚBLICO, COMO DEL SECTOR PRIVADO POR TRATARSE DE LEYES QUE AFECTAN A TODA LA POBLACIÓN.\n\nENTRE OTRAS ACTIVIDADES ESTARÁN LA DE LEGISLAR EN MATERIAS DE SU COMPETENCIA DE ACUERDO A LA CONSTITUCIÓN, LEYES DEL ESTADO Y LA NACIÓN, PARA DOTARLO DE INSTRUMENTOS NORMATIVOS LEGALES QUE PERMITAN LA PROMOCIÓN DEL DESARROLLO INTEGRAL Y SUSTENTABLE DEL ESTADO\n'),
+(3, 1, 2, 'LA CONTRALORÍA DEL ESTADO AMAZONAS, ES EL ÓRGANO DE CONTROL, VIGILANCIA Y FISCALIZACIÓN DE LOS INGRESOS, GASTOS Y BIENES PÚBLICOS DEL ESTADO Y A TAL EFECTO GOZA DE AUTONOMÍA ORGÁNICA Y FUNCIONAL, DE CONFORMIDAD CON LO ESTABLECIDO EN EL ARTÍCULO 163 DE LA CONSTITUCIÓN DE LA REPÚBLICA BOLIVARIANA DE VENEZUELA, SIN MENOSCABO DE LA FUNCIÓN DE CONTROL, SEGUIMIENTO Y EVALUACIÓN DE LA CONTRALORÍA GENERAL DE LA REPÚBLICA.\n\nLA CONTRALORÍA DEL ESTADO AMAZONAS, AHORA COMO ÓRGANO INTEGRANTE DEL SISTEMA NACIONAL DE CONTROL FISCAL, EL CUAL ES UN CONJUNTO DE ÓRGANOS, ESTRUCTURAS, RECURSOS Y PROCESOS QUE INTEGRADOS BAJO LA RECTORÍA DE LA CONTRALORÍA GENERAL DE LA REPÚBLICA, INTERACTÚAN COORDINADAMENTE A FIN DE LOGRAR LA UNIDAD DE DIRECCIÓN DE LOS SISTEMAS Y PROCEDIMIENTOS DE CONTROL QUE COADYUVEN AL LOGRO DE LOS OBJETIVOS GENERALES DE LOS DISTINTOS ENTES Y ORGANISMOS SUJETOS A CONTROL FISCAL, ASÍ COMO TAMBIÉN AL BUEN FUNCIONAMIENTO DE LA ADMINISTRACIÓN PÚBLICA; CUYOS OBJETIVOS SON:\n\n1.	FORTALECER LA CAPACIDAD DEL ESTADO PARA EJECUTAR EFICAZMENTE SU FUNCIÓN DE GOBIERNO.\n\n2.	LOGRAR LA TRANSPARENCIA Y LA EFICIENCIA EN EL MANEJO DE LOS RECURSOS DEL SECTOR PÚBLICO Y ASÍ CONTRIBUIR A OPTIMIZAR LA CALIDAD DE VIDA DE LA CIUDADANÍA.\n\n3.	ESTABLECER LAS RESPONSABILIDADES POR LA COMISIÓN DE IRREGULARIDADES RELACIONADAS CON LA GESTIÓN DE LAS ENTIDADES PÚBLICAS.\n'),
+(4, 1, 3, 'LE CORRESPONDE REPRESENTAR Y AMPARAR JUDICIAL Y EXTRAJUDICIALMENTE, CONFORME A LAS INSTRUCCIONES EMANADAS DEL EJECUTIVO REGIONAL O DEL CONSEJO LEGISLATIVO LOS INTERESES DEL ESTADO, SUS BIENES, SU PATRIMONIO, RENTAS Y DERECHOS, REDACTAR Y SUSCRIBIR CONFORME A LAS INSTRUCCIONES QUE LE FUEREN COMUNICADAS POR EL EJECUTIVO REGIONAL, POR EL CONSEJO LEGISLATIVO, LOS DOCUMENTOS CONTENTIVOS DE ACTOS, NEGOCIO O CONTRATOS QUE CONCIERNAN AL ESTADO; ADEMÁS PRESTAR ASESORÍA JURÍDICA A LOS ÓRGANOS Y DEPENDENCIA DEL ESTADO.\n\nASISTIR EN REPRESENTACIÓN DEL ESTADO A LAS DISCUSIONES DE LOS CONTRATOS COLECTIVOS QUE EL EJECUTIVO REGIONAL, CONSEJO LEGISLATIVO Y SUS DEPENDENCIAS, ÓRGANOS AUXILIARES Y CONEXOS TENGAN A BIEN SUSCRIBIR CON SUS TRABAJADORES.\nLLEVAR UN INVENTARIO PERMANENTE DE LOS BIENES INMUEBLES DEL ESTADO, VELAR POR EL ESTRICTO CUMPLIMIENTO DE LAS LEYES, EN EL ÁMBITO DEL ESTADO Y PEDIR POR ANTE LOS ORGANISMOS JURISDICCIONALES COMPETENTES LA NULIDAD DE LEYES, DECRETOS, ORDENANZAS, ACUERDOS Y RESOLUCIONES DICTADAS EN EL ESTADO.\n\nPRESENTAR PROYECTOS DE LEYES ANTE EL CONSEJO LEGISLATIVO REGIONAL Y SOLICITAR LA REFORMA PARCIAL DE LAS YA EXISTENTES, CUANDO ELLA SEA PERTINENTE A LOS INTERESES DEL ESTADO Y LA NACIÓN.\n\nELABORAR SU PROPIO PRESUPUESTO DE GASTOS A FIN DE SER INCLUIDOS EN EL PRESUPUESTO GENERAL DE INGRESOS Y GASTOS DEL ESTADO, Y ORDENAR TRASLADOS DE PARTIDAS Y OTROS MOVIMIENTOS CONTABLES DENTRO DE SU PROPIO PRESUPUESTO ANUAL DE GASTO, CONFORME A LO ESTABLECIDO EN LA LEY ORGÁNICA DE ADMINISTRACIÓN DEL ESTADO, LEY ORGÁNICA DE PRESUPUESTO Y LA LEY ORGÁNICA DE RÉGIMEN PRESUPUESTARIO DEL ESTADO Y\nDEMÁS NORMATIVA VIGENTE\n'),
+(5, 1, 4, 'LA SECRETARÍA DEL DESPACHO Y SEGUIMIENTO DE LA GESTIÓN PÚBLICA, TIENE EL OBJETIVO DE DIRIGIR LA ADMINISTRACIÓN DEPARTAMENTAL Y EL CUMPLIMIENTO DE LAS POLÍTICAS, PROGRAMAS Y PROYECTOS DISEÑADOS POR EL GOBERNADOR DEL ESTADO AMAZONAS, ASÍ MISMO, ELABORAR EL PLAN DE RESTRUCTURACIÓN GENERAL DE LAS SECRETARÍAS QUE CONFORMAN EL PODER EJECUTIVO ESTADAL. SE CONSIDERA INDISPENSABLE MODIFICAR LA ESTRUCTURA, EN CONTINUIDAD CON LOS OBJETIVOS Y METAS PREVISTAS PARA SU MEJOR FUNCIONAMIENTO, DE LA MISMA MANERA EL SEGUIMIENTO DE LAS ACTIVIDADES Y EL CONTROL DEL DESEMPEÑO INSTITUCIONAL.\nTAMBIÉN SE ENCARGA DE HACER QUE SE CUMPLAN TODAS LAS ACTIVIDADES PROGRAMADAS EN LA AGENDA DE TRABAJO EJECUTADA POR EL GOBERNADOR DEL ESTADO AMAZONAS, DESTINADA A MEJORAR EL SISTEMA DE ATENCIÓN DE ASISTENCIA SOCIAL DE LA POBLACIÓN PARA GARANTIZAR LA VINCULACIÓN ENTRE EL PUEBLO Y EL GOBIERNO Y CUMPLIR TODAS LAS METAS PROGRAMADAS EN EL PLAN DE DESARROLLO DE LA NUEVA AMAZONAS\n'),
+(6, 1, 5, 'LA SECRETARÍA GENERAL DE GOBIERNO TIENE COMO FINALIDAD IMPLEMENTAR ESTRATEGIAS PARA PROMOVER EL EJERCICIO DEL DERECHO A LA PARTICIPACIÓN DEL EJECUTIVO, EN LA GESTIÓN PÚBLICA, ORIENTAR Y ASESORAR, ATENDER DENUNCIAS Y SUGERENCIAS QUE SEAN VINCULADAS CON LA GESTIÓN, GARANTIZAR EL CUMPLIMIENTO DE LAS POLÍTICAS, PROGRAMAS Y PROYECTOS QUE EJECUTA LA GOBERNACIÓN DEL ESTADO AMAZONAS.\n\nDENTRO DE ALGUNAS FUNCIONES DE LA SECRETARÍA GENERAL DE GOBIERNO, ESTÁ TAMBIÉN PLANIFICAR, FORMULAR Y ORGANIZAR LAS ACTIVIDADES POLÍTICAS Y ADMINISTRATIVAS Y HACER SEGUIMIENTO AL CUMPLIMIENTO DE LAS DECISIONES EMANADAS POR EL GOBERNADOR DEL ESTADO AMAZONAS.\nSON ATRIBUCIONES ESENCIALES DE ESTA SECRETARÍA, MANTENER RELACIONES INTERINSTITUCIONALES CON EL CONSEJO LEGISLATIVO, ALCALDÍAS, ORGANISMOS NACIONALES Y REGIONALES, EL CLERO, SINDICATOS Y DEMÁS ORGANIZACIONES COMUNITARIAS ESTABLECIDAS EN EL ESTADO AMAZONAS\n'),
+(7, 1, 6, 'LA SECRETARÍA DE RECURSOS HUMANOS TIENE COMO OBJETIVO GESTIONAR TODO LO RELACIONADO CON EL PERSONAL QUE LABORA EN LA GOBERNACIÓN DEL ESTADO, SEGÚN LO ESTABLECIDO EN LAS NORMAS Y PRINCIPIOS QUE RIGEN LA ADMINISTRACIÓN DE PERSONAL Y DEMÁS LEYES QUE TIENEN COMPETENCIA CON LA MATERIA.\nTAMBIÉN COORDINA Y ADMINISTRA LA EJECUCIÓN DE LOS CONTRATOS COLECTIVOS DE ACUERDO CON LAS CLÁUSULAS ESTABLECIDAS ENTRE EL EJECUTIVO REGIONAL Y LOS TRABAJADORES DEPENDIENTES DEL MISMO\n'),
+(8, 1, 7, '\nLA SECRETARIA EJECUTIVA DE PLANIFICACIÓN, PROYECTOS Y PRESUPUESTO SE ENCARGA DE FORMULAR, EJECUTAR, EVALUAR EL PRESUPUESTO ANUAL, ASÍ MISMO ASESORAR AL GOBERNADOR, SECRETARIAS Y ENTES DESCENTRALIZADOS EN MATERIA DE PLANIFICACIÓN, ORGANIZACIÓN INSTITUCIONAL, DISTRIBUCIÓN Y EJECUCIÓN PRESUPUESTARIA PARA GARANTIZAR LA OPTIMIZACIÓN EN LA INVERSIÓN DE LOS RECURSOS PÚBLICOS QUE GENEREN LA CONSTRUCCIÓN DE UN ESTADO MODELO PARA TODA LA POBLACIÓN AMAZONENSE.\nES DECIR, LAS FUNCIONES MÁS DESTACADAS DE LA SECRETARIA ES PLANIFICAR LAS ESTRATEGIAS INSTITUCIONALES, Y DEL ENTRONO ASOCIADO AL SECTOR DE PLANIFICACIÓN, PROYECTOS, PRESUPUESTOS E INNOVACIÓN, PRESENTAR EL PLAN OPERATIVO ANUAL E INFORMAR A LA OFICINA NACIONAL DE PRESUPUESTO (ONAPRE), CON LA PERIODICIDAD QUE ESTE LO REQUIERA, ACERCA DE LA GESTIÓN PRESUPUESTARIA DE LA GOBERNACIÓN DEL ESTADO.\n'),
+(9, 1, 8, 'LA SECRETARÍA DE ADMINISTRACIÓN TIENE COMO OBJETIVO ORGANIZAR, DIRIGIR Y VIGILAR EL PROCESO FINANCIERO DEL PRESUPUESTO DEL ESTADO. ASÍ MISMO, SE ENCARGADA DE PROPONER E INSTRUMENTAR LAS POLÍTICAS, NORMAS Y PROCEDIMIENTOS NECESARIOS PARA SALVAGUARDAR LOS BIENES INSTITUCIONALES DEL ESTADO, COORDINAR LOS SERVICIOS DE COMPRAS DE BIENES, LLEVAR EL REGISTRO DEL PATRIMONIO DEL ESTADO, DIRIGIR LOS SERVICIOS DE IMPRENTA Y REPRODUCCIÓN Y REALIZAR EL CONTROL LA CONTABILIDAD FISCAL DEL EJECUTIVO '),
+(11, 1, 9, 'ESTA SECRETARÍA ES LA ENCARGADA DE REALIZAR EL REGISTRO Y CONTROL DE LA CANCELACIÓN DE LOS COMPROMISOS ADQUIRIDOS, A TRAVÉS DE SISTEMAS ADMINISTRATIVOS QUE ASEGURAN EL ADECUADO MANEJO DEL TESORO PÚBLICO Y LA RECAUDACIÓN DE FONDOS PROVENIENTES DE LA RENTA DE DIVERSAS ÍNDOLES. DE IGUAL MANERA REALIZA LOS PAGOS DE LA EJECUCIÓN PRESUPUESTARIA QUE LLEVA A CABO LA SECRETARÍA EJECUTIVA DE PRESUPUESTO, CUMPLIENDO CON LA LEY ORGÁNICA DEL RÉGIMEN PRESUPUESTARIO, LEY ORGÁNICA DE LA CONTRALORÍA GENERAL DEL ESTADO Y DEMÁS NORMATIVA VIGENTE DE LA REPÚBLICA BOLIVARIANA DE VENEZUELA.'),
+(12, 1, 10, 'LA SECRETARIA EJECUTIVA INDÍGENA OFRECE PARTICIPACIÓN PROTAGÓNICA A LOS PUEBLOS INDÍGENAS Y COMUNIDADES EN LOS PROGRAMAS SOCIALES Y PROYECTOS DE DESARROLLO INTEGRAL Y HACE RESPETAR LOS DERECHOS DE LOS INDÍGENAS CONSAGRADOS EN LA CONSTITUCIÓN NACIONAL, DE IGUAL MANERA DESARROLLAR POLÍTICAS PÚBLICAS REFERENTE A SU ORGANIZACIÓN CULTURAL, SOCIAL, POLÍTICA Y ECONÓMICA PARA GARANTIZARLES UNA BUENA CALIDAD DE VIDA, DESARROLLAR ACCIONES EN LAS COMUNIDADES INDÍGENAS QUE CONTRIBUYAN AL DESARROLLO SOCIO ECONÓMICO, CONSULTAS ORIENTADAS AL MEJORAMIENTO DE LAS CONDICIONES EDUCATIVAS, TRABAJO Y SALUD; OTRA DE LAS ACTIVIDADES PRINCIPALES QUE SE DEDICA ESTA SECRETARÍA ES ESTABLECER RELACIONES INTERINSTITUCIONALES CON LOS ENTES PÚBLICOS, NACIONALES Y REGIONALES QUE HACEN VIDA ACTIVA EN EL ESTADO AMAZONAS, AFÍN DE COORDINAR ACCIONES A FAVOR DE LAS COMUNIDADES INDÍGENAS, A TRAVÉS DE LOS DIFERENTES ENTES CREDITICIOS A NIVEL NACIONAL Y REGIONAL.'),
+(13, 1, 11, 'ESTE PROGRAMA TIENE COMO OBJETIVO EVALUAR Y CONTROLAR EL CUMPLIMIENTO Y LOS RESULTADOS DE LAS NORMAS, MÉTODOS Y PROCEDIMIENTOS APLICADOS EN LA FUNCIÓN PÚBLICA, ASÍ COMO VIGILAR EL DESEMPEÑO DE LOS CONTROLES INTERNOS Y ANALIZAR Y VERIFICAR LA GESTIÓN ADMINISTRATIVA Y FINANCIERA DE ACUERDO A LAS LEYES VIGENTES DE LA REPÚBLICA BOLIVARIANA DE VENEZUELA PARA SALVAGUARDAR LOS RECURSOS DEL ESTADO. DE IGUAL MANERA, COORDINAR LOS PROGRAMAS DE AUDITORÍA A REALIZARSE EN LAS DIFERENTES SECRETARÍAS Y ORGANISMOS DESCENTRALIZADOS DEPENDIENTES PRESUPUESTARIAMENTE DE LA GOBERNACIÓN DEL ESTADO AMAZONAS.'),
+(14, 2, 14, 'EN ESTE PROGRAMA DE DESARROLLAN ACCIONES TENDENCIAS PARA EL RESCATE Y MANEJO DE LA IMAGEN INSTITUCIONAL, MEDIANTE LA EJECUCIÓN DE TODAS LAS ACTIVIDADES EN LO REFERENTE A SEGURIDAD Y DEFENSA Y ORDEN PÚBLICO DEL PUEBLO AMAZONENSE, POR ENDE EN LOS ASPECTOS ADMINISTRATIVOS SE REFIERE; CUMPLE EFICIENTEMENTE CON LA MISIÓN ENCOMENDADA POR EL DESPACHO SUPERIOR EMANADO POR EL GOBERNADOR DEL ESTADO,, APOYANDO UN PLAN DE CUMPLIMIENTO GENERAL, CON EL ADIESTRAMIENTO Y CAPACITACIÓN DE TODO EL PERSONAL POLICIAL, TÉCNICO, ADMINISTRATIVO Y OBREROS E IGUALMENTE CON LOS RECURSOS LOGÍSTICO Y FINANCIEROS PARA EL FUNCIONAMIENTO DE LA POLICÍA PARA SU COMPLETA CONFIABILIDAD.'),
+(15, 2, 15, 'ESTA SECRETARÍA TIENE COMO PRINCIPAL OBJETIVO CUMPLIR CON EL RESGUARDO Y LA SEGURIDAD DEL ORDEN PÚBLICO. DE IGUAL MANERA SE DEDICA A LA ADMINISTRACIÓN DE ASUNTOS CIVILES Y PREPARAR AL PERSONAL POLICIAL PARA SALVAGUARDAR LA COLECTIVIDAD AFECTADAS POR LAS CALAMIDADES PÚBLICAS, Y PROTECCIÓN SOCIAL, PARA ATENDER A LA COMUNIDAD VULNERABLE, ASÍ MISMO SERVIR DE ENLACE ENTRE EL EJECUTIVO REGIONAL Y LAS FUERZAS ARMADAS POLICIALES Y DEMÁS ORGANISMOS DE SEGURIDAD DEL ESTADO.'),
+(16, 2, 16, 'ESTE PROGRAMA TIENE COMO FINALIDAD VELAR Y PROTEGER A LAS PERSONAS QUE SE ENCUENTRE EN SITUACIONES VULNERABLES Y SALVAGUARDAR LA INTEGRIDAD FÍSICA ANTE LA EVENTUALIDAD DE UN DESASTRE PROVOCADO POR AGENTES NATURALES O HUMANOS, ASÍ MISMO, COORDINAR Y DIRIGIR LOS OPERATIVOS EN ÉPOCAS FESTIVAS Y FINES DE SEMANA PARA PREVENIR ALGUNA TRAGEDIA O PERDIDA DE VIDA.'),
+(17, 2, 17, 'LA COMANDANCIA GENERAL DE BOMBEROS DEL ESTADO AMAZONAS, TIENE COMO FUNCIÓN CUMPLIR CON LA SEGURIDAD Y PROTECCIÓN AL CIUDADANO, EXTINCIÓN DE INCENDIOS Y OTROS SINIESTROS, VERIFICAR LAS CAUSAS Y EL ORIGEN, UTILIZANDO MÉTODOS PARA PROTEGER A LOS AFECTADOS.\n\nDE LA MISMA MANERA, EL CUERPO DE BOMBEROS, DA ATENCIÓN DE EMERGENCIA PRE-HOSPITALARIA, OFRECE SERVICIOS DE RESCATE, SALVAMENTO Y LA PARTICIPACIÓN EN LOS PROGRAMAS DE PROTECCIÓN Y COMBATE DE ALGÚN DESASTRE, ENCAMINADOS A LA SEGURIDAD DE LA COMUNIDAD UTILIZANDO MÉTODOS DE PREVENCIÓN Y PROTECCIÓN A LA CIUDADANÍA.\n'),
+(18, 3, 18, 'ESTA SECRETARÍA TIENE COMO FINALIDAD FORTALECER EL TURISMO COMO UNA ACTIVIDAD ESTRATÉGICA, A FIN DE LOGRAR UN EQUILIBRIO ECONÓMICO Y SOCIAL, TANTO NACIONAL COMO INTERNACIONAL, FUNDAMENTANDO SU DESARROLLO EN LOS PRINCIPIOS DE SOSTENIBILIDAD, ASÍ MISMO COORDINANDO LAS ACTIVIDADES TURÍSTICAS TANTO PÚBLICAS COMO PRIVADAS CONTRIBUYENDO EL DESARROLLO ECONÓMICO Y SOCIAL DE NUESTRO ESTADO AMAZONAS, ENTRE SUS FUNCIONES:\n	PLANIFICACIÓN Y EJECUCIÓN DE PROGRAMAS PARA QUE LA ACTIVIDAD TURÍSTICA SE CONVIERTA EN UNA FUENTE FUNDAMENTAL PARA PROPICIAR EL DESARROLLO ECONÓMICO Y CULTURAL DEL ESTADO AMAZONAS.\n	MANTENER Y CONSERVAR EN BUENAS CONDICIONES LA INFRAESTRUCTURA TURÍSTICA.\n	EVITAR LA EXPLOTACIÓN DESMEDIDA DE LOS RECURSOS MINEROS EN ÁREAS SUJETAS A PROTECCIÓN AMBIENTAL Y VELAR POR EL MANTENIMIENTO Y CONSERVACIÓN DE\nNUESTROS PAISAJES.\n'),
+(20, 4, 20, 'EN EL SECTOR 08 PERTENECE LOS JUBILADOS Y PENSIONADOS DE EDUCACIÓN; COMO FINALIDAD GESTIONAR LOS PAGOS PROCEDENTES A LA CONTRATACIÓN COLECTIVA CORRESPONDIENTE A LOS JUBILADOS Y PENSIONADOS DEL SECTOR EDUCACIÓN ADSCRITOS A LA GOBERNACIÓN DEL ESTADO AMAZONAS'),
+(22, 5, 22, 'ESTE PROGRAMA TIENE A SU CARGO LA COORDINACIÓN OPERATIVA DE TODAS LAS ACTIVIDADES DIRIGIDAS A PROMOVER Y DIFUNDIR LA GESTIÓN DEL GOBIERNO DE AMAZONAS, ASÍ MISMO TENDRÁ A SU CARGO EL DISEÑO DE CAMPAÑA Y DISPOSITIVOS PUBLICITARIOS DIRIGIDOS POR EL GOBIERNO DE AMAZONAS Y DESEMPEÑARÁ LAS SIGUIENTES FUNCIONES:\n	COORDINAR Y MONITOREAR LA COBERTURA PERIODÍSTICA DE LAS ACTIVIDADES PROMOVIDAS POR EL GOBIERNO DE AMAZONAS.\n	PLANIFICAR LA AGENDA DEL GOBIERNO DE AMAZONAS.\n	ADMINISTRAR LOS RECURSOS MATERIALES Y HUMANOS, ATENDIENDO A LOS LINEAMIENTOS EMANADOS DE LA SECRETARÍA DE INFORMACIÓN Y COMUNICACIÓN DEL ESTADO AMAZONAS.\n		EFECTUAR LOS ESTUDIOS DE CAMPO REQUERIDOS PARA EL DISEÑO ADECUADO DE LAS PIEZAS PUBLICITARIAS.\n	DISEÑAR, EJECUTAR Y HACER SEGUIMIENTO AL PLAN OPERATIVO ANUAL DE LA SECRETARÍA DE INFORMACIÓN Y COMUNICACIÓN DEL ESTADO AMAZONAS.\n'),
+(23, 5, 23, 'EL PROGRAMA DE LA BIBLIOTECA PÚBLICA TIENE EL OBJETIVO DE BRINDARLES EL SERVICIO A NUESTRA POBLACIÓN CON EL FIN DE CONTROLAR TÉCNICAMENTE EL MATERIAL BIBLIOGRÁFICO Y AUDIOVISUAL, ASÍ MISMO SIRVE DE ENLACE ENTRE LA CIUDADANÍA CON SUS NECESIDADES DE INFORMACIÓN. LOS SERVICIOS DE LA BIBLIOTECA PÚBLICA TIENEN DIVERSAS FUNCIONES TALES COMO:\n-DOTAR A LA BIBLIOTECA PÚBLICA DEL MATERIAL BIBLIOTECARIO, DIRIGIDO A ATENDER A LOS USUARIOS DE LA INFORMACIÓN, CONOCIMIENTO Y RECREACIÓN PARA SU PREPARACIÓN ACADÉMICA Y SOCIO-CULTURAL.\n-PROMOVER EL USO DE LA LECTURA Y DE LA INFORMACIÓN COMO INSTRUMENTO PARA EL DESARROLLO INDIVIDUAL Y COLECTIVO.\n-APOYAR A LA EDUCACIÓN EN TODOS SUS NIVELES.\n'),
+(24, 5, 24, 'LA SECRETARÍA EJECUTIVA DE CULTURA Y COMUNICACIÓN SOCIAL TIENE COMO OBJETIVO FORMULAR E IMPLEMENTAR LOS LINEAMIENTOS DE LAS POLÍTICAS PÚBLICAS PARA ASÍ PROMOVER, FOMENTAR Y CONSERVAR LOS VALORES CULTURALES DE LA REGIÓN. TAMBIÉN EN ESTA SECRETARÍA SE FORMULAN Y SE EJECUTAN ACCIONES TENDENTES PRINCIPALMENTE A LA INVESTIGACIÓN, DIFUSIÓN DE ACTIVIDADES AUTÓCTONAS Y RESCATE DE LOS VALORES CULTURALES PROPIOS DE NUESTRO ESTADO AMAZONAS.'),
+(26, 6, 26, 'LA SECRETARÍA DE INFRAESTRUCTURA DE LA GOBERNACIÓN DEL ESTADO AMAZONAS TIENE COMO PROPÓSITO DE ADECUARLA A LOS OBJETIVOS Y METAS PREVISTOS PARA SU MEJOR FUNCIONAMIENTO INSTITUCIONAL EN FIN DE PLANIFICAR Y EVALUAR PROYECTOS DE DIVISIÓN DE INFORMÁTICA.\n\nASÍ MISMO SUPERVISAR LAS OBRAS Y PROYECTOS AMADA POR EL EJECUTIVO REGIONAL DEL ESTADO AMAZONAS A FIN DE QUE SE CUMPLAN LOS OBJETIVOS PREVISTO A LA LEY.\n'),
+(27, 6, 27, 'LA SECRETARÍA EJECUTIVA DE SERVICIOS Y MANTENIMIENTO COMUNITARIO TIENE COMO PROPÓSITO EFECTUAR PLANES DE MANTENIMIENTO PREVENTIVOS, ASÍ COMO FOMENTARAN LA SOLIDARIDAD Y EL COMPROMISO CON LA COMUNIDAD DE ACUERDO A LOS LINEAMIENTOS DE LAS POLÍTICAS IMPLEMENTADAS POR LAS LÍNEAS ESTRATÉGICAS Y SUPERVISAR LAS LABORES DE MANTENIMIENTO Y SERVICIO PRESTADOS A LA COMUNIDAD POR LOS TRABAJADORES Y TRABAJADORAS DEL ESTADO AMAZONAS.'),
+(28, 7, 28, 'ESTE PROGRAMA IMPULSA DE MANERA ESENCIAL LA CONSOLIDACIÓN DEL SISTEMA DE SALUD LLEVANDO A CABO LA EJECUCIÓN DEL SERVICIO INTEGRAL DE URGENCIAS MÉDICAS, FORTALECIENDO DE MANERA EFICAZ EL PROGRAMA DE SALUD LOGRANDO LOS OBJETIVOS DE POLÍTICAS SANITARIAS Y ESENCIALES PARA EL ESTADO GARANTIZANDO CON EFICIENCIA Y EFICACIA LA ATENCIÓN AL CIUDADANO PARA EL MEJORAMIENTO DE LA SALUD.'),
+(29, 8, 29, 'LA SECRETARÍA EJECUTIVA DE PARTICIPACIÓN POPULAR TIENE COMO PROPÓSITO LA CREACIÓN DE LAS COORDINACIONES COMUNALES DEPENDIENTE DE LA JEFATURA DE PARTICIPACIÓN COMUNITARIA, ESTA JEFATURA TIENE LA PARTICIPACIÓN DE EFECTUAR PLANES PARTICIPATIVOS EN LA ORGANIZACIÓN TERRITORIAL Y CONSOLIDACIÓN DE LA GESTIÓN DE GOBIERNO EN LAS COMUNAS Y ASÍ IMPULSAR EL DESARROLLO DE LA PARTICIPACIÓN CORRESPONSABILIDAD DE LOS CIUDADANOS Y CIUDADANAS EN LAS GESTIÓN DE LAS POLÍTICAS PÚBLICAS FOMENTANDO LA SOLIDARIDAD Y EL COMPROMISO CON LA COMUNIDAD DE ACUERDO A LOS LINEAMIENTOS IMPLANTADA POR LA LEY.'),
+(30, 8, 30, 'ESTE PROGRAMA TIENE COMO OBJETIVO FORTALECER LA PROTECCIÓN SOCIAL DEL PUEBLO AMAZONENSES EN LO ESTABLECIDO EN LAS LÍNEAS DE GOBIERNO NACIONAL, REGIONAL Y MUNICIPAL, A FIN DE LOGRAR EL PROCESO SOCIO-PRODUCTIVO DEL ESTADO AMAZONAS.\n\nASÍ MISMO TIENE EL DEBER DE ATENDER, ORIENTAR A LA CIUDADANÍA EN EL SUMINISTRO DE INFORMACIÓN, INTERPOSICIÓN DE RECLAMOS, DENUNCIAS, SUGERENCIAS VINCULADAS CON EL EJERCICIO DEL CONTROL DE LA GESTIÓN DE LOS PROGRAMAS DEL ENTE GUBERNAMENTAL Y RELACIONARSE CON TODAS LAS INSTITUCIONES DEL ESTADO CON EL FIN DE EJECUTAR LAS POLÍTICAS PÚBLICAS TANTOS NACIONALES, ESTATALES Y MUNICIPALES Y DESARROLLAR EN MATERIA DE PROTECCIÓN SOCIAL SOSTENIBLE Y EQUILIBRADO.\n'),
+(31, 9, 33, 'LA SECRETARÍA EJECUTIVA DE GESTIÓN HUMANA TIENE COMO PROPÓSITOS FACILITAR LA PREPARACIÓN DE TODOS LOS FUNCIONARIOS PÚBLICOS CON EL FIN DE DIRIGIR LOS PROCESOS ADMINISTRATIVOS CUMPLIENDO CON LAS NORMATIVAS Y PROCEDIMIENTOS EMANADO POR LA LEY, SUS PRINCIPALES OBJETIVOS ES ATRAER, RECLUTAR Y CAPACITAR EL DESARROLLO DE LOS TRABAJADORES ACTIVOS DE LA GOBERNACIÓN DEL ESTADO.'),
+(32, 10, 34, 'ESTE SECTOR TIENE COMO FUNCIÓN, LAS TRANSFERENCIAS A ORGANISMO CON ATRIBUCIONES PARA DISPONER SU ASIGNACIÓN SECTORIAL, POR TAL MOTIVO SE UBICA EL SECTOR 15 GASTOS NO CLASIFICADOS SECTORIALMENTE, COMO UNIDAD RESPONSABLE LA SECRETARIA DEL DESPACHO Y SEGUIMIENTO DE LA GESTIÓN PUBLICA DONDE IMPARTE LOS 5 GRANDES OBJETIVOS DEL PLAN DE LA PATRIA Y EN MIRAS A LA NUEVA AMAZONAS PARA EL FORTALECIMIENTO DE LA INSTITUCIONALIDAD COMO LO DICTA LA CUARTA LÍNEA DE LA LEY ESTADAL DEL PLAN DE DESARROLLO ECONÓMICO Y SOCIAL NUEVA AMAZONAS, ORIENTADA AL DESARROLLO DE POTENCIALIDADES COMO SON FORTALECER, EXPANDIR Y CONSOLIDAR LAS EXPERIENCIAS PRODUCTIVAS DEL GOBIERNO.'),
+(46, 4, 21, 'TIENE COMO PROPÓSITO REUNIR A LOS DISTINTOS MOVIMIENTOS JUVENILES Y ORGANIZACIONES ESTUDIANTILES UNIVERSITARIAS DEL ESTADO AMAZONAS, CON EL FIN DE IMPULSAR Y DESARROLLAR UN ESPACIO DINÁMICO Y PERMANENTE DE PARTICIPACIÓN E IMPLEMENTACIÓN DE POLÍTICAS PÚBLICAS DESTINADOS A ATENDER A LA JUVENTUD Y DESARROLLAR ACCIONES PARA EL FORTALECIMIENTO DE LA EDUCACIÓN SUPERIOR PARA LA CREACIÓN DE UNA NUEVA ÉTICA SOCIALISTA, REUNIENDO A DISTINTAS FUERZAS GENERADORAS DE IDEAS PRODUCTIVAS VINCULADAS POSITIVAMENTE, A LAS POLÍTICAS QUE IMPULSEN A SU ATENCIÓN PARA LA CONSTRUCCIÓN DEL FUTURO DE LA NUEVA AMAZONAS.'),
+(48, 2, 40, 'sofi douisdhf sdofishdf sdoifhsdf sldifopsidhnfoisndf sdhpfshdopfns dfnsodifnsodf sdgsdg'),
+(49, 2, 40, 'ES PLANIFICAR, EJECUTAR Y ARTICULAR LAS POLITICAS PUBLICAS BASADO EN EL PRINCIPIO DE CORRESPONSABILIDAD ENTRE EL ESTADO Y LA SOCIEDAD CIVIL PARA DAR CUMPLIMIENTO A LOS PRINCIPIOS DE INDEPENDENCIA, DEMOCRACIA, IGUALDAD, PAZ, LIBERTAD, JUSTICIA, SOLIDARIDAD, PROMOCION Y AFIRMACION DE LOS DERECHOS HUMANOS, DENTRO DE SU AMBITO TERRITORIAL, DESARROLLANDO E IMPLEMENTANDO MECANISMOS DE COOPERACION E INTEGRACION ENTRE LOS ORGANISMOS E INSTITUCIONES VINCULADOS CON LA SEGURIDAD CIUDADANA, DEFENSA Y EMERGENCIA DEL ESTADO');
 
 -- --------------------------------------------------------
 
@@ -1110,18 +1356,150 @@ INSERT INTO `descripcion_programas` (`id`, `id_sector`, `id_programa`, `descripc
 --
 
 CREATE TABLE `distribucion_entes` (
-  `id` int(255) NOT NULL,
-  `id_ente` int(255) NOT NULL,
-  `actividad_id` int(255) DEFAULT NULL,
+  `id` int(11) NOT NULL,
+  `id_ente` int(11) NOT NULL,
+  `actividad_id` int(11) DEFAULT NULL,
   `distribucion` longtext NOT NULL,
   `monto_total` varchar(255) DEFAULT NULL,
-  `status` int(255) NOT NULL,
-  `id_ejercicio` int(255) NOT NULL,
+  `status` int(11) NOT NULL,
+  `id_ejercicio` int(11) NOT NULL,
   `comentario` longtext NOT NULL,
   `fecha` varchar(255) DEFAULT NULL,
-  `id_asignacion` int(255) NOT NULL,
+  `id_asignacion` int(11) NOT NULL,
   `status_cerrar` int(255) NOT NULL DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `distribucion_entes`
+--
+
+INSERT INTO `distribucion_entes` (`id`, `id_ente`, `actividad_id`, `distribucion`, `monto_total`, `status`, `id_ejercicio`, `comentario`, `fecha`, `id_asignacion`, `status_cerrar`) VALUES
+(1, 78, 199, '[{\"id_distribucion\":\"919\",\"monto\":800000}]', '800000', 1, 1, '', '2024-11-28', 42, 0),
+(2, 45, 171, '[{\"id_distribucion\":\"1487\",\"monto\":650000}]', '650000', 1, 1, '', '2024-11-28', 68, 0),
+(3, 61, 187, '[{\"id_distribucion\":\"911\",\"monto\":3000000}]', '3000000', 1, 1, '', '2024-11-28', 66, 0),
+(4, 23, 150, '[{\"id_distribucion\":\"1024\",\"monto\":150000},{\"id_distribucion\":\"1025\",\"monto\":20000},{\"id_distribucion\":\"1026\",\"monto\":125000}]', '43945000', 1, 1, '', '2024-11-28', 46, 0),
+(5, 23, 71, '[{\"id_distribucion\":\"813\",\"monto\":10500000},{\"id_distribucion\":\"814\",\"monto\":1000000},{\"id_distribucion\":\"815\",\"monto\":2000000},{\"id_distribucion\":\"816\",\"monto\":900000},{\"id_distribucion\":\"817\",\"monto\":650000},{\"id_distribucion\":\"818\",\"monto\":500000},{\"id_distribucion\":\"819\",\"monto\":400000},{\"id_distribucion\":\"820\",\"monto\":200000},{\"id_distribucion\":\"821\",\"monto\":900000},{\"id_distribucion\":\"822\",\"monto\":100000},{\"id_distribucion\":\"823\",\"monto\":300000},{\"id_distribucion\":\"824\",\"monto\":50000},{\"id_distribucion\":\"825\",\"monto\":1700000},{\"id_distribucion\":\"826\",\"monto\":6000000},{\"id_distribucion\":\"827\",\"monto\":300000},{\"id_distribucion\":\"828\",\"monto\":250000},{\"id_distribucion\":\"829\",\"monto\":1300000},{\"id_distribucion\":\"830\",\"monto\":100000},{\"id_distribucion\":\"831\",\"monto\":200000},{\"id_distribucion\":\"832\",\"monto\":1500000},{\"id_distribucion\":\"833\",\"monto\":2320000},{\"id_distribucion\":\"834\",\"monto\":2100000},{\"id_distribucion\":\"835\",\"monto\":2100000},{\"id_distribucion\":\"836\",\"monto\":2100000},{\"id_distribucion\":\"837\",\"monto\":650000},{\"id_distribucion\":\"838\",\"monto\":180000},{\"id_distribucion\":\"839\",\"monto\":200000},{\"id_distribucion\":\"840\",\"monto\":200000},{\"id_distribucion\":\"841\",\"monto\":200000},{\"id_distribucion\":\"842\",\"monto\":200000},{\"id_distribucion\":\"843\",\"monto\":250000},{\"id_distribucion\":\"844\",\"monto\":500000},{\"id_distribucion\":\"845\",\"monto\":400000},{\"id_distribucion\":\"846\",\"monto\":2700000},{\"id_distribucion\":\"847\",\"monto\":100000},{\"id_distribucion\":\"848\",\"monto\":300000},{\"id_distribucion\":\"849\",\"monto\":300000}]', '43945000', 1, 1, '', '2024-11-28', 46, 0),
+(6, 54, 180, '[{\"id_distribucion\":\"904\",\"monto\":3000000}]', '3000000', 1, 1, '', '2024-11-28', 3, 0),
+(7, 29, 155, '[{\"id_distribucion\":\"879\",\"monto\":160000}]', '160000', 1, 1, '', '2024-11-28', 4, 0),
+(8, 39, 165, '[{\"id_distribucion\":\"889\",\"monto\":100000}]', '100000', 1, 1, '', '2024-11-28', 5, 0),
+(9, 56, 182, '[{\"id_distribucion\":\"906\",\"monto\":3000000}]', '3000000', 1, 1, '', '2024-11-28', 6, 0),
+(10, 38, 164, '[{\"id_distribucion\":\"888\",\"monto\":400000}]', '400000', 1, 1, '', '2024-11-28', 7, 0),
+(11, 59, 185, '[{\"id_distribucion\":\"909\",\"monto\":3000000}]', '3000000', 1, 1, '', '2024-11-28', 8, 0),
+(12, 77, 198, '[{\"id_distribucion\":\"890\",\"monto\":2000000}]', '2000000', 1, 1, '', '2024-11-28', 43, 0),
+(13, 57, 183, '[{\"id_distribucion\":\"907\",\"monto\":3000000}]', '3000000', 1, 1, '', '2024-11-28', 9, 0),
+(14, 1, 130, '[{\"id_distribucion\":\"1282\",\"monto\":20001},{\"id_distribucion\":\"1283\",\"monto\":3000},{\"id_distribucion\":\"1284\",\"monto\":500},{\"id_distribucion\":\"1285\",\"monto\":500},{\"id_distribucion\":\"1286\",\"monto\":17300},{\"id_distribucion\":\"1287\",\"monto\":27400},{\"id_distribucion\":\"1288\",\"monto\":500},{\"id_distribucion\":\"1289\",\"monto\":500},{\"id_distribucion\":\"1290\",\"monto\":5100},{\"id_distribucion\":\"1291\",\"monto\":4100},{\"id_distribucion\":\"1292\",\"monto\":500},{\"id_distribucion\":\"1293\",\"monto\":500},{\"id_distribucion\":\"1294\",\"monto\":510},{\"id_distribucion\":\"1295\",\"monto\":100},{\"id_distribucion\":\"1296\",\"monto\":100},{\"id_distribucion\":\"1297\",\"monto\":100},{\"id_distribucion\":\"1298\",\"monto\":150},{\"id_distribucion\":\"1299\",\"monto\":150},{\"id_distribucion\":\"1300\",\"monto\":100},{\"id_distribucion\":\"1301\",\"monto\":4100},{\"id_distribucion\":\"1302\",\"monto\":3900},{\"id_distribucion\":\"1303\",\"monto\":100},{\"id_distribucion\":\"1304\",\"monto\":6100},{\"id_distribucion\":\"1305\",\"monto\":4700},{\"id_distribucion\":\"1306\",\"monto\":3100},{\"id_distribucion\":\"1307\",\"monto\":4500},{\"id_distribucion\":\"1308\",\"monto\":111},{\"id_distribucion\":\"1309\",\"monto\":3300},{\"id_distribucion\":\"1310\",\"monto\":500},{\"id_distribucion\":\"1311\",\"monto\":100},{\"id_distribucion\":\"1312\",\"monto\":500},{\"id_distribucion\":\"1313\",\"monto\":100},{\"id_distribucion\":\"1314\",\"monto\":100},{\"id_distribucion\":\"1315\",\"monto\":100},{\"id_distribucion\":\"1316\",\"monto\":500},{\"id_distribucion\":\"1317\",\"monto\":100},{\"id_distribucion\":\"1318\",\"monto\":100},{\"id_distribucion\":\"1319\",\"monto\":500},{\"id_distribucion\":\"1320\",\"monto\":100},{\"id_distribucion\":\"1321\",\"monto\":500},{\"id_distribucion\":\"1322\",\"monto\":100},{\"id_distribucion\":\"1323\",\"monto\":100},{\"id_distribucion\":\"1324\",\"monto\":100},{\"id_distribucion\":\"1325\",\"monto\":100},{\"id_distribucion\":\"1326\",\"monto\":100},{\"id_distribucion\":\"1327\",\"monto\":3000},{\"id_distribucion\":\"1328\",\"monto\":3000},{\"id_distribucion\":\"1329\",\"monto\":3000},{\"id_distribucion\":\"1330\",\"monto\":3000},{\"id_distribucion\":\"1331\",\"monto\":3000},{\"id_distribucion\":\"1332\",\"monto\":3000},{\"id_distribucion\":\"1333\",\"monto\":3000},{\"id_distribucion\":\"1334\",\"monto\":3000},{\"id_distribucion\":\"1335\",\"monto\":3000},{\"id_distribucion\":\"1336\",\"monto\":3000},{\"id_distribucion\":\"1337\",\"monto\":39000},{\"id_distribucion\":\"1338\",\"monto\":26000},{\"id_distribucion\":\"1339\",\"monto\":19500},{\"id_distribucion\":\"1340\",\"monto\":28600},{\"id_distribucion\":\"1341\",\"monto\":15600},{\"id_distribucion\":\"1342\",\"monto\":10400},{\"id_distribucion\":\"1343\",\"monto\":10400},{\"id_distribucion\":\"1344\",\"monto\":13000},{\"id_distribucion\":\"1345\",\"monto\":6500},{\"id_distribucion\":\"1346\",\"monto\":3900},{\"id_distribucion\":\"1347\",\"monto\":3900},{\"id_distribucion\":\"1348\",\"monto\":3900},{\"id_distribucion\":\"1349\",\"monto\":10400},{\"id_distribucion\":\"1350\",\"monto\":6500},{\"id_distribucion\":\"1351\",\"monto\":13000},{\"id_distribucion\":\"1352\",\"monto\":5200},{\"id_distribucion\":\"1353\",\"monto\":16900},{\"id_distribucion\":\"1354\",\"monto\":11700},{\"id_distribucion\":\"1355\",\"monto\":26000},{\"id_distribucion\":\"1356\",\"monto\":9100},{\"id_distribucion\":\"1357\",\"monto\":100},{\"id_distribucion\":\"1358\",\"monto\":100},{\"id_distribucion\":\"1359\",\"monto\":100},{\"id_distribucion\":\"1360\",\"monto\":100},{\"id_distribucion\":\"1361\",\"monto\":77220},{\"id_distribucion\":\"1362\",\"monto\":100},{\"id_distribucion\":\"1363\",\"monto\":300},{\"id_distribucion\":\"1364\",\"monto\":100},{\"id_distribucion\":\"1365\",\"monto\":100},{\"id_distribucion\":\"1366\",\"monto\":100},{\"id_distribucion\":\"1367\",\"monto\":100},{\"id_distribucion\":\"1368\",\"monto\":100},{\"id_distribucion\":\"1369\",\"monto\":86580},{\"id_distribucion\":\"1370\",\"monto\":100},{\"id_distribucion\":\"1371\",\"monto\":300},{\"id_distribucion\":\"1372\",\"monto\":100},{\"id_distribucion\":\"1373\",\"monto\":100},{\"id_distribucion\":\"1374\",\"monto\":100},{\"id_distribucion\":\"1375\",\"monto\":100},{\"id_distribucion\":\"1376\",\"monto\":100},{\"id_distribucion\":\"1377\",\"monto\":14040},{\"id_distribucion\":\"1378\",\"monto\":100},{\"id_distribucion\":\"1379\",\"monto\":100},{\"id_distribucion\":\"1380\",\"monto\":100},{\"id_distribucion\":\"1381\",\"monto\":37440},{\"id_distribucion\":\"1382\",\"monto\":300},{\"id_distribucion\":\"1383\",\"monto\":100},{\"id_distribucion\":\"1384\",\"monto\":100},{\"id_distribucion\":\"1385\",\"monto\":100},{\"id_distribucion\":\"1386\",\"monto\":100},{\"id_distribucion\":\"1387\",\"monto\":30500},{\"id_distribucion\":\"1388\",\"monto\":100},{\"id_distribucion\":\"1389\",\"monto\":300},{\"id_distribucion\":\"1390\",\"monto\":100},{\"id_distribucion\":\"1391\",\"monto\":100},{\"id_distribucion\":\"1392\",\"monto\":100},{\"id_distribucion\":\"1393\",\"monto\":55000},{\"id_distribucion\":\"1394\",\"monto\":104000},{\"id_distribucion\":\"1395\",\"monto\":90000},{\"id_distribucion\":\"1396\",\"monto\":33000},{\"id_distribucion\":\"1397\",\"monto\":9000},{\"id_distribucion\":\"1398\",\"monto\":2000},{\"id_distribucion\":\"1399\",\"monto\":2000},{\"id_distribucion\":\"1400\",\"monto\":2000},{\"id_distribucion\":\"1401\",\"monto\":2000},{\"id_distribucion\":\"1402\",\"monto\":2000},{\"id_distribucion\":\"1403\",\"monto\":273123},{\"id_distribucion\":\"1404\",\"monto\":20000},{\"id_distribucion\":\"1405\",\"monto\":30000},{\"id_distribucion\":\"1406\",\"monto\":12000},{\"id_distribucion\":\"1407\",\"monto\":300000},{\"id_distribucion\":\"1408\",\"monto\":50000},{\"id_distribucion\":\"1409\",\"monto\":500000},{\"id_distribucion\":\"1410\",\"monto\":6000},{\"id_distribucion\":\"1411\",\"monto\":30000},{\"id_distribucion\":\"1412\",\"monto\":280000},{\"id_distribucion\":\"1413\",\"monto\":60000},{\"id_distribucion\":\"1414\",\"monto\":90000},{\"id_distribucion\":\"1415\",\"monto\":30000},{\"id_distribucion\":\"1416\",\"monto\":50000},{\"id_distribucion\":\"1417\",\"monto\":50000},{\"id_distribucion\":\"1418\",\"monto\":120000},{\"id_distribucion\":\"1419\",\"monto\":200000},{\"id_distribucion\":\"1420\",\"monto\":50000},{\"id_distribucion\":\"1421\",\"monto\":50000},{\"id_distribucion\":\"1422\",\"monto\":36000},{\"id_distribucion\":\"1423\",\"monto\":300000},{\"id_distribucion\":\"1424\",\"monto\":360000},{\"id_distribucion\":\"1425\",\"monto\":300000},{\"id_distribucion\":\"1426\",\"monto\":40000},{\"id_distribucion\":\"1427\",\"monto\":130000},{\"id_distribucion\":\"1428\",\"monto\":70000},{\"id_distribucion\":\"1429\",\"monto\":12000},{\"id_distribucion\":\"1430\",\"monto\":12000},{\"id_distribucion\":\"1431\",\"monto\":20000},{\"id_distribucion\":\"1432\",\"monto\":1000},{\"id_distribucion\":\"1433\",\"monto\":100000},{\"id_distribucion\":\"1434\",\"monto\":100000},{\"id_distribucion\":\"1435\",\"monto\":180000},{\"id_distribucion\":\"1436\",\"monto\":300000},{\"id_distribucion\":\"1437\",\"monto\":10000},{\"id_distribucion\":\"1438\",\"monto\":100000},{\"id_distribucion\":\"1439\",\"monto\":1000},{\"id_distribucion\":\"1440\",\"monto\":1000},{\"id_distribucion\":\"1441\",\"monto\":1200},{\"id_distribucion\":\"1442\",\"monto\":1200},{\"id_distribucion\":\"1443\",\"monto\":1200},{\"id_distribucion\":\"1444\",\"monto\":1200},{\"id_distribucion\":\"1445\",\"monto\":240000},{\"id_distribucion\":\"1446\",\"monto\":120000},{\"id_distribucion\":\"1447\",\"monto\":60000},{\"id_distribucion\":\"1448\",\"monto\":6000},{\"id_distribucion\":\"1449\",\"monto\":911000},{\"id_distribucion\":\"1450\",\"monto\":600},{\"id_distribucion\":\"1451\",\"monto\":600},{\"id_distribucion\":\"1452\",\"monto\":240000},{\"id_distribucion\":\"1453\",\"monto\":1200},{\"id_distribucion\":\"1454\",\"monto\":1200},{\"id_distribucion\":\"1455\",\"monto\":120000},{\"id_distribucion\":\"1456\",\"monto\":120000},{\"id_distribucion\":\"1457\",\"monto\":30000},{\"id_distribucion\":\"1458\",\"monto\":1000},{\"id_distribucion\":\"1459\",\"monto\":1200},{\"id_distribucion\":\"1460\",\"monto\":60000},{\"id_distribucion\":\"1461\",\"monto\":80000},{\"id_distribucion\":\"1462\",\"monto\":200000},{\"id_distribucion\":\"1463\",\"monto\":160000},{\"id_distribucion\":\"1464\",\"monto\":1200},{\"id_distribucion\":\"1465\",\"monto\":1000},{\"id_distribucion\":\"1466\",\"monto\":1000},{\"id_distribucion\":\"1467\",\"monto\":500},{\"id_distribucion\":\"1468\",\"monto\":4680},{\"id_distribucion\":\"1469\",\"monto\":21400},{\"id_distribucion\":\"1470\",\"monto\":500},{\"id_distribucion\":\"1471\",\"monto\":32800},{\"id_distribucion\":\"1472\",\"monto\":49200},{\"id_distribucion\":\"1473\",\"monto\":100},{\"id_distribucion\":\"1474\",\"monto\":100},{\"id_distribucion\":\"1475\",\"monto\":1000},{\"id_distribucion\":\"1476\",\"monto\":1000},{\"id_distribucion\":\"1477\",\"monto\":50},{\"id_distribucion\":\"1478\",\"monto\":9600},{\"id_distribucion\":\"1479\",\"monto\":600},{\"id_distribucion\":\"1480\",\"monto\":7020},{\"id_distribucion\":\"1481\",\"monto\":500},{\"id_distribucion\":\"1482\",\"monto\":19300},{\"id_distribucion\":\"1483\",\"monto\":700000},{\"id_distribucion\":\"1484\",\"monto\":7000},{\"id_distribucion\":\"1485\",\"monto\":1964000}]', '10429175', 1, 1, '', '2024-11-28', 65, 0),
+(15, 2, 131, '[{\"id_distribucion\":\"1140\",\"monto\":104200},{\"id_distribucion\":\"1141\",\"monto\":14800},{\"id_distribucion\":\"1142\",\"monto\":12540},{\"id_distribucion\":\"1143\",\"monto\":52350},{\"id_distribucion\":\"1144\",\"monto\":23547},{\"id_distribucion\":\"1145\",\"monto\":41770},{\"id_distribucion\":\"1146\",\"monto\":15789},{\"id_distribucion\":\"1147\",\"monto\":7879},{\"id_distribucion\":\"1148\",\"monto\":118500},{\"id_distribucion\":\"1149\",\"monto\":20980},{\"id_distribucion\":\"1150\",\"monto\":10380},{\"id_distribucion\":\"1151\",\"monto\":89200},{\"id_distribucion\":\"1152\",\"monto\":9835},{\"id_distribucion\":\"1153\",\"monto\":9300},{\"id_distribucion\":\"1154\",\"monto\":9200},{\"id_distribucion\":\"1155\",\"monto\":16770},{\"id_distribucion\":\"1156\",\"monto\":16770},{\"id_distribucion\":\"1157\",\"monto\":3770},{\"id_distribucion\":\"1158\",\"monto\":62800},{\"id_distribucion\":\"1160\",\"monto\":62800},{\"id_distribucion\":\"1161\",\"monto\":62800},{\"id_distribucion\":\"1162\",\"monto\":7500},{\"id_distribucion\":\"1163\",\"monto\":60400},{\"id_distribucion\":\"1164\",\"monto\":3770},{\"id_distribucion\":\"1165\",\"monto\":18835},{\"id_distribucion\":\"1166\",\"monto\":18835},{\"id_distribucion\":\"1167\",\"monto\":89231},{\"id_distribucion\":\"1168\",\"monto\":37770},{\"id_distribucion\":\"1169\",\"monto\":37770},{\"id_distribucion\":\"1170\",\"monto\":37770},{\"id_distribucion\":\"1171\",\"monto\":18835},{\"id_distribucion\":\"1172\",\"monto\":88741},{\"id_distribucion\":\"1173\",\"monto\":155000},{\"id_distribucion\":\"1174\",\"monto\":37770},{\"id_distribucion\":\"1175\",\"monto\":110115},{\"id_distribucion\":\"1176\",\"monto\":11031},{\"id_distribucion\":\"1177\",\"monto\":11031},{\"id_distribucion\":\"1178\",\"monto\":11031},{\"id_distribucion\":\"1179\",\"monto\":18835},{\"id_distribucion\":\"1180\",\"monto\":91789},{\"id_distribucion\":\"1181\",\"monto\":18835},{\"id_distribucion\":\"1182\",\"monto\":105250},{\"id_distribucion\":\"1183\",\"monto\":18835},{\"id_distribucion\":\"1184\",\"monto\":18835},{\"id_distribucion\":\"1185\",\"monto\":37770},{\"id_distribucion\":\"1186\",\"monto\":4800},{\"id_distribucion\":\"1187\",\"monto\":14200},{\"id_distribucion\":\"1188\",\"monto\":93250},{\"id_distribucion\":\"1189\",\"monto\":68400},{\"id_distribucion\":\"1190\",\"monto\":18835},{\"id_distribucion\":\"1191\",\"monto\":18835},{\"id_distribucion\":\"1192\",\"monto\":149900},{\"id_distribucion\":\"1193\",\"monto\":98500},{\"id_distribucion\":\"1194\",\"monto\":37770},{\"id_distribucion\":\"1195\",\"monto\":93000},{\"id_distribucion\":\"1196\",\"monto\":20400},{\"id_distribucion\":\"1197\",\"monto\":3770},{\"id_distribucion\":\"1198\",\"monto\":73540},{\"id_distribucion\":\"1199\",\"monto\":37770},{\"id_distribucion\":\"1200\",\"monto\":72800},{\"id_distribucion\":\"1201\",\"monto\":18900},{\"id_distribucion\":\"1202\",\"monto\":10000},{\"id_distribucion\":\"1203\",\"monto\":70800},{\"id_distribucion\":\"1204\",\"monto\":14100},{\"id_distribucion\":\"1205\",\"monto\":16000},{\"id_distribucion\":\"1206\",\"monto\":10000},{\"id_distribucion\":\"1207\",\"monto\":75900},{\"id_distribucion\":\"1208\",\"monto\":27700},{\"id_distribucion\":\"1209\",\"monto\":102500},{\"id_distribucion\":\"1210\",\"monto\":18835},{\"id_distribucion\":\"1211\",\"monto\":102500},{\"id_distribucion\":\"1212\",\"monto\":37770},{\"id_distribucion\":\"1213\",\"monto\":18835},{\"id_distribucion\":\"1214\",\"monto\":18835},{\"id_distribucion\":\"1215\",\"monto\":1019987},{\"id_distribucion\":\"1216\",\"monto\":37770},{\"id_distribucion\":\"1217\",\"monto\":145800},{\"id_distribucion\":\"1218\",\"monto\":145800},{\"id_distribucion\":\"1219\",\"monto\":37770},{\"id_distribucion\":\"1220\",\"monto\":110200},{\"id_distribucion\":\"1221\",\"monto\":37770},{\"id_distribucion\":\"1222\",\"monto\":186100},{\"id_distribucion\":\"1223\",\"monto\":37770},{\"id_distribucion\":\"1224\",\"monto\":37770},{\"id_distribucion\":\"1225\",\"monto\":37770},{\"id_distribucion\":\"1226\",\"monto\":93500},{\"id_distribucion\":\"1227\",\"monto\":93500},{\"id_distribucion\":\"1228\",\"monto\":37770},{\"id_distribucion\":\"1229\",\"monto\":37770},{\"id_distribucion\":\"1230\",\"monto\":37770},{\"id_distribucion\":\"1231\",\"monto\":156900},{\"id_distribucion\":\"1232\",\"monto\":120300},{\"id_distribucion\":\"1233\",\"monto\":120300},{\"id_distribucion\":\"1234\",\"monto\":120300},{\"id_distribucion\":\"1235\",\"monto\":3704},{\"id_distribucion\":\"1236\",\"monto\":12562},{\"id_distribucion\":\"1237\",\"monto\":36000},{\"id_distribucion\":\"1238\",\"monto\":215500},{\"id_distribucion\":\"1239\",\"monto\":195400},{\"id_distribucion\":\"1240\",\"monto\":198600},{\"id_distribucion\":\"1241\",\"monto\":9044},{\"id_distribucion\":\"1242\",\"monto\":25187},{\"id_distribucion\":\"1243\",\"monto\":36770},{\"id_distribucion\":\"1244\",\"monto\":18264},{\"id_distribucion\":\"1245\",\"monto\":46392},{\"id_distribucion\":\"1246\",\"monto\":26640},{\"id_distribucion\":\"1247\",\"monto\":1163},{\"id_distribucion\":\"1248\",\"monto\":2996},{\"id_distribucion\":\"1249\",\"monto\":2500},{\"id_distribucion\":\"1250\",\"monto\":90546},{\"id_distribucion\":\"1251\",\"monto\":1921},{\"id_distribucion\":\"1252\",\"monto\":8292},{\"id_distribucion\":\"1253\",\"monto\":186300},{\"id_distribucion\":\"1254\",\"monto\":17650},{\"id_distribucion\":\"1255\",\"monto\":3770},{\"id_distribucion\":\"1256\",\"monto\":165300},{\"id_distribucion\":\"1257\",\"monto\":156900},{\"id_distribucion\":\"1258\",\"monto\":22911},{\"id_distribucion\":\"1259\",\"monto\":9463},{\"id_distribucion\":\"1260\",\"monto\":51786},{\"id_distribucion\":\"1261\",\"monto\":19230},{\"id_distribucion\":\"1262\",\"monto\":17129},{\"id_distribucion\":\"1263\",\"monto\":16190},{\"id_distribucion\":\"1264\",\"monto\":2914},{\"id_distribucion\":\"1265\",\"monto\":2279},{\"id_distribucion\":\"1266\",\"monto\":2193},{\"id_distribucion\":\"1267\",\"monto\":534},{\"id_distribucion\":\"1268\",\"monto\":37770},{\"id_distribucion\":\"1269\",\"monto\":18885},{\"id_distribucion\":\"1270\",\"monto\":37770},{\"id_distribucion\":\"1271\",\"monto\":18885},{\"id_distribucion\":\"1272\",\"monto\":95369},{\"id_distribucion\":\"1273\",\"monto\":92500},{\"id_distribucion\":\"1274\",\"monto\":95700},{\"id_distribucion\":\"1275\",\"monto\":37770},{\"id_distribucion\":\"1276\",\"monto\":3770},{\"id_distribucion\":\"1277\",\"monto\":44124},{\"id_distribucion\":\"1278\",\"monto\":148200},{\"id_distribucion\":\"1279\",\"monto\":160000},{\"id_distribucion\":\"1280\",\"monto\":38332},{\"id_distribucion\":\"1281\",\"monto\":18385}]', '8286116', 1, 1, '', '2024-11-28', 47, 0),
+(16, 26, 153, '[{\"id_distribucion\":\"692\",\"monto\":1000000},{\"id_distribucion\":\"693\",\"monto\":900000},{\"id_distribucion\":\"694\",\"monto\":100000},{\"id_distribucion\":\"695\",\"monto\":1400000},{\"id_distribucion\":\"696\",\"monto\":250000},{\"id_distribucion\":\"697\",\"monto\":1300000},{\"id_distribucion\":\"698\",\"monto\":1600000},{\"id_distribucion\":\"699\",\"monto\":450000},{\"id_distribucion\":\"701\",\"monto\":1500000},{\"id_distribucion\":\"702\",\"monto\":1300000},{\"id_distribucion\":\"703\",\"monto\":1100000},{\"id_distribucion\":\"704\",\"monto\":1100000},{\"id_distribucion\":\"705\",\"monto\":500000},{\"id_distribucion\":\"706\",\"monto\":100000},{\"id_distribucion\":\"707\",\"monto\":100000},{\"id_distribucion\":\"708\",\"monto\":100000},{\"id_distribucion\":\"709\",\"monto\":100000},{\"id_distribucion\":\"710\",\"monto\":500000},{\"id_distribucion\":\"711\",\"monto\":200000},{\"id_distribucion\":\"712\",\"monto\":100000},{\"id_distribucion\":\"713\",\"monto\":350000},{\"id_distribucion\":\"714\",\"monto\":300000},{\"id_distribucion\":\"715\",\"monto\":4000000},{\"id_distribucion\":\"716\",\"monto\":250000},{\"id_distribucion\":\"717\",\"monto\":700000},{\"id_distribucion\":\"718\",\"monto\":100000},{\"id_distribucion\":\"719\",\"monto\":600000},{\"id_distribucion\":\"720\",\"monto\":600000},{\"id_distribucion\":\"721\",\"monto\":400000},{\"id_distribucion\":\"722\",\"monto\":250000},{\"id_distribucion\":\"723\",\"monto\":700000},{\"id_distribucion\":\"724\",\"monto\":150000},{\"id_distribucion\":\"725\",\"monto\":500000},{\"id_distribucion\":\"726\",\"monto\":4000000},{\"id_distribucion\":\"727\",\"monto\":300000},{\"id_distribucion\":\"728\",\"monto\":500000},{\"id_distribucion\":\"729\",\"monto\":2000000},{\"id_distribucion\":\"875\",\"monto\":250000},{\"id_distribucion\":\"1136\",\"monto\":9750000}]', '262048469', 1, 1, '', '2024-11-28', 45, 0),
+(17, 26, 82, '[{\"id_distribucion\":\"663\",\"monto\":500000},{\"id_distribucion\":\"664\",\"monto\":2500000},{\"id_distribucion\":\"665\",\"monto\":1500000},{\"id_distribucion\":\"666\",\"monto\":500000},{\"id_distribucion\":\"667\",\"monto\":1700000},{\"id_distribucion\":\"668\",\"monto\":600000},{\"id_distribucion\":\"669\",\"monto\":600000},{\"id_distribucion\":\"670\",\"monto\":100000},{\"id_distribucion\":\"671\",\"monto\":6050000},{\"id_distribucion\":\"672\",\"monto\":200000},{\"id_distribucion\":\"673\",\"monto\":2000000},{\"id_distribucion\":\"674\",\"monto\":1800000},{\"id_distribucion\":\"675\",\"monto\":1700000},{\"id_distribucion\":\"676\",\"monto\":1300000},{\"id_distribucion\":\"677\",\"monto\":1400000},{\"id_distribucion\":\"678\",\"monto\":700000},{\"id_distribucion\":\"679\",\"monto\":200000},{\"id_distribucion\":\"680\",\"monto\":200000},{\"id_distribucion\":\"681\",\"monto\":200000},{\"id_distribucion\":\"682\",\"monto\":200000},{\"id_distribucion\":\"683\",\"monto\":500000},{\"id_distribucion\":\"684\",\"monto\":500000},{\"id_distribucion\":\"685\",\"monto\":400000},{\"id_distribucion\":\"686\",\"monto\":300000},{\"id_distribucion\":\"687\",\"monto\":300000},{\"id_distribucion\":\"688\",\"monto\":3000000},{\"id_distribucion\":\"689\",\"monto\":250000},{\"id_distribucion\":\"690\",\"monto\":700000},{\"id_distribucion\":\"691\",\"monto\":14000000},{\"id_distribucion\":\"730\",\"monto\":2200000},{\"id_distribucion\":\"731\",\"monto\":200000},{\"id_distribucion\":\"732\",\"monto\":200000},{\"id_distribucion\":\"733\",\"monto\":300000},{\"id_distribucion\":\"734\",\"monto\":900000},{\"id_distribucion\":\"735\",\"monto\":200000},{\"id_distribucion\":\"736\",\"monto\":100000}]', '262048469', 1, 1, '', '2024-11-28', 45, 0),
+(18, 26, 83, '[{\"id_distribucion\":\"762\",\"monto\":12188469},{\"id_distribucion\":\"763\",\"monto\":8000000},{\"id_distribucion\":\"764\",\"monto\":1000000},{\"id_distribucion\":\"765\",\"monto\":23500000},{\"id_distribucion\":\"766\",\"monto\":1500000},{\"id_distribucion\":\"767\",\"monto\":9000000}]', '262048469', 1, 1, '', '2024-11-28', 45, 0),
+(19, 26, 84, '[{\"id_distribucion\":\"738\",\"monto\":500000},{\"id_distribucion\":\"739\",\"monto\":800000},{\"id_distribucion\":\"740\",\"monto\":700000},{\"id_distribucion\":\"741\",\"monto\":750000},{\"id_distribucion\":\"742\",\"monto\":350000},{\"id_distribucion\":\"743\",\"monto\":500000},{\"id_distribucion\":\"744\",\"monto\":5770000},{\"id_distribucion\":\"745\",\"monto\":200000},{\"id_distribucion\":\"746\",\"monto\":1500000},{\"id_distribucion\":\"747\",\"monto\":1600000},{\"id_distribucion\":\"748\",\"monto\":1400000},{\"id_distribucion\":\"749\",\"monto\":1300000},{\"id_distribucion\":\"750\",\"monto\":850000},{\"id_distribucion\":\"751\",\"monto\":300000},{\"id_distribucion\":\"752\",\"monto\":200000},{\"id_distribucion\":\"753\",\"monto\":400000},{\"id_distribucion\":\"754\",\"monto\":1000000},{\"id_distribucion\":\"755\",\"monto\":13000000},{\"id_distribucion\":\"850\",\"monto\":13500000},{\"id_distribucion\":\"851\",\"monto\":4430000},{\"id_distribucion\":\"852\",\"monto\":600000},{\"id_distribucion\":\"853\",\"monto\":250000},{\"id_distribucion\":\"854\",\"monto\":600000},{\"id_distribucion\":\"855\",\"monto\":700000},{\"id_distribucion\":\"856\",\"monto\":500000},{\"id_distribucion\":\"857\",\"monto\":800000},{\"id_distribucion\":\"858\",\"monto\":900000},{\"id_distribucion\":\"859\",\"monto\":500000},{\"id_distribucion\":\"860\",\"monto\":6000000},{\"id_distribucion\":\"861\",\"monto\":150000},{\"id_distribucion\":\"862\",\"monto\":1500000},{\"id_distribucion\":\"863\",\"monto\":700000},{\"id_distribucion\":\"864\",\"monto\":600000},{\"id_distribucion\":\"865\",\"monto\":1000000},{\"id_distribucion\":\"866\",\"monto\":900000},{\"id_distribucion\":\"867\",\"monto\":250000},{\"id_distribucion\":\"868\",\"monto\":700000},{\"id_distribucion\":\"869\",\"monto\":6000000},{\"id_distribucion\":\"870\",\"monto\":100000},{\"id_distribucion\":\"871\",\"monto\":300000},{\"id_distribucion\":\"872\",\"monto\":750000},{\"id_distribucion\":\"873\",\"monto\":300000},{\"id_distribucion\":\"874\",\"monto\":300000}]', '262048469', 1, 1, '', '2024-11-28', 45, 0),
+(20, 26, 85, '[{\"id_distribucion\":\"768\",\"monto\":200000},{\"id_distribucion\":\"769\",\"monto\":12000000},{\"id_distribucion\":\"770\",\"monto\":100000},{\"id_distribucion\":\"771\",\"monto\":1390000},{\"id_distribucion\":\"772\",\"monto\":100000},{\"id_distribucion\":\"773\",\"monto\":100000},{\"id_distribucion\":\"774\",\"monto\":900000},{\"id_distribucion\":\"775\",\"monto\":750000},{\"id_distribucion\":\"776\",\"monto\":850000},{\"id_distribucion\":\"777\",\"monto\":200000},{\"id_distribucion\":\"778\",\"monto\":380000},{\"id_distribucion\":\"779\",\"monto\":150000},{\"id_distribucion\":\"780\",\"monto\":1000000},{\"id_distribucion\":\"781\",\"monto\":160000},{\"id_distribucion\":\"782\",\"monto\":150000},{\"id_distribucion\":\"783\",\"monto\":1100000},{\"id_distribucion\":\"784\",\"monto\":20000},{\"id_distribucion\":\"785\",\"monto\":8000000},{\"id_distribucion\":\"786\",\"monto\":50000},{\"id_distribucion\":\"787\",\"monto\":10000},{\"id_distribucion\":\"788\",\"monto\":200000},{\"id_distribucion\":\"789\",\"monto\":3500000},{\"id_distribucion\":\"790\",\"monto\":150000},{\"id_distribucion\":\"791\",\"monto\":150000},{\"id_distribucion\":\"792\",\"monto\":150000},{\"id_distribucion\":\"793\",\"monto\":150000},{\"id_distribucion\":\"794\",\"monto\":1700000},{\"id_distribucion\":\"795\",\"monto\":1500000},{\"id_distribucion\":\"796\",\"monto\":1500000},{\"id_distribucion\":\"797\",\"monto\":1500000},{\"id_distribucion\":\"798\",\"monto\":500000},{\"id_distribucion\":\"799\",\"monto\":500000},{\"id_distribucion\":\"800\",\"monto\":100000},{\"id_distribucion\":\"801\",\"monto\":100000},{\"id_distribucion\":\"802\",\"monto\":100000},{\"id_distribucion\":\"803\",\"monto\":100000},{\"id_distribucion\":\"804\",\"monto\":100000},{\"id_distribucion\":\"805\",\"monto\":500000},{\"id_distribucion\":\"806\",\"monto\":250000},{\"id_distribucion\":\"807\",\"monto\":600000},{\"id_distribucion\":\"808\",\"monto\":50000},{\"id_distribucion\":\"809\",\"monto\":3500000},{\"id_distribucion\":\"810\",\"monto\":150000},{\"id_distribucion\":\"811\",\"monto\":100000},{\"id_distribucion\":\"812\",\"monto\":1250000}]', '262048469', 1, 1, '', '2024-11-28', 45, 0),
+(21, 11, 140, '[{\"id_distribucion\":\"522\",\"monto\":150000},{\"id_distribucion\":\"523\",\"monto\":1000},{\"id_distribucion\":\"524\",\"monto\":9000},{\"id_distribucion\":\"525\",\"monto\":1300},{\"id_distribucion\":\"526\",\"monto\":150000},{\"id_distribucion\":\"527\",\"monto\":2500},{\"id_distribucion\":\"528\",\"monto\":100000},{\"id_distribucion\":\"529\",\"monto\":75000},{\"id_distribucion\":\"530\",\"monto\":95000},{\"id_distribucion\":\"531\",\"monto\":5800},{\"id_distribucion\":\"532\",\"monto\":25852},{\"id_distribucion\":\"533\",\"monto\":2500},{\"id_distribucion\":\"534\",\"monto\":1000},{\"id_distribucion\":\"535\",\"monto\":15000},{\"id_distribucion\":\"536\",\"monto\":12000},{\"id_distribucion\":\"537\",\"monto\":5000},{\"id_distribucion\":\"538\",\"monto\":90000},{\"id_distribucion\":\"539\",\"monto\":80000},{\"id_distribucion\":\"1098\",\"monto\":530000},{\"id_distribucion\":\"1099\",\"monto\":20000},{\"id_distribucion\":\"1100\",\"monto\":125000}]', '2845952', 1, 1, '', '2024-11-28', 49, 0),
+(22, 11, 36, '[{\"id_distribucion\":\"1101\",\"monto\":530000},{\"id_distribucion\":\"1102\",\"monto\":20000},{\"id_distribucion\":\"1103\",\"monto\":125000}]', '2845952', 1, 1, '', '2024-11-28', 49, 0),
+(23, 11, 37, '[{\"id_distribucion\":\"1104\",\"monto\":530000},{\"id_distribucion\":\"1105\",\"monto\":20000},{\"id_distribucion\":\"1106\",\"monto\":125000}]', '2845952', 1, 1, '', '2024-11-28', 49, 0),
+(24, 11, 200, '[{\"id_distribucion\":\"1107\",\"monto\":530000},{\"id_distribucion\":\"1108\",\"monto\":20000},{\"id_distribucion\":\"1109\",\"monto\":125000}]', '2845952', 1, 1, '', '2024-11-28', 49, 0),
+(27, 67, 193, '[{\"id_distribucion\":\"917\",\"monto\":3000000}]', '3000000', 1, 1, '', '2024-11-28', 10, 0),
+(28, 68, 194, '[{\"id_distribucion\":\"918\",\"monto\":1200000}]', '1200000', 1, 1, '', '2024-11-28', 11, 0),
+(29, 65, 191, '[{\"id_distribucion\":\"915\",\"monto\":3000000}]', '3000000', 1, 1, '', '2024-11-28', 12, 0),
+(30, 66, 192, '[{\"id_distribucion\":\"1486\",\"monto\":20000000}]', '20000000', 1, 1, '', '2024-11-28', 69, 0),
+(31, 32, 158, '[{\"id_distribucion\":\"882\",\"monto\":200000}]', '200000', 1, 1, '', '2024-11-28', 14, 0),
+(32, 62, 188, '[{\"id_distribucion\":\"912\",\"monto\":100000}]', '100000', 1, 1, '', '2024-11-28', 15, 0),
+(33, 64, 190, '[{\"id_distribucion\":\"914\",\"monto\":3000000}]', '3000000', 1, 1, '', '2024-11-28', 16, 0),
+(34, 43, 169, '[{\"id_distribucion\":\"893\",\"monto\":4500000}]', '4500000', 1, 1, '', '2024-11-28', 17, 0),
+(35, 49, 175, '[{\"id_distribucion\":\"899\",\"monto\":3000000}]', '3000000', 1, 1, '', '2024-11-28', 18, 0),
+(36, 31, 157, '[{\"id_distribucion\":\"881\",\"monto\":300000}]', '300000', 1, 1, '', '2024-11-28', 19, 0),
+(37, 48, 174, '[{\"id_distribucion\":\"898\",\"monto\":2800000}]', '2800000', 1, 1, '', '2024-11-28', 20, 0),
+(38, 30, 156, '[{\"id_distribucion\":\"880\",\"monto\":300000}]', '300000', 1, 1, '', '2024-11-28', 21, 0),
+(39, 47, 173, '[{\"id_distribucion\":\"897\",\"monto\":1600000}]', '1600000', 1, 1, '', '2024-11-28', 22, 0),
+(40, 51, 177, '[{\"id_distribucion\":\"901\",\"monto\":3000000}]', '3000000', 1, 1, '', '2024-11-28', 23, 0),
+(41, 42, 168, '[{\"id_distribucion\":\"892\",\"monto\":2000000}]', '2000000', 1, 1, '', '2024-11-28', 24, 0),
+(42, 33, 159, '[{\"id_distribucion\":\"883\",\"monto\":1000000}]', '1000000', 1, 1, '', '2024-11-28', 25, 0),
+(43, 63, 189, '[{\"id_distribucion\":\"913\",\"monto\":3000000}]', '3000000', 1, 1, '', '2024-11-28', 26, 0),
+(44, 55, 181, '[{\"id_distribucion\":\"905\",\"monto\":3000000}]', '3000000', 1, 1, '', '2024-11-28', 27, 0),
+(45, 44, 170, '[{\"id_distribucion\":\"894\",\"monto\":1200000}]', '1200000', 1, 1, '', '2024-11-28', 28, 0),
+(46, 52, 178, '[{\"id_distribucion\":\"902\",\"monto\":3000000}]', '3000000', 1, 1, '', '2024-11-28', 29, 0),
+(47, 36, 162, '[{\"id_distribucion\":\"886\",\"monto\":3000000}]', '3000000', 1, 1, '', '2024-11-28', 31, 0),
+(48, 50, 176, '[{\"id_distribucion\":\"900\",\"monto\":3000000}]', '3000000', 1, 1, '', '2024-11-28', 30, 0),
+(49, 53, 179, '[{\"id_distribucion\":\"903\",\"monto\":3000000}]', '3000000', 1, 1, '', '2024-11-28', 32, 0),
+(50, 35, 161, '[{\"id_distribucion\":\"885\",\"monto\":160000}]', '160000', 1, 1, '', '2024-11-28', 33, 0),
+(51, 15, 144, '[{\"id_distribucion\":\"332\",\"monto\":260000},{\"id_distribucion\":\"333\",\"monto\":385200},{\"id_distribucion\":\"334\",\"monto\":100000},{\"id_distribucion\":\"335\",\"monto\":96300},{\"id_distribucion\":\"336\",\"monto\":115560},{\"id_distribucion\":\"337\",\"monto\":28890},{\"id_distribucion\":\"338\",\"monto\":750000},{\"id_distribucion\":\"339\",\"monto\":20258},{\"id_distribucion\":\"340\",\"monto\":159365},{\"id_distribucion\":\"341\",\"monto\":100254},{\"id_distribucion\":\"342\",\"monto\":25658},{\"id_distribucion\":\"343\",\"monto\":160000},{\"id_distribucion\":\"344\",\"monto\":25458},{\"id_distribucion\":\"345\",\"monto\":550000},{\"id_distribucion\":\"346\",\"monto\":15854},{\"id_distribucion\":\"347\",\"monto\":12200},{\"id_distribucion\":\"348\",\"monto\":30300},{\"id_distribucion\":\"349\",\"monto\":125325},{\"id_distribucion\":\"350\",\"monto\":25000},{\"id_distribucion\":\"351\",\"monto\":120365},{\"id_distribucion\":\"352\",\"monto\":96300},{\"id_distribucion\":\"353\",\"monto\":231120},{\"id_distribucion\":\"354\",\"monto\":120000},{\"id_distribucion\":\"355\",\"monto\":128541},{\"id_distribucion\":\"356\",\"monto\":145236},{\"id_distribucion\":\"357\",\"monto\":90000}]', '3917184', 1, 1, '', '2024-11-28', 48, 0),
+(52, 3, 132, '[{\"id_distribucion\":\"1498\",\"monto\":311340},{\"id_distribucion\":\"1499\",\"monto\":48360},{\"id_distribucion\":\"1500\",\"monto\":90888},{\"id_distribucion\":\"1501\",\"monto\":195000},{\"id_distribucion\":\"1502\",\"monto\":218700},{\"id_distribucion\":\"1503\",\"monto\":15000},{\"id_distribucion\":\"1504\",\"monto\":22032},{\"id_distribucion\":\"1505\",\"monto\":18864},{\"id_distribucion\":\"1506\",\"monto\":21600},{\"id_distribucion\":\"1507\",\"monto\":5088},{\"id_distribucion\":\"1508\",\"monto\":7104},{\"id_distribucion\":\"1509\",\"monto\":22308},{\"id_distribucion\":\"1510\",\"monto\":11088},{\"id_distribucion\":\"1511\",\"monto\":14544},{\"id_distribucion\":\"1512\",\"monto\":4488},{\"id_distribucion\":\"1513\",\"monto\":26328},{\"id_distribucion\":\"1514\",\"monto\":10968},{\"id_distribucion\":\"1515\",\"monto\":68184},{\"id_distribucion\":\"1516\",\"monto\":1200},{\"id_distribucion\":\"1517\",\"monto\":1200},{\"id_distribucion\":\"1518\",\"monto\":1200},{\"id_distribucion\":\"1519\",\"monto\":1200},{\"id_distribucion\":\"1520\",\"monto\":1200},{\"id_distribucion\":\"1521\",\"monto\":1200},{\"id_distribucion\":\"1522\",\"monto\":1200},{\"id_distribucion\":\"1523\",\"monto\":1200},{\"id_distribucion\":\"1524\",\"monto\":12876},{\"id_distribucion\":\"1525\",\"monto\":8388},{\"id_distribucion\":\"1526\",\"monto\":6444},{\"id_distribucion\":\"1527\",\"monto\":5880},{\"id_distribucion\":\"1528\",\"monto\":2736},{\"id_distribucion\":\"1529\",\"monto\":1536},{\"id_distribucion\":\"1530\",\"monto\":1356},{\"id_distribucion\":\"1531\",\"monto\":1272},{\"id_distribucion\":\"1532\",\"monto\":7368},{\"id_distribucion\":\"1533\",\"monto\":3456},{\"id_distribucion\":\"1534\",\"monto\":3924},{\"id_distribucion\":\"1535\",\"monto\":4752},{\"id_distribucion\":\"1536\",\"monto\":9120},{\"id_distribucion\":\"1537\",\"monto\":5388},{\"id_distribucion\":\"1538\",\"monto\":4296},{\"id_distribucion\":\"1539\",\"monto\":4584},{\"id_distribucion\":\"1540\",\"monto\":220488},{\"id_distribucion\":\"1541\",\"monto\":56784},{\"id_distribucion\":\"1542\",\"monto\":36168},{\"id_distribucion\":\"1543\",\"monto\":22968},{\"id_distribucion\":\"1544\",\"monto\":7200},{\"id_distribucion\":\"1545\",\"monto\":2664},{\"id_distribucion\":\"1546\",\"monto\":24072},{\"id_distribucion\":\"1547\",\"monto\":9780},{\"id_distribucion\":\"1548\",\"monto\":29952},{\"id_distribucion\":\"1549\",\"monto\":18696},{\"id_distribucion\":\"1550\",\"monto\":8424},{\"id_distribucion\":\"1551\",\"monto\":1200},{\"id_distribucion\":\"1552\",\"monto\":1200},{\"id_distribucion\":\"1553\",\"monto\":1200},{\"id_distribucion\":\"1554\",\"monto\":1200},{\"id_distribucion\":\"1555\",\"monto\":30000},{\"id_distribucion\":\"1556\",\"monto\":30000},{\"id_distribucion\":\"1557\",\"monto\":414940},{\"id_distribucion\":\"1558\",\"monto\":90000},{\"id_distribucion\":\"1559\",\"monto\":30000},{\"id_distribucion\":\"1560\",\"monto\":124992},{\"id_distribucion\":\"1561\",\"monto\":284988},{\"id_distribucion\":\"1562\",\"monto\":306600},{\"id_distribucion\":\"1563\",\"monto\":114984},{\"id_distribucion\":\"1564\",\"monto\":150000},{\"id_distribucion\":\"1565\",\"monto\":66000},{\"id_distribucion\":\"1566\",\"monto\":16992},{\"id_distribucion\":\"1567\",\"monto\":329318},{\"id_distribucion\":\"1568\",\"monto\":66000},{\"id_distribucion\":\"1569\",\"monto\":20004},{\"id_distribucion\":\"1570\",\"monto\":50004},{\"id_distribucion\":\"1571\",\"monto\":120000},{\"id_distribucion\":\"1572\",\"monto\":50004},{\"id_distribucion\":\"1573\",\"monto\":30816},{\"id_distribucion\":\"1574\",\"monto\":80560},{\"id_distribucion\":\"1575\",\"monto\":90000}]', '4143058', 1, 1, '', '2024-11-28', 70, 0),
+(53, 14, 143, '[{\"id_distribucion\":\"469\",\"monto\":120000},{\"id_distribucion\":\"470\",\"monto\":150000},{\"id_distribucion\":\"471\",\"monto\":100000},{\"id_distribucion\":\"472\",\"monto\":25000},{\"id_distribucion\":\"473\",\"monto\":15000},{\"id_distribucion\":\"474\",\"monto\":10500},{\"id_distribucion\":\"475\",\"monto\":120000},{\"id_distribucion\":\"476\",\"monto\":12365},{\"id_distribucion\":\"477\",\"monto\":100000},{\"id_distribucion\":\"478\",\"monto\":25695},{\"id_distribucion\":\"479\",\"monto\":18456},{\"id_distribucion\":\"480\",\"monto\":100000},{\"id_distribucion\":\"481\",\"monto\":15658},{\"id_distribucion\":\"482\",\"monto\":100000},{\"id_distribucion\":\"483\",\"monto\":9630},{\"id_distribucion\":\"484\",\"monto\":1700},{\"id_distribucion\":\"485\",\"monto\":35256},{\"id_distribucion\":\"486\",\"monto\":70000},{\"id_distribucion\":\"487\",\"monto\":12500},{\"id_distribucion\":\"488\",\"monto\":20000},{\"id_distribucion\":\"489\",\"monto\":100000},{\"id_distribucion\":\"490\",\"monto\":25658},{\"id_distribucion\":\"491\",\"monto\":102000},{\"id_distribucion\":\"492\",\"monto\":50000}]', '1339418', 1, 1, '', '2024-11-28', 63, 0),
+(57, 58, 184, '[{\"id_distribucion\":\"908\",\"monto\":3000000}]', '3000000', 1, 1, '', '2024-11-28', 34, 0),
+(58, 18, 146, '[{\"id_distribucion\":\"128\",\"monto\":550000},{\"id_distribucion\":\"129\",\"monto\":2800},{\"id_distribucion\":\"130\",\"monto\":25500},{\"id_distribucion\":\"131\",\"monto\":2800},{\"id_distribucion\":\"132\",\"monto\":480000},{\"id_distribucion\":\"133\",\"monto\":9300},{\"id_distribucion\":\"134\",\"monto\":236254},{\"id_distribucion\":\"135\",\"monto\":180500},{\"id_distribucion\":\"136\",\"monto\":240600},{\"id_distribucion\":\"137\",\"monto\":18500},{\"id_distribucion\":\"138\",\"monto\":105500},{\"id_distribucion\":\"139\",\"monto\":12500},{\"id_distribucion\":\"140\",\"monto\":2500},{\"id_distribucion\":\"141\",\"monto\":2900},{\"id_distribucion\":\"142\",\"monto\":26000},{\"id_distribucion\":\"143\",\"monto\":17500},{\"id_distribucion\":\"144\",\"monto\":170500},{\"id_distribucion\":\"145\",\"monto\":180254},{\"id_distribucion\":\"146\",\"monto\":103254},{\"id_distribucion\":\"147\",\"monto\":18500},{\"id_distribucion\":\"148\",\"monto\":27500},{\"id_distribucion\":\"149\",\"monto\":1180},{\"id_distribucion\":\"150\",\"monto\":60500},{\"id_distribucion\":\"151\",\"monto\":18500},{\"id_distribucion\":\"925\",\"monto\":530000},{\"id_distribucion\":\"926\",\"monto\":20000},{\"id_distribucion\":\"927\",\"monto\":125000}]', '5193342', 1, 1, '', '2024-11-28', 62, 0),
+(59, 18, 54, '[{\"id_distribucion\":\"931\",\"monto\":530000},{\"id_distribucion\":\"932\",\"monto\":20000},{\"id_distribucion\":\"933\",\"monto\":125000}]', '5193342', 1, 1, '', '2024-11-28', 62, 0),
+(60, 18, 55, '[{\"id_distribucion\":\"934\",\"monto\":530000},{\"id_distribucion\":\"935\",\"monto\":20000},{\"id_distribucion\":\"936\",\"monto\":125000}]', '5193342', 1, 1, '', '2024-11-28', 62, 0),
+(61, 18, 56, '[{\"id_distribucion\":\"940\",\"monto\":530000},{\"id_distribucion\":\"941\",\"monto\":20000},{\"id_distribucion\":\"942\",\"monto\":125000}]', '5193342', 1, 1, '', '2024-11-28', 62, 0),
+(62, 19, 147, '[{\"id_distribucion\":\"169\",\"monto\":170799},{\"id_distribucion\":\"170\",\"monto\":216254},{\"id_distribucion\":\"171\",\"monto\":150000},{\"id_distribucion\":\"172\",\"monto\":420000},{\"id_distribucion\":\"173\",\"monto\":190500},{\"id_distribucion\":\"174\",\"monto\":492200},{\"id_distribucion\":\"175\",\"monto\":550000},{\"id_distribucion\":\"176\",\"monto\":530254},{\"id_distribucion\":\"177\",\"monto\":350000},{\"id_distribucion\":\"178\",\"monto\":420965},{\"id_distribucion\":\"179\",\"monto\":102685},{\"id_distribucion\":\"180\",\"monto\":310856},{\"id_distribucion\":\"181\",\"monto\":177727},{\"id_distribucion\":\"182\",\"monto\":230000},{\"id_distribucion\":\"183\",\"monto\":270321},{\"id_distribucion\":\"184\",\"monto\":42000},{\"id_distribucion\":\"185\",\"monto\":50500},{\"id_distribucion\":\"186\",\"monto\":56987},{\"id_distribucion\":\"187\",\"monto\":54100},{\"id_distribucion\":\"188\",\"monto\":91500},{\"id_distribucion\":\"189\",\"monto\":150000},{\"id_distribucion\":\"190\",\"monto\":550500},{\"id_distribucion\":\"191\",\"monto\":430254},{\"id_distribucion\":\"192\",\"monto\":35000},{\"id_distribucion\":\"193\",\"monto\":190000},{\"id_distribucion\":\"194\",\"monto\":170000},{\"id_distribucion\":\"195\",\"monto\":780256},{\"id_distribucion\":\"196\",\"monto\":42800},{\"id_distribucion\":\"197\",\"monto\":5500000},{\"id_distribucion\":\"198\",\"monto\":35500},{\"id_distribucion\":\"199\",\"monto\":21400},{\"id_distribucion\":\"200\",\"monto\":29960},{\"id_distribucion\":\"201\",\"monto\":4280},{\"id_distribucion\":\"943\",\"monto\":530000},{\"id_distribucion\":\"944\",\"monto\":20000},{\"id_distribucion\":\"945\",\"monto\":125000}]', '16192598', 1, 1, '', '2024-11-28', 61, 0),
+(63, 19, 58, '[{\"id_distribucion\":\"949\",\"monto\":530000},{\"id_distribucion\":\"950\",\"monto\":20000},{\"id_distribucion\":\"951\",\"monto\":125000}]', '16192598', 1, 1, '', '2024-11-28', 61, 0),
+(64, 19, 59, '[{\"id_distribucion\":\"955\",\"monto\":530000},{\"id_distribucion\":\"956\",\"monto\":20000},{\"id_distribucion\":\"957\",\"monto\":125000}]', '16192598', 1, 1, '', '2024-11-28', 61, 0),
+(65, 19, 60, '[{\"id_distribucion\":\"961\",\"monto\":530000},{\"id_distribucion\":\"962\",\"monto\":20000},{\"id_distribucion\":\"963\",\"monto\":125000}]', '16192598', 1, 1, '', '2024-11-28', 61, 0),
+(66, 19, 61, '[{\"id_distribucion\":\"964\",\"monto\":530000},{\"id_distribucion\":\"965\",\"monto\":20000},{\"id_distribucion\":\"966\",\"monto\":125000}]', '16192598', 1, 1, '', '2024-11-28', 61, 0),
+(67, 16, 145, '[{\"id_distribucion\":\"90\",\"monto\":100000},{\"id_distribucion\":\"91\",\"monto\":22000},{\"id_distribucion\":\"92\",\"monto\":74000},{\"id_distribucion\":\"93\",\"monto\":75000},{\"id_distribucion\":\"94\",\"monto\":28000},{\"id_distribucion\":\"95\",\"monto\":90000},{\"id_distribucion\":\"96\",\"monto\":29000},{\"id_distribucion\":\"97\",\"monto\":45000},{\"id_distribucion\":\"98\",\"monto\":200000},{\"id_distribucion\":\"99\",\"monto\":37000},{\"id_distribucion\":\"100\",\"monto\":58000},{\"id_distribucion\":\"101\",\"monto\":22000},{\"id_distribucion\":\"102\",\"monto\":33000},{\"id_distribucion\":\"103\",\"monto\":42800},{\"id_distribucion\":\"104\",\"monto\":43000},{\"id_distribucion\":\"105\",\"monto\":37000},{\"id_distribucion\":\"106\",\"monto\":74000},{\"id_distribucion\":\"107\",\"monto\":45000},{\"id_distribucion\":\"108\",\"monto\":250000},{\"id_distribucion\":\"109\",\"monto\":15000},{\"id_distribucion\":\"110\",\"monto\":25000},{\"id_distribucion\":\"111\",\"monto\":150000},{\"id_distribucion\":\"112\",\"monto\":29500},{\"id_distribucion\":\"113\",\"monto\":160000},{\"id_distribucion\":\"114\",\"monto\":75500},{\"id_distribucion\":\"115\",\"monto\":151200},{\"id_distribucion\":\"116\",\"monto\":85000},{\"id_distribucion\":\"117\",\"monto\":8500},{\"id_distribucion\":\"118\",\"monto\":183500},{\"id_distribucion\":\"119\",\"monto\":36000},{\"id_distribucion\":\"120\",\"monto\":22600},{\"id_distribucion\":\"121\",\"monto\":10500},{\"id_distribucion\":\"122\",\"monto\":15000},{\"id_distribucion\":\"123\",\"monto\":19043},{\"id_distribucion\":\"124\",\"monto\":18000},{\"id_distribucion\":\"125\",\"monto\":17000},{\"id_distribucion\":\"126\",\"monto\":34000},{\"id_distribucion\":\"127\",\"monto\":24000},{\"id_distribucion\":\"920\",\"monto\":40000},{\"id_distribucion\":\"921\",\"monto\":500000},{\"id_distribucion\":\"1128\",\"monto\":1060000}]', '3984143', 1, 1, '', '2024-11-28', 44, 0),
+(68, 21, 148, '[{\"id_distribucion\":\"223\",\"monto\":300000},{\"id_distribucion\":\"224\",\"monto\":300000},{\"id_distribucion\":\"225\",\"monto\":35000},{\"id_distribucion\":\"226\",\"monto\":19500},{\"id_distribucion\":\"227\",\"monto\":20500},{\"id_distribucion\":\"228\",\"monto\":42500},{\"id_distribucion\":\"229\",\"monto\":45000},{\"id_distribucion\":\"230\",\"monto\":17500},{\"id_distribucion\":\"231\",\"monto\":45000},{\"id_distribucion\":\"232\",\"monto\":17500},{\"id_distribucion\":\"233\",\"monto\":20000},{\"id_distribucion\":\"234\",\"monto\":12000},{\"id_distribucion\":\"235\",\"monto\":10180},{\"id_distribucion\":\"236\",\"monto\":15600},{\"id_distribucion\":\"237\",\"monto\":21000},{\"id_distribucion\":\"238\",\"monto\":6200},{\"id_distribucion\":\"239\",\"monto\":21500},{\"id_distribucion\":\"240\",\"monto\":95000},{\"id_distribucion\":\"241\",\"monto\":80000},{\"id_distribucion\":\"242\",\"monto\":8500},{\"id_distribucion\":\"243\",\"monto\":35000},{\"id_distribucion\":\"244\",\"monto\":30852},{\"id_distribucion\":\"245\",\"monto\":160000},{\"id_distribucion\":\"246\",\"monto\":22650},{\"id_distribucion\":\"247\",\"monto\":15100},{\"id_distribucion\":\"248\",\"monto\":18500},{\"id_distribucion\":\"249\",\"monto\":15000},{\"id_distribucion\":\"250\",\"monto\":10500},{\"id_distribucion\":\"251\",\"monto\":17500},{\"id_distribucion\":\"976\",\"monto\":560000},{\"id_distribucion\":\"977\",\"monto\":40000},{\"id_distribucion\":\"978\",\"monto\":150000}]', '2207582', 1, 1, '', '2024-11-28', 60, 0),
+(69, 6, 135, '[{\"id_distribucion\":\"152\",\"monto\":300000},{\"id_distribucion\":\"153\",\"monto\":250654},{\"id_distribucion\":\"154\",\"monto\":250000},{\"id_distribucion\":\"155\",\"monto\":550000},{\"id_distribucion\":\"156\",\"monto\":83119},{\"id_distribucion\":\"157\",\"monto\":156236},{\"id_distribucion\":\"158\",\"monto\":41256},{\"id_distribucion\":\"159\",\"monto\":250000},{\"id_distribucion\":\"160\",\"monto\":300000},{\"id_distribucion\":\"161\",\"monto\":83119},{\"id_distribucion\":\"162\",\"monto\":78658},{\"id_distribucion\":\"163\",\"monto\":200000},{\"id_distribucion\":\"164\",\"monto\":95258},{\"id_distribucion\":\"165\",\"monto\":25254},{\"id_distribucion\":\"166\",\"monto\":200000},{\"id_distribucion\":\"167\",\"monto\":154365},{\"id_distribucion\":\"168\",\"monto\":24485},{\"id_distribucion\":\"986\",\"monto\":1500000},{\"id_distribucion\":\"987\",\"monto\":20000},{\"id_distribucion\":\"988\",\"monto\":500000},{\"id_distribucion\":\"989\",\"monto\":619289}]', '10241693', 1, 1, '', '2024-11-28', 56, 0),
+(70, 6, 14, '[{\"id_distribucion\":\"990\",\"monto\":530000},{\"id_distribucion\":\"991\",\"monto\":20000},{\"id_distribucion\":\"992\",\"monto\":125000}]', '10241693', 1, 1, '', '2024-11-28', 56, 0),
+(71, 6, 15, '[{\"id_distribucion\":\"994\",\"monto\":530000},{\"id_distribucion\":\"995\",\"monto\":20000},{\"id_distribucion\":\"996\",\"monto\":125000}]', '10241693', 1, 1, '', '2024-11-28', 56, 0),
+(72, 6, 16, '[{\"id_distribucion\":\"1000\",\"monto\":530000},{\"id_distribucion\":\"1001\",\"monto\":20000},{\"id_distribucion\":\"1002\",\"monto\":125000}]', '10241693', 1, 1, '', '2024-11-28', 56, 0),
+(73, 6, 17, '[{\"id_distribucion\":\"1007\",\"monto\":20000},{\"id_distribucion\":\"1027\",\"monto\":400000},{\"id_distribucion\":\"1028\",\"monto\":90000}]', '10241693', 1, 1, '', '2024-11-28', 56, 0),
+(74, 6, 18, '[{\"id_distribucion\":\"1012\",\"monto\":530000},{\"id_distribucion\":\"1013\",\"monto\":20000},{\"id_distribucion\":\"1014\",\"monto\":125000}]', '10241693', 1, 1, '', '2024-11-28', 56, 0),
+(75, 6, 19, '[{\"id_distribucion\":\"1021\",\"monto\":530000},{\"id_distribucion\":\"1022\",\"monto\":20000},{\"id_distribucion\":\"1023\",\"monto\":125000}]', '10241693', 1, 1, '', '2024-11-28', 56, 0),
+(76, 6, 20, '[{\"id_distribucion\":\"1032\",\"monto\":530000},{\"id_distribucion\":\"1033\",\"monto\":20000},{\"id_distribucion\":\"1034\",\"monto\":125000}]', '10241693', 1, 1, '', '2024-11-28', 56, 0);
+INSERT INTO `distribucion_entes` (`id`, `id_ente`, `actividad_id`, `distribucion`, `monto_total`, `status`, `id_ejercicio`, `comentario`, `fecha`, `id_asignacion`, `status_cerrar`) VALUES
+(77, 22, 149, '[{\"id_distribucion\":\"376\",\"monto\":500000},{\"id_distribucion\":\"377\",\"monto\":300000},{\"id_distribucion\":\"378\",\"monto\":32500},{\"id_distribucion\":\"379\",\"monto\":95000},{\"id_distribucion\":\"380\",\"monto\":32500},{\"id_distribucion\":\"381\",\"monto\":280000},{\"id_distribucion\":\"382\",\"monto\":200000},{\"id_distribucion\":\"383\",\"monto\":240000},{\"id_distribucion\":\"384\",\"monto\":8400},{\"id_distribucion\":\"385\",\"monto\":80000},{\"id_distribucion\":\"386\",\"monto\":500000},{\"id_distribucion\":\"387\",\"monto\":120000},{\"id_distribucion\":\"388\",\"monto\":160000},{\"id_distribucion\":\"389\",\"monto\":242000},{\"id_distribucion\":\"390\",\"monto\":250000},{\"id_distribucion\":\"391\",\"monto\":20000},{\"id_distribucion\":\"392\",\"monto\":540254},{\"id_distribucion\":\"393\",\"monto\":650000},{\"id_distribucion\":\"394\",\"monto\":550000},{\"id_distribucion\":\"395\",\"monto\":428000},{\"id_distribucion\":\"396\",\"monto\":21400},{\"id_distribucion\":\"397\",\"monto\":4280},{\"id_distribucion\":\"398\",\"monto\":8500},{\"id_distribucion\":\"399\",\"monto\":900000},{\"id_distribucion\":\"400\",\"monto\":200000},{\"id_distribucion\":\"401\",\"monto\":360987},{\"id_distribucion\":\"402\",\"monto\":800000},{\"id_distribucion\":\"403\",\"monto\":650254},{\"id_distribucion\":\"404\",\"monto\":32000},{\"id_distribucion\":\"405\",\"monto\":114500},{\"id_distribucion\":\"406\",\"monto\":8560},{\"id_distribucion\":\"407\",\"monto\":110500},{\"id_distribucion\":\"408\",\"monto\":13050},{\"id_distribucion\":\"409\",\"monto\":256541},{\"id_distribucion\":\"410\",\"monto\":535000},{\"id_distribucion\":\"411\",\"monto\":90950},{\"id_distribucion\":\"412\",\"monto\":6800000},{\"id_distribucion\":\"413\",\"monto\":32600},{\"id_distribucion\":\"414\",\"monto\":31500},{\"id_distribucion\":\"415\",\"monto\":370357},{\"id_distribucion\":\"416\",\"monto\":420852},{\"id_distribucion\":\"417\",\"monto\":13063},{\"id_distribucion\":\"418\",\"monto\":42800},{\"id_distribucion\":\"419\",\"monto\":33400},{\"id_distribucion\":\"980\",\"monto\":150000},{\"id_distribucion\":\"981\",\"monto\":20000},{\"id_distribucion\":\"982\",\"monto\":125000},{\"id_distribucion\":\"993\",\"monto\":20000}]', '17984748', 1, 1, '', '2024-11-28', 59, 0),
+(78, 22, 66, '[{\"id_distribucion\":\"997\",\"monto\":150000},{\"id_distribucion\":\"998\",\"monto\":20000},{\"id_distribucion\":\"999\",\"monto\":125000}]', '17984748', 1, 1, '', '2024-11-28', 59, 0),
+(79, 22, 67, '[{\"id_distribucion\":\"1003\",\"monto\":150000},{\"id_distribucion\":\"1004\",\"monto\":20000},{\"id_distribucion\":\"1005\",\"monto\":125000}]', '17984748', 1, 1, '', '2024-11-28', 59, 0),
+(80, 7, 136, '[{\"id_distribucion\":\"202\",\"monto\":500000},{\"id_distribucion\":\"203\",\"monto\":300000},{\"id_distribucion\":\"204\",\"monto\":225000},{\"id_distribucion\":\"205\",\"monto\":150000},{\"id_distribucion\":\"206\",\"monto\":900000},{\"id_distribucion\":\"207\",\"monto\":519504},{\"id_distribucion\":\"208\",\"monto\":850000},{\"id_distribucion\":\"209\",\"monto\":940000},{\"id_distribucion\":\"210\",\"monto\":100000},{\"id_distribucion\":\"211\",\"monto\":250000},{\"id_distribucion\":\"212\",\"monto\":276584},{\"id_distribucion\":\"213\",\"monto\":349258},{\"id_distribucion\":\"214\",\"monto\":106751},{\"id_distribucion\":\"215\",\"monto\":513600},{\"id_distribucion\":\"216\",\"monto\":245836},{\"id_distribucion\":\"217\",\"monto\":200452},{\"id_distribucion\":\"218\",\"monto\":100000},{\"id_distribucion\":\"219\",\"monto\":250000},{\"id_distribucion\":\"220\",\"monto\":250000},{\"id_distribucion\":\"221\",\"monto\":285225},{\"id_distribucion\":\"222\",\"monto\":400000},{\"id_distribucion\":\"1041\",\"monto\":1000000},{\"id_distribucion\":\"1042\",\"monto\":20000},{\"id_distribucion\":\"1043\",\"monto\":125000}]', '11487210', 1, 1, '', '2024-11-28', 58, 0),
+(81, 7, 22, '[{\"id_distribucion\":\"1047\",\"monto\":530000},{\"id_distribucion\":\"1048\",\"monto\":20000},{\"id_distribucion\":\"1049\",\"monto\":125000}]', '11487210', 1, 1, '', '2024-11-28', 58, 0),
+(82, 7, 23, '[{\"id_distribucion\":\"1056\",\"monto\":1000000},{\"id_distribucion\":\"1057\",\"monto\":20000},{\"id_distribucion\":\"1058\",\"monto\":125000}]', '11487210', 1, 1, '', '2024-11-28', 58, 0),
+(83, 7, 24, '[{\"id_distribucion\":\"1062\",\"monto\":530000},{\"id_distribucion\":\"1063\",\"monto\":20000},{\"id_distribucion\":\"1064\",\"monto\":125000}]', '11487210', 1, 1, '', '2024-11-28', 58, 0),
+(84, 7, 25, '[{\"id_distribucion\":\"1068\",\"monto\":80000},{\"id_distribucion\":\"1069\",\"monto\":20000},{\"id_distribucion\":\"1070\",\"monto\":35000}]', '11487210', 1, 1, '', '2024-11-28', 58, 0),
+(86, 10, 139, '[{\"id_distribucion\":\"493\",\"monto\":250000},{\"id_distribucion\":\"494\",\"monto\":20000},{\"id_distribucion\":\"495\",\"monto\":50000},{\"id_distribucion\":\"496\",\"monto\":10254},{\"id_distribucion\":\"497\",\"monto\":35965},{\"id_distribucion\":\"498\",\"monto\":27845},{\"id_distribucion\":\"499\",\"monto\":33000},{\"id_distribucion\":\"500\",\"monto\":100000},{\"id_distribucion\":\"501\",\"monto\":55000},{\"id_distribucion\":\"502\",\"monto\":40254},{\"id_distribucion\":\"503\",\"monto\":30787},{\"id_distribucion\":\"504\",\"monto\":105201},{\"id_distribucion\":\"505\",\"monto\":30000},{\"id_distribucion\":\"506\",\"monto\":22130},{\"id_distribucion\":\"507\",\"monto\":15369},{\"id_distribucion\":\"508\",\"monto\":28546},{\"id_distribucion\":\"509\",\"monto\":250000},{\"id_distribucion\":\"510\",\"monto\":11000},{\"id_distribucion\":\"511\",\"monto\":55000},{\"id_distribucion\":\"512\",\"monto\":10000},{\"id_distribucion\":\"513\",\"monto\":11000},{\"id_distribucion\":\"514\",\"monto\":35000},{\"id_distribucion\":\"515\",\"monto\":35000},{\"id_distribucion\":\"516\",\"monto\":30000},{\"id_distribucion\":\"517\",\"monto\":80000},{\"id_distribucion\":\"518\",\"monto\":25000},{\"id_distribucion\":\"519\",\"monto\":25000},{\"id_distribucion\":\"520\",\"monto\":40125},{\"id_distribucion\":\"521\",\"monto\":95000},{\"id_distribucion\":\"1095\",\"monto\":530000},{\"id_distribucion\":\"1096\",\"monto\":20000},{\"id_distribucion\":\"1097\",\"monto\":125000}]', '2231476', 1, 1, '', '2024-11-28', 54, 0),
+(87, 5, 134, '[{\"id_distribucion\":\"40\",\"monto\":3280000},{\"id_distribucion\":\"41\",\"monto\":214000},{\"id_distribucion\":\"42\",\"monto\":132639},{\"id_distribucion\":\"43\",\"monto\":176505},{\"id_distribucion\":\"44\",\"monto\":66184},{\"id_distribucion\":\"45\",\"monto\":1441045},{\"id_distribucion\":\"46\",\"monto\":107000},{\"id_distribucion\":\"47\",\"monto\":176504},{\"id_distribucion\":\"48\",\"monto\":150533},{\"id_distribucion\":\"49\",\"monto\":88233},{\"id_distribucion\":\"50\",\"monto\":187250},{\"id_distribucion\":\"51\",\"monto\":160500},{\"id_distribucion\":\"52\",\"monto\":267500},{\"id_distribucion\":\"53\",\"monto\":214000},{\"id_distribucion\":\"54\",\"monto\":481500},{\"id_distribucion\":\"55\",\"monto\":107000},{\"id_distribucion\":\"56\",\"monto\":267500},{\"id_distribucion\":\"57\",\"monto\":107000},{\"id_distribucion\":\"58\",\"monto\":2195016},{\"id_distribucion\":\"59\",\"monto\":50130},{\"id_distribucion\":\"60\",\"monto\":26750},{\"id_distribucion\":\"61\",\"monto\":900000},{\"id_distribucion\":\"62\",\"monto\":267500},{\"id_distribucion\":\"63\",\"monto\":214000},{\"id_distribucion\":\"64\",\"monto\":187250},{\"id_distribucion\":\"65\",\"monto\":203300},{\"id_distribucion\":\"66\",\"monto\":321000},{\"id_distribucion\":\"67\",\"monto\":214000},{\"id_distribucion\":\"68\",\"monto\":256800},{\"id_distribucion\":\"952\",\"monto\":530000},{\"id_distribucion\":\"953\",\"monto\":20000},{\"id_distribucion\":\"954\",\"monto\":125000}]', '18648300', 1, 1, '', '2024-11-28', 53, 0),
+(88, 5, 9, '[{\"id_distribucion\":\"958\",\"monto\":530000},{\"id_distribucion\":\"959\",\"monto\":20000},{\"id_distribucion\":\"960\",\"monto\":125000}]', '18648300', 1, 1, '', '2024-11-28', 53, 0),
+(89, 5, 10, '[{\"id_distribucion\":\"69\",\"monto\":250000},{\"id_distribucion\":\"70\",\"monto\":21500},{\"id_distribucion\":\"71\",\"monto\":227062},{\"id_distribucion\":\"72\",\"monto\":120000},{\"id_distribucion\":\"73\",\"monto\":150000},{\"id_distribucion\":\"74\",\"monto\":55000},{\"id_distribucion\":\"75\",\"monto\":80000},{\"id_distribucion\":\"76\",\"monto\":120000},{\"id_distribucion\":\"77\",\"monto\":145254},{\"id_distribucion\":\"78\",\"monto\":150000},{\"id_distribucion\":\"79\",\"monto\":220000},{\"id_distribucion\":\"80\",\"monto\":320000},{\"id_distribucion\":\"81\",\"monto\":150000},{\"id_distribucion\":\"82\",\"monto\":125845},{\"id_distribucion\":\"83\",\"monto\":150000},{\"id_distribucion\":\"84\",\"monto\":88000},{\"id_distribucion\":\"85\",\"monto\":100000},{\"id_distribucion\":\"86\",\"monto\":90000},{\"id_distribucion\":\"87\",\"monto\":100000},{\"id_distribucion\":\"88\",\"monto\":80000},{\"id_distribucion\":\"89\",\"monto\":70000},{\"id_distribucion\":\"967\",\"monto\":530000},{\"id_distribucion\":\"968\",\"monto\":20000},{\"id_distribucion\":\"979\",\"monto\":125000}]', '18648300', 1, 1, '', '2024-11-28', 53, 0),
+(90, 5, 11, '[{\"id_distribucion\":\"973\",\"monto\":530000},{\"id_distribucion\":\"974\",\"monto\":20000},{\"id_distribucion\":\"975\",\"monto\":125000}]', '18648300', 1, 1, '', '2024-11-28', 53, 0),
+(91, 5, 12, '[{\"id_distribucion\":\"983\",\"monto\":530000},{\"id_distribucion\":\"984\",\"monto\":20000},{\"id_distribucion\":\"985\",\"monto\":125000}]', '18648300', 1, 1, '', '2024-11-28', 53, 0),
+(92, 24, 151, '[{\"id_distribucion\":\"288\",\"monto\":420500},{\"id_distribucion\":\"289\",\"monto\":125000},{\"id_distribucion\":\"290\",\"monto\":100000},{\"id_distribucion\":\"291\",\"monto\":13254},{\"id_distribucion\":\"292\",\"monto\":30254},{\"id_distribucion\":\"293\",\"monto\":35500},{\"id_distribucion\":\"294\",\"monto\":125458},{\"id_distribucion\":\"295\",\"monto\":31600},{\"id_distribucion\":\"296\",\"monto\":35265},{\"id_distribucion\":\"297\",\"monto\":31200},{\"id_distribucion\":\"298\",\"monto\":150225},{\"id_distribucion\":\"299\",\"monto\":33300},{\"id_distribucion\":\"300\",\"monto\":400258},{\"id_distribucion\":\"301\",\"monto\":32000},{\"id_distribucion\":\"302\",\"monto\":49800},{\"id_distribucion\":\"303\",\"monto\":47500},{\"id_distribucion\":\"304\",\"monto\":33200},{\"id_distribucion\":\"1030\",\"monto\":100000},{\"id_distribucion\":\"1031\",\"monto\":225000},{\"id_distribucion\":\"1135\",\"monto\":780000}]', '3684314', 1, 1, '', '2024-11-28', 52, 0),
+(93, 24, 74, '[{\"id_distribucion\":\"1035\",\"monto\":150000},{\"id_distribucion\":\"1036\",\"monto\":20000},{\"id_distribucion\":\"1037\",\"monto\":125000}]', '3684314', 1, 1, '', '2024-11-28', 52, 0),
+(94, 24, 75, '[{\"id_distribucion\":\"1038\",\"monto\":150000},{\"id_distribucion\":\"1039\",\"monto\":20000},{\"id_distribucion\":\"1040\",\"monto\":125000}]', '3684314', 1, 1, '', '2024-11-28', 52, 0),
+(95, 24, 76, '[{\"id_distribucion\":\"1044\",\"monto\":150000},{\"id_distribucion\":\"1045\",\"monto\":20000},{\"id_distribucion\":\"1046\",\"monto\":125000}]', '3684314', 1, 1, '', '2024-11-28', 52, 0),
+(96, 24, 201, '[{\"id_distribucion\":\"1050\",\"monto\":150000},{\"id_distribucion\":\"1051\",\"monto\":20000},{\"id_distribucion\":\"1052\",\"monto\":125000}]', '3684314', 1, 1, '', '2024-11-28', 52, 0),
+(97, 24, 202, '[{\"id_distribucion\":\"1053\",\"monto\":150000},{\"id_distribucion\":\"1054\",\"monto\":20000},{\"id_distribucion\":\"1055\",\"monto\":125000}]', '3684314', 1, 1, '', '2024-11-28', 52, 0),
+(98, 8, 137, '[{\"id_distribucion\":\"568\",\"monto\":100000},{\"id_distribucion\":\"569\",\"monto\":300000},{\"id_distribucion\":\"570\",\"monto\":784000},{\"id_distribucion\":\"571\",\"monto\":449400},{\"id_distribucion\":\"572\",\"monto\":70620},{\"id_distribucion\":\"573\",\"monto\":800000},{\"id_distribucion\":\"574\",\"monto\":1500000},{\"id_distribucion\":\"575\",\"monto\":15000},{\"id_distribucion\":\"576\",\"monto\":700000},{\"id_distribucion\":\"577\",\"monto\":2500000},{\"id_distribucion\":\"578\",\"monto\":53500},{\"id_distribucion\":\"579\",\"monto\":3500000},{\"id_distribucion\":\"580\",\"monto\":30500},{\"id_distribucion\":\"581\",\"monto\":1070000},{\"id_distribucion\":\"582\",\"monto\":5000000},{\"id_distribucion\":\"583\",\"monto\":200000},{\"id_distribucion\":\"585\",\"monto\":1000000},{\"id_distribucion\":\"586\",\"monto\":3000000},{\"id_distribucion\":\"587\",\"monto\":1030000},{\"id_distribucion\":\"588\",\"monto\":3500000},{\"id_distribucion\":\"589\",\"monto\":139100},{\"id_distribucion\":\"590\",\"monto\":335000},{\"id_distribucion\":\"591\",\"monto\":1000000},{\"id_distribucion\":\"592\",\"monto\":1500000},{\"id_distribucion\":\"593\",\"monto\":507105},{\"id_distribucion\":\"594\",\"monto\":192600},{\"id_distribucion\":\"595\",\"monto\":24489},{\"id_distribucion\":\"596\",\"monto\":2600000},{\"id_distribucion\":\"597\",\"monto\":1391000},{\"id_distribucion\":\"598\",\"monto\":28891},{\"id_distribucion\":\"599\",\"monto\":727600},{\"id_distribucion\":\"600\",\"monto\":4251365},{\"id_distribucion\":\"601\",\"monto\":21400},{\"id_distribucion\":\"602\",\"monto\":400000},{\"id_distribucion\":\"603\",\"monto\":2033000},{\"id_distribucion\":\"604\",\"monto\":597879},{\"id_distribucion\":\"605\",\"monto\":460100},{\"id_distribucion\":\"606\",\"monto\":2830000},{\"id_distribucion\":\"607\",\"monto\":4000000},{\"id_distribucion\":\"608\",\"monto\":898800},{\"id_distribucion\":\"609\",\"monto\":1500000},{\"id_distribucion\":\"610\",\"monto\":203300},{\"id_distribucion\":\"611\",\"monto\":160500},{\"id_distribucion\":\"612\",\"monto\":6000000},{\"id_distribucion\":\"613\",\"monto\":535000},{\"id_distribucion\":\"614\",\"monto\":900000},{\"id_distribucion\":\"615\",\"monto\":75000},{\"id_distribucion\":\"616\",\"monto\":100000},{\"id_distribucion\":\"617\",\"monto\":254852},{\"id_distribucion\":\"618\",\"monto\":417300},{\"id_distribucion\":\"619\",\"monto\":3210000},{\"id_distribucion\":\"620\",\"monto\":3500},{\"id_distribucion\":\"621\",\"monto\":1000000},{\"id_distribucion\":\"622\",\"monto\":500000},{\"id_distribucion\":\"624\",\"monto\":80000},{\"id_distribucion\":\"625\",\"monto\":450000},{\"id_distribucion\":\"626\",\"monto\":50000},{\"id_distribucion\":\"627\",\"monto\":1500000},{\"id_distribucion\":\"628\",\"monto\":406018},{\"id_distribucion\":\"629\",\"monto\":37956},{\"id_distribucion\":\"630\",\"monto\":900000},{\"id_distribucion\":\"631\",\"monto\":19046},{\"id_distribucion\":\"632\",\"monto\":18000},{\"id_distribucion\":\"633\",\"monto\":400000},{\"id_distribucion\":\"634\",\"monto\":50000},{\"id_distribucion\":\"635\",\"monto\":258940},{\"id_distribucion\":\"636\",\"monto\":17000},{\"id_distribucion\":\"637\",\"monto\":500000},{\"id_distribucion\":\"638\",\"monto\":1800000},{\"id_distribucion\":\"639\",\"monto\":800000},{\"id_distribucion\":\"640\",\"monto\":800000},{\"id_distribucion\":\"641\",\"monto\":18254854},{\"id_distribucion\":\"642\",\"monto\":2568000},{\"id_distribucion\":\"643\",\"monto\":100000},{\"id_distribucion\":\"644\",\"monto\":900000},{\"id_distribucion\":\"645\",\"monto\":1500000},{\"id_distribucion\":\"646\",\"monto\":214000},{\"id_distribucion\":\"647\",\"monto\":500000},{\"id_distribucion\":\"648\",\"monto\":94000},{\"id_distribucion\":\"649\",\"monto\":107000},{\"id_distribucion\":\"650\",\"monto\":524300},{\"id_distribucion\":\"651\",\"monto\":55640},{\"id_distribucion\":\"652\",\"monto\":586000},{\"id_distribucion\":\"653\",\"monto\":300000},{\"id_distribucion\":\"654\",\"monto\":800000},{\"id_distribucion\":\"655\",\"monto\":73081},{\"id_distribucion\":\"656\",\"monto\":234330},{\"id_distribucion\":\"657\",\"monto\":524300},{\"id_distribucion\":\"658\",\"monto\":49220},{\"id_distribucion\":\"659\",\"monto\":43870},{\"id_distribucion\":\"660\",\"monto\":2500000},{\"id_distribucion\":\"661\",\"monto\":2500000},{\"id_distribucion\":\"662\",\"monto\":570000},{\"id_distribucion\":\"1074\",\"monto\":530000},{\"id_distribucion\":\"1075\",\"monto\":20000},{\"id_distribucion\":\"1076\",\"monto\":125000},{\"id_distribucion\":\"1491\",\"monto\":8000000},{\"id_distribucion\":\"1492\",\"monto\":8500000},{\"id_distribucion\":\"1493\",\"monto\":11000000}]', '135011356', 1, 1, '', '2024-11-28', 51, 0),
+(99, 8, 27, '[{\"id_distribucion\":\"1077\",\"monto\":530000},{\"id_distribucion\":\"1078\",\"monto\":20000},{\"id_distribucion\":\"1079\",\"monto\":125000}]', '135011356', 1, 1, '', '2024-11-28', 51, 0),
+(100, 8, 28, '[{\"id_distribucion\":\"1080\",\"monto\":530000},{\"id_distribucion\":\"1081\",\"monto\":20000},{\"id_distribucion\":\"1082\",\"monto\":125000}]', '135011356', 1, 1, '', '2024-11-28', 51, 0),
+(101, 46, 172, '[{\"id_distribucion\":\"896\",\"monto\":2800000}]', '2800000', 1, 1, '', '2024-11-28', 36, 0),
+(102, 34, 160, '[{\"id_distribucion\":\"884\",\"monto\":800000}]', '800000', 1, 1, '', '2024-11-28', 37, 0),
+(103, 9, 138, '[{\"id_distribucion\":\"420\",\"monto\":231524},{\"id_distribucion\":\"421\",\"monto\":8400},{\"id_distribucion\":\"422\",\"monto\":7500},{\"id_distribucion\":\"423\",\"monto\":40698},{\"id_distribucion\":\"424\",\"monto\":20369},{\"id_distribucion\":\"425\",\"monto\":13705},{\"id_distribucion\":\"426\",\"monto\":500000},{\"id_distribucion\":\"427\",\"monto\":40369},{\"id_distribucion\":\"428\",\"monto\":10487},{\"id_distribucion\":\"429\",\"monto\":9154},{\"id_distribucion\":\"430\",\"monto\":40695},{\"id_distribucion\":\"431\",\"monto\":15489},{\"id_distribucion\":\"432\",\"monto\":30659},{\"id_distribucion\":\"433\",\"monto\":650000},{\"id_distribucion\":\"434\",\"monto\":6500},{\"id_distribucion\":\"435\",\"monto\":20632},{\"id_distribucion\":\"436\",\"monto\":150000},{\"id_distribucion\":\"437\",\"monto\":30000},{\"id_distribucion\":\"438\",\"monto\":20659},{\"id_distribucion\":\"439\",\"monto\":15698},{\"id_distribucion\":\"440\",\"monto\":15523},{\"id_distribucion\":\"441\",\"monto\":17000},{\"id_distribucion\":\"1083\",\"monto\":530000},{\"id_distribucion\":\"1084\",\"monto\":20000},{\"id_distribucion\":\"1085\",\"monto\":125000}]', '4595061', 1, 1, '', '2024-11-28', 50, 0),
+(104, 9, 31, '[{\"id_distribucion\":\"1086\",\"monto\":530000},{\"id_distribucion\":\"1087\",\"monto\":20000},{\"id_distribucion\":\"1088\",\"monto\":125000}]', '4595061', 1, 1, '', '2024-11-28', 50, 0),
+(105, 9, 32, '[{\"id_distribucion\":\"1089\",\"monto\":530000},{\"id_distribucion\":\"1090\",\"monto\":20000},{\"id_distribucion\":\"1091\",\"monto\":125000}]', '4595061', 1, 1, '', '2024-11-28', 50, 0),
+(106, 9, 33, '[{\"id_distribucion\":\"1092\",\"monto\":530000},{\"id_distribucion\":\"1093\",\"monto\":20000},{\"id_distribucion\":\"1094\",\"monto\":125000}]', '4595061', 1, 1, '', '2024-11-28', 50, 0),
+(107, 60, 186, '[{\"id_distribucion\":\"910\",\"monto\":3000000}]', '3000000', 1, 1, '', '2024-11-28', 35, 0),
+(108, 37, 163, '[{\"id_distribucion\":\"887\",\"monto\":300000}]', '300000', 1, 1, '', '2024-11-28', 38, 0),
+(109, 40, 166, '[{\"id_distribucion\":\"895\",\"monto\":900000}]', '900000', 1, 1, '', '2024-11-28', 40, 0),
+(110, 41, 167, '[{\"id_distribucion\":\"891\",\"monto\":309200}]', '309200', 1, 1, '', '2024-11-28', 39, 0),
+(111, 70, 195, '[{\"id_distribucion\":\"878\",\"monto\":160000}]', '160000', 1, 1, '', '2024-11-28', 41, 0),
+(112, 4, 133, '[{\"id_distribucion\":\"7\",\"monto\":950000},{\"id_distribucion\":\"8\",\"monto\":401119},{\"id_distribucion\":\"9\",\"monto\":515119},{\"id_distribucion\":\"10\",\"monto\":559508},{\"id_distribucion\":\"11\",\"monto\":250000},{\"id_distribucion\":\"12\",\"monto\":638829},{\"id_distribucion\":\"14\",\"monto\":900000},{\"id_distribucion\":\"15\",\"monto\":552504},{\"id_distribucion\":\"16\",\"monto\":1500000},{\"id_distribucion\":\"17\",\"monto\":373560},{\"id_distribucion\":\"18\",\"monto\":513600},{\"id_distribucion\":\"19\",\"monto\":1198400},{\"id_distribucion\":\"20\",\"monto\":750000},{\"id_distribucion\":\"21\",\"monto\":400000},{\"id_distribucion\":\"22\",\"monto\":50740},{\"id_distribucion\":\"23\",\"monto\":231120},{\"id_distribucion\":\"24\",\"monto\":235400},{\"id_distribucion\":\"25\",\"monto\":64200},{\"id_distribucion\":\"26\",\"monto\":250000},{\"id_distribucion\":\"27\",\"monto\":50833},{\"id_distribucion\":\"28\",\"monto\":150000},{\"id_distribucion\":\"29\",\"monto\":25680},{\"id_distribucion\":\"30\",\"monto\":85600},{\"id_distribucion\":\"31\",\"monto\":390260},{\"id_distribucion\":\"33\",\"monto\":1500000},{\"id_distribucion\":\"34\",\"monto\":856000},{\"id_distribucion\":\"38\",\"monto\":177465},{\"id_distribucion\":\"922\",\"monto\":5000000},{\"id_distribucion\":\"923\",\"monto\":20000},{\"id_distribucion\":\"924\",\"monto\":500000},{\"id_distribucion\":\"1494\",\"monto\":4616667},{\"id_distribucion\":\"1495\",\"monto\":4616667},{\"id_distribucion\":\"1496\",\"monto\":5116666},{\"id_distribucion\":\"1497\",\"monto\":256800}]', '35721737', 1, 1, '', '2024-11-29', 71, 0),
+(113, 4, 5, '[{\"id_distribucion\":\"928\",\"monto\":530000},{\"id_distribucion\":\"929\",\"monto\":20000},{\"id_distribucion\":\"930\",\"monto\":125000}]', '35721737', 1, 1, '', '2024-11-29', 71, 0),
+(114, 4, 6, '[{\"id_distribucion\":\"937\",\"monto\":530000},{\"id_distribucion\":\"938\",\"monto\":20000},{\"id_distribucion\":\"939\",\"monto\":125000}]', '35721737', 1, 1, '', '2024-11-29', 71, 0),
+(115, 4, 7, '[{\"id_distribucion\":\"946\",\"monto\":530000},{\"id_distribucion\":\"947\",\"monto\":20000},{\"id_distribucion\":\"948\",\"monto\":125000}]', '35721737', 1, 1, '', '2024-11-29', 71, 0),
+(117, 13, 142, '[{\"id_distribucion\":\"442\",\"monto\":180000},{\"id_distribucion\":\"443\",\"monto\":200000},{\"id_distribucion\":\"444\",\"monto\":150000},{\"id_distribucion\":\"445\",\"monto\":55000},{\"id_distribucion\":\"446\",\"monto\":65000},{\"id_distribucion\":\"447\",\"monto\":15500},{\"id_distribucion\":\"448\",\"monto\":250000},{\"id_distribucion\":\"449\",\"monto\":38520},{\"id_distribucion\":\"450\",\"monto\":250000},{\"id_distribucion\":\"451\",\"monto\":50000},{\"id_distribucion\":\"452\",\"monto\":15000},{\"id_distribucion\":\"453\",\"monto\":150000},{\"id_distribucion\":\"454\",\"monto\":20000},{\"id_distribucion\":\"455\",\"monto\":45000},{\"id_distribucion\":\"456\",\"monto\":6000},{\"id_distribucion\":\"457\",\"monto\":5600},{\"id_distribucion\":\"458\",\"monto\":35500},{\"id_distribucion\":\"459\",\"monto\":100000},{\"id_distribucion\":\"460\",\"monto\":12500},{\"id_distribucion\":\"461\",\"monto\":25500},{\"id_distribucion\":\"462\",\"monto\":80000},{\"id_distribucion\":\"463\",\"monto\":64200},{\"id_distribucion\":\"464\",\"monto\":154080},{\"id_distribucion\":\"465\",\"monto\":50000},{\"id_distribucion\":\"466\",\"monto\":100000},{\"id_distribucion\":\"467\",\"monto\":80000},{\"id_distribucion\":\"468\",\"monto\":85000}]', '2483200', 1, 1, '', '2024-11-29', 73, 0),
+(118, 13, 213, '[{\"id_distribucion\":\"876\",\"monto\":800},{\"id_distribucion\":\"877\",\"monto\":200000}]', '2483200', 1, 1, '', '2024-11-29', 73, 0),
+(119, 81, 210, '[{\"id_distribucion\":\"970\",\"monto\":530000},{\"id_distribucion\":\"971\",\"monto\":20000},{\"id_distribucion\":\"972\",\"monto\":125000}]', '675000', 1, 1, '', '2024-11-29', 74, 0),
+(121, 80, 206, '[{\"id_distribucion\":\"358\",\"monto\":150000},{\"id_distribucion\":\"359\",\"monto\":50000},{\"id_distribucion\":\"360\",\"monto\":150000},{\"id_distribucion\":\"361\",\"monto\":90000},{\"id_distribucion\":\"362\",\"monto\":8000},{\"id_distribucion\":\"363\",\"monto\":80000},{\"id_distribucion\":\"364\",\"monto\":25000},{\"id_distribucion\":\"365\",\"monto\":85500},{\"id_distribucion\":\"366\",\"monto\":80000},{\"id_distribucion\":\"367\",\"monto\":50000},{\"id_distribucion\":\"368\",\"monto\":20000},{\"id_distribucion\":\"369\",\"monto\":120000},{\"id_distribucion\":\"370\",\"monto\":25000},{\"id_distribucion\":\"371\",\"monto\":15000},{\"id_distribucion\":\"372\",\"monto\":14000},{\"id_distribucion\":\"373\",\"monto\":90000},{\"id_distribucion\":\"374\",\"monto\":125456},{\"id_distribucion\":\"375\",\"monto\":38500},{\"id_distribucion\":\"1116\",\"monto\":1060000},{\"id_distribucion\":\"1117\",\"monto\":30000},{\"id_distribucion\":\"1118\",\"monto\":250000}]', '5796456', 1, 1, '', '2024-11-29', 76, 0),
+(122, 80, 207, '[{\"id_distribucion\":\"1119\",\"monto\":1060000},{\"id_distribucion\":\"1120\",\"monto\":30000},{\"id_distribucion\":\"1121\",\"monto\":250000}]', '5796456', 1, 1, '', '2024-11-29', 76, 0),
+(123, 80, 208, '[{\"id_distribucion\":\"1122\",\"monto\":1060000},{\"id_distribucion\":\"1123\",\"monto\":30000},{\"id_distribucion\":\"1124\",\"monto\":125000}]', '5796456', 1, 1, '', '2024-11-29', 76, 0),
+(124, 80, 209, '[{\"id_distribucion\":\"1125\",\"monto\":530000},{\"id_distribucion\":\"1126\",\"monto\":30000},{\"id_distribucion\":\"1127\",\"monto\":125000}]', '5796456', 1, 1, '', '2024-11-29', 76, 0),
+(125, 79, 203, '[{\"id_distribucion\":\"252\",\"monto\":500000},{\"id_distribucion\":\"253\",\"monto\":25500},{\"id_distribucion\":\"254\",\"monto\":80000},{\"id_distribucion\":\"255\",\"monto\":25000},{\"id_distribucion\":\"256\",\"monto\":100000},{\"id_distribucion\":\"257\",\"monto\":100000},{\"id_distribucion\":\"258\",\"monto\":120000},{\"id_distribucion\":\"259\",\"monto\":4400},{\"id_distribucion\":\"260\",\"monto\":300000},{\"id_distribucion\":\"261\",\"monto\":90000},{\"id_distribucion\":\"262\",\"monto\":95000},{\"id_distribucion\":\"263\",\"monto\":10000},{\"id_distribucion\":\"264\",\"monto\":200000},{\"id_distribucion\":\"265\",\"monto\":350000},{\"id_distribucion\":\"266\",\"monto\":350000},{\"id_distribucion\":\"267\",\"monto\":180254},{\"id_distribucion\":\"268\",\"monto\":14500},{\"id_distribucion\":\"269\",\"monto\":2280},{\"id_distribucion\":\"270\",\"monto\":6500},{\"id_distribucion\":\"271\",\"monto\":1500000},{\"id_distribucion\":\"272\",\"monto\":125458},{\"id_distribucion\":\"273\",\"monto\":105000},{\"id_distribucion\":\"274\",\"monto\":450000},{\"id_distribucion\":\"275\",\"monto\":200000},{\"id_distribucion\":\"276\",\"monto\":32000},{\"id_distribucion\":\"277\",\"monto\":95000},{\"id_distribucion\":\"278\",\"monto\":110500},{\"id_distribucion\":\"279\",\"monto\":13254},{\"id_distribucion\":\"280\",\"monto\":230000},{\"id_distribucion\":\"281\",\"monto\":15000},{\"id_distribucion\":\"282\",\"monto\":15854},{\"id_distribucion\":\"283\",\"monto\":250000},{\"id_distribucion\":\"284\",\"monto\":200000},{\"id_distribucion\":\"285\",\"monto\":5500},{\"id_distribucion\":\"286\",\"monto\":9200},{\"id_distribucion\":\"287\",\"monto\":33254},{\"id_distribucion\":\"1009\",\"monto\":150000},{\"id_distribucion\":\"1010\",\"monto\":20000},{\"id_distribucion\":\"1011\",\"monto\":125000}]', '6828454', 1, 1, '', '2024-11-29', 77, 0),
+(126, 79, 204, '[{\"id_distribucion\":\"1015\",\"monto\":150000},{\"id_distribucion\":\"1016\",\"monto\":20000},{\"id_distribucion\":\"1017\",\"monto\":125000}]', '6828454', 1, 1, '', '2024-11-29', 77, 0),
+(127, 79, 205, '[{\"id_distribucion\":\"1018\",\"monto\":150000},{\"id_distribucion\":\"1019\",\"monto\":20000},{\"id_distribucion\":\"1020\",\"monto\":125000}]', '6828454', 1, 1, '', '2024-11-29', 77, 0),
+(128, 12, 141, '[{\"id_distribucion\":\"540\",\"monto\":90000},{\"id_distribucion\":\"541\",\"monto\":120000},{\"id_distribucion\":\"542\",\"monto\":75000},{\"id_distribucion\":\"543\",\"monto\":130000},{\"id_distribucion\":\"544\",\"monto\":42000},{\"id_distribucion\":\"545\",\"monto\":45000},{\"id_distribucion\":\"546\",\"monto\":55000},{\"id_distribucion\":\"547\",\"monto\":25000},{\"id_distribucion\":\"548\",\"monto\":58254},{\"id_distribucion\":\"549\",\"monto\":30000},{\"id_distribucion\":\"550\",\"monto\":50000},{\"id_distribucion\":\"551\",\"monto\":70000},{\"id_distribucion\":\"552\",\"monto\":64000},{\"id_distribucion\":\"553\",\"monto\":55000},{\"id_distribucion\":\"554\",\"monto\":96254},{\"id_distribucion\":\"555\",\"monto\":100000},{\"id_distribucion\":\"556\",\"monto\":130000},{\"id_distribucion\":\"557\",\"monto\":40000},{\"id_distribucion\":\"558\",\"monto\":140000},{\"id_distribucion\":\"559\",\"monto\":120000},{\"id_distribucion\":\"560\",\"monto\":74000},{\"id_distribucion\":\"561\",\"monto\":190000},{\"id_distribucion\":\"562\",\"monto\":295000},{\"id_distribucion\":\"563\",\"monto\":60000},{\"id_distribucion\":\"564\",\"monto\":250000},{\"id_distribucion\":\"565\",\"monto\":100000},{\"id_distribucion\":\"566\",\"monto\":90000},{\"id_distribucion\":\"1110\",\"monto\":600000},{\"id_distribucion\":\"1111\",\"monto\":80000},{\"id_distribucion\":\"1112\",\"monto\":500000}]', '4954508', 1, 1, '', '2024-11-29', 78, 0),
+(129, 12, 214, '[{\"id_distribucion\":\"1113\",\"monto\":600000},{\"id_distribucion\":\"1114\",\"monto\":80000},{\"id_distribucion\":\"1115\",\"monto\":500000}]', '4954508', 1, 1, '', '2024-11-29', 78, 0),
+(130, 82, 212, '[{\"id_distribucion\":\"756\",\"monto\":12861531},{\"id_distribucion\":\"757\",\"monto\":1000000},{\"id_distribucion\":\"758\",\"monto\":8000000},{\"id_distribucion\":\"759\",\"monto\":25011531},{\"id_distribucion\":\"760\",\"monto\":1000000},{\"id_distribucion\":\"761\",\"monto\":7000000}]', '54873062', 1, 1, '', '2024-11-29', 79, 0),
+(131, 25, 152, '[{\"id_distribucion\":\"305\",\"monto\":400000},{\"id_distribucion\":\"306\",\"monto\":12500},{\"id_distribucion\":\"307\",\"monto\":55254},{\"id_distribucion\":\"308\",\"monto\":125658},{\"id_distribucion\":\"309\",\"monto\":10800},{\"id_distribucion\":\"310\",\"monto\":55000},{\"id_distribucion\":\"311\",\"monto\":25123},{\"id_distribucion\":\"312\",\"monto\":120600},{\"id_distribucion\":\"313\",\"monto\":55000},{\"id_distribucion\":\"314\",\"monto\":15854},{\"id_distribucion\":\"315\",\"monto\":35258},{\"id_distribucion\":\"316\",\"monto\":100000},{\"id_distribucion\":\"317\",\"monto\":55800},{\"id_distribucion\":\"318\",\"monto\":23524},{\"id_distribucion\":\"319\",\"monto\":45254},{\"id_distribucion\":\"320\",\"monto\":120000},{\"id_distribucion\":\"321\",\"monto\":45254},{\"id_distribucion\":\"322\",\"monto\":25854},{\"id_distribucion\":\"323\",\"monto\":25695},{\"id_distribucion\":\"324\",\"monto\":12475},{\"id_distribucion\":\"325\",\"monto\":95365},{\"id_distribucion\":\"326\",\"monto\":20365},{\"id_distribucion\":\"327\",\"monto\":25987},{\"id_distribucion\":\"328\",\"monto\":62584},{\"id_distribucion\":\"329\",\"monto\":25654},{\"id_distribucion\":\"330\",\"monto\":50654},{\"id_distribucion\":\"331\",\"monto\":35258},{\"id_distribucion\":\"1059\",\"monto\":150000},{\"id_distribucion\":\"1060\",\"monto\":20000},{\"id_distribucion\":\"1061\",\"monto\":125000}]', '2465770', 1, 1, '', '2024-11-29', 80, 0),
+(132, 25, 215, '[{\"id_distribucion\":\"1065\",\"monto\":150000},{\"id_distribucion\":\"1066\",\"monto\":20000},{\"id_distribucion\":\"1067\",\"monto\":125000}]', '2465770', 1, 1, '', '2024-11-29', 80, 0),
+(133, 25, 216, '[{\"id_distribucion\":\"1071\",\"monto\":150000},{\"id_distribucion\":\"1072\",\"monto\":20000},{\"id_distribucion\":\"1073\",\"monto\":25000}]', '2465770', 1, 1, '', '2024-11-29', 80, 0);
 
 -- --------------------------------------------------------
 
@@ -1130,18 +1508,1570 @@ CREATE TABLE `distribucion_entes` (
 --
 
 CREATE TABLE `distribucion_presupuestaria` (
-  `id` int(255) NOT NULL,
-  `id_partida` int(255) NOT NULL,
+  `id` int(11) NOT NULL,
+  `id_partida` int(11) NOT NULL,
   `monto_inicial` varchar(255) DEFAULT NULL,
-  `id_ejercicio` int(255) NOT NULL,
+  `id_ejercicio` int(11) NOT NULL,
   `monto_actual` varchar(255) DEFAULT NULL,
-  `id_sector` int(255) NOT NULL,
-  `id_programa` int(255) NOT NULL,
-  `id_proyecto` int(255) NOT NULL,
-  `id_actividad` int(255) NOT NULL,
-  `status` int(255) NOT NULL,
-  `status_cerrar` int(255) NOT NULL DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `id_sector` int(11) NOT NULL,
+  `id_programa` int(11) NOT NULL,
+  `id_proyecto` int(11) NOT NULL,
+  `status` int(11) NOT NULL,
+  `status_cerrar` int(255) NOT NULL,
+  `id_actividad` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `distribucion_presupuestaria`
+--
+
+INSERT INTO `distribucion_presupuestaria` (`id`, `id_partida`, `monto_inicial`, `id_ejercicio`, `monto_actual`, `id_sector`, `id_programa`, `id_proyecto`, `status`, `status_cerrar`, `id_actividad`) VALUES
+(7, 1011, '950000', 1, '0', 1, 4, 0, 1, 0, '51'),
+(8, 1033, '401119', 1, '0', 1, 4, 0, 1, 0, '51'),
+(9, 1027, '515119', 1, '0', 1, 4, 0, 1, 0, '51'),
+(10, 1036, '559508', 1, '0', 1, 4, 0, 1, 0, '51'),
+(11, 1038, '250000', 1, '0', 1, 4, 0, 1, 0, '51'),
+(12, 1042, '638829', 1, '0', 1, 4, 0, 1, 0, '51'),
+(14, 1047, '900000', 1, '0', 1, 4, 0, 1, 0, '51'),
+(15, 1049, '552504', 1, '0', 1, 4, 0, 1, 0, '51'),
+(16, 1050, '1500000', 1, '0', 1, 4, 0, 1, 0, '51'),
+(17, 1064, '373560', 1, '0', 1, 4, 0, 1, 0, '51'),
+(18, 1078, '513600', 1, '0', 1, 4, 0, 1, 0, '51'),
+(19, 1084, '1198400', 1, '0', 1, 4, 0, 1, 0, '51'),
+(20, 1087, '750000', 1, '0', 1, 4, 0, 1, 0, '51'),
+(21, 1098, '400000', 1, '0', 1, 4, 0, 1, 0, '51'),
+(22, 1135, '50740', 1, '0', 1, 4, 0, 1, 0, '51'),
+(23, 1143, '231120', 1, '0', 1, 4, 0, 1, 0, '51'),
+(24, 1150, '235400', 1, '0', 1, 4, 0, 1, 0, '51'),
+(25, 1151, '64200', 1, '0', 1, 4, 0, 1, 0, '51'),
+(26, 1201, '250000', 1, '0', 1, 4, 0, 1, 0, '51'),
+(27, 1241, '50833', 1, '0', 1, 4, 0, 1, 0, '51'),
+(28, 1262, '150000', 1, '0', 1, 4, 0, 1, 0, '51'),
+(29, 1263, '25680', 1, '0', 1, 4, 0, 1, 0, '51'),
+(30, 1264, '85600', 1, '0', 1, 4, 0, 1, 0, '51'),
+(31, 1265, '390260', 1, '0', 1, 4, 0, 1, 0, '51'),
+(33, 1495, '1500000', 1, '0', 1, 4, 0, 1, 0, '51'),
+(34, 1499, '856000', 1, '0', 1, 4, 0, 1, 0, '51'),
+(38, 1046, '177465', 1, '0', 1, 4, 0, 1, 0, '51'),
+(40, 1011, '3280000', 1, '0', 1, 5, 0, 1, 0, '51'),
+(41, 1026, '214000', 1, '0', 1, 5, 0, 1, 0, '51'),
+(42, 1033, '132639', 1, '0', 1, 5, 0, 1, 0, '51'),
+(43, 1038, '176505', 1, '0', 1, 5, 0, 1, 0, '51'),
+(44, 1039, '66184', 1, '0', 1, 5, 0, 1, 0, '51'),
+(45, 1041, '1441045', 1, '0', 1, 5, 0, 1, 0, '51'),
+(46, 1042, '107000', 1, '0', 1, 5, 0, 1, 0, '51'),
+(47, 1047, '176504', 1, '0', 1, 5, 0, 1, 0, '51'),
+(48, 1050, '150533', 1, '0', 1, 5, 0, 1, 0, '51'),
+(49, 1052, '88233', 1, '0', 1, 5, 0, 1, 0, '51'),
+(50, 1069, '187250', 1, '0', 1, 5, 0, 1, 0, '51'),
+(51, 1077, '160500', 1, '0', 1, 5, 0, 1, 0, '51'),
+(52, 1078, '267500', 1, '0', 1, 5, 0, 1, 0, '51'),
+(53, 1081, '214000', 1, '0', 1, 5, 0, 1, 0, '51'),
+(54, 1084, '481500', 1, '0', 1, 5, 0, 1, 0, '51'),
+(55, 1101, '107000', 1, '0', 1, 5, 0, 1, 0, '51'),
+(56, 1045, '267500', 1, '0', 1, 5, 0, 1, 0, '51'),
+(57, 1141, '107000', 1, '0', 1, 5, 0, 1, 0, '51'),
+(58, 1143, '2195016', 1, '0', 1, 5, 0, 1, 0, '51'),
+(59, 1144, '50130', 1, '0', 1, 5, 0, 1, 0, '51'),
+(60, 1150, '26750', 1, '0', 1, 5, 0, 1, 0, '51'),
+(61, 1151, '900000', 1, '0', 1, 5, 0, 1, 0, '51'),
+(62, 1168, '267500', 1, '0', 1, 5, 0, 1, 0, '51'),
+(63, 1226, '214000', 1, '0', 1, 5, 0, 1, 0, '51'),
+(64, 1251, '187250', 1, '0', 1, 5, 0, 1, 0, '51'),
+(65, 1262, '203300', 1, '0', 1, 5, 0, 1, 0, '51'),
+(66, 1263, '321000', 1, '0', 1, 5, 0, 1, 0, '51'),
+(67, 1264, '214000', 1, '0', 1, 5, 0, 1, 0, '51'),
+(68, 1495, '256800', 1, '0', 1, 5, 0, 1, 0, '51'),
+(69, 1011, '250000', 1, '0', 1, 5, 0, 1, 0, '53'),
+(70, 1027, '21500', 1, '0', 1, 5, 0, 1, 0, '53'),
+(71, 1033, '227062', 1, '0', 1, 5, 0, 1, 0, '53'),
+(72, 1036, '120000', 1, '0', 1, 5, 0, 1, 0, '53'),
+(73, 1038, '150000', 1, '0', 1, 5, 0, 1, 0, '53'),
+(74, 1041, '55000', 1, '0', 1, 5, 0, 1, 0, '53'),
+(75, 1042, '80000', 1, '0', 1, 5, 0, 1, 0, '53'),
+(76, 1047, '120000', 1, '0', 1, 5, 0, 1, 0, '53'),
+(77, 1050, '145254', 1, '0', 1, 5, 0, 1, 0, '53'),
+(78, 1081, '150000', 1, '0', 1, 5, 0, 1, 0, '53'),
+(79, 1084, '220000', 1, '0', 1, 5, 0, 1, 0, '53'),
+(80, 1150, '320000', 1, '0', 1, 5, 0, 1, 0, '53'),
+(81, 1155, '150000', 1, '0', 1, 5, 0, 1, 0, '53'),
+(82, 1168, '125845', 1, '0', 1, 5, 0, 1, 0, '53'),
+(83, 1173, '150000', 1, '0', 1, 5, 0, 1, 0, '53'),
+(84, 1174, '88000', 1, '0', 1, 5, 0, 1, 0, '53'),
+(85, 1226, '100000', 1, '0', 1, 5, 0, 1, 0, '53'),
+(86, 1241, '90000', 1, '0', 1, 5, 0, 1, 0, '53'),
+(87, 1262, '100000', 1, '0', 1, 5, 0, 1, 0, '53'),
+(88, 1263, '80000', 1, '0', 1, 5, 0, 1, 0, '53'),
+(89, 1264, '70000', 1, '0', 1, 5, 0, 1, 0, '53'),
+(90, 1011, '100000', 1, '0', 3, 18, 0, 1, 0, '51'),
+(91, 1027, '22000', 1, '0', 3, 18, 0, 1, 0, '51'),
+(92, 1032, '74000', 1, '0', 3, 18, 0, 1, 0, '51'),
+(93, 1033, '75000', 1, '0', 3, 18, 0, 1, 0, '51'),
+(94, 1036, '28000', 1, '0', 3, 18, 0, 1, 0, '51'),
+(95, 1038, '90000', 1, '0', 3, 18, 0, 1, 0, '51'),
+(96, 1039, '29000', 1, '0', 3, 18, 0, 1, 0, '51'),
+(97, 1041, '45000', 1, '0', 3, 18, 0, 1, 0, '51'),
+(98, 1042, '200000', 1, '0', 3, 18, 0, 1, 0, '51'),
+(99, 1047, '37000', 1, '0', 3, 18, 0, 1, 0, '51'),
+(100, 1050, '58000', 1, '0', 3, 18, 0, 1, 0, '51'),
+(101, 1056, '22000', 1, '0', 3, 18, 0, 1, 0, '51'),
+(102, 1062, '33000', 1, '0', 3, 18, 0, 1, 0, '51'),
+(103, 1064, '42800', 1, '0', 3, 18, 0, 1, 0, '51'),
+(104, 1077, '43000', 1, '0', 3, 18, 0, 1, 0, '51'),
+(105, 1079, '37000', 1, '0', 3, 18, 0, 1, 0, '51'),
+(106, 1081, '74000', 1, '0', 3, 18, 0, 1, 0, '51'),
+(107, 1082, '45000', 1, '0', 3, 18, 0, 1, 0, '51'),
+(108, 1083, '250000', 1, '0', 3, 18, 0, 1, 0, '51'),
+(109, 1084, '15000', 1, '0', 3, 18, 0, 1, 0, '51'),
+(110, 1087, '25000', 1, '0', 3, 18, 0, 1, 0, '51'),
+(111, 1089, '150000', 1, '0', 3, 18, 0, 1, 0, '51'),
+(112, 1135, '29500', 1, '0', 3, 18, 0, 1, 0, '51'),
+(113, 1141, '160000', 1, '0', 3, 18, 0, 1, 0, '51'),
+(114, 1142, '75500', 1, '0', 3, 18, 0, 1, 0, '51'),
+(115, 1143, '151200', 1, '0', 3, 18, 0, 1, 0, '51'),
+(116, 1144, '85000', 1, '0', 3, 18, 0, 1, 0, '51'),
+(117, 1150, '8500', 1, '0', 3, 18, 0, 1, 0, '51'),
+(118, 1151, '183500', 1, '0', 3, 18, 0, 1, 0, '51'),
+(119, 1160, '36000', 1, '0', 3, 18, 0, 1, 0, '51'),
+(120, 1165, '22600', 1, '0', 3, 18, 0, 1, 0, '51'),
+(121, 1168, '10500', 1, '0', 3, 18, 0, 1, 0, '51'),
+(122, 1169, '15000', 1, '0', 3, 18, 0, 1, 0, '51'),
+(123, 1174, '19043', 1, '0', 3, 18, 0, 1, 0, '51'),
+(124, 1226, '18000', 1, '0', 3, 18, 0, 1, 0, '51'),
+(125, 1241, '17000', 1, '0', 3, 18, 0, 1, 0, '51'),
+(126, 1251, '34000', 1, '0', 3, 18, 0, 1, 0, '51'),
+(127, 1262, '24000', 1, '0', 3, 18, 0, 1, 0, '51'),
+(128, 1011, '550000', 1, '0', 4, 21, 0, 1, 0, '51'),
+(129, 1021, '2800', 1, '0', 4, 21, 0, 1, 0, '51'),
+(130, 1026, '25500', 1, '0', 4, 21, 0, 1, 0, '51'),
+(131, 1027, '2800', 1, '0', 4, 21, 0, 1, 0, '51'),
+(132, 1033, '480000', 1, '0', 4, 21, 0, 1, 0, '51'),
+(133, 1036, '9300', 1, '0', 4, 21, 0, 1, 0, '51'),
+(134, 1038, '236254', 1, '0', 4, 21, 0, 1, 0, '51'),
+(135, 1042, '180500', 1, '0', 4, 21, 0, 1, 0, '51'),
+(136, 1047, '240600', 1, '0', 4, 21, 0, 1, 0, '51'),
+(137, 1050, '18500', 1, '0', 4, 21, 0, 1, 0, '51'),
+(138, 1052, '105500', 1, '0', 4, 21, 0, 1, 0, '51'),
+(139, 1064, '12500', 1, '0', 4, 21, 0, 1, 0, '51'),
+(140, 1069, '2500', 1, '0', 4, 21, 0, 1, 0, '51'),
+(141, 1077, '2900', 1, '0', 4, 21, 0, 1, 0, '51'),
+(142, 1078, '26000', 1, '0', 4, 21, 0, 1, 0, '51'),
+(143, 1081, '17500', 1, '0', 4, 21, 0, 1, 0, '51'),
+(144, 1082, '170500', 1, '0', 4, 21, 0, 1, 0, '51'),
+(145, 1084, '180254', 1, '0', 4, 21, 0, 1, 0, '51'),
+(146, 1087, '103254', 1, '0', 4, 21, 0, 1, 0, '51'),
+(147, 1142, '18500', 1, '0', 4, 21, 0, 1, 0, '51'),
+(148, 1150, '27500', 1, '0', 4, 21, 0, 1, 0, '51'),
+(149, 1169, '1180', 1, '0', 4, 21, 0, 1, 0, '51'),
+(150, 1173, '60500', 1, '0', 4, 21, 0, 1, 0, '51'),
+(151, 1241, '18500', 1, '0', 4, 21, 0, 1, 0, '51'),
+(152, 1011, '300000', 1, '0', 1, 6, 0, 1, 0, '51'),
+(153, 1038, '250654', 1, '0', 1, 6, 0, 1, 0, '51'),
+(154, 1041, '250000', 1, '0', 1, 6, 0, 1, 0, '51'),
+(155, 1042, '550000', 1, '0', 1, 6, 0, 1, 0, '51'),
+(156, 1047, '83119', 1, '0', 1, 6, 0, 1, 0, '51'),
+(157, 1050, '156236', 1, '0', 1, 6, 0, 1, 0, '51'),
+(158, 1078, '41256', 1, '0', 1, 6, 0, 1, 0, '51'),
+(159, 1081, '250000', 1, '0', 1, 6, 0, 1, 0, '51'),
+(160, 1084, '300000', 1, '0', 1, 6, 0, 1, 0, '51'),
+(161, 1098, '83119', 1, '0', 1, 6, 0, 1, 0, '51'),
+(162, 1142, '78658', 1, '0', 1, 6, 0, 1, 0, '51'),
+(163, 1150, '200000', 1, '0', 1, 6, 0, 1, 0, '51'),
+(164, 1168, '95258', 1, '0', 1, 6, 0, 1, 0, '51'),
+(165, 1198, '25254', 1, '0', 1, 6, 0, 1, 0, '51'),
+(166, 1262, '200000', 1, '0', 1, 6, 0, 1, 0, '51'),
+(167, 1263, '154365', 1, '0', 1, 6, 0, 1, 0, '51'),
+(168, 1264, '24485', 1, '0', 1, 6, 0, 1, 0, '51'),
+(169, 1011, '170799', 1, '0', 5, 22, 0, 1, 0, '51'),
+(170, 1027, '216254', 1, '0', 5, 22, 0, 1, 0, '51'),
+(171, 1033, '150000', 1, '0', 5, 22, 0, 1, 0, '51'),
+(172, 1038, '420000', 1, '0', 5, 22, 0, 1, 0, '51'),
+(173, 1039, '190500', 1, '0', 5, 22, 0, 1, 0, '51'),
+(174, 1041, '492200', 1, '0', 5, 22, 0, 1, 0, '51'),
+(175, 1042, '550000', 1, '0', 5, 22, 0, 1, 0, '51'),
+(176, 1047, '530254', 1, '0', 5, 22, 0, 1, 0, '51'),
+(177, 1050, '350000', 1, '0', 5, 22, 0, 1, 0, '51'),
+(178, 1069, '420965', 1, '0', 5, 22, 0, 1, 0, '51'),
+(179, 1077, '102685', 1, '0', 5, 22, 0, 1, 0, '51'),
+(180, 1078, '310856', 1, '0', 5, 22, 0, 1, 0, '51'),
+(181, 1081, '177727', 1, '0', 5, 22, 0, 1, 0, '51'),
+(182, 1082, '230000', 1, '0', 5, 22, 0, 1, 0, '51'),
+(183, 1084, '270321', 1, '0', 5, 22, 0, 1, 0, '51'),
+(184, 1085, '42000', 1, '0', 5, 22, 0, 1, 0, '51'),
+(185, 1089, '50500', 1, '0', 5, 22, 0, 1, 0, '51'),
+(186, 1124, '56987', 1, '0', 5, 22, 0, 1, 0, '51'),
+(187, 1135, '54100', 1, '0', 5, 22, 0, 1, 0, '51'),
+(188, 1141, '91500', 1, '0', 5, 22, 0, 1, 0, '51'),
+(189, 1142, '150000', 1, '0', 5, 22, 0, 1, 0, '51'),
+(190, 1143, '550500', 1, '0', 5, 22, 0, 1, 0, '51'),
+(191, 1144, '430254', 1, '0', 5, 22, 0, 1, 0, '51'),
+(192, 1150, '35000', 1, '0', 5, 22, 0, 1, 0, '51'),
+(193, 1151, '190000', 1, '0', 5, 22, 0, 1, 0, '51'),
+(194, 1160, '170000', 1, '0', 5, 22, 0, 1, 0, '51'),
+(195, 1168, '780256', 1, '0', 5, 22, 0, 1, 0, '51'),
+(196, 1173, '42800', 1, '0', 5, 22, 0, 1, 0, '51'),
+(197, 1192, '5500000', 1, '0', 5, 22, 0, 1, 0, '51'),
+(198, 1226, '35500', 1, '0', 5, 22, 0, 1, 0, '51'),
+(199, 1241, '21400', 1, '0', 5, 22, 0, 1, 0, '51'),
+(200, 1263, '29960', 1, '0', 5, 22, 0, 1, 0, '51'),
+(201, 1264, '4280', 1, '0', 5, 22, 0, 1, 0, '51'),
+(202, 1011, '500000', 1, '0', 1, 7, 0, 1, 0, '51'),
+(203, 1026, '300000', 1, '0', 1, 7, 0, 1, 0, '51'),
+(204, 1027, '225000', 1, '0', 1, 7, 0, 1, 0, '51'),
+(205, 1033, '150000', 1, '0', 1, 7, 0, 1, 0, '51'),
+(206, 1038, '900000', 1, '0', 1, 7, 0, 1, 0, '51'),
+(207, 1041, '519504', 1, '0', 1, 7, 0, 1, 0, '51'),
+(208, 1042, '850000', 1, '0', 1, 7, 0, 1, 0, '51'),
+(209, 1047, '940000', 1, '0', 1, 7, 0, 1, 0, '51'),
+(210, 1050, '100000', 1, '0', 1, 7, 0, 1, 0, '51'),
+(211, 1052, '250000', 1, '0', 1, 7, 0, 1, 0, '51'),
+(212, 1078, '276584', 1, '0', 1, 7, 0, 1, 0, '51'),
+(213, 1081, '349258', 1, '0', 1, 7, 0, 1, 0, '51'),
+(214, 1084, '106751', 1, '0', 1, 7, 0, 1, 0, '51'),
+(215, 1087, '513600', 1, '0', 1, 7, 0, 1, 0, '51'),
+(216, 1098, '245836', 1, '0', 1, 7, 0, 1, 0, '51'),
+(217, 1150, '200452', 1, '0', 1, 7, 0, 1, 0, '51'),
+(218, 1168, '100000', 1, '0', 1, 7, 0, 1, 0, '51'),
+(219, 1226, '250000', 1, '0', 1, 7, 0, 1, 0, '51'),
+(220, 1241, '250000', 1, '0', 1, 7, 0, 1, 0, '51'),
+(221, 1262, '285225', 1, '0', 1, 7, 0, 1, 0, '51'),
+(222, 1263, '400000', 1, '0', 1, 7, 0, 1, 0, '51'),
+(223, 1011, '300000', 1, '0', 5, 24, 0, 1, 0, '51'),
+(224, 1026, '300000', 1, '0', 5, 24, 0, 1, 0, '51'),
+(225, 1027, '35000', 1, '0', 5, 24, 0, 1, 0, '51'),
+(226, 1033, '19500', 1, '0', 5, 24, 0, 1, 0, '51'),
+(227, 1036, '20500', 1, '0', 5, 24, 0, 1, 0, '51'),
+(228, 1038, '42500', 1, '0', 5, 24, 0, 1, 0, '51'),
+(229, 1041, '45000', 1, '0', 5, 24, 0, 1, 0, '51'),
+(230, 1042, '17500', 1, '0', 5, 24, 0, 1, 0, '51'),
+(231, 1047, '45000', 1, '0', 5, 24, 0, 1, 0, '51'),
+(232, 1050, '17500', 1, '0', 5, 24, 0, 1, 0, '51'),
+(233, 1052, '20000', 1, '0', 5, 24, 0, 1, 0, '51'),
+(234, 1064, '12000', 1, '0', 5, 24, 0, 1, 0, '51'),
+(235, 1069, '10180', 1, '0', 5, 24, 0, 1, 0, '51'),
+(236, 1077, '15600', 1, '0', 5, 24, 0, 1, 0, '51'),
+(237, 1078, '21000', 1, '0', 5, 24, 0, 1, 0, '51'),
+(238, 1079, '6200', 1, '0', 5, 24, 0, 1, 0, '51'),
+(239, 1081, '21500', 1, '0', 5, 24, 0, 1, 0, '51'),
+(240, 1084, '95000', 1, '0', 5, 24, 0, 1, 0, '51'),
+(241, 1087, '80000', 1, '0', 5, 24, 0, 1, 0, '51'),
+(242, 1089, '8500', 1, '0', 5, 24, 0, 1, 0, '51'),
+(243, 1098, '35000', 1, '0', 5, 24, 0, 1, 0, '51'),
+(244, 1141, '30852', 1, '0', 5, 24, 0, 1, 0, '51'),
+(245, 1143, '160000', 1, '0', 5, 24, 0, 1, 0, '51'),
+(246, 1150, '22650', 1, '0', 5, 24, 0, 1, 0, '51'),
+(247, 1226, '15100', 1, '0', 5, 24, 0, 1, 0, '51'),
+(248, 1251, '18500', 1, '0', 5, 24, 0, 1, 0, '51'),
+(249, 1255, '15000', 1, '0', 5, 24, 0, 1, 0, '51'),
+(250, 1262, '10500', 1, '0', 5, 24, 0, 1, 0, '51'),
+(251, 1263, '17500', 1, '0', 5, 24, 0, 1, 0, '51'),
+(252, 1011, '500000', 1, '0', 6, 27, 0, 1, 0, '51'),
+(253, 1021, '25500', 1, '0', 6, 27, 0, 1, 0, '51'),
+(254, 1026, '80000', 1, '0', 6, 27, 0, 1, 0, '51'),
+(255, 1027, '25000', 1, '0', 6, 27, 0, 1, 0, '51'),
+(256, 1033, '100000', 1, '0', 6, 27, 0, 1, 0, '51'),
+(257, 1036, '100000', 1, '0', 6, 27, 0, 1, 0, '51'),
+(258, 1038, '120000', 1, '0', 6, 27, 0, 1, 0, '51'),
+(259, 1042, '4400', 1, '0', 6, 27, 0, 1, 0, '51'),
+(260, 1047, '300000', 1, '0', 6, 27, 0, 1, 0, '51'),
+(261, 1050, '90000', 1, '0', 6, 27, 0, 1, 0, '51'),
+(262, 1056, '95000', 1, '0', 6, 27, 0, 1, 0, '51'),
+(263, 1059, '10000', 1, '0', 6, 27, 0, 1, 0, '51'),
+(264, 1062, '200000', 1, '0', 6, 27, 0, 1, 0, '51'),
+(265, 1063, '350000', 1, '0', 6, 27, 0, 1, 0, '51'),
+(266, 1064, '350000', 1, '0', 6, 27, 0, 1, 0, '51'),
+(267, 1065, '180254', 1, '0', 6, 27, 0, 1, 0, '51'),
+(268, 1069, '14500', 1, '0', 6, 27, 0, 1, 0, '51'),
+(269, 1073, '2280', 1, '0', 6, 27, 0, 1, 0, '51'),
+(270, 1075, '6500', 1, '0', 6, 27, 0, 1, 0, '51'),
+(271, 1078, '1500000', 1, '0', 6, 27, 0, 1, 0, '51'),
+(272, 1081, '125458', 1, '0', 6, 27, 0, 1, 0, '51'),
+(273, 1084, '105000', 1, '0', 6, 27, 0, 1, 0, '51'),
+(274, 1087, '450000', 1, '0', 6, 27, 0, 1, 0, '51'),
+(275, 1088, '200000', 1, '0', 6, 27, 0, 1, 0, '51'),
+(276, 1142, '32000', 1, '0', 6, 27, 0, 1, 0, '51'),
+(277, 1150, '95000', 1, '0', 6, 27, 0, 1, 0, '51'),
+(278, 1168, '110500', 1, '0', 6, 27, 0, 1, 0, '51'),
+(279, 1169, '13254', 1, '0', 6, 27, 0, 1, 0, '51'),
+(280, 1173, '230000', 1, '0', 6, 27, 0, 1, 0, '51'),
+(281, 1203, '15000', 1, '0', 6, 27, 0, 1, 0, '51'),
+(282, 1212, '15854', 1, '0', 6, 27, 0, 1, 0, '51'),
+(283, 1220, '250000', 1, '0', 6, 27, 0, 1, 0, '51'),
+(284, 1221, '200000', 1, '0', 6, 27, 0, 1, 0, '51'),
+(285, 1223, '5500', 1, '0', 6, 27, 0, 1, 0, '51'),
+(286, 1229, '9200', 1, '0', 6, 27, 0, 1, 0, '51'),
+(287, 1241, '33254', 1, '0', 6, 27, 0, 1, 0, '51'),
+(288, 1011, '420500', 1, '0', 8, 29, 0, 1, 0, '51'),
+(289, 1027, '125000', 1, '0', 8, 29, 0, 1, 0, '51'),
+(290, 1033, '100000', 1, '0', 8, 29, 0, 1, 0, '51'),
+(291, 1036, '13254', 1, '0', 8, 29, 0, 1, 0, '51'),
+(292, 1038, '30254', 1, '0', 8, 29, 0, 1, 0, '51'),
+(293, 1042, '35500', 1, '0', 8, 29, 0, 1, 0, '51'),
+(294, 1047, '125458', 1, '0', 8, 29, 0, 1, 0, '51'),
+(295, 1050, '31600', 1, '0', 8, 29, 0, 1, 0, '51'),
+(296, 1052, '35265', 1, '0', 8, 29, 0, 1, 0, '51'),
+(297, 1069, '31200', 1, '0', 8, 29, 0, 1, 0, '51'),
+(298, 1078, '150225', 1, '0', 8, 29, 0, 1, 0, '51'),
+(299, 1081, '33300', 1, '0', 8, 29, 0, 1, 0, '51'),
+(300, 1084, '400258', 1, '0', 8, 29, 0, 1, 0, '51'),
+(301, 1241, '32000', 1, '0', 8, 29, 0, 1, 0, '51'),
+(302, 1262, '49800', 1, '0', 8, 29, 0, 1, 0, '51'),
+(303, 1263, '47500', 1, '0', 8, 29, 0, 1, 0, '51'),
+(304, 1264, '33200', 1, '0', 8, 29, 0, 1, 0, '51'),
+(305, 1011, '400000', 1, '0', 8, 30, 0, 1, 0, '51'),
+(306, 1026, '12500', 1, '0', 8, 30, 0, 1, 0, '51'),
+(307, 1027, '55254', 1, '0', 8, 30, 0, 1, 0, '51'),
+(308, 1033, '125658', 1, '0', 8, 30, 0, 1, 0, '51'),
+(309, 1036, '10800', 1, '0', 8, 30, 0, 1, 0, '51'),
+(310, 1038, '55000', 1, '0', 8, 30, 0, 1, 0, '51'),
+(311, 1041, '25123', 1, '0', 8, 30, 0, 1, 0, '51'),
+(312, 1042, '120600', 1, '0', 8, 30, 0, 1, 0, '51'),
+(313, 1047, '55000', 1, '0', 8, 30, 0, 1, 0, '51'),
+(314, 1050, '15854', 1, '0', 8, 30, 0, 1, 0, '51'),
+(315, 1052, '35258', 1, '0', 8, 30, 0, 1, 0, '51'),
+(316, 1069, '100000', 1, '0', 8, 30, 0, 1, 0, '51'),
+(317, 1078, '55800', 1, '0', 8, 30, 0, 1, 0, '51'),
+(318, 1079, '23524', 1, '0', 8, 30, 0, 1, 0, '51'),
+(319, 1081, '45254', 1, '0', 8, 30, 0, 1, 0, '51'),
+(320, 1084, '120000', 1, '0', 8, 30, 0, 1, 0, '51'),
+(321, 1087, '45254', 1, '0', 8, 30, 0, 1, 0, '51'),
+(322, 1098, '25854', 1, '0', 8, 30, 0, 1, 0, '51'),
+(323, 1141, '25695', 1, '0', 8, 30, 0, 1, 0, '51'),
+(324, 1142, '12475', 1, '0', 8, 30, 0, 1, 0, '51'),
+(325, 1143, '95365', 1, '0', 8, 30, 0, 1, 0, '51'),
+(326, 1144, '20365', 1, '0', 8, 30, 0, 1, 0, '51'),
+(327, 1150, '25987', 1, '0', 8, 30, 0, 1, 0, '51'),
+(328, 1168, '62584', 1, '0', 8, 30, 0, 1, 0, '51'),
+(329, 1173, '25654', 1, '0', 8, 30, 0, 1, 0, '51'),
+(330, 1226, '50654', 1, '0', 8, 30, 0, 1, 0, '51'),
+(331, 1262, '35258', 1, '0', 8, 30, 0, 1, 0, '51'),
+(332, 1011, '260000', 1, '0', 2, 17, 0, 1, 0, '51'),
+(333, 1027, '385200', 1, '0', 2, 17, 0, 1, 0, '51'),
+(334, 1032, '100000', 1, '0', 2, 17, 0, 1, 0, '51'),
+(335, 1033, '96300', 1, '0', 2, 17, 0, 1, 0, '51'),
+(336, 1036, '115560', 1, '0', 2, 17, 0, 1, 0, '51'),
+(337, 1038, '28890', 1, '0', 2, 17, 0, 1, 0, '51'),
+(338, 1041, '750000', 1, '0', 2, 17, 0, 1, 0, '51'),
+(339, 1042, '20258', 1, '0', 2, 17, 0, 1, 0, '51'),
+(340, 1047, '159365', 1, '0', 2, 17, 0, 1, 0, '51'),
+(341, 1050, '100254', 1, '0', 2, 17, 0, 1, 0, '51'),
+(342, 1052, '25658', 1, '0', 2, 17, 0, 1, 0, '51'),
+(343, 1064, '160000', 1, '0', 2, 17, 0, 1, 0, '51'),
+(344, 1069, '25458', 1, '0', 2, 17, 0, 1, 0, '51'),
+(345, 1070, '550000', 1, '0', 2, 17, 0, 1, 0, '51'),
+(346, 1077, '15854', 1, '0', 2, 17, 0, 1, 0, '51'),
+(347, 1081, '12200', 1, '0', 2, 17, 0, 1, 0, '51'),
+(348, 1082, '30300', 1, '0', 2, 17, 0, 1, 0, '51'),
+(349, 1084, '125325', 1, '0', 2, 17, 0, 1, 0, '51'),
+(350, 1090, '25000', 1, '0', 2, 17, 0, 1, 0, '51'),
+(351, 1141, '120365', 1, '0', 2, 17, 0, 1, 0, '51'),
+(352, 1143, '96300', 1, '0', 2, 17, 0, 1, 0, '51'),
+(353, 1150, '231120', 1, '0', 2, 17, 0, 1, 0, '51'),
+(354, 1168, '120000', 1, '0', 2, 17, 0, 1, 0, '51'),
+(355, 1262, '128541', 1, '0', 2, 17, 0, 1, 0, '51'),
+(356, 1263, '145236', 1, '0', 2, 17, 0, 1, 0, '51'),
+(357, 1264, '90000', 1, '0', 2, 17, 0, 1, 0, '51'),
+(358, 1011, '150000', 1, '0', 2, 40, 0, 1, 0, '51'),
+(359, 1027, '50000', 1, '0', 2, 40, 0, 1, 0, '51'),
+(360, 1033, '150000', 1, '0', 2, 40, 0, 1, 0, '51'),
+(361, 1036, '90000', 1, '0', 2, 40, 0, 1, 0, '51'),
+(362, 1038, '8000', 1, '0', 2, 40, 0, 1, 0, '51'),
+(363, 1042, '80000', 1, '0', 2, 40, 0, 1, 0, '51'),
+(364, 1047, '25000', 1, '0', 2, 40, 0, 1, 0, '51'),
+(365, 1050, '85500', 1, '0', 2, 40, 0, 1, 0, '51'),
+(366, 1069, '80000', 1, '0', 2, 40, 0, 1, 0, '51'),
+(367, 1077, '50000', 1, '0', 2, 40, 0, 1, 0, '51'),
+(368, 1081, '20000', 1, '0', 2, 40, 0, 1, 0, '51'),
+(369, 1084, '120000', 1, '0', 2, 40, 0, 1, 0, '51'),
+(370, 1087, '25000', 1, '0', 2, 40, 0, 1, 0, '51'),
+(371, 1150, '15000', 1, '0', 2, 40, 0, 1, 0, '51'),
+(372, 1241, '14000', 1, '0', 2, 40, 0, 1, 0, '51'),
+(373, 1262, '90000', 1, '0', 2, 40, 0, 1, 0, '51'),
+(374, 1263, '125456', 1, '0', 2, 40, 0, 1, 0, '51'),
+(375, 1264, '38500', 1, '0', 2, 40, 0, 1, 0, '51'),
+(376, 1011, '500000', 1, '0', 6, 26, 0, 1, 0, '51'),
+(377, 1018, '300000', 1, '0', 6, 26, 0, 1, 0, '51'),
+(378, 1021, '32500', 1, '0', 6, 26, 0, 1, 0, '51'),
+(379, 1026, '95000', 1, '0', 6, 26, 0, 1, 0, '51'),
+(380, 1027, '32500', 1, '0', 6, 26, 0, 1, 0, '51'),
+(381, 1033, '280000', 1, '0', 6, 26, 0, 1, 0, '51'),
+(382, 1036, '200000', 1, '0', 6, 26, 0, 1, 0, '51'),
+(383, 1038, '240000', 1, '0', 6, 26, 0, 1, 0, '51'),
+(384, 1042, '8400', 1, '0', 6, 26, 0, 1, 0, '51'),
+(385, 1046, '80000', 1, '0', 6, 26, 0, 1, 0, '51'),
+(386, 1047, '500000', 1, '0', 6, 26, 0, 1, 0, '51'),
+(387, 1050, '120000', 1, '0', 6, 26, 0, 1, 0, '51'),
+(388, 1052, '160000', 1, '0', 6, 26, 0, 1, 0, '51'),
+(389, 1056, '242000', 1, '0', 6, 26, 0, 1, 0, '51'),
+(390, 1057, '250000', 1, '0', 6, 26, 0, 1, 0, '51'),
+(391, 1059, '20000', 1, '0', 6, 26, 0, 1, 0, '51'),
+(392, 1062, '540254', 1, '0', 6, 26, 0, 1, 0, '51'),
+(393, 1063, '650000', 1, '0', 6, 26, 0, 1, 0, '51'),
+(394, 1064, '550000', 1, '0', 6, 26, 0, 1, 0, '51'),
+(395, 1065, '428000', 1, '0', 6, 26, 0, 1, 0, '51'),
+(396, 1069, '21400', 1, '0', 6, 26, 0, 1, 0, '51'),
+(397, 1073, '4280', 1, '0', 6, 26, 0, 1, 0, '51'),
+(398, 1075, '8500', 1, '0', 6, 26, 0, 1, 0, '51'),
+(399, 1078, '900000', 1, '0', 6, 26, 0, 1, 0, '51'),
+(400, 1081, '200000', 1, '0', 6, 26, 0, 1, 0, '51'),
+(401, 1084, '360987', 1, '0', 6, 26, 0, 1, 0, '51'),
+(402, 1087, '800000', 1, '0', 6, 26, 0, 1, 0, '51'),
+(403, 1088, '650254', 1, '0', 6, 26, 0, 1, 0, '51'),
+(404, 1142, '32000', 1, '0', 6, 26, 0, 1, 0, '51'),
+(405, 1150, '114500', 1, '0', 6, 26, 0, 1, 0, '51'),
+(406, 1162, '8560', 1, '0', 6, 26, 0, 1, 0, '51'),
+(407, 1168, '110500', 1, '0', 6, 26, 0, 1, 0, '51'),
+(408, 1169, '13050', 1, '0', 6, 26, 0, 1, 0, '51'),
+(409, 1173, '256541', 1, '0', 6, 26, 0, 1, 0, '51'),
+(410, 1176, '535000', 1, '0', 6, 26, 0, 1, 0, '51'),
+(411, 1177, '90950', 1, '0', 6, 26, 0, 1, 0, '51'),
+(412, 1192, '6800000', 1, '0', 6, 26, 0, 1, 0, '51'),
+(413, 1203, '32600', 1, '0', 6, 26, 0, 1, 0, '51'),
+(414, 1212, '31500', 1, '0', 6, 26, 0, 1, 0, '51'),
+(415, 1220, '370357', 1, '0', 6, 26, 0, 1, 0, '51'),
+(416, 1221, '420852', 1, '0', 6, 26, 0, 1, 0, '51'),
+(417, 1223, '13063', 1, '0', 6, 26, 0, 1, 0, '51'),
+(418, 1229, '42800', 1, '0', 6, 26, 0, 1, 0, '51'),
+(419, 1241, '33400', 1, '0', 6, 26, 0, 1, 0, '51'),
+(420, 1011, '231524', 1, '0', 1, 9, 0, 1, 0, '51'),
+(421, 1026, '8400', 1, '0', 1, 9, 0, 1, 0, '51'),
+(422, 1027, '7500', 1, '0', 1, 9, 0, 1, 0, '51'),
+(423, 1033, '40698', 1, '0', 1, 9, 0, 1, 0, '51'),
+(424, 1038, '20369', 1, '0', 1, 9, 0, 1, 0, '51'),
+(425, 1041, '13705', 1, '0', 1, 9, 0, 1, 0, '51'),
+(426, 1042, '500000', 1, '0', 1, 9, 0, 1, 0, '51'),
+(427, 1047, '40369', 1, '0', 1, 9, 0, 1, 0, '51'),
+(428, 1050, '10487', 1, '0', 1, 9, 0, 1, 0, '51'),
+(429, 1052, '9154', 1, '0', 1, 9, 0, 1, 0, '51'),
+(430, 1069, '40695', 1, '0', 1, 9, 0, 1, 0, '51'),
+(431, 1078, '15489', 1, '0', 1, 9, 0, 1, 0, '51'),
+(432, 1081, '30659', 1, '0', 1, 9, 0, 1, 0, '51'),
+(433, 1084, '650000', 1, '0', 1, 9, 0, 1, 0, '51'),
+(434, 1087, '6500', 1, '0', 1, 9, 0, 1, 0, '51'),
+(435, 1142, '20632', 1, '0', 1, 9, 0, 1, 0, '51'),
+(436, 1150, '150000', 1, '0', 1, 9, 0, 1, 0, '51'),
+(437, 1169, '30000', 1, '0', 1, 9, 0, 1, 0, '51'),
+(438, 1173, '20659', 1, '0', 1, 9, 0, 1, 0, '51'),
+(439, 1262, '15698', 1, '0', 1, 9, 0, 1, 0, '51'),
+(440, 1263, '15523', 1, '0', 1, 9, 0, 1, 0, '51'),
+(441, 1264, '17000', 1, '0', 1, 9, 0, 1, 0, '51'),
+(442, 1011, '180000', 1, '0', 2, 15, 0, 1, 0, '51'),
+(443, 1027, '200000', 1, '0', 2, 15, 0, 1, 0, '51'),
+(444, 1032, '150000', 1, '0', 2, 15, 0, 1, 0, '51'),
+(445, 1033, '55000', 1, '0', 2, 15, 0, 1, 0, '51'),
+(446, 1036, '65000', 1, '0', 2, 15, 0, 1, 0, '51'),
+(447, 1038, '15500', 1, '0', 2, 15, 0, 1, 0, '51'),
+(448, 1041, '250000', 1, '0', 2, 15, 0, 1, 0, '51'),
+(449, 1042, '38520', 1, '0', 2, 15, 0, 1, 0, '51'),
+(450, 1047, '250000', 1, '0', 2, 15, 0, 1, 0, '51'),
+(451, 1050, '50000', 1, '0', 2, 15, 0, 1, 0, '51'),
+(452, 1052, '15000', 1, '0', 2, 15, 0, 1, 0, '51'),
+(453, 1064, '150000', 1, '0', 2, 15, 0, 1, 0, '51'),
+(454, 1069, '20000', 1, '0', 2, 15, 0, 1, 0, '51'),
+(455, 1070, '45000', 1, '0', 2, 15, 0, 1, 0, '51'),
+(456, 1077, '6000', 1, '0', 2, 15, 0, 1, 0, '51'),
+(457, 1081, '5600', 1, '0', 2, 15, 0, 1, 0, '51'),
+(458, 1082, '35500', 1, '0', 2, 15, 0, 1, 0, '51'),
+(459, 1083, '100000', 1, '0', 2, 15, 0, 1, 0, '51'),
+(460, 1089, '12500', 1, '0', 2, 15, 0, 1, 0, '51'),
+(461, 1090, '25500', 1, '0', 2, 15, 0, 1, 0, '51'),
+(462, 1141, '80000', 1, '0', 2, 15, 0, 1, 0, '51'),
+(463, 1143, '64200', 1, '0', 2, 15, 0, 1, 0, '51'),
+(464, 1150, '154080', 1, '0', 2, 15, 0, 1, 0, '51'),
+(465, 1168, '50000', 1, '0', 2, 15, 0, 1, 0, '51'),
+(466, 1262, '100000', 1, '0', 2, 15, 0, 1, 0, '51'),
+(467, 1263, '80000', 1, '0', 2, 15, 0, 1, 0, '51'),
+(468, 1264, '85000', 1, '0', 2, 15, 0, 1, 0, '51'),
+(469, 1011, '120000', 1, '0', 2, 16, 0, 1, 0, '51'),
+(470, 1027, '150000', 1, '0', 2, 16, 0, 1, 0, '51'),
+(471, 1032, '100000', 1, '0', 2, 16, 0, 1, 0, '51'),
+(472, 1033, '25000', 1, '0', 2, 16, 0, 1, 0, '51'),
+(473, 1036, '15000', 1, '0', 2, 16, 0, 1, 0, '51'),
+(474, 1038, '10500', 1, '0', 2, 16, 0, 1, 0, '51'),
+(475, 1041, '120000', 1, '0', 2, 16, 0, 1, 0, '51'),
+(476, 1042, '12365', 1, '0', 2, 16, 0, 1, 0, '51'),
+(477, 1047, '100000', 1, '0', 2, 16, 0, 1, 0, '51'),
+(478, 1050, '25695', 1, '0', 2, 16, 0, 1, 0, '51'),
+(479, 1052, '18456', 1, '0', 2, 16, 0, 1, 0, '51'),
+(480, 1064, '100000', 1, '0', 2, 16, 0, 1, 0, '51'),
+(481, 1069, '15658', 1, '0', 2, 16, 0, 1, 0, '51'),
+(482, 1070, '100000', 1, '0', 2, 16, 0, 1, 0, '51'),
+(483, 1077, '9630', 1, '0', 2, 16, 0, 1, 0, '51'),
+(484, 1081, '1700', 1, '0', 2, 16, 0, 1, 0, '51'),
+(485, 1082, '35256', 1, '0', 2, 16, 0, 1, 0, '51'),
+(486, 1084, '70000', 1, '0', 2, 16, 0, 1, 0, '51'),
+(487, 1089, '12500', 1, '0', 2, 16, 0, 1, 0, '51'),
+(488, 1090, '20000', 1, '0', 2, 16, 0, 1, 0, '51'),
+(489, 1141, '100000', 1, '0', 2, 16, 0, 1, 0, '51'),
+(490, 1143, '25658', 1, '0', 2, 16, 0, 1, 0, '51'),
+(491, 1150, '102000', 1, '0', 2, 16, 0, 1, 0, '51'),
+(492, 1168, '50000', 1, '0', 2, 16, 0, 1, 0, '51'),
+(493, 1011, '250000', 1, '0', 1, 10, 0, 1, 0, '51'),
+(494, 1026, '20000', 1, '0', 1, 10, 0, 1, 0, '51'),
+(495, 1033, '50000', 1, '0', 1, 10, 0, 1, 0, '51'),
+(496, 1036, '10254', 1, '0', 1, 10, 0, 1, 0, '51'),
+(497, 1038, '35965', 1, '0', 1, 10, 0, 1, 0, '51'),
+(498, 1042, '27845', 1, '0', 1, 10, 0, 1, 0, '51'),
+(499, 1047, '33000', 1, '0', 1, 10, 0, 1, 0, '51'),
+(500, 1050, '100000', 1, '0', 1, 10, 0, 1, 0, '51'),
+(501, 1052, '55000', 1, '0', 1, 10, 0, 1, 0, '51'),
+(502, 1064, '40254', 1, '0', 1, 10, 0, 1, 0, '51'),
+(503, 1065, '30787', 1, '0', 1, 10, 0, 1, 0, '51'),
+(504, 1069, '105201', 1, '0', 1, 10, 0, 1, 0, '51'),
+(505, 1077, '30000', 1, '0', 1, 10, 0, 1, 0, '51'),
+(506, 1078, '22130', 1, '0', 1, 10, 0, 1, 0, '51'),
+(507, 1079, '15369', 1, '0', 1, 10, 0, 1, 0, '51'),
+(508, 1081, '28546', 1, '0', 1, 10, 0, 1, 0, '51'),
+(509, 1084, '250000', 1, '0', 1, 10, 0, 1, 0, '51'),
+(510, 1087, '11000', 1, '0', 1, 10, 0, 1, 0, '51'),
+(511, 1098, '55000', 1, '0', 1, 10, 0, 1, 0, '51'),
+(512, 1118, '10000', 1, '0', 1, 10, 0, 1, 0, '51'),
+(513, 1122, '11000', 1, '0', 1, 10, 0, 1, 0, '51'),
+(514, 1141, '35000', 1, '0', 1, 10, 0, 1, 0, '51'),
+(515, 1143, '35000', 1, '0', 1, 10, 0, 1, 0, '51'),
+(516, 1150, '30000', 1, '0', 1, 10, 0, 1, 0, '51'),
+(517, 1168, '80000', 1, '0', 1, 10, 0, 1, 0, '51'),
+(518, 1173, '25000', 1, '0', 1, 10, 0, 1, 0, '51'),
+(519, 1225, '25000', 1, '0', 1, 10, 0, 1, 0, '51'),
+(520, 1262, '40125', 1, '0', 1, 10, 0, 1, 0, '51'),
+(521, 1263, '95000', 1, '0', 1, 10, 0, 1, 0, '51'),
+(522, 1011, '150000', 1, '0', 1, 11, 0, 1, 0, '51'),
+(523, 1027, '1000', 1, '0', 1, 11, 0, 1, 0, '51'),
+(524, 1032, '9000', 1, '0', 1, 11, 0, 1, 0, '51'),
+(525, 1033, '1300', 1, '0', 1, 11, 0, 1, 0, '51'),
+(526, 1036, '150000', 1, '0', 1, 11, 0, 1, 0, '51'),
+(527, 1038, '2500', 1, '0', 1, 11, 0, 1, 0, '51'),
+(528, 1041, '100000', 1, '0', 1, 11, 0, 1, 0, '51'),
+(529, 1042, '75000', 1, '0', 1, 11, 0, 1, 0, '51'),
+(530, 1047, '95000', 1, '0', 1, 11, 0, 1, 0, '51'),
+(531, 1050, '5800', 1, '0', 1, 11, 0, 1, 0, '51'),
+(532, 1069, '25852', 1, '0', 1, 11, 0, 1, 0, '51'),
+(533, 1077, '2500', 1, '0', 1, 11, 0, 1, 0, '51'),
+(534, 1081, '1000', 1, '0', 1, 11, 0, 1, 0, '51'),
+(535, 1084, '15000', 1, '0', 1, 11, 0, 1, 0, '51'),
+(536, 1150, '12000', 1, '0', 1, 11, 0, 1, 0, '51'),
+(537, 1174, '5000', 1, '0', 1, 11, 0, 1, 0, '51'),
+(538, 1262, '90000', 1, '0', 1, 11, 0, 1, 0, '51'),
+(539, 1264, '80000', 1, '0', 1, 11, 0, 1, 0, '51'),
+(540, 1011, '90000', 1, '0', 2, 14, 0, 1, 0, '51'),
+(541, 1026, '120000', 1, '0', 2, 14, 0, 1, 0, '51'),
+(542, 1027, '75000', 1, '0', 2, 14, 0, 1, 0, '51'),
+(543, 1033, '130000', 1, '0', 2, 14, 0, 1, 0, '51'),
+(544, 1036, '42000', 1, '0', 2, 14, 0, 1, 0, '51'),
+(545, 1038, '45000', 1, '0', 2, 14, 0, 1, 0, '51'),
+(546, 1040, '55000', 1, '0', 2, 14, 0, 1, 0, '51'),
+(547, 1042, '25000', 1, '0', 2, 14, 0, 1, 0, '51'),
+(548, 1047, '58254', 1, '0', 2, 14, 0, 1, 0, '51'),
+(549, 1050, '30000', 1, '0', 2, 14, 0, 1, 0, '51'),
+(550, 1052, '50000', 1, '0', 2, 14, 0, 1, 0, '51'),
+(551, 1064, '70000', 1, '0', 2, 14, 0, 1, 0, '51'),
+(552, 1069, '64000', 1, '0', 2, 14, 0, 1, 0, '51'),
+(553, 1078, '55000', 1, '0', 2, 14, 0, 1, 0, '51'),
+(554, 1081, '96254', 1, '0', 2, 14, 0, 1, 0, '51'),
+(555, 1084, '100000', 1, '0', 2, 14, 0, 1, 0, '51'),
+(556, 1087, '130000', 1, '0', 2, 14, 0, 1, 0, '51'),
+(557, 1089, '40000', 1, '0', 2, 14, 0, 1, 0, '51'),
+(558, 1098, '140000', 1, '0', 2, 14, 0, 1, 0, '51'),
+(559, 1101, '120000', 1, '0', 2, 14, 0, 1, 0, '51'),
+(560, 1135, '74000', 1, '0', 2, 14, 0, 1, 0, '51'),
+(561, 1141, '190000', 1, '0', 2, 14, 0, 1, 0, '51'),
+(562, 1142, '295000', 1, '0', 2, 14, 0, 1, 0, '51'),
+(563, 1144, '60000', 1, '0', 2, 14, 0, 1, 0, '51'),
+(564, 1150, '250000', 1, '0', 2, 14, 0, 1, 0, '51'),
+(565, 1262, '100000', 1, '0', 2, 14, 0, 1, 0, '51'),
+(566, 1263, '90000', 1, '0', 2, 14, 0, 1, 0, '51'),
+(568, 1012, '100000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(569, 1013, '300000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(570, 1018, '784000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(571, 1021, '449400', 1, '0', 1, 8, 0, 1, 0, '51'),
+(572, 1023, '70620', 1, '0', 1, 8, 0, 1, 0, '51'),
+(573, 1026, '800000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(574, 1027, '1500000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(575, 1028, '15000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(576, 1029, '700000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(577, 1033, '2500000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(578, 1037, '53500', 1, '0', 1, 8, 0, 1, 0, '51'),
+(579, 1038, '3500000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(580, 1039, '30500', 1, '0', 1, 8, 0, 1, 0, '51'),
+(581, 1041, '1070000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(582, 1042, '5000000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(583, 1045, '200000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(585, 1048, '1000000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(586, 1050, '3000000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(587, 1051, '1030000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(588, 1052, '3500000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(589, 1054, '139100', 1, '0', 1, 8, 0, 1, 0, '51'),
+(590, 1058, '335000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(591, 1059, '1000000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(592, 1062, '1500000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(593, 1065, '507105', 1, '0', 1, 8, 0, 1, 0, '51'),
+(594, 1066, '192600', 1, '0', 1, 8, 0, 1, 0, '51'),
+(595, 1067, '24489', 1, '0', 1, 8, 0, 1, 0, '51'),
+(596, 1069, '2600000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(597, 1070, '1391000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(598, 1074, '28891', 1, '0', 1, 8, 0, 1, 0, '51'),
+(599, 1077, '727600', 1, '0', 1, 8, 0, 1, 0, '51'),
+(600, 1078, '4251365', 1, '0', 1, 8, 0, 1, 0, '51'),
+(601, 1079, '21400', 1, '0', 1, 8, 0, 1, 0, '51'),
+(602, 1080, '400000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(603, 1081, '2033000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(604, 1082, '597879', 1, '0', 1, 8, 0, 1, 0, '51'),
+(605, 1083, '460100', 1, '0', 1, 8, 0, 1, 0, '51'),
+(606, 1084, '2830000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(607, 1087, '4000000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(608, 1088, '898800', 1, '0', 1, 8, 0, 1, 0, '51'),
+(609, 1090, '1500000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(610, 1098, '203300', 1, '0', 1, 8, 0, 1, 0, '51'),
+(611, 1101, '160500', 1, '0', 1, 8, 0, 1, 0, '51'),
+(612, 1106, '6000000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(613, 1111, '535000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(614, 1118, '900000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(615, 1119, '75000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(616, 1120, '100000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(617, 1122, '254852', 1, '0', 1, 8, 0, 1, 0, '51'),
+(618, 1124, '417300', 1, '0', 1, 8, 0, 1, 0, '51'),
+(619, 1135, '3210000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(620, 1137, '3500', 1, '0', 1, 8, 0, 1, 0, '51'),
+(621, 1141, '1000000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(622, 1142, '500000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(624, 1144, '80000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(625, 1146, '450000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(626, 1147, '50000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(627, 1150, '1500000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(628, 1154, '406018', 1, '0', 1, 8, 0, 1, 0, '51'),
+(629, 1156, '37956', 1, '0', 1, 8, 0, 1, 0, '51'),
+(630, 1158, '900000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(631, 1160, '19046', 1, '0', 1, 8, 0, 1, 0, '51'),
+(632, 1162, '18000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(633, 1165, '400000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(634, 1167, '50000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(635, 1168, '258940', 1, '0', 1, 8, 0, 1, 0, '51'),
+(636, 1169, '17000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(637, 1170, '500000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(638, 1173, '1800000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(639, 1174, '800000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(640, 1188, '800000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(641, 1192, '18254854', 1, '0', 1, 8, 0, 1, 0, '51'),
+(642, 1198, '2568000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(643, 1203, '100000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(644, 1208, '900000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(645, 1223, '1500000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(646, 1224, '214000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(647, 1225, '500000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(648, 1226, '94000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(649, 1227, '107000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(650, 1228, '524300', 1, '0', 1, 8, 0, 1, 0, '51'),
+(651, 1231, '55640', 1, '0', 1, 8, 0, 1, 0, '51'),
+(652, 1233, '586000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(653, 1235, '300000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(654, 1237, '800000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(655, 1241, '73081', 1, '0', 1, 8, 0, 1, 0, '51'),
+(656, 1247, '234330', 1, '0', 1, 8, 0, 1, 0, '51'),
+(657, 1248, '524300', 1, '0', 1, 8, 0, 1, 0, '51'),
+(658, 1255, '49220', 1, '0', 1, 8, 0, 1, 0, '51'),
+(659, 1262, '43870', 1, '0', 1, 8, 0, 1, 0, '51'),
+(660, 1263, '2500000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(661, 1264, '2500000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(662, 1265, '570000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(663, 753, '500000', 1, '0', 9, 33, 0, 1, 0, '52'),
+(664, 771, '2500000', 1, '0', 9, 33, 0, 1, 0, '52'),
+(665, 773, '1500000', 1, '0', 9, 33, 0, 1, 0, '52'),
+(666, 774, '500000', 1, '0', 9, 33, 0, 1, 0, '52'),
+(667, 775, '1700000', 1, '0', 9, 33, 0, 1, 0, '52'),
+(668, 776, '600000', 1, '0', 9, 33, 0, 1, 0, '52'),
+(669, 813, '600000', 1, '0', 9, 33, 0, 1, 0, '52'),
+(670, 816, '100000', 1, '0', 9, 33, 0, 1, 0, '52'),
+(671, 817, '6050000', 1, '0', 9, 33, 0, 1, 0, '52'),
+(672, 852, '200000', 1, '0', 9, 33, 0, 1, 0, '52'),
+(673, 854, '2000000', 1, '0', 9, 33, 0, 1, 0, '52'),
+(674, 872, '1800000', 1, '0', 9, 33, 0, 1, 0, '52'),
+(675, 873, '1700000', 1, '0', 9, 33, 0, 1, 0, '52'),
+(676, 874, '1300000', 1, '0', 9, 33, 0, 1, 0, '52'),
+(677, 875, '1400000', 1, '0', 9, 33, 0, 1, 0, '52'),
+(678, 915, '700000', 1, '0', 9, 33, 0, 1, 0, '52'),
+(679, 916, '200000', 1, '0', 9, 33, 0, 1, 0, '52'),
+(680, 917, '200000', 1, '0', 9, 33, 0, 1, 0, '52'),
+(681, 918, '200000', 1, '0', 9, 33, 0, 1, 0, '52'),
+(682, 919, '200000', 1, '0', 9, 33, 0, 1, 0, '52'),
+(683, 920, '500000', 1, '0', 9, 33, 0, 1, 0, '52'),
+(684, 922, '500000', 1, '0', 9, 33, 0, 1, 0, '52'),
+(685, 923, '400000', 1, '0', 9, 33, 0, 1, 0, '52'),
+(686, 924, '300000', 1, '0', 9, 33, 0, 1, 0, '52'),
+(687, 925, '300000', 1, '0', 9, 33, 0, 1, 0, '52'),
+(688, 985, '3000000', 1, '0', 9, 33, 0, 1, 0, '52'),
+(689, 990, '250000', 1, '0', 9, 33, 0, 1, 0, '52'),
+(690, 1150, '700000', 1, '0', 9, 33, 0, 1, 0, '52'),
+(691, 732, '14000000', 1, '0', 9, 33, 0, 1, 0, '52'),
+(692, 751, '1000000', 1, '0', 9, 33, 0, 1, 0, '51'),
+(693, 760, '900000', 1, '0', 9, 33, 0, 1, 0, '51'),
+(694, 761, '100000', 1, '0', 9, 33, 0, 1, 0, '51'),
+(695, 762, '1400000', 1, '0', 9, 33, 0, 1, 0, '51'),
+(696, 764, '250000', 1, '0', 9, 33, 0, 1, 0, '51'),
+(697, 766, '1300000', 1, '0', 9, 33, 0, 1, 0, '51'),
+(698, 767, '1600000', 1, '0', 9, 33, 0, 1, 0, '51'),
+(699, 804, '450000', 1, '0', 9, 33, 0, 1, 0, '51'),
+(701, 866, '1500000', 1, '0', 9, 33, 0, 1, 0, '51'),
+(702, 868, '1300000', 1, '0', 9, 33, 0, 1, 0, '51'),
+(703, 869, '1100000', 1, '0', 9, 33, 0, 1, 0, '51'),
+(704, 870, '1100000', 1, '0', 9, 33, 0, 1, 0, '51'),
+(705, 903, '500000', 1, '0', 9, 33, 0, 1, 0, '51'),
+(706, 904, '100000', 1, '0', 9, 33, 0, 1, 0, '51'),
+(707, 905, '100000', 1, '0', 9, 33, 0, 1, 0, '51'),
+(708, 906, '100000', 1, '0', 9, 33, 0, 1, 0, '51'),
+(709, 907, '100000', 1, '0', 9, 33, 0, 1, 0, '51'),
+(710, 908, '500000', 1, '0', 9, 33, 0, 1, 0, '51'),
+(711, 909, '200000', 1, '0', 9, 33, 0, 1, 0, '51'),
+(712, 910, '100000', 1, '0', 9, 33, 0, 1, 0, '51'),
+(713, 911, '350000', 1, '0', 9, 33, 0, 1, 0, '51'),
+(714, 913, '300000', 1, '0', 9, 33, 0, 1, 0, '51'),
+(715, 984, '4000000', 1, '0', 9, 33, 0, 1, 0, '51'),
+(716, 989, '250000', 1, '0', 9, 33, 0, 1, 0, '51'),
+(717, 1150, '700000', 1, '0', 9, 33, 0, 1, 0, '51'),
+(718, 2088, '100000', 1, '0', 9, 33, 0, 1, 0, '51'),
+(719, 2091, '600000', 1, '0', 9, 33, 0, 1, 0, '51'),
+(720, 2094, '600000', 1, '0', 9, 33, 0, 1, 0, '51'),
+(721, 2097, '400000', 1, '0', 9, 33, 0, 1, 0, '51'),
+(722, 2099, '250000', 1, '0', 9, 33, 0, 1, 0, '51'),
+(723, 2101, '700000', 1, '0', 9, 33, 0, 1, 0, '51'),
+(724, 2103, '150000', 1, '0', 9, 33, 0, 1, 0, '51'),
+(725, 2104, '500000', 1, '0', 9, 33, 0, 1, 0, '51'),
+(726, 2105, '4000000', 1, '0', 9, 33, 0, 1, 0, '51'),
+(727, 2106, '300000', 1, '0', 9, 33, 0, 1, 0, '51'),
+(728, 2108, '500000', 1, '0', 9, 33, 0, 1, 0, '51'),
+(729, 2096, '2000000', 1, '0', 9, 33, 0, 1, 0, '51'),
+(730, 2084, '2200000', 1, '0', 9, 33, 0, 1, 0, '52'),
+(731, 2085, '200000', 1, '0', 9, 33, 0, 1, 0, '52'),
+(732, 2087, '200000', 1, '0', 9, 33, 0, 1, 0, '52'),
+(733, 2090, '300000', 1, '0', 9, 33, 0, 1, 0, '52'),
+(734, 2092, '900000', 1, '0', 9, 33, 0, 1, 0, '52'),
+(735, 2093, '200000', 1, '0', 9, 33, 0, 1, 0, '52'),
+(736, 2095, '100000', 1, '0', 9, 33, 0, 1, 0, '52'),
+(738, 2111, '500000', 1, '0', 9, 33, 0, 1, 0, '54'),
+(739, 2112, '800000', 1, '0', 9, 33, 0, 1, 0, '54'),
+(740, 2113, '700000', 1, '0', 9, 33, 0, 1, 0, '54'),
+(741, 2114, '750000', 1, '0', 9, 33, 0, 1, 0, '54'),
+(742, 2115, '350000', 1, '0', 9, 33, 0, 1, 0, '54'),
+(743, 2116, '500000', 1, '0', 9, 33, 0, 1, 0, '54'),
+(744, 2117, '5770000', 1, '0', 9, 33, 0, 1, 0, '54'),
+(745, 2119, '200000', 1, '0', 9, 33, 0, 1, 0, '54'),
+(746, 2120, '1500000', 1, '0', 9, 33, 0, 1, 0, '54'),
+(747, 2121, '1600000', 1, '0', 9, 33, 0, 1, 0, '54'),
+(748, 2122, '1400000', 1, '0', 9, 33, 0, 1, 0, '54'),
+(749, 2123, '1300000', 1, '0', 9, 33, 0, 1, 0, '54'),
+(750, 2124, '850000', 1, '0', 9, 33, 0, 1, 0, '54'),
+(751, 2125, '300000', 1, '0', 9, 33, 0, 1, 0, '54'),
+(752, 2126, '200000', 1, '0', 9, 33, 0, 1, 0, '54'),
+(753, 2127, '400000', 1, '0', 9, 33, 0, 1, 0, '54'),
+(754, 2128, '1000000', 1, '0', 9, 33, 0, 1, 0, '54'),
+(755, 734, '13000000', 1, '0', 9, 33, 0, 1, 0, '54'),
+(756, 1439, '12861531', 1, '0', 4, 20, 0, 1, 0, '52'),
+(757, 1447, '1000000', 1, '0', 4, 20, 0, 1, 0, '52'),
+(758, 1450, '8000000', 1, '0', 4, 20, 0, 1, 0, '52'),
+(759, 1440, '25011531', 1, '0', 4, 20, 0, 1, 0, '52'),
+(760, 1451, '1000000', 1, '0', 4, 20, 0, 1, 0, '52'),
+(761, 1454, '7000000', 1, '0', 4, 20, 0, 1, 0, '52'),
+(762, 1439, '12188469', 1, '0', 9, 33, 0, 1, 0, '53'),
+(763, 1447, '8000000', 1, '0', 9, 33, 0, 1, 0, '53'),
+(764, 1450, '1000000', 1, '0', 9, 33, 0, 1, 0, '53'),
+(765, 1440, '23500000', 1, '0', 9, 33, 0, 1, 0, '53'),
+(766, 1451, '1500000', 1, '0', 9, 33, 0, 1, 0, '53'),
+(767, 1454, '9000000', 1, '0', 9, 33, 0, 1, 0, '53'),
+(768, 745, '200000', 1, '0', 9, 33, 0, 1, 0, '55'),
+(769, 746, '12000000', 1, '0', 9, 33, 0, 1, 0, '55'),
+(770, 756, '100000', 1, '0', 9, 33, 0, 1, 0, '55'),
+(771, 757, '1390000', 1, '0', 9, 33, 0, 1, 0, '55'),
+(772, 789, '100000', 1, '0', 9, 33, 0, 1, 0, '55'),
+(773, 790, '100000', 1, '0', 9, 33, 0, 1, 0, '55'),
+(774, 791, '900000', 1, '0', 9, 33, 0, 1, 0, '55'),
+(775, 792, '750000', 1, '0', 9, 33, 0, 1, 0, '55'),
+(776, 793, '850000', 1, '0', 9, 33, 0, 1, 0, '55'),
+(777, 795, '200000', 1, '0', 9, 33, 0, 1, 0, '55'),
+(778, 797, '380000', 1, '0', 9, 33, 0, 1, 0, '55'),
+(779, 2098, '150000', 1, '0', 9, 33, 0, 1, 0, '55'),
+(780, 2100, '1000000', 1, '0', 9, 33, 0, 1, 0, '55'),
+(781, 2102, '160000', 1, '0', 9, 33, 0, 1, 0, '55'),
+(782, 2107, '150000', 1, '0', 9, 33, 0, 1, 0, '55'),
+(783, 2109, '1100000', 1, '0', 9, 33, 0, 1, 0, '55'),
+(784, 832, '20000', 1, '0', 9, 33, 0, 1, 0, '55'),
+(785, 837, '8000000', 1, '0', 9, 33, 0, 1, 0, '55'),
+(786, 859, '50000', 1, '0', 9, 33, 0, 1, 0, '55'),
+(787, 861, '10000', 1, '0', 9, 33, 0, 1, 0, '55'),
+(788, 862, '200000', 1, '0', 9, 33, 0, 1, 0, '55'),
+(789, 864, '3500000', 1, '0', 9, 33, 0, 1, 0, '55'),
+(790, 884, '150000', 1, '0', 9, 33, 0, 1, 0, '55'),
+(791, 886, '150000', 1, '0', 9, 33, 0, 1, 0, '55'),
+(792, 887, '150000', 1, '0', 9, 33, 0, 1, 0, '55'),
+(793, 888, '150000', 1, '0', 9, 33, 0, 1, 0, '55'),
+(794, 889, '1700000', 1, '0', 9, 33, 0, 1, 0, '55'),
+(795, 891, '1500000', 1, '0', 9, 33, 0, 1, 0, '55'),
+(796, 892, '1500000', 1, '0', 9, 33, 0, 1, 0, '55'),
+(797, 893, '1500000', 1, '0', 9, 33, 0, 1, 0, '55'),
+(798, 896, '500000', 1, '0', 9, 33, 0, 1, 0, '55'),
+(799, 947, '500000', 1, '0', 9, 33, 0, 1, 0, '55'),
+(800, 949, '100000', 1, '0', 9, 33, 0, 1, 0, '55'),
+(801, 954, '100000', 1, '0', 9, 33, 0, 1, 0, '55'),
+(802, 955, '100000', 1, '0', 9, 33, 0, 1, 0, '55'),
+(803, 956, '100000', 1, '0', 9, 33, 0, 1, 0, '55'),
+(804, 957, '100000', 1, '0', 9, 33, 0, 1, 0, '55'),
+(805, 958, '500000', 1, '0', 9, 33, 0, 1, 0, '55'),
+(806, 961, '250000', 1, '0', 9, 33, 0, 1, 0, '55'),
+(807, 962, '600000', 1, '0', 9, 33, 0, 1, 0, '55'),
+(808, 2110, '50000', 1, '0', 9, 33, 0, 1, 0, '55'),
+(809, 983, '3500000', 1, '0', 9, 33, 0, 1, 0, '55'),
+(810, 2131, '150000', 1, '0', 9, 33, 0, 1, 0, '55'),
+(811, 994, '100000', 1, '0', 9, 33, 0, 1, 0, '55'),
+(812, 1150, '1250000', 1, '0', 9, 33, 0, 1, 0, '55'),
+(813, 732, '10500000', 1, '0', 7, 28, 0, 1, 0, '52'),
+(814, 735, '1000000', 1, '0', 7, 28, 0, 1, 0, '52'),
+(815, 753, '2000000', 1, '0', 7, 28, 0, 1, 0, '52'),
+(816, 771, '900000', 1, '0', 7, 28, 0, 1, 0, '52'),
+(817, 773, '650000', 1, '0', 7, 28, 0, 1, 0, '52'),
+(818, 775, '500000', 1, '0', 7, 28, 0, 1, 0, '52'),
+(819, 776, '400000', 1, '0', 7, 28, 0, 1, 0, '52'),
+(820, 800, '200000', 1, '0', 7, 28, 0, 1, 0, '52'),
+(821, 2084, '900000', 1, '0', 7, 28, 0, 1, 0, '52'),
+(822, 2085, '100000', 1, '0', 7, 28, 0, 1, 0, '52'),
+(823, 2086, '300000', 1, '0', 7, 28, 0, 1, 0, '52'),
+(824, 2087, '50000', 1, '0', 7, 28, 0, 1, 0, '52'),
+(825, 2089, '1700000', 1, '0', 7, 28, 0, 1, 0, '52'),
+(826, 817, '6000000', 1, '0', 7, 28, 0, 1, 0, '52'),
+(827, 845, '300000', 1, '0', 7, 28, 0, 1, 0, '52'),
+(828, 2090, '250000', 1, '0', 7, 28, 0, 1, 0, '52'),
+(829, 2092, '1300000', 1, '0', 7, 28, 0, 1, 0, '52'),
+(830, 2093, '100000', 1, '0', 7, 28, 0, 1, 0, '52'),
+(831, 852, '200000', 1, '0', 7, 28, 0, 1, 0, '52'),
+(832, 854, '1500000', 1, '0', 7, 28, 0, 1, 0, '52'),
+(833, 872, '2320000', 1, '0', 7, 28, 0, 1, 0, '52'),
+(834, 873, '2100000', 1, '0', 7, 28, 0, 1, 0, '52'),
+(835, 874, '2100000', 1, '0', 7, 28, 0, 1, 0, '52'),
+(836, 875, '2100000', 1, '0', 7, 28, 0, 1, 0, '52'),
+(837, 915, '650000', 1, '0', 7, 28, 0, 1, 0, '52'),
+(838, 916, '180000', 1, '0', 7, 28, 0, 1, 0, '52'),
+(839, 917, '200000', 1, '0', 7, 28, 0, 1, 0, '52'),
+(840, 918, '200000', 1, '0', 7, 28, 0, 1, 0, '52'),
+(841, 919, '200000', 1, '0', 7, 28, 0, 1, 0, '52'),
+(842, 920, '200000', 1, '0', 7, 28, 0, 1, 0, '52'),
+(843, 922, '250000', 1, '0', 7, 28, 0, 1, 0, '52'),
+(844, 923, '500000', 1, '0', 7, 28, 0, 1, 0, '52'),
+(845, 925, '400000', 1, '0', 7, 28, 0, 1, 0, '52'),
+(846, 985, '2700000', 1, '0', 7, 28, 0, 1, 0, '52'),
+(847, 2095, '100000', 1, '0', 7, 28, 0, 1, 0, '52'),
+(848, 990, '300000', 1, '0', 7, 28, 0, 1, 0, '52'),
+(849, 1150, '300000', 1, '0', 7, 28, 0, 1, 0, '52'),
+(850, 737, '13500000', 1, '0', 9, 33, 0, 1, 0, '54'),
+(851, 738, '4430000', 1, '0', 9, 33, 0, 1, 0, '54'),
+(852, 2063, '600000', 1, '0', 9, 33, 0, 1, 0, '54'),
+(853, 2064, '250000', 1, '0', 9, 33, 0, 1, 0, '54'),
+(854, 2065, '600000', 1, '0', 9, 33, 0, 1, 0, '54'),
+(855, 2066, '700000', 1, '0', 9, 33, 0, 1, 0, '54'),
+(856, 2067, '500000', 1, '0', 9, 33, 0, 1, 0, '54'),
+(857, 2069, '800000', 1, '0', 9, 33, 0, 1, 0, '54'),
+(858, 2070, '900000', 1, '0', 9, 33, 0, 1, 0, '54'),
+(859, 2071, '500000', 1, '0', 9, 33, 0, 1, 0, '54'),
+(860, 2072, '6000000', 1, '0', 9, 33, 0, 1, 0, '54'),
+(861, 2073, '150000', 1, '0', 9, 33, 0, 1, 0, '54'),
+(862, 2074, '1500000', 1, '0', 9, 33, 0, 1, 0, '54'),
+(863, 2075, '700000', 1, '0', 9, 33, 0, 1, 0, '54'),
+(864, 2076, '600000', 1, '0', 9, 33, 0, 1, 0, '54'),
+(865, 2077, '1000000', 1, '0', 9, 33, 0, 1, 0, '54'),
+(866, 2078, '900000', 1, '0', 9, 33, 0, 1, 0, '54'),
+(867, 2079, '250000', 1, '0', 9, 33, 0, 1, 0, '54'),
+(868, 2080, '700000', 1, '0', 9, 33, 0, 1, 0, '54'),
+(869, 987, '6000000', 1, '0', 9, 33, 0, 1, 0, '54'),
+(870, 2081, '100000', 1, '0', 9, 33, 0, 1, 0, '54'),
+(871, 2083, '300000', 1, '0', 9, 33, 0, 1, 0, '54'),
+(872, 2060, '750000', 1, '0', 9, 33, 0, 1, 0, '54'),
+(873, 2068, '300000', 1, '0', 9, 33, 0, 1, 0, '54'),
+(874, 2082, '300000', 1, '0', 9, 33, 0, 1, 0, '54'),
+(875, 2132, '250000', 1, '0', 9, 33, 0, 1, 0, '51'),
+(876, 2129, '800', 1, '0', 2, 15, 0, 1, 0, '52'),
+(877, 2130, '200000', 1, '0', 2, 15, 0, 1, 0, '52'),
+(878, 2133, '160000', 1, '0', 10, 34, 0, 1, 0, '51'),
+(879, 2134, '160000', 1, '0', 10, 34, 0, 1, 0, '51'),
+(880, 2135, '300000', 1, '0', 10, 34, 0, 1, 0, '51'),
+(881, 2136, '300000', 1, '0', 10, 34, 0, 1, 0, '51'),
+(882, 2137, '200000', 1, '0', 10, 34, 0, 1, 0, '51'),
+(883, 2138, '1000000', 1, '0', 10, 34, 0, 1, 0, '51'),
+(884, 2139, '800000', 1, '0', 10, 34, 0, 1, 0, '51'),
+(885, 2140, '160000', 1, '0', 10, 34, 0, 1, 0, '51'),
+(886, 2141, '3000000', 1, '0', 10, 34, 0, 1, 0, '51'),
+(887, 2142, '300000', 1, '0', 10, 34, 0, 1, 0, '51'),
+(888, 2143, '400000', 1, '0', 10, 34, 0, 1, 0, '51'),
+(889, 2144, '100000', 1, '0', 10, 34, 0, 1, 0, '51'),
+(890, 2061, '2000000', 1, '0', 10, 34, 0, 1, 0, '51'),
+(891, 2145, '309200', 1, '0', 10, 34, 0, 1, 0, '51'),
+(892, 2146, '2000000', 1, '0', 10, 34, 0, 1, 0, '51'),
+(893, 2147, '4500000', 1, '0', 10, 34, 0, 1, 0, '51'),
+(894, 2148, '1200000', 1, '0', 10, 34, 0, 1, 0, '51'),
+(895, 2149, '900000', 1, '0', 10, 34, 0, 1, 0, '51'),
+(896, 2150, '2800000', 1, '0', 10, 34, 0, 1, 0, '51'),
+(897, 2151, '1600000', 1, '0', 10, 34, 0, 1, 0, '51'),
+(898, 2152, '2800000', 1, '0', 10, 34, 0, 1, 0, '51'),
+(899, 2153, '3000000', 1, '0', 10, 34, 0, 1, 0, '51'),
+(900, 2058, '3000000', 1, '0', 10, 34, 0, 1, 0, '51'),
+(901, 2059, '3000000', 1, '0', 10, 34, 0, 1, 0, '51'),
+(902, 2155, '3000000', 1, '0', 10, 34, 0, 1, 0, '51'),
+(903, 2158, '3000000', 1, '0', 10, 34, 0, 1, 0, '51'),
+(904, 2157, '3000000', 1, '0', 10, 34, 0, 1, 0, '51'),
+(905, 2159, '3000000', 1, '0', 10, 34, 0, 1, 0, '51'),
+(906, 2160, '3000000', 1, '0', 10, 34, 0, 1, 0, '51'),
+(907, 2161, '3000000', 1, '0', 10, 34, 0, 1, 0, '51'),
+(908, 2162, '3000000', 1, '0', 10, 34, 0, 1, 0, '51'),
+(909, 2163, '3000000', 1, '0', 10, 34, 0, 1, 0, '51'),
+(910, 2164, '3000000', 1, '0', 10, 34, 0, 1, 0, '51'),
+(911, 2165, '3000000', 1, '0', 10, 34, 0, 1, 0, '51'),
+(912, 2166, '100000', 1, '0', 10, 34, 0, 1, 0, '51'),
+(913, 2167, '3000000', 1, '0', 10, 34, 0, 1, 0, '51'),
+(914, 2168, '3000000', 1, '0', 10, 34, 0, 1, 0, '51'),
+(915, 2169, '3000000', 1, '0', 10, 34, 0, 1, 0, '51'),
+(917, 2171, '3000000', 1, '0', 10, 34, 0, 1, 0, '51'),
+(918, 2172, '1200000', 1, '0', 10, 34, 0, 1, 0, '51'),
+(919, 2062, '800000', 1, '0', 10, 34, 0, 1, 0, '51'),
+(920, 849, '40000', 1, '0', 3, 18, 0, 1, 0, '51'),
+(921, 851, '500000', 1, '0', 3, 18, 0, 1, 0, '51'),
+(922, 727, '5000000', 1, '0', 1, 4, 0, 1, 0, '51'),
+(923, 849, '20000', 1, '0', 1, 4, 0, 1, 0, '51'),
+(924, 851, '500000', 1, '0', 1, 4, 0, 1, 0, '51'),
+(925, 727, '530000', 1, '0', 4, 21, 0, 1, 0, '51'),
+(926, 849, '20000', 1, '0', 4, 21, 0, 1, 0, '51'),
+(927, 851, '125000', 1, '0', 4, 21, 0, 1, 0, '51'),
+(928, 727, '530000', 1, '0', 1, 4, 0, 1, 0, '52'),
+(929, 849, '20000', 1, '0', 1, 4, 0, 1, 0, '52'),
+(930, 851, '125000', 1, '0', 1, 4, 0, 1, 0, '52'),
+(931, 727, '530000', 1, '0', 4, 21, 0, 1, 0, '52'),
+(932, 849, '20000', 1, '0', 4, 21, 0, 1, 0, '52'),
+(933, 851, '125000', 1, '0', 4, 21, 0, 1, 0, '52'),
+(934, 727, '530000', 1, '0', 4, 21, 0, 1, 0, '53'),
+(935, 849, '20000', 1, '0', 4, 21, 0, 1, 0, '53'),
+(936, 851, '125000', 1, '0', 4, 21, 0, 1, 0, '53'),
+(937, 727, '530000', 1, '0', 1, 4, 0, 1, 0, '53'),
+(938, 849, '20000', 1, '0', 1, 4, 0, 1, 0, '53'),
+(939, 851, '125000', 1, '0', 1, 4, 0, 1, 0, '53'),
+(940, 727, '530000', 1, '0', 4, 21, 0, 1, 0, '54'),
+(941, 849, '20000', 1, '0', 4, 21, 0, 1, 0, '54'),
+(942, 851, '125000', 1, '0', 4, 21, 0, 1, 0, '54'),
+(943, 727, '530000', 1, '0', 5, 22, 0, 1, 0, '51'),
+(944, 849, '20000', 1, '0', 5, 22, 0, 1, 0, '51'),
+(945, 851, '125000', 1, '0', 5, 22, 0, 1, 0, '51'),
+(946, 727, '530000', 1, '0', 1, 4, 0, 1, 0, '54'),
+(947, 849, '20000', 1, '0', 1, 4, 0, 1, 0, '54'),
+(948, 851, '125000', 1, '0', 1, 4, 0, 1, 0, '54'),
+(949, 727, '530000', 1, '0', 5, 22, 0, 1, 0, '52'),
+(950, 849, '20000', 1, '0', 5, 22, 0, 1, 0, '52'),
+(951, 851, '125000', 1, '0', 5, 22, 0, 1, 0, '52'),
+(952, 727, '530000', 1, '0', 1, 5, 0, 1, 0, '51'),
+(953, 849, '20000', 1, '0', 1, 5, 0, 1, 0, '51'),
+(954, 851, '125000', 1, '0', 1, 5, 0, 1, 0, '51'),
+(955, 727, '530000', 1, '0', 5, 22, 0, 1, 0, '53'),
+(956, 849, '20000', 1, '0', 5, 22, 0, 1, 0, '53'),
+(957, 851, '125000', 1, '0', 5, 22, 0, 1, 0, '53'),
+(958, 727, '530000', 1, '0', 1, 5, 0, 1, 0, '52'),
+(959, 849, '20000', 1, '0', 1, 5, 0, 1, 0, '52'),
+(960, 851, '125000', 1, '0', 1, 5, 0, 1, 0, '52'),
+(961, 727, '530000', 1, '0', 5, 22, 0, 1, 0, '54'),
+(962, 849, '20000', 1, '0', 5, 22, 0, 1, 0, '54'),
+(963, 851, '125000', 1, '0', 5, 22, 0, 1, 0, '54'),
+(964, 727, '530000', 1, '0', 5, 22, 0, 1, 0, '55'),
+(965, 849, '20000', 1, '0', 5, 22, 0, 1, 0, '55'),
+(966, 851, '125000', 1, '0', 5, 22, 0, 1, 0, '55'),
+(967, 727, '530000', 1, '0', 1, 5, 0, 1, 0, '53'),
+(968, 849, '20000', 1, '0', 1, 5, 0, 1, 0, '53'),
+(970, 727, '530000', 1, '0', 5, 23, 0, 1, 0, '51'),
+(971, 849, '20000', 1, '0', 5, 23, 0, 1, 0, '51'),
+(972, 851, '125000', 1, '0', 5, 23, 0, 1, 0, '51'),
+(973, 727, '530000', 1, '0', 1, 5, 0, 1, 0, '54'),
+(974, 849, '20000', 1, '0', 1, 5, 0, 1, 0, '54'),
+(975, 851, '125000', 1, '0', 1, 5, 0, 1, 0, '54'),
+(976, 727, '560000', 1, '0', 5, 24, 0, 1, 0, '51'),
+(977, 849, '40000', 1, '0', 5, 24, 0, 1, 0, '51'),
+(978, 851, '150000', 1, '0', 5, 24, 0, 1, 0, '51'),
+(979, 851, '125000', 1, '0', 1, 5, 0, 1, 0, '53'),
+(980, 727, '150000', 1, '0', 6, 26, 0, 1, 0, '51'),
+(981, 849, '20000', 1, '0', 6, 26, 0, 1, 0, '51'),
+(982, 851, '125000', 1, '0', 6, 26, 0, 1, 0, '51'),
+(983, 727, '530000', 1, '0', 1, 5, 0, 1, 0, '55'),
+(984, 849, '20000', 1, '0', 1, 5, 0, 1, 0, '55'),
+(985, 851, '125000', 1, '0', 1, 5, 0, 1, 0, '55'),
+(986, 727, '1500000', 1, '0', 1, 6, 0, 1, 0, '51'),
+(987, 849, '20000', 1, '0', 1, 6, 0, 1, 0, '51'),
+(988, 851, '500000', 1, '0', 1, 6, 0, 1, 0, '51'),
+(989, 902, '619289', 1, '0', 1, 6, 0, 1, 0, '51'),
+(990, 727, '530000', 1, '0', 1, 6, 0, 1, 0, '52'),
+(991, 849, '20000', 1, '0', 1, 6, 0, 1, 0, '52'),
+(992, 851, '125000', 1, '0', 1, 6, 0, 1, 0, '52'),
+(993, 902, '20000', 1, '0', 6, 26, 0, 1, 0, '51'),
+(994, 727, '530000', 1, '0', 1, 6, 0, 1, 0, '53'),
+(995, 849, '20000', 1, '0', 1, 6, 0, 1, 0, '53'),
+(996, 851, '125000', 1, '0', 1, 6, 0, 1, 0, '53'),
+(997, 727, '150000', 1, '0', 6, 26, 0, 1, 0, '52'),
+(998, 849, '20000', 1, '0', 6, 26, 0, 1, 0, '52'),
+(999, 851, '125000', 1, '0', 6, 26, 0, 1, 0, '52'),
+(1000, 727, '530000', 1, '0', 1, 6, 0, 1, 0, '54'),
+(1001, 849, '20000', 1, '0', 1, 6, 0, 1, 0, '54'),
+(1002, 851, '125000', 1, '0', 1, 6, 0, 1, 0, '54'),
+(1003, 727, '150000', 1, '0', 6, 26, 0, 1, 0, '53'),
+(1004, 849, '20000', 1, '0', 6, 26, 0, 1, 0, '53'),
+(1005, 851, '125000', 1, '0', 6, 26, 0, 1, 0, '53'),
+(1007, 849, '20000', 1, '0', 1, 6, 0, 1, 0, '55'),
+(1009, 727, '150000', 1, '0', 6, 27, 0, 1, 0, '51'),
+(1010, 849, '20000', 1, '0', 6, 27, 0, 1, 0, '51'),
+(1011, 851, '125000', 1, '0', 6, 27, 0, 1, 0, '51'),
+(1012, 727, '530000', 1, '0', 1, 6, 0, 1, 0, '56');
+INSERT INTO `distribucion_presupuestaria` (`id`, `id_partida`, `monto_inicial`, `id_ejercicio`, `monto_actual`, `id_sector`, `id_programa`, `id_proyecto`, `status`, `status_cerrar`, `id_actividad`) VALUES
+(1013, 849, '20000', 1, '0', 1, 6, 0, 1, 0, '56'),
+(1014, 851, '125000', 1, '0', 1, 6, 0, 1, 0, '56'),
+(1015, 727, '150000', 1, '0', 6, 27, 0, 1, 0, '52'),
+(1016, 849, '20000', 1, '0', 6, 27, 0, 1, 0, '52'),
+(1017, 851, '125000', 1, '0', 6, 27, 0, 1, 0, '52'),
+(1018, 727, '150000', 1, '0', 6, 27, 0, 1, 0, '53'),
+(1019, 849, '20000', 1, '0', 6, 27, 0, 1, 0, '53'),
+(1020, 851, '125000', 1, '0', 6, 27, 0, 1, 0, '53'),
+(1021, 727, '530000', 1, '0', 1, 6, 0, 1, 0, '57'),
+(1022, 849, '20000', 1, '0', 1, 6, 0, 1, 0, '57'),
+(1023, 851, '125000', 1, '0', 1, 6, 0, 1, 0, '57'),
+(1024, 727, '150000', 1, '0', 7, 28, 0, 1, 0, '51'),
+(1025, 849, '20000', 1, '0', 7, 28, 0, 1, 0, '51'),
+(1026, 851, '125000', 1, '0', 7, 28, 0, 1, 0, '51'),
+(1027, 727, '400000', 1, '0', 1, 6, 0, 1, 0, '55'),
+(1028, 851, '90000', 1, '0', 1, 6, 0, 1, 0, '55'),
+(1030, 849, '100000', 1, '0', 8, 29, 0, 1, 0, '51'),
+(1031, 851, '225000', 1, '0', 8, 29, 0, 1, 0, '51'),
+(1032, 727, '530000', 1, '0', 1, 6, 0, 1, 0, '58'),
+(1033, 849, '20000', 1, '0', 1, 6, 0, 1, 0, '58'),
+(1034, 851, '125000', 1, '0', 1, 6, 0, 1, 0, '58'),
+(1035, 727, '150000', 1, '0', 8, 29, 0, 1, 0, '52'),
+(1036, 849, '20000', 1, '0', 8, 29, 0, 1, 0, '52'),
+(1037, 851, '125000', 1, '0', 8, 29, 0, 1, 0, '52'),
+(1038, 727, '150000', 1, '0', 8, 29, 0, 1, 0, '53'),
+(1039, 849, '20000', 1, '0', 8, 29, 0, 1, 0, '53'),
+(1040, 851, '125000', 1, '0', 8, 29, 0, 1, 0, '53'),
+(1041, 727, '1000000', 1, '0', 1, 7, 0, 1, 0, '51'),
+(1042, 849, '20000', 1, '0', 1, 7, 0, 1, 0, '51'),
+(1043, 851, '125000', 1, '0', 1, 7, 0, 1, 0, '51'),
+(1044, 727, '150000', 1, '0', 8, 29, 0, 1, 0, '54'),
+(1045, 849, '20000', 1, '0', 8, 29, 0, 1, 0, '54'),
+(1046, 851, '125000', 1, '0', 8, 29, 0, 1, 0, '54'),
+(1047, 727, '530000', 1, '0', 1, 7, 0, 1, 0, '52'),
+(1048, 849, '20000', 1, '0', 1, 7, 0, 1, 0, '52'),
+(1049, 851, '125000', 1, '0', 1, 7, 0, 1, 0, '52'),
+(1050, 727, '150000', 1, '0', 8, 29, 0, 1, 0, '55'),
+(1051, 849, '20000', 1, '0', 8, 29, 0, 1, 0, '55'),
+(1052, 851, '125000', 1, '0', 8, 29, 0, 1, 0, '55'),
+(1053, 727, '150000', 1, '0', 8, 29, 0, 1, 0, '56'),
+(1054, 849, '20000', 1, '0', 8, 29, 0, 1, 0, '56'),
+(1055, 851, '125000', 1, '0', 8, 29, 0, 1, 0, '56'),
+(1056, 727, '1000000', 1, '0', 1, 7, 0, 1, 0, '53'),
+(1057, 849, '20000', 1, '0', 1, 7, 0, 1, 0, '53'),
+(1058, 851, '125000', 1, '0', 1, 7, 0, 1, 0, '53'),
+(1059, 727, '150000', 1, '0', 8, 30, 0, 1, 0, '51'),
+(1060, 849, '20000', 1, '0', 8, 30, 0, 1, 0, '51'),
+(1061, 851, '125000', 1, '0', 8, 30, 0, 1, 0, '51'),
+(1062, 727, '530000', 1, '0', 1, 7, 0, 1, 0, '54'),
+(1063, 849, '20000', 1, '0', 1, 7, 0, 1, 0, '54'),
+(1064, 851, '125000', 1, '0', 1, 7, 0, 1, 0, '54'),
+(1065, 727, '150000', 1, '0', 8, 30, 0, 1, 0, '52'),
+(1066, 849, '20000', 1, '0', 8, 30, 0, 1, 0, '52'),
+(1067, 851, '125000', 1, '0', 8, 30, 0, 1, 0, '52'),
+(1068, 727, '80000', 1, '0', 1, 7, 0, 1, 0, '55'),
+(1069, 849, '20000', 1, '0', 1, 7, 0, 1, 0, '55'),
+(1070, 851, '35000', 1, '0', 1, 7, 0, 1, 0, '55'),
+(1071, 727, '150000', 1, '0', 8, 30, 0, 1, 0, '53'),
+(1072, 849, '20000', 1, '0', 8, 30, 0, 1, 0, '53'),
+(1073, 851, '25000', 1, '0', 8, 30, 0, 1, 0, '53'),
+(1074, 727, '530000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(1075, 849, '20000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(1076, 851, '125000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(1077, 727, '530000', 1, '0', 1, 8, 0, 1, 0, '52'),
+(1078, 849, '20000', 1, '0', 1, 8, 0, 1, 0, '52'),
+(1079, 851, '125000', 1, '0', 1, 8, 0, 1, 0, '52'),
+(1080, 727, '530000', 1, '0', 1, 8, 0, 1, 0, '53'),
+(1081, 849, '20000', 1, '0', 1, 8, 0, 1, 0, '53'),
+(1082, 851, '125000', 1, '0', 1, 8, 0, 1, 0, '53'),
+(1083, 727, '530000', 1, '0', 1, 9, 0, 1, 0, '51'),
+(1084, 849, '20000', 1, '0', 1, 9, 0, 1, 0, '51'),
+(1085, 851, '125000', 1, '0', 1, 9, 0, 1, 0, '51'),
+(1086, 727, '530000', 1, '0', 1, 9, 0, 1, 0, '52'),
+(1087, 849, '20000', 1, '0', 1, 9, 0, 1, 0, '52'),
+(1088, 851, '125000', 1, '0', 1, 9, 0, 1, 0, '52'),
+(1089, 727, '530000', 1, '0', 1, 9, 0, 1, 0, '53'),
+(1090, 849, '20000', 1, '0', 1, 9, 0, 1, 0, '53'),
+(1091, 851, '125000', 1, '0', 1, 9, 0, 1, 0, '53'),
+(1092, 727, '530000', 1, '0', 1, 9, 0, 1, 0, '54'),
+(1093, 849, '20000', 1, '0', 1, 9, 0, 1, 0, '54'),
+(1094, 851, '125000', 1, '0', 1, 9, 0, 1, 0, '54'),
+(1095, 727, '530000', 1, '0', 1, 10, 0, 1, 0, '51'),
+(1096, 849, '20000', 1, '0', 1, 10, 0, 1, 0, '51'),
+(1097, 851, '125000', 1, '0', 1, 10, 0, 1, 0, '51'),
+(1098, 727, '530000', 1, '0', 1, 11, 0, 1, 0, '51'),
+(1099, 849, '20000', 1, '0', 1, 11, 0, 1, 0, '51'),
+(1100, 851, '125000', 1, '0', 1, 11, 0, 1, 0, '51'),
+(1101, 727, '530000', 1, '0', 1, 11, 0, 1, 0, '52'),
+(1102, 849, '20000', 1, '0', 1, 11, 0, 1, 0, '52'),
+(1103, 851, '125000', 1, '0', 1, 11, 0, 1, 0, '52'),
+(1104, 727, '530000', 1, '0', 1, 11, 0, 1, 0, '53'),
+(1105, 849, '20000', 1, '0', 1, 11, 0, 1, 0, '53'),
+(1106, 851, '125000', 1, '0', 1, 11, 0, 1, 0, '53'),
+(1107, 727, '530000', 1, '0', 1, 11, 0, 1, 0, '54'),
+(1108, 849, '20000', 1, '0', 1, 11, 0, 1, 0, '54'),
+(1109, 851, '125000', 1, '0', 1, 11, 0, 1, 0, '54'),
+(1110, 727, '600000', 1, '0', 2, 14, 0, 1, 0, '51'),
+(1111, 849, '80000', 1, '0', 2, 14, 0, 1, 0, '51'),
+(1112, 851, '500000', 1, '0', 2, 14, 0, 1, 0, '51'),
+(1113, 727, '600000', 1, '0', 2, 14, 0, 1, 0, '52'),
+(1114, 849, '80000', 1, '0', 2, 14, 0, 1, 0, '52'),
+(1115, 851, '500000', 1, '0', 2, 14, 0, 1, 0, '52'),
+(1116, 727, '1060000', 1, '0', 2, 40, 0, 1, 0, '51'),
+(1117, 849, '30000', 1, '0', 2, 40, 0, 1, 0, '51'),
+(1118, 851, '250000', 1, '0', 2, 40, 0, 1, 0, '51'),
+(1119, 727, '1060000', 1, '0', 2, 40, 0, 1, 0, '52'),
+(1120, 849, '30000', 1, '0', 2, 40, 0, 1, 0, '52'),
+(1121, 851, '250000', 1, '0', 2, 40, 0, 1, 0, '52'),
+(1122, 727, '1060000', 1, '0', 2, 40, 0, 1, 0, '53'),
+(1123, 849, '30000', 1, '0', 2, 40, 0, 1, 0, '53'),
+(1124, 851, '125000', 1, '0', 2, 40, 0, 1, 0, '53'),
+(1125, 727, '530000', 1, '0', 2, 40, 0, 1, 0, '54'),
+(1126, 849, '30000', 1, '0', 2, 40, 0, 1, 0, '54'),
+(1127, 851, '125000', 1, '0', 2, 40, 0, 1, 0, '54'),
+(1128, 727, '1060000', 1, '0', 3, 18, 0, 1, 0, '51'),
+(1129, 2055, '4143058', 1, '4143058', 10, 34, 0, 1, 0, '51'),
+(1130, 2036, '40000000', 1, '40000000', 10, 34, 0, 1, 0, '51'),
+(1135, 727, '780000', 1, '0', 8, 29, 0, 1, 0, '51'),
+(1136, 810, '9750000', 1, '0', 9, 33, 0, 1, 0, '51'),
+(1137, 1685, '100000', 1, '100000', 10, 34, 0, 1, 0, '51'),
+(1138, 2035, '150000', 1, '150000', 10, 34, 0, 1, 0, '51'),
+(1139, 2037, '2000000', 1, '2000000', 10, 34, 0, 1, 0, '51'),
+(1140, 1011, '104200', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1141, 1013, '14800', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1142, 1018, '12540', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1143, 1021, '52350', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1144, 1026, '23547', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1145, 1027, '41770', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1146, 1019, '15789', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1147, 1029, '7879', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1148, 1033, '118500', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1149, 1036, '20980', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1150, 1037, '10380', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1151, 1038, '89200', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1152, 1039, '9835', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1153, 1040, '9300', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1154, 1041, '9200', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1155, 1042, '16770', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1156, 1043, '16770', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1157, 1046, '3770', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1158, 1047, '62800', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1160, 1050, '62800', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1161, 1052, '62800', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1162, 1053, '7500', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1163, 1054, '60400', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1164, 1056, '3770', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1165, 1057, '18835', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1166, 1058, '18835', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1167, 1059, '89231', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1168, 1060, '37770', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1169, 1062, '37770', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1170, 1064, '37770', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1171, 1065, '18835', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1172, 1067, '88741', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1173, 1069, '155000', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1174, 1070, '37770', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1175, 1071, '110115', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1176, 1073, '11031', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1177, 1074, '11031', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1178, 1075, '11031', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1179, 1077, '18835', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1180, 1078, '91789', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1181, 1079, '18835', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1182, 1081, '105250', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1183, 1082, '18835', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1184, 1083, '18835', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1185, 1084, '37770', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1186, 1085, '4800', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1187, 1086, '14200', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1188, 1087, '93250', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1189, 1088, '68400', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1190, 1089, '18835', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1191, 1090, '18835', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1192, 1098, '149900', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1193, 1118, '98500', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1194, 1120, '37770', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1195, 1124, '93000', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1196, 1135, '20400', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1197, 1138, '3770', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1198, 1141, '73540', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1199, 1142, '37770', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1200, 1143, '72800', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1201, 1144, '18900', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1202, 1147, '10000', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1203, 1150, '70800', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1204, 1156, '14100', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1205, 1160, '16000', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1206, 1162, '10000', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1207, 1164, '75900', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1208, 1165, '27700', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1209, 1168, '102500', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1210, 1169, '18835', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1211, 1173, '102500', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1212, 1174, '37770', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1213, 1176, '18835', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1214, 1188, '18835', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1215, 1192, '1019987', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1216, 1198, '37770', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1217, 1201, '145800', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1218, 1203, '145800', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1219, 1204, '37770', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1220, 1208, '110200', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1221, 1209, '37770', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1222, 1212, '186100', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1223, 1213, '37770', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1224, 1217, '37770', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1225, 1218, '37770', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1226, 1226, '93500', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1227, 1241, '93500', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1228, 1251, '37770', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1229, 1253, '37770', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1230, 1255, '37770', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1231, 1262, '156900', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1232, 1263, '120300', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1233, 1264, '120300', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1234, 1265, '120300', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1235, 1440, '3704', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1236, 1451, '12562', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1237, 1454, '36000', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1238, 2036, '215500', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1239, 2037, '195400', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1240, 727, '198600', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1241, 738, '9044', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1242, 745, '25187', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1243, 749, '36770', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1244, 762, '18264', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1245, 766, '46392', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1246, 767, '26640', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1247, 788, '1163', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1248, 789, '2996', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1249, 790, '2500', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1250, 796, '90546', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1251, 799, '1921', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1252, 808, '8292', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1253, 810, '186300', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1254, 832, '17650', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1255, 844, '3770', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1256, 849, '165300', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1257, 851, '156900', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1258, 859, '22911', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1259, 861, '9463', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1260, 866, '51786', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1261, 868, '19230', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1262, 869, '17129', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1263, 870, '16190', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1264, 884, '2914', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1265, 886, '2279', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1266, 887, '2193', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1267, 888, '534', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1268, 902, '37770', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1269, 904, '18885', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1270, 905, '37770', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1271, 906, '18885', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1272, 907, '95369', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1273, 910, '92500', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1274, 911, '95700', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1275, 913, '37770', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1276, 946, '3770', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1277, 982, '44124', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1278, 984, '148200', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1279, 989, '160000', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1280, 993, '38332', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1281, 1048, '18385', 1, '0', 1, 2, 0, 1, 0, '51'),
+(1282, 727, '20001', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1283, 732, '3000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1284, 737, '500', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1285, 738, '500', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1286, 745, '17300', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1287, 746, '27400', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1288, 760, '500', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1289, 762, '500', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1290, 766, '5100', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1291, 767, '4100', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1292, 771, '500', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1293, 773, '500', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1294, 775, '510', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1295, 776, '100', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1296, 783, '100', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1297, 785, '100', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1298, 786, '150', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1299, 787, '150', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1300, 788, '100', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1301, 789, '4100', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1302, 790, '3900', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1303, 791, '100', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1304, 792, '6100', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1305, 793, '4700', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1306, 796, '3100', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1307, 797, '4500', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1308, 798, '111', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1309, 799, '3300', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1310, 800, '500', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1311, 803, '100', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1312, 810, '500', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1313, 812, '100', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1314, 813, '100', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1315, 814, '100', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1316, 817, '500', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1317, 819, '100', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1318, 820, '100', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1319, 822, '500', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1320, 832, '100', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1321, 837, '500', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1322, 842, '100', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1323, 843, '100', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1324, 844, '100', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1325, 845, '100', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1326, 846, '100', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1327, 849, '3000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1328, 851, '3000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1329, 852, '3000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1330, 854, '3000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1331, 855, '3000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1332, 856, '3000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1333, 859, '3000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1334, 861, '3000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1335, 862, '3000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1336, 864, '3000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1337, 866, '39000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1338, 868, '26000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1339, 869, '19500', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1340, 870, '28600', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1341, 872, '15600', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1342, 873, '10400', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1343, 874, '10400', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1344, 875, '13000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1345, 879, '6500', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1346, 880, '3900', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1347, 881, '3900', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1348, 882, '3900', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1349, 884, '10400', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1350, 886, '6500', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1351, 887, '13000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1352, 888, '5200', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1353, 889, '16900', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1354, 891, '11700', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1355, 892, '26000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1356, 893, '9100', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1357, 902, '100', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1358, 903, '100', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1359, 904, '100', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1360, 905, '100', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1361, 909, '77220', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1362, 910, '100', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1363, 911, '300', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1364, 913, '100', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1365, 914, '100', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1366, 915, '100', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1367, 916, '100', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1368, 917, '100', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1369, 921, '86580', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1370, 922, '100', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1371, 923, '300', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1372, 925, '100', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1373, 926, '100', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1374, 927, '100', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1375, 943, '100', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1376, 944, '100', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1377, 948, '14040', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1378, 949, '100', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1379, 954, '100', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1380, 955, '100', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1381, 959, '37440', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1382, 960, '300', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1383, 961, '100', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1384, 965, '100', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1385, 966, '100', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1386, 967, '100', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1387, 971, '30500', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1388, 972, '100', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1389, 973, '300', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1390, 975, '100', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1391, 977, '100', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1392, 2173, '100', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1393, 982, '55000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1394, 983, '104000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1395, 984, '90000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1396, 985, '33000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1397, 987, '9000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1398, 989, '2000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1399, 990, '2000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1400, 991, '2000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1401, 993, '2000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1402, 994, '2000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1403, 1011, '273123', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1404, 1021, '20000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1405, 1026, '30000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1406, 1027, '12000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1407, 1033, '300000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1408, 1036, '50000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1409, 1038, '500000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1410, 1041, '6000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1411, 1042, '30000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1412, 1047, '280000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1413, 1050, '60000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1414, 1052, '90000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1415, 1059, '30000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1416, 1062, '50000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1417, 1064, '50000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1418, 1065, '120000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1419, 1069, '200000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1420, 1070, '50000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1421, 1075, '50000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1422, 1077, '36000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1423, 1078, '300000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1424, 1081, '360000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1425, 1082, '300000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1426, 1084, '40000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1427, 1087, '130000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1428, 1088, '70000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1429, 1089, '12000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1430, 1090, '12000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1431, 1098, '20000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1432, 1106, '1000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1433, 1118, '100000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1434, 1122, '100000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1435, 1142, '180000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1436, 1143, '300000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1437, 1144, '10000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1438, 1147, '100000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1439, 1148, '1000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1440, 1150, '1000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1441, 1154, '1200', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1442, 1156, '1200', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1443, 1160, '1200', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1444, 1165, '1200', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1445, 1168, '240000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1446, 1173, '120000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1447, 1174, '60000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1448, 1176, '6000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1449, 1192, '911000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1450, 1194, '600', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1451, 1198, '600', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1452, 1203, '240000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1453, 1208, '1200', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1454, 1209, '1200', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1455, 1212, '120000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1456, 1217, '120000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1457, 1226, '30000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1458, 1231, '1000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1459, 1233, '1200', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1460, 1241, '60000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1461, 1262, '80000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1462, 1263, '200000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1463, 1264, '160000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1464, 1286, '1200', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1465, 1439, '1000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1466, 1440, '1000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1467, 1447, '500', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1468, 1449, '4680', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1469, 1450, '21400', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1470, 1451, '500', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1471, 1453, '32800', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1472, 1454, '49200', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1473, 1495, '100', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1474, 1514, '100', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1475, 1525, '1000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1476, 1527, '1000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1477, 1531, '50', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1478, 1533, '9600', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1479, 1536, '600', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1480, 1542, '7020', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1481, 1538, '500', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1482, 1544, '19300', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1483, 2036, '700000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1484, 2037, '7000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1485, 2055, '1964000', 1, '0', 1, 1, 0, 1, 0, '51'),
+(1486, 2170, '20000000', 1, '0', 10, 34, 0, 1, 0, '51'),
+(1487, 2174, '650000', 1, '0', 10, 34, 0, 1, 0, '51'),
+(1491, 1011, '8000000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(1492, 1047, '8500000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(1493, 1143, '11000000', 1, '0', 1, 8, 0, 1, 0, '51'),
+(1494, 1501, '4616667', 1, '0', 1, 4, 0, 1, 0, '51'),
+(1495, 1503, '4616667', 1, '0', 1, 4, 0, 1, 0, '51'),
+(1496, 1504, '5116666', 1, '0', 1, 4, 0, 1, 0, '51'),
+(1497, 1516, '256800', 1, '0', 1, 4, 0, 1, 0, '51'),
+(1498, 727, '311340', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1499, 732, '48360', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1500, 737, '90888', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1501, 746, '195000', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1502, 760, '218700', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1503, 762, '15000', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1504, 766, '22032', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1505, 767, '18864', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1506, 771, '21600', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1507, 773, '5088', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1508, 775, '7104', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1509, 783, '22308', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1510, 785, '11088', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1511, 786, '14544', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1512, 791, '4488', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1513, 792, '26328', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1514, 793, '10968', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1515, 797, '68184', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1516, 849, '1200', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1517, 851, '1200', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1518, 852, '1200', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1519, 854, '1200', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1520, 855, '1200', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1521, 856, '1200', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1522, 862, '1200', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1523, 864, '1200', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1524, 866, '12876', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1525, 868, '8388', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1526, 869, '6444', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1527, 870, '5880', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1528, 872, '2736', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1529, 873, '1536', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1530, 874, '1356', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1531, 875, '1272', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1532, 879, '7368', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1533, 880, '3456', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1534, 881, '3924', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1535, 882, '4752', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1536, 889, '9120', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1537, 891, '5388', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1538, 892, '4296', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1539, 893, '4584', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1540, 903, '220488', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1541, 907, '56784', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1542, 908, '36168', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1543, 915, '22968', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1544, 919, '7200', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1545, 920, '2664', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1546, 957, '24072', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1547, 958, '9780', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1548, 962, '29952', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1549, 965, '18696', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1550, 969, '8424', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1551, 989, '1200', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1552, 990, '1200', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1553, 991, '1200', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1554, 994, '1200', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1555, 1033, '30000', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1556, 1036, '30000', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1557, 1038, '414940', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1558, 1047, '90000', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1559, 1052, '30000', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1560, 1069, '124992', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1561, 1078, '284988', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1562, 1081, '306600', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1563, 1084, '114984', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1564, 1087, '150000', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1565, 1118, '66000', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1566, 1147, '16992', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1567, 1192, '329318', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1568, 1233, '66000', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1569, 1241, '20004', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1570, 1262, '50004', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1571, 1263, '120000', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1572, 1264, '50004', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1573, 1439, '30816', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1574, 1440, '80560', 1, '0', 1, 3, 0, 1, 0, '51'),
+(1575, 2037, '90000', 1, '0', 1, 3, 0, 1, 0, '51');
 
 -- --------------------------------------------------------
 
@@ -1150,12 +3080,19 @@ CREATE TABLE `distribucion_presupuestaria` (
 --
 
 CREATE TABLE `ejercicio_fiscal` (
-  `id` int(255) NOT NULL,
+  `id` int(11) NOT NULL,
   `ano` varchar(255) DEFAULT NULL,
   `situado` varchar(255) DEFAULT NULL,
   `divisor` varchar(255) DEFAULT NULL,
-  `status` int(1) NOT NULL DEFAULT 1
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `status` int(11) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `ejercicio_fiscal`
+--
+
+INSERT INTO `ejercicio_fiscal` (`id`, `ano`, `situado`, `divisor`, `status`) VALUES
+(1, '2025', '828611640', '12', 1);
 
 -- --------------------------------------------------------
 
@@ -1165,33 +3102,33 @@ CREATE TABLE `ejercicio_fiscal` (
 
 CREATE TABLE `empleados` (
   `id` int(11) NOT NULL,
-  `nacionalidad` varchar(2) DEFAULT NULL,
-  `cedula` varchar(20) DEFAULT NULL,
-  `nombres` varchar(255) DEFAULT NULL,
-  `otros_anios` int(11) NOT NULL DEFAULT 0,
-  `status` varchar(5) DEFAULT NULL,
-  `observacion` varchar(255) DEFAULT NULL,
-  `cod_cargo` varchar(10) DEFAULT NULL,
-  `banco` varchar(255) DEFAULT NULL,
-  `cuenta_bancaria` varchar(255) DEFAULT NULL,
+  `nacionalidad` varchar(2) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `cedula` varchar(20) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `nombres` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `otros_años` int(11) NOT NULL DEFAULT 0,
+  `status` varchar(5) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `observacion` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `cod_cargo` varchar(10) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `banco` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `cuenta_bancaria` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
   `hijos` int(11) NOT NULL DEFAULT 0,
   `instruccion_academica` int(11) NOT NULL DEFAULT 0,
-  `discapacidades` int(2) NOT NULL DEFAULT 0,
-  `tipo_nomina` varchar(10) DEFAULT NULL,
-  `id_dependencia` int(255) NOT NULL,
-  `verificado` int(1) NOT NULL DEFAULT 0,
-  `correcion` varchar(255) DEFAULT NULL,
-  `beca` int(2) NOT NULL DEFAULT 0,
+  `discapacidades` int(11) NOT NULL DEFAULT 0,
+  `tipo_nomina` varchar(10) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `id_dependencia` int(11) NOT NULL,
+  `verificado` int(11) NOT NULL DEFAULT 0,
+  `correcion` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `beca` int(11) NOT NULL DEFAULT 0,
   `fecha_ingreso` date DEFAULT NULL,
   `id_categoria` int(11) NOT NULL,
-  `id_partida` longtext DEFAULT NULL
+  `id_partida` longtext COLLATE latin1_spanish_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 --
 -- Volcado de datos para la tabla `empleados`
 --
 
-INSERT INTO `empleados` (`id`, `nacionalidad`, `cedula`, `nombres`, `otros_anios`, `status`, `observacion`, `cod_cargo`, `banco`, `cuenta_bancaria`, `hijos`, `instruccion_academica`, `discapacidades`, `tipo_nomina`, `id_dependencia`, `verificado`, `correcion`, `beca`, `fecha_ingreso`, `id_categoria`, `id_partida`) VALUES
+INSERT INTO `empleados` (`id`, `nacionalidad`, `cedula`, `nombres`, `otros_años`, `status`, `observacion`, `cod_cargo`, `banco`, `cuenta_bancaria`, `hijos`, `instruccion_academica`, `discapacidades`, `tipo_nomina`, `id_dependencia`, `verificado`, `correcion`, `beca`, `fecha_ingreso`, `id_categoria`, `id_partida`) VALUES
 (1, 'V', '1569432', 'LARA, SANTIAGA', 0, 'A', NULL, '0041', '0175', '01750653640100510043', 0, 0, 0, '003', 6, 1, '', 0, '2018-01-18', 1, ''),
 (2, 'V', '1569359', 'CABULLA, LINO', 0, 'A', NULL, '0041', '0175', '01750082150076635687', 0, 1, 0, '003', 6, 1, '', 0, '2018-01-17', 1, ''),
 (3, 'V', '6087028', 'CAMACHO G, WILLIAM', 0, 'A', NULL, '1596', '0102', '01020338420000074405', 0, 0, 0, '003', 7, 1, '', 0, '2018-02-14', 1, ''),
@@ -1518,7 +3455,7 @@ INSERT INTO `empleados` (`id`, `nacionalidad`, `cedula`, `nombres`, `otros_anios
 (324, 'V', '15955539', 'MARTINEZ, LUIS ALBERTO', 0, 'A', NULL, '0455', '0163', '01630409364095002889', 1, 0, 0, '003', 6, 1, '', 0, '2018-05-15', 1, ''),
 (325, 'V', '15955628', 'DE LOS RIOS RODRIGUEZ, BOLPAUR', 0, 'A', NULL, '0455', '0102', '01020457710000315261', 0, 0, 0, '003', 6, 1, '', 0, '2022-02-17', 1, ''),
 (326, 'V', '15955682', 'LUNA VERA, JUAN BAUTISTA', 0, 'A', NULL, '0455', '0102', '01020457710100641736', 0, 0, 0, '003', 6, 1, '', 0, '2022-05-01', 1, '');
-INSERT INTO `empleados` (`id`, `nacionalidad`, `cedula`, `nombres`, `otros_anios`, `status`, `observacion`, `cod_cargo`, `banco`, `cuenta_bancaria`, `hijos`, `instruccion_academica`, `discapacidades`, `tipo_nomina`, `id_dependencia`, `verificado`, `correcion`, `beca`, `fecha_ingreso`, `id_categoria`, `id_partida`) VALUES
+INSERT INTO `empleados` (`id`, `nacionalidad`, `cedula`, `nombres`, `otros_años`, `status`, `observacion`, `cod_cargo`, `banco`, `cuenta_bancaria`, `hijos`, `instruccion_academica`, `discapacidades`, `tipo_nomina`, `id_dependencia`, `verificado`, `correcion`, `beca`, `fecha_ingreso`, `id_categoria`, `id_partida`) VALUES
 (327, 'V', '15955979', 'CURUMI ALCALA, WILMER FERNANDO', 0, 'A', NULL, '0090', '0175', '01750575140076883178', 0, 0, 0, '003', 6, 1, '', 0, '2022-11-09', 1, ''),
 (328, 'V', '15998672', 'GONZALEZ S. JUAN G.', 0, 'A', NULL, '0455', '0102', '01020457760100649749', 0, 0, 0, '003', 6, 1, '', 0, '2023-07-13', 1, ''),
 (329, 'V', '15999458', 'MENDOZA SEIJAS, ANA', 0, 'A', NULL, '0455', '0102', '01020457780100647160', 0, 0, 0, '003', 6, 1, '', 0, '2018-04-15', 1, ''),
@@ -1842,7 +3779,7 @@ INSERT INTO `empleados` (`id`, `nacionalidad`, `cedula`, `nombres`, `otros_anios
 (647, 'V', '21547299', 'CESAR ARVELO, MARCEL EDGARDO', 0, 'A', NULL, '0455', '0102', '01020147110000055932', 0, 0, 0, '003', 6, 1, '', 0, '2022-07-01', 1, ''),
 (648, 'V', '21547404', 'RUIZ ALONZO, DAYMAR ALEJANDRA', 0, 'A', NULL, '0455', '0102', '01020457730000515045', 1, 2, 0, '003', 6, 1, '', 1, '2022-05-01', 1, ''),
 (649, 'V', '21547526', 'LAICA DE CASTROLIZ MARIANA', 0, 'A', NULL, '0455', '0175', '01750044980076058189', 0, 0, 0, '003', 6, 1, '', 0, '2018-04-15', 1, '');
-INSERT INTO `empleados` (`id`, `nacionalidad`, `cedula`, `nombres`, `otros_anios`, `status`, `observacion`, `cod_cargo`, `banco`, `cuenta_bancaria`, `hijos`, `instruccion_academica`, `discapacidades`, `tipo_nomina`, `id_dependencia`, `verificado`, `correcion`, `beca`, `fecha_ingreso`, `id_categoria`, `id_partida`) VALUES
+INSERT INTO `empleados` (`id`, `nacionalidad`, `cedula`, `nombres`, `otros_años`, `status`, `observacion`, `cod_cargo`, `banco`, `cuenta_bancaria`, `hijos`, `instruccion_academica`, `discapacidades`, `tipo_nomina`, `id_dependencia`, `verificado`, `correcion`, `beca`, `fecha_ingreso`, `id_categoria`, `id_partida`) VALUES
 (650, 'V', '21547828', 'CASTILLA RESTREPO, DORIS', 0, 'A', NULL, '0041', '0102', '01020457740000192879', 0, 0, 0, '003', 6, 1, '', 0, '2013-01-01', 1, ''),
 (651, 'V', '21547839', 'MORALES GONZALEZ, NORALBA', 0, 'A', NULL, '7403', '0102', '01020457780000756558', 0, 0, 0, '003', 6, 1, '', 0, '2022-11-09', 1, ''),
 (652, 'V', '21547846', 'LOPEZ PONARE, MAYERLIN YASNEILA', 0, 'A', NULL, '0041', '0102', '01020457750000762869', 0, 0, 0, '003', 6, 1, '', 0, '2023-05-31', 1, ''),
@@ -2166,7 +4103,7 @@ INSERT INTO `empleados` (`id`, `nacionalidad`, `cedula`, `nombres`, `otros_anios
 (970, 'V', '30690674', 'GOMEZ MENDEZ, ROBERT ANTONIO', 0, 'A', NULL, '0455', '0102', '01020457710000671507', 0, 0, 0, '003', 6, 1, '', 0, '2021-10-13', 1, ''),
 (971, 'V', '30690687', 'TOVAR INFANTE, DITTCELI G.', 0, 'A', NULL, '0455', '0102', '01020457710000670812', 0, 0, 0, '003', 6, 1, '', 0, '2022-04-25', 1, ''),
 (972, 'V', '30690854', 'HERNANDEZANAVE, WISTON', 0, 'A', NULL, '0455', '0175', '01750082100076751654', 0, 0, 0, '003', 6, 1, '', 0, '2022-05-01', 1, '');
-INSERT INTO `empleados` (`id`, `nacionalidad`, `cedula`, `nombres`, `otros_anios`, `status`, `observacion`, `cod_cargo`, `banco`, `cuenta_bancaria`, `hijos`, `instruccion_academica`, `discapacidades`, `tipo_nomina`, `id_dependencia`, `verificado`, `correcion`, `beca`, `fecha_ingreso`, `id_categoria`, `id_partida`) VALUES
+INSERT INTO `empleados` (`id`, `nacionalidad`, `cedula`, `nombres`, `otros_años`, `status`, `observacion`, `cod_cargo`, `banco`, `cuenta_bancaria`, `hijos`, `instruccion_academica`, `discapacidades`, `tipo_nomina`, `id_dependencia`, `verificado`, `correcion`, `beca`, `fecha_ingreso`, `id_categoria`, `id_partida`) VALUES
 (973, 'V', '30691140', 'ESTEVES RODRIGUEZ JOSIE', 0, 'A', NULL, '0455', '0102', '01020457780000667508', 0, 0, 0, '003', 6, 1, '', 0, '2022-05-01', 1, ''),
 (974, 'V', '30691195', 'LESMES AZAVACHE, KARLA', 0, 'A', NULL, '0041', '0102', '01020457710000886619', 0, 0, 0, '003', 6, 1, '', 0, '2023-06-01', 1, ''),
 (975, 'V', '30845873', 'BOLIVAR YORDAN J', 0, 'A', NULL, '0455', '0102', '01020501800007213256', 0, 0, 0, '003', 6, 1, '', 0, '2023-08-01', 1, ''),
@@ -2486,7 +4423,7 @@ INSERT INTO `empleados` (`id`, `nacionalidad`, `cedula`, `nombres`, `otros_anios
 (1289, 'V', '24128617', 'MARIAN JOSE ROJAS HERNANDEZ', 0, 'A', NULL, '0455', '0102', '01020457730000206529', 0, 0, 0, '003', 6, 1, '', 0, '2024-01-26', 1, ''),
 (1290, 'V', '23985353', 'WUENDIS ROSA GARCIA MENARE', 0, 'A', NULL, '0455', '0102', '01020457750000085287', 0, 0, 0, '003', 6, 1, '', 0, '2024-01-26', 1, ''),
 (1291, 'V', '14975811', 'KEYLA ISMARA MARTINEZ DE FERNANDEZ', 0, 'A', NULL, '0455', '0102', '01020457730000318585', 0, 0, 0, '003', 6, 1, '', 0, '2024-01-26', 1, '');
-INSERT INTO `empleados` (`id`, `nacionalidad`, `cedula`, `nombres`, `otros_anios`, `status`, `observacion`, `cod_cargo`, `banco`, `cuenta_bancaria`, `hijos`, `instruccion_academica`, `discapacidades`, `tipo_nomina`, `id_dependencia`, `verificado`, `correcion`, `beca`, `fecha_ingreso`, `id_categoria`, `id_partida`) VALUES
+INSERT INTO `empleados` (`id`, `nacionalidad`, `cedula`, `nombres`, `otros_años`, `status`, `observacion`, `cod_cargo`, `banco`, `cuenta_bancaria`, `hijos`, `instruccion_academica`, `discapacidades`, `tipo_nomina`, `id_dependencia`, `verificado`, `correcion`, `beca`, `fecha_ingreso`, `id_categoria`, `id_partida`) VALUES
 (1292, 'V', '26837775', 'NAHOMYS ESPERANZA GONZALEZ PAYEMA', 0, 'A', NULL, '0455', '0102', '01020457780000800624', 0, 0, 0, '003', 6, 1, '', 0, '2024-01-26', 1, ''),
 (1293, 'V', '18243314', 'GONZALEZ PEREZ JOSE GREGORIO', 0, 'A', NULL, '0455', '0102', '01020457730000618188', 0, 0, 0, '003', 6, 1, '', 0, '2024-01-26', 1, ''),
 (1294, 'V', '26321172', 'COLINA FRANCO ANGEL DOMINGO ', 0, 'A', NULL, '0455', '0102', '01020457750000591234', 0, 0, 0, '003', 6, 1, '', 0, '2023-11-21', 1, ''),
@@ -2566,23 +4503,23 @@ INSERT INTO `empleados` (`id`, `nacionalidad`, `cedula`, `nombres`, `otros_anios
 
 CREATE TABLE `empleados_pasados` (
   `id` int(11) NOT NULL,
-  `nacionalidad` varchar(2) DEFAULT NULL,
-  `cedula` varchar(20) DEFAULT NULL,
-  `nombres` varchar(255) DEFAULT NULL,
-  `otros_anios` int(11) NOT NULL DEFAULT 0,
-  `status` varchar(5) DEFAULT NULL,
-  `observacion` varchar(255) DEFAULT NULL,
-  `cod_cargo` varchar(10) DEFAULT NULL,
-  `banco` varchar(255) DEFAULT NULL,
-  `cuenta_bancaria` varchar(255) DEFAULT NULL,
+  `nacionalidad` varchar(2) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `cedula` varchar(20) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `nombres` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `otros_años` int(11) NOT NULL DEFAULT 0,
+  `status` varchar(5) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `observacion` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `cod_cargo` varchar(10) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `banco` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `cuenta_bancaria` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
   `hijos` int(11) NOT NULL DEFAULT 0,
   `instruccion_academica` int(11) NOT NULL DEFAULT 0,
-  `discapacidades` int(2) NOT NULL DEFAULT 0,
-  `tipo_nomina` varchar(255) DEFAULT NULL,
-  `id_dependencia` int(255) NOT NULL,
-  `verificado` int(1) NOT NULL DEFAULT 0,
-  `correcion` varchar(255) DEFAULT NULL,
-  `beca` int(2) NOT NULL DEFAULT 0,
+  `discapacidades` int(11) NOT NULL DEFAULT 0,
+  `tipo_nomina` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `id_dependencia` int(11) NOT NULL,
+  `verificado` int(11) NOT NULL DEFAULT 0,
+  `correcion` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `beca` int(11) NOT NULL DEFAULT 0,
   `fecha_ingreso` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
@@ -4000,81 +5937,88 @@ CREATE TABLE `entes` (
   `programa` varchar(10) NOT NULL,
   `proyecto` varchar(10) NOT NULL,
   `actividad` varchar(10) NOT NULL,
+  `partida` varchar(50) DEFAULT NULL,
   `ente_nombre` longtext NOT NULL,
-  `tipo_ente` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `tipo_ente` varchar(255) DEFAULT NULL,
+  `juridico` int(11) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `entes`
 --
 
-INSERT INTO `entes` (`id`, `sector`, `programa`, `proyecto`, `actividad`, `ente_nombre`, `tipo_ente`) VALUES
-(1, '1', '1', '0', '51', 'CONSEJO LEGISLATIVO', 'J'),
-(2, '1', '2', '0', '51', 'CONTRALORIA GENERAL DEL ESTADO', 'J'),
-(3, '1', '3', '0', '51', 'PROCURADORIA GENERAL', 'J'),
-(4, '1', '4', '0', '51', 'SECRETARIA DEL DESPACHO DEL GOBERNADOR YSECRETARIA DE LA GESTION PUBLICA', 'J'),
-(5, '1', '5', '0', '51', 'SECRETARIA GENERAL DE GOBIERNO', 'J'),
-(6, '1', '6', '0', '51', 'SECRETARIA EJECUTIVA DE GESTION HUMANO', 'J'),
-(7, '1', '7', '0', '51', 'SECRETARIA DE PLANIFICACION, PROYECTO Y PRESUPUESTO', 'J'),
-(8, '1', '8', '0', '51', 'SERVICIOS DE ADMINISTRACION', 'J'),
-(9, '1', '9', '0', '51', 'TESORERIA', 'J'),
-(10, '1', '10', '0', '51', 'SECRETARIA EJECUTIVA INDIGENA', 'J'),
-(11, '1', '11', '0', '51', 'AUDITORIA INTERNA', 'J'),
-(12, '2', '14', '0', '51', 'COORDINACION DE SERVICIOS POLICIALES', 'J'),
-(13, '2', '15', '0', '51', 'SECRETARIA DE POLITICA DE ASUNTOS FRONTERIZOS', 'J'),
-(14, '2', '16', '0', '51', 'PROTECCION CIVIL', 'J'),
-(15, '2', '17', '0', '51', 'PREVENCION Y CONTROL DE SINIESTRO (BOMBEROS)', 'J'),
-(16, '3', '18', '0', '51', 'SECREATARIA DE TURISMO', 'J'),
-(18, '4', '21', '0', '51', 'SEC. EJEC. PARA LA ATENCION DE  LA JUVENTUD Y ESTUDIANTE UNIVERSITARIO', 'J'),
-(19, '5', '22', '0', '51', 'SEC. EJEC.DEL SISTEMA DE INFOR. COM. ( SICOAMA)', 'J'),
-(21, '5', '24', '0', '51', 'SECRETARIA DE CULTURA', 'J'),
-(22, '6', '26', '0', '51', 'SECRETARIA DE INFRAESTRUCTURA', 'J'),
-(23, '7', '28', '0', '51', 'ADMINISTRATIVOS MALARIOLOGIA-GOBERNACION', 'J'),
-(24, '8', '29', '0', '51', 'SECRETARIA Y COORDINACION', 'J'),
-(25, '8', '32', '0', '51', 'PROTECCION SOCIAL', 'J'),
-(26, '9', '33', '0', '51', 'CONTRATACION COLECTIVA DE EMPLEADOS', 'J'),
-(28, '1', '13', '0', '51', 'SECREATARIA EJECUTIVA DE BIENES Y SERVICIOS', 'J'),
-(29, '10', '34', '0', '51', 'AMAVISION', 'D'),
-(30, '10', '34', '0', '51', 'FUNDACION ORQUESTA SINFONICA JUVENIL E INFANTIL DE AMAZONAS', 'D'),
-(31, '10', '34', '0', '51', 'FUNDACION CULTURAL ESCUELA ACADEMICA DE ORQUESTAS Y BANDAS DE AMAZONAS', 'D'),
-(32, '10', '34', '0', '51', 'ESCUELA INTEGRAL DE DANZAS', 'D'),
-(33, '10', '34', '0', '51', 'FUNDAPRODICAM', 'D'),
-(34, '10', '34', '0', '51', 'SUPERINTENDENCIA DE ADMINISTRACION TRIBUTARIA DEL ESTADO AMAZONAS (SATEAMAZ)', 'D'),
-(35, '10', '34', '0', '51', 'MUSEO ETNOLOGICO', 'D'),
-(36, '10', '34', '0', '51', 'INSTITUTO REGIONAL DE DEPORTE AMAZONAS (I.R.D.A)', 'D'),
-(37, '10', '34', '0', '51', 'U.N.A', 'D'),
-(38, '10', '34', '0', '51', 'BIBLIOTECA PUBLICA SIMON RODRIGUEZ', 'D'),
-(39, '10', '34', '0', '51', 'AMAZONAS F.C', 'D'),
-(40, '10', '34', '0', '51', 'UNIVERSIDAD EXPERIMENTAL POLITECNICA DE LA FUERZA ARMADA NACIONAL NUCLEO AMAZONAS', 'D'),
-(41, '10', '34', '0', '51', 'UPEL', 'D'),
-(42, '10', '34', '0', '51', 'FUNDACIONIHIRU', 'D'),
-(43, '10', '34', '0', '51', 'FUNDA SALUD', 'D'),
-(44, '10', '34', '0', '51', 'HOSPITAL DR. JOSE GREGORIO HERNANDEZ', 'D'),
-(45, '10', '34', '0', '51', 'A.C. HERMANAS DE JESUS RESUCITADO CASA HOGAR \"CARMEN MARTINEZ\"', 'D'),
-(46, '10', '34', '0', '51', 'SIUMA', 'D'),
-(47, '10', '34', '0', '51', 'FUNDACION PARA LA ATENCION INTEGRAL A LA MUJER DE AMAZONAS', 'D'),
-(48, '10', '34', '0', '51', 'FUNDACION DE SISTEMA DE ATENCION INTEGRAL PARA LAS PERSONAS CON DISCAPACIDAD (SAIPDIS)', 'D'),
-(49, '10', '34', '0', '51', 'FUNDACION CENTRO DE HISTORIA DE LA IDENTIDAD AMAZONENCE', 'D'),
-(50, '10', '34', '0', '51', 'INVIOBRAS AMAZONAS', 'D'),
-(51, '10', '34', '0', '51', 'FUNDACION PROMO-AMAZONAS', 'D'),
-(52, '10', '34', '0', '51', 'INSCATA', 'D'),
-(53, '10', '34', '0', '51', 'LUBRICANTES AMAZONAS C.A', 'D'),
-(54, '10', '34', '0', '51', 'ALIMENTOS AMAZONAS C.A', 'D'),
-(55, '10', '34', '0', '51', 'HIDROAMAZONAS C.A', 'D'),
-(56, '10', '34', '0', '51', 'ASFALTO Y PAVIMENTOS AMAZONAS C.A', 'D'),
-(57, '10', '34', '0', '51', 'COMBUSTIBLES AMAZONAS C.A', 'D'),
-(58, '10', '34', '0', '51', 'SANEAMIENTO AMBIENTAL C.A', 'D'),
-(59, '10', '34', '0', '51', 'BLOQUES Y AGREGADOS AMAZONAS C.A', 'D'),
-(60, '10', '34', '0', '51', 'TEXTILES AMAZONAS C.A', 'D'),
-(61, '10', '34', '0', '51', 'ACUARIOS AMAZONAS', 'D'),
-(62, '10', '34', '0', '51', 'EXPORTADORA AMAZONAS C.A', 'D'),
-(63, '10', '34', '0', '51', 'GAS COMUNAL AMAZONAS C.A', 'D'),
-(64, '10', '34', '0', '51', 'FARMA-AMAZONAS C.A', 'D'),
-(65, '10', '34', '0', '51', 'EMPRESA FLUVIALES AMAZONAS C.A', 'D'),
-(66, '10', '34', '0', '51', 'EMPRESA PUBLICA DE AMAZONAS C.A', 'D'),
-(67, '10', '34', '0', '51', 'EMPRESA DE SERVICIOS Y MANTENIMIENTO GENERALES AMAZONAS C.A (SERVIAMAZONAS)', 'D'),
-(68, '10', '34', '0', '51', 'EMPRESA DE TURISMO', 'D'),
-(70, '10', '34', '0', '51', 'VICARIATO APOSTOLICO', 'D');
+INSERT INTO `entes` (`id`, `sector`, `programa`, `proyecto`, `actividad`, `partida`, `ente_nombre`, `tipo_ente`, `juridico`) VALUES
+(1, '1', '1', '0', '51', NULL, 'CONSEJO LEGISLATIVO', 'J', 0),
+(2, '1', '2', '0', '51', NULL, 'CONTRALORIA GENERAL DEL ESTADO', 'J', 0),
+(3, '1', '3', '0', '51', NULL, 'PROCURADORIA GENERAL', 'J', 0),
+(4, '1', '4', '0', '51', NULL, 'SECRETARIA EJECUTIVA DEL DESPACHO Y SEGUIMIENTO DE LA GESTION PUBLICA', 'J', 0),
+(5, '1', '5', '0', '51', NULL, 'SECRETARIA GENERAL DE GOBIERNO', 'J', 0),
+(6, '1', '6', '0', '51', NULL, 'SECRETARIA EJECUTIVA DE GESTION HUMANO', 'J', 0),
+(7, '1', '7', '0', '51', NULL, 'SECRETARIA DE PLANIFICACION, PROYECTO Y PRESUPUESTO', 'J', 0),
+(8, '1', '8', '0', '51', NULL, 'SERVICIOS DE ADMINISTRACION', 'J', 0),
+(9, '1', '9', '0', '51', NULL, 'TESORERIA', 'J', 0),
+(10, '1', '10', '0', '51', NULL, 'SECRETARIA EJECUTIVA INDIGENA', 'J', 0),
+(11, '1', '11', '0', '51', NULL, 'AUDITORIA INTERNA', 'J', 0),
+(12, '2', '14', '0', '51', NULL, 'COORDINACION DE SERVICIOS POLICIALES', 'J', 0),
+(13, '2', '15', '0', '51', NULL, 'SECRETARIA DE POLITICA DE ASUNTOS FRONTERIZOS', 'J', 0),
+(14, '2', '16', '0', '51', NULL, 'PROTECCION CIVIL', 'J', 0),
+(15, '2', '17', '0', '51', NULL, 'PREVENCION Y CONTROL DE SINIESTRO (BOMBEROS)', 'J', 0),
+(16, '3', '18', '0', '51', NULL, 'SECREATARIA DE TURISMO', 'J', 0),
+(18, '4', '21', '0', '51', NULL, 'SEC. EJEC. PARA LA ATENCION DE  LA JUVENTUD Y ESTUDIANTE UNIVERSITARIO', 'J', 0),
+(19, '5', '22', '0', '51', NULL, 'SEC. EJEC.DEL SISTEMA DE INFOR. COM. ( SICOAMA)', 'J', 0),
+(21, '5', '24', '0', '51', NULL, 'SECRETARIA DE CULTURA', 'J', 0),
+(22, '6', '26', '0', '51', NULL, 'SECRETARIA DE INFRAESTRUCTURA', 'J', 0),
+(23, '7', '28', '0', '51', NULL, 'ADMINISTRATIVOS MALARIOLOGIA-GOBERNACION', 'J', 0),
+(24, '8', '29', '0', '51', '', 'SECRETARIA DE PARTICIPACION POPULAR', 'J', 0),
+(25, '8', '30', '0', '51', NULL, 'PROTECCION SOCIAL', 'J', 0),
+(26, '9', '33', '0', '51', NULL, 'CONTRATACION COLECTIVA DE EMPLEADOS', 'J', 0),
+(29, '10', '34', '0', '51', '2134', 'AMAVISION', 'D', 0),
+(30, '10', '34', '0', '51', '2135', 'FUNDACION ORQUESTA SINFONICA JUVENIL E INFANTIL DE AMAZONAS', 'D', 0),
+(31, '10', '34', '0', '51', '2136', 'FUNDACION CULTURAL ESCUELA ACADEMICA DE ORQUESTAS Y BANDAS DE AMAZONAS', 'D', 0),
+(32, '10', '34', '0', '51', '2137', 'ESCUELA INTEGRAL DE DANZAS', 'D', 0),
+(33, '10', '34', '0', '51', '2138', 'FUNDAPRODICAM', 'D', 0),
+(34, '10', '34', '0', '51', '2139', 'SUPERINTENDENCIA DE ADMINISTRACION TRIBUTARIA DEL ESTADO AMAZONAS (SATEAMAZ)', 'D', 0),
+(35, '10', '34', '0', '51', '2140', 'MUSEO ETNOLOGICO', 'D', 0),
+(36, '10', '34', '0', '51', '2141', 'INSTITUTO REGIONAL DE DEPORTE AMAZONAS (I.R.D.A)', 'D', 0),
+(37, '10', '34', '0', '51', '2142', 'U.N.A', 'D', 0),
+(38, '10', '34', '0', '51', '2143', 'BIBLIOTECA PUBLICA SIMON RODRIGUEZ', 'D', 0),
+(39, '10', '34', '0', '51', '2144', 'AMAZONAS F.C', 'D', 0),
+(40, '10', '34', '0', '51', '2149', 'UNIVERSIDAD EXPERIMENTAL POLITECNICA DE LA FUERZA ARMADA NACIONAL NUCLEO AMAZONAS', 'D', 0),
+(41, '10', '34', '0', '51', '2145', 'UPEL', 'D', 0),
+(42, '10', '34', '0', '51', '2146', 'FUNDAIHIRU', 'D', 0),
+(43, '10', '34', '0', '51', '2147', 'FUNDA SALUD', 'D', 0),
+(44, '10', '34', '0', '51', '2148', 'HOSPITAL DR. JOSE GREGORIO HERNANDEZ', 'D', 0),
+(45, '10', '34', '0', '51', '2174', 'A.C. HERMANAS DE JESUS RESUCITADO CASA HOGAR \"CARMEN MARTINEZ\"', 'D', 0),
+(46, '10', '34', '0', '51', '2150', 'SIUMA', 'D', 0),
+(47, '10', '34', '0', '51', '2151', 'FUNDACION PARA LA ATENCION INTEGRAL A LA MUJER DE AMAZONAS', 'D', 0),
+(48, '10', '34', '0', '51', '2152', 'FUNDACION DE SISTEMA DE ATENCION INTEGRAL PARA LAS PERSONAS CON DISCAPACIDAD (SAIPDIS)', 'D', 0),
+(49, '10', '34', '0', '51', '2153', 'FUNDACION CENTRO DE HISTORIA DE LA IDENTIDAD AMAZONENCE', 'D', 0),
+(50, '10', '34', '0', '51', '2058', 'INVIOBRAS AMAZONAS', 'D', 0),
+(51, '10', '34', '0', '51', '2059', 'FUNDACION PROMO-AMAZONAS', 'D', 0),
+(52, '10', '34', '0', '51', '2155', 'INSCATA', 'D', 0),
+(53, '10', '34', '0', '51', '2158', 'LUBRICANTES AMAZONAS C.A', 'D', 0),
+(54, '10', '34', '0', '51', '2157', 'ALIMENTOS AMAZONAS C.A', 'D', 0),
+(55, '10', '34', '0', '51', '2159', 'HIDROAMAZONAS C.A', 'D', 0),
+(56, '10', '34', '0', '51', '2160', 'ASFALTO Y PAVIMENTOS AMAZONAS C.A', 'D', 0),
+(57, '10', '34', '0', '51', '2161', 'COMBUSTIBLES AMAZONAS C.A', 'D', 0),
+(58, '10', '34', '0', '51', '2162', 'SANEAMIENTO AMBIENTAL C.A', 'D', 0),
+(59, '10', '34', '0', '51', '2163', 'BLOQUES Y AGREGADOS AMAZONAS C.A', 'D', 0),
+(60, '10', '34', '0', '51', '2164', 'TEXTILES AMAZONAS C.A', 'D', 0),
+(61, '10', '34', '0', '51', '2165', 'ACUARIOS AMAZONAS', 'D', 0),
+(62, '10', '34', '0', '51', '2166', 'EXPORTADORA AMAZONAS C.A', 'D', 0),
+(63, '10', '34', '0', '51', '2167', 'GAS COMUNAL AMAZONAS C.A', 'D', 0),
+(64, '10', '34', '0', '51', '2168', 'FARMA-AMAZONAS C.A', 'D', 0),
+(65, '10', '34', '0', '51', '2169', 'EMPRESA FLUVIALES AMAZONAS C.A', 'D', 0),
+(66, '10', '34', '0', '51', '2170', 'EMPRESA PUBLICA DE AMAZONAS C.A', 'D', 0),
+(67, '10', '34', '0', '51', '2171', 'EMPRESA DE SERVICIOS Y MANTENIMIENTO GENERALES AMAZONAS C.A (SERVIAMAZONAS)', 'D', 0),
+(68, '10', '34', '0', '51', '2172', 'EMPRESA DE TURISMO', 'D', 0),
+(70, '10', '34', '0', '51', '2133', 'VICARIATO APOSTOLICO', 'D', 0),
+(77, '10', '34', '0', '51', '2061', 'CENTRO DE INVESTIGACION AMAZONAS', 'D', 0),
+(78, '10', '34', '0', '51', '2062', 'AERO AMAZONAS', 'D', 0),
+(79, '6', '27', '0', '51', '', 'SECRETARIA EJECUTIVA DE SERVICIOS Y MANTENIMIENTO COMUNITARIO', 'J', 0),
+(80, '2', '40', '0', '51', '', 'SECRETARIA  EJECUTIVA DE SEGURIDAD CIUDADANA', 'J', 0),
+(81, '5', '23', '0', '51', '', 'ADMINISTRATIVO DE I.A.B.N GOBERNACION', 'J', 0),
+(82, '4', '20', '0', '51', '', 'JUBILADOS Y PENSIONADOS DE EDUCACION', 'J', 0);
 
 -- --------------------------------------------------------
 
@@ -4083,146 +6027,158 @@ INSERT INTO `entes` (`id`, `sector`, `programa`, `proyecto`, `actividad`, `ente_
 --
 
 CREATE TABLE `entes_dependencias` (
-  `id` int(255) NOT NULL,
+  `id` int(11) NOT NULL,
   `ue` varchar(10) DEFAULT NULL,
   `sector` varchar(10) DEFAULT NULL,
   `programa` varchar(10) DEFAULT NULL,
   `proyecto` varchar(10) DEFAULT NULL,
   `actividad` varchar(10) DEFAULT NULL,
+  `partida` varchar(50) DEFAULT NULL,
   `ente_nombre` longtext DEFAULT NULL,
   `tipo_ente` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `entes_dependencias`
 --
 
-INSERT INTO `entes_dependencias` (`id`, `ue`, `sector`, `programa`, `proyecto`, `actividad`, `ente_nombre`, `tipo_ente`) VALUES
-(5, '4', '1', '4', '0', '52', 'SECRETARIA EJECUTIVA', 'J'),
-(6, '4', '1', '4', '0', '53', 'CONTRATACIONES PUBLICAS', 'J'),
-(7, '4', '1', '4', '0', '54', 'ASESORIA JURIDICA', 'J'),
-(9, '5', '1', '5', '0', '52', 'SERVICIOS DE INFORMACION Y CUSTODIA DE DOCUMENTOS', 'J'),
-(10, '5', '1', '5', '0', '53', 'ASESORAMIENTO JURIDICO', 'J'),
-(11, '5', '1', '5', '0', '54', 'ASUNTOS POLITICOS', 'J'),
-(12, '5', '1', '5', '0', '55', 'OFICINA DEL FONDO DE COMPENSACION INTERRITORIAL', 'J'),
-(14, '6', '1', '6', '0', '52', 'RECLUTAMIENTO Y SELECCION Y EVALUACION DE PERSONAL', 'J'),
-(15, '6', '1', '6', '0', '53', 'REGISTRO Y CONTROL', 'J'),
-(16, '6', '1', '6', '0', '54', 'PREVISION SOCIAL', 'J'),
-(17, '6', '1', '6', '0', '55', 'RELACIONES LABORALES', 'J'),
-(18, '6', '1', '6', '0', '56', 'AUDITORIA, CONTROL Y FISCALIZACION LABORAL', 'J'),
-(19, '6', '1', '6', '0', '57', 'SEGURO SOCIAL', 'J'),
-(20, '6', '1', '6', '0', '58', 'ELABORACION PROCESAMIENTO Y GENERACION DE NOMINAS', 'J'),
-(22, '7', '1', '7', '0', '52', 'FORMULACION Y EVALUACION PRESUPUESTARIA', 'J'),
-(23, '7', '1', '7', '0', '53', 'CONTROL Y EJECUCION PRESUPUESTARIA', 'J'),
-(24, '7', '1', '7', '0', '54', 'PLANIFICACION Y EVALUACION DE PROYECTOS', 'J'),
-(25, '7', '1', '7', '0', '55', 'INFORMATICA', 'J'),
-(27, '8', '1', '8', '0', '52', 'SERVICIOS CONTABLES', 'J'),
-(28, '8', '1', '8', '0', '53', 'SERVICIOS DE COMPRAS Y SUMINISTROS', 'J'),
-(29, '8', '1', '8', '0', '54', 'OFICINA DE BINES Y SERVICIOS', 'J'),
-(31, '9', '1', '9', '0', '52', 'SERVICIOS CONTABLES DEL TESORO', 'J'),
-(32, '9', '1', '9', '0', '53', 'UNIDAD DE ORDENAMIENTO DE PAGO', 'J'),
-(33, '9', '1', '9', '0', '54', 'SERVICIO DE APOYO FISCAL', 'J'),
-(36, '11', '1', '11', '0', '52', 'OFICINA DE CONTROL POSTERIOR', 'J'),
-(37, '11', '1', '11', '0', '53', 'OFICINA DE  DETERMINACION DE RESPONSABILIDAD', 'J'),
-(39, '28', '1', '13', '0', '52', 'OFICINA DE REGISTRO Y CONTROL DE BIENES MUEBLES E INMUEBLES', 'J'),
-(40, '28', '1', '13', '0', '53', 'OFICINA DE CONTABILIDAD', 'J'),
-(41, '28', '1', '13', '0', '54', 'OFICINA DE INVENTARIOS', 'J'),
-(42, '28', '1', '13', '0', '55', 'SEGURIDAD Y VIGILANCIA', 'J'),
-(44, '12', '2', '14', '0', '52', 'CIRMIL', 'J'),
-(49, '16', '3', '18', '0', '52', 'OPERADORES TURISTICO Y EMPRENDEDORES', 'J'),
-(50, '16', '3', '18', '0', '53', 'PROMOCION Y COMUNICACIÓN', 'J'),
-(51, '16', '3', '18', '0', '54', 'INSPECTOR DE TURISMO', 'J'),
-(52, '17', '4', '20', '0', '52', 'JUBILADOS Y PENSIONADOS DE EDUCACION', 'J'),
-(54, '18', '4', '21', '0', '52', 'ASUNTOS DE LA JUVENTUD', 'J'),
-(55, '18', '4', '21', '0', '53', 'JEFATURA DE LOS ESTUDIANTES', 'J'),
-(56, '18', '4', '21', '0', '54', 'ORIENTACION Y PREVENCION A LOS ESTUDIANTES', 'J'),
-(58, '19', '5', '22', '0', '52', 'JEFATURA DE PRENSA', 'J'),
-(59, '19', '5', '22', '0', '53', 'JEFATURA COMUNICACIÓN DIGITAL', 'J'),
-(60, '19', '5', '22', '0', '54', 'JEFATURA DE DISEÑO Y PUBLICIDAD', 'J'),
-(61, '19', '5', '22', '0', '55', 'OFICINA DE REDES SOCIALES', 'J'),
-(64, '21', '5', '24', '0', '57', 'CONTRUCCION Y MEJORAMIENTO DE OBRAS EN BINES PARA EL DESARROLLO CULTURAL (FCI)', 'J'),
-(66, '22', '6', '26', '0', '52', 'DIVISION DE SUPERVICION Y EVALUACION DE PROYECTO', 'J'),
-(67, '22', '6', '26', '0', '53', 'DIVISION DE INFORMATICA, REGISTRO Y CONTROL', 'J'),
-(68, '22', '6', '26', '0', '54', 'ASESORIA LEGAL', 'J'),
-(69, '22', '6', '27', '1', '57', 'CONTRUCCION Y MEJORAMIENTO DE OBRAS  (FCI)', 'J'),
-(71, '23', '7', '28', '0', '52', 'CONTRATACION COLECTIVA OBREROS DE LA SALUD', 'J'),
-(72, '23', '7', '28', '1', '57', 'CONTRUCCION Y MEJORAS DE OBRAS EN BIENES PARA EL FORTALECIMIENTO DE LA SALUD (FCI)', 'J'),
-(74, '24', '8', '29', '0', '52', 'JEFATRA DE SOLUCION DE CONFLICTOS', 'J'),
-(75, '24', '8', '29', '0', '53', 'GESTION COMUNAL', 'J'),
-(76, '24', '8', '29', '0', '54', 'FORMACION Y ASESORIA LEGAL', 'J'),
-(78, '25', '8', '32', '0', '52', 'PROGRAMAS SOCIALES', 'J'),
-(79, '25', '8', '32', '0', '53', 'ATENCION AL SERVIDOR PUBLICO', 'J'),
-(80, '25', '8', '32', '0', '54', 'GESTION INSTITUCIONAL', 'J'),
-(82, '26', '9', '33', '0', '52', 'CONTRATACION COLECTIVA DE OBREROS DE INFRAESTRUCTURA', 'J'),
-(83, '26', '9', '33', '0', '53', 'PENSIONADOS Y JUBILADOS', 'J'),
-(84, '26', '9', '33', '0', '54', 'CONTRATADOS GOBERNACION', 'J'),
-(85, '26', '9', '33', '0', '55', 'PERSONAL DIRECTIVO DE ALTO NIVEL Y JEFATURAS', 'J'),
-(130, '1', '1', '1', '0', '51', 'CONSEJO LEGISLATIVO', 'J'),
-(131, '2', '1', '2', '0', '51', 'CONTRALORIA GENERAL DEL ESTADO', 'J'),
-(132, '3', '1', '3', '0', '51', 'PROCURADORIA GENERAL', 'J'),
-(133, '4', '1', '4', '0', '51', 'SECRETARIA DEL DESPACHO DEL GOBERNADOR Y SECRETARIA DE LA GESTION PUBLICA', 'J'),
-(134, '5', '1', '5', '0', '51', 'SECRETARIA GENERAL DE GOBIERNO', 'J'),
-(135, '6', '1', '6', '0', '51', 'SECRETARIA EJECUTIVA DE GESTION HUMANO', 'J'),
-(136, '7', '1', '7', '0', '51', 'SECRETARIA DE PLANIFICACION, PROYECTO Y PRESUPUESTO', 'J'),
-(137, '8', '1', '8', '0', '51', 'SERVICIOS DE ADMINISTRACION', 'J'),
-(138, '9', '1', '9', '0', '51', 'TESORERIA', 'J'),
-(139, '10', '1', '10', '0', '51', 'SECRETARIA EJECUTIVA INDIGENA', 'J'),
-(140, '11', '1', '11', '0', '51', 'AUDITORIA INTERNA', 'J'),
-(141, '12', '2', '14', '0', '51', 'COORDINACION DE SERVICIOS POLICIALES', 'J'),
-(142, '13', '2', '15', '0', '51', 'SECRETARIA DE POLITICA DE ASUNTOS FRONTERIZOS', 'J'),
-(143, '14', '2', '16', '0', '51', 'PROTECCION CIVIL', 'J'),
-(144, '15', '2', '17', '0', '51', 'PREVENCION Y CONTROL DE SINIESTRO (BOMBEROS)', 'J'),
-(145, '16', '3', '18', '0', '51', 'SECRETARIA DE TURISMO', 'J'),
-(146, '18', '4', '21', '0', '51', 'SEC. EJEC. PARA LA ATENCION DE LA JUVENTUD Y ESTUDIANTE UNIVERSITARIO', 'J'),
-(147, '19', '5', '22', '0', '51', 'SEC. EJEC. DEL SISTEMA DE INFOR. COM. (SICOAMA)', 'J'),
-(148, '21', '5', '24', '0', '51', 'SECRETARIA DE CULTURA', 'J'),
-(149, '22', '6', '26', '0', '51', 'SECRETARIA DE INFRAESTRUCTURA', 'J'),
-(150, '23', '7', '28', '0', '51', 'ADMINISTRATIVOS MALARIOLOGIA-GOBERNACION', 'J'),
-(151, '24', '8', '29', '0', '51', 'SECRETARIA Y COORDINACION', 'J'),
-(152, '25', '8', '32', '0', '51', 'PROTECCION SOCIAL', 'J'),
-(153, '26', '9', '33', '0', '51', 'CONTRATACION COLECTIVA DE EMPLEADOS', 'J'),
-(154, '28', '1', '13', '0', '51', 'SECRETARIA EJECUTIVA DE BIENES Y SERVICIOS', 'J'),
-(155, '29', '10', '34', '0', '51', 'AMAVISION', 'D'),
-(156, '30', '10', '34', '0', '51', 'FUNDACION ORQUESTA SINFONICA JUVENIL E INFANTIL DE AMAZONAS', 'D'),
-(157, '31', '10', '34', '0', '51', 'FUNDACION CULTURAL ESCUELA ACADEMICA DE ORQUESTAS Y BANDAS DE AMAZONAS', 'D'),
-(158, '32', '10', '34', '0', '51', 'ESCUELA INTEGRAL DE DANZAS', 'D'),
-(159, '33', '10', '34', '0', '51', 'FUNDAPRODICAM', 'D'),
-(160, '34', '10', '34', '0', '51', 'SUPERINTENDENCIA DE ADMINISTRACION TRIBUTARIA DEL ESTADO AMAZONAS (SATEAMAZ)', 'D'),
-(161, '35', '10', '34', '0', '51', 'MUSEO ETNOLOGICO', 'D'),
-(162, '36', '10', '34', '0', '51', 'INSTITUTO REGIONAL DE DEPORTE AMAZONAS (I.R.D.A)', 'D'),
-(163, '37', '10', '34', '0', '51', 'U.N.A', 'D'),
-(164, '38', '10', '34', '0', '51', 'BIBLIOTECA PUBLICA SIMON RODRIGUEZ', 'D'),
-(165, '39', '10', '34', '0', '51', 'AMAZONAS F.C', 'D'),
-(166, '40', '10', '34', '0', '51', 'UNIVERSIDAD EXPERIMENTAL POLITECNICA DE LA FUERZA ARMADA NACIONAL NUCLEO AMAZONAS', 'D'),
-(167, '41', '10', '34', '0', '51', 'UPEL', 'D'),
-(168, '42', '10', '34', '0', '51', 'FUNDACIONIHIRU', 'D'),
-(169, '43', '10', '34', '0', '51', 'FUNDA SALUD', 'D'),
-(170, '44', '10', '34', '0', '51', 'HOSPITAL DR. JOSE GREGORIO HERNANDEZ', 'D'),
-(171, '45', '10', '34', '0', '51', 'A.C. HERMANAS DE JESUS RESUCITADO CASA HOGAR \"CARMEN MARTINEZ\"', 'D'),
-(172, '46', '10', '34', '0', '51', 'SIUMA', 'D'),
-(173, '47', '10', '34', '0', '51', 'FUNDACION PARA LA ATENCION INTEGRAL A LA MUJER DE AMAZONAS', 'D'),
-(174, '48', '10', '34', '0', '51', 'FUNDACION DE SISTEMA DE ATENCION INTEGRAL PARA LAS PERSONAS CON DISCAPACIDAD (SAIPDIS)', 'D'),
-(175, '49', '10', '34', '0', '51', 'FUNDACION CENTRO DE HISTORIA DE LA IDENTIDAD AMAZONENCE', 'D'),
-(176, '50', '10', '34', '0', '51', 'INVIOBRAS AMAZONAS', 'D'),
-(177, '51', '10', '34', '0', '51', 'FUNDACION PROMO-AMAZONAS', 'D'),
-(178, '52', '10', '34', '0', '51', 'INSCATA', 'D'),
-(179, '53', '10', '34', '0', '51', 'LUBRICANTES AMAZONAS C.A', 'D'),
-(180, '54', '10', '34', '0', '51', 'ALIMENTOS AMAZONAS C.A', 'D'),
-(181, '55', '10', '34', '0', '51', 'HIDROAMAZONAS C.A', 'D'),
-(182, '56', '10', '34', '0', '51', 'ASFALTO Y PAVIMENTOS AMAZONAS C.A', 'D'),
-(183, '57', '10', '34', '0', '51', 'COMBUSTIBLES AMAZONAS C.A', 'D'),
-(184, '58', '10', '34', '0', '51', 'SANEAMIENTO AMBIENTAL C.A', 'D'),
-(185, '59', '10', '34', '0', '51', 'BLOQUES Y AGREGADOS AMAZONAS C.A', 'D'),
-(186, '60', '10', '34', '0', '51', 'TEXTILES AMAZONAS C.A', 'D'),
-(187, '61', '10', '34', '0', '51', 'ACUARIOS AMAZONAS', 'D'),
-(188, '62', '10', '34', '0', '51', 'EXPORTADORA AMAZONAS C.A', 'D'),
-(189, '63', '10', '34', '0', '51', 'GAS COMUNAL AMAZONAS C.A', 'D'),
-(190, '64', '10', '34', '0', '51', 'FARMA-AMAZONAS C.A', 'D'),
-(191, '65', '10', '34', '0', '51', 'EMPRESA FLUVIALES AMAZONAS C.A', 'D'),
-(192, '66', '10', '34', '0', '51', 'EMPRESA PUBLICA DE AMAZONAS C.A', 'D'),
-(193, '67', '10', '34', '0', '51', 'EMPRESA DE SERVICIOS Y MANTENIMIENTO GENERALES AMAZONAS C.A (SERVIAMAZONAS)', 'D'),
-(194, '68', '10', '34', '0', '51', 'EMPRESA DE TURISMO', 'D'),
-(195, '70', '10', '34', '0', '51', 'VICARIATO APOSTOLICO', 'D');
+INSERT INTO `entes_dependencias` (`id`, `ue`, `sector`, `programa`, `proyecto`, `actividad`, `partida`, `ente_nombre`, `tipo_ente`) VALUES
+(5, '4', '1', '4', '0', '52', NULL, 'JEFATURA  DE ANALISIS ESTRATEGICOS', 'J'),
+(6, '4', '1', '4', '0', '53', NULL, 'CONTRATACIONES PUBLICAS', 'J'),
+(7, '4', '1', '4', '0', '54', NULL, 'JEFATURA DE LA RESIDENCIA DEL GOBERNADOR', 'J'),
+(9, '5', '1', '5', '0', '52', NULL, 'SERVICIOS DE INFORMACION Y CUSTODIA DE DOCUMENTOS', 'J'),
+(10, '5', '1', '5', '0', '53', NULL, 'ASESORAMIENTO JURIDICO', 'J'),
+(11, '5', '1', '5', '0', '54', NULL, 'ASUNTOS POLITICOS', 'J'),
+(12, '5', '1', '5', '0', '55', NULL, 'OFICINA DEL FONDO DE COMPENSACION INTERRITORIAL', 'J'),
+(14, '6', '1', '6', '0', '52', NULL, 'RECLUTAMIENTO Y SELECCION Y EVALUACION DE PERSONAL', 'J'),
+(15, '6', '1', '6', '0', '53', NULL, 'REGISTRO Y CONTROL', 'J'),
+(16, '6', '1', '6', '0', '54', NULL, 'PREVISION SOCIAL', 'J'),
+(17, '6', '1', '6', '0', '55', NULL, 'RELACIONES LABORALES', 'J'),
+(18, '6', '1', '6', '0', '56', NULL, 'OFICINA DE BIENESTAR SOCIAL', 'J'),
+(19, '6', '1', '6', '0', '57', NULL, 'ELABORACION, PROCESAMIENTO Y GENERACION DE NOMINAS', 'J'),
+(20, '6', '1', '6', '0', '58', NULL, 'OFICINA DE ATENCION AL SERVIDOR PUBLICO', 'J'),
+(22, '7', '1', '7', '0', '52', NULL, 'FORMULACION Y EVALUACION PRESUPUESTARIA', 'J'),
+(23, '7', '1', '7', '0', '53', NULL, 'CONTROL Y EJECUCION PRESUPUESTARIA', 'J'),
+(24, '7', '1', '7', '0', '54', NULL, 'PLANIFICACION Y EVALUACION DE PROYECTOS', 'J'),
+(25, '7', '1', '7', '0', '55', NULL, 'INFORMATICA', 'J'),
+(27, '8', '1', '8', '0', '52', NULL, 'SERVICIOS CONTABLES', 'J'),
+(28, '8', '1', '8', '0', '53', NULL, 'SERVICIOS DE COMPRAS Y SUMINISTROS', 'J'),
+(29, '8', '1', '8', '0', '54', NULL, 'OFICINA DE BINES Y SERVICIOS', 'J'),
+(31, '9', '1', '9', '0', '52', NULL, 'SERVICIOS CONTABLES DEL TESORO', 'J'),
+(32, '9', '1', '9', '0', '53', NULL, 'UNIDAD DE ORDENAMIENTO DE PAGO', 'J'),
+(33, '9', '1', '9', '0', '54', NULL, 'SERVICIO DE APOYO FISCAL', 'J'),
+(36, '11', '1', '11', '0', '52', NULL, 'OFICINA DE AUDITORIA INTERNA', 'J'),
+(37, '11', '1', '11', '0', '53', NULL, 'OFICINA DE  CONTROL POSTERIOR', 'J'),
+(49, '16', '3', '18', '0', '52', NULL, 'OPERADORES TURISTICO Y EMPRENDEDORES', 'J'),
+(50, '16', '3', '18', '0', '53', NULL, 'PROMOCION Y COMUNICACIÓN', 'J'),
+(51, '16', '3', '18', '0', '54', NULL, 'INSPECTOR DE TURISMO', 'J'),
+(54, '18', '4', '21', '0', '52', NULL, 'ASUNTOS DE LA JUVENTUD', 'J'),
+(55, '18', '4', '21', '0', '53', NULL, 'JEFATURA DE LOS ESTUDIANTES', 'J'),
+(56, '18', '4', '21', '0', '54', NULL, 'ORIENTACION Y PREVENCION A LOS ESTUDIANTES', 'J'),
+(58, '19', '5', '22', '0', '52', NULL, 'JEFATURA DE PRENSA', 'J'),
+(59, '19', '5', '22', '0', '53', NULL, 'JEFATURA COMUNICACIÓN DIGITAL', 'J'),
+(60, '19', '5', '22', '0', '54', NULL, 'JEFATURA DE COMUNICACION POPULAR', 'J'),
+(61, '19', '5', '22', '0', '55', NULL, 'JEFATURA DE DISEÑO PUBLICIDAD', 'J'),
+(64, '21', '5', '24', '0', '57', NULL, 'CONTRUCCION Y MEJORAMIENTO DE OBRAS EN BINES PARA EL DESARROLLO CULTURAL (FCI)', 'J'),
+(66, '22', '6', '26', '0', '52', NULL, 'DIVISION DE SUPERVICION Y EVALUACION DE PROYECTO', 'J'),
+(67, '22', '6', '26', '0', '53', NULL, 'DIVISION DE INFORMATICA, REGISTRO Y CONTROL', 'J'),
+(68, '22', '6', '26', '0', '54', NULL, 'ASESORIA LEGAL', 'J'),
+(69, '22', '6', '27', '1', '57', NULL, 'CONTRUCCION Y MEJORAMIENTO DE OBRAS  (FCI)', 'J'),
+(71, '23', '7', '28', '0', '52', NULL, 'CONTRATACION COLECTIVA OBREROS DE LA SALUD', 'J'),
+(72, '23', '7', '28', '1', '57', NULL, 'CONTRUCCION Y MEJORAS DE OBRAS EN BIENES PARA EL FORTALECIMIENTO DE LA SALUD (FCI)', 'J'),
+(74, '24', '8', '29', '0', '52', NULL, 'JEFATURA DE FORMACION CIUDADANA', 'J'),
+(75, '24', '8', '29', '0', '53', NULL, 'JEFATURA DE GESTION COMUNITARIA', 'J'),
+(76, '24', '8', '29', '0', '54', NULL, 'JEFATURA DE PROTECCION SOCIAL', 'J'),
+(82, '26', '9', '33', '0', '52', NULL, 'CONTRATACION COLECTIVA DE OBREROS DE LA D.I.E', 'J'),
+(83, '26', '9', '33', '0', '53', NULL, 'PENSIONADOS Y JUBILADOS GOBERNACION', 'J'),
+(84, '26', '9', '33', '0', '54', NULL, 'CONTRATADOS GOBERNACION', 'J'),
+(85, '26', '9', '33', '0', '55', NULL, 'PERSONAL DIRECTIVO DE ALTO NIVEL Y JEFATURAS', 'J'),
+(130, '1', '1', '1', '0', '51', NULL, 'CONSEJO LEGISLATIVO', 'J'),
+(131, '2', '1', '2', '0', '51', NULL, 'CONTRALORIA GENERAL DEL ESTADO', 'J'),
+(132, '3', '1', '3', '0', '51', NULL, 'PROCURADORIA GENERAL', 'J'),
+(133, '4', '1', '4', '0', '51', NULL, 'SECRETARIA DEL DESPACHO DEL GOBERNADOR Y SECRETARIA DE LA GESTION PUBLICA', 'J'),
+(134, '5', '1', '5', '0', '51', NULL, 'SECRETARIA GENERAL DE GOBIERNO', 'J'),
+(135, '6', '1', '6', '0', '51', NULL, 'SECRETARIA EJECUTIVA DE GESTION HUMANO', 'J'),
+(136, '7', '1', '7', '0', '51', NULL, 'SECRETARIA DE PLANIFICACION, PROYECTO Y PRESUPUESTO', 'J'),
+(137, '8', '1', '8', '0', '51', NULL, 'SERVICIOS DE ADMINISTRACION', 'J'),
+(138, '9', '1', '9', '0', '51', NULL, 'TESORERIA', 'J'),
+(139, '10', '1', '10', '0', '51', NULL, 'SECRETARIA EJECUTIVA INDIGENA', 'J'),
+(140, '11', '1', '11', '0', '51', NULL, 'AUDITORIA INTERNA', 'J'),
+(141, '12', '2', '14', '0', '51', NULL, 'COORDINACION DE SERVICIOS POLICIALES', 'J'),
+(142, '13', '2', '15', '0', '51', NULL, 'SECRETARIA DE POLITICA DE ASUNTOS FRONTERIZOS', 'J'),
+(143, '14', '2', '16', '0', '51', NULL, 'PROTECCION CIVIL', 'J'),
+(144, '15', '2', '17', '0', '51', NULL, 'PREVENCION Y CONTROL DE SINIESTRO (BOMBEROS)', 'J'),
+(145, '16', '3', '18', '0', '51', NULL, 'SECRETARIA DE TURISMO', 'J'),
+(146, '18', '4', '21', '0', '51', NULL, 'SEC. EJEC. PARA LA ATENCION DE LA JUVENTUD Y ESTUDIANTE UNIVERSITARIO', 'J'),
+(147, '19', '5', '22', '0', '51', NULL, 'SEC. EJEC. DEL SISTEMA DE INFOR. COM. (SICOAMA)', 'J'),
+(148, '21', '5', '24', '0', '51', NULL, 'SECRETARIA DE CULTURA', 'J'),
+(149, '22', '6', '26', '0', '51', NULL, 'SECRETARIA DE INFRAESTRUCTURA', 'J'),
+(150, '23', '7', '28', '0', '51', NULL, 'ADMINISTRATIVOS MALARIOLOGIA-GOBERNACION', 'J'),
+(151, '24', '8', '29', '0', '51', '', 'SECRETARIA DE PARTICIPACION POPULAR', 'J'),
+(152, '25', '8', '30', '0', '51', NULL, 'PROTECCION SOCIAL', 'J'),
+(153, '26', '9', '33', '0', '51', NULL, 'CONTRATACION COLECTIVA DE EMPLEADOS', 'J'),
+(155, '29', '10', '34', '0', '51', '2134', 'AMAVISION', 'D'),
+(156, '30', '10', '34', '0', '51', '2135', 'FUNDACION ORQUESTA SINFONICA JUVENIL E INFANTIL DE AMAZONAS', 'D'),
+(157, '31', '10', '34', '0', '51', '2136', 'FUNDACION CULTURAL ESCUELA ACADEMICA DE ORQUESTAS Y BANDAS DE AMAZONAS', 'D'),
+(158, '32', '10', '34', '0', '51', '2137', 'ESCUELA INTEGRAL DE DANZAS', 'D'),
+(159, '33', '10', '34', '0', '51', '2138', 'FUNDAPRODICAM', 'D'),
+(160, '34', '10', '34', '0', '51', '2139', 'SUPERINTENDENCIA DE ADMINISTRACION TRIBUTARIA DEL ESTADO AMAZONAS (SATEAMAZ)', 'D'),
+(161, '35', '10', '34', '0', '51', '2140', 'MUSEO ETNOLOGICO', 'D'),
+(162, '36', '10', '34', '0', '51', '2141', 'INSTITUTO REGIONAL DE DEPORTE AMAZONAS (I.R.D.A)', 'D'),
+(163, '37', '10', '34', '0', '51', '2142', 'U.N.A', 'D'),
+(164, '38', '10', '34', '0', '51', '2143', 'BIBLIOTECA PUBLICA SIMON RODRIGUEZ', 'D'),
+(165, '39', '10', '34', '0', '51', '2144', 'AMAZONAS F.C', 'D'),
+(166, '40', '10', '34', '0', '51', '2149', 'UNIVERSIDAD EXPERIMENTAL POLITECNICA DE LA FUERZA ARMADA NACIONAL NUCLEO AMAZONAS', 'D'),
+(167, '41', '10', '34', '0', '51', '2145', 'UPEL', 'D'),
+(168, '42', '10', '34', '0', '51', '2146', 'FUNDAIHIRU', 'D'),
+(169, '43', '10', '34', '0', '51', '2147', 'FUNDA SALUD', 'D'),
+(170, '44', '10', '34', '0', '51', '2148', 'HOSPITAL DR. JOSE GREGORIO HERNANDEZ', 'D'),
+(171, '45', '10', '34', '0', '51', '2174', 'A.C. HERMANAS DE JESUS RESUCITADO CASA HOGAR \"CARMEN MARTINEZ\"', 'D'),
+(172, '46', '10', '34', '0', '51', '2150', 'SIUMA', 'D'),
+(173, '47', '10', '34', '0', '51', '2151', 'FUNDACION PARA LA ATENCION INTEGRAL A LA MUJER DE AMAZONAS', 'D'),
+(174, '48', '10', '34', '0', '51', '2152', 'FUNDACION DE SISTEMA DE ATENCION INTEGRAL PARA LAS PERSONAS CON DISCAPACIDAD (SAIPDIS)', 'D'),
+(175, '49', '10', '34', '0', '51', '2153', 'FUNDACION CENTRO DE HISTORIA DE LA IDENTIDAD AMAZONENCE', 'D'),
+(176, '50', '10', '34', '0', '51', '2058', 'INVIOBRAS AMAZONAS', 'D'),
+(177, '51', '10', '34', '0', '51', '2059', 'FUNDACION PROMO-AMAZONAS', 'D'),
+(178, '52', '10', '34', '0', '51', '2155', 'INSCATA', 'D'),
+(179, '53', '10', '34', '0', '51', '2158', 'LUBRICANTES AMAZONAS C.A', 'D'),
+(180, '54', '10', '34', '0', '51', '2157', 'ALIMENTOS AMAZONAS C.A', 'D'),
+(181, '55', '10', '34', '0', '51', '2159', 'HIDROAMAZONAS C.A', 'D'),
+(182, '56', '10', '34', '0', '51', '2160', 'ASFALTO Y PAVIMENTOS AMAZONAS C.A', 'D'),
+(183, '57', '10', '34', '0', '51', '2161', 'COMBUSTIBLES AMAZONAS C.A', 'D'),
+(184, '58', '10', '34', '0', '51', '2162', 'SANEAMIENTO AMBIENTAL C.A', 'D'),
+(185, '59', '10', '34', '0', '51', '2163', 'BLOQUES Y AGREGADOS AMAZONAS C.A', 'D'),
+(186, '60', '10', '34', '0', '51', '2164', 'TEXTILES AMAZONAS C.A', 'D'),
+(187, '61', '10', '34', '0', '51', '2165', 'ACUARIOS AMAZONAS', 'D'),
+(188, '62', '10', '34', '0', '51', '2166', 'EXPORTADORA AMAZONAS C.A', 'D'),
+(189, '63', '10', '34', '0', '51', '2167', 'GAS COMUNAL AMAZONAS C.A', 'D'),
+(190, '64', '10', '34', '0', '51', '2168', 'FARMA-AMAZONAS C.A', 'D'),
+(191, '65', '10', '34', '0', '51', '2169', 'EMPRESA FLUVIALES AMAZONAS C.A', 'D'),
+(192, '66', '10', '34', '0', '51', '2170', 'EMPRESA PUBLICA DE AMAZONAS C.A', 'D'),
+(193, '67', '10', '34', '0', '51', '2171', 'EMPRESA DE SERVICIOS Y MANTENIMIENTO GENERALES AMAZONAS C.A (SERVIAMAZONAS)', 'D'),
+(194, '68', '10', '34', '0', '51', '2172', 'EMPRESA DE TURISMO', 'D'),
+(195, '70', '10', '34', '0', '51', '2133', 'VICARIATO APOSTOLICO', 'D'),
+(196, '23', '1', '2', '0', '53', NULL, 'examens', 'J'),
+(198, '77', '10', '34', '0', '51', '2061', 'CENTRO DE INVESTIGACION AMAZONAS', 'D'),
+(199, '78', '10', '34', '0', '51', '2062', 'AERO AMAZONAS', 'D'),
+(200, '11', '1', '11', '0', '54', NULL, 'OFICINA DE DETERMINACION', 'J'),
+(201, '24', '8', '29', '0', '55', NULL, 'JEFATURA PARTICIPACION COMUNITARIA', 'J'),
+(202, '24', '8', '29', '0', '56', NULL, 'ASESOR LEGAL', 'J'),
+(203, '79', '6', '27', '0', '51', '', 'SECRETARIA EJECUTIVA DE SERVICIOS Y MANTENIMIENTO COMUNITARIO', 'J'),
+(204, '79', '6', '27', '0', '52', NULL, 'JEFATURA  DE REGISTRO Y CONTROL DE GESTION HUMANA', 'J'),
+(205, '79', '6', '27', '0', '53', NULL, 'JEFATURA DE ORGANIZACION Y MANTENIMIENTO TERRITORIAL', 'J'),
+(206, '80', '2', '40', '0', '51', NULL, 'SECRETARIA  EJECUTIVA DE SEGURIDAD CIUDADANA', 'J'),
+(207, '80', '2', '40', '0', '52', NULL, 'COORDINACION DE ARTICULACION INSTITUCIONAL Y CIUDADANA', 'J'),
+(208, '80', '2', '40', '0', '53', NULL, 'COORDINACION DE PREVENCION Y ACCION COMUNITARIA', 'J'),
+(209, '80', '2', '40', '0', '54', NULL, 'COORDINACION DE INFORMATICA Y RED', 'J'),
+(210, '81', '5', '23', '0', '51', NULL, 'ADMINISTRATIVO DE I.A.B.N GOBERNACION', 'J'),
+(211, '82', '4', '20', '0', '51', NULL, 'JUBILADOS Y PENSIONADOS DE EDUCACION', 'J'),
+(212, '82', '4', '20', '0', '52', NULL, 'JUBILADOS Y PENSIONADOS', 'J'),
+(213, '13', '2', '15', '0', '52', NULL, 'CIRMIL', 'J'),
+(214, '12', '2', '14', '0', '52', NULL, 'OFICINA DE INFORMACION Y REDES', 'J'),
+(215, '25', '8', '30', '0', '52', NULL, 'JEFATURA DE PROTECCION SOCIAL', 'J'),
+(216, '25', '8', '30', '0', '53', NULL, 'JEFATURA DE GESTION HUMANA SOCIAL', 'J'),
+(217, '25', '8', '30', '0', '54', NULL, 'GESTION INSTITUCIONAL', 'J');
 
 -- --------------------------------------------------------
 
@@ -4231,10 +6187,10 @@ INSERT INTO `entes_dependencias` (`id`, `ue`, `sector`, `programa`, `proyecto`, 
 --
 
 CREATE TABLE `error_log` (
-  `id` int(255) NOT NULL,
+  `id` int(11) NOT NULL,
   `descripcion` longtext NOT NULL,
   `fecha` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `error_log`
@@ -4247,7 +6203,19 @@ INSERT INTO `error_log` (`id`, `descripcion`, `fecha`) VALUES
 (4, 'El tipo de ente Descentralizado solo permite una distribución.', '2024-10-24 12:51:44'),
 (5, 'La suma de los montos de las distribuciones no es igual al monto total.', '2024-10-24 12:53:07'),
 (6, 'La suma de los montos de las distribuciones no es igual al monto total.', '2024-10-24 20:46:06'),
-(7, 'El tipo de ente Descentralizado solo permite una distribución.[{\"id_distribucion\":\"13\",\"monto\":500},{\"id_distribucion\":\"14\",\"monto\":500},{\"id_distribucion\":\"15\",\"monto\":500},{\"id_distribucion\":\"16\",\"monto\":500}]', '2024-11-05 08:31:33');
+(7, 'El tipo de ente Descentralizado solo permite una distribución.[{\"id_distribucion\":\"13\",\"monto\":500},{\"id_distribucion\":\"14\",\"monto\":500},{\"id_distribucion\":\"15\",\"monto\":500},{\"id_distribucion\":\"16\",\"monto\":500}]', '2024-11-05 08:31:33'),
+(8, 'Error en la preparación de la consulta SQL para distribucion_presupuestaria: Unknown column \'id_actividad\' in \'field list\'', '2024-11-11 09:57:08'),
+(9, 'Error en la preparación de la consulta SQL para distribucion_presupuestaria: Unknown column \'id_actividad\' in \'field list\'', '2024-11-11 09:57:15'),
+(10, 'Error en la preparación de la consulta SQL para distribucion_presupuestaria: Unknown column \'id_actividad\' in \'field list\'', '2024-11-11 09:57:53'),
+(11, 'El tipo de ente Descentralizado solo permite una distribución.[{\"id_distribucion\":\"878\",\"monto\":160000},{\"id_distribucion\":\"879\",\"monto\":160000},{\"id_distribucion\":\"880\",\"monto\":300000},{\"id_distribucion\":\"881\",\"monto\":300000},{\"id_distribucion\":\"882\",\"monto\":200000},{\"id_distribucion\":\"883\",\"monto\":1000000},{\"id_distribucion\":\"884\",\"monto\":800000},{\"id_distribucion\":\"885\",\"monto\":160000},{\"id_distribucion\":\"886\",\"monto\":3000000},{\"id_distribucion\":\"887\",\"monto\":300000},{\"id_distribucion\":\"888\",\"monto\":400000},{\"id_distribucion\":\"889\",\"monto\":100000},{\"id_distribucion\":\"890\",\"monto\":2000000},{\"id_distribucion\":\"891\",\"monto\":309200},{\"id_distribucion\":\"892\",\"monto\":2000000},{\"id_distribucion\":\"893\",\"monto\":4500000},{\"id_distribucion\":\"894\",\"monto\":1200000},{\"id_distribucion\":\"895\",\"monto\":900000},{\"id_distribucion\":\"896\",\"monto\":2800000},{\"id_distribucion\":\"897\",\"monto\":1600000},{\"id_distribucion\":\"898\",\"monto\":2800000},{\"id_distribucion\":\"899\",\"monto\":3000000},{\"id_distribucion\":\"900\",\"monto\":3000000},{\"id_distribucion\":\"901\",\"monto\":3000000},{\"id_distribucion\":\"902\",\"monto\":3000000},{\"id_distribucion\":\"903\",\"monto\":3000000},{\"id_distribucion\":\"904\",\"monto\":3000000},{\"id_distribucion\":\"905\",\"monto\":3000000},{\"id_distribucion\":\"906\",\"monto\":3000000},{\"id_distribucion\":\"907\",\"monto\":3000000},{\"id_distribucion\":\"908\",\"monto\":3000000},{\"id_distribucion\":\"909\",\"monto\":3000000},{\"id_distribucion\":\"910\",\"monto\":3000000},{\"id_distribucion\":\"911\",\"monto\":3000000},{\"id_distribucion\":\"912\",\"monto\":100000},{\"id_distribucion\":\"913\",\"monto\":3000000},{\"id_distribucion\":\"914\",\"monto\":3000000},{\"id_distribucion\":\"915\",\"monto\":3000000},{\"id_distribucion\":\"916\",\"monto\":30000000},{\"id_distribucion\":\"917\",\"monto\":3000000},{\"id_distribucion\":\"918\",\"monto\":1200000},{\"id_distribucion\":\"919\",\"monto\":800000},{\"id_distribucion\":\"1129\",\"monto\":4143058},{\"id_distribucion\":\"1130\",\"monto\":40000000},{\"id_distribucion\":\"1137\",\"monto\":100000},{\"id_distribucion\":\"1138\",\"monto\":150000},{\"id_distribucion\":\"1139\",\"monto\":2000000}]', '2024-11-21 10:41:56'),
+(12, 'El tipo de ente Descentralizado solo permite una distribución.[{\"id_distribucion\":\"878\",\"monto\":160000},{\"id_distribucion\":\"879\",\"monto\":160000},{\"id_distribucion\":\"880\",\"monto\":300000},{\"id_distribucion\":\"881\",\"monto\":300000},{\"id_distribucion\":\"882\",\"monto\":200000},{\"id_distribucion\":\"883\",\"monto\":1000000},{\"id_distribucion\":\"884\",\"monto\":800000},{\"id_distribucion\":\"885\",\"monto\":160000},{\"id_distribucion\":\"886\",\"monto\":3000000},{\"id_distribucion\":\"887\",\"monto\":300000},{\"id_distribucion\":\"888\",\"monto\":400000},{\"id_distribucion\":\"889\",\"monto\":100000},{\"id_distribucion\":\"890\",\"monto\":2000000},{\"id_distribucion\":\"891\",\"monto\":309200},{\"id_distribucion\":\"892\",\"monto\":2000000},{\"id_distribucion\":\"893\",\"monto\":4500000},{\"id_distribucion\":\"894\",\"monto\":1200000},{\"id_distribucion\":\"895\",\"monto\":900000},{\"id_distribucion\":\"896\",\"monto\":2800000},{\"id_distribucion\":\"897\",\"monto\":1600000},{\"id_distribucion\":\"898\",\"monto\":2800000},{\"id_distribucion\":\"899\",\"monto\":3000000},{\"id_distribucion\":\"900\",\"monto\":3000000},{\"id_distribucion\":\"901\",\"monto\":3000000},{\"id_distribucion\":\"902\",\"monto\":3000000},{\"id_distribucion\":\"903\",\"monto\":3000000},{\"id_distribucion\":\"904\",\"monto\":3000000},{\"id_distribucion\":\"905\",\"monto\":3000000},{\"id_distribucion\":\"906\",\"monto\":3000000},{\"id_distribucion\":\"907\",\"monto\":3000000},{\"id_distribucion\":\"908\",\"monto\":3000000},{\"id_distribucion\":\"909\",\"monto\":3000000},{\"id_distribucion\":\"910\",\"monto\":3000000},{\"id_distribucion\":\"911\",\"monto\":3000000},{\"id_distribucion\":\"912\",\"monto\":100000},{\"id_distribucion\":\"913\",\"monto\":3000000},{\"id_distribucion\":\"914\",\"monto\":3000000},{\"id_distribucion\":\"915\",\"monto\":3000000},{\"id_distribucion\":\"916\",\"monto\":30000000},{\"id_distribucion\":\"917\",\"monto\":3000000},{\"id_distribucion\":\"918\",\"monto\":1200000},{\"id_distribucion\":\"919\",\"monto\":800000},{\"id_distribucion\":\"1129\",\"monto\":4143058},{\"id_distribucion\":\"1130\",\"monto\":40000000},{\"id_distribucion\":\"1137\",\"monto\":100000},{\"id_distribucion\":\"1138\",\"monto\":150000},{\"id_distribucion\":\"1139\",\"monto\":2000000}]', '2024-11-21 10:42:21'),
+(13, 'El tipo de ente Descentralizado solo permite una distribución.[{\"id_distribucion\":\"878\",\"monto\":160000},{\"id_distribucion\":\"879\",\"monto\":160000},{\"id_distribucion\":\"880\",\"monto\":300000},{\"id_distribucion\":\"881\",\"monto\":300000},{\"id_distribucion\":\"882\",\"monto\":200000},{\"id_distribucion\":\"883\",\"monto\":1000000},{\"id_distribucion\":\"884\",\"monto\":800000},{\"id_distribucion\":\"885\",\"monto\":160000},{\"id_distribucion\":\"886\",\"monto\":3000000},{\"id_distribucion\":\"887\",\"monto\":300000},{\"id_distribucion\":\"888\",\"monto\":400000},{\"id_distribucion\":\"889\",\"monto\":100000},{\"id_distribucion\":\"890\",\"monto\":2000000},{\"id_distribucion\":\"891\",\"monto\":309200},{\"id_distribucion\":\"892\",\"monto\":2000000},{\"id_distribucion\":\"893\",\"monto\":4500000},{\"id_distribucion\":\"894\",\"monto\":1200000},{\"id_distribucion\":\"895\",\"monto\":900000},{\"id_distribucion\":\"896\",\"monto\":2800000},{\"id_distribucion\":\"897\",\"monto\":1600000},{\"id_distribucion\":\"898\",\"monto\":2800000},{\"id_distribucion\":\"899\",\"monto\":3000000},{\"id_distribucion\":\"900\",\"monto\":3000000},{\"id_distribucion\":\"901\",\"monto\":3000000},{\"id_distribucion\":\"902\",\"monto\":3000000},{\"id_distribucion\":\"903\",\"monto\":3000000},{\"id_distribucion\":\"904\",\"monto\":3000000},{\"id_distribucion\":\"905\",\"monto\":3000000},{\"id_distribucion\":\"906\",\"monto\":3000000},{\"id_distribucion\":\"907\",\"monto\":3000000},{\"id_distribucion\":\"908\",\"monto\":3000000},{\"id_distribucion\":\"909\",\"monto\":3000000},{\"id_distribucion\":\"910\",\"monto\":3000000},{\"id_distribucion\":\"911\",\"monto\":3000000},{\"id_distribucion\":\"912\",\"monto\":100000},{\"id_distribucion\":\"913\",\"monto\":3000000},{\"id_distribucion\":\"914\",\"monto\":3000000},{\"id_distribucion\":\"915\",\"monto\":3000000},{\"id_distribucion\":\"916\",\"monto\":30000000},{\"id_distribucion\":\"917\",\"monto\":3000000},{\"id_distribucion\":\"918\",\"monto\":1200000},{\"id_distribucion\":\"919\",\"monto\":800000},{\"id_distribucion\":\"1129\",\"monto\":4143058},{\"id_distribucion\":\"1130\",\"monto\":40000000},{\"id_distribucion\":\"1137\",\"monto\":100000},{\"id_distribucion\":\"1138\",\"monto\":150000},{\"id_distribucion\":\"1139\",\"monto\":2000000}]', '2024-11-21 10:42:50'),
+(14, 'El tipo de ente Descentralizado solo permite una distribución.[{\"id_distribucion\":\"878\",\"monto\":160000},{\"id_distribucion\":\"879\",\"monto\":160000},{\"id_distribucion\":\"880\",\"monto\":300000},{\"id_distribucion\":\"881\",\"monto\":300000},{\"id_distribucion\":\"882\",\"monto\":200000},{\"id_distribucion\":\"883\",\"monto\":1000000},{\"id_distribucion\":\"884\",\"monto\":800000},{\"id_distribucion\":\"885\",\"monto\":160000},{\"id_distribucion\":\"886\",\"monto\":3000000},{\"id_distribucion\":\"887\",\"monto\":300000},{\"id_distribucion\":\"888\",\"monto\":400000},{\"id_distribucion\":\"889\",\"monto\":100000},{\"id_distribucion\":\"890\",\"monto\":2000000},{\"id_distribucion\":\"891\",\"monto\":309200},{\"id_distribucion\":\"892\",\"monto\":2000000},{\"id_distribucion\":\"893\",\"monto\":4500000},{\"id_distribucion\":\"894\",\"monto\":1200000},{\"id_distribucion\":\"895\",\"monto\":900000},{\"id_distribucion\":\"896\",\"monto\":2800000},{\"id_distribucion\":\"897\",\"monto\":1600000},{\"id_distribucion\":\"898\",\"monto\":2800000},{\"id_distribucion\":\"899\",\"monto\":3000000},{\"id_distribucion\":\"900\",\"monto\":3000000},{\"id_distribucion\":\"901\",\"monto\":3000000},{\"id_distribucion\":\"902\",\"monto\":3000000},{\"id_distribucion\":\"903\",\"monto\":3000000},{\"id_distribucion\":\"904\",\"monto\":3000000},{\"id_distribucion\":\"905\",\"monto\":3000000},{\"id_distribucion\":\"906\",\"monto\":3000000},{\"id_distribucion\":\"907\",\"monto\":3000000},{\"id_distribucion\":\"908\",\"monto\":3000000},{\"id_distribucion\":\"909\",\"monto\":3000000},{\"id_distribucion\":\"910\",\"monto\":3000000},{\"id_distribucion\":\"911\",\"monto\":3000000},{\"id_distribucion\":\"912\",\"monto\":100000},{\"id_distribucion\":\"913\",\"monto\":3000000},{\"id_distribucion\":\"914\",\"monto\":3000000},{\"id_distribucion\":\"915\",\"monto\":3000000},{\"id_distribucion\":\"916\",\"monto\":30000000},{\"id_distribucion\":\"917\",\"monto\":3000000},{\"id_distribucion\":\"918\",\"monto\":1200000},{\"id_distribucion\":\"919\",\"monto\":800000},{\"id_distribucion\":\"1129\",\"monto\":4143058},{\"id_distribucion\":\"1130\",\"monto\":40000000},{\"id_distribucion\":\"1137\",\"monto\":100000},{\"id_distribucion\":\"1138\",\"monto\":150000},{\"id_distribucion\":\"1139\",\"monto\":2000000}]', '2024-11-21 13:15:27'),
+(15, 'El tipo de ente Descentralizado solo permite una distribución.[{\"id_distribucion\":\"878\",\"monto\":160000},{\"id_distribucion\":\"879\",\"monto\":160000},{\"id_distribucion\":\"880\",\"monto\":300000},{\"id_distribucion\":\"881\",\"monto\":300000},{\"id_distribucion\":\"882\",\"monto\":200000},{\"id_distribucion\":\"883\",\"monto\":1000000},{\"id_distribucion\":\"884\",\"monto\":800000},{\"id_distribucion\":\"885\",\"monto\":160000},{\"id_distribucion\":\"886\",\"monto\":3000000},{\"id_distribucion\":\"887\",\"monto\":300000},{\"id_distribucion\":\"888\",\"monto\":400000},{\"id_distribucion\":\"889\",\"monto\":100000},{\"id_distribucion\":\"890\",\"monto\":2000000},{\"id_distribucion\":\"891\",\"monto\":309200},{\"id_distribucion\":\"892\",\"monto\":2000000},{\"id_distribucion\":\"893\",\"monto\":4500000},{\"id_distribucion\":\"894\",\"monto\":1200000},{\"id_distribucion\":\"895\",\"monto\":900000},{\"id_distribucion\":\"896\",\"monto\":2800000},{\"id_distribucion\":\"897\",\"monto\":1600000},{\"id_distribucion\":\"898\",\"monto\":2800000},{\"id_distribucion\":\"899\",\"monto\":3000000},{\"id_distribucion\":\"900\",\"monto\":3000000},{\"id_distribucion\":\"901\",\"monto\":3000000},{\"id_distribucion\":\"902\",\"monto\":3000000},{\"id_distribucion\":\"903\",\"monto\":3000000},{\"id_distribucion\":\"904\",\"monto\":3000000},{\"id_distribucion\":\"905\",\"monto\":3000000},{\"id_distribucion\":\"906\",\"monto\":3000000},{\"id_distribucion\":\"907\",\"monto\":3000000},{\"id_distribucion\":\"908\",\"monto\":3000000},{\"id_distribucion\":\"909\",\"monto\":3000000},{\"id_distribucion\":\"910\",\"monto\":3000000},{\"id_distribucion\":\"911\",\"monto\":3000000},{\"id_distribucion\":\"912\",\"monto\":100000},{\"id_distribucion\":\"913\",\"monto\":3000000},{\"id_distribucion\":\"914\",\"monto\":3000000},{\"id_distribucion\":\"915\",\"monto\":3000000},{\"id_distribucion\":\"916\",\"monto\":30000000},{\"id_distribucion\":\"917\",\"monto\":3000000},{\"id_distribucion\":\"918\",\"monto\":1200000},{\"id_distribucion\":\"919\",\"monto\":800000},{\"id_distribucion\":\"1129\",\"monto\":4143058},{\"id_distribucion\":\"1130\",\"monto\":40000000},{\"id_distribucion\":\"1137\",\"monto\":100000},{\"id_distribucion\":\"1138\",\"monto\":150000},{\"id_distribucion\":\"1139\",\"monto\":2000000}]', '2024-11-21 13:17:25'),
+(16, 'El tipo de ente Descentralizado solo permite una distribución.[{\"id_distribucion\":\"878\",\"monto\":160000},{\"id_distribucion\":\"879\",\"monto\":160000},{\"id_distribucion\":\"880\",\"monto\":300000},{\"id_distribucion\":\"881\",\"monto\":300000},{\"id_distribucion\":\"882\",\"monto\":200000},{\"id_distribucion\":\"883\",\"monto\":1000000},{\"id_distribucion\":\"884\",\"monto\":800000},{\"id_distribucion\":\"885\",\"monto\":160000},{\"id_distribucion\":\"886\",\"monto\":3000000},{\"id_distribucion\":\"887\",\"monto\":300000},{\"id_distribucion\":\"888\",\"monto\":400000},{\"id_distribucion\":\"889\",\"monto\":100000},{\"id_distribucion\":\"890\",\"monto\":2000000},{\"id_distribucion\":\"891\",\"monto\":309200},{\"id_distribucion\":\"892\",\"monto\":2000000},{\"id_distribucion\":\"893\",\"monto\":4500000},{\"id_distribucion\":\"894\",\"monto\":1200000},{\"id_distribucion\":\"895\",\"monto\":900000},{\"id_distribucion\":\"896\",\"monto\":2800000},{\"id_distribucion\":\"897\",\"monto\":1600000},{\"id_distribucion\":\"898\",\"monto\":2800000},{\"id_distribucion\":\"899\",\"monto\":3000000},{\"id_distribucion\":\"900\",\"monto\":3000000},{\"id_distribucion\":\"901\",\"monto\":3000000},{\"id_distribucion\":\"902\",\"monto\":3000000},{\"id_distribucion\":\"903\",\"monto\":3000000},{\"id_distribucion\":\"904\",\"monto\":3000000},{\"id_distribucion\":\"905\",\"monto\":3000000},{\"id_distribucion\":\"906\",\"monto\":3000000},{\"id_distribucion\":\"907\",\"monto\":3000000},{\"id_distribucion\":\"908\",\"monto\":3000000},{\"id_distribucion\":\"909\",\"monto\":3000000},{\"id_distribucion\":\"910\",\"monto\":3000000},{\"id_distribucion\":\"911\",\"monto\":3000000},{\"id_distribucion\":\"912\",\"monto\":100000},{\"id_distribucion\":\"913\",\"monto\":3000000},{\"id_distribucion\":\"914\",\"monto\":3000000},{\"id_distribucion\":\"915\",\"monto\":3000000},{\"id_distribucion\":\"916\",\"monto\":30000000},{\"id_distribucion\":\"917\",\"monto\":3000000},{\"id_distribucion\":\"918\",\"monto\":1200000},{\"id_distribucion\":\"919\",\"monto\":800000},{\"id_distribucion\":\"1129\",\"monto\":4143058},{\"id_distribucion\":\"1130\",\"monto\":40000000},{\"id_distribucion\":\"1137\",\"monto\":100000},{\"id_distribucion\":\"1138\",\"monto\":150000},{\"id_distribucion\":\"1139\",\"monto\":2000000}]', '2024-11-21 13:17:38'),
+(17, 'No se pudo actualizar la partida presupuestaria', '2024-11-22 12:29:43'),
+(18, 'Una o mas partidas ya están en uso en el mismo sector, programa y actividad: 407.01.02.01.0000', '2024-11-28 09:20:33'),
+(19, 'La suma de los montos de las distribuciones es mayor al monto total de la asignacion.', '2024-11-28 16:58:08');
 
 -- --------------------------------------------------------
 
@@ -4259,7 +6227,7 @@ CREATE TABLE `frecuencias_por_grupo` (
   `id` int(11) NOT NULL,
   `id_grupo` int(11) NOT NULL,
   `tipo` varchar(10) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `frecuencias_por_grupo`
@@ -4277,13 +6245,17 @@ INSERT INTO `frecuencias_por_grupo` (`id`, `id_grupo`, `tipo`) VALUES
 --
 
 CREATE TABLE `gastos` (
-  `id` int(255) NOT NULL,
-  `id_tipo` int(255) NOT NULL,
+  `id` int(11) NOT NULL,
+  `id_tipo` int(11) NOT NULL,
   `descripcion` longtext NOT NULL,
   `monto` varchar(255) DEFAULT NULL,
-  `status` int(255) NOT NULL,
-  `id_ejercicio` int(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `status` int(11) NOT NULL,
+  `id_ejercicio` int(11) NOT NULL,
+  `beneficiario` longtext NOT NULL,
+  `identificador` longtext NOT NULL,
+  `distribuciones` longtext NOT NULL,
+  `fecha` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -4292,11 +6264,11 @@ CREATE TABLE `gastos` (
 --
 
 CREATE TABLE `historico_conceptos` (
-  `id` int(255) NOT NULL,
+  `id` int(11) NOT NULL,
   `identificador` varchar(255) NOT NULL,
   `valor` varchar(255) NOT NULL,
   `fecha` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `historico_conceptos`
@@ -4314,7 +6286,7 @@ INSERT INTO `historico_conceptos` (`id`, `identificador`, `valor`, `fecha`) VALU
 --
 
 CREATE TABLE `historico_reintegros` (
-  `id` int(255) NOT NULL,
+  `id` int(11) NOT NULL,
   `id_empleado` varchar(255) DEFAULT NULL,
   `sueldo_base` varchar(255) DEFAULT NULL,
   `asignaciones` longtext DEFAULT NULL,
@@ -4324,7 +6296,7 @@ CREATE TABLE `historico_reintegros` (
   `nombre_nomina` varchar(255) DEFAULT NULL,
   `fecha` varchar(255) DEFAULT NULL,
   `time` datetime NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `historico_reintegros`
@@ -4996,7 +6968,7 @@ INSERT INTO `historico_reintegros` (`id`, `id_empleado`, `sueldo_base`, `asignac
 --
 
 CREATE TABLE `informacion_consejo` (
-  `id` int(255) NOT NULL,
+  `id` int(11) NOT NULL,
   `nombre_apellido_presidente` longtext NOT NULL,
   `nombre_apellido_secretario` longtext NOT NULL,
   `domicilio` longtext NOT NULL,
@@ -5004,14 +6976,14 @@ CREATE TABLE `informacion_consejo` (
   `pagina_web` longtext NOT NULL,
   `email` longtext NOT NULL,
   `consejo_local` longtext NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `informacion_consejo`
 --
 
 INSERT INTO `informacion_consejo` (`id`, `nombre_apellido_presidente`, `nombre_apellido_secretario`, `domicilio`, `telefono`, `pagina_web`, `email`, `consejo_local`) VALUES
-(1, 'Lesgiladora: Delkis Bastidas', 'Abg. Lester Mirabal', 'Avenida Aeropuerto Sector \"Simón Bolivar\".', '', '', '', '');
+(1, 'Lesgiladora: Delkis Bastidas', 'Abg. Edixon Gomez', 'Avenida Aeropuerto Sector \"Simón Bolivar\".', '0248-5211758', 'www.consejolegislativodeamazonas.gob.ve', 'CLEA_AMAZONAS@GMAIL.COM', 'Planificación Publica');
 
 -- --------------------------------------------------------
 
@@ -5020,20 +6992,20 @@ INSERT INTO `informacion_consejo` (`id`, `nombre_apellido_presidente`, `nombre_a
 --
 
 CREATE TABLE `informacion_contraloria` (
-  `id` int(255) NOT NULL,
+  `id` int(11) NOT NULL,
   `nombre_apellido_contralor` longtext NOT NULL,
   `domicilio` longtext NOT NULL,
   `telefono` longtext NOT NULL,
   `pagina_web` longtext NOT NULL,
   `email` longtext NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `informacion_contraloria`
 --
 
 INSERT INTO `informacion_contraloria` (`id`, `nombre_apellido_contralor`, `domicilio`, `telefono`, `pagina_web`, `email`) VALUES
-(1, 'Abog. Guillermo Forti', 'AVENIDA AEROPUERTO SECTOR LOS LIRIOS \"SEDE DE LA  CONTRALORIA\"', '0248-5212759', 'www.contraloriaestadoamazonas.gob.ve', 'contraloria_amazonas@yahoo.es');
+(1, 'DR. CESAR SANGUINETTI', 'AV. AEROPUERTO SECTOR LOS LIRIOS \"SEDE DE LA CONTRALORIA\"', '0248-5212759', 'www.contraloriaestadoamazonas.gob.ve', 'DIPUTADOANSANGUINETTI@GMAIL.COM');
 
 -- --------------------------------------------------------
 
@@ -5042,7 +7014,7 @@ INSERT INTO `informacion_contraloria` (`id`, `nombre_apellido_contralor`, `domic
 --
 
 CREATE TABLE `informacion_gobernacion` (
-  `id` int(255) NOT NULL,
+  `id` int(11) NOT NULL,
   `identificacion` longtext NOT NULL,
   `domicilio` longtext NOT NULL,
   `telefono` longtext NOT NULL,
@@ -5050,14 +7022,14 @@ CREATE TABLE `informacion_gobernacion` (
   `fax` longtext NOT NULL,
   `codigo_postal` longtext NOT NULL,
   `nombre_apellido_gobernador` longtext NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `informacion_gobernacion`
 --
 
 INSERT INTO `informacion_gobernacion` (`id`, `identificacion`, `domicilio`, `telefono`, `pagina_web`, `fax`, `codigo_postal`, `nombre_apellido_gobernador`) VALUES
-(1, 'GOBERNACIÓN DE AMAZONAS', 'AVENIDA RIO NEGRO. FRENTE A LA PLAZA BOLIVAR.', '0248-5212759', 'www.contraloriaestadoamazonas.gob.ve', '', '7101', 'Ing.MIGUEL RODRIGUEZ');
+(1, 'GOBERNACIÓN DE AMAZONAS', 'AVENIDA RIO NEGRO. FRENTE A LA PLAZA BOLIVAR.', '0248-5212759', 'www.contraloriaestadoamazonas.gob.ve', '', '7101', 'ING.MIGUEL RODRIGUEZ');
 
 -- --------------------------------------------------------
 
@@ -5066,13 +7038,13 @@ INSERT INTO `informacion_gobernacion` (`id`, `identificacion`, `domicilio`, `tel
 --
 
 CREATE TABLE `informacion_pdf` (
-  `id` int(255) NOT NULL,
+  `id` int(11) NOT NULL,
   `cedula` longtext DEFAULT NULL,
   `total_pagar` longtext DEFAULT NULL,
   `correlativo` varchar(255) DEFAULT NULL,
   `identificador` varchar(255) DEFAULT NULL,
   `banco` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `informacion_pdf`
@@ -5103,10 +7075,10 @@ INSERT INTO `informacion_pdf` (`id`, `cedula`, `total_pagar`, `correlativo`, `id
 --
 
 CREATE TABLE `informacion_personas` (
-  `id` int(255) NOT NULL,
+  `id` int(11) NOT NULL,
   `nombres` longtext NOT NULL,
   `cargo` longtext NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `informacion_personas`
@@ -5114,7 +7086,7 @@ CREATE TABLE `informacion_personas` (
 
 INSERT INTO `informacion_personas` (`id`, `nombres`, `cargo`) VALUES
 (1, 'LEG. DELKIS BASTIDAS ', 'PRESIDENTA'),
-(2, 'ABOG. LESTER MIRABAL', 'SECRETARIO DE CÁMARA '),
+(2, 'ABOG. EDIXON GOMEZ', 'SECRETARIO DE CÁMARA '),
 (3, 'ING. MIGUEL RODRÍGUEZ', 'GOBERNADOR DEL ESTADO AMAZONAS'),
 (4, 'ING. ANALI HERRERA', 'SECRETARIA EJECUTIVA DE GOBIERNO');
 
@@ -5125,13 +7097,13 @@ INSERT INTO `informacion_personas` (`id`, `nombres`, `cargo`) VALUES
 --
 
 CREATE TABLE `menu` (
-  `id` int(1) NOT NULL,
+  `id` int(11) NOT NULL,
   `oficina` varchar(255) DEFAULT NULL,
   `categoria` varchar(255) DEFAULT NULL,
   `nombre` varchar(255) DEFAULT NULL,
   `dir` varchar(255) DEFAULT NULL,
   `icono` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `menu`
@@ -5157,8 +7129,8 @@ INSERT INTO `menu` (`id`, `oficina`, `categoria`, `nombre`, `dir`, `icono`) VALU
 (17, 'pl_formulacion', 'Teoría y leyes', 'Consejo', 'mod_pl_formulacion/form_consejo_tabla', NULL),
 (18, 'pl_formulacion', 'Teoría y leyes', 'Personas', 'mod_pl_formulacion/form_persona_tabla', NULL),
 (19, 'pl_formulacion', 'Teoría y leyes', 'Articulos', 'mod_pl_formulacion/form_titulo1_tabla', NULL),
-(20, 'ejecucion_p', 'Ejecución presupuestaria', 'Solicitudes de dozavo', 'mod_ejecucion_presupuestaria/pre_solicitudes_tabla', 'bx-cog'),
-(21, 'ejecucion_p', 'Ejecución presupuestaria', 'Gastos de Funcionamiento', 'mod_ejecucion_presupuestaria/pre_gastos_form', 'bx-cog'),
+(20, 'ejecucion_p', NULL, 'inicio', 'mod_ejecucion_presupuestaria/index', 'bx-home'),
+(21, 'ejecucion_p', NULL, 'Gastos de Funcionamiento', 'mod_ejecucion_presupuestaria/pre_gastos_form', 'bx-cog'),
 (22, 'relaciones_laborales', NULL, 'Netos de pago', 'mod_relaciones_laborales/index', 'bx-detail'),
 (23, 'registro_control', NULL, 'Pagos de Nómina', 'mod_registro_control/index', 'bx-file'),
 (24, 'registro_control', NULL, 'Reintegros', 'mod_registro_control/regcom_reintegros', 'bx-refresh'),
@@ -5178,7 +7150,13 @@ INSERT INTO `menu` (`id`, `oficina`, `categoria`, `nombre`, `dir`, `icono`) VALU
 (38, 'nomina', 'Nómina', 'Registro de nominas', 'mod_nomina/nom_grupos', 'bx-wallet-alt'),
 (39, 'nomina', 'Nómina', 'Pagar nomina', 'mod_nomina/nom_peticiones_form', 'bx-wallet-alt'),
 (40, 'pl_formulacion', NULL, 'Reportes', 'mod_pl_formulacion/form_reportes', 'bx-download'),
-(42, '', 'usuarios', 'Seguimiento general', 'mod_global/global_user_logs', NULL);
+(41, 'entes', NULL, 'solicitud de dozavo', 'mod_entes/solicitud_dozavo_vista', NULL),
+(42, 'ejecucion_p', NULL, 'reportes', 'mod_ejecucion_presupuestaria/pre_reportes', 'bx-download'),
+(43, 'ejecucion_p', NULL, 'traspasos', 'mod_ejecucion_presupuestaria/pre_traspasos_form', 'bx bx-receipt'),
+(46, 'ejecucion_p', NULL, 'Solicitudes de dozavo', 'mod_ejecucion_presupuestaria/pre_solicitudes_tabla', 'bx-cog'),
+(47, 'ejecucion_p', NULL, 'créditos / proyectos', 'mod_ejecucion_presupuestaria/pre_proyectos_form', 'bx-folder'),
+(48, 'pl_formulacion', NULL, 'planes operativos', 'mod_pl_formulacion/form_plan_operativo', 'bxs-report'),
+(49, 'proyectos', NULL, 'créditos / proyectos', 'mod_proyectos/pro_proyectos_form', 'bx-folder');
 
 -- --------------------------------------------------------
 
@@ -5189,11 +7167,11 @@ INSERT INTO `menu` (`id`, `oficina`, `categoria`, `nombre`, `dir`, `icono`) VALU
 CREATE TABLE `modificaciones_empleados` (
   `id` int(11) NOT NULL,
   `empleado` int(11) NOT NULL,
-  `campo` varchar(255) DEFAULT NULL,
-  `valor` varchar(255) DEFAULT NULL,
+  `campo` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `valor` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
   `timestamp` datetime NOT NULL DEFAULT current_timestamp(),
-  `user_acepta` int(10) NOT NULL DEFAULT 0,
-  `fecha` varchar(50) NOT NULL
+  `user_acepta` int(11) NOT NULL DEFAULT 0,
+  `fecha` varchar(50) COLLATE latin1_spanish_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 -- --------------------------------------------------------
@@ -5204,16 +7182,16 @@ CREATE TABLE `modificaciones_empleados` (
 
 CREATE TABLE `movimientos` (
   `id` int(11) NOT NULL,
-  `id_empleado` int(10) NOT NULL,
-  `id_nomina` varchar(255) DEFAULT NULL,
+  `id_empleado` int(11) NOT NULL,
+  `id_nomina` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
   `fecha_movimiento` datetime NOT NULL DEFAULT current_timestamp(),
-  `accion` varchar(50) DEFAULT NULL,
-  `tabla` varchar(255) DEFAULT NULL,
-  `campo` varchar(255) DEFAULT NULL,
-  `descripcion` longtext DEFAULT NULL,
-  `valor_anterior` varchar(255) DEFAULT NULL,
-  `valor_nuevo` varchar(255) DEFAULT NULL,
-  `usuario_id` varchar(255) DEFAULT NULL,
+  `accion` varchar(50) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `tabla` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `campo` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `descripcion` longtext COLLATE latin1_spanish_ci DEFAULT NULL,
+  `valor_anterior` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `valor_nuevo` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `usuario_id` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
   `status` int(11) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
@@ -5234,11 +7212,11 @@ INSERT INTO `movimientos` (`id`, `id_empleado`, `id_nomina`, `fecha_movimiento`,
 
 CREATE TABLE `nominas` (
   `id` int(11) NOT NULL,
-  `grupo_nomina` varchar(255) DEFAULT NULL,
-  `nombre` varchar(255) DEFAULT NULL,
-  `frecuencia` varchar(255) DEFAULT NULL,
-  `tipo` varchar(255) DEFAULT NULL,
-  `conceptos_aplicados` varchar(255) DEFAULT NULL
+  `grupo_nomina` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `nombre` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `frecuencia` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `tipo` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `conceptos_aplicados` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 --
@@ -5261,8 +7239,8 @@ INSERT INTO `nominas` (`id`, `grupo_nomina`, `nombre`, `frecuencia`, `tipo`, `co
 
 CREATE TABLE `nominas_conceptos` (
   `id` int(11) NOT NULL,
-  `contador_cod_con` int(3) DEFAULT NULL,
-  `cod_concepto` int(20) DEFAULT NULL,
+  `contador_cod_con` int(11) DEFAULT NULL,
+  `cod_concepto` int(11) DEFAULT NULL,
   `nom_concepto` varchar(255) DEFAULT NULL,
   `cod_partida` varchar(255) DEFAULT NULL,
   `asignacion` varchar(50) DEFAULT NULL,
@@ -5273,7 +7251,7 @@ CREATE TABLE `nominas_conceptos` (
   `cod_nomina` varchar(10) DEFAULT NULL,
   `nom_nomina` varchar(255) DEFAULT NULL,
   `tipo_concepto` varchar(1) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Volcado de datos para la tabla `nominas_conceptos`
@@ -5304,8 +7282,8 @@ INSERT INTO `nominas_conceptos` (`id`, `contador_cod_con`, `cod_concepto`, `nom_
 
 CREATE TABLE `nominas_grupos` (
   `id` int(11) NOT NULL,
-  `codigo` varchar(20) DEFAULT NULL,
-  `nombre` varchar(255) DEFAULT NULL,
+  `codigo` varchar(20) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `nombre` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
   `creado` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
@@ -5327,12 +7305,12 @@ INSERT INTO `nominas_grupos` (`id`, `codigo`, `nombre`, `creado`) VALUES
 CREATE TABLE `notificaciones` (
   `id` int(11) NOT NULL,
   `user_1` int(11) NOT NULL,
-  `user_2` varchar(150) DEFAULT NULL,
+  `user_2` varchar(150) COLLATE latin1_spanish_ci DEFAULT NULL,
   `tipo` int(11) NOT NULL,
-  `guia` longtext DEFAULT NULL,
+  `guia` longtext COLLATE latin1_spanish_ci DEFAULT NULL,
   `date` datetime DEFAULT current_timestamp(),
-  `visto` int(1) NOT NULL DEFAULT 0,
-  `comentario` varchar(255) DEFAULT NULL
+  `visto` int(11) NOT NULL DEFAULT 0,
+  `comentario` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 --
@@ -5356,8 +7334,8 @@ CREATE TABLE `partidas_presupuestarias` (
   `partida` varchar(255) DEFAULT NULL,
   `nombre` longtext DEFAULT NULL,
   `descripcion` longtext DEFAULT NULL,
-  `status` int(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `status` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `partidas_presupuestarias`
@@ -5618,7 +7596,7 @@ INSERT INTO `partidas_presupuestarias` (`id`, `partida`, `nombre`, `descripcion`
 (975, '401.07.85.00.0000', NULL, 'Aportes para la adquisición de juguetes para los hijos e hijas del personal contratado', 0),
 (976, '401.07.86.00.0000', NULL, 'Ayudas especiales asignadas al personal empleado', 0),
 (977, '401.07.87.00.0000', NULL, 'Ayudas especiales asignadas al personal obrero', 0),
-(978, '401.07.89.00.0000', NULL, 'Ayudas especiales asignadas al personal contratado ', 0),
+(978, '401.07.89.00.0000', 'Asistencia socio-económica', 'Ayudas especiales asignadas al personal militar', 0),
 (979, '401.07.90.00.0000', NULL, 'Ayudas especiales asignadas al personal de alto nivel y dirección', 0),
 (980, '401.07.91.00.0000', NULL, 'Ayudas especiales asignadas para altos funcionarios y altas funcionarias del poder público y de elección popular.', 0),
 (981, '401.07.92.00.0000', NULL, 'Ayudas por hijos e hijas con necesidades especiales para altos funcionarios y altas funcionarias del poder público y de elección popular', 0),
@@ -6697,7 +8675,122 @@ INSERT INTO `partidas_presupuestarias` (`id`, `partida`, `nombre`, `descripcion`
 (2052, '412.04.01.00.0000', NULL, 'Disminución de resultados acumulados', 0),
 (2053, '412.04.02.00.0000', NULL, 'Disminución de resultados del ejercicio económico financiero', 0),
 (2054, '498.00.00.00.0000', NULL, 'RECTIFICACIONES AL PRESUPUESTO', 0),
-(2055, '498.01.00.00.0000', NULL, 'Rectificaciones al presupuesto', 0);
+(2055, '498.01.01.00.0000', 'Rectificación al presupuesto', 'Rectificaciones al presupuesto', 0),
+(2058, '407.03.03.05.0001', NULL, 'INVIOBRAS AMAZONAS', NULL),
+(2059, '407.03.03.05.0002', NULL, 'FUNDACION PROMO-AMAZONAS', NULL),
+(2060, '401.02.01.00.0001', NULL, 'Compensaciones prevista en las escala de sueldo al personal empleado contratado', NULL),
+(2061, '407.01.03.04.0002', NULL, 'CENTRO DE INVESTIGACION AMAZONAS', NULL),
+(2062, '407.01.03.02.0003', NULL, 'AERO AMAZONAS', NULL),
+(2063, '401.03.37.00.0001', NULL, 'Primas de Trasporte al Personal empleado contratado', NULL),
+(2064, '401.03.39.00.0001', NULL, 'Primas por hijos e Hijas al personal Empleado contratado', NULL),
+(2065, '401.03.40.00.0001', NULL, 'Primas de Profesionalizacion al personal empleado contratado', NULL),
+(2066, '401.03.41.00.0001', NULL, 'Primas Por Antiguedad al personal empleado contratado', NULL),
+(2067, '401.03.96.00.0001', NULL, 'Primas por dedicacion al sistema publico de Salud a Empleados Contratados', NULL),
+(2068, '401.03.96.00.0003', NULL, 'Primas por Discapacidad a empleados Contratados', NULL),
+(2069, '401.03.96.00.0004', NULL, 'Primas por Escalafon a Empleados Contratados', NULL),
+(2070, '401.03.96.00.0005', NULL, 'Primas Por Fonteras a Empleados Contratados', NULL),
+(2071, '401.04.24.00.0001', NULL, 'Complemento al Personal Empleados Contratados por horas extraordinarias', NULL),
+(2072, '401.04.26.00.0001', NULL, 'Bono Compensatorio de Alimentacion al Personal Empleado Contratado', NULL),
+(2073, '401.05.07.00.0001', NULL, 'Aguinaldos ala Personal Empleado Contratado', NULL),
+(2074, '401.05.08.00.0001', NULL, 'Bono Vacacional al Personal Empleado Contratado', NULL),
+(2075, '401.06.25.00.0001', NULL, 'Aporte Legal Al Instituto Venezolano de los Seguros Sociales  por personal empleado contratado', NULL),
+(2076, '401.06.26.00.0001', NULL, 'Aporte Patronal al Fondo de Ahorro Obligatorio para la Viviendas Por Personal Empleados Contratados', NULL),
+(2077, '401.06.27.00.0001', NULL, 'Aporte Patronal al Fondo Contributivo del Regimen Prestacional de  Empleo al Personal Empleado Contratado', NULL),
+(2078, '401.06.28.00.0001', NULL, 'Aporte Patronal al Fondo de Jubilaciones por Personal Empleado Contratado', NULL),
+(2079, '401.07.12.00.0001', NULL, 'Aportes para la Adquisicion de Juguetes para los hijos e Hijas del Personal Empleado Contratado', NULL),
+(2080, '401.07.75.00.0001', NULL, 'Becas al personal empleado contratado', NULL),
+(2081, '401.07.99.00.0001', NULL, 'Bono de estabilidad Economica a Empleados Contratados', NULL),
+(2082, '401.08.03.00.0001', NULL, 'Prestaciones Sociales e Indemnizaciones al Personal Empleado Contratado', NULL),
+(2083, '401.93.01.00.0001', NULL, 'Bono de Compensacion por Servicios de Salud a Empleados Contratados', NULL),
+(2084, '401.03.98.00.0001', NULL, 'Primas por Fronteras a Obreros', NULL),
+(2085, '401.03.98.00.0004', NULL, 'Primas por Lunch a Obreros', NULL),
+(2086, '401.03.98.00.0005', NULL, 'Primas por Dedicacion Especial Al Sistema Publico de Salud a Obreros', NULL),
+(2087, '401.03.98.00.0006', NULL, 'Prima por Discapacidad al Personal Obrero', NULL),
+(2088, '401.07.96.00.0001', NULL, 'Bono de estabilidad económica a empleados', NULL),
+(2089, '401.03.98.00.0007', NULL, 'Primas por Escalafon', NULL),
+(2090, '401.04.97.00.0001', NULL, 'Bono nocturno a obreros', NULL),
+(2091, '401.03.10.00.0001', NULL, 'Prima por jerarquía o responsabilidad en el cargo', NULL),
+(2092, '401.04.97.00.0002', NULL, 'Domingo feriado a Obreros', NULL),
+(2093, '401.04.97.00.0011', NULL, 'Bono Sindical', NULL),
+(2094, '401.03.10.00.0002', NULL, 'Prima por responsabilidad en el cargo', NULL),
+(2095, '401.07.97.00.0001', NULL, 'Bono Estabilida Economica al Personal Obrero', NULL),
+(2096, '401.03.97.00.0001', '0001', 'Primas por frontera a empleado', NULL),
+(2097, '401.03.97.00.0012', NULL, 'Primas por dedicación al sistema publico de salud', NULL),
+(2098, '401.03.95.00.0001', NULL, 'Primas por discapacidad al personal De Alto Nivel y Direccion', NULL),
+(2099, '401.03.97.00.0013', NULL, 'Primas por discapacidad a empleados', NULL),
+(2100, '401.03.95.00.0002', NULL, 'Primas Por Transporte al Personal de Alto Nivel y De Direccion', NULL),
+(2101, '401.03.97.00.0014', NULL, 'Primas por escalafón a empleados', NULL),
+(2102, '401.03.95.00.0003', NULL, 'Primas por Residencia al Personal de Alto Nivel y  De Direccion', NULL),
+(2103, '401.04.96.00.0001', NULL, 'Bono sindical a empleados', NULL),
+(2104, '401.04.96.00.0002', NULL, 'Reconocimiento por 15 años de servicios', NULL),
+(2105, '401.04.96.00.0003', NULL, 'Días feriados a empleados', NULL),
+(2106, '401.04.96.00.0009', NULL, 'Reconocimiento por 10 años de servicios', NULL),
+(2107, '401.03.95.00.0004', NULL, 'Primas por Jerarquia en el Cargo al Personal de Alto Nivel y de Direccion', NULL),
+(2108, '401.04.96.00.0012', NULL, 'Reconocimiento por antigüedad a empleados', NULL),
+(2109, '401.03.95.00.0005', NULL, 'Prima por Frontera al Personal de Alto Nivel y de Direccion', NULL),
+(2110, '401.07.94.00.0001', NULL, 'Bono de Estabilidad Economica a Altos Funcionarios y Altas Funcionarias del Poder Publico y de Eleccion Popular', NULL),
+(2111, '401.02.03.00.0002', NULL, 'Compensación prevista en la  escala de sueldos al personal obreros contratados', NULL),
+(2112, '401.03.39.00.0002', NULL, 'Primas por hijos a obreros contratados', NULL),
+(2113, '401.03.40.00.0002', NULL, 'Primas por profesionalización a obreros contratados', NULL),
+(2114, '401.03.41.00.0002', NULL, 'Primas por antigüedad a obreros contratados', NULL),
+(2115, '401.03.96.00.0002', NULL, 'Prima por discapacidad a obreros contratados', NULL),
+(2116, '401.04.24.00.0002', NULL, 'Complemento al personal obreros contratados por horas extraordinarias o por sobre tiempo', NULL),
+(2117, '401.04.26.00.0002', NULL, 'Bono compensatorio de alimentación al personal obrero contratado', NULL),
+(2119, '401.05.07.00.0002', NULL, 'Aguinaldo al personal obrero contratado', NULL),
+(2120, '401.05.08.00.0002', NULL, 'Bono vacacional al personal obrero contratado', NULL),
+(2121, '401.06.25.00.0002', NULL, 'Aporte Legal al Instituto Venezolano de los Seguros Sociales por personal obreros contratado', NULL),
+(2122, '401.06.27.00.0002', NULL, 'Aporte patronal al fondo contributivo del regimen prestacional de empleado al personal obrero contratado', NULL),
+(2123, '401.06.28.00.0002', NULL, 'Aporte patronal al fondo de jubilaciones por personal obrero contratado', NULL),
+(2124, '401.07.18.00.0002', NULL, 'Becas al personal obrero contratado', NULL),
+(2125, '401.07.28.00.0002', NULL, 'Aporte para la adq. de juguetes para los hijos e hijas del personal obrero contratado', NULL),
+(2126, '401.07.99.00.0002', NULL, 'Bono de estabilidad económica al personal obrero contratado', NULL),
+(2127, '401.08.03.00.0002', NULL, 'Prestaciones sociales e indemnizaciones al personal obrero contratado', NULL),
+(2128, '401.04.54.00.0002', NULL, 'Bono nocturno al personal obreros contratado', NULL),
+(2129, '407.01.03.03.0011', NULL, 'cenja', NULL),
+(2130, '407.01.03.03.0012', '0012', 'Cirmil', NULL),
+(2131, '401.07.95.00.0001', NULL, 'Bono de estabilidad económica al personal de alto nivel y de dirección', NULL),
+(2132, '401.04.96.00.0013', NULL, 'Reconocimiento por 25 años de servicios', NULL),
+(2133, '407.01.03.02.0004', NULL, 'VICARIATO APOSTOLICO', NULL),
+(2134, '407.01.03.02.0005', NULL, 'AMAVISION', NULL),
+(2135, '407.01.03.02.0010', NULL, 'FUNDACION ORQUESTA SINFONICA JUVENIL E INFANTIL DE AMAZONAS', NULL),
+(2136, '407.01.03.02.0011', NULL, 'FUNDACION CULTURA ESCUELA ACADEMICA DE ORQUESTAS Y BANDAS DE AMAZONAS', NULL),
+(2137, '407.01.03.02.0013', NULL, 'ESCUELA INTEGRAL DE DANZAS', NULL),
+(2138, '407.01.03.02.0014', NULL, 'FUNDAPRODICAM', NULL),
+(2139, '407.01.03.02.0017', NULL, 'SUPERINTENDENCIA DE ADMINISTRACION TRIBUTARIA DEL ESTADO AMAZONAS - SATEAMAZ', NULL),
+(2140, '407.01.03.02.0018', 'MUSEO ETNOLOGICO', 'MUSEO ETNOLOGICO', NULL),
+(2141, '407.01.03.02.0019', NULL, 'INSTITO REGIONAL DE DEPORTE AMAZONAS - IRDA', NULL),
+(2142, '407.01.03.02.0024', NULL, 'UNIVERSIDAD NACIONAL ABIERTA - U.N.A', NULL),
+(2143, '407.01.03.02.0025', NULL, 'BIBLIOTECA PUBLICA SIMON RODRIGUEZ', NULL),
+(2144, '407.01.03.02.0026', NULL, 'AMAZONAS F.C', NULL),
+(2145, '407.01.03.04.0028', 'UNIVERSIDAD PADALOGICA EXPERIMENTAL LIBERTADOR - UPEL', 'UNIVERSIDAD PADALOGICA EXPERIMENTAL LIBERTADOR - UPEL', NULL),
+(2146, '407.01.03.04.0001', 'FUNDACIONIHIRU', 'FUNDACIONIHIRU', NULL),
+(2147, '407.01.03.04.0013', NULL, 'FUNDASALUD AMAZONAS', NULL),
+(2148, '407.01.03.04.0007', NULL, 'HOSPITAL DR JOSE GREGORIO HERNANDEZ', NULL),
+(2149, '407.01.03.04.0027', NULL, 'UNIVERSIDAD EXPERIMENTAL POLITECNICA DE LA FUERZA ARMADA NACIONAL NUCLEO AMAZONAS - UNEFA', NULL),
+(2150, '407.01.03.04.0009', NULL, 'SISTEMA DE URGENCIA MEDICAS AMAZONAS - SIUMA', NULL),
+(2151, '407.01.03.04.0010', NULL, 'FUNDACION PARA LA ATENCION INTEGRAL A LA MUJER DE AMAZONAS - FAIMA', NULL),
+(2152, '407.01.03.04.0011', NULL, 'FUNDACION DE SISTEMA DE ATENCION INTEGRAL PARA LAS PERSONAS CIN DICAPACIDAD - SAIPDIS', NULL),
+(2153, '407.01.03.04.0012', NULL, 'FUNDACION CENTRO DE HISTORIA DE IDENTIDAD AMAZONENCE', NULL),
+(2155, '407.03.03.05.0004', NULL, 'INSCATA', NULL),
+(2157, '407.03.03.05.0006', NULL, 'ALIMENTOS AMAZONAS C.A', NULL),
+(2158, '407.03.03.05.0005', NULL, 'LUBRICANTES AMAZONAS 2018 C.A', NULL),
+(2159, '407.03.03.05.0007', NULL, 'HIDROAMAZONAS C.A', NULL),
+(2160, '407.03.03.05.0008', NULL, 'ASFALTOS Y PAVIMENTOS AMAZONAS', NULL),
+(2161, '407.03.03.05.0009', NULL, 'COMBUSTIBLE AMAZONAS C.A', NULL),
+(2162, '407.03.03.05.0010', NULL, 'SANEAMIENTO AMBIENTAL', NULL),
+(2163, '407.03.03.05.0011', NULL, 'BLOQUES Y AGREGADO AMAZONAS C.A', NULL),
+(2164, '407.03.03.05.0012', NULL, 'TEXTILES AMAZONAS C.A', NULL),
+(2165, '407.03.03.05.0013', NULL, 'ACUARIOS AMAZONAS', NULL),
+(2166, '407.03.03.05.0014', NULL, 'EXPORTADORA AMAZONAS', NULL),
+(2167, '407.03.03.05.0015', NULL, 'GAS COMUNAL', NULL),
+(2168, '407.03.03.05.0016', NULL, 'FARMA AMAZONAS', NULL),
+(2169, '407.03.03.05.0017', NULL, 'FLUVIALES AMAZONAS', NULL);
+INSERT INTO `partidas_presupuestarias` (`id`, `partida`, `nombre`, `descripcion`, `status`) VALUES
+(2170, '407.03.03.05.0018', NULL, 'EMPRESA PUBLICA DE AMAZONAS', NULL),
+(2171, '407.03.03.05.0019', NULL, 'MANTENIMIENTO Y SERVICIOS GERENCIALES AMAZONAS - SERVIAMAZONAS', NULL),
+(2172, '407.03.03.05.0020', NULL, 'TURISMO AMAZONAS C.A', NULL),
+(2173, '401.07.88.00.0000', 'Asistencia socio-económica', 'Ayudas especiales asignadas al personal contratado', 0),
+(2174, '407.01.03.04.0008', NULL, 'A.C. HERMANAS DE JESUS RECUSITADO CASA HOGAR - CARMEN MARTINEZ ', NULL);
 
 -- --------------------------------------------------------
 
@@ -6707,9 +8800,9 @@ INSERT INTO `partidas_presupuestarias` (`id`, `partida`, `nombre`, `descripcion`
 
 CREATE TABLE `password_resets` (
   `id` int(11) NOT NULL,
-  `email` varchar(255) DEFAULT NULL,
-  `token` varchar(255) DEFAULT NULL,
-  `expires` varchar(255) DEFAULT NULL,
+  `email` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `token` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `expires` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
   `attempts` int(11) DEFAULT 0,
   `last_attempt` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
@@ -6721,22 +8814,22 @@ CREATE TABLE `password_resets` (
 --
 
 CREATE TABLE `personal_directivo` (
-  `id` int(255) NOT NULL,
+  `id` int(11) NOT NULL,
   `direccion` longtext DEFAULT NULL,
   `nombre_apellido` longtext DEFAULT NULL,
   `email` longtext DEFAULT NULL,
   `telefono` longtext DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `personal_directivo`
 --
 
 INSERT INTO `personal_directivo` (`id`, `direccion`, `nombre_apellido`, `email`, `telefono`) VALUES
-(1, 'Planificación y/o Presupuesto', 'Lic. JUAN GOMEZ', '', ''),
-(2, 'Administración y/o Finanzas', 'Prof. Yenny Romero', '', ''),
-(3, 'Recursos Humanos y/o Personal', 'Lic. Maria Rojas', '', ''),
-(4, 'Sindico (a) Procurador (a)', 'Abog. Luis Machado', '', ''),
+(1, 'Planificación y Presupuesto', 'LIC. FRANKLIN CAMPOS', 'franklincamp79@gmail.com', '04268062677'),
+(2, 'Administración y Finanzas', 'LIC. LEONARDO CABELLO', 'cabepal@gmail.com', '04264096694'),
+(3, 'Recursos Humanos y Personal', 'LICDA. DIOSMIRA JOSEFINA ALMANZA', 'diosmira.almanza23@gmail.com', '0412-1420909'),
+(4, 'Sindico (a) Procurador (a)', 'ABOG. CONNIE MORELIA CONZALEZ NORAN', 'connegonza0917@mail.com', '04266344021'),
 (5, 'Cronista del Municipio:', '', '', '');
 
 -- --------------------------------------------------------
@@ -6746,7 +8839,7 @@ INSERT INTO `personal_directivo` (`id`, `direccion`, `nombre_apellido`, `email`,
 --
 
 CREATE TABLE `peticiones` (
-  `id` int(255) NOT NULL,
+  `id` int(11) NOT NULL,
   `empleados` longtext DEFAULT NULL,
   `asignaciones` longtext DEFAULT NULL,
   `deducciones` longtext DEFAULT NULL,
@@ -6759,7 +8852,7 @@ CREATE TABLE `peticiones` (
   `identificador` varchar(255) DEFAULT NULL,
   `status_archivos` varchar(255) DEFAULT NULL,
   `correccion` longtext DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `peticiones`
@@ -6783,10 +8876,34 @@ INSERT INTO `peticiones` (`id`, `empleados`, `asignaciones`, `deducciones`, `apo
 --
 
 CREATE TABLE `plan_inversion` (
-  `id` int(255) NOT NULL,
-  `id_ejercicio` int(255) DEFAULT NULL,
+  `id` int(11) NOT NULL,
+  `id_ejercicio` int(11) DEFAULT NULL,
   `monto_total` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `plan_operativo`
+--
+
+CREATE TABLE `plan_operativo` (
+  `id` int(255) NOT NULL,
+  `id_ente` int(255) NOT NULL,
+  `objetivo_general` longtext NOT NULL,
+  `objetivos_especificos` longtext NOT NULL,
+  `estrategias` longtext NOT NULL,
+  `accciones` longtext NOT NULL,
+  `politicas` longtext NOT NULL,
+  `culturales` longtext NOT NULL,
+  `socio_productivas` longtext NOT NULL,
+  `social_educativas` longtext NOT NULL,
+  `salud` longtext NOT NULL,
+  `seguridad` longtext NOT NULL,
+  `servicios` longtext NOT NULL,
+  `ambientes` longtext NOT NULL,
+  `id_ejercicio` int(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -6798,7 +8915,15 @@ CREATE TABLE `pl_actividades` (
   `id` int(11) NOT NULL,
   `actividad` varchar(10) DEFAULT NULL,
   `denominacion` longtext DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `pl_actividades`
+--
+
+INSERT INTO `pl_actividades` (`id`, `actividad`, `denominacion`) VALUES
+(25, '11', 'OBRAS'),
+(26, '54', 'OFICINA DE DETERMINACION');
 
 -- --------------------------------------------------------
 
@@ -6807,14 +8932,113 @@ CREATE TABLE `pl_actividades` (
 --
 
 CREATE TABLE `pl_metas` (
-  `id` int(255) NOT NULL,
-  `programa` int(255) NOT NULL,
+  `id` int(11) NOT NULL,
+  `programa` int(11) NOT NULL,
   `meta` longtext NOT NULL,
   `unidad_medida` longtext NOT NULL,
-  `cantidad` int(255) NOT NULL,
+  `cantidad` int(11) NOT NULL,
   `costo` varchar(255) NOT NULL,
-  `id_ejercicio` int(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `id_ejercicio` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `pl_metas`
+--
+
+INSERT INTO `pl_metas` (`id`, `programa`, `meta`, `unidad_medida`, `cantidad`, `costo`, `id_ejercicio`) VALUES
+(1, 4, 'Mantener la organización, revisión y  verificar la documentación que requieran firma y/o aprobación del gobernador', 'DOCUMENTACION DE APROBACION', 1200, '150.000,00', 1),
+(2, 4, 'Llevar la agenda actualizada del ciudadano gobernador, para atender a la población amazonense a un 100% a sus necesidades solicitadas', 'AGENDA', 200, '2.300.000,00', 1),
+(4, 4, 'Realizar el seguimientos y control de los planes y acciones correspondiente para los periodos fiscales de las políticas publicas de todas las secretarias y comisarias especiales', 'SEGUIMIENTO DE LA GESTION', 1200, '1.300.000,00', 1),
+(5, 4, 'Supervisar y procesar toda la información de datos estadísticos de la gestión de gobierno', 'DATOS ESTADISTICOS DE LA GESTION', 3000, '8.500.000,00', 1),
+(7, 5, 'Refrendar con su firma los decretos del Gobernador o de la Gobernadora del Estado, y cuidar de la ejecución de los mismo', 'LEGARLIZAR', 100, '350.000,00', 1),
+(8, 5, 'Compilar y verificar el Informe de gestión y la Cuenta del Gobernador o de la Gobernadora del Estado.', 'MEMORIA Y CUENTA', 1, '2.000.000,00', 1),
+(9, 5, 'Evaluar  la gestión de las distintas dependencias del Estado, previo informe de la Secretaria de Planificación Y Presupuesto Y realizar las respectivas recomendaciones que señalen mecanismos que permitan optimizar la Gestión de Gobierno.', 'EVALUAR ', 10, '2.500.000,00', 1),
+(10, 5, 'Actuar como órgano de comunicación y enlace, conforme a las instrucciones del Gobernador o de la Gobernadora, entre este y los demás órganos y funcionarios del Poder Publico.', 'ACTUACIONES ', 120, '1.500.000,00', 1),
+(11, 6, 'Garantizar los pagos de nominas de los trabajadores', 'NOMINAS', 15, '28.000.000,00', 1),
+(12, 6, 'Reclutamiento y selección del personal de acuerdo a la ley', 'SELECCION DE PERSONAL', 350, '70.000,00', 1),
+(13, 6, 'Revision de los contratos  Colectivos', 'CONTRATOS', 5, '88.000,00', 1),
+(14, 6, 'Revisión y actualización del Registro de Asignación de Cargos', 'R.A.C', 1, '100.000,00', 1),
+(15, 7, 'Asesoría a los diferentes Entes y Secretarias en materia  de la formulación presupuesto', 'ASESORIAS', 330, '270.000,00', 1),
+(16, 7, 'Elaboración de informes trimestrales de la ejecución presupuestaria estadal', 'EJECUCION', 6, '2.200.000,00', 1),
+(17, 7, 'Formulación y elaboración del proyecto de presupuesto anual', 'PROYECTOS', 1, '3.500.000,00', 1),
+(18, 7, 'Elaboracion de la Memoria y cuenta de la gestion administrativa del Ciudadano Gobernador.', 'MEMORIA ', 1, '8.000.000,00', 1),
+(19, 7, 'Elaboracion del Plan Operativo Anual', 'PLAN', 1, '8.000.000,00', 1),
+(20, 7, 'Realizar traspasos de acuerdo a la ley Orgánica del regimen Presupuestario', 'TRASPASO', 60, '5.000.000,00', 1),
+(21, 8, 'Llevar el control en el sistema , la entrada y salida de todos los documentos en tramite de pago.', 'ORDENES DE PAGO', 3000, '62.000,00', 1),
+(22, 8, 'Atender oportunamente las requisiciones de las diferentes Secretarias en materia de adquisición.', 'ORDENES, COMPRA Y SERVICIOS', 85000, '550.000,00', 1),
+(23, 8, 'Revisar ordenes de pago con sus respectivos requisitos para la verificación de las misma.', 'ORDENES DE PAGO', 3000, '350.000,00', 1),
+(24, 9, 'Elaboraciones de transferencias', 'TRANSFERENCIAS', 3000, '8.500.000,00', 1),
+(25, 9, 'Balance del fondo del tesoro', 'BALANCE', 150, '350.000,00', 1),
+(26, 9, 'Conciliación bancaria', 'CONCILIACION', 330, '250.000,00', 1),
+(27, 9, 'Resumen de Movimientos de Fondos', 'RESUMENES', 170, '250.000,00', 1),
+(28, 9, 'Comprobantes de Ingresos y Egresos', 'COMPROBANTES ', 3000, '2.000.000,00', 1),
+(29, 9, 'Informes de relacion de comprobantes', 'INFORME', 5, '600.000,00', 1),
+(30, 10, 'Realización de consultas de  asambleas indígenas', 'ASAMBLEAS', 50, '50.000,00', 1),
+(31, 10, 'Orientación y capacitación en las areas agrícolas y artesanales', 'MICRO EMPRESAS', 120, '55.000,00', 1),
+(32, 10, 'Constitución y elaboración de pequeños emprendedores a través de cursos y talleres.', 'TALLERES', 80, '70.000,00', 1),
+(33, 10, 'Realizacion de exposiciones Agro-artesanales', 'EVENTOS ', 5, '250.000,00', 1),
+(34, 11, 'Controlar el cumplimiento y los resultados de las políticas y ordenar las aperturas y averiguaciones administrativas.', 'PROGRAMAS DE AUDITORIAS', 350, '150.000,00', 1),
+(35, 11, 'Analizar los procedimientos y el desempeño de la función publica', 'EVALUACIONES ', 80, '85.000,00', 1),
+(36, 11, 'Ordenar las aperturas de investigación en materia de asuntos legales', 'APERTURAS DE LAS AVERIGUACIONES', 200, '40.000,00', 1),
+(42, 14, 'Planificar, coordinar, dirigir, organizar, las operaciones para el control de los procedimientos disciplinarios. Planes de trabajo y actuación de los funcionarios pertenecientes al Instituto de la Policía del Estado Amazonas', 'PLANIFICAR', 6, '26.000.000,00', 1),
+(43, 14, 'Formalizar el procesos y genera información a VISIPOL sobre el ingreso y egresos de los funcionario para la toma decisiones en materia de seguridad policial en tiempo real.', 'PROCESO DE LA VISIPOL', 15, '6.500.000,00', 1),
+(44, 14, 'Realizar patrullaje y operativos  en carnaval, semana santa y fiestas festivas.', 'OPERATIVOS PATRULLAJE', 10, '20.000.000,00', 1),
+(45, 14, 'Operativo aniversario Policial', 'ANIVERSARIO', 2, '6.500.000,00', 1),
+(46, 15, 'Asistir a las reuniones ordinaria o extraordinaria del consejo de seguridad.', 'REUNIONES CON CONSEJO DE SEGURIDAD', 60, '10.000.000,00', 1),
+(47, 15, 'informar al Gobernador y demás secretario ejecutivos de la actividades técnicas, administrativo y de investigación que se realicen en la secretaria ', 'INFORME', 6, '2.000.000,00', 1),
+(48, 15, 'Orientar y coordinar la formulación de políticas, planes  y programas dirigidos a garantizar la convivencia pacifica, el respeto  delos derecho humano, las seguridad ciudadana y la prevención del orden publico del estado', 'FORMULACION DE POLITICAS DE SEGURIDAD', 10, '15.000.000,00', 1),
+(49, 15, 'Orientar y vigilar las defensa y protección de los derechos constitucionales de los ciudadanos en todo el Estado Amazonas', 'PROTECCION DE LOS DERECHO CONSTITUCIONALES', 6, '8.500.000,0', 1),
+(50, 16, 'Operativo en épocas de festivida', 'OPERATIVOS', 30, '250.000,00', 1),
+(51, 16, 'Talleres de rescate y primeros auxilio', 'TALLERES', 25, '90.000,00', 1),
+(52, 16, 'Rescate a personas por eventos naturales o provocados.', 'RESCATE', 25, '100.000,00', 1),
+(53, 16, 'Cursos de primeros auxilios', 'CURSOS', 20, '150.000,00', 1),
+(54, 17, 'Proteccion a los habitantes a la comunidad', 'PROTECCION', 25, '100.000,00', 1),
+(55, 17, 'Taller de incendios y siniestros', 'TALLER', 30, '300.000,00', 1),
+(56, 17, 'Atención de emergencias y ayudas pre-hospitalaria ', 'ATENCION AL CIUDADANO', 65, '550.000,00', 1),
+(57, 18, 'Operativos de protección ambiental y control de las actividades minera.', 'OPERATIVOS', 10, '250.000,00', 1),
+(58, 18, 'Operativos de mantenimiento y limpieza de espacios turisticos', 'OPERATIVOS', 15, '400.000,00', 1),
+(59, 18, 'Registro y control de los turistas que visitan el Estados.', 'REGISTRO', 15, '250.000,00', 1),
+(60, 18, 'Promoción de los recursos y areas turísticas publicados en redes , vallas y folletos del Estado Amazonas', 'PUBLICIDAD', 100, '250.000,00', 1),
+(61, 20, 'Programar el proceso para el calculo de sueldo.', 'NOMINA', 12, '30.051.352,00', 1),
+(62, 20, 'calculo de bono al merito', 'MONINAS', 12, '45.652.764.00', 1),
+(63, 21, 'Organización de cursos y talleres al personal de la secretaria de la juventud', 'TALLERES ', 20, '100.000,00', 1),
+(64, 21, 'Organizar programas de atención para el desarrollo político de la juventud', 'PROGRAMAS', 30, '4.500,00', 1),
+(65, 21, 'Asistir a eventos productivo y educativos a nivel nacional e internacional.', 'EVENTOS', 40, '4.700,00', 1),
+(66, 21, 'Organizar y apoyar a los estudiantes  universitarios y juventud para la organización de eventos culturales y deportivos.', 'EVENTOS', 28, '100.000,00', 1),
+(67, 22, 'Publicacion de la gestion del Gobieno estadal en redes sociales', 'PUBLICACIONES', 150, '50.000,00', 1),
+(68, 22, 'Coordinar y monitorear la cobertura periodística de las actividades realizada', 'COORDINACION DE ACTIVIDADES', 100, '160.000,00', 1),
+(69, 22, 'Capacitación al personal de campo requeridos para adquirir información', 'CAPACITACION', 15, '45.000,00', 1),
+(70, 22, 'Elaboración de micros de televisión nacional. ', 'MICROS', 35, '100.000,00', 1),
+(71, 22, 'Adquisición de equipos de computación', 'EQUIPOS', 5, '85.000,00', 1),
+(72, 23, 'Realizar actividades culturales', 'EVENTOS', 30, '70.000,00', 1),
+(73, 23, 'Adquisición de materiales y recursos para el funcionamiento bibliotecarios', 'PROYECTOS', 8, '2.000.000,00', 1),
+(74, 23, 'Realizar de aprendizaje para el buen uso del programa', 'TALLER, CURSOS Y JORNADAS', 3, '350.000,00', 1),
+(75, 23, 'Mantemiento de la infraestructura bibliotecario', 'PROYECTOS', 3, '850.000,00', 1),
+(76, 24, 'Implementar las políticas para fomentar y conservar los valores culturales de la region', 'PROYECTOS ', 3, '400.000,00', 1),
+(77, 24, 'Convenios con fundaciones de cultura popular', 'CONVENIO', 10, '100.000,00', 1),
+(78, 24, 'Intercambio cultural y social dentro fuera del Estado', 'EVENTOS', 80, '200.000,00', 1),
+(79, 24, 'Proteger y resguardar los patrimonios culturales', 'PATRIMONIO', 30, '250.000,00', 1),
+(83, 26, 'Planificar y evaluar proyectos de obras y construcción.', 'PROYECTOS', 20, '600.000,00', 1),
+(84, 26, 'Adecuar  el funcionamiento para las mejoras de los servicios básicos', 'PROYECTOS', 25, '650.000,00', 1),
+(85, 26, 'Elaboración del plan operativo anual de la secretaria.', 'PLAN', 1, '70.000,00', 1),
+(86, 26, 'Evaluar las metas previstas de actividades para el mejor funcionamiento institucional.', 'OFICINAS', 35, '200.000,00', 1),
+(87, 27, 'Coordinar programas y actividades de limpieza y mantenimiento para el buen vivir de la comunidad.', 'PROGRAMAS', 95, '200.000,00', 1),
+(88, 27, 'Formular proyectos de actividades preventivas de los servicios básicos.', 'PROYECTOS', 65, '150.000,00', 1),
+(89, 27, 'Elaboración del plan operativo anual de la secretaria', 'PLAN OPERATIVO', 5, '200.000,00', 1),
+(90, 28, 'Capacitación de programas de salud al personal hospitalario.', 'TALLERES', 50, '200.000,00', 1),
+(91, 28, 'Asistencias medicas a las comunidades ', 'operativos', 350, '250.000,00', 1),
+(92, 28, 'Coordinación de campañas medicas y preventivas para la comunidad.', 'OPERATIVOS', 350, '200.000,00', 1),
+(93, 28, 'Supervisar al personal de asistencias medica que cumplan con las normas sanitarias requeridas.', 'SUPERVISION', 250, '100.000,00', 1),
+(94, 30, 'Atención y capacitación al personal adscrita a la secretaria.', 'TALLERES', 30, '95.000,00', 1),
+(95, 30, 'Asistencia a las actividades programadas por el gobernador.', 'EVENTOS', 70, '40.000,00', 1),
+(96, 30, 'Coordinar y evaluar proyectos sociales asignadas a las comunas.', 'SUPERVICION', 150, '70.000,00', 1),
+(97, 32, 'Fortalecer la protección social del pueblo amazonense.', 'PROGRAMAS SOCIALES', 70, '200.000,00', 1),
+(98, 32, 'Orientar a la ciudadanía  del control de programas de información de reclamos denuncias y sugerencias.', 'PROGRAMAS SOCIALES', 40, '200.000,00', 1),
+(99, 32, 'Operativos de rescate a  todos los habitantes para que entre en los programas sociales.', 'OPERATIVOS', 300, '250.000,00', 1),
+(100, 32, 'Formular el plan operativo de la secretaria.', 'PLAN OPERATIVO', 1, '75.000,00', 1),
+(101, 33, 'Aporte  patronales a obreros y empleados de la gobernación.', 'BENEFICIOS', 150, '450.000,00', 1),
+(102, 33, 'Tramites para el pago de prestaciones sociales a empleados  y obreros permanentes.', 'BENEFICIOS', 250, '650.000,00', 1),
+(103, 33, 'Reclutar y capacitar al personal activo perteneciente a la gobernación.', 'CAPACITACION', 150, '300.000,00', 1);
 
 -- --------------------------------------------------------
 
@@ -6826,7 +9050,7 @@ CREATE TABLE `pl_partidas` (
   `id` int(11) NOT NULL,
   `partida` varchar(20) DEFAULT NULL,
   `denominacion` longtext DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `pl_partidas`
@@ -6853,7 +9077,7 @@ CREATE TABLE `pl_programas` (
   `sector` varchar(10) DEFAULT NULL,
   `programa` varchar(10) DEFAULT NULL,
   `denominacion` longtext DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `pl_programas`
@@ -6873,27 +9097,24 @@ INSERT INTO `pl_programas` (`id`, `sector`, `programa`, `denominacion`) VALUES
 (11, '1', '11', 'UNIDAD ESTADAL DE AUDITORIA INTERNA'),
 (12, '1', '12', 'AREA DE CONTROL Y SEGUIMIENTO'),
 (13, '1', '13', 'SECREATARIA EJECUTIVA DE BIENES Y SERVICIOS'),
-(14, '2', '01', 'SERVICIOS SEGURIDAD, DEFENSA Y ORDEN PUBLICO'),
-(15, '2', '02', 'ASUNTOS CIVILES Y POLITICOS'),
+(14, '2', '01', 'SECRETARIA EJECUTIVA DE POLITICA Y ASUNTOS CIVILES'),
+(15, '2', '02', 'POLICIA SEGURIDAD Y DEFENSA'),
 (16, '2', '03', 'ASUNTOS DE PREVENCION Y CALAMIDADES PUBLICAS'),
 (17, '2', '04', 'PREVENCION Y CONTROL DE SINIESTROS'),
 (18, '3', '01', 'PROMOCION Y DESARROLLO TURISTICO EN EL ESTADO'),
-(19, '4', '01', 'SERVICIOS ADMINISTRATIVOS Y APOYO A LA EDUCACION'),
 (20, '4', '02', 'EDUCACION BASICA, PREESCOLAR Y DIVERSIFICADA'),
-(21, '4', '03', 'MODERNIZACION Y FORTALECIMIENTO DE LA EDUCACION BASICA'),
+(21, '4', '03', 'ATENCION DE LA JUVENTUD Y ESTUDIANTE UNIVERSITARIO'),
 (22, '5', '01', 'SERVICIOS DE INFORMACION Y COMUNICACION AMAZONAS'),
 (23, '5', '02', 'SERVICIOS DE APOYO BIBLIOTECARIO'),
 (24, '5', '03', 'PROMOCION Y DESARROLLO CULTURAL'),
-(25, '5', '04', 'TECNOLOGIA DE INFORMACION'),
 (26, '6', '01', 'DIRECCION, COORDINACION Y CONTROL DE OBRAS EN EL ESTADO'),
-(27, '6', '02', 'CONSTRUCCION, MANTENIMIENTO Y CONSERVACION DE OBRAS DEL ESTADO'),
+(27, '6', '02', 'SECRETARIA EJECUTIVA DE SERVICIOS Y MANTENIMIENTO COMUNITARIO'),
 (28, '7', '01', 'FOMENTO Y RESTITUCION DE LA SALUD'),
-(29, '8', '01', 'SERVICIOS DE DESARROLLO SOCIAL'),
-(30, '8', '02', 'DESARROLLO SOCIAL Y PODER POPULAR'),
-(31, '8', '03', 'SECRETARIA EJEC. INTEGRAL DE LAS PERSONAS CON DISCAPACIDAD'),
-(32, '8', '04', 'SECRETRARIA EJECUTIVA ATENCION INTEGRAL A LA MUJER, LA FAMILIA E IGUALDAD DE GENERO'),
+(29, '8', '01', 'PARTICIPACION POPULAR'),
+(30, '8', '02', 'PROTECCION SOCIAL'),
 (33, '9', '01', 'CREDITOS ADMINISTRATIVOS POR EL PROGRAMA RR.HH'),
-(34, '10', '01', 'CREDITOS ADMINISTRADOS POR LA DIRECCION EJECUTIVA ');
+(34, '10', '01', 'CREDITOS ADMINISTRADOS POR LA DIRECCION EJECUTIVA '),
+(40, '2', '05', 'SECRETARIA EJECUTIVA DE SEGURIDAD CIUDADANA');
 
 -- --------------------------------------------------------
 
@@ -6905,7 +9126,14 @@ CREATE TABLE `pl_proyectos` (
   `id` int(11) NOT NULL,
   `proyecto_id` varchar(255) DEFAULT NULL,
   `denominacion` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `pl_proyectos`
+--
+
+INSERT INTO `pl_proyectos` (`id`, `proyecto_id`, `denominacion`) VALUES
+(2, '02', 'SOCIAL');
 
 -- --------------------------------------------------------
 
@@ -6917,7 +9145,7 @@ CREATE TABLE `pl_sectores` (
   `id` int(11) NOT NULL,
   `sector` varchar(11) DEFAULT NULL,
   `denominacion` longtext DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `pl_sectores`
@@ -6947,7 +9175,7 @@ CREATE TABLE `pl_sectores_presupuestarios` (
   `programa` varchar(10) DEFAULT NULL,
   `proyecto` varchar(10) DEFAULT NULL,
   `nombre` longtext DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `pl_sectores_presupuestarios`
@@ -6996,7 +9224,7 @@ INSERT INTO `pl_sectores_presupuestarios` (`id`, `sector`, `programa`, `proyecto
 --
 
 CREATE TABLE `poa_actividades` (
-  `id` int(255) NOT NULL,
+  `id` int(11) NOT NULL,
   `actividades` longtext DEFAULT NULL,
   `responsable` longtext DEFAULT NULL,
   `unidad_medida` varchar(255) DEFAULT NULL,
@@ -7004,7 +9232,7 @@ CREATE TABLE `poa_actividades` (
   `total` varchar(255) DEFAULT NULL,
   `id_ente` varchar(255) DEFAULT NULL,
   `fecha` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -7013,9 +9241,9 @@ CREATE TABLE `poa_actividades` (
 --
 
 CREATE TABLE `primantiguedad` (
-  `id` int(255) NOT NULL,
-  `porcentaje` varchar(255) DEFAULT NULL,
-  `tiempo` varchar(255) DEFAULT NULL
+  `id` int(11) NOT NULL,
+  `porcentaje` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `tiempo` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -7055,9 +9283,9 @@ INSERT INTO `primantiguedad` (`id`, `porcentaje`, `tiempo`) VALUES
 --
 
 CREATE TABLE `profesiones` (
-  `id_profesion` int(255) NOT NULL,
-  `profesion` varchar(255) DEFAULT NULL,
-  `porcentaje` varchar(255) DEFAULT NULL
+  `id_profesion` int(11) NOT NULL,
+  `profesion` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `porcentaje` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -7075,18 +9303,34 @@ INSERT INTO `profesiones` (`id_profesion`, `profesion`, `porcentaje`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `proyecto_credito`
+--
+
+CREATE TABLE `proyecto_credito` (
+  `id` int(255) NOT NULL,
+  `id_credito` int(255) NOT NULL,
+  `tipo_proyecto` int(255) NOT NULL,
+  `descripcion_proyecto` longtext NOT NULL,
+  `distribuciones` longtext NOT NULL,
+  `decreto` longtext NOT NULL,
+  `status` int(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `proyecto_inversion`
 --
 
 CREATE TABLE `proyecto_inversion` (
-  `id` int(255) NOT NULL,
-  `id_plan` int(255) DEFAULT NULL,
+  `id` int(11) NOT NULL,
+  `id_plan` int(11) DEFAULT NULL,
   `proyecto` longtext DEFAULT NULL,
   `descripcion` longtext DEFAULT NULL,
   `monto_proyecto` varchar(255) DEFAULT NULL,
-  `status` int(255) DEFAULT 0,
+  `status` int(11) DEFAULT 0,
   `comentario` longtext DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -7100,10 +9344,10 @@ CREATE TABLE `proyecto_inversion_partidas` (
   `partida` longtext DEFAULT NULL,
   `monto` varchar(255) DEFAULT NULL,
   `sector_id` varchar(255) DEFAULT NULL,
-  `programa_id` int(10) DEFAULT NULL,
-  `proyecto_id` int(10) DEFAULT NULL,
-  `actividad_id` int(10) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `programa_id` int(11) DEFAULT NULL,
+  `proyecto_id` int(11) DEFAULT NULL,
+  `actividad_id` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -7112,7 +9356,7 @@ CREATE TABLE `proyecto_inversion_partidas` (
 --
 
 CREATE TABLE `recibo_pago` (
-  `id` int(255) NOT NULL,
+  `id` int(11) NOT NULL,
   `id_empleado` varchar(255) DEFAULT NULL,
   `sueldo_base` varchar(255) DEFAULT NULL,
   `sueldo_integral` varchar(255) DEFAULT NULL,
@@ -7126,7 +9370,7 @@ CREATE TABLE `recibo_pago` (
   `nombre_nomina` varchar(255) DEFAULT NULL,
   `fecha_inicio` varchar(255) DEFAULT NULL,
   `fecha_fin` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `recibo_pago`
@@ -11275,14 +13519,14 @@ INSERT INTO `recibo_pago` (`id`, `id_empleado`, `sueldo_base`, `sueldo_integral`
 
 CREATE TABLE `reportes` (
   `id` int(11) NOT NULL,
-  `furmulacion` longtext DEFAULT NULL,
-  `nominas` longtext DEFAULT NULL,
-  `columnas` longtext DEFAULT NULL,
-  `formato` varchar(10) DEFAULT NULL,
-  `nombre` varchar(255) DEFAULT NULL,
-  `user` int(10) DEFAULT NULL,
+  `furmulacion` longtext COLLATE latin1_spanish_ci DEFAULT NULL,
+  `nominas` longtext COLLATE latin1_spanish_ci DEFAULT NULL,
+  `columnas` longtext COLLATE latin1_spanish_ci DEFAULT NULL,
+  `formato` varchar(10) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `nombre` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `user` int(11) DEFAULT NULL,
   `creacion` datetime NOT NULL DEFAULT current_timestamp(),
-  `tipoFiltro` varchar(255) DEFAULT NULL
+  `tipoFiltro` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 --
@@ -11314,7 +13558,7 @@ INSERT INTO `reportes` (`id`, `furmulacion`, `nominas`, `columnas`, `formato`, `
 --
 
 CREATE TABLE `solicitud_dozavos` (
-  `id` int(255) NOT NULL,
+  `id` int(11) NOT NULL,
   `numero_orden` varchar(255) DEFAULT NULL,
   `numero_compromiso` varchar(255) DEFAULT NULL,
   `descripcion` longtext DEFAULT NULL,
@@ -11322,25 +13566,27 @@ CREATE TABLE `solicitud_dozavos` (
   `monto` varchar(255) DEFAULT NULL,
   `fecha` varchar(255) DEFAULT NULL,
   `partidas` varchar(255) DEFAULT NULL,
-  `id_ente` int(255) DEFAULT NULL,
-  `status` int(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `id_ente` int(11) DEFAULT NULL,
+  `status` int(11) DEFAULT NULL,
+  `id_ejercicio` int(255) NOT NULL,
+  `mes` int(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `solicitud_dozavos`
 --
 
-INSERT INTO `solicitud_dozavos` (`id`, `numero_orden`, `numero_compromiso`, `descripcion`, `tipo`, `monto`, `fecha`, `partidas`, `id_ente`, `status`) VALUES
-(1, '1', 'C1001', 'Compra de material de oficina', 'A', '500.0', '2024-01-15', '[{ \"id\": 3, \"monto\": 166.67 }, { \"id\": 14, \"monto\": 166.67 }, { \"id\": 25, \"monto\": 166.66 }]', 1, 0),
-(2, '2', 'C1002', 'Pago a proveedor', 'A', '1200.0', '2024-02-23', '[{ \"id\": 8, \"monto\": 1200.0 }]', 1, 0),
-(3, '3', 'C1003', 'Renovación de licencias de software', 'A', '800.0', '2024-03-08', '[{ \"id\": 18, \"monto\": 400.0 }, { \"id\": 47, \"monto\": 400.0 }]', 1, 0),
-(4, '4', 'C1004', 'Gastos de envío', 'A', '300.0', '2024-04-19', '[{ \"id\": 37, \"monto\": 300.0 }]', 1, 0),
-(5, '5', 'C1005', 'Publicidad en redes sociales', 'A', '700.0', '2024-05-27', '[{ \"id\": 42, \"monto\": 233.33 }, { \"id\": 65, \"monto\": 233.33 }, { \"id\": 69, \"monto\": 233.34 }]', 1, 0),
-(6, '6', 'C1006', 'Capacitación del personal', 'D', '1000.0', '2024-06-14', '[{ \"id\": 80, \"monto\": 333.33 }]', 1, 0),
-(7, '7', 'C1007', 'Mantenimiento de equipamiento', 'D', '600.0', '2024-07-03', '[{ \"id\": 90, \"monto\": 300.0 }, { \"id\": 103, \"monto\": 300.0 }]', 1, 0),
-(8, '8', 'C1008', 'Compra de material de limpieza', 'D', '400.0', '2024-08-11', '[{ \"id\": 104, \"monto\": 200.0 }, { \"id\": 110, \"monto\": 200.0 }]', 1, 0),
-(9, '9', 'C1009', 'Consultoría externa', 'D', '1500.0', '2024-09-25', '[{ \"id\": 5, \"monto\": 1500.0 }]', 1, 0),
-(10, '10', 'C1010', 'Actualización de equipo informático', 'D', '2000.0', '2024-10-30', '[{ \"id\": 5, \"monto\": 500.0 }, { \"id\": 12, \"monto\": 500.0 }, { \"id\": 26, \"monto\": 500.0 }, { \"id\": 78, \"monto\": 500.0 }]', 1, 0);
+INSERT INTO `solicitud_dozavos` (`id`, `numero_orden`, `numero_compromiso`, `descripcion`, `tipo`, `monto`, `fecha`, `partidas`, `id_ente`, `status`, `id_ejercicio`, `mes`) VALUES
+(1, '1', 'C1001', 'Compra de material de oficina', 'A', '500.0', '2024-01-15', '[{ \"id\": 3, \"monto\": 166.67 }, { \"id\": 14, \"monto\": 166.67 }, { \"id\": 25, \"monto\": 166.66 }]', 1, 0, 0, 0),
+(2, '2', 'C1002', 'Pago a proveedor', 'A', '1200.0', '2024-02-23', '[{ \"id\": 8, \"monto\": 1200.0 }]', 1, 0, 0, 0),
+(3, '3', 'C1003', 'Renovación de licencias de software', 'A', '800.0', '2024-03-08', '[{ \"id\": 18, \"monto\": 400.0 }, { \"id\": 47, \"monto\": 400.0 }]', 1, 0, 0, 0),
+(4, '4', 'C1004', 'Gastos de envío', 'A', '300.0', '2024-04-19', '[{ \"id\": 37, \"monto\": 300.0 }]', 1, 0, 0, 0),
+(5, '5', 'C1005', 'Publicidad en redes sociales', 'A', '700.0', '2024-05-27', '[{ \"id\": 42, \"monto\": 233.33 }, { \"id\": 65, \"monto\": 233.33 }, { \"id\": 69, \"monto\": 233.34 }]', 1, 0, 0, 0),
+(6, '6', 'C1006', 'Capacitación del personal', 'D', '1000.0', '2024-06-14', '[{ \"id\": 80, \"monto\": 333.33 }]', 1, 0, 0, 0),
+(7, '7', 'C1007', 'Mantenimiento de equipamiento', 'D', '600.0', '2024-07-03', '[{ \"id\": 90, \"monto\": 300.0 }, { \"id\": 103, \"monto\": 300.0 }]', 1, 0, 0, 0),
+(8, '8', 'C1008', 'Compra de material de limpieza', 'D', '400.0', '2024-08-11', '[{ \"id\": 104, \"monto\": 200.0 }, { \"id\": 110, \"monto\": 200.0 }]', 1, 0, 0, 0),
+(9, '9', 'C1009', 'Consultoría externa', 'D', '1500.0', '2024-09-25', '[{ \"id\": 5, \"monto\": 1500.0 }]', 1, 0, 0, 0),
+(10, '10', 'C1010', 'Actualización de equipo informático', 'D', '2000.0', '2024-10-30', '[{ \"id\": 5, \"monto\": 500.0 }, { \"id\": 12, \"monto\": 500.0 }, { \"id\": 26, \"monto\": 500.0 }, { \"id\": 78, \"monto\": 500.0 }]', 1, 0, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -11351,7 +13597,11 @@ INSERT INTO `solicitud_dozavos` (`id`, `numero_orden`, `numero_compromiso`, `des
 CREATE TABLE `system_bd` (
   `id` int(11) NOT NULL,
   `actualizacion` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `system_bd`
+--
 
 -- --------------------------------------------------------
 
@@ -11369,21 +13619,25 @@ CREATE TABLE `system_users` (
   `creado` datetime DEFAULT current_timestamp(),
   `u_nivel` int(11) DEFAULT NULL,
   `u_status` int(11) NOT NULL DEFAULT 1,
-  `u_cedula` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+  `u_cedula` varchar(255) DEFAULT NULL,
+  `id_ente` int(255) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Volcado de datos para la tabla `system_users`
 --
 
-INSERT INTO `system_users` (`u_id`, `u_nombre`, `u_oficina_id`, `u_oficina`, `u_email`, `u_contrasena`, `creado`, `u_nivel`, `u_status`, `u_cedula`) VALUES
-(31, 'user Nombre', 1, 'nomina', 'corro@correo.com', '$2y$10$EyP1MOY39kuw4uREdk7ao.UUzQ10YNIZ95IZLM70MUPo5J6YzEBVG', '2024-03-07 11:18:19', 1, 1, '6722697'),
-(33, 'otro user', 2, 'registro_control', 'correo2@correo.com', '$2y$10$EyP1MOY39kuw4uREdk7ao.UUzQ10YNIZ95IZLM70MUPo5J6YzEBVG', '2024-05-29 16:32:32', 2, 1, '6722697'),
-(34, 'relaciones_laborales_user\r\n', 3, 'relaciones_laborales', 'corro3@correo.com', '$2y$10$EyP1MOY39kuw4uREdk7ao.UUzQ10YNIZ95IZLM70MUPo5J6YzEBVG', '2024-08-06 18:31:06', 1, 1, '6722697'),
-(35, 'Ricardo', 4, 'pl_formulacion', 'rr@gmail.com', '$2y$10$azF/dOpnDs9sCTYiLEF7kO8612REFdjpk8Te.bih4BaNDSfhAw9MO', '2024-10-12 11:21:03', 1, 1, '6722697'),
-(36, 'Otro user', 4, 'pl_formulacion', 'dc@gmail.com', '$2y$10$rkLTvh67l6wU6P3sNrmDoOKE9fYZeEe46nkk7VtYcRB20nM0cgIZ.', '2024-10-12 15:47:50', 2, 1, '6722697'),
-(37, 'Otro user nomina', 1, 'nomina', 'll@gmail.com', '$2y$10$7rP3s5kmozULLCHQpVCQ9exS28MkvJpV8x4whtmS2Z0EnXD2YbeK.', '2024-10-12 21:15:58', 2, 1, '6722697'),
-(38, 'YO', 4, 'pl_formulacion', 'AAAac.80014.dc@gmail.com', '$2y$10$3uf.A1xijNn8S10tm7uVUecZFAiucPQ81ENB0D5nJTS96sfLcp6pG', '2024-10-15 21:25:50', 2, 1, '27640176');
+INSERT INTO `system_users` (`u_id`, `u_nombre`, `u_oficina_id`, `u_oficina`, `u_email`, `u_contrasena`, `creado`, `u_nivel`, `u_status`, `u_cedula`, `id_ente`) VALUES
+(1, 'Fatima Gomez', 4, 'pl_formulacion', 'fatimagomezpd@gmail.com', '$2y$10$hnIbz1ZrBHafAJkP15JY1eXLqj8DewVb3xuuQkux/g2hc5BiBBFMe', '2024-11-07 10:08:41', 1, 1, '15500730', 1),
+(31, 'user Nombre', 1, 'nomina', 'corro@correo.com', '$2y$10$EyP1MOY39kuw4uREdk7ao.UUzQ10YNIZ95IZLM70MUPo5J6YzEBVG', '2024-03-07 11:18:19', 1, 1, '6722697', 1),
+(33, 'otro user', 2, 'registro_control', 'correo2@correo.com', '$2y$10$EyP1MOY39kuw4uREdk7ao.UUzQ10YNIZ95IZLM70MUPo5J6YzEBVG', '2024-05-29 16:32:32', 2, 1, '6722697', 1),
+(34, 'relaciones_laborales_user\r\n', 3, 'relaciones_laborales', 'corro3@correo.com', '$2y$10$EyP1MOY39kuw4uREdk7ao.UUzQ10YNIZ95IZLM70MUPo5J6YzEBVG', '2024-08-06 18:31:06', 1, 1, '6722697', 1),
+(35, 'Ricardo', 4, 'pl_formulacion', 'rr@gmail.com', '$2y$10$azF/dOpnDs9sCTYiLEF7kO8612REFdjpk8Te.bih4BaNDSfhAw9MO', '2024-10-12 11:21:03', 1, 1, '6722697', 1),
+(40, 'Hilson Martinez', 4, 'pl_formulacion', 'martinezhilson8@gmail.com', '$2y$10$3mEuUd1/uIn0nNx3.qBoYeGeDc7WAXsEUvldqHX1WNaWusgVwnu9e', '2024-11-06 15:30:45', 2, 1, '18835804', 1),
+(42, 'ASDRUBAL MARTINEZ', 4, 'pl_formulacion', 'asdrubalmartinez486@gmail.com', '$2y$10$yUnVJhDWX6xkB4BEch2HPeAbEGNA311qcjs1DXVIsTmaah6jzHwzW', '2024-11-07 11:23:04', 2, 1, '31607394', 1),
+(43, 'user ejecucion', 5, 'ejecucion_p', 'eje@correo.com', '$2y$10$eyp1moy39kuw4uredk7ao.uuzq10yniz95izlm70mupo5j6yzebvg', '2024-08-06 18:31:06', 1, 1, '67226972', 1),
+(44, 'user ente', 6, 'entes', 'ente@correo.com', '$2y$10$eyp1moy39kuw4uredk7ao.uuzq10yniz95izlm70mupo5j6yzebvg', '2024-12-20 16:30:38', 1, 1, '67226972', 1),
+(45, 'user proyectos', 7, 'proyectos', 'proyecto@correo.com', '$2y$10$eyp1moy39kuw4uredk7ao.uuzq10yniz95izlm70mupo5j6yzebvg', '2024-08-06 18:31:06', 1, 1, '67226972', 1);
 
 -- --------------------------------------------------------
 
@@ -11395,7 +13649,7 @@ CREATE TABLE `system_users_permisos` (
   `id` int(11) NOT NULL,
   `id_user` int(11) NOT NULL,
   `id_item_menu` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `system_users_permisos`
@@ -11411,7 +13665,24 @@ INSERT INTO `system_users_permisos` (`id`, `id_user`, `id_item_menu`) VALUES
 (12, 37, 20),
 (13, 38, 1),
 (14, 38, 2),
-(15, 38, 3);
+(15, 38, 3),
+(16, 40, 14),
+(17, 40, 15),
+(18, 40, 16),
+(19, 40, 17),
+(20, 40, 18),
+(21, 40, 19),
+(22, 40, 5),
+(23, 40, 6),
+(24, 42, 5),
+(25, 42, 12),
+(26, 42, 6),
+(27, 40, 12),
+(28, 40, 2),
+(29, 42, 2),
+(30, 40, 3),
+(31, 40, 20),
+(32, 40, 21);
 
 -- --------------------------------------------------------
 
@@ -11420,13 +13691,13 @@ INSERT INTO `system_users_permisos` (`id`, `id_user`, `id_item_menu`) VALUES
 --
 
 CREATE TABLE `tabuladores` (
-  `id` int(255) NOT NULL,
+  `id` int(11) NOT NULL,
   `nombre` varchar(255) DEFAULT NULL,
   `grados` varchar(255) DEFAULT NULL,
   `pasos` varchar(255) DEFAULT NULL,
   `aniosPasos` varchar(255) DEFAULT NULL,
   `timestamp` date NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `tabuladores`
@@ -11442,12 +13713,12 @@ INSERT INTO `tabuladores` (`id`, `nombre`, `grados`, `pasos`, `aniosPasos`, `tim
 --
 
 CREATE TABLE `tabuladores_estr` (
-  `id` int(255) NOT NULL,
+  `id` int(11) NOT NULL,
   `paso` varchar(255) DEFAULT NULL,
   `grado` varchar(255) DEFAULT NULL,
   `monto` varchar(255) DEFAULT NULL,
-  `tabulador_id` int(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `tabulador_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `tabuladores_estr`
@@ -11852,18 +14123,18 @@ INSERT INTO `tabuladores_estr` (`id`, `paso`, `grado`, `monto`, `tabulador_id`) 
 --
 
 CREATE TABLE `tasa` (
-  `id` int(255) NOT NULL,
+  `id` int(11) NOT NULL,
   `descripcion` varchar(255) DEFAULT NULL,
   `simbolo` varchar(255) DEFAULT NULL,
   `valor` varchar(2000) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `tasa`
 --
 
 INSERT INTO `tasa` (`id`, `descripcion`, `simbolo`, `valor`) VALUES
-(1, 'Precio del Dólar Actual', '$', '42.8569');
+(1, 'Precio del Dólar Actual', '$', '56.283');
 
 -- --------------------------------------------------------
 
@@ -11872,12 +14143,12 @@ INSERT INTO `tasa` (`id`, `descripcion`, `simbolo`, `valor`) VALUES
 --
 
 CREATE TABLE `tasa_historico` (
-  `id` int(255) NOT NULL,
+  `id` int(11) NOT NULL,
   `u_nombre` varchar(255) DEFAULT NULL,
   `precio` varchar(255) DEFAULT NULL,
   `descripcion` varchar(2000) DEFAULT NULL,
   `fecha` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `tasa_historico`
@@ -11898,7 +14169,29 @@ INSERT INTO `tasa_historico` (`id`, `u_nombre`, `precio`, `descripcion`, `fecha`
 (12, 'sigob', '41.0429', 'actualizacion automática', '27-10-2024'),
 (13, 'sigob', '42.2256', 'actualizacion automática', '30-10-2024'),
 (14, 'sigob', '42.5622', 'actualizacion automática', '31-10-2024'),
-(15, 'sigob', '42.8569', 'actualizacion automática', '05-11-2024');
+(15, 'sigob', '42.8569', 'actualizacion automática', '05-11-2024'),
+(16, 'sigob', '43.4576', 'actualizacion automática', '06-11-2024'),
+(17, 'sigob', '43.7822', 'actualizacion automática', '07-11-2024'),
+(18, 'sigob', '44.7035', 'actualizacion automática', '11-11-2024'),
+(19, 'sigob', '44.7544', 'actualizacion automática', '12-11-2024'),
+(20, 'sigob', '44.9289', 'actualizacion automática', '13-11-2024'),
+(21, 'sigob', '45.053', 'actualizacion automática', '14-11-2024'),
+(22, 'sigob', '45.507', 'actualizacion automática', '15-11-2024'),
+(23, 'sigob', '45.7894', 'actualizacion automática', '18-11-2024'),
+(24, 'sigob', '0', 'actualizacion automática', '19-11-2024'),
+(25, 'sigob', '46.0588', 'actualizacion automática', '21-11-2024'),
+(26, 'sigob', '46.3273', 'actualizacion automática', '22-11-2024'),
+(27, 'sigob', '46.6427', 'actualizacion automática', '26-11-2024'),
+(28, 'sigob', '46.7537', 'actualizacion automática', '27-11-2024'),
+(29, 'sigob', '46.8554', 'actualizacion automática', '28-11-2024'),
+(30, 'sigob', '47.3138', 'actualizacion automática', '29-11-2024'),
+(31, 'sigob', '47.6074', 'actualizacion automática', '30-11-2024'),
+(32, 'sigob', '47.7293', 'actualizacion automática', '03-12-2024'),
+(33, 'sigob', '48.1183', 'actualizacion automática', '05-12-2024'),
+(34, 'sigob', '48.3265', 'actualizacion automática', '06-12-2024'),
+(35, 'sigob', '48.7903', 'actualizacion automática', '07-12-2024'),
+(36, 'sigob', '51.7659', 'actualizacion automática', '27-12-2024'),
+(37, 'sigob', '56.283', 'actualizacion automática', '24-01-2025');
 
 -- --------------------------------------------------------
 
@@ -11909,8 +14202,8 @@ INSERT INTO `tasa_historico` (`id`, `u_nombre`, `precio`, `descripcion`, `fecha`
 CREATE TABLE `tipo_gastos` (
   `id` int(255) NOT NULL,
   `nombre` longtext DEFAULT NULL,
-  `id_partida` int(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `id_partida` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -11919,18 +14212,18 @@ CREATE TABLE `tipo_gastos` (
 --
 
 CREATE TABLE `titulo_1` (
-  `id` int(255) NOT NULL,
+  `id` int(11) NOT NULL,
   `articulo` longtext NOT NULL,
   `descripcion` longtext NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `titulo_1`
 --
 
 INSERT INTO `titulo_1` (`id`, `articulo`, `descripcion`) VALUES
-(1, 'ARTÍCULO 2:', 'Se acuerdan los Créditos Presupuestarios, para el Ejercicio Fiscal 2024, asignados a los diferentes sectores, programas, sub-programas, proyectos  y partidas, y  los  acordados a los \"Créditos no Asignables a Programas\" de conformidad con el Título III \"Presupuesto de Gastos\". '),
-(2, 'ARTÍCULO 3:', 'La Distribución Institucional del Presupuesto de Gastos para el Ejercicio Fiscal 2024, será aprobada mediante Decreto dictado por el Gobernador del Estado, en el cual precisará su Distribución Institucional condicionada de conformidad con lo dispuesto en el Parágrafo Único de este Artículo y consiste en el detalle de los créditos presupuestarios acordados a las diferentes categorías presupuestarias a nivel de actividades y sub-partidas genéricas y específicas, sub- específicas y otras desagregaciones de menor nivel que solo tendrán carácter informativo para fines administrativos y de control interno, tal como lo establece el artículo 34 de la Ley Orgánica de Administración Financiera del Estado Amazonas, publicada en Gaceta Oficial Año 16 Nº 17 de fecha 02 de Julio del año 2008 extraordinaria. \r\nEl Decreto mencionado en este artículo deberá reflejar fielmente las modificaciones o alteraciones introducidas por el Consejo Legislativo en el curso de la discusión y aprobación de esta Ley. \r\n'),
+(1, 'ARTÍCULO 2:', 'Se acuerdan los Créditos Presupuestarios, para el Ejercicio Fiscal 2025, asignados a los diferentes sectores, programas, sub-programas, proyectos  y partidas, y  los  acordados a los \"Créditos no Asignables a Programas\" de conformidad con el Título III \"Presupuesto de Gastos\". '),
+(2, 'ARTÍCULO 3:', 'La Distribución Institucional del Presupuesto de Gastos para el Ejercicio Fiscal 2025, será aprobada mediante Decreto dictado por el Gobernador del Estado, en el cual precisará su Distribución Institucional condicionada de conformidad con lo dispuesto en el Parágrafo Único de este Artículo y consiste en el detalle de los créditos presupuestarios acordados a las diferentes categorías presupuestarias a nivel de actividades y sub-partidas genéricas y específicas, sub- específicas y otras desagregaciones de menor nivel que solo tendrán carácter informativo para fines administrativos y de control interno, tal como lo establece el artículo 34 de la Ley Orgánica de Administración Financiera del Estado Amazonas, publicada en Gaceta Oficial Año 16 Nº 17 de fecha 02 de Julio del año 2008 extraordinaria. \nEl Decreto mencionado en este artículo deberá reflejar fielmente las modificaciones o alteraciones introducidas por el Consejo Legislativo en el curso de la discusión y aprobación de esta Ley. \n'),
 (3, 'ARTÍCULO 4:', 'La Secretaría de Planificación, Proyectos y Presupuesto deberá implementar un sistema de seguimiento sobre la programación de la ejecución física y financiera del presupuesto, conforme a lo dispuesto en el artículo 46 de la Ley Orgánica de Administración Financiera del Estado Amazonas, publicada en Gaceta Oficial Año 16 Nº 17 de fecha 02 de Julio del año 2008 extraordinaria.'),
 (4, 'ARTÍCULO 5', 'Los Créditos Presupuestarios del Presupuesto de Gastos, por Programas, Proyectos y Partidas, constituyen el límite máximo de las autorizaciones disponibles para gastos. '),
 (5, 'ARTÍCULO 6:', 'Las modificaciones a los Créditos correspondientes a las categorías presupuestarias que integran el Consejo Legislativo, la Procuraduría Estatal y la Contraloría General del Estado Amazonas, se ejecutarán de acuerdo a lo dispuesto en las Leyes, debiendo comunicar sus decisiones a las Secretaría de Administración y de Planificación Proyectos y Presupuesto de la Gobernación a fin de conservar la unidad de registrar tanto en la Ejecución Presupuestaria como en la elaboración del Balance Consolidado de la Hacienda Pública Estatal. '),
@@ -11939,9 +14232,9 @@ INSERT INTO `titulo_1` (`id`, `articulo`, `descripcion`) VALUES
 (8, 'ARTICULO 9:', 'Los Resultados de la Ejecución Física y Financiera del Presupuesto de Ingresos y Gastos serán informados al Ejecutivo Estatal por medio de la Secretaría de Planificación, Proyectos y Presupuesto, de acuerdo a la periodicidad que se prevea en el Decreto Reglamentario de esta Ley. Dicha Secretaría analizará la información para conocimiento del Gobernador, quien deberá informar trimestralmente de ello al Consejo Legislativo, dentro de los cuarenta y cinco (45) días siguientes al vencimiento del Período de que se trate. \r\nLos funcionarios públicos que no cumplan con la obligación establecida en este artículo, se harán acreedores de las sanciones civiles, penales, administrativas y disciplinarias previstas en el ordenamiento jurídico. \r\n'),
 (9, 'ARTICULO 10:', 'Las Fundaciones, Entes descentralizados con fines Empresariales  y Asociaciones Civiles están obligadas a presentar, junto con la solicitud de recursos, un Balance certificado por un contador público y un informe de sus actividades para poder obtener los aportes presupuestarios del Gobierno Estatal. La entrega de los Dozavos que le correspondan se realizará previa la presentación ante la Secretaría de Planificación, Proyectos y Presupuesto de los informes de Ejecución de los programas respectivos. Las Instituciones particulares que reciban Recursos Fiscales deberán enviar a dicha Secretaría un informe trimestral de su gestión física y financiera. La Secretaría de Planificación, Proyectos y Presupuesto hará las evaluaciones correspondientes, cuyo resultado deberá presentar al Gobernador del Estado.  Una copia de esta evaluación será remitida al Consejo Legislativo. \r\nCuando los Entes e Instituciones beneficiarios de las asignaciones no cumplan con las obligaciones establecidas en este artículo,  cuando la evaluación sea insatisfactoria, cuando se detecten irregularidades o falsedades en los documentos entregados, o cuando así lo solicite el Consejo Legislativo o su Comisión Delegada, la Gobernación del Estado suspenderá a los beneficiarios los pagos correspondientes, obligándose en caso de irregularidades a hacer las denuncias ante los organismos competentes del Estado, a fin de fijar las responsabilidades a que hubiere lugar. \r\n'),
 (10, 'ARTÍCULO 11:', 'Una vez aprobado el Plan de Inversión en Obras y Servicios, el Consejo Estatal de Planificación y Coordinación de Políticas Públicas del Estado Amazonas, conforme a lo dispuesto en la Ley de los Consejos Estatales de Planificación de Políticas Públicas; El Gobernador del Estado, por si o mediante delegación del Secretario correspondiente lo presentará al Consejo Legislativo para su aprobación dentro de los tres (03) meses siguientes a la publicación de la presente Ley. De incumplirse con este procedimiento legal, toda erogación presupuestaria sobre el particular estará viciada de nulidad absoluta, acarreando las sanciones correspondientes para los funcionarios responsables. '),
-(11, 'ARTÍCULO 12:', 'A los fines de la Ejecución presupuestaria. \r\na)	El Ejecutivo Estatal, a través de la Secretaría de Planificación Proyectos y Presupuesto, podrá ordenar Traspasos de Créditos Presupuestarios que modifiquen la Distribución Institucional del Presupuesto de Gastos, dentro de una misma partida. Estos traspasos deberán ser informados al Consejo Legislativo, a la Contraloría Estatal, y a la Oficina Nacional de Presupuesto (ONAPRE), dentro de los siguientes veinte (30) días de haberse producido. Igualmente remitirá copia de ello a la Oficina de Auditoría Interna de la Gobernación y a la Secretaría de Administración, estas modificaciones se harán mediante traslados internos. \r\nb)	El Ejecutivo Estatal, a través de la Secretaría de Planificación, Proyectos y Presupuesto, podrá ordenar traspasos de créditos presupuestarios entre partidas de un mismo programa o de diferentes programas, o entre una misma partida de diferentes programas, dentro de un mismo sector o diferentes sectores hasta un límite del veinte por ciento (20%) de los respectivos créditos originales, en concordancia con el artículo 39  de la Ley Orgánica de Administración Financiera del Estado Amazonas, publicada en Gaceta Oficial Año 16 Nº 17 de fecha 02 de Julio del año 2008 extraordinaria y del artículo 86 del Reglamento Nº 1 de la Ley Orgánica de Administración Financiera del Sector Publico, según decreto Nº 3776, publicado en Gaceta Oficial Nº 5781 Extraordinario de fecha 12 de agosto del 2005. Estos traspasos de créditos deberán ser fundamentados mediante resoluciones publicadas en la Gaceta Oficial del Estado Amazonas; de los mismos se remitirán copias al Consejo Legislativo Regional, Contraloría General del Estado, ONAPRE, dentro de los (30) días siguientes de haberse producido. \r\nc)	El Ejecutivo Estatal podrá disponer del Crédito asignado a la partida\" \"Rectificaciones al Presupuesto\" para atender gastos imprevistos que se presenten en el Transcurso del Ejercicio fiscal o para incrementar los créditos presupuestarios que resultaren insuficientes. Esta modificación presupuestaria se hará mediante Resolución que deberá publicarse en la Gaceta Oficial del Estado Amazonas. Dentro de los diez (10) días siguientes de haberse producido, el Ejecutivo Estatal notificará de estas decisiones al Consejo Legislativo, a la Contraloría Estatal, y a la Oficina Nacional de Presupuesto (ONAPRE). El monto original de la partida \"Rectificaciones al Presupuesto\" no podrá ser menor al 0,5% ni exceder del uno por cierto (1%) del monto de los ingresos ordinarios, ni podrá aumentarse durante el ejercicio fiscal. \r\nd)	Los traspasos de créditos presupuestarios entre partidas de un mismo programa o de diferentes programas, o entre una misma partida de diferentes programas, dentro de un mismo sector o de diferentes sectores superiores al veinte por ciento (20%) deberán ser remitidos debidamente fundamentados al Consejo Legislativo para su aprobación. Después de haber sido aprobados se remitirán al Ejecutivo Estatal a través de la Secretaría de Planificación Proyectos y Presupuesto para ser publicados mediante Resolución en la Gaceta Oficial del Estado, enviándose una copia de las mismas a todos los organismos involucrados en el proceso. \r\ne)	El Ejecutivo Estatal podrá decretar Créditos Adicionales al Presupuesto de Gastos, previa aprobación del Consejo Legislativo, para cubrir gastos necesarios, pero no previstos en esta Ley, o crédito presupuestario insuficiente y solo se exigirá como anexo para su aprobación, la distribución presupuestaria del crédito y copia de la gaceta oficial donde se aprobó dicho crédito adicional para el Estado. Los créditos adicionales podrán ser financiados con: \r\na)	Existencias no comprometidas del Tesoro. \r\nb)	Economías de Cargos vacantes, las cuales deberán acordarse insubsistentes previamente, o con anulaciones de créditos adicionales, mediante Decreto publicado en la Gaceta oficial del Estado. \r\nc)	Otras fuentes de financiamiento aprobadas por la Asamblea Nacional. \r\nd)	Aportes o donaciones de otros organismos públicos o privados. \r\ne)	Ingresos extraordinarios del Estado.\r\nf)	Cuando se utilice el crédito presupuestario de la partida \"Rectificaciones al Presupuesto\" y cuando se decreten Créditos Adicionales, se deberán señalar las categorías presupuestarias, partida, unidad administrativa y cualquier otro concepto que sea necesario para identificar el destino de la modificación, así como el efecto sobre las metas programadas; estas últimas deberán establecerse en cualquier modificación presupuestaria. \r\ng)	Salvo para casos de emergencia el monto de las modificaciones presupuestarias, no podrá destinarse para cubrir gastos cuyas asignaciones en el presupuesto de Gastos hayan sido previamente disminuidas en el mismo ejercicio presupuestario, mediante otras operaciones de traspaso de créditos, declaraciones de insubsistencia o creación de nuevas partidas. \r\nh)	Los montos de los Créditos Presupuestarios de las sub-partidas (4.01.01.01.00) “Sueldos básicos personal fijo a tiempo completo\"; (4.01.01.29.00) \"Dietas\"; (4.01.01.10.00) \"Salarios a Obreros en puestos permanentes, y ( 4.01.02.01.00) \"Compensaciones previstas en las escalas de sueldos al personal fijo a tiempo completo\", no podrán ser modificadas sin la previa autorización del Consejo Legislativo, excepto en el último trimestre del ejercicio fiscal de que se trate, cuando ya se hayan cubierto y estimado en su totalidad el monto correspondiente para la cancelación de tales obligaciones, en concordancia con el artículo 39  de la Ley Orgánica de Administración Financiera del Estado Amazonas, publicada en Gaceta Oficial Año 16 Nº 17 de fecha 02 de Julio del año 2008 extraordinaria. \r\n'),
-(12, 'ARTICULO 13:', 'El Gobernador podrá delegar en él o la Secretaría de Planificación, Proyectos y Presupuesto, mediante decreto que será publicado en la Gaceta Oficial del Estado, la atribución de tramitar las modificaciones presupuestarias en el proceso de Ejecución Presupuestaria del Ejercicio Fiscal 2024. '),
-(13, 'ARTICULO 14:', 'La Gobernación del Estado Amazonas dará estricto cumplimiento a lo establecido en la Ley de Presupuesto de Ingresos y Gastos para el Ejercicio fiscal 2024, sancionada y promulgada por el Poder Nacional, en todo lo relativo a la administración de los créditos que le son transferidos en dicha Ley, a través del Ministerio de Infraestructura, con el fin de alcanzar las metas y objetivos dispuestos en los artículos 8 y 14 de la ley de Política Habitacional. '),
+(11, 'ARTÍCULO 12:', 'A los fines de la Ejecución presupuestaria. \na)	El Ejecutivo Estatal, a través de la Secretaría de Planificación Proyectos y Presupuesto, podrá ordenar Traspasos de Créditos Presupuestarios que modifiquen la Distribución Institucional del Presupuesto de Gastos, dentro de una misma partida. Estos traspasos deberán ser informados al Consejo Legislativo, a la Contraloría Estatal, y a la Oficina Nacional de Presupuesto (ONAPRE), dentro de los siguientes veinte (20) días de haberse producido. Igualmente remitirá copia de ello a la Oficina de Auditoría Interna de la Gobernación y a la Secretaría de Administración, estas modificaciones se harán mediante traslados internos. \nb)	El Ejecutivo Estatal, a través de la Secretaría de Planificación, Proyectos y Presupuesto, podrá ordenar traspasos de créditos presupuestarios entre partidas de un mismo programa o de diferentes programas, o entre una misma partida de diferentes programas, dentro de un mismo sector o diferentes sectores hasta un límite del veinte por ciento (20%) de los respectivos créditos originales, en concordancia con el artículo 39  de la Ley Orgánica de Administración Financiera del Estado Amazonas, publicada en Gaceta Oficial Año 16 Nº 17 de fecha 02 de Julio del año 2008 extraordinaria y del artículo 86 del Reglamento Nº 1 de la Ley Orgánica de Administración Financiera del Sector Publico, según decreto Nº 3776, publicado en Gaceta Oficial Nº 5781 Extraordinario de fecha 12 de agosto del 2005. Estos traspasos de créditos deberán ser fundamentados mediante resoluciones publicadas en la Gaceta Oficial del Estado Amazonas; de los mismos se remitirán copias al Consejo Legislativo Regional, Contraloría General del Estado, ONAPRE, dentro de los (30) días siguientes de haberse producido. \nc)	El Ejecutivo Estatal podrá disponer del Crédito asignado a la partida\" \"Rectificaciones al Presupuesto\" para atender gastos imprevistos que se presenten en el Transcurso del Ejercicio fiscal o para incrementar los créditos presupuestarios que resultaren insuficientes. Esta modificación presupuestaria se hará mediante Resolución que deberá publicarse en la Gaceta Oficial del Estado Amazonas. Dentro de los diez (10) días siguientes de haberse producido, el Ejecutivo Estatal notificará de estas decisiones al Consejo Legislativo, a la Contraloría Estatal, y a la Oficina Nacional de Presupuesto (ONAPRE). El monto original de la partida \"Rectificaciones al Presupuesto\" no podrá ser menor al 0,5% ni exceder del uno por cierto (1%) del monto de los ingresos ordinarios, ni podrá aumentarse durante el ejercicio fiscal. \nd)	Los traspasos de créditos presupuestarios entre partidas de un mismo programa o de diferentes programas, o entre una misma partida de diferentes programas, dentro de un mismo sector o de diferentes sectores superiores al veinte por ciento (20%) deberán ser remitidos debidamente fundamentados al Consejo Legislativo para su aprobación. Después de haber sido aprobados se remitirán al Ejecutivo Estatal a través de la Secretaría de Planificación Proyectos y Presupuesto para ser publicados mediante Resolución en la Gaceta Oficial del Estado, enviándose una copia de las mismas a todos los organismos involucrados en el proceso. \ne)	El Ejecutivo Estatal podrá decretar Créditos Adicionales al Presupuesto de Gastos, previa aprobación del Consejo Legislativo, para cubrir gastos necesarios, pero no previstos en esta Ley, o crédito presupuestario insuficiente y solo se exigirá como anexo para su aprobación, la distribución presupuestaria del crédito y copia de la gaceta oficial donde se aprobó dicho crédito adicional para el Estado. Los créditos adicionales podrán ser financiados con: \na)	Existencias no comprometidas del Tesoro. \nb)	Economías de Cargos vacantes, las cuales deberán acordarse insubsistentes previamente, o con anulaciones de créditos adicionales, mediante Decreto publicado en la Gaceta oficial del Estado. \nc)	Otras fuentes de financiamiento aprobadas por la Asamblea Nacional. \nd)	Aportes o donaciones de otros organismos públicos o privados. \ne)	Ingresos extraordinarios del Estado.\nf)	Cuando se utilice el crédito presupuestario de la partida \"Rectificaciones al Presupuesto\" y cuando se decreten Créditos Adicionales, se deberán señalar las categorías presupuestarias, partida, unidad administrativa y cualquier otro concepto que sea necesario para identificar el destino de la modificación, así como el efecto sobre las metas programadas; estas últimas deberán establecerse en cualquier modificación presupuestaria. \ng)	Salvo para casos de emergencia el monto de las modificaciones presupuestarias, no podrá destinarse para cubrir gastos cuyas asignaciones en el presupuesto de Gastos hayan sido previamente disminuidas en el mismo ejercicio presupuestario, mediante otras operaciones de traspaso de créditos, declaraciones de insubsistencia o creación de nuevas partidas. \nh)	Los montos de los Créditos Presupuestarios de las sub-partidas (4.01.01.01.00) “Sueldos básicos personal fijo a tiempo completo\"; (4.01.01.29.00) \"Dietas\"; (4.01.01.10.00) \"Salarios a Obreros en puestos permanentes, y ( 4.01.02.01.00) \"Compensaciones previstas en las escalas de sueldos al personal fijo a tiempo completo\", no podrán ser modificadas sin la previa autorización del Consejo Legislativo, excepto en el último trimestre del ejercicio fiscal de que se trate, cuando ya se hayan cubierto y estimado en su totalidad el monto correspondiente para la cancelación de tales obligaciones, en concordancia con el artículo 39  de la Ley Orgánica de Administración Financiera del Estado Amazonas, publicada en Gaceta Oficial Año 16 Nº 17 de fecha 02 de Julio del año 2008 extraordinaria. \n'),
+(12, 'ARTICULO 13:', 'El Gobernador podrá delegar en él o la Secretaría de Planificación, Proyectos y Presupuesto, mediante decreto que será publicado en la Gaceta Oficial del Estado, la atribución de tramitar las modificaciones presupuestarias en el proceso de Ejecución Presupuestaria del Ejercicio Fiscal 2025. '),
+(13, 'ARTICULO 14:', 'La Gobernación del Estado Amazonas dará estricto cumplimiento a lo establecido en la Ley de Presupuesto de Ingresos y Gastos para el Ejercicio fiscal 2025, sancionada y promulgada por el Poder Nacional, en todo lo relativo a la administración de los créditos que le son transferidos en dicha Ley, a través del Ministerio de Infraestructura, con el fin de alcanzar las metas y objetivos dispuestos en los artículos 8 y 14 de la ley de Política Habitacional. '),
 (14, 'ARTÍCULO 15:', 'Para que los Institutos Autónomos, Entes Descentralizados con fines empresariales y Fundaciones del Estado puedan llevar a cabo modificaciones en la ejecución de sus Presupuestos, deberán solicitar la aprobación previa de la Secretaría de Planificación, Proyectos y Presupuestos del Ejecutivo Estatal; dependencia que de inmediato las comunicará al Consejo Legislativo y a la Contraloría General del Estado. Estas modificaciones estarán sometidas a las siguientes consideraciones: \r\n\r\nLos traspasos de Créditos Presupuestarios entre partidas de un mismo programa o de distintos programas superiores al veinte por ciento (20%) de los respectivos créditos originales. Los traspasos inferiores a ese porcentaje serán aprobados por el Directorio del Organismo, debiendo ser informados a la Secretaría de Planificación, Proyectos y Presupuesto. \r\nLos incrementos de Créditos Presupuestarios que surjan como productos de nuevas fuentes de financiamiento y que repercutan favorablemente, aumentando el monto total del presupuesto vigente. \r\nLa disminución de los ingresos propios, corrientes o de capital, que superen el veinte por ciento (20%) de la estimación inicial, o en aquellos casos en los que no se concrete la percepción de otros ingresos. La Secretaría de Planificación, Proyectos y presupuesto actuará en cada caso, según la normativa establecida en esta Ley. \r\n'),
 (15, 'ARTÍCULO 16:', 'El Gobernador del Estado, mediante Decreto que prevea las normas y procedimientos al respecto, podrá delegar a cada organismo sus funciones como ordenador de compromisos y pagos de la Hacienda Pública Estatal; debiendo identificar plenamente en el mismo a los funcionarios y funcionarias que tendrán autorización para comprometer con cargo al Tesorero Estatal. Así mismo, en dicho Decreto se determinarán las partidas de cada programa que serán controladas y ejecutadas por la Administración Central del Estado. El Gobernador está obligado a remitir al Consejo Legislativo una copia de la Gaceta Oficial, dentro de los cinco (5) días siguientes a la publicación de dicho Decreto. '),
 (16, 'ARTÍCULO 17:', 'Los Créditos Presupuestarios que se encuentran sujetos a convenios, no podrán ser objeto de modificaciones, sin la correspondiente acta que justifique el acuerdo entre las partes firmantes del mismo. '),
@@ -11952,7 +14245,7 @@ INSERT INTO `titulo_1` (`id`, `articulo`, `descripcion`) VALUES
 (21, 'ARTÍCULO 22:', 'El Gobernador del Estado, a través de las Secretarías de Administración y de Planificación, Proyectos y Presupuesto dictará mediante resolución las medidas para incrementar las existencias del tesoro, con el monto de los créditos no comprometidos al 31 de diciembre del Ejercicio Fiscal fenecido. '),
 (22, 'ARTICULO 23:', 'El incumplimiento de los deberes contemplados en esta Ley por parte de los funcionarios o terceros responsables de los mismos dará lugar a la apertura de la averiguación correspondiente a fin de determinar la responsabilidad disciplinaria o administrativa a que hubiere lugar, sin perjuicio de la que adelante el Ministerio Público en lo que le concierne al ámbito civil y penal. '),
 (23, 'ARTÍCULO 24:', 'Para todo lo no previsto en estas Disposiciones Generales en materia de Ejecución y Control Presupuestario, regirá la normativa contenida en la Ley de Administración Financiera del Estado Amazonas, en cuanto sea aplicable.'),
-(24, 'ARTICULO 27:', 'Esta Ley entrará en vigencia a partir de su publicación en Gaceta Oficial del Estado Amazonas y/o en la Gaceta Oficial del Consejo Legislativo del Estado Amazonas. \r\n\r\nDada, firmada, sellada y refrendada en el salón de sesiones del Consejo Legislativo del Estado Amazonas. En Puerto Ayacucho a los 28 días del mes de diciembre del 2019. Año 209 de la Independencia y 160 de la Federación.');
+(24, 'ARTICULO 27:', 'Esta Ley entrará en vigencia a partir de su publicación en Gaceta Oficial del Estado Amazonas y/o en la Gaceta Oficial del Consejo Legislativo del Estado Amazonas. \n\nDada, firmada, sellada y refrendada en el salón de sesiones del Consejo Legislativo del Estado Amazonas. En Puerto Ayacucho a los 12 días del mes de diciembre del 2024. Año 165 de la Independencia y 214 de la Federación.');
 
 -- --------------------------------------------------------
 
@@ -11962,14 +14255,27 @@ INSERT INTO `titulo_1` (`id`, `articulo`, `descripcion`) VALUES
 
 CREATE TABLE `traspasos` (
   `id` int(255) NOT NULL,
-  `id_partida_t` int(255) NOT NULL,
-  `id_partida_r` int(255) NOT NULL,
+  `n_orden` int(255) NOT NULL,
   `id_ejercicio` int(255) NOT NULL,
-  `monto` varchar(255) DEFAULT NULL,
+  `monto_total` varchar(255) DEFAULT NULL,
   `fecha` varchar(255) DEFAULT NULL,
-  `monto_anterior` varchar(255) DEFAULT NULL,
-  `monto_actual` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `status` int(255) NOT NULL,
+  `tipo` int(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `traspaso_informacion`
+--
+
+CREATE TABLE `traspaso_informacion` (
+  `id` int(255) NOT NULL,
+  `id_traspaso` int(255) NOT NULL,
+  `id_distribucion` int(255) NOT NULL,
+  `monto` varchar(255) NOT NULL,
+  `tipo` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -11978,14 +14284,14 @@ CREATE TABLE `traspasos` (
 --
 
 CREATE TABLE `txt` (
-  `id` int(255) NOT NULL,
-  `id_empleado` int(255) NOT NULL,
+  `id` int(11) NOT NULL,
+  `id_empleado` int(11) NOT NULL,
   `total_a_pagar` varchar(255) DEFAULT NULL,
   `nombre_nomina` varchar(255) DEFAULT NULL,
   `identificador` varchar(255) DEFAULT NULL,
   `fecha_pagar` varchar(255) DEFAULT NULL,
   `correlativo` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `txt`
@@ -16288,6 +18594,12 @@ ALTER TABLE `correcciones`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indices de la tabla `credito_adicional`
+--
+ALTER TABLE `credito_adicional`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indices de la tabla `dependencias`
 --
 ALTER TABLE `dependencias`
@@ -16480,6 +18792,12 @@ ALTER TABLE `plan_inversion`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indices de la tabla `plan_operativo`
+--
+ALTER TABLE `plan_operativo`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indices de la tabla `pl_actividades`
 --
 ALTER TABLE `pl_actividades`
@@ -16540,6 +18858,12 @@ ALTER TABLE `profesiones`
   ADD PRIMARY KEY (`id_profesion`);
 
 --
+-- Indices de la tabla `proyecto_credito`
+--
+ALTER TABLE `proyecto_credito`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indices de la tabla `proyecto_inversion`
 --
 ALTER TABLE `proyecto_inversion`
@@ -16573,8 +18897,7 @@ ALTER TABLE `solicitud_dozavos`
 -- Indices de la tabla `system_bd`
 --
 ALTER TABLE `system_bd`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `actualizacion` (`actualizacion`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indices de la tabla `system_users`
@@ -16614,6 +18937,12 @@ ALTER TABLE `tasa_historico`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indices de la tabla `tipo_gastos`
+--
+ALTER TABLE `tipo_gastos`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indices de la tabla `titulo_1`
 --
 ALTER TABLE `titulo_1`
@@ -16623,6 +18952,12 @@ ALTER TABLE `titulo_1`
 -- Indices de la tabla `traspasos`
 --
 ALTER TABLE `traspasos`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `traspaso_informacion`
+--
+ALTER TABLE `traspaso_informacion`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -16639,13 +18974,13 @@ ALTER TABLE `txt`
 -- AUTO_INCREMENT de la tabla `asignacion_ente`
 --
 ALTER TABLE `asignacion_ente`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=81;
 
 --
 -- AUTO_INCREMENT de la tabla `audit_logs`
 --
 ALTER TABLE `audit_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=187;
 
 --
 -- AUTO_INCREMENT de la tabla `backups`
@@ -16675,7 +19010,7 @@ ALTER TABLE `categorias`
 -- AUTO_INCREMENT de la tabla `compromisos`
 --
 ALTER TABLE `compromisos`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `conceptos`
@@ -16687,7 +19022,7 @@ ALTER TABLE `conceptos`
 -- AUTO_INCREMENT de la tabla `conceptos_aplicados`
 --
 ALTER TABLE `conceptos_aplicados`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=95;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=95;
 
 --
 -- AUTO_INCREMENT de la tabla `conceptos_formulacion`
@@ -16702,34 +19037,40 @@ ALTER TABLE `correcciones`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
+-- AUTO_INCREMENT de la tabla `credito_adicional`
+--
+ALTER TABLE `credito_adicional`
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT de la tabla `dependencias`
 --
 ALTER TABLE `dependencias`
-  MODIFY `id_dependencia` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=87;
+  MODIFY `id_dependencia` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=87;
 
 --
 -- AUTO_INCREMENT de la tabla `descripcion_programas`
 --
 ALTER TABLE `descripcion_programas`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
 
 --
 -- AUTO_INCREMENT de la tabla `distribucion_entes`
 --
 ALTER TABLE `distribucion_entes`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=134;
 
 --
 -- AUTO_INCREMENT de la tabla `distribucion_presupuestaria`
 --
 ALTER TABLE `distribucion_presupuestaria`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1576;
 
 --
 -- AUTO_INCREMENT de la tabla `ejercicio_fiscal`
 --
 ALTER TABLE `ejercicio_fiscal`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `empleados`
@@ -16753,19 +19094,19 @@ ALTER TABLE `empleados_por_grupo`
 -- AUTO_INCREMENT de la tabla `entes`
 --
 ALTER TABLE `entes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=76;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=83;
 
 --
 -- AUTO_INCREMENT de la tabla `entes_dependencias`
 --
 ALTER TABLE `entes_dependencias`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=196;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=218;
 
 --
 -- AUTO_INCREMENT de la tabla `error_log`
 --
 ALTER TABLE `error_log`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT de la tabla `frecuencias_por_grupo`
@@ -16777,55 +19118,55 @@ ALTER TABLE `frecuencias_por_grupo`
 -- AUTO_INCREMENT de la tabla `gastos`
 --
 ALTER TABLE `gastos`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `historico_conceptos`
 --
 ALTER TABLE `historico_conceptos`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `historico_reintegros`
 --
 ALTER TABLE `historico_reintegros`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=655;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=655;
 
 --
 -- AUTO_INCREMENT de la tabla `informacion_consejo`
 --
 ALTER TABLE `informacion_consejo`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `informacion_contraloria`
 --
 ALTER TABLE `informacion_contraloria`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `informacion_gobernacion`
 --
 ALTER TABLE `informacion_gobernacion`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `informacion_pdf`
 --
 ALTER TABLE `informacion_pdf`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=324;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=324;
 
 --
 -- AUTO_INCREMENT de la tabla `informacion_personas`
 --
 ALTER TABLE `informacion_personas`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `menu`
 --
 ALTER TABLE `menu`
-  MODIFY `id` int(1) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
 
 --
 -- AUTO_INCREMENT de la tabla `modificaciones_empleados`
@@ -16867,7 +19208,7 @@ ALTER TABLE `notificaciones`
 -- AUTO_INCREMENT de la tabla `partidas_presupuestarias`
 --
 ALTER TABLE `partidas_presupuestarias`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2057;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2175;
 
 --
 -- AUTO_INCREMENT de la tabla `password_resets`
@@ -16879,31 +19220,37 @@ ALTER TABLE `password_resets`
 -- AUTO_INCREMENT de la tabla `personal_directivo`
 --
 ALTER TABLE `personal_directivo`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `peticiones`
 --
 ALTER TABLE `peticiones`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=107;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=107;
 
 --
 -- AUTO_INCREMENT de la tabla `plan_inversion`
 --
 ALTER TABLE `plan_inversion`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `plan_operativo`
+--
+ALTER TABLE `plan_operativo`
   MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `pl_actividades`
 --
 ALTER TABLE `pl_actividades`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT de la tabla `pl_metas`
 --
 ALTER TABLE `pl_metas`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=104;
 
 --
 -- AUTO_INCREMENT de la tabla `pl_partidas`
@@ -16915,13 +19262,13 @@ ALTER TABLE `pl_partidas`
 -- AUTO_INCREMENT de la tabla `pl_programas`
 --
 ALTER TABLE `pl_programas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
 
 --
 -- AUTO_INCREMENT de la tabla `pl_proyectos`
 --
 ALTER TABLE `pl_proyectos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `pl_sectores`
@@ -16939,25 +19286,31 @@ ALTER TABLE `pl_sectores_presupuestarios`
 -- AUTO_INCREMENT de la tabla `poa_actividades`
 --
 ALTER TABLE `poa_actividades`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `primantiguedad`
 --
 ALTER TABLE `primantiguedad`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT de la tabla `profesiones`
 --
 ALTER TABLE `profesiones`
-  MODIFY `id_profesion` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id_profesion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT de la tabla `proyecto_credito`
+--
+ALTER TABLE `proyecto_credito`
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `proyecto_inversion`
 --
 ALTER TABLE `proyecto_inversion`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `proyecto_inversion_partidas`
@@ -16969,7 +19322,7 @@ ALTER TABLE `proyecto_inversion_partidas`
 -- AUTO_INCREMENT de la tabla `recibo_pago`
 --
 ALTER TABLE `recibo_pago`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47968;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47968;
 
 --
 -- AUTO_INCREMENT de la tabla `reportes`
@@ -16981,55 +19334,61 @@ ALTER TABLE `reportes`
 -- AUTO_INCREMENT de la tabla `solicitud_dozavos`
 --
 ALTER TABLE `solicitud_dozavos`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT de la tabla `system_bd`
 --
 ALTER TABLE `system_bd`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
 -- AUTO_INCREMENT de la tabla `system_users`
 --
 ALTER TABLE `system_users`
-  MODIFY `u_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
+  MODIFY `u_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
 
 --
 -- AUTO_INCREMENT de la tabla `system_users_permisos`
 --
 ALTER TABLE `system_users_permisos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT de la tabla `tabuladores`
 --
 ALTER TABLE `tabuladores`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT de la tabla `tabuladores_estr`
 --
 ALTER TABLE `tabuladores_estr`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=670;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=670;
 
 --
 -- AUTO_INCREMENT de la tabla `tasa`
 --
 ALTER TABLE `tasa`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `tasa_historico`
 --
 ALTER TABLE `tasa_historico`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+
+--
+-- AUTO_INCREMENT de la tabla `tipo_gastos`
+--
+ALTER TABLE `tipo_gastos`
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `titulo_1`
 --
 ALTER TABLE `titulo_1`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT de la tabla `traspasos`
@@ -17038,10 +19397,16 @@ ALTER TABLE `traspasos`
   MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT de la tabla `traspaso_informacion`
+--
+ALTER TABLE `traspaso_informacion`
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT de la tabla `txt`
 --
 ALTER TABLE `txt`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61773;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61773;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
