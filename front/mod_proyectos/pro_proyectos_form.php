@@ -34,7 +34,7 @@ require_once '../../back/sistema_global/session.php';
 
                             <div class=" d-flex justify-content-between">
                                 <h4 class="fw-bold py-3 mb-4">
-                                    <span class="text-muted fw-light">Nombre de oficina /</span> Proyectos
+                                    <span class="text-muted fw-light">Proyectos/</span> Créditos y Proyectos
                                 </h4>
                                 <div class="row" id="ejercicios-fiscales">
                                 </div>
@@ -49,7 +49,7 @@ require_once '../../back/sistema_global/session.php';
             <!-- [ Main Content ] start -->
             <div class="row mb3">
 
-                <div class="col-lg-12 mb-3" id="proyectos-view">
+                <div class="col-lg-12 mb-3" id="pro-proyectos-view">
                     <div class="card">
 
                         <div class="card-header d-flex justify-content-between">
@@ -58,11 +58,11 @@ require_once '../../back/sistema_global/session.php';
                                 <small class="mt-0 text-muted">Administre los créditos y cargue los decretos
                                     correspondientes</small>
                             </div>
-                            <button class="btn btn-primary" id="proyectos-registrar">REGISTRAR</button>
+                            <button class="btn btn-primary" id="pro-proyectos-registrar">REGISTRAR</button>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive p-1">
-                                <table id="proyecto-table" class="table table-striped" style="width:100%">
+                                <table id="pro-proyecto-table" class="table table-striped" style="width:100%">
                                     <thead class="w-100">
 
 

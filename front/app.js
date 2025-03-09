@@ -26,17 +26,18 @@ import { validateRequestForm } from './src/controllers/peticionesNominaForm.js'
 
 import { validateRequestNomForm } from './src/controllers/peticionesNominaReview.js'
 import { validateCompromisosView } from './src/controllers/pre_compromisosView.js'
-import { validateGastosTable } from './src/controllers/pre_gastosFuncionamientoTable.js'
+
 import { validateGastosView } from './src/controllers/pre_gastosFuncionamientoView.js'
 import { validateReportesView } from './src/controllers/pre_reportesView.js'
-import { validateSolicitudesDozavosTable } from './src/controllers/pre_solicitudesDozavosTable.js'
+
 import { validateSolicitudesDozavos } from './src/controllers/pre_solicitudesDozavosView.js'
 import { validateTraspasosView } from './src/controllers/pre_traspasosView.js'
 import { loadRegconRequestTable } from './src/controllers/regcon_peticionesTable.js'
 import { validateTabulatorForm } from './src/controllers/tabuladorForm.js'
 import { validateTasaActual } from './src/controllers/tasaView.js'
 import { validateModal } from './src/helpers/helpers.js'
-import { validateProyectosView } from './src/controllers/pre_proyectosView.js'
+import { validatePreProyectosView } from './src/controllers/pre_proyectosView.js'
+import { validateProProyectosView } from './src/controllers/pro_proyectosView.js'
 const d = document
 
 // const requestForm2 = d.getElementById('request-form2')
@@ -63,7 +64,8 @@ d.addEventListener('DOMContentLoaded', (e) => {
   const traspasosView = d.getElementById('traspasos-view')
   const reportesView = d.getElementById('reportes-view')
   const compromisosView = d.getElementById('compromisos-view')
-  const proyectosView = d.getElementById('proyectos-view')
+  const preProyectosView = d.getElementById('pre-proyectos-view')
+
   // Formulación
   const partidasView = d.getElementById('partidas-view')
   const distribucionView = d.getElementById('distribucion-view')
@@ -76,6 +78,8 @@ d.addEventListener('DOMContentLoaded', (e) => {
   const titulo1View = d.getElementById('titulo-1-view')
   const descripcionProgramaView = d.getElementById('descripcion-programa-view')
   const planOperativoView = d.getElementById('form-plan-operativo-view')
+  // Proyectos
+  const proProyectosView = d.getElementById('pro-proyectos-view')
 
   // ENTES
   const solicitudEntesView = d.getElementById('solicitudes-entes-dozavos-view')
@@ -215,8 +219,14 @@ d.addEventListener('DOMContentLoaded', (e) => {
     validateCompromisosView()
   }
 
-  if (proyectosView) {
-    validateProyectosView()
+  if (preProyectosView) {
+    validatePreProyectosView()
+  }
+
+  // Modulo proyectos
+
+  if (proProyectosView) {
+    validateProProyectosView()
   }
 
   //  FORMULACIÓN

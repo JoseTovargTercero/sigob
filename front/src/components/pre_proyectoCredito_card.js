@@ -16,6 +16,7 @@ export const pre_proyectoCredito_card = ({
   data = null,
   close = false,
   reset,
+  details = false,
 }) => {
   let decretoFile = null
   const maxFileSize = 5 * 1024 * 1024 // 5 MB (ajusta según tus necesidades)
@@ -29,6 +30,8 @@ export const pre_proyectoCredito_card = ({
   }
 
   let { decreto, id_compromiso, correlativo_compromiso } = data
+
+  let valdiate
 
   let card = `  <div class='card slide-up-animation' id='${nombreCard}-form-card'>
       <div class='card-header d-flex justify-content-between'>
@@ -79,35 +82,43 @@ export const pre_proyectoCredito_card = ({
           </p>
         </div>
         <div class='row mb-4'>
-          <div class='col'>
-            <p>
-              <b>Descripción credito: </b>${data.descripcion_credito}
-            </p>
-          </div>
+         
           <div class='col'>
             <p>
               <b>Descripción proyecto: </b>${data.descripcion_proyecto}
             </p>
           </div>
         </div>
-        <div class='row'>
-          ${
-            decreto
-              ? '<iframe id="decreto-iframe" style="width: 100%; height: 400px;"></iframe>'
-              : '<input type="file" id="decreto-file" accept="application/pdf" class="form-control"><p id="decreto-file-error" class="text-danger slide-up-animation mt-2" style="display: none;">Error: Archivo inválido.</p>'
-          }
-        </div>
+        ${
+          details
+            ? ` <div class='row'>
+              ${
+                decreto
+                  ? '<iframe id="decreto-iframe" style="width: 100%; height: 400px;"></iframe>'
+                  : '<input type="file" id="decreto-file" accept="application/pdf" class="form-control"><p id="decreto-file-error" class="text-danger slide-up-animation mt-2" style="display: none;">Error: Archivo inválido.</p>'
+              }
+            </div>`
+            : ''
+        }
+        
       </div>
       <div class='card-footer text-center'>
         ${
-          id_compromiso
-            ? `<button class='btn btn-secondary' data-compromisoid="${id_compromiso}">
-              Descargar Compromiso
-            </button>`
-            : !decreto
-            ? `<button class="btn btn-primary" id="${nombreCard}-guardar">Subir Decreto</button>`
-            : ''
+          details
+            ? `${
+                id_compromiso
+                  ? `<button class='btn btn-secondary' data-compromisoid="${id_compromiso}">
+                  Descargar Compromiso
+                </button>`
+                  : !decreto
+                  ? `<button class="btn btn-primary" id="${nombreCard}-guardar">Subir Decreto</button>`
+                  : ''
+              }`
+            : decreto
+            ? `<span class="btn btn-sm btn-success">Confirmado</span>`
+            : `<span class="btn btn-sm btn-secondary">No confirmado</span>`
         }
+      
       </div>
     </div>`
 
@@ -226,7 +237,7 @@ export const pre_proyectoCredito_card = ({
   }
 
   // Manejo de datos recibidos (blob PDF)
-  if (data && data.decreto) {
+  if (data && data.decreto && details) {
     decretoIframe.src = `${DECRETOS_URL}/${data.decreto}`
   }
 
