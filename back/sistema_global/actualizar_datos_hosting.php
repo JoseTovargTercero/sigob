@@ -1,17 +1,23 @@
 <?php
 set_time_limit(10000000); // 5 minutos
 require_once 'conexion.php';
+require_once 'conexion_remota.php';
+
+
 if ($local_db->connect_error || $remote_db->connect_error) {
-    die(json_encode(["error" => "Error de conexión a la base de datos"]));
+    echo $_SESSION['error_remote_db'];
+    die(json_encode(["error" => "Error de conexion a la base de datos"]));
 }
 
 // Obtener nombres de tablas
-function obtenerTablas($db) {
+function obtenerTablas($db)
+{
     $result = $db->query("SHOW TABLES");
     return array_column($result->fetch_all(), 0);
 }
 
-function obtenerHashTabla($db, $tabla) {
+function obtenerHashTabla($db, $tabla)
+{
     $columnas = [];
     $resultado = $db->query("SHOW COLUMNS FROM `$tabla`");
 
@@ -39,7 +45,8 @@ function obtenerHashTabla($db, $tabla) {
     return $row ? $row['hash'] : null;
 }
 
-function basesDeDatosIguales($local_db, $remote_db) {
+function basesDeDatosIguales($local_db, $remote_db)
+{
     $tablas_local = obtenerTablas($local_db);
     $tablas_remoto = obtenerTablas($remote_db);
     $tablas_comunes = array_intersect($tablas_local, $tablas_remoto);
@@ -57,7 +64,8 @@ function basesDeDatosIguales($local_db, $remote_db) {
 }
 
 // Obtener datos de una tabla en lotes
-function obtenerDatosTabla($db, $tabla, $limit = 5000) {
+function obtenerDatosTabla($db, $tabla, $limit = 5000)
+{
     $datos = [];
     $offset = 0;
 
@@ -80,11 +88,13 @@ function obtenerDatosTabla($db, $tabla, $limit = 5000) {
 }
 
 
-function vaciarTabla($db, $tabla) {
+function vaciarTabla($db, $tabla)
+{
     $db->query("DELETE FROM `$tabla`");
 }
 
-function insertarDatos($db, $tabla, $datos) {
+function insertarDatos($db, $tabla, $datos)
+{
     if (empty($datos)) return;
 
     $columnas = "`" . implode("`, `", array_keys($datos[0])) . "`";
@@ -99,7 +109,8 @@ function insertarDatos($db, $tabla, $datos) {
     }
 }
 
-function sincronizarDistribucionEnte($local_db, $remote_db) {
+function sincronizarDistribucionEnte($local_db, $remote_db)
+{
     $tabla = "distribucion_entes";
 
     // Obtener datos de la tabla en ambas bases de datos
@@ -129,7 +140,8 @@ function sincronizarDistribucionEnte($local_db, $remote_db) {
 
 
 
-function sincronizarBasesDeDatos($local_db, $remote_db) {
+function sincronizarBasesDeDatos($local_db, $remote_db)
+{
     if (basesDeDatosIguales($local_db, $remote_db)) {
         return ["success" => "Las bases de datos ya están sincronizadas, no se realizaron cambios"];
     }
@@ -180,4 +192,3 @@ function sincronizarBasesDeDatos($local_db, $remote_db) {
 $resultado = sincronizarBasesDeDatos($local_db, $remote_db);
 header('Content-Type: application/json');
 echo json_encode($resultado);
-?>

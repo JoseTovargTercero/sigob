@@ -54,7 +54,6 @@ function crearGasto($id_tipo, $descripcion, $monto, $id_ejercicio, $beneficiario
         } else {
             throw new Exception("No se pudo registrar el gasto");
         }
-
     } catch (Exception $e) {
         // Registrar el error en la tabla error_log
         registrarError($e->getMessage());
@@ -154,7 +153,6 @@ function gestionarGasto($idGasto, $accion)
             } else {
                 throw new Exception("No se pudo actualizar el gasto a aceptado");
             }
-
         } elseif ($accion === "rechazar") {
             // Actualizar el estado del gasto a rechazado
             $sqlUpdateGasto = "UPDATE gastos SET status = 2 WHERE id = ?";
@@ -169,11 +167,9 @@ function gestionarGasto($idGasto, $accion)
             } else {
                 throw new Exception("No se pudo rechazar el gasto");
             }
-
         } else {
             throw new Exception("Acción no válida. Debe ser 'aceptar' o 'rechazar'.");
         }
-
     } catch (Exception $e) {
         $conexion->rollback();
         registrarError($e->getMessage());
@@ -186,12 +182,13 @@ function gestionarGasto($idGasto, $accion)
 
 function obtenerGastos($id_ejercicio)
 {
-    global $conexion;
+global $conexion;
 
     try {
         $sql = "SELECT id, id_tipo, descripcion, monto, status, id_ejercicio, distribuciones, fecha, beneficiario, identificador 
                 FROM gastos 
-                WHERE id_ejercicio = ?";
+                WHERE id_ejercicio = ?
+                ORDER BY fecha";
         $stmt = $conexion->prepare($sql);
         $stmt->bind_param("i", $id_ejercicio);
         $stmt->execute();
@@ -320,7 +317,6 @@ function obtenerGastos($id_ejercicio)
 
         // Devolver los datos en formato JSON
         return json_encode($gastos);
-
     } catch (Exception $e) {
         registrarError($e->getMessage());
         return json_encode(['error' => $e->getMessage()]);
@@ -372,7 +368,6 @@ function obtenerSumatoriaPorTrimestre($id_ejercicio)
             "success" => true,
             "data" => $trimestres
         ]);
-
     } catch (Exception $e) {
         return json_encode([
             "success" => false,
@@ -547,7 +542,6 @@ function actualizarGasto($id, $id_tipo, $descripcion, $monto, $id_ejercicio, $be
         } else {
             throw new Exception("Error al actualizar el gasto.");
         }
-
     } catch (Exception $e) {
         registrarError($e->getMessage());
         return json_encode(['error' => $e->getMessage()]);
@@ -652,5 +646,3 @@ if (isset($data["accion"])) {
 } else {
     echo json_encode(['error' => 'No se especificó ninguna acción']);
 }
-
-
