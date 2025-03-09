@@ -67,7 +67,7 @@ if (isset($_GET['id'])) {
     $tipo_nomina2 = json_encode(array_values($tipo_nomina));
 
     // Consultar la tabla empleados
-    $stmt = $conexion->prepare("SELECT *, TIMESTAMPDIFF(YEAR, fecha_ingreso, CURDATE()) + otros_años AS antiguedad_total FROM empleados WHERE id = ?");
+    $stmt = $conexion->prepare("SELECT *, TIMESTAMPDIFF(YEAR, fecha_ingreso, CURDATE()) + otros_anios AS antiguedad_total FROM empleados WHERE id = ?");
     if (!$stmt) {
         die("Error en la preparación de la declaración SELECT empleados: " . $conexion->error);
     }
@@ -82,7 +82,7 @@ if (isset($_GET['id'])) {
     $status_empleado = "R";
 
     // Insertar en empleados_pasados
-    $stmt = $conexion->prepare("INSERT INTO empleados_pasados (nacionalidad, cedula, nombres, otros_años, status, observacion, cod_cargo, banco, cuenta_bancaria, hijos, instruccion_academica, discapacidades, tipo_nomina, id_dependencia, verificado, correcion, beca, fecha_ingreso) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt = $conexion->prepare("INSERT INTO empleados_pasados (nacionalidad, cedula, nombres, otros_anios, status, observacion, cod_cargo, banco, cuenta_bancaria, hijos, instruccion_academica, discapacidades, tipo_nomina, id_dependencia, verificado, correcion, beca, fecha_ingreso) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
     if (!$stmt) {
         die("Error en la preparación de la declaración INSERT empleados_pasados: " . $conexion->error);
     }
@@ -151,4 +151,3 @@ if (isset($_GET['id'])) {
 
 // Cerrar la conexión
 $conexion->close();
-?>

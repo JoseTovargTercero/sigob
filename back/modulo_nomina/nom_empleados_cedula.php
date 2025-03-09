@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This script is responsible for retrieving employee information based on their identification number (cedula).
  * It receives a JSON payload containing the cedula and returns the employee's details if found.
@@ -18,7 +19,7 @@ if (@$cedula != '') {
 
     // Prepare the SQL statement to retrieve employee details
     $stmt = mysqli_prepare($conexion, "SELECT *, TIMESTAMPDIFF(YEAR, fecha_ingreso, CURDATE()) AS antiguedad, 
-    otros_años, TIMESTAMPDIFF(YEAR, fecha_ingreso, CURDATE()) + otros_años AS anios_totales 
+    otros_anios, TIMESTAMPDIFF(YEAR, fecha_ingreso, CURDATE()) + otros_anios AS anios_totales 
     FROM empleados WHERE cedula = ?");
     $stmt->bind_param('s', $cedula);
     $stmt->execute();

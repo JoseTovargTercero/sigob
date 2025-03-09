@@ -8,7 +8,7 @@ if (isset($_POST['id'])) {
 
     // Consulta SQL para obtener los datos del empleado y su dependencia
     $sql = "SELECT e.id, e.cedula, e.nombres, d.id_dependencia, d.dependencia,
-                   e.nacionalidad, e.fecha_ingreso, e.otros_años, e.status, 
+                   e.nacionalidad, e.fecha_ingreso, e.otros_anios, e.status, 
                    e.observacion, e.cod_cargo, e.banco, e.cuenta_bancaria, e.hijos, 
                    e.instruccion_academica, e.discapacidades, c.cargo 
             FROM empleados AS e
@@ -43,8 +43,8 @@ if (isset($_POST['id'])) {
                 "dependencia" => $row["dependencia"], // LISTO
                 "nacionalidad" => $row["nacionalidad"], // LISTO
                 "fecha_ingreso" => $row["fecha_ingreso"], // LISTO
-                "otros_años" => $row["otros_años"], // LISTO
-                "status" => $row["status"], 
+                "otros_anios" => $row["otros_anios"], // LISTO
+                "status" => $row["status"],
                 "observacion" => $row["observacion"], //listo
                 "cod_cargo" => $row["cod_cargo"], // LISTO
                 "cargo" => $row["cargo"], // CARGO
@@ -71,4 +71,3 @@ $conexion->close();
 // Pasar el array a la vista (puedes utilizar un archivo de vista o imprimir los datos aquí mismo)
 header('Content-Type: application/json');
 echo json_encode($datos);
-?>

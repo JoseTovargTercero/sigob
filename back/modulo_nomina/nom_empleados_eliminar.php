@@ -71,7 +71,7 @@ try {
         $tipo_nomina2 = json_encode(array_values($tipo_nomina));
 
         // Consultar la tabla empleados
-        $stmt = $conexion->prepare("SELECT *, TIMESTAMPDIFF(YEAR, fecha_ingreso, CURDATE()) + otros_años AS antiguedad_total FROM empleados WHERE id = ?");
+        $stmt = $conexion->prepare("SELECT *, TIMESTAMPDIFF(YEAR, fecha_ingreso, CURDATE()) + otros_anios AS antiguedad_total FROM empleados WHERE id = ?");
         if (!$stmt) {
             throw new Exception("Error en la preparación de la declaración SELECT empleados: $conexion->error");
         }
@@ -86,7 +86,7 @@ try {
         $status_empleado = "R";
 
         // Insertar en empleados_pasados
-        $stmt = $conexion->prepare("INSERT INTO empleados_pasados (nacionalidad, cedula, nombres, otros_años, status, observacion, cod_cargo, banco, cuenta_bancaria, hijos, instruccion_academica, discapacidades, tipo_nomina, id_dependencia, verificado, correcion, beca, fecha_ingreso) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt = $conexion->prepare("INSERT INTO empleados_pasados (nacionalidad, cedula, nombres, otros_anios, status, observacion, cod_cargo, banco, cuenta_bancaria, hijos, instruccion_academica, discapacidades, tipo_nomina, id_dependencia, verificado, correcion, beca, fecha_ingreso) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
         if (!$stmt) {
             throw new Exception("Error en la preparación de la declaración INSERT empleados_pasados: $conexion->error");
         }
@@ -139,7 +139,6 @@ try {
             $stmt_mov = $conexion->prepare("INSERT INTO movimientos (id_empleado, id_nomina, fecha_movimiento, accion, descripcion, status) VALUES (?, ?, ?, ?, ?, ?)");
             if (!$stmt_mov) {
                 throw new Exception("Error en la preparación de la declaración INSERT movimientos: $conexion->error");
-
             }
             $stmt_mov->bind_param("issssi", $id, $tipo_nomina_json, $fecha_movimiento, $accion, $descripcion, $status);
             $stmt_mov->execute();
@@ -153,7 +152,6 @@ try {
         // ACTUALIZAR RESPUESTA EXITOSA
         $conexion->commit();
         $response = json_encode(["success" => "Empleado desactivado correctamente."]);
-
     } else {
         throw new Exception('No se ha proporcionado un ID.');
     }

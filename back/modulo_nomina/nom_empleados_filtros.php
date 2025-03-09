@@ -6,7 +6,7 @@ $api_key = "4bfc66a740d312008475dded";
 $url = "https://v6.exchangerate-api.com/v6/{$api_key}/pair/USD/VES";
 $response = file_get_contents($url);
 $data = json_decode($response, true);
-$precio_dolar = $data['conversion_rate'];   
+$precio_dolar = $data['conversion_rate'];
 
 // Verificar que los datos se han enviado mediante POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -80,14 +80,14 @@ foreach ($empleados as $empleado_id) {
         // Evaluar condiciones utilizando la función evalua_condiciones
         if (evalua_condiciones($conexion, $empleado, $condiciones)) {
             $cumple_alguna_condicion = true;
-            
+
             if ($tipo_calculo == '1') {
                 $cantidad_a_pagar += $valor; // Aquí puedes añadir la lógica específica de cálculo si es necesario
             } elseif ($tipo_calculo == '2') {
-               $cantidad_a_pagar += round($valor * $precio_dolar,2);
+                $cantidad_a_pagar += round($valor * $precio_dolar, 2);
             } elseif ($tipo_calculo == '3') {
                 $salarioBase = calculoSalarioBase($conexion, $empleado_id);
-                 if ($valor < 100) {
+                if ($valor < 100) {
                     $cantidad_a_pagar += round($salarioBase * ($valor / 100), 2);
                 } else {
                     echo "El valor del porcentaje no es válido.";
@@ -102,7 +102,8 @@ foreach ($empleados as $empleado_id) {
 }
 
 // Función para evaluar condiciones
-function evalua_condiciones($conexion, $empleado, $condiciones) {
+function evalua_condiciones($conexion, $empleado, $condiciones)
+{
     // Ejecutar consulta SQL dinámica con las condiciones proporcionadas
     $sql = "SELECT COUNT(*) AS count FROM empleados WHERE id = ? AND {$condiciones}";
     $stmt = $conexion->prepare($sql);
@@ -117,10 +118,11 @@ function evalua_condiciones($conexion, $empleado, $condiciones) {
 }
 
 // Función para calcular el salario base
-function calculoSalarioBase($conexion, $empleado_id) {
+function calculoSalarioBase($conexion, $empleado_id)
+{
     // Consulta SQL con LEFT JOIN
     $sql = "SELECT empleados.*, cargos_grados.grado,
-            TIMESTAMPDIFF(YEAR, empleados.fecha_ingreso, CURDATE()) + empleados.otros_años AS paso
+            TIMESTAMPDIFF(YEAR, empleados.fecha_ingreso, CURDATE()) + empleados.otros_anios AS paso
             FROM empleados
             LEFT JOIN cargos_grados ON empleados.cod_cargo = cargos_grados.cod_cargo
             WHERE empleados.id = ?";
@@ -150,11 +152,12 @@ function calculoSalarioBase($conexion, $empleado_id) {
     }
 }
 
-function obtenerMonto($conexion, $grado, $paso) {
+function obtenerMonto($conexion, $grado, $paso)
+{
     // Agregar el prefijo 'G' al grado
-    $grado = "G".$grado;
+    $grado = "G" . $grado;
     // Agregar el prefijo 'P' al paso
-    $paso = "P".$paso;
+    $paso = "P" . $paso;
     // Consulta SQL para obtener el monto
     $sql = "SELECT monto FROM tabuladores_estr WHERE grado = ? AND paso = ?";
     $stmt = $conexion->prepare($sql);
@@ -188,4 +191,3 @@ header('Content-Type: application/json');
 echo json_encode($response);
 
 $conexion->close();
-?>

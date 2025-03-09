@@ -1,5 +1,5 @@
-import { getCategorias } from '../api/categorias.js'
-import { getDependencias } from '../api/dependencias.js'
+import { getCategorias } from "../api/categorias.js";
+import { getDependencias } from "../api/dependencias.js";
 import {
   getBankData,
   getEmployeeByCedula,
@@ -8,11 +8,11 @@ import {
   getProfessionData,
   sendEmployeeData,
   updateRequestEmployeeData,
-} from '../api/empleados.js'
-import { consultarPartida, getPartidas } from '../api/partidas.js'
-import { nom_categoria_form_card } from '../components/nom_categoria_form_card.js'
-import { nomCorrectionAlert } from '../components/nom_correcion_alert.js'
-import { nom_dependencia_form_card } from '../components/nom_dependencia_form_card.js'
+} from "../api/empleados.js";
+import { consultarPartida, getPartidas } from "../api/partidas.js";
+import { nom_categoria_form_card } from "../components/nom_categoria_form_card.js";
+import { nomCorrectionAlert } from "../components/nom_correcion_alert.js";
+import { nom_dependencia_form_card } from "../components/nom_dependencia_form_card.js";
 
 import {
   closeModal,
@@ -22,106 +22,106 @@ import {
   toastNotification,
   validateInput,
   validateModal,
-} from '../helpers/helpers.js'
-import { ALERT_TYPES, NOTIFICATIONS_TYPES } from '../helpers/types.js'
+} from "../helpers/helpers.js";
+import { ALERT_TYPES, NOTIFICATIONS_TYPES } from "../helpers/types.js";
 import {
   confirmDeleteEmployee,
   loadEmployeeTable,
   validateEmployeeTable,
-} from '../controllers/empleadosTable.js'
+} from "../controllers/empleadosTable.js";
 
-const d = document
+const d = document;
 
 export const nom_empleados_form_card = ({ elementToInset, id }) => {
   let fieldList = {
-    nombres: '',
-    nacionalidad: '',
+    nombres: "",
+    nacionalidad: "",
     cedula: 0,
-    status: '',
-    instruccion_academica: '',
-    cod_cargo: '',
-    fecha_ingreso: '',
-    otros_años: 0,
+    status: "",
+    instruccion_academica: "",
+    cod_cargo: "",
+    fecha_ingreso: "",
+    otros_anios: 0,
     hijos: 0,
     beca: 0,
-    discapacidades: '',
-    banco: '',
-    cuenta_bancaria: '',
+    discapacidades: "",
+    banco: "",
+    cuenta_bancaria: "",
     // tipo_cuenta: 0,
-    id_dependencia: '',
-    id_categoria: '',
-    id_partida: '',
+    id_dependencia: "",
+    id_categoria: "",
+    id_partida: "",
 
     tipo_nomina: 0,
     correcion: 0,
-    observacion: '',
-  }
+    observacion: "",
+  };
 
   let fieldListErrors = {
     nombres: {
       value: true,
-      message: 'Introducir un campo válido',
-      type: 'text',
+      message: "Introducir un campo válido",
+      type: "text",
     },
     nacionalidad: {
       value: true,
-      message: 'Introducir un campo válido',
-      type: 'text',
+      message: "Introducir un campo válido",
+      type: "text",
     },
     cedula: {
       value: true,
-      message: 'Introduzca cédula válida',
-      type: 'cedula',
+      message: "Introduzca cédula válida",
+      type: "cedula",
     },
     status: {
       value: false,
-      message: 'Elija una opción',
-      type: 'text',
+      message: "Elija una opción",
+      type: "text",
     },
     instruccion_academica: {
       value: true,
-      message: 'Elija una opción',
-      type: 'text',
+      message: "Elija una opción",
+      type: "text",
     },
     cod_cargo: {
       value: true,
-      message: 'Elija un cargo',
-      type: 'number',
+      message: "Elija un cargo",
+      type: "number",
     },
     fecha_ingreso: {
       value: true,
-      message: 'Fecha inválida o mayor',
-      type: 'date',
+      message: "Fecha inválida o mayor",
+      type: "date",
     },
-    otros_años: {
+    otros_anios: {
       value: true,
       message: 'Introducir cantidad o "0"',
-      type: 'number2',
+      type: "number2",
     },
     hijos: {
       value: true,
       message: 'Introducir cantidad o "0"',
-      type: 'number2',
+      type: "number2",
     },
     beca: {
       value: true,
       message: 'Introducir cantidad o "0"',
-      type: 'number2',
+      type: "number2",
     },
     banco: {
       value: true,
-      message: 'Elija un banco',
-      type: 'text',
+      message: "Elija un banco",
+      type: "text",
     },
     cuenta_bancaria: {
       value: true,
-      message: 'Introducir N° de cuenta válido',
-      type: 'cuenta_bancaria',
+      message: "Introducir N° de cuenta válido",
+      type: "cuenta_bancaria",
     },
     discapacidades: {
       value: true,
-      message: 'Elija una opción',
-      type: 'number2',
+      message: "Elija una opción",
+      type: "number2",
     },
     // tipo_cuenta: {
     //   value: true,
@@ -130,46 +130,46 @@ export const nom_empleados_form_card = ({ elementToInset, id }) => {
     // },
     id_dependencia: {
       value: true,
-      message: 'Elegir una dependencia',
-      type: 'number',
+      message: "Elegir una dependencia",
+      type: "number",
     },
     id_categoria: {
       value: true,
-      message: 'Elegir una unidad',
-      type: 'number',
+      message: "Elegir una unidad",
+      type: "number",
     },
     id_partida: {
       value: null,
-      message: 'Elegir una partida',
-      type: 'text',
+      message: "Elegir una partida",
+      type: "text",
     },
     tipo_nomina: {
       value: null,
-      message: 'Introducir un campo válido',
-      type: 'number2',
+      message: "Introducir un campo válido",
+      type: "number2",
     },
     observacion: {
       value: null,
-      message: 'Introducir un campo válido',
-      type: 'text',
+      message: "Introducir un campo válido",
+      type: "text",
     },
-  }
+  };
 
   let clases = {
-    employeeInputClass: 'employee-input',
-    employeeSelectClass: 'employee-select',
-    btnId: 'btn-employee-save',
-    selectSearchInput: 'select-search-input',
-    selectSearch: ['cargo'],
-    btnAddId: 'add-dependency',
-  }
+    employeeInputClass: "employee-input",
+    employeeSelectClass: "employee-select",
+    btnId: "btn-employee-save",
+    selectSearchInput: "select-search-input",
+    selectSearch: ["cargo"],
+    btnAddId: "add-dependency",
+  };
 
-  let employeeId
+  let employeeId;
 
-  let partidas
+  let partidas;
 
-  const oldCardElement = d.getElementById('modal-employee-form')
-  if (oldCardElement) oldCardElement.remove()
+  const oldCardElement = d.getElementById("modal-employee-form");
+  if (oldCardElement) oldCardElement.remove();
 
   let card = ` <div class='modal-window' id='modal-employee-form'>
       <div class='card modal-box'>
@@ -330,15 +330,15 @@ export const nom_empleados_form_card = ({ elementToInset, id }) => {
             <div class='form-group'>
               <div class='row'>
                 <div class='col-sm'>
-                  <label class='form-label' for='otros_años'>
+                  <label class='form-label' for='otros_anios'>
                     OTROS AÑOS LABORALES
                   </label>
                   <input
                     class='employee-input form-control'
                     type='number'
-                    name='otros_años'
+                    name='otros_anios'
                     placeholder='Cantidad de años'
-                    id='otros_años'
+                    id='otros_anios'
                   />
                 </div>
                 <div class='col-sm'>
@@ -510,14 +510,14 @@ export const nom_empleados_form_card = ({ elementToInset, id }) => {
           </button>
         </div>
       </div>
-    </div>`
+    </div>`;
 
-  d.getElementById(elementToInset).insertAdjacentHTML('afterbegin', card)
+  d.getElementById(elementToInset).insertAdjacentHTML("afterbegin", card);
 
-  let cardElement = d.getElementById('modal-employee-form')
-  let formElement = d.getElementById('employee-form')
+  let cardElement = d.getElementById("modal-employee-form");
+  let formElement = d.getElementById("employee-form");
 
-  if (!formElement) return
+  if (!formElement) return;
 
   //   const btnAddElement = d.getElementById(btnAddId)
   //   const btnDependencySave = d.getElementById('dependency-save-btn')
@@ -526,98 +526,98 @@ export const nom_empleados_form_card = ({ elementToInset, id }) => {
 
   //   const selectSearchInputElement = d.querySelectorAll(`.${selectSearchInput}`)
 
-  const employeeInputElement = d.querySelectorAll(`.employee-input`)
-  const employeeSelectElement = d.querySelectorAll(`.employee-select`)
+  const employeeInputElement = d.querySelectorAll(`.employee-input`);
+  const employeeSelectElement = d.querySelectorAll(`.employee-select`);
 
   const closeCard = () => {
     // validateEditButtons()
-    cardElement.remove()
-    cardElement.removeEventListener('click', validateClick)
-    cardElement.removeEventListener('input', validateInputFunction)
+    cardElement.remove();
+    cardElement.removeEventListener("click", validateClick);
+    cardElement.removeEventListener("input", validateInputFunction);
 
-    return false
-  }
+    return false;
+  };
 
   async function loadEmployeeData() {
-    let cargos = await getJobData()
-    let profesiones = await getProfessionData()
-    let dependencias = await getDependencias()
-    let categorias = await getCategorias()
-    partidas = await getPartidas()
+    let cargos = await getJobData();
+    let profesiones = await getProfessionData();
+    let dependencias = await getDependencias();
+    let categorias = await getCategorias();
+    partidas = await getPartidas();
 
-    let bancos = await getBankData()
-    insertOptions({ input: 'cargo', data: cargos })
-    insertOptions({ input: 'instruccion_academica', data: profesiones })
-    insertOptions({ input: 'dependencias', data: dependencias.mappedData })
-    insertOptions({ input: 'categorias', data: categorias.mappedData })
-    insertOptions({ input: 'bancos', data: bancos })
-    ;(() => {
-      let partidasSelect = d.getElementById('search-select-partidas')
-      partidasSelect.innerHTML = ''
+    let bancos = await getBankData();
+    insertOptions({ input: "cargo", data: cargos });
+    insertOptions({ input: "instruccion_academica", data: profesiones });
+    insertOptions({ input: "dependencias", data: dependencias.mappedData });
+    insertOptions({ input: "categorias", data: categorias.mappedData });
+    insertOptions({ input: "bancos", data: bancos });
+    (() => {
+      let partidasSelect = d.getElementById("search-select-partidas");
+      partidasSelect.innerHTML = "";
 
-      let options = [`<option value=''>Elegir partida...</option>`]
+      let options = [`<option value=''>Elegir partida...</option>`];
 
       partidas.fullInfo.forEach((option) => {
-        let opt = `<option value="${option.id}">${option.partida} - ${option.descripcion}</option>`
-        options.push(opt)
-      })
+        let opt = `<option value="${option.id}">${option.partida} - ${option.descripcion}</option>`;
+        options.push(opt);
+      });
 
-      partidasSelect.innerHTML = options.join('')
+      partidasSelect.innerHTML = options.join("");
 
-      $('#search-select-partidas')
+      $("#search-select-partidas")
         .chosen()
         .change(function (obj, result) {
-          fieldList.id_partida = result.selected
-          console.log('changed: %o', result)
-        })
+          fieldList.id_partida = result.selected;
+          console.log("changed: %o", result);
+        });
 
-      return
-    })()
+      return;
+    })();
 
     // CÓDIGO PARA OBTENER EMPLEADO EN CASO DE EDITAR
     if (id) {
       // Obtener datos de empleado dada su ID
-      let employeeData = await getEmployeeData(id)
-      console.log(employeeData)
+      let employeeData = await getEmployeeData(id);
+      console.log(employeeData);
 
       // SI EL EMPLEADO TIENE EL VERIFICADO EN 2, COLOCAR CORRECIÓN EN FORMULARCIÓN DE EDICIÓN
 
       if (employeeData.verificado === 2) {
-        let correcionElement = d.getElementById('employee-correcion')
-        if (correcionElement) correcionElement.remove()
+        let correcionElement = d.getElementById("employee-correcion");
+        if (correcionElement) correcionElement.remove();
         formElement.insertAdjacentHTML(
-          'beforebegin',
+          "beforebegin",
           nomCorrectionAlert({
             message: employeeData.correcion,
             type: ALERT_TYPES.warning,
           })
-        )
+        );
       }
 
       // Vacíar campo de dependencia no necesario
-      delete employeeData.dependencia
+      delete employeeData.dependencia;
 
-      employeeData.id = employeeData.id_empleado
+      employeeData.id = employeeData.id_empleado;
       if (employeeData.foto) {
-        let preview = document.getElementById('empleado-foto')
-        preview.src = `../../img/empleados/${employeeData.cedula}.jpg`
+        let preview = document.getElementById("empleado-foto");
+        preview.src = `../../img/empleados/${employeeData.cedula}.jpg`;
       }
-      employeeId = employeeData.id_empleado
+      employeeId = employeeData.id_empleado;
 
-      console.log(employeeId)
+      console.log(employeeId);
 
-      fieldList = employeeData
+      fieldList = employeeData;
 
       employeeSelectElement.forEach((select) => {
         // SI EL VALOR NO ES UNDEFINED COLOCAR VALOR EN SELECT
         if (employeeData[select.name] !== undefined)
-          select.value = employeeData[select.name]
+          select.value = employeeData[select.name];
 
-        if (select.name === 'id_partida') {
-          $('#search-select-partidas').val(employeeData[select.name])
+        if (select.name === "id_partida") {
+          $("#search-select-partidas").val(employeeData[select.name]);
 
           // Actualizar el select de Chosen
-          $('#search-select-partidas').trigger('chosen:updated')
+          $("#search-select-partidas").trigger("chosen:updated");
         }
 
         validateInput({
@@ -625,84 +625,84 @@ export const nom_empleados_form_card = ({ elementToInset, id }) => {
           fieldList,
           fieldListErrors,
           type: fieldListErrors[select.name].type,
-        })
-      })
+        });
+      });
 
       employeeInputElement.forEach((input) => {
         // SI EL VALOR NO ES UNDEFINED COLOCAR VALOR EN INPUT
-        if (input.name === 'cedula') {
-          input.setAttribute('disabled', 'true')
+        if (input.name === "cedula") {
+          input.setAttribute("disabled", "true");
         }
 
         if (employeeData[input.name] !== undefined)
-          input.value = employeeData[input.name]
+          input.value = employeeData[input.name];
 
         validateInput({
           target: input,
           fieldList,
           fieldListErrors,
           type: fieldListErrors[input.name].type,
-        })
-      })
+        });
+      });
 
       // mostrarCodigoDependencia()
 
       // console.log(fieldList, fieldListErrors)
     } else {
-      delete fieldList.id
-      delete fieldList.employeeId
-      d.getElementById('cedula').removeAttribute('disabled')
+      delete fieldList.id;
+      delete fieldList.employeeId;
+      d.getElementById("cedula").removeAttribute("disabled");
     }
   }
 
   function validateClick(e) {
     if (e.target.dataset.close) {
-      closeCard()
+      closeCard();
     }
 
-    if (e.target.id === 'btn-employee-form-close') {
-      closeCard()
+    if (e.target.id === "btn-employee-form-close") {
+      closeCard();
     }
 
-    if (e.target.id === 'add-dependency') {
+    if (e.target.id === "add-dependency") {
       nom_dependencia_form_card({
-        elementToInsert: 'modal-employee-form',
+        elementToInsert: "modal-employee-form",
         reloadSelect: loadDependencias,
-      })
+      });
     }
 
-    if (e.target.id === 'add-category') {
+    if (e.target.id === "add-category") {
       nom_categoria_form_card({
-        elementToInsert: 'modal-employee-form',
+        elementToInsert: "modal-employee-form",
         reloadSelect: loadCategorias,
-      })
+      });
     }
 
-    if (e.target.id === 'actualizar-opciones') {
-      loadCategorias()
-      loadDependencias()
-      const numeroFinal = 0
-      let contador = 5
-      let intervalo
-      e.target.innerText = `ACTUALIZAR OPCIONES EN ${contador}`
-      e.target.setAttribute('disabled', true)
+    if (e.target.id === "actualizar-opciones") {
+      loadCategorias();
+      loadDependencias();
+      const numeroFinal = 0;
+      let contador = 5;
+      let intervalo;
+      e.target.innerText = `ACTUALIZAR OPCIONES EN ${contador}`;
+      e.target.setAttribute("disabled", true);
 
       if (contador >= numeroFinal) {
         intervalo = setInterval(function () {
-          contador--
-          e.target.innerText = `ACTUALIZAR OPCIONES EN ${contador}`
+          contador--;
+          e.target.innerText = `ACTUALIZAR OPCIONES EN ${contador}`;
           if (contador === numeroFinal) {
-            clearInterval(intervalo)
-            e.target.removeAttribute('disabled')
-            e.target.innerText = 'ACTUALIZAR OPCIONES'
+            clearInterval(intervalo);
+            e.target.removeAttribute("disabled");
+            e.target.innerText = "ACTUALIZAR OPCIONES";
           }
-        }, 1000) // Intervalo de 1 segundo (1000 milisegundos)
+        }, 1000); // Intervalo de 1 segundo (1000 milisegundos)
       }
     }
 
     // ENVIAR DATOS
 
-    if (e.target.id === 'btn-employee-save') {
+    if (e.target.id === "btn-employee-save") {
       // VALIDAR EI BECAS CURSADAS ES MAYOR A HIJOS
 
       employeeSelectElement.forEach((input) => {
@@ -711,8 +711,8 @@ export const nom_empleados_form_card = ({ elementToInset, id }) => {
           fieldList,
           fieldListErrors,
           type: fieldListErrors[input.name].type,
-        })
-      })
+        });
+      });
 
       employeeInputElement.forEach((input) => {
         if (fieldListErrors[input.name])
@@ -721,26 +721,26 @@ export const nom_empleados_form_card = ({ elementToInset, id }) => {
             fieldList,
             fieldListErrors,
             type: fieldListErrors[input.name].type,
-          })
-      })
+          });
+      });
 
       if (Object.values(fieldListErrors).some((el) => el.value)) {
         return confirmNotification({
           type: NOTIFICATIONS_TYPES.fail,
-          message: 'Complete todo el formulario antes de avanzar',
-        })
+          message: "Complete todo el formulario antes de avanzar",
+        });
       }
 
-      console.log(fieldList, fieldListErrors)
+      console.log(fieldList, fieldListErrors);
 
       if (fieldList.beca > fieldList.hijos) {
         toastNotification({
           type: NOTIFICATIONS_TYPES.fail,
-          message: 'Becas cursadas no puede ser mayor a la cantidad de hijos.',
-        })
-        return
+          message: "Becas cursadas no puede ser mayor a la cantidad de hijos.",
+        });
+        return;
       }
-      delete fieldList.correcion
+      delete fieldList.correcion;
 
       // EDITAR EMPLEADO
 
@@ -749,115 +749,115 @@ export const nom_empleados_form_card = ({ elementToInset, id }) => {
           type: NOTIFICATIONS_TYPES.send,
           successFunction: function () {
             sendEmployeeInformationRequest({ data: fieldList }).then((res) => {
-              loadEmployeeTable()
-              closeCard()
-            })
+              loadEmployeeTable();
+              closeCard();
+            });
           },
-          message: '¿Desea actualizar la información de este empleado?',
-        })
+          message: "¿Desea actualizar la información de este empleado?",
+        });
 
       // REGISTRAR EMPLEADO
       return confirmNotification({
         type: NOTIFICATIONS_TYPES.send,
         successFunction: function () {
           sendEmployeeData({ data: fieldList }).then((res) => {
-            loadEmployeeTable()
-            closeCard()
-          })
+            loadEmployeeTable();
+            closeCard();
+          });
         },
 
-        message: '¿Desea registrar este empleado?',
-      })
+        message: "¿Desea registrar este empleado?",
+      });
     }
   }
 
   async function validateInputFunction(e) {
-    if (e.target.id === 'empleado-foto-input') {
-      previewImage(e)
+    if (e.target.id === "empleado-foto-input") {
+      previewImage(e);
     }
-    if (e.target.classList.contains('employee-input')) {
+    if (e.target.classList.contains("employee-input")) {
       fieldList = validateInput({
         target: e.target,
         fieldList,
         fieldListErrors,
         type: fieldListErrors[e.target.name].type,
-      })
+      });
     }
 
-    if (e.target.classList.contains('employee-select')) {
+    if (e.target.classList.contains("employee-select")) {
       fieldList = validateInput({
         target: e.target,
         fieldList,
         fieldListErrors,
         type: fieldListErrors[e.target.name].type,
-      })
-      if (e.target.name === 'id_dependencia') {
+      });
+      if (e.target.name === "id_dependencia") {
         // mostrarCodigoDependencia()
       }
     }
   }
   async function validateFocusOutFunction(e) {
-    if (e.target.name === 'cedula') {
+    if (e.target.name === "cedula") {
       getEmployeeByCedula({ cedula: e.target.value }).then((res) => {
         if (!res.status) {
           toastNotification({
             type: NOTIFICATIONS_TYPES.fail,
             message: res.mensaje,
-          })
+          });
           // Resetear input si el status es falso
-          e.target.value = ''
+          e.target.value = "";
           fieldList = validateInput({
             target: e.target,
             fieldList,
             fieldListErrors,
             type: fieldListErrors[e.target.name].type,
-          })
+          });
 
-          formElement.otros_años.value = ''
+          formElement.otros_anios.value = "";
         } else {
           // SI EL USUARIO EXISTE, SUMAR LOS OTROS AÑOS
           if (!res.otros_anios) {
-            formElement.otros_años.value = ''
-            return
+            formElement.otros_anios.value = "";
+            return;
           }
 
           toastNotification({
             type: NOTIFICATIONS_TYPES.done,
             message:
-              'Existe registro de este empleado. Se actualizará el campo otros años laborales',
-          })
-          formElement.otros_años.value =
-            Number(formElement.otros_años.value) + res.otros_anios
+              "Existe registro de este empleado. Se actualizará el campo otros años laborales",
+          });
+          formElement.otros_anios.value =
+            Number(formElement.otros_anios.value) + res.otros_anios;
         }
-      })
+      });
     }
 
-    if (e.target.name === 'id_partida') {
+    if (e.target.name === "id_partida") {
     }
-    if (e.target.classList.contains('employee-input')) {
+    if (e.target.classList.contains("employee-input")) {
       fieldList = validateInput({
         target: e.target,
         fieldList,
         fieldListErrors,
         type: fieldListErrors[e.target.name].type,
-      })
+      });
     }
 
-    if (e.target.classList.contains('employee-select')) {
+    if (e.target.classList.contains("employee-select")) {
       fieldList = validateInput({
         target: e.target,
         fieldList,
         fieldListErrors,
         type: fieldListErrors[e.target.name].type,
-      })
+      });
     }
   }
 
   async function loadDependencias() {
     getDependencias().then((res) => {
       // dependenciasLaborales = res.fullInfo
-      insertOptions({ input: 'dependencias', data: res.mappedData })
-    })
+      insertOptions({ input: "dependencias", data: res.mappedData });
+    });
 
     //  mostrarCodigoDependencia()
   }
@@ -865,27 +865,27 @@ export const nom_empleados_form_card = ({ elementToInset, id }) => {
   async function loadCategorias() {
     getCategorias().then((res) => {
       // dependenciasLaborales = res.fullInfo
-      insertOptions({ input: 'categorias', data: res.mappedData })
-    })
+      insertOptions({ input: "categorias", data: res.mappedData });
+    });
   }
 
   function previewImage(event) {
-    let input = event.target
+    let input = event.target;
 
-    if (input.files === 0) return
+    if (input.files === 0) return;
 
-    let file = input.files[0]
+    let file = input.files[0];
 
-    console.log(file)
+    console.log(file);
 
-    if (!['image/jpeg', 'image/png'].includes(file.type)) {
+    if (!["image/jpeg", "image/png"].includes(file.type)) {
       toastNotification({
         type: NOTIFICATIONS_TYPES.fail,
-        message: 'Tipo de archivo no admitido',
-      })
+        message: "Tipo de archivo no admitido",
+      });
 
-      event.target.value = ''
-      return
+      event.target.value = "";
+      return;
     }
 
     if (file.size > 2 * 1024 * 1024) {
@@ -893,83 +893,83 @@ export const nom_empleados_form_card = ({ elementToInset, id }) => {
       // Mostrar un mensaje de error si el archivo es demasiado grande
       toastNotification({
         type: NOTIFICATIONS_TYPES.fail,
-        message: 'Archivo demasiado grande',
-      })
-      return
+        message: "Archivo demasiado grande",
+      });
+      return;
     }
 
-    let reader = new FileReader()
+    let reader = new FileReader();
     reader.onload = function (e) {
-      console.log(e)
+      console.log(e);
 
-      let dataURL = reader.result
-      let preview = document.getElementById('empleado-foto')
-      preview.style.display = 'none'
+      let dataURL = reader.result;
+      let preview = document.getElementById("empleado-foto");
+      preview.style.display = "none";
 
       // Guardar estado de la url
-      fieldList.foto = e.target.result
+      fieldList.foto = e.target.result;
       if (!id) {
-        fieldList.tipo_foto = file.type.replace('image/', '')
+        fieldList.tipo_foto = file.type.replace("image/", "");
       }
 
-      preview.src = dataURL
-      preview.style.display = 'block' // Mostrar la imagen una vez cargada
-    }
-    reader.readAsDataURL(file)
+      preview.src = dataURL;
+      preview.style.display = "block"; // Mostrar la imagen una vez cargada
+    };
+    reader.readAsDataURL(file);
   }
 
   async function sendEmployeeInformationRequest({ data }) {
     let employeeDataRequest = await getEmployeeData(employeeId),
-      employeeData = employeeDataRequest
+      employeeData = employeeDataRequest;
 
-    console.log(employeeData)
-    let updateData = []
+    console.log(employeeData);
+    let updateData = [];
 
     Object.entries(data).forEach((el) => {
-      let propiedad = el[0]
+      let propiedad = el[0];
       let valorAnterior =
-        typeof employeeData[propiedad] !== 'string'
+        typeof employeeData[propiedad] !== "string"
           ? String(employeeData[propiedad])
-          : employeeData[propiedad]
+          : employeeData[propiedad];
 
-      let valorNuevo = el[1] !== 'string' ? String(el[1]) : el[1]
+      let valorNuevo = el[1] !== "string" ? String(el[1]) : el[1];
 
-      if (!valorNuevo) return
+      if (!valorNuevo) return;
 
-      if (propiedad === 'id' || propiedad === 'id_empleado') return
+      if (propiedad === "id" || propiedad === "id_empleado") return;
 
       if (valorNuevo !== valorAnterior) {
         console.log(
           propiedad,
           valorNuevo,
           valorAnterior,
-          'Se actualiza: ',
+          "Se actualiza: ",
           valorNuevo !== valorAnterior
-        )
+        );
         updateData.push([
           Number(employeeId),
           propiedad,
           valorNuevo,
           valorAnterior,
-        ])
+        ]);
       }
-    })
-    console.log(updateData)
+    });
+    console.log(updateData);
     if (updateData.length === 0) {
-      toast_s('error', 'No hay cambios para este empleado')
-      return
+      toast_s("error", "No hay cambios para este empleado");
+      return;
     }
 
-    let result = await updateRequestEmployeeData({ data: updateData })
+    let result = await updateRequestEmployeeData({ data: updateData });
   }
 
   function enviarInformacion(data) {}
 
-  formElement.addEventListener('submit', (e) => e.preventDefault())
+  formElement.addEventListener("submit", (e) => e.preventDefault());
 
-  loadEmployeeData()
+  loadEmployeeData();
 
-  cardElement.addEventListener('input', validateInputFunction)
-  cardElement.addEventListener('focusout', validateFocusOutFunction)
-  cardElement.addEventListener('click', validateClick)
-}
+  cardElement.addEventListener("input", validateInputFunction);
+  cardElement.addEventListener("focusout", validateFocusOutFunction);
+  cardElement.addEventListener("click", validateClick);
+};

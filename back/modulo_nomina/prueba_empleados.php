@@ -10,7 +10,7 @@ $data = array(
     "nacionalidad" => "V",
     "cedula" => '123456789',
     "nombres" => "Pedro Pablo",
-    "otros_años" => '0',
+    "otros_anios" => '0',
     "status" => 'A',
     "observacion" => NULL,
     "cod_cargo" => "0041",
@@ -47,4 +47,3 @@ $result = file_get_contents($url, false, $context);
 
 // Imprimir la respuesta del servidor
 echo $result;
-?>

@@ -176,7 +176,7 @@ while ($r = $query->fetch_object()) {
                               </select>
                             </div>
                           </div>
-                        
+
                           <div class="col-sm-6">
                             <div class="mb-3">
                               <label class="form-label">Tipo de pago</label>
@@ -579,20 +579,20 @@ while ($r = $query->fetch_object()) {
      * @param string $i The group ID.
      * @return array An array of employee data.
      */
-    $stmt = mysqli_prepare($conexion, "SELECT e.id, e.nacionalidad, e.cedula, e.nombres, e.fecha_ingreso, e.otros_años, e.status, e.observacion, e.cod_cargo, e.hijos, e.instruccion_academica, e.discapacidades, e.id_dependencia, e.verificado, TIMESTAMPDIFF(YEAR, e.fecha_ingreso, CURDATE()) AS antiguedad, TIMESTAMPDIFF(YEAR, e.fecha_ingreso, CURDATE()) + e.otros_años AS anios_totales_calculados FROM empleados_por_grupo LEFT JOIN empleados AS e ON e.id = empleados_por_grupo.id_empleado WHERE id_grupo = ?");
+    $stmt = mysqli_prepare($conexion, "SELECT e.id, e.nacionalidad, e.cedula, e.nombres, e.fecha_ingreso, e.otros_anios, e.status, e.observacion, e.cod_cargo, e.hijos, e.instruccion_academica, e.discapacidades, e.id_dependencia, e.verificado, TIMESTAMPDIFF(YEAR, e.fecha_ingreso, CURDATE()) AS antiguedad, TIMESTAMPDIFF(YEAR, e.fecha_ingreso, CURDATE()) + e.otros_anios AS anios_totales_calculados FROM empleados_por_grupo LEFT JOIN empleados AS e ON e.id = empleados_por_grupo.id_empleado WHERE id_grupo = ?");
     $stmt->bind_param('s', $i);
     $stmt->execute();
     $result = $stmt->get_result();
 
     if ($result->num_rows > 0) {
       while ($row = $result->fetch_assoc()) {
-        if ($row["otros_años"] !== null) {
-          $anios_actuales = $row["anios_totales_calculados"] - $row["otros_años"];
+        if ($row["otros_anios"] !== null) {
+          $anios_actuales = $row["anios_totales_calculados"] - $row["otros_anios"];
         } else {
           $anios_actuales = $row["antiguedad"];
         }
 
-        echo 'empleadosSeleccionados.push([' . $row["id"] . ',"' . $row["nacionalidad"] . '","' . $row["cedula"] . '","' . $row["nombres"] . '","' . $row["fecha_ingreso"] . '",' . $anios_actuales . ',' . $row["otros_años"] . ',' . $row["anios_totales_calculados"] . ',"' . $row["status"] . '","' . $row['observacion'] . '","' . $row["cod_cargo"] . '",' . $row["hijos"] . ',' . $row["instruccion_academica"] . ',' . $row["discapacidades"] . ',' . $row["id_dependencia"] . ',' . $row["verificado"] . '])' . PHP_EOL;
+        echo 'empleadosSeleccionados.push([' . $row["id"] . ',"' . $row["nacionalidad"] . '","' . $row["cedula"] . '","' . $row["nombres"] . '","' . $row["fecha_ingreso"] . '",' . $anios_actuales . ',' . $row["otros_anios"] . ',' . $row["anios_totales_calculados"] . ',"' . $row["status"] . '","' . $row['observacion'] . '","' . $row["cod_cargo"] . '",' . $row["hijos"] . ',' . $row["instruccion_academica"] . ',' . $row["discapacidades"] . ',' . $row["id_dependencia"] . ',' . $row["verificado"] . '])' . PHP_EOL;
       }
     }
 
@@ -752,7 +752,7 @@ while ($r = $query->fetch_object()) {
           <option id="diferencia_sueldoconcepto" value="sueldo_diferencia">-- DIFERENCIA DE SUELDO --</option>
           `);
           data1.forEach(d => {
-          
+
 
             $('#concepto_aplicar').append(`<option  value="${d.id}">${d.nom_concepto}</option>`);
           });
@@ -1339,7 +1339,7 @@ while ($r = $query->fetch_object()) {
         }
       }
       $('#nomina_resumen').append('</ul>')
- 
+
     }
 
 
@@ -1525,41 +1525,41 @@ while ($r = $query->fetch_object()) {
 
 
     function setTipoPago() {
-          if (document.getElementById('tipo_pago').value == 2) { // Diferencia
-            document.getElementById('diferencia_sueldoconcepto').style.display = 'block';
-            document.getElementById('prefijo_nomina2').innerHTML = ' (Diferencia)';
-          } else { // estandar
-            document.getElementById('diferencia_sueldoconcepto').style.display = 'none';
-            document.getElementById('prefijo_nomina2').innerHTML = '';
+      if (document.getElementById('tipo_pago').value == 2) { // Diferencia
+        document.getElementById('diferencia_sueldoconcepto').style.display = 'block';
+        document.getElementById('prefijo_nomina2').innerHTML = ' (Diferencia)';
+      } else { // estandar
+        document.getElementById('diferencia_sueldoconcepto').style.display = 'none';
+        document.getElementById('prefijo_nomina2').innerHTML = '';
+      }
+    }
+
+
+    function set_tipoPago() {
+      setTipoPago()
+      if (Object.keys(conceptosAplicados).length != 0) {
+
+        Swal.fire({
+          title: "¿Estás seguro?",
+          text: "Esta acción borrará los conceptos registrados y deberá agregarlos nuevamente",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#04a9f5",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Sí, eliminarlo!",
+          cancelButtonText: "Cancelar",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            conceptosAplicados = {};
+            $('#table-conceptos').html('');
+            $('#concepto_aplicados').html('');
+            setTipoPago()
           }
-        }
+        });
 
-
-    function set_tipoPago(){
-          setTipoPago()
-        if (Object.keys(conceptosAplicados).length != 0) {
-
-          Swal.fire({
-            title: "¿Estás seguro?",
-            text: "Esta acción borrará los conceptos registrados y deberá agregarlos nuevamente",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#04a9f5",
-            cancelButtonColor: "#d33",
-            confirmButtonText: "Sí, eliminarlo!",
-            cancelButtonText: "Cancelar",
-          }).then((result) => {
-            if (result.isConfirmed) {
-              conceptosAplicados = {};
-              $('#table-conceptos').html('');
-              $('#concepto_aplicados').html('');
-              setTipoPago()
-            }
-          });
-
-          } else {
-          setTipoPago()
-        }
+      } else {
+        setTipoPago()
+      }
     }
 
     /**

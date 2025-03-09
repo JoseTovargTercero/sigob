@@ -2,12 +2,12 @@ import {
   getEmployeeData,
   getJobData,
   getProfessionData,
-} from '../api/empleados.js'
+} from "../api/empleados.js";
 
 export async function employeeCard({ id, elementToInsert }) {
-  const container = document.getElementById(elementToInsert)
+  const container = document.getElementById(elementToInsert);
 
-  let employeedeData = await getEmployeeData(id)
+  let employeedeData = await getEmployeeData(id);
 
   //   let dataExample = {
   //     id_empleado: 48,
@@ -19,7 +19,7 @@ export async function employeeCard({ id, elementToInsert }) {
   //     nacionalidad: 'E',
   //     cod_empleado: null,
   //     fecha_ingreso: '2024-05-19',
-  //     otros_años: 2,
+  //     otros_anios: 2,
   //     status: '',
   //     observacion: null,
   //     cod_cargo: '35123',
@@ -36,7 +36,7 @@ export async function employeeCard({ id, elementToInsert }) {
     cedula = employeedeData.cedula,
     nacionalidad = employeedeData.nacionalidad,
     fecha_ingreso = employeedeData.fecha_ingreso,
-    otros_años = employeedeData.otros_años,
+    otros_anios = employeedeData.otros_anios,
     status = employeedeData.status,
     banco = employeedeData.banco,
     cuenta_bancaria = employeedeData.cuenta_bancaria,
@@ -48,23 +48,23 @@ export async function employeeCard({ id, elementToInsert }) {
     discapacidades = employeedeData.discapacidades,
     tipo_nomina = employeedeData.tipo_nomina,
     observacion = employeedeData.observacion,
-    foto = employeedeData.foto
+    foto = employeedeData.foto;
 
   const getCargo = async () => {
-    let cargos = await getJobData()
-    let cargoEncontrado = cargos.find((el) => el.id == cargo)
-    return cargoEncontrado ? cargoEncontrado.name : 'Cargo no disponible'
-  }
+    let cargos = await getJobData();
+    let cargoEncontrado = cargos.find((el) => el.id == cargo);
+    return cargoEncontrado ? cargoEncontrado.name : "Cargo no disponible";
+  };
 
   const getIntrusccionAcademica = async () => {
-    let profesiones = await getProfessionData()
+    let profesiones = await getProfessionData();
     let profesionEncontrada = profesiones.find(
       (el) => el.id == instruccion_academica
-    )
+    );
     return profesionEncontrada
       ? profesionEncontrada.name
-      : 'Profesión no disponible'
-  }
+      : "Profesión no disponible";
+  };
 
   // const getDependencia = async () => {
   //   let dependencias = await getDependencyData()
@@ -75,32 +75,32 @@ export async function employeeCard({ id, elementToInsert }) {
 
   const calcularAniosLaborales = (fechaIngreso, otrosAnios) => {
     // Crear objetos Date para la fecha de ingreso y la fecha actual
-    let fechaIngresoObj = new Date(fechaIngreso)
-    let fechaActual = new Date()
+    let fechaIngresoObj = new Date(fechaIngreso);
+    let fechaActual = new Date();
 
     // Calcular la diferencia en milisegundos entre las dos fechas
-    let diferenciaMilisegundos = fechaActual - fechaIngresoObj
+    let diferenciaMilisegundos = fechaActual - fechaIngresoObj;
 
     // Convertir la diferencia de milisegundos a años y meses
-    let aniosDiferencia = Math.floor(diferenciaMilisegundos / 31536000000) // 1000 * 60 * 60 * 24 * 365.25
+    let aniosDiferencia = Math.floor(diferenciaMilisegundos / 31536000000); // 1000 * 60 * 60 * 24 * 365.25
     let mesesDiferencia = Math.floor(
       (diferenciaMilisegundos % 31536000000) / 2628000000
-    ) // 1000 * 60 * 60 * 24 * 30.44
+    ); // 1000 * 60 * 60 * 24 * 30.44
 
     // Generar el texto de salida
     let textoSalida = `${aniosDiferencia + otrosAnios} años ${
-      mesesDiferencia && 'y'
-    } ${mesesDiferencia || ''} meses.`
+      mesesDiferencia && "y"
+    } ${mesesDiferencia || ""} meses.`;
 
-    return textoSalida
-  }
+    return textoSalida;
+  };
 
   const validarImagen = () => {
     if (!foto) {
-      return '../../front/src/assets/img/default.jpg'
+      return "../../front/src/assets/img/default.jpg";
     }
-    return `../../img/empleados/${cedula}.jpg`
-  }
+    return `../../img/empleados/${cedula}.jpg`;
+  };
 
   let employeeCardElement = ` <div class='modal-window slide-up-animation' id='modal-employee'>
       <div class='modal-box card w-90'>
@@ -137,7 +137,7 @@ export async function employeeCard({ id, elementToInsert }) {
                 <p>Cédula: ${cedula}</p>
                 <p>
                   Nacionalidad: ${
-                    nacionalidad === 'V' ? 'Venezolano' : 'Extranjero'
+                    nacionalidad === "V" ? "Venezolano" : "Extranjero"
                   }
                 </p>
               </div>
@@ -147,7 +147,7 @@ export async function employeeCard({ id, elementToInsert }) {
               <p>Hijos: ${hijos} hijo/as</p>
               <p>Educación: ${await getIntrusccionAcademica()} </p>
               <p>
-                Discapacidad: ${discapacidades === 0 ? 'No posee' : 'Si posee'}
+                Discapacidad: ${discapacidades === 0 ? "No posee" : "Si posee"}
               </p>
             </div>
           </div>
@@ -157,7 +157,7 @@ export async function employeeCard({ id, elementToInsert }) {
               <p>
                 Experiencia laboral: ${calcularAniosLaborales(
                   fecha_ingreso,
-                  otros_años
+                  otros_anios
                 )}
               </p>
               <p>Dependencia laboral: ${dependencia}</p>
@@ -168,10 +168,10 @@ export async function employeeCard({ id, elementToInsert }) {
           </div>
         </div>
       </div>
-    </div>`
+    </div>`;
 
-  container.insertAdjacentHTML('beforeend', employeeCardElement)
-  return
+  container.insertAdjacentHTML("beforeend", employeeCardElement);
+  return;
 }
 
 {

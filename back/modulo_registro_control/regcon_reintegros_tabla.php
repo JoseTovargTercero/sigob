@@ -3,7 +3,7 @@ require_once '../sistema_global/conexion.php';
 require_once '../sistema_global/session.php';
 
 
-    $sql = "
+$sql = "
     SELECT 
         r.id_empleado, 
         r.asignaciones, 
@@ -19,7 +19,7 @@ require_once '../sistema_global/session.php';
         d.dependencia,
         e.nacionalidad, 
         e.fecha_ingreso, 
-        e.otros_años, 
+        e.otros_anios, 
         e.status, 
         e.observacion, 
         e.cod_cargo, 
@@ -41,8 +41,8 @@ require_once '../sistema_global/session.php';
         r.id_empleado, r.time
 ";
 
-   
-    
+
+
 $resultado = $conexion->query($sql);
 $empleados = [];
 
@@ -58,7 +58,7 @@ while ($row = $resultado->fetch_assoc()) {
             'dependencia' => $row['dependencia'],
             'nacionalidad' => $row['nacionalidad'],
             'fecha_ingreso' => $row['fecha_ingreso'],
-            'otros_años' => $row['otros_años'],
+            'otros_anios' => $row['otros_anios'],
             'status' => $row['status'],
             'observacion' => $row['observacion'],
             'cod_cargo' => $row['cod_cargo'],
@@ -91,6 +91,3 @@ header('Content-Type: application/json');
 // Imprimir en formato JSON
 echo json_encode($empleados, JSON_PRETTY_PRINT);
 $conexion->close();
-
-
-?>

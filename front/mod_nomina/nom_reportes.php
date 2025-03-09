@@ -175,7 +175,7 @@ require_once '../../back/sistema_global/session.php';
                                 Nacionalidad
                               </label>
                               <label class="list-group-item">
-                                <input class="form-check-input me-1 campos" type="checkbox" value="otros_años">
+                                <input class="form-check-input me-1 campos" type="checkbox" value="otros_anios">
                                 Otros años
                               </label>
                               <label class="list-group-item">

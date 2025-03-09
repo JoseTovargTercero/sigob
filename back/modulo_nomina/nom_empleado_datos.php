@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id'])) {
 
     // Consulta SQL para obtener los datos del empleado y su dependencia
     $sql = "SELECT e.id, e.cedula, e.nombres, e.tipo_nomina, d.id_dependencia, d.dependencia,
-                   e.nacionalidad, e.fecha_ingreso, e.otros_años, e.status, 
+                   e.nacionalidad, e.fecha_ingreso, e.otros_anios, e.status, 
                    e.observacion, e.cod_cargo, e.banco, e.cuenta_bancaria, e.hijos, 
                    e.instruccion_academica, e.discapacidades, e.tipo_nomina, e.correcion, e.beca, e.verificado, e.id_partida, e.id_categoria
             FROM empleados AS e
@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id'])) {
                 "nacionalidad" => $row["nacionalidad"],
                 "fecha_ingreso" => $row["fecha_ingreso"],
                 "cod_cargo" => $row["cod_cargo"],
-                "otros_años" => $row["otros_años"],
+                "otros_anios" => $row["otros_anios"],
                 "status" => $row["status"],
                 "observacion" => $row["observacion"],
                 "banco" => $row["banco"],
@@ -88,4 +88,3 @@ $conexion->close();
 // Pasar el array a la vista (puedes utilizar un archivo de vista o imprimir los datos aquí mismo)
 header('Content-Type: application/json');
 echo json_encode($datos);
-?>

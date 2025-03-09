@@ -1168,7 +1168,7 @@ CREATE TABLE `empleados` (
   `nacionalidad` varchar(2) DEFAULT NULL,
   `cedula` varchar(20) DEFAULT NULL,
   `nombres` varchar(255) DEFAULT NULL,
-  `otros_años` int(11) NOT NULL DEFAULT 0,
+  `otros_anios` int(11) NOT NULL DEFAULT 0,
   `status` varchar(5) DEFAULT NULL,
   `observacion` varchar(255) DEFAULT NULL,
   `cod_cargo` varchar(10) DEFAULT NULL,
@@ -1191,7 +1191,7 @@ CREATE TABLE `empleados` (
 -- Volcado de datos para la tabla `empleados`
 --
 
-INSERT INTO `empleados` (`id`, `nacionalidad`, `cedula`, `nombres`, `otros_años`, `status`, `observacion`, `cod_cargo`, `banco`, `cuenta_bancaria`, `hijos`, `instruccion_academica`, `discapacidades`, `tipo_nomina`, `id_dependencia`, `verificado`, `correcion`, `beca`, `fecha_ingreso`, `id_categoria`, `id_partida`) VALUES
+INSERT INTO `empleados` (`id`, `nacionalidad`, `cedula`, `nombres`, `otros_anios`, `status`, `observacion`, `cod_cargo`, `banco`, `cuenta_bancaria`, `hijos`, `instruccion_academica`, `discapacidades`, `tipo_nomina`, `id_dependencia`, `verificado`, `correcion`, `beca`, `fecha_ingreso`, `id_categoria`, `id_partida`) VALUES
 (1, 'V', '1569432', 'LARA, SANTIAGA', 0, 'A', NULL, '0041', '0175', '01750653640100510043', 0, 0, 0, '003', 6, 1, '', 0, '2018-01-18', 1, ''),
 (2, 'V', '1569359', 'CABULLA, LINO', 0, 'A', NULL, '0041', '0175', '01750082150076635687', 0, 1, 0, '003', 6, 1, '', 0, '2018-01-17', 1, ''),
 (3, 'V', '6087028', 'CAMACHO G, WILLIAM', 0, 'A', NULL, '1596', '0102', '01020338420000074405', 0, 0, 0, '003', 7, 1, '', 0, '2018-02-14', 1, ''),
@@ -1518,7 +1518,7 @@ INSERT INTO `empleados` (`id`, `nacionalidad`, `cedula`, `nombres`, `otros_años
 (324, 'V', '15955539', 'MARTINEZ, LUIS ALBERTO', 0, 'A', NULL, '0455', '0163', '01630409364095002889', 1, 0, 0, '003', 6, 1, '', 0, '2018-05-15', 1, ''),
 (325, 'V', '15955628', 'DE LOS RIOS RODRIGUEZ, BOLPAUR', 0, 'A', NULL, '0455', '0102', '01020457710000315261', 0, 0, 0, '003', 6, 1, '', 0, '2022-02-17', 1, ''),
 (326, 'V', '15955682', 'LUNA VERA, JUAN BAUTISTA', 0, 'A', NULL, '0455', '0102', '01020457710100641736', 0, 0, 0, '003', 6, 1, '', 0, '2022-05-01', 1, '');
-INSERT INTO `empleados` (`id`, `nacionalidad`, `cedula`, `nombres`, `otros_años`, `status`, `observacion`, `cod_cargo`, `banco`, `cuenta_bancaria`, `hijos`, `instruccion_academica`, `discapacidades`, `tipo_nomina`, `id_dependencia`, `verificado`, `correcion`, `beca`, `fecha_ingreso`, `id_categoria`, `id_partida`) VALUES
+INSERT INTO `empleados` (`id`, `nacionalidad`, `cedula`, `nombres`, `otros_anios`, `status`, `observacion`, `cod_cargo`, `banco`, `cuenta_bancaria`, `hijos`, `instruccion_academica`, `discapacidades`, `tipo_nomina`, `id_dependencia`, `verificado`, `correcion`, `beca`, `fecha_ingreso`, `id_categoria`, `id_partida`) VALUES
 (327, 'V', '15955979', 'CURUMI ALCALA, WILMER FERNANDO', 0, 'A', NULL, '0090', '0175', '01750575140076883178', 0, 0, 0, '003', 6, 1, '', 0, '2022-11-09', 1, ''),
 (328, 'V', '15998672', 'GONZALEZ S. JUAN G.', 0, 'A', NULL, '0455', '0102', '01020457760100649749', 0, 0, 0, '003', 6, 1, '', 0, '2023-07-13', 1, ''),
 (329, 'V', '15999458', 'MENDOZA SEIJAS, ANA', 0, 'A', NULL, '0455', '0102', '01020457780100647160', 0, 0, 0, '003', 6, 1, '', 0, '2018-04-15', 1, ''),
@@ -1842,7 +1842,7 @@ INSERT INTO `empleados` (`id`, `nacionalidad`, `cedula`, `nombres`, `otros_años
 (647, 'V', '21547299', 'CESAR ARVELO, MARCEL EDGARDO', 0, 'A', NULL, '0455', '0102', '01020147110000055932', 0, 0, 0, '003', 6, 1, '', 0, '2022-07-01', 1, ''),
 (648, 'V', '21547404', 'RUIZ ALONZO, DAYMAR ALEJANDRA', 0, 'A', NULL, '0455', '0102', '01020457730000515045', 1, 2, 0, '003', 6, 1, '', 1, '2022-05-01', 1, ''),
 (649, 'V', '21547526', 'LAICA DE CASTROLIZ MARIANA', 0, 'A', NULL, '0455', '0175', '01750044980076058189', 0, 0, 0, '003', 6, 1, '', 0, '2018-04-15', 1, '');
-INSERT INTO `empleados` (`id`, `nacionalidad`, `cedula`, `nombres`, `otros_años`, `status`, `observacion`, `cod_cargo`, `banco`, `cuenta_bancaria`, `hijos`, `instruccion_academica`, `discapacidades`, `tipo_nomina`, `id_dependencia`, `verificado`, `correcion`, `beca`, `fecha_ingreso`, `id_categoria`, `id_partida`) VALUES
+INSERT INTO `empleados` (`id`, `nacionalidad`, `cedula`, `nombres`, `otros_anios`, `status`, `observacion`, `cod_cargo`, `banco`, `cuenta_bancaria`, `hijos`, `instruccion_academica`, `discapacidades`, `tipo_nomina`, `id_dependencia`, `verificado`, `correcion`, `beca`, `fecha_ingreso`, `id_categoria`, `id_partida`) VALUES
 (650, 'V', '21547828', 'CASTILLA RESTREPO, DORIS', 0, 'A', NULL, '0041', '0102', '01020457740000192879', 0, 0, 0, '003', 6, 1, '', 0, '2013-01-01', 1, ''),
 (651, 'V', '21547839', 'MORALES GONZALEZ, NORALBA', 0, 'A', NULL, '7403', '0102', '01020457780000756558', 0, 0, 0, '003', 6, 1, '', 0, '2022-11-09', 1, ''),
 (652, 'V', '21547846', 'LOPEZ PONARE, MAYERLIN YASNEILA', 0, 'A', NULL, '0041', '0102', '01020457750000762869', 0, 0, 0, '003', 6, 1, '', 0, '2023-05-31', 1, ''),
@@ -2166,7 +2166,7 @@ INSERT INTO `empleados` (`id`, `nacionalidad`, `cedula`, `nombres`, `otros_años
 (970, 'V', '30690674', 'GOMEZ MENDEZ, ROBERT ANTONIO', 0, 'A', NULL, '0455', '0102', '01020457710000671507', 0, 0, 0, '003', 6, 1, '', 0, '2021-10-13', 1, ''),
 (971, 'V', '30690687', 'TOVAR INFANTE, DITTCELI G.', 0, 'A', NULL, '0455', '0102', '01020457710000670812', 0, 0, 0, '003', 6, 1, '', 0, '2022-04-25', 1, ''),
 (972, 'V', '30690854', 'HERNANDEZANAVE, WISTON', 0, 'A', NULL, '0455', '0175', '01750082100076751654', 0, 0, 0, '003', 6, 1, '', 0, '2022-05-01', 1, '');
-INSERT INTO `empleados` (`id`, `nacionalidad`, `cedula`, `nombres`, `otros_años`, `status`, `observacion`, `cod_cargo`, `banco`, `cuenta_bancaria`, `hijos`, `instruccion_academica`, `discapacidades`, `tipo_nomina`, `id_dependencia`, `verificado`, `correcion`, `beca`, `fecha_ingreso`, `id_categoria`, `id_partida`) VALUES
+INSERT INTO `empleados` (`id`, `nacionalidad`, `cedula`, `nombres`, `otros_anios`, `status`, `observacion`, `cod_cargo`, `banco`, `cuenta_bancaria`, `hijos`, `instruccion_academica`, `discapacidades`, `tipo_nomina`, `id_dependencia`, `verificado`, `correcion`, `beca`, `fecha_ingreso`, `id_categoria`, `id_partida`) VALUES
 (973, 'V', '30691140', 'ESTEVES RODRIGUEZ JOSIE', 0, 'A', NULL, '0455', '0102', '01020457780000667508', 0, 0, 0, '003', 6, 1, '', 0, '2022-05-01', 1, ''),
 (974, 'V', '30691195', 'LESMES AZAVACHE, KARLA', 0, 'A', NULL, '0041', '0102', '01020457710000886619', 0, 0, 0, '003', 6, 1, '', 0, '2023-06-01', 1, ''),
 (975, 'V', '30845873', 'BOLIVAR YORDAN J', 0, 'A', NULL, '0455', '0102', '01020501800007213256', 0, 0, 0, '003', 6, 1, '', 0, '2023-08-01', 1, ''),
@@ -2486,7 +2486,7 @@ INSERT INTO `empleados` (`id`, `nacionalidad`, `cedula`, `nombres`, `otros_años
 (1289, 'V', '24128617', 'MARIAN JOSE ROJAS HERNANDEZ', 0, 'A', NULL, '0455', '0102', '01020457730000206529', 0, 0, 0, '003', 6, 1, '', 0, '2024-01-26', 1, ''),
 (1290, 'V', '23985353', 'WUENDIS ROSA GARCIA MENARE', 0, 'A', NULL, '0455', '0102', '01020457750000085287', 0, 0, 0, '003', 6, 1, '', 0, '2024-01-26', 1, ''),
 (1291, 'V', '14975811', 'KEYLA ISMARA MARTINEZ DE FERNANDEZ', 0, 'A', NULL, '0455', '0102', '01020457730000318585', 0, 0, 0, '003', 6, 1, '', 0, '2024-01-26', 1, '');
-INSERT INTO `empleados` (`id`, `nacionalidad`, `cedula`, `nombres`, `otros_años`, `status`, `observacion`, `cod_cargo`, `banco`, `cuenta_bancaria`, `hijos`, `instruccion_academica`, `discapacidades`, `tipo_nomina`, `id_dependencia`, `verificado`, `correcion`, `beca`, `fecha_ingreso`, `id_categoria`, `id_partida`) VALUES
+INSERT INTO `empleados` (`id`, `nacionalidad`, `cedula`, `nombres`, `otros_anios`, `status`, `observacion`, `cod_cargo`, `banco`, `cuenta_bancaria`, `hijos`, `instruccion_academica`, `discapacidades`, `tipo_nomina`, `id_dependencia`, `verificado`, `correcion`, `beca`, `fecha_ingreso`, `id_categoria`, `id_partida`) VALUES
 (1292, 'V', '26837775', 'NAHOMYS ESPERANZA GONZALEZ PAYEMA', 0, 'A', NULL, '0455', '0102', '01020457780000800624', 0, 0, 0, '003', 6, 1, '', 0, '2024-01-26', 1, ''),
 (1293, 'V', '18243314', 'GONZALEZ PEREZ JOSE GREGORIO', 0, 'A', NULL, '0455', '0102', '01020457730000618188', 0, 0, 0, '003', 6, 1, '', 0, '2024-01-26', 1, ''),
 (1294, 'V', '26321172', 'COLINA FRANCO ANGEL DOMINGO ', 0, 'A', NULL, '0455', '0102', '01020457750000591234', 0, 0, 0, '003', 6, 1, '', 0, '2023-11-21', 1, ''),
@@ -2569,7 +2569,7 @@ CREATE TABLE `empleados_pasados` (
   `nacionalidad` varchar(2) DEFAULT NULL,
   `cedula` varchar(20) DEFAULT NULL,
   `nombres` varchar(255) DEFAULT NULL,
-  `otros_años` int(11) NOT NULL DEFAULT 0,
+  `otros_anios` int(11) NOT NULL DEFAULT 0,
   `status` varchar(5) DEFAULT NULL,
   `observacion` varchar(255) DEFAULT NULL,
   `cod_cargo` varchar(10) DEFAULT NULL,

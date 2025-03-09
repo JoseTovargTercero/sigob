@@ -313,7 +313,7 @@ require_once '../../back/sistema_global/session.php';
               const dependencia = data[i].dependencia;
               const nacionalidad = data[i].nacionalidad;
               const fecha_ingreso = data[i].fecha_ingreso;
-              const otros_años = data[i].otros_años;
+              const otros_anios = data[i].otros_anios;
               const status = data[i].status;
               const observacion = data[i].observacion;
               const cod_cargo = data[i].cod_cargo;
