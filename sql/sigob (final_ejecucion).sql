@@ -6035,7 +6035,8 @@ CREATE TABLE `entes_dependencias` (
   `actividad` varchar(10) DEFAULT NULL,
   `partida` varchar(50) DEFAULT NULL,
   `ente_nombre` longtext DEFAULT NULL,
-  `tipo_ente` varchar(255) DEFAULT NULL
+  `tipo_ente` varchar(255) DEFAULT NULL,
+  `juridico` int(11) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
