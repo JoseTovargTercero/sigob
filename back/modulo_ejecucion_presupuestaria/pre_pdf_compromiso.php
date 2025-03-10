@@ -149,9 +149,39 @@ if ($tablaRegistro == "gastos") {
             $stmtPartida->close();
 
             if ($dataPartida) {
+                // Consultar sector
+            $querySector = "SELECT sector FROM pl_sectores WHERE id = ?";
+            $stmtSector = $conexion->prepare($querySector);
+            $stmtSector->bind_param('i', $dataDistribucion['id_sector']);
+            $stmtSector->execute();
+            $resultSector = $stmtSector->get_result();
+            $dataSector = $resultSector->fetch_assoc();
+            $stmtSector->close();
+
+            // Consultar programa
+            $queryPrograma = "SELECT programa FROM pl_programas WHERE id = ?";
+            $stmtPrograma = $conexion->prepare($queryPrograma);
+            $stmtPrograma->bind_param('i', $dataDistribucion['id_programa']);
+            $stmtPrograma->execute();
+            $resultPrograma = $stmtPrograma->get_result();
+            $dataPrograma = $resultPrograma->fetch_assoc();
+            $stmtPrograma->close();
+
+            // Consultar proyecto
+            $queryProyecto = "SELECT proyecto_id FROM pl_proyectos WHERE id = ?";
+            $stmtProyecto = $conexion->prepare($queryProyecto);
+            $stmtProyecto->bind_param('i', $dataDistribucion['id_proyecto']);
+            $stmtProyecto->execute();
+            $resultProyecto = $stmtProyecto->get_result();
+            $dataProyecto = $resultProyecto->fetch_assoc();
+            $stmtProyecto->close();
+
+            // Concatenar sector.programa.proyecto
+            $codigoCompleto = ($dataSector['sector'] ?? '00') . '.' . ($dataPrograma['programa'] ?? '00') . '.' . ($dataProyecto['proyecto_id'] ?? '00') . '.00';
                 $detalleDistribuciones[] = [
                     'distribucion' => $distribucion,
                     'partida_presupuestaria' => $dataPartida
+                    'codigo_sector_programa_proyecto' => $codigoCompleto
                 ];
             } else {
                 die("No se encontró la partida presupuestaria correspondiente.");
@@ -227,9 +257,41 @@ if ($tablaRegistro == "gastos") {
             $stmtPartida->close();
 
             if ($dataPartida) {
+            // Consultar sector
+            $querySector = "SELECT sector FROM pl_sectores WHERE id = ?";
+            $stmtSector = $conexion->prepare($querySector);
+            $stmtSector->bind_param('i', $dataDistribucion['id_sector']);
+            $stmtSector->execute();
+            $resultSector = $stmtSector->get_result();
+            $dataSector = $resultSector->fetch_assoc();
+            $stmtSector->close();
+
+            // Consultar programa
+            $queryPrograma = "SELECT programa FROM pl_programas WHERE id = ?";
+            $stmtPrograma = $conexion->prepare($queryPrograma);
+            $stmtPrograma->bind_param('i', $dataDistribucion['id_programa']);
+            $stmtPrograma->execute();
+            $resultPrograma = $stmtPrograma->get_result();
+            $dataPrograma = $resultPrograma->fetch_assoc();
+            $stmtPrograma->close();
+
+            // Consultar proyecto
+            $queryProyecto = "SELECT proyecto_id FROM pl_proyectos WHERE id = ?";
+            $stmtProyecto = $conexion->prepare($queryProyecto);
+            $stmtProyecto->bind_param('i', $dataDistribucion['id_proyecto']);
+            $stmtProyecto->execute();
+            $resultProyecto = $stmtProyecto->get_result();
+            $dataProyecto = $resultProyecto->fetch_assoc();
+            $stmtProyecto->close();
+
+            // Concatenar sector.programa.proyecto
+            $codigoCompleto = ($dataSector['sector'] ?? '00') . '.' . ($dataPrograma['programa'] ?? '00') . '.' . ($dataProyecto['proyecto_id'] ?? '00') . '.00';
+
+
                 $detalleDistribuciones[] = [
                     'distribucion' => $distribucion,
                     'partida_presupuestaria' => $dataPartida
+                    'codigo_sector_programa_proyecto' => $codigoCompleto
                 ];
             } else {
                 die("No se encontró la partida presupuestaria correspondiente.");
@@ -355,7 +417,7 @@ if ($tablaRegistro == "gastos") {
             $stmtProyecto->close();
 
             // Concatenar sector.programa.proyecto
-            $codigoCompleto = ($dataSector['sector'] ?? '0') . '.' . ($dataPrograma['programa'] ?? '0') . '.' . ($dataProyecto['proyecto_id'] ?? '0') . '.0';
+            $codigoCompleto = ($dataSector['sector'] ?? '00') . '.' . ($dataPrograma['programa'] ?? '00') . '.' . ($dataProyecto['proyecto_id'] ?? '00') . '.00';
 
             $detallePartidas[] = [
                 'partida' => [
@@ -940,9 +1002,10 @@ function unidad2($numuero)
     <?php if (($tablaRegistro === 'gastos' || $tablaRegistro === 'proyecto_credito') && !empty($detalleDistribuciones) && is_array($detalleDistribuciones)) : ?>
         <?php foreach ($detalleDistribuciones as $distribucion) : 
             $partidaPresupuestaria = $distribucion['partida_presupuestaria'] ?? null;
+            $codigo_sector_programa_proyecto = $distribucion['codigo_sector_programa_proyecto'] ?? null;
             ?>
             <tr>
-                <td class="bl bt bb"><?php echo $partidaPresupuestaria['partida'] ?? 'N/A'; ?></td>
+                <td class="bl bt bb"><?php echo $codigo_sector_programa_proyecto ?? '00.00.00.00'; ?>.<?php echo $partidaPresupuestaria['partida'] ?? 'N/A'; ?></td>
                 <td class="bl bt bb br"><?php echo $partidaPresupuestaria['descripcion'] ?? 'Sin descripción'; ?></td>
                 <td class="bl bt bb br">
                     <?php echo number_format($distribucion['distribucion']['monto'] ?? 0, 2, ',', '.'); ?>
