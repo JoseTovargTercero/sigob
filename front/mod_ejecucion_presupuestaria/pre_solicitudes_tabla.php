@@ -55,7 +55,7 @@ require_once '../../back/sistema_global/session.php';
                 <h5 class="mb-0">Lista de solicitudes de dozavos por entes</h5>
                 <small class="mt-0 text-muted">Administre las solicitudes</small>
               </div>
-              <button class="btn btn-primary" id="solicitud-registrar">REGISTRAR</button>
+              <button class="btn btn-primary hide" id="solicitud-registrar">REGISTRAR</button>
             </div>
             <div class="card-body">
               <div class="table-responsive p-1">
