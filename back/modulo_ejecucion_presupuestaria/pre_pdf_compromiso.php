@@ -915,7 +915,7 @@ function unidad2($numuero)
                 </td>
             </tr>
         <?php endforeach; ?>
-    <?php else<?php if ($tablaRegistro === 'solicitud_dozavos' && !empty($dataSolicitud)) : ?>
+    <?php elseif ($tablaRegistro === 'solicitud_dozavos' && !empty($dataSolicitud)) : ?>
     <?php 
     $partidas = !empty($dataSolicitud['success']['partidas']) ? $dataSolicitud['success']['partidas'] : [];
     ?>
