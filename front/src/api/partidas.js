@@ -6,6 +6,7 @@ import {
   toastNotification,
 } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
+import { APP_URL, config } from './urlConfig.js'
 
 const partidasUrl = `${APP_URL}${config.MODULE_NAMES.NOMINA}nom_partidas_datos.php`
 
