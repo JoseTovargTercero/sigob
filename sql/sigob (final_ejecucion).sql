@@ -5948,9 +5948,9 @@ CREATE TABLE `entes` (
 --
 
 INSERT INTO `entes` (`id`, `sector`, `programa`, `proyecto`, `actividad`, `partida`, `ente_nombre`, `tipo_ente`, `juridico`) VALUES
-(1, '1', '1', '0', '51', NULL, 'CONSEJO LEGISLATIVO', 'J', 0),
-(2, '1', '2', '0', '51', NULL, 'CONTRALORIA GENERAL DEL ESTADO', 'J', 0),
-(3, '1', '3', '0', '51', NULL, 'PROCURADORIA GENERAL', 'J', 0),
+(1, '1', '1', '0', '51', NULL, 'CONSEJO LEGISLATIVO', 'J', 1),
+(2, '1', '2', '0', '51', NULL, 'CONTRALORIA GENERAL DEL ESTADO', 'J', 1),
+(3, '1', '3', '0', '51', NULL, 'PROCURADORIA GENERAL', 'J', 1),
 (4, '1', '4', '0', '51', NULL, 'SECRETARIA EJECUTIVA DEL DESPACHO Y SEGUIMIENTO DE LA GESTION PUBLICA', 'J', 0),
 (5, '1', '5', '0', '51', NULL, 'SECRETARIA GENERAL DE GOBIERNO', 'J', 0),
 (6, '1', '6', '0', '51', NULL, 'SECRETARIA EJECUTIVA DE GESTION HUMANO', 'J', 0),
