@@ -915,18 +915,19 @@ function unidad2($numuero)
                 </td>
             </tr>
         <?php endforeach; ?>
-    <?php elseif ($tablaRegistro === 'solicitud_dozavos' && !empty($dataSolicitud)) : ?>
-        <?php 
-        $partidas = !empty($dataRegistro['partidas']) ? json_decode($dataRegistro['partidas'], true) : [];
-        ?>
-        <?php foreach ($detallePartidas as $detalle) : ?>
-            <tr>
-                <td class="bl bt bb"><?php echo $detalle['partida_presupuestaria']['partida'] ?? 'N/A'; ?></td>
-                <td class="bl bt bb"><?php echo htmlspecialchars($detalle['partida_presupuestaria']['descripcion'] ?? 'Sin descripción'); ?></td>
-                <td class="bl bt bb"><?php echo number_format($detalle['partida']['monto'] ?? 0, 2, ',', '.'); ?></td>
-            </tr>
-        <?php endforeach; ?>
-    <?php endif; ?>
+    <?php else<?php if ($tablaRegistro === 'solicitud_dozavos' && !empty($dataSolicitud)) : ?>
+    <?php 
+    $partidas = !empty($dataSolicitud['success']['partidas']) ? $dataSolicitud['success']['partidas'] : [];
+    ?>
+    <?php foreach ($partidas as $detalle) : ?>
+        <tr>
+            <td class="bl bt bb"><?php echo $detalle['partida'] ?? 'N/A'; ?></td>
+            <td class="bl bt bb"><?php echo htmlspecialchars($detalle['descripcion'] ?? 'Sin descripción'); ?></td>
+            <td class="bl bt bb"><?php echo number_format($detalle['monto'] ?? 0, 2, ',', '.'); ?></td>
+        </tr>
+    <?php endforeach; ?>
+<?php endif; ?>
+
 </table>
 
 
