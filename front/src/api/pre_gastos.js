@@ -5,11 +5,14 @@ import {
   toastNotification,
 } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
+import { APP_URL, config } from './urlConfig.js'
 
-const gastosUrl =
-  '../../../../sigob/back/modulo_ejecucion_presupuestaria/pre_gastos.php'
-const tipoGastosUrl =
-  '../../../../sigob/back/modulo_ejecucion_presupuestaria/pre_tipo_gastos.php'
+// const gastosUrl =
+//   '../../../../sigob/back/modulo_ejecucion_presupuestaria/pre_gastos.php'
+
+const gastosUrl = `${APP_URL}${config.MODULE_NAMES.EJECUCION}/pre_gastos.php`
+
+const tipoGastosUrl = `${APP_URL}${config.MODULE_NAMES.EJECUCION}/pre_tipo_gastos.php`
 
 const getGastos = async (id_ejercicio) => {
   showLoader()
