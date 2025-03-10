@@ -59,9 +59,10 @@ export const pre_traspasosCard = ({
 
       return `  <tr>
           <td>${sppa}.${partida.partida}</td>
-        
         ${data.status === 1 ? '' : `<td>${separadorLocal(partida.monto)}</td>`}
-          <td class="table-success">+${separadorLocal(partida.monto)}</td>
+          <td class="table-success">+${separadorLocal(
+            partida.monto_traspaso
+          )}</td>
           <td class="table-primary">${
             data.status === 1
               ? `${separadorLocal(partida.monto)} Bs`
@@ -86,7 +87,9 @@ export const pre_traspasosCard = ({
             data.status === 1 ? '' : `<td>${separadorLocal(partida.monto)}</td>`
           }
           
-          <td class="table-danger">-${separadorLocal(partida.monto)}</td>
+          <td class="table-danger">-${separadorLocal(
+            partida.monto_traspaso
+          )}</td>
            
           <td class="table-primary">${
             data.status === 1
