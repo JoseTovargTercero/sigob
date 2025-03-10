@@ -5,8 +5,9 @@ import {
   toastNotification,
 } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
+import { APP_URL, config } from './urlConfig.js'
 
-const tasaUrl = '../../../../sigob/back/sistema_global/tasa.php'
+const tasaUrl = `${APP_URL}${config.MODULE_NAMES.GLOBAL}sistema_global/tasa.php`
 
 const obtenerTasa = async () => {
   try {

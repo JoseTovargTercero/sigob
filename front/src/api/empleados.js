@@ -5,53 +5,40 @@ import {
   toastNotification,
 } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
+import { APP_URL, config } from './urlConfig.js'
 
-const cargosUrl = '../../../../../sigob/back/modulo_nomina/nom_cargos_info.php'
+const cargosUrl = `${APP_URL}${config.MODULE_NAMES.NOMINA}nom_cargos_info.php`
 
-const dependenciasUrl =
-  '../../../../../sigob/back/modulo_nomina/nom_dependencias_datos.php'
+const dependenciasUrl = `${APP_URL}${config.MODULE_NAMES.NOMINA}nom_dependencias_datos.php`
 
-const updateDependenciaUrl =
-  '../../../../../sigob/back/modulo_nomina/nom_dependencia_modif.php'
+const updateDependenciaUrl = `${APP_URL}${config.MODULE_NAMES.NOMINA}nom_dependencia_modif.php`
 
-const deleteDependencyUrl =
-  '../../../../../sigob/back/modulo_nomina/nom_dependencia_eliminar.php'
+const deleteDependencyUrl = `${APP_URL}${config.MODULE_NAMES.NOMINA}nom_dependencia_eliminar.php`
 
-const bancosUrl =
-  '../../../../../sigob/back/modulo_nomina/nom_bancos_disponibles.php'
+const bancosUrl = `${APP_URL}${config.MODULE_NAMES.NOMINA}nom_bancos_disponibles.php`
 
-const profesionesUrl =
-  '../../../../../sigob/back/modulo_nomina/nom_profesion_info.php'
+const profesionesUrl = `${APP_URL}${config.MODULE_NAMES.NOMINA}nom_profesion_info.php`
 
-const sendEmployeeUrl =
-  '../../../../../sigob/back/modulo_nomina/nom_empleados_registro.php'
+const sendEmployeeUrl = `${APP_URL}${config.MODULE_NAMES.NOMINA}nom_empleados_registro.php`
 
-const updateEmployeeUrl =
-  '../../../../../sigob/back/modulo_nomina/nom_empleados_modif.php'
+const updateEmployeeUrl = `${APP_URL}${config.MODULE_NAMES.NOMINA}nom_empleados_modif.php`
 
-const updateRequestEmployeeUrl =
-  '../../../../../sigob/back/modulo_nomina/nom_empleados_editar.php'
+const updateRequestEmployeeUrl = `${APP_URL}${config.MODULE_NAMES.NOMINA}nom_empleados_editar.php`
 
-const updateEmployeeStatusUrl =
-  '../../../../sigob/back/modulo_nomina/nom_cambiar_status.php'
+const updateEmployeeStatusUrl = `${APP_URL}${config.MODULE_NAMES.NOMINA}nom_cambiar_status.php`
 
-const getEmployeesUrl =
-  '../../../../../sigob/back/modulo_nomina/nom_empleados_datos.php'
+const getEmployeesUrl = `${APP_URL}${config.MODULE_NAMES.NOMINA}nom_empleados_datos.php`
 
-const getEmployeeUrl =
-  '../../../../../sigob/back/modulo_nomina/nom_empleado_datos.php'
+const getEmployeeUrl = `${APP_URL}${config.MODULE_NAMES.NOMINA}nom_empleado_datos.php`
 
-const getEmployeeByCedulaUrl =
-  '../../../../sigob/back/modulo_nomina/nom_empleados_cedula.php'
+const getEmployeeByCedulaUrl = `${APP_URL}${config.MODULE_NAMES.NOMINA}nom_empleados_cedula.php`
 
 const getRegConEmployeeUrl =
   '../../../../sigob/back/modulo_registro_control/regcon_empleado_datos.php'
 
-const deleteEmployeeUrl =
-  '../../../../../sigob/back/modulo_nomina/nom_empleados_eliminar.php'
+const deleteEmployeeUrl = `${APP_URL}${config.MODULE_NAMES.NOMINA}nom_empleados_eliminar.php`
 
-const sendDependencyUrl =
-  '../../../../../sigob/back/modulo_nomina/nom_dependencia_registro.php'
+const sendDependencyUrl = `${APP_URL}${config.MODULE_NAMES.NOMINA}nom_dependencia_registro.php`
 
 const mapData = ({ obj, name, id }) => {
   return obj.map((el) => {
@@ -90,7 +77,13 @@ const getEmployeeData = async (id) => {
     const res = await fetch(`${getEmployeeUrl}?id=${id}`)
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    const clone = res.clone()
+    let text = await clone.text()
+    console.log(text)
+
     const json = await res.json()
+    console.log(text)
     console.log(json)
     return json[0]
   } catch (e) {

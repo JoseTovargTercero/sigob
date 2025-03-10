@@ -6,15 +6,13 @@ import {
   toastNotification,
 } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
+import { APP_URL, config } from './urlConfig.js'
 
-const apiUrl =
-  '../../../../sigob/back/modulo_pl_formulacion/form_pdf_informacion_crud.php'
+const apiUrl = `${APP_URL}${config.MODULE_NAMES.FORMULACION}form_pdf_informacion_crud.php`
 
-const apiPresupuestoUrl =
-  '../../../../sigob/back/modulo_pl_formulacion/form_pdf_presupuesto_crud.php'
+const apiPresupuestoUrl = `${APP_URL}${config.MODULE_NAMES.FORMULACION}form_pdf_presupuesto_crud.php`
 
-const apiDescripcionProgramaUrl =
-  '../../../../sigob/back/modulo_pl_formulacion/form_pdf_descripcion_crud.php'
+const apiDescripcionProgramaUrl = `${APP_URL}${config.MODULE_NAMES.FORMULACION}form_pdf_descripcion_crud.php`
 
 const getGobernacionData = async () => {
   showLoader()

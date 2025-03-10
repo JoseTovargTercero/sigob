@@ -21,7 +21,9 @@ const config = {
     GLOBAL: 'sistema_global/',
     FORMULACION: 'modulo_pl_formulacion/',
     EJECUCION: 'modulo_ejecucion_presupuestaria/',
-    PROYECTOS: 'modulo_proyectos/',
+    NOMINA: 'modulo_nomina/',
+    REGISTRO_CONTROL: 'modulo_registro_control/',
+    RELACIONES_LABORALES: 'modulo_relaciones_laborales/',
   },
 }
 
