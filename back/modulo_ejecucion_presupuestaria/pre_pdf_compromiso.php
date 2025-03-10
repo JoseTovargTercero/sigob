@@ -355,7 +355,7 @@ if ($tablaRegistro == "gastos") {
             $stmtProyecto->close();
 
             // Concatenar sector.programa.proyecto
-            $codigoCompleto = ($dataSector['sector'] ?? '0') . '.' . ($dataPrograma['programa'] ?? '0') . '.' . ($dataProyecto['proyecto_id'] ?? '0');
+            $codigoCompleto = ($dataSector['sector'] ?? '0') . '.' . ($dataPrograma['programa'] ?? '0') . '.' . ($dataProyecto['proyecto_id'] ?? '0') . '.0';
 
             $detallePartidas[] = [
                 'partida' => [
@@ -958,7 +958,7 @@ function unidad2($numuero)
         ?>
         <?php foreach ($detallePartidas as $detalle) : ?>
             <tr>
-                <td class="bl bt bb"><?php echo $detalle['partida_presupuestaria']['codigo_sector_programa_proyecto'] ?? 'N/A'; ?><?php echo $detalle['partida_presupuestaria']['partida'] ?? 'N/A'; ?></td>
+                <td class="bl bt bb"><?php echo $detalle['codigo_sector_programa_proyecto'] ?? '0.0.0.0'; ?><?php echo $detalle['partida_presupuestaria']['partida'] ?? 'N/A'; ?></td>
                 <td class="bl bt bb"><?php echo htmlspecialchars($detalle['partida_presupuestaria']['descripcion'] ?? 'Sin descripción'); ?></td>
                 <td class="bl bt bb"><?php echo number_format($detalle['partida']['monto'] ?? 0, 2, ',', '.'); ?></td>
             </tr>
