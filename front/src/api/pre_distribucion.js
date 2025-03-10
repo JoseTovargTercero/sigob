@@ -364,7 +364,7 @@ const obtenerEntes = async () => {
 
     const json = await res.json()
 
-    console.log(json)
+    // console.log(json)
 
     if (json.error) {
       toastNotification({
@@ -438,6 +438,53 @@ const obtenerDistribucionEntes = async (id_ejercicio, id_ente) => {
   }
 }
 
+const obtenerDistribuciones = async (id_ejercicio) => {
+  showLoader()
+  try {
+    let res = await fetch(ejercicioFiscalUrl, {
+      method: 'POST',
+      body: JSON.stringify({
+        accion: 'obtener_distribuciones',
+        id_ejercicio,
+      }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    // const clone = res.clone()
+
+    // let text = await clone.text()
+
+    // console.log(text)
+
+    const json = await res.json()
+
+    console.log(json)
+
+    if (json.error) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.fail,
+        message: json.error,
+      })
+    }
+
+    if (json.success) {
+      return json.success
+    }
+
+    return json
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener informacion de distribucion',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
 export {
   getEjecicio,
   getEjecicios,
@@ -447,5 +494,6 @@ export {
   enviarDistribucionPresupuestariaEntes,
   eliminarDistribucion,
   obtenerDistribucionEntes,
+  obtenerDistribuciones,
   obtenerEntes,
 }

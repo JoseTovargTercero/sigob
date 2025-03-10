@@ -74,10 +74,10 @@ const getPreAsignacionEnte = async (id, ejercicioId) => {
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
 
-    const clone = res.clone()
+    // const clone = res.clone()
 
-    let text = await clone.text()
-    console.log(text)
+    // let text = await clone.text()
+    // console.log(text)
 
     const json = await res.json()
 

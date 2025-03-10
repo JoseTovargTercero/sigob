@@ -604,6 +604,78 @@ function obtenerDistribucionEntesPorEjercicio($id_ejercicio, $id_ente)
 }
 
 
+function obtenerDistribucionPorEjercicio($id_ejercicio)
+{
+    global $conexion;
+
+
+    // Consulta principal con todos los datos necesarios
+    $sql = "SELECT 
+                de.*, 
+                e.id AS ente_id, e.ente_nombre, e.sector AS ente_sector, e.programa AS ente_programa, 
+                e.actividad AS ente_actividad, e.proyecto AS ente_proyecto, e.tipo_ente,
+                s.id AS sector_id, s.denominacion AS sector_nombre, s.sector AS sector_numero,
+                p.id AS programa_id, p.denominacion AS programa_nombre, p.programa AS programa_numero,
+                a.id AS actividad_id, a.denominacion AS actividad_nombre, a.actividad AS actividad_numero,
+                pr.id AS proyecto_id, pr.denominacion AS proyecto_nombre, pr.proyecto_id AS proyecto_numero
+            FROM distribucion_entes de
+            JOIN entes e ON de.id_ente = e.id
+            LEFT JOIN pl_sectores s ON e.sector = s.id
+            LEFT JOIN pl_programas p ON e.programa = p.id
+            LEFT JOIN pl_actividades a ON e.actividad = a.id
+            LEFT JOIN pl_proyectos pr ON e.proyecto = pr.id
+            WHERE de.id_ejercicio = ?";
+
+    $stmt = $conexion->prepare($sql);
+    $stmt->bind_param("i", $id_ejercicio);
+    $stmt->execute();
+    $resultado = $stmt->get_result();
+
+    if ($resultado->num_rows === 0) {
+        return json_encode(["error" => "No se encontraron registros en distribucion_entes para el id_ejercicio."]);
+    }
+
+    $informacion = [];
+
+    while ($row = $resultado->fetch_assoc()) {
+        // Procesar el campo distribucion si existe
+        if (!empty($row['distribucion'])) {
+            $decoded = json_decode($row['distribucion'], true);
+
+            foreach ($decoded as &$distribucion) {
+                $id_distribucion = $distribucion['id_distribucion'];
+
+                // Consulta específica para obtener la partida presupuestaria
+                $sql_partida = "SELECT dp.id_partida, pp.* 
+                                FROM distribucion_presupuestaria dp
+                                JOIN partidas_presupuestarias pp ON dp.id_partida = pp.id
+                                WHERE dp.id = ?";
+                $stmt_partida = $conexion->prepare($sql_partida);
+                $stmt_partida->bind_param("i", $id_distribucion);
+                $stmt_partida->execute();
+                $resultado_partida = $stmt_partida->get_result();
+
+                if ($resultado_partida->num_rows > 0) {
+                    $distribucion['partida_presupuestaria'] = $resultado_partida->fetch_assoc();
+                } else {
+                    $distribucion['partida_presupuestaria'] = null;
+                }
+
+                $distribucion['sector_numero'] = $row['sector_numero'];
+                $informacion[] = $distribucion;
+            }
+
+            // Reemplazar la distribución con los datos completos
+        }
+
+        // Agregar toda la fila con la información procesada
+    }
+
+    return json_encode(['success' => $informacion]);
+}
+
+
+
 
 
 
@@ -855,6 +927,12 @@ if (isset($data["accion"])) {
             echo json_encode(['error' => "Debe proporcionar un ejercicio fiscal para la consulta"]);
         } else {
             echo consultarDistribucionPresupuestaria($data["id_ejercicio"]);
+        }
+    } elseif ($accion === "obtener_distribuciones") {
+        if (empty($data["id_ejercicio"])) {
+            echo json_encode(['error' => "Debe proporcionar un ejercicio fiscal para la consulta"]);
+        } else {
+            echo obtenerDistribucionPorEjercicio($data["id_ejercicio"]);
         }
     } elseif (isset($data["accion"]) && $data["accion"] === "modificar_partida") {
         if (empty($data["partida1"]) || empty($data["partida2"]) || empty($data["monto"])) {
