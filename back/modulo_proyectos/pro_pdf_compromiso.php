@@ -70,7 +70,7 @@ if ($tablaRegistro == "gastos") {
     }
 } elseif ($tablaRegistro == "solicitud_dozavos") {
     // URL de la API
-    $api_url = "https://sigob.net/api/solicitudes";
+    $api_url = "https://sigob.net/sigob_entes/api/solicitudes";
 
     // Configuración de la solicitud cURL
     $ch = curl_init();
@@ -250,7 +250,7 @@ if ($tablaRegistro == "gastos") {
     ];
 } elseif ($tablaRegistro == "solicitud_dozavos") {
     // URL de la API
-    $api_url = "https://sigob.net/api/solicitudes";
+    $api_url = "https://sigob.net/sigob_entes/api/solicitudes";
 
     // ID del registro del compromiso
 
