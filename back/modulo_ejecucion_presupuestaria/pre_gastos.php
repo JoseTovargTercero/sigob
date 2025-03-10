@@ -64,7 +64,7 @@ function crearGasto($id_tipo, $descripcion, $monto, $id_ejercicio, $beneficiario
 
 
 
-function gestionarGasto($idGasto, $accion)
+function gestionarGasto($idGasto, $accion, $codigo)
 {
     global $conexion;
 
@@ -136,7 +136,7 @@ function gestionarGasto($idGasto, $accion)
             $stmtUpdateGasto->execute();
 
             if ($stmtUpdateGasto->affected_rows > 0) {
-                $resultadoCompromiso = registrarCompromiso($idGasto, 'gastos', $descripcion, $id_ejercicio, '');
+                $resultadoCompromiso = registrarCompromiso($idGasto, 'gastos', $descripcion, $id_ejercicio, $codigo);
 
                 if (isset($resultadoCompromiso['success']) && $resultadoCompromiso['success']) {
                     $conexion->commit();
@@ -637,7 +637,7 @@ if (isset($data["accion"])) {
 
         case 'gestionar':  // Nueva opción para aceptar o rechazar
 
-            echo gestionarGasto($data["id"], $data["accion_gestion"]);
+            echo gestionarGasto($data["id"], $data["accion_gestion"], $data["codigo"]);
             break;
 
         default:
