@@ -919,7 +919,10 @@ function unidad2($numuero)
         <?php endforeach; ?>
     <?php elseif ($tablaRegistro === 'solicitud_dozavos' && !empty($dataSolicitud)) : ?>
         <?php 
-        $partidas = !empty($dataRegistro['partidas']) ? json_decode($dataRegistro['partidas'], true) : [];
+        $partidas = !empty($dataRegistro['partidas']) && is_string($dataRegistro['partidas']) 
+    ? json_decode($dataRegistro['partidas'], true) 
+    : (is_array($dataRegistro['partidas']) ? $dataRegistro['partidas'] : []);
+
         ?>
         <?php foreach ($detallePartidas as $detalle) : ?>
             <tr>
