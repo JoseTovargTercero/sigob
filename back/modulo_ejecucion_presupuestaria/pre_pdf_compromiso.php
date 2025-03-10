@@ -180,7 +180,7 @@ if ($tablaRegistro == "gastos") {
             $codigoCompleto = ($dataSector['sector'] ?? '00') . '.' . ($dataPrograma['programa'] ?? '00') . '.' . ($dataProyecto['proyecto_id'] ?? '00') . '.00';
                 $detalleDistribuciones[] = [
                     'distribucion' => $distribucion,
-                    'partida_presupuestaria' => $dataPartida
+                    'partida_presupuestaria' => $dataPartida,
                     'codigo_sector_programa_proyecto' => $codigoCompleto
                 ];
             } else {
@@ -290,7 +290,7 @@ if ($tablaRegistro == "gastos") {
 
                 $detalleDistribuciones[] = [
                     'distribucion' => $distribucion,
-                    'partida_presupuestaria' => $dataPartida
+                    'partida_presupuestaria' => $dataPartida,
                     'codigo_sector_programa_proyecto' => $codigoCompleto
                 ];
             } else {
