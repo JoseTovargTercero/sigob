@@ -169,7 +169,7 @@ $titulo = 'Distribución por entes';
       <script src="../../src/assets/js/amcharts5/xy.js"></script>
 
       <script>
-        const url_back = '../../back/modulo_pl_formulacion/form_distribucion_detalles_back.php'
+        const url_back = '../../back/modulo_ejecucion_presupuestaria/pre_distribucion_detalles_back.php'
 
         var DataTable = $("#table").DataTable({
           language: lenguaje_datat
