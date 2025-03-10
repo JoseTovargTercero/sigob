@@ -38,6 +38,7 @@ import { validateTasaActual } from './src/controllers/tasaView.js'
 import { validateModal } from './src/helpers/helpers.js'
 import { validatePreProyectosView } from './src/controllers/pre_proyectosView.js'
 import { validateProProyectosView } from './src/controllers/pro_proyectosView.js'
+import { preValidateAsignacionEntesView } from './src/controllers/pre_asignacionEntesView.js'
 const d = document
 
 // const requestForm2 = d.getElementById('request-form2')
@@ -65,11 +66,13 @@ d.addEventListener('DOMContentLoaded', (e) => {
   const reportesView = d.getElementById('reportes-view')
   const compromisosView = d.getElementById('compromisos-view')
   const preProyectosView = d.getElementById('pre-proyectos-view')
+  const preAsignacionEntesView = d.getElementById('pre-asignacion-entes-view')
 
   // Formulación
   const partidasView = d.getElementById('partidas-view')
   const distribucionView = d.getElementById('distribucion-view')
   const asignacionEntesView = d.getElementById('asignacion-entes-view')
+
   const gobernacionView = d.getElementById('gobernacion-view')
   const contraloriaView = d.getElementById('contraloria-view')
   const consejoView = d.getElementById('consejo-view')
@@ -221,6 +224,10 @@ d.addEventListener('DOMContentLoaded', (e) => {
 
   if (preProyectosView) {
     validatePreProyectosView()
+  }
+
+  if (preAsignacionEntesView) {
+    preValidateAsignacionEntesView()
   }
 
   // Modulo proyectos

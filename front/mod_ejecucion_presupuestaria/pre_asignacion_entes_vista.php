@@ -34,7 +34,8 @@ require_once '../../back/sistema_global/session.php';
               <div class=" d-flex justify-content-between">
 
                 <h4 class="fw-bold py-3 mb-4">
-                  <span class="text-muted fw-light">Formulación /</span> Presupuesto de unidades y dependencias
+                  <span class="text-muted fw-light">Ejecución presupuestaria /</span> Presupuesto de unidades y
+                  dependencias
                 </h4>
 
                 <div class="row" id="ejercicios-fiscales">
@@ -49,13 +50,13 @@ require_once '../../back/sistema_global/session.php';
       <!-- [ Main Content ] start -->
       <div class="row mb3">
 
-        <div class="col-lg-12 mb-3" id="asignacion-entes-view">
+        <div class="col-lg-12 mb-3" id="pre-asignacion-entes-view">
           <div class="card">
             <div class="card-header d-flex justify-content-between">
               <div class="">
                 <h5 class="mb-0">Asignación de presupuesto a unidades y dependencias</h5>
               </div>
-              <button class="btn btn-sm btn-primary" id="entes-asignar">REGISTRAR</button>
+              <!-- <button class="btn btn-sm btn-primary" id="entes-asignar">REGISTRAR</button> -->
             </div>
             <div class="card-body">
               <!-- <div class="table-responsive d-none">
@@ -68,7 +69,7 @@ require_once '../../back/sistema_global/session.php';
                 </table>
               </div> -->
               <div class="table-responsive">
-                <table id="asignacion-entes-table" class="table table-striped" style="width:100%">
+                <table id="pre-asignacion-entes-table" class="table table-striped" style="width:100%">
                   <thead class="">
                     <th class="w-50">ENTE</th>
                     <th class="w-10">MONTO ASIGNADO</th>

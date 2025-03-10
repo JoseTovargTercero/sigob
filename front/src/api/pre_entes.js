@@ -12,6 +12,53 @@ const entesDistribucionUrl = `${APP_URL}${config.MODULE_NAMES.GLOBAL}sigob_api_a
 
 const asignacionEntesUrl = `${APP_URL}${config.MODULE_NAMES.EJECUCION}pre_asignacion_entes.php`
 
+const getPreAsignacionesEntes = async () => {
+  showLoader()
+  try {
+    let res = await fetch(asignacionEntesUrl, {
+      method: 'POST',
+      body: JSON.stringify({ accion: 'consultar' }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    const clone = res.clone()
+
+    let text = await clone.text()
+
+    // console.log(text)
+
+    const json = await res.json()
+
+    console.log(json)
+    if (json.success) {
+      let mappedData = mapData({
+        obj: json.success,
+        name: 'ente_nombre',
+        id: 'id',
+      })
+
+      return { mappedData, fullInfo: json.success }
+    }
+
+    if (json.error) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.fail,
+        message: json.error,
+      })
+    }
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener asignaciones de entes',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
 const getPreAsignacionEntes = async (ejercicioId) => {
   showLoader()
   try {
@@ -150,6 +197,7 @@ const obtenerDistribucionSecretaria = async ({ id_ejercicio }) => {
 }
 
 export {
+  getPreAsignacionesEntes,
   getPreAsignacionEntes,
   getPreAsignacionEnte,
   obtenerDistribucionSecretaria,
