@@ -345,26 +345,28 @@ if ($tablaRegistro == "gastos") {
 
         // Resultado final con la información de la solicitud, las partidas y distribuciones presupuestarias
         $response = [
-            'compromiso' => $dataCompromiso,
-            'registro_especifico' => $response_data['success'],
-            'solicitud' => [
-                'id' => $response_data['success']['id'],
-                'numero_orden' => $response_data['success']['numero_orden'],
-                'numero_compromiso' => $response_data['success']['numero_compromiso'],
-                'descripcion' => $response_data['success']['descripcion'],
-                'tipo' => $response_data['success']['tipo'],
-                'monto' => $response_data['success']['monto'],
-                'fecha' => $response_data['success']['fecha'],
-                'id_ente' => $response_data['success']['id_ente'],
-                'status' => $response_data['success']['status'],
-                'id_ejercicio' => $response_data['success']['id_ejercicio'],
-                'mes' => $date2 // Incluir el mes en formato textual
-            ],
-            'partidas' => $detallePartidas
-        ];
+    'compromiso' => $dataCompromiso,
+    'registro_especifico' => $response_data['success'],
+    'solicitud' => [
+        'id' => $response_data['success']['id'],
+        'numero_orden' => $response_data['success']['numero_orden'],
+        'numero_compromiso' => $response_data['success']['numero_compromiso'],
+        'descripcion' => $response_data['success']['descripcion'],
+        'tipo' => $response_data['success']['tipo'],
+        'monto' => $response_data['success']['monto'],
+        'fecha' => $response_data['success']['fecha'],
+        'id_ente' => $response_data['success']['id_ente'],
+        'status' => $response_data['success']['status'],
+        'id_ejercicio' => $response_data['success']['id_ejercicio'],
+        'mes' => $date2 // Incluir el mes en formato textual
+    ],
+    'partidas' => $detallePartidas
+];
+
+
     }
 }
-
+$dataSolicitud = $response; // Asegurar que la vista accede a los datos
 
 
 
@@ -916,18 +918,17 @@ function unidad2($numuero)
             </tr>
         <?php endforeach; ?>
     <?php elseif ($tablaRegistro === 'solicitud_dozavos' && !empty($dataSolicitud)) : ?>
-    <?php 
-    $partidas = !empty($dataSolicitud['success']['partidas']) ? $dataSolicitud['success']['partidas'] : [];
-    ?>
-    <?php foreach ($partidas as $detalle) : ?>
-        <tr>
-            <td class="bl bt bb"><?php echo $detalle['partida'] ?? 'N/A'; ?></td>
-            <td class="bl bt bb"><?php echo htmlspecialchars($detalle['descripcion'] ?? 'Sin descripción'); ?></td>
-            <td class="bl bt bb"><?php echo number_format($detalle['monto'] ?? 0, 2, ',', '.'); ?></td>
-        </tr>
-    <?php endforeach; ?>
-<?php endif; ?>
-
+        <?php 
+        $partidas = !empty($dataRegistro['partidas']) ? json_decode($dataRegistro['partidas'], true) : [];
+        ?>
+        <?php foreach ($detallePartidas as $detalle) : ?>
+            <tr>
+                <td class="bl bt bb"><?php echo $detalle['partida_presupuestaria']['partida'] ?? 'N/A'; ?></td>
+                <td class="bl bt bb"><?php echo htmlspecialchars($detalle['partida_presupuestaria']['descripcion'] ?? 'Sin descripción'); ?></td>
+                <td class="bl bt bb"><?php echo number_format($detalle['partida']['monto'] ?? 0, 2, ',', '.'); ?></td>
+            </tr>
+        <?php endforeach; ?>
+    <?php endif; ?>
 </table>
 
 
