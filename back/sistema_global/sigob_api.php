@@ -91,7 +91,7 @@ function apiPost($url, $data)
 function consultarDisponibilidadApi($distribuciones, $id_ejercicio)
 {
     $data = ["accion" => "consultar_disponibilidad", "distribuciones" => $distribuciones, "id_ejercicio" => $id_ejercicio];
-    $url = "https://sigob.net/api/asignaciones";
+    $url = "https://sigob.net/sigob_entes/api/asignaciones";
 
     $response = apiPost($url, $data);
 
@@ -101,7 +101,7 @@ function consultarDisponibilidadApi($distribuciones, $id_ejercicio)
 function actualizarDistribucionApi($distribuciones, $id_ejercicio)
 {
     $data = ["accion" => "actualizar_distribucion", "distribuciones" => $distribuciones, "id_ejercicio" => $id_ejercicio];
-    $url = "https://sigob.net/api/asignaciones";
+    $url = "https://sigob.net/sigob_entes/api/asignaciones";
 
     $response = apiPost($url, $data);
 
@@ -114,7 +114,7 @@ function actualizarTablasApi($id_ejercicio)
 
     try {
         $conexion->begin_transaction();
-        $url = "https://sigob.net/api/ejercicio_fiscal";
+        $url = "https://sigob.net/sigob_entes/api/ejercicio_fiscal";
         $ejerciciosRegistros = consultarTablas('ejercicio_fiscal', 'id', $id_ejercicio);
         $distribucionesRegistros = consultarTablas('distribucion_presupuestaria', 'id_ejercicio', $id_ejercicio);
         $distribucionesEntesRegistros = consultarTablas('distribucion_entes', 'id_ejercicio', $id_ejercicio);
