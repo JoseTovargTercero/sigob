@@ -304,44 +304,76 @@ if ($tablaRegistro == "gastos") {
         $detallePartidas = [];
 
         foreach ($partidas as $partida) {
-            $id_distribucion = $partida['id'];
-            $monto_partida = $partida['monto'];
+    $id_distribucion = $partida['id'];
+    $monto_partida = $partida['monto'];
 
-            // Consultar la distribución presupuestaria asociada a la partida
-            $queryDistribucion = "SELECT * FROM distribucion_presupuestaria WHERE id = ?";
-            $stmtDistribucion = $conexion->prepare($queryDistribucion);
-            $stmtDistribucion->bind_param('i', $id_distribucion);
-            $stmtDistribucion->execute();
-            $resultDistribucion = $stmtDistribucion->get_result();
-            $dataDistribucion = $resultDistribucion->fetch_assoc();
-            $stmtDistribucion->close();
+    // Consultar la distribución presupuestaria asociada a la partida
+    $queryDistribucion = "SELECT * FROM distribucion_presupuestaria WHERE id = ?";
+    $stmtDistribucion = $conexion->prepare($queryDistribucion);
+    $stmtDistribucion->bind_param('i', $id_distribucion);
+    $stmtDistribucion->execute();
+    $resultDistribucion = $stmtDistribucion->get_result();
+    $dataDistribucion = $resultDistribucion->fetch_assoc();
+    $stmtDistribucion->close();
 
-            if ($dataDistribucion) {
-                // Consultar los detalles de la partida presupuestaria
-                $queryPartida = "SELECT * FROM partidas_presupuestarias WHERE id = ?";
-                $stmtPartida = $conexion->prepare($queryPartida);
-                $stmtPartida->bind_param('i', $dataDistribucion['id_partida']);
-                $stmtPartida->execute();
-                $resultPartida = $stmtPartida->get_result();
-                $dataPartida = $resultPartida->fetch_assoc();
-                $stmtPartida->close();
+    if ($dataDistribucion) {
+        // Consultar los detalles de la partida presupuestaria
+        $queryPartida = "SELECT * FROM partidas_presupuestarias WHERE id = ?";
+        $stmtPartida = $conexion->prepare($queryPartida);
+        $stmtPartida->bind_param('i', $dataDistribucion['id_partida']);
+        $stmtPartida->execute();
+        $resultPartida = $stmtPartida->get_result();
+        $dataPartida = $resultPartida->fetch_assoc();
+        $stmtPartida->close();
 
-                if ($dataPartida) {
-                    $detallePartidas[] = [
-                        'partida' => [
-                            'id' => $dataDistribucion['id_partida'],
-                            'monto' => $monto_partida
-                        ],
-                        'distribucion_presupuestaria' => $dataDistribucion,
-                        'partida_presupuestaria' => $dataPartida
-                    ];
-                } else {
-                    die("No se encontró la información de la partida presupuestaria para el ID {$dataDistribucion['id_partida']}.");
-                }
-            } else {
-                die("No se encontró la distribución presupuestaria para el ID de la partida $id_distribucion.");
-            }
+        if ($dataPartida) {
+            // Consultar sector
+            $querySector = "SELECT sector FROM pl_sectores WHERE id = ?";
+            $stmtSector = $conexion->prepare($querySector);
+            $stmtSector->bind_param('i', $dataDistribucion['id_sector']);
+            $stmtSector->execute();
+            $resultSector = $stmtSector->get_result();
+            $dataSector = $resultSector->fetch_assoc();
+            $stmtSector->close();
+
+            // Consultar programa
+            $queryPrograma = "SELECT programa FROM pl_programas WHERE id = ?";
+            $stmtPrograma = $conexion->prepare($queryPrograma);
+            $stmtPrograma->bind_param('i', $dataDistribucion['id_programa']);
+            $stmtPrograma->execute();
+            $resultPrograma = $stmtPrograma->get_result();
+            $dataPrograma = $resultPrograma->fetch_assoc();
+            $stmtPrograma->close();
+
+            // Consultar proyecto
+            $queryProyecto = "SELECT proyecto_id FROM pl_proyectos WHERE id = ?";
+            $stmtProyecto = $conexion->prepare($queryProyecto);
+            $stmtProyecto->bind_param('i', $dataDistribucion['id_proyecto']);
+            $stmtProyecto->execute();
+            $resultProyecto = $stmtProyecto->get_result();
+            $dataProyecto = $resultProyecto->fetch_assoc();
+            $stmtProyecto->close();
+
+            // Concatenar sector.programa.proyecto
+            $codigoCompleto = ($dataSector['sector'] ?? '0') . '.' . ($dataPrograma['programa'] ?? '0') . '.' . ($dataProyecto['proyecto_id'] ?? '0') . '.0';
+
+            $detallePartidas[] = [
+                'partida' => [
+                    'id' => $dataDistribucion['id_partida'],
+                    'monto' => $monto_partida
+                ],
+                'distribucion_presupuestaria' => $dataDistribucion,
+                'partida_presupuestaria' => $dataPartida,
+                'codigo_sector_programa_proyecto' => $codigoCompleto
+            ];
+        } else {
+            die("No se encontró la información de la partida presupuestaria para el ID {$dataDistribucion['id_partida']}.");
         }
+    } else {
+        die("No se encontró la distribución presupuestaria para el ID de la partida $id_distribucion.");
+    }
+}
+
 
         // Resultado final con la información de la solicitud, las partidas y distribuciones presupuestarias
         $response = [
@@ -926,7 +958,7 @@ function unidad2($numuero)
         ?>
         <?php foreach ($detallePartidas as $detalle) : ?>
             <tr>
-                <td class="bl bt bb"><?php echo $detalle['partida_presupuestaria']['partida'] ?? 'N/A'; ?></td>
+                <td class="bl bt bb"><?php echo $detalle['codigo_sector_programa_proyecto'] ?? '0.0.0.0'; ?>.<?php echo $detalle['partida_presupuestaria']['partida'] ?? 'N/A'; ?></td>
                 <td class="bl bt bb"><?php echo htmlspecialchars($detalle['partida_presupuestaria']['descripcion'] ?? 'Sin descripción'); ?></td>
                 <td class="bl bt bb"><?php echo number_format($detalle['partida']['monto'] ?? 0, 2, ',', '.'); ?></td>
             </tr>
