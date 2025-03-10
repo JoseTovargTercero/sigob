@@ -345,7 +345,7 @@ if ($tablaRegistro == "gastos") {
 
         // Resultado final con la información de la solicitud, las partidas y distribuciones presupuestarias
         $response = [
-            'compromiso' => $response_data['success']['informacion_compromiso'],
+            'compromiso' => $dataCompromiso,
             'registro_especifico' => $response_data['success'],
             'solicitud' => [
                 'id' => $response_data['success']['id'],
