@@ -4,15 +4,16 @@ import {
   mapData,
   showLoader,
   toastNotification,
-} from "../helpers/helpers.js";
-import { NOTIFICATIONS_TYPES } from "../helpers/types.js";
+} from '../helpers/helpers.js'
+import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
+import { APP_URL, config } from './urlConfig.js'
 
 let datos = [
   {
     id: 0,
     id_ente: 0,
-    tipo_ente: "J",
-    ente_nombre: "Ente 1",
+    tipo_ente: 'J',
+    ente_nombre: 'Ente 1',
     id_poa: 0,
     partidas: [{ id: 1, monto: 5000 }],
     monto: 15000,
@@ -20,8 +21,8 @@ let datos = [
   {
     id: 1,
     id_ente: 1,
-    tipo_ente: "J",
-    ente_nombre: "Ente 2",
+    tipo_ente: 'J',
+    ente_nombre: 'Ente 2',
     partidas: [
       { id: 1, monto: 7000 },
       { id: 2, monto: 12000 },
@@ -31,8 +32,8 @@ let datos = [
   {
     id: 2,
     id_ente: 2,
-    tipo_ente: "D",
-    ente_nombre: "Ente 3",
+    tipo_ente: 'D',
+    ente_nombre: 'Ente 3',
     id_poa: 2,
     partidas: [{ id: 1, monto: 6000 }],
     monto: 21000,
@@ -40,8 +41,8 @@ let datos = [
   {
     id: 3,
     id_ente: 3,
-    tipo_ente: "J",
-    ente_nombre: "Ente 4",
+    tipo_ente: 'J',
+    ente_nombre: 'Ente 4',
     id_poa: 3,
     partidas: [
       { id: 1, monto: 8000 },
@@ -52,8 +53,8 @@ let datos = [
   {
     id: 4,
     id_ente: 4,
-    tipo_ente: "D",
-    ente_nombre: "Ente 5",
+    tipo_ente: 'D',
+    ente_nombre: 'Ente 5',
     id_poa: 4,
     partidas: [{ id: 1, monto: 9000 }],
     monto: 17000,
@@ -61,8 +62,8 @@ let datos = [
   {
     id: 5,
     id_ente: 5,
-    tipo_ente: "J",
-    ente_nombre: "Ente 6",
+    tipo_ente: 'J',
+    ente_nombre: 'Ente 6',
     id_poa: 5,
     partidas: [
       { id: 1, monto: 7000 },
@@ -73,8 +74,8 @@ let datos = [
   {
     id: 6,
     id_ente: 6,
-    tipo_ente: "D",
-    ente_nombre: "Ente 7",
+    tipo_ente: 'D',
+    ente_nombre: 'Ente 7',
     id_poa: 6,
     partidas: [{ id: 2, monto: 12000 }],
     monto: 22000,
@@ -82,8 +83,8 @@ let datos = [
   {
     id: 7,
     id_ente: 7,
-    tipo_ente: "J",
-    ente_nombre: "Ente 8",
+    tipo_ente: 'J',
+    ente_nombre: 'Ente 8',
     id_poa: 7,
     partidas: [
       { id: 1, monto: 9500 },
@@ -94,8 +95,8 @@ let datos = [
   {
     id: 8,
     id_ente: 8,
-    tipo_ente: "D",
-    ente_nombre: "Ente 9",
+    tipo_ente: 'D',
+    ente_nombre: 'Ente 9',
     id_poa: 8,
     partidas: [{ id: 2, monto: 13500 }],
     monto: 22000,
@@ -103,8 +104,8 @@ let datos = [
   {
     id: 9,
     id_ente: 9,
-    tipo_ente: "J",
-    ente_nombre: "Ente 10",
+    tipo_ente: 'J',
+    ente_nombre: 'Ente 10',
     id_poa: 9,
     partidas: [
       { id: 1, monto: 9200 },
@@ -112,23 +113,21 @@ let datos = [
     ],
     monto: 19000,
   },
-];
+]
 
 const ejercicioFiscalUrl =
-  "../../../../sigob/back/sistema_global/ejercicio_fiscal.php";
+  '../../../../sigob/back/sistema_global/ejercicio_fiscal.php'
 
-const entesUrl = "../../../../sigob/back/modulo_pl_formulacion/form_entes.php";
+const entesUrl = `${APP_URL}${config.MODULE_NAMES.FORMULACION}form_entes.php`
 
-const entesAsignacionUrl =
-  "../../../../sigob/back/modulo_pl_formulacion/form_asignacion_entes.php";
+const entesAsignacionUrl = `${APP_URL}${config.MODULE_NAMES.FORMULACION}form_asignacion_entes.php`
 
-const entesDistribucionUrl =
-  "../../../../sigob/back/modulo_pl_formulacion/form_distribucion_entes.php";
+const entesDistribucionUrl = `${APP_URL}${config.MODULE_NAMES.FORMULACION}form_distribucion_entes.php`
 
 const distribucionPresupuestariUrl =
-  "../../../../sigob/back/modulo_pl_formulacion/form_distribucion.php";
+  '../../../../sigob/back/modulo_pl_formulacion/form_distribucion.php'
 const getEntesPlanes = async () => {
-  showLoader();
+  showLoader()
   try {
     // let res = await fetch(ejercicioFiscalUrl, {
     //   method: 'POST',
@@ -162,21 +161,21 @@ const getEntesPlanes = async () => {
     // if (json.error) {
     //   toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
     // }
-    return datos;
+    return datos
   } catch (e) {
-    console.log(e);
+    console.log(e)
 
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
-      message: "Error al obtener ejercicios fiscales",
-    });
+      message: 'Error al obtener ejercicios fiscales',
+    })
   } finally {
-    hideLoader();
+    hideLoader()
   }
-};
+}
 
 const getEntesPlan = async (id) => {
-  showLoader();
+  showLoader()
   try {
     // let res = await fetch(ejercicioFiscalUrl, {
     //   method: 'POST',
@@ -202,568 +201,568 @@ const getEntesPlan = async (id) => {
     //   toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
     // }
 
-    let planEncontrado = datos.find((plan) => plan.id === id);
+    let planEncontrado = datos.find((plan) => plan.id === id)
 
-    return planEncontrado;
+    return planEncontrado
   } catch (e) {
-    console.log(e);
+    console.log(e)
 
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
-      message: "Error al obtener ejercicio fiscal",
-    });
+      message: 'Error al obtener ejercicio fiscal',
+    })
   } finally {
-    hideLoader();
+    hideLoader()
   }
-};
+}
 
 const getEntes = async () => {
-  showLoader();
+  showLoader()
   try {
     let res = await fetch(entesUrl, {
-      method: "POST",
-      body: JSON.stringify({ accion: "obtener" }),
-    });
+      method: 'POST',
+      body: JSON.stringify({ accion: 'obtener' }),
+    })
 
-    if (!res.ok) throw { status: res.status, statusText: res.statusText };
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
 
     // const clone = res.clone()
 
     // let text = await clone.text()
 
-    const json = await res.json();
+    const json = await res.json()
 
     // console.log(json)
     if (json.success) {
       let mappedData = mapData({
         obj: json.success,
-        name: "ente_nombre",
-        id: "id",
-      });
+        name: 'ente_nombre',
+        id: 'id',
+      })
 
-      return { mappedData, fullInfo: json.success };
+      return { mappedData, fullInfo: json.success }
     }
 
     if (json.error) {
       toastNotification({
         type: NOTIFICATIONS_TYPES.fail,
         message: json.error,
-      });
+      })
     }
   } catch (e) {
-    console.log(e);
+    console.log(e)
 
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
-      message: "Error al obtener información de los entes",
-    });
+      message: 'Error al obtener información de los entes',
+    })
   } finally {
-    hideLoader();
+    hideLoader()
   }
-};
+}
 
 const getEnte = async (id) => {
-  showLoader();
+  showLoader()
   try {
     let res = await fetch(entesUrl, {
-      method: "POST",
-      body: JSON.stringify({ accion: "obtener_por_id", id }),
-    });
+      method: 'POST',
+      body: JSON.stringify({ accion: 'obtener_por_id', id }),
+    })
 
-    if (!res.ok) throw { status: res.status, statusText: res.statusText };
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
 
-    const clone = res.clone();
+    const clone = res.clone()
 
-    let text = await clone.text();
+    let text = await clone.text()
 
-    console.log(text);
+    console.log(text)
 
-    const json = await res.json();
+    const json = await res.json()
 
-    console.log(json);
+    console.log(json)
 
     if (json.success) {
-      return json.success;
+      return json.success
     }
     if (json.error) {
       toastNotification({
         type: NOTIFICATIONS_TYPES.fail,
         message: json.error,
-      });
+      })
     }
 
-    return json.success;
+    return json.success
   } catch (e) {
-    console.log(e);
+    console.log(e)
 
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
-      message: "Error al obtener información del ente",
-    });
+      message: 'Error al obtener información del ente',
+    })
   } finally {
-    hideLoader();
+    hideLoader()
   }
-};
+}
 
 const getAsignacionesEntes = async () => {
-  showLoader();
+  showLoader()
   try {
     let res = await fetch(entesAsignacionUrl, {
-      method: "POST",
-      body: JSON.stringify({ accion: "consultar" }),
-    });
+      method: 'POST',
+      body: JSON.stringify({ accion: 'consultar' }),
+    })
 
-    if (!res.ok) throw { status: res.status, statusText: res.statusText };
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
 
-    const clone = res.clone();
+    const clone = res.clone()
 
-    let text = await clone.text();
+    let text = await clone.text()
 
     // console.log(text)
 
-    const json = await res.json();
+    const json = await res.json()
 
-    console.log(json);
+    console.log(json)
     if (json.success) {
       let mappedData = mapData({
         obj: json.success,
-        name: "ente_nombre",
-        id: "id",
-      });
+        name: 'ente_nombre',
+        id: 'id',
+      })
 
-      return { mappedData, fullInfo: json.success };
+      return { mappedData, fullInfo: json.success }
     }
 
     if (json.error) {
       toastNotification({
         type: NOTIFICATIONS_TYPES.fail,
         message: json.error,
-      });
+      })
     }
   } catch (e) {
-    console.log(e);
+    console.log(e)
 
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
-      message: "Error al obtener asignaciones de entes",
-    });
+      message: 'Error al obtener asignaciones de entes',
+    })
   } finally {
-    hideLoader();
+    hideLoader()
   }
-};
+}
 
 const getAsignacionesEnte = async (id) => {
-  showLoader();
+  showLoader()
   try {
     let res = await fetch(entesAsignacionUrl, {
-      method: "POST",
-      body: JSON.stringify({ accion: "consultar_por_id", id }),
-    });
+      method: 'POST',
+      body: JSON.stringify({ accion: 'consultar_por_id', id }),
+    })
 
-    if (!res.ok) throw { status: res.status, statusText: res.statusText };
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
 
-    const clone = res.clone();
+    const clone = res.clone()
 
-    let text = await clone.text();
+    let text = await clone.text()
 
     // console.log(text)
 
-    const json = await res.json();
+    const json = await res.json()
 
-    console.log(json);
+    console.log(json)
     if (json.success) {
-      return json.success;
+      return json.success
     }
 
     if (json.error) {
       toastNotification({
         type: NOTIFICATIONS_TYPES.fail,
         message: json.error,
-      });
+      })
     }
   } catch (e) {
-    console.log(e);
+    console.log(e)
 
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
-      message: "Error al obtener asignaciones de entes",
-    });
+      message: 'Error al obtener asignaciones de entes',
+    })
   } finally {
-    hideLoader();
+    hideLoader()
   }
-};
+}
 
 const eliminarAsignacionEnte = async (id) => {
   try {
     let res = await fetch(entesAsignacionUrl, {
-      method: "POST",
-      body: JSON.stringify({ id, accion: "delete" }),
-    });
+      method: 'POST',
+      body: JSON.stringify({ id, accion: 'delete' }),
+    })
 
-    if (!res.ok) throw { status: res.status, statusText: res.statusText };
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
 
-    const clone = res.clone();
+    const clone = res.clone()
 
-    let text = await clone.text();
+    let text = await clone.text()
 
-    console.log(text);
+    console.log(text)
 
-    const json = await res.json();
+    const json = await res.json()
 
-    console.log(json);
+    console.log(json)
 
     if (json.success) {
       toastNotification({
         type: NOTIFICATIONS_TYPES.done,
         message: json.success,
-      });
+      })
     }
     if (json.error) {
       toastNotification({
         type: NOTIFICATIONS_TYPES.fail,
         message: json.error,
-      });
+      })
     }
 
-    return json;
+    return json
   } catch (e) {
-    console.log(e);
+    console.log(e)
 
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
-      message: "Error al eliminar asignacion de ente ",
-    });
+      message: 'Error al eliminar asignacion de ente ',
+    })
   } finally {
-    hideLoader();
+    hideLoader()
   }
-};
+}
 
 const asignarMontoEnte = async ({ id_ente, monto_total, id_ejercicio }) => {
-  showLoader();
+  showLoader()
   try {
     let res = await fetch(entesAsignacionUrl, {
-      method: "POST",
+      method: 'POST',
       body: JSON.stringify({
-        accion: "insert",
+        accion: 'insert',
         id_ente,
         monto_total,
         id_ejercicio,
       }),
-    });
+    })
 
-    if (!res.ok) throw { status: res.status, statusText: res.statusText };
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
 
-    const clone = res.clone();
+    const clone = res.clone()
 
-    let text = await clone.text();
+    let text = await clone.text()
 
-    console.log(text);
+    console.log(text)
 
-    const json = await res.json();
+    const json = await res.json()
 
-    console.log(json);
+    console.log(json)
 
     if (json.success) {
       toastNotification({
         type: NOTIFICATIONS_TYPES.done,
         message: json.success,
-      });
+      })
     }
     if (json.error) {
       toastNotification({
         type: NOTIFICATIONS_TYPES.fail,
         message: json.error,
-      });
+      })
     }
 
-    return json;
+    return json
   } catch (e) {
-    console.log(e);
+    console.log(e)
 
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
-      message: "Error al asignar monto a ente",
-    });
+      message: 'Error al asignar monto a ente',
+    })
   } finally {
-    hideLoader();
+    hideLoader()
   }
-};
+}
 
 const getDistribucionEntes = async () => {
-  showLoader();
+  showLoader()
   try {
     let res = await fetch(entesDistribucionUrl, {
-      method: "POST",
-      body: JSON.stringify({ accion: "consultar" }),
-    });
+      method: 'POST',
+      body: JSON.stringify({ accion: 'consultar' }),
+    })
 
-    if (!res.ok) throw { status: res.status, statusText: res.statusText };
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
 
-    const clone = res.clone();
+    const clone = res.clone()
 
-    let text = await clone.text();
+    let text = await clone.text()
 
-    console.log(text);
+    console.log(text)
 
-    const json = await res.json();
+    const json = await res.json()
 
-    console.log(json);
+    console.log(json)
     if (json.success) {
       let mappedData = mapData({
         obj: json.success,
-        name: "ente_nombre",
-        id: "id",
-      });
+        name: 'ente_nombre',
+        id: 'id',
+      })
 
-      return { mappedData, fullInfo: json.success };
+      return { mappedData, fullInfo: json.success }
     }
 
     if (json.error) {
-      return json;
+      return json
       // toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
     }
   } catch (e) {
-    console.log(e);
+    console.log(e)
 
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
-      message: "Error al obtener distribucion de partidas",
-    });
+      message: 'Error al obtener distribucion de partidas',
+    })
   } finally {
-    hideLoader();
+    hideLoader()
   }
-};
+}
 
 const getDistribucionEnte = async (id) => {
-  showLoader();
+  showLoader()
   try {
     let res = await fetch(entesDistribucionUrl, {
-      method: "POST",
-      body: JSON.stringify({ accion: "consultar_id", id }),
-    });
+      method: 'POST',
+      body: JSON.stringify({ accion: 'consultar_id', id }),
+    })
 
-    if (!res.ok) throw { status: res.status, statusText: res.statusText };
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
 
-    const clone = res.clone();
+    const clone = res.clone()
 
-    let text = await clone.text();
+    let text = await clone.text()
 
-    console.log(text);
+    console.log(text)
 
-    const json = await res.json();
+    const json = await res.json()
 
-    console.log(json);
+    console.log(json)
     if (json.success) {
-      return json.success;
+      return json.success
     }
 
     if (json.error) {
       toastNotification({
         type: NOTIFICATIONS_TYPES.fail,
         message: json.error,
-      });
-      return json;
+      })
+      return json
     }
   } catch (e) {
-    console.log(e);
+    console.log(e)
 
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
-      message: "Error al obtener distribucion de partidas",
-    });
+      message: 'Error al obtener distribucion de partidas',
+    })
   } finally {
-    hideLoader();
+    hideLoader()
   }
-};
+}
 
 const aceptarDistribucionEnte = async ({ id }) => {
-  showLoader();
+  showLoader()
   try {
     let res = await fetch(entesDistribucionUrl, {
-      method: "POST",
+      method: 'POST',
       body: JSON.stringify({
-        accion: "aprobar_rechazar",
+        accion: 'aprobar_rechazar',
         status: 1,
         id_asignacion: id,
       }),
-    });
+    })
 
-    if (!res.ok) throw { status: res.status, statusText: res.statusText };
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
 
-    const clone = res.clone();
+    const clone = res.clone()
 
-    let text = await clone.text();
+    let text = await clone.text()
 
-    console.log(text);
+    console.log(text)
 
-    const json = await res.json();
+    const json = await res.json()
 
-    console.log(json);
+    console.log(json)
 
     if (json.success) {
       toastNotification({
         type: NOTIFICATIONS_TYPES.done,
         message: json.success,
-      });
+      })
     }
     if (json.error) {
       toastNotification({
         type: NOTIFICATIONS_TYPES.fail,
         message: json.error,
-      });
+      })
     }
 
-    return json;
+    return json
   } catch (e) {
-    console.log(e);
+    console.log(e)
 
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
-      message: "Error al aceptar distribucion de ente",
-    });
+      message: 'Error al aceptar distribucion de ente',
+    })
   } finally {
-    hideLoader();
+    hideLoader()
   }
-};
+}
 
 const rechazarDistribucionEnte = async ({ id }) => {
-  console.log(id);
+  console.log(id)
 
-  showLoader();
+  showLoader()
   try {
     let res = await fetch(entesDistribucionUrl, {
-      method: "POST",
+      method: 'POST',
       body: JSON.stringify({
-        accion: "aprobar_rechazar",
+        accion: 'aprobar_rechazar',
         status: 2,
         id_asignacion: id,
       }),
-    });
+    })
 
-    if (!res.ok) throw { status: res.status, statusText: res.statusText };
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
 
-    const clone = res.clone();
+    const clone = res.clone()
 
-    let text = await clone.text();
+    let text = await clone.text()
 
-    console.log(text);
+    console.log(text)
 
-    const json = await res.json();
+    const json = await res.json()
 
-    console.log(json);
+    console.log(json)
 
     if (json.success) {
       toastNotification({
         type: NOTIFICATIONS_TYPES.done,
         message: json.success,
-      });
+      })
     }
     if (json.error) {
       toastNotification({
         type: NOTIFICATIONS_TYPES.fail,
         message: json.error,
-      });
+      })
     }
 
-    return json;
+    return json
   } catch (e) {
-    console.log(e);
+    console.log(e)
 
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
-      message: "Error al rechazar distribucion de ente",
-    });
+      message: 'Error al rechazar distribucion de ente',
+    })
   } finally {
-    hideLoader();
+    hideLoader()
   }
-};
+}
 
 const getDependenciasEntes = async () => {
-  showLoader();
+  showLoader()
   try {
     let res = await fetch(entesDistribucionUrl, {
-      method: "POST",
-      body: JSON.stringify({ accion: "consultar" }),
-    });
+      method: 'POST',
+      body: JSON.stringify({ accion: 'consultar' }),
+    })
 
-    if (!res.ok) throw { status: res.status, statusText: res.statusText };
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
 
-    const clone = res.clone();
+    const clone = res.clone()
 
-    let text = await clone.text();
+    let text = await clone.text()
 
-    console.log(text);
+    console.log(text)
 
-    const json = await res.json();
+    const json = await res.json()
 
-    console.log(json);
+    console.log(json)
     if (json.success) {
       let mappedData = mapData({
         obj: json.success,
-        name: "ente_nombre",
-        id: "id",
-      });
+        name: 'ente_nombre',
+        id: 'id',
+      })
 
-      return { mappedData, fullInfo: json.success };
+      return { mappedData, fullInfo: json.success }
     }
 
     if (json.error) {
-      return json;
+      return json
       // toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
     }
   } catch (e) {
-    console.log(e);
+    console.log(e)
 
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
-      message: "Error al obtener dependencias entes",
-    });
+      message: 'Error al obtener dependencias entes',
+    })
   } finally {
-    hideLoader();
+    hideLoader()
   }
-};
+}
 
 const getDependenciasEnte = async (id) => {
-  showLoader();
+  showLoader()
   try {
     let res = await fetch(entesDistribucionUrl, {
-      method: "POST",
-      body: JSON.stringify({ accion: "consultar_id", id }),
-    });
+      method: 'POST',
+      body: JSON.stringify({ accion: 'consultar_id', id }),
+    })
 
-    if (!res.ok) throw { status: res.status, statusText: res.statusText };
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
 
-    const clone = res.clone();
+    const clone = res.clone()
 
-    let text = await clone.text();
+    let text = await clone.text()
 
-    console.log(text);
+    console.log(text)
 
-    const json = await res.json();
+    const json = await res.json()
 
-    console.log(json);
+    console.log(json)
     if (json.success) {
-      return json.success;
+      return json.success
     }
 
     if (json.error) {
       toastNotification({
         type: NOTIFICATIONS_TYPES.fail,
         message: json.error,
-      });
-      return json;
+      })
+      return json
     }
   } catch (e) {
-    console.log(e);
+    console.log(e)
 
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
-      message: "Error al obtener distribucion de partidas",
-    });
+      message: 'Error al obtener distribucion de partidas',
+    })
   } finally {
-    hideLoader();
+    hideLoader()
   }
-};
+}
 
 export {
   getEntesPlan,
@@ -780,4 +779,4 @@ export {
   rechazarDistribucionEnte,
   getDependenciasEntes,
   getDependenciasEnte,
-};
+}

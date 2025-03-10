@@ -105,7 +105,7 @@ $titulo = 'Distribución por entes';
     <div class="pc-content">
       <div class=" d-flex justify-content-between">
         <h4 class="fw-bold py-3 mb-4">
-          <span class="text-muted fw-light">Formulación /</span> <?php echo $titulo ?>
+          <span class="text-muted fw-light">Ejecución presupuestaria /</span> <?php echo $titulo ?>
         </h4>
       </div>
       <div class="row ">
@@ -128,7 +128,9 @@ $titulo = 'Distribución por entes';
               <div class="d-flex flex-column">
                 <div class="card-title mb-auto ">
                   <h5 class="mb-0"><?php echo $info_asignacion['ente_nombre'] ?></h5>
-                  <p class="mb-0" id="asignacion_total">Asignación total: <b><?php echo number_format($info_asignacion['monto_total'], 2, ',', '.') ?> Bs</b></p>
+                  <p class="mb-0" id="asignacion_total">Asignación total:
+                    <b><?php echo number_format($info_asignacion['monto_total'], 2, ',', '.') ?> Bs</b>
+                  </p>
                   <p id="actividad"></p>
                 </div>
                 <div class="mt-2 card-body">
@@ -141,8 +143,7 @@ $titulo = 'Distribución por entes';
                         <th>S/P/P</th>
                         <th>Partida</th>
                         <th>Asignación</th>
-                        <th></th>
-                        <th></th>
+
                       </tr>
                     </thead>
                     <tbody>
@@ -194,7 +195,7 @@ $titulo = 'Distribución por entes';
         }
 
         // Intercambiar entre las tablas
-        document.addEventListener('click', function(event) {
+        document.addEventListener('click', function (event) {
           if (event.target.closest('.nav-item')) {
             const id = event.target.closest('.nav-item').getAttribute('data-id-actividad');
             info_actividades(id)
@@ -258,7 +259,7 @@ $titulo = 'Distribución por entes';
               key: key,
               monto_nuevo: monto
             }),
-            success: function(response) {
+            success: function (response) {
               console.log(response)
               if (response.success) {
                 msgReload()
@@ -266,7 +267,7 @@ $titulo = 'Distribución por entes';
                 toast_s("error", response.error);
               }
             },
-            error: function(xhr, status, error) {
+            error: function (xhr, status, error) {
               toast_s("error", xhr.responseText);
             },
           });
@@ -316,8 +317,6 @@ $titulo = 'Distribución por entes';
                 spp,
                 distribucionPartida[distrib.id_distribucion]['partida'],
                 agregarSeparadorMiles(distrib.monto) + ' Bs',
-                `<button class="btn btn-update btn-sm bg-brand-color-2 text-white" data-edit-id-dist="${id}" data-monto="${distrib.monto}" data-key-id="${index}"></button>`,
-                `<button class="btn btn-danger btn-sm btn-destroy" data-delete-id-dist="${id}" data-monto="${distrib.monto}" data-key-id="${index}"></button>`
               ]);
             });
             DataTable.rows.add(info_tabla).draw();
@@ -345,7 +344,7 @@ $titulo = 'Distribución por entes';
                   id: id,
                   key: key
                 }),
-                success: function(response) {
+                success: function (response) {
                   console.log(response)
                   if (response.success) {
                     msgReload()
@@ -353,7 +352,7 @@ $titulo = 'Distribución por entes';
                     toast_s("error", response.error);
                   }
                 },
-                error: function(xhr, status, error) {
+                error: function (xhr, status, error) {
                   console.error(xhr.responseText);
                 },
               });

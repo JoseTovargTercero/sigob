@@ -1,20 +1,16 @@
 import { confirmNotification, toastNotification } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
+import { APP_URL, config } from './urlConfig.js'
 
-const sendTabulatorUrl =
-  '../../../../../sigob/back/modulo_nomina/nom_tabulador_registro.php'
+const sendTabulatorUrl = `${APP_URL}${config.MODULE_NAMES.NOMINA}nom_tabulador_registro.php`
 
-const updateTabulatorUrl =
-  '../../../../../sigob/back/modulo_nomina/nom_tabulador_modif.php'
+const updateTabulatorUrl = `${APP_URL}${config.MODULE_NAMES.NOMINA}nom_tabulador_modif.php`
 
-const getTabulatorsDataUrl =
-  '../../../../../sigob/back/modulo_nomina/nom_tabulador_datos.php'
+const getTabulatorsDataUrl = `${APP_URL}${config.MODULE_NAMES.NOMINA}nom_tabulador_datos.php`
 
-const getTabulatorDataUrl =
-  '../../../../../sigob/back/modulo_nomina/nom_tabuladorEst_Info.php'
+const getTabulatorDataUrl = `${APP_URL}${config.MODULE_NAMES.NOMINA}nom_tabuladorEst_Info.php`
 
-const deleteTabulatorUrl =
-  '../../../../../sigob/back/modulo_nomina/nom_tabulador_delete.php'
+const deleteTabulatorUrl = `${APP_URL}${config.MODULE_NAMES.NOMINA}nom_tabulador_delete.php`
 
 const sendTabulatorData = async ({ tabulatorData }) => {
   try {

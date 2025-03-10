@@ -7,9 +7,9 @@ import {
   toastNotification,
 } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
+import { APP_URL, config } from './urlConfig.js'
 
-const partidasFormUrl =
-  '../../../../sigob/back/modulo_pl_formulacion/form_sectores.php'
+const partidasFormUrl = `${APP_URL}${config.MODULE_NAMES.FORMULACION}form_sectores.php`
 
 const getSectores = async () => {
   showLoader()

@@ -5,24 +5,19 @@ import {
   toastNotification,
 } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
+import { APP_URL, config } from './urlConfig.js'
 
-const getMovimientosUrl =
-  '../../../../sigob/back/modulo_nomina/nom_movimientos_datos.php'
+const getMovimientosUrl = `${APP_URL}${config.MODULE_NAMES.nomina}nom_movimientos_datos.php`
 
-const revertirCambiosUrl =
-  '../../../../sigob/back/modulo_nomina/nom_revertir_cambios.php'
+const revertirCambiosUrl = `${APP_URL}${config.MODULE_NAMES.nomina}nom_revertir_cambios.php`
 
-const getRegConMovimientosUrl =
-  '../../../../sigob/back/modulo_registro_control/regcon_movimientos_datos.php'
+const getRegConMovimientosUrl = `${APP_URL}${config.MODULE_NAMES.EJECUCION}regcon_movimientos_datos.php`
 
-const getPeticionesMovimientosUrl =
-  '../../../../sigob/back/modulo_nomina/nom_peticiones_cambios.php'
+const getPeticionesMovimientosUrl = `${APP_URL}${config.MODULE_NAMES.nomina}nom_peticiones_cambios.php`
 
-const updateRegConMovimientosUrl =
-  '../../../../sigob/back/modulo_registro_control/regcon_movimientos_datos.php'
+const updateRegConMovimientosUrl = `${APP_URL}${config.MODULE_NAMES.EJECUCION}regcon_movimientos_datos.php`
 
-const rechazarPeticionUrl =
-  '../../../../sigob/back/modulo_registro_control/regcon_peticion_rechazar.php'
+const rechazarPeticionUrl = `${APP_URL}${config.MODULE_NAMES.EJECUCION}regcon_peticion_rechazar.php`
 
 const getMovimientos = async () => {
   try {
