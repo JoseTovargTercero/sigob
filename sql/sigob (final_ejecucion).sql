@@ -7155,7 +7155,6 @@ INSERT INTO `menu` (`id`, `oficina`, `categoria`, `nombre`, `dir`, `icono`) VALU
 (42, 'ejecucion_p', NULL, 'reportes', 'mod_ejecucion_presupuestaria/pre_reportes', 'bx-download'),
 (43, 'ejecucion_p', NULL, 'traspasos', 'mod_ejecucion_presupuestaria/pre_traspasos_form', 'bx bx-receipt'),
 (46, 'ejecucion_p', NULL, 'Solicitudes de dozavo', 'mod_ejecucion_presupuestaria/pre_solicitudes_tabla', 'bx-cog'),
-(47, 'ejecucion_p', NULL, 'créditos / proyectos', 'mod_ejecucion_presupuestaria/pre_proyectos_form', 'bx-folder'),
 (48, 'pl_formulacion', NULL, 'planes operativos', 'mod_pl_formulacion/form_plan_operativo', 'bxs-report'),
 (49, 'proyectos', NULL, 'créditos / proyectos', 'mod_proyectos/pro_proyectos_form', 'bx-folder');
 
