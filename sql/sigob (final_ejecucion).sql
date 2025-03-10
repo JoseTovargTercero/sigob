@@ -1032,14 +1032,14 @@ INSERT INTO `categorias` (`id`, `categoria`, `categoria_nombre`) VALUES
 --
 
 CREATE TABLE `compromisos` (
-  `id` int(11) NOT NULL,
+  `id` int(255) NOT NULL,
   `correlativo` varchar(255) DEFAULT NULL,
-  `tipo` varchar(255) DEFAULT NULL,
-  `id_registro` int(11) NOT NULL,
+  `descripcion` longtext DEFAULT NULL,
+  `id_registro` int(255) NOT NULL,
   `id_ejercicio` int(255) NOT NULL,
   `tabla_registro` longtext NOT NULL,
   `numero_compromiso` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 

@@ -432,6 +432,8 @@ $stmt->close();
 
 
     <script>
+      let id_ejercicio_fiscal = "<?php echo $ejercicio_fiscal ?>"
+
       am5.ready(function() {
         // Crear elemento raíz
         var root = am5.Root.new("grafico_gastos_trimestre");
@@ -535,7 +537,7 @@ $stmt->close();
               contentType: "application/json",
               data: JSON.stringify({
                 accion: "obtener_trimestre",
-                id_ejercicio: "1",
+                id_ejercicio: id_ejercicio_fiscal
               }),
             })
             .done(function(resultado) {
@@ -658,7 +660,7 @@ $stmt->close();
               contentType: 'application/json',
               data: JSON.stringify({
                 accion: 'obtener',
-                id_ejercicio: '1'
+                id_ejercicio: id_ejercicio_fiscal
               }),
             })
             .done(function(resultado) {
@@ -694,7 +696,7 @@ $stmt->close();
           type: "GET", // Tipo de solicitud
           dataType: "json", // Automáticamente parsea el JSON
           data: {
-            id_ejercicio: "3", // Parámetros de la solicitud
+            id_ejercicio: id_ejercicio_fiscal, // Parámetros de la solicitud
           },
         })
         .done(function(response) {
