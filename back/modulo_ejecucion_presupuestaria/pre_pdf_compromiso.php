@@ -355,7 +355,7 @@ if ($tablaRegistro == "gastos") {
             $stmtProyecto->close();
 
             // Concatenar sector.programa.proyecto
-            $codigoCompleto = ($dataSector['sector'] ?? 'N/A') . '.' . ($dataPrograma['programa'] ?? 'N/A') . '.' . ($dataProyecto['proyecto'] ?? 'N/A');
+            $codigoCompleto = ($dataSector['sector'] ?? '0') . '.' . ($dataPrograma['programa'] ?? '0') . '.' . ($dataProyecto['proyecto_id'] ?? '0');
 
             $detallePartidas[] = [
                 'partida' => [
