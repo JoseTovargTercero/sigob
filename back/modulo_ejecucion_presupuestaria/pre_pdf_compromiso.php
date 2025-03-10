@@ -129,7 +129,7 @@ if ($tablaRegistro == "gastos") {
 
     foreach ($distribuciones as $distribucion) {
         $id_distribucion = $distribucion['id_distribucion'];
-        $queryDistribucion = "SELECT id_partida FROM distribucion_presupuestaria WHERE id = ?";
+        $queryDistribucion = "SELECT * FROM distribucion_presupuestaria WHERE id = ?";
         $stmtDistribucion = $conexion->prepare($queryDistribucion);
         $stmtDistribucion->bind_param('i', $id_distribucion);
         $stmtDistribucion->execute();
@@ -237,7 +237,7 @@ if ($tablaRegistro == "gastos") {
 
     foreach ($distribuciones as $distribucion) {
         $id_distribucion = $distribucion['id_distribucion'];
-        $queryDistribucion = "SELECT id_partida FROM distribucion_presupuestaria WHERE id = ?";
+        $queryDistribucion = "SELECT * FROM distribucion_presupuestaria WHERE id = ?";
         $stmtDistribucion = $conexion->prepare($queryDistribucion);
         $stmtDistribucion->bind_param('i', $id_distribucion);
         $stmtDistribucion->execute();
