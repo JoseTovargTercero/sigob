@@ -346,7 +346,7 @@ if ($tablaRegistro == "gastos") {
             $stmtPrograma->close();
 
             // Consultar proyecto
-            $queryProyecto = "SELECT proyecto FROM pl_proyectos WHERE id = ?";
+            $queryProyecto = "SELECT proyecto_id FROM pl_proyectos WHERE id = ?";
             $stmtProyecto = $conexion->prepare($queryProyecto);
             $stmtProyecto->bind_param('i', $dataDistribucion['id_proyecto']);
             $stmtProyecto->execute();
