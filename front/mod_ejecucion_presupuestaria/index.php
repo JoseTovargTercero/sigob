@@ -923,7 +923,7 @@ $stmt->close();
                 var data = [];
                 var data_tabla = [];
                 DataTable.clear()
-                let contandor = 1
+                let contador = 1
                 // Procesar el resultado
                 resultado.forEach(element => {
                   let value = element.value;
@@ -936,7 +936,7 @@ $stmt->close();
                   });
                   let porcentaje_restante = restante * 100 / total_inicial
                   let porcentaje_restante_redondeado = Math.round(porcentaje_restante * 100) / 100
-                  data_tabla.push([contandor++, value, total_inicial + '<small>Bs</small>', restante + '<small>Bs</small>', porcentaje_restante_redondeado + '<small>%</small>'])
+                  data_tabla.push([contador++, value, total_inicial + '<small>Bs</small>', restante + '<small>Bs</small>', porcentaje_restante_redondeado + '<small>%</small>'])
                 });
 
                 DataTable.rows.add(data_tabla).draw()

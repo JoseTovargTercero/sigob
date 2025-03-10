@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.2
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Servidor: 127.0.0.1
--- Tiempo de generación: 09-03-2025 a las 15:33:57
--- Versión del servidor: 10.4.13-MariaDB
--- Versión de PHP: 7.4.8
+-- Servidor: localhost:3306
+-- Tiempo de generación: 10-03-2025 a las 14:06:36
+-- Versión del servidor: 10.11.10-MariaDB-cll-lve
+-- Versión de PHP: 8.3.14
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `sigob`
+-- Base de datos: `sigobnet_sigob`
 --
 
 -- --------------------------------------------------------
@@ -35,7 +35,7 @@ CREATE TABLE `asignacion_ente` (
   `fecha` varchar(255) DEFAULT NULL,
   `status` varchar(255) DEFAULT NULL,
   `status_cerrar` int(255) NOT NULL DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `asignacion_ente`
@@ -128,7 +128,7 @@ CREATE TABLE `audit_logs` (
   `affected_rows` int(11) DEFAULT NULL,
   `user_id` int(11) DEFAULT NULL,
   `timestamp` datetime DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `audit_logs`
@@ -331,8 +331,8 @@ INSERT INTO `audit_logs` (`id`, `action_type`, `table_name`, `situation`, `affec
 CREATE TABLE `backups` (
   `id` int(11) NOT NULL,
   `user` int(11) NOT NULL,
-  `fecha` varchar(20) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `tablas` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL
+  `fecha` varchar(20) DEFAULT NULL,
+  `tablas` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 --
@@ -353,10 +353,10 @@ INSERT INTO `backups` (`id`, `user`, `fecha`, `tablas`) VALUES
 
 CREATE TABLE `bancos` (
   `id` int(11) NOT NULL,
-  `prefijo` varchar(50) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `nombre` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `matriz` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `afiliado` varchar(20) COLLATE latin1_spanish_ci DEFAULT NULL
+  `prefijo` varchar(50) DEFAULT NULL,
+  `nombre` varchar(255) DEFAULT NULL,
+  `matriz` varchar(255) DEFAULT NULL,
+  `afiliado` varchar(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 --
@@ -378,7 +378,7 @@ CREATE TABLE `cargos_grados` (
   `cargo` varchar(255) DEFAULT NULL,
   `cod_cargo` varchar(5) DEFAULT NULL,
   `grado` varchar(2) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
 -- Volcado de datos para la tabla `cargos_grados`
@@ -931,7 +931,7 @@ CREATE TABLE `categorias` (
   `id` int(11) NOT NULL,
   `categoria` varchar(255) DEFAULT NULL,
   `categoria_nombre` longtext DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `categorias`
@@ -1032,7 +1032,7 @@ INSERT INTO `categorias` (`id`, `categoria`, `categoria_nombre`) VALUES
 --
 
 CREATE TABLE `compromisos` (
-  `id` int(255) NOT NULL,
+  `id` int(11) NOT NULL,
   `correlativo` varchar(255) DEFAULT NULL,
   `descripcion` longtext DEFAULT NULL,
   `id_registro` int(255) NOT NULL,
@@ -1058,7 +1058,7 @@ CREATE TABLE `conceptos` (
   `maxval` int(11) NOT NULL DEFAULT 0,
   `tipo_calculo_origen` int(11) NOT NULL DEFAULT 0,
   `codigo_concepto` varchar(50) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
 -- Volcado de datos para la tabla `conceptos`
@@ -1103,7 +1103,7 @@ CREATE TABLE `conceptos_aplicados` (
   `nomina_restar` varchar(255) DEFAULT NULL,
   `multiplicador` varchar(255) DEFAULT NULL,
   `otra_nomina` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `conceptos_aplicados`
@@ -1142,9 +1142,9 @@ INSERT INTO `conceptos_aplicados` (`id`, `concepto_id`, `nom_concepto`, `fecha_a
 
 CREATE TABLE `conceptos_formulacion` (
   `id` int(11) NOT NULL,
-  `tipo_calculo` varchar(10) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `condicion` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `valor` varchar(50) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `tipo_calculo` varchar(10) DEFAULT NULL,
+  `condicion` varchar(255) DEFAULT NULL,
+  `valor` varchar(50) DEFAULT NULL,
   `concepto_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
@@ -1169,7 +1169,7 @@ CREATE TABLE `correcciones` (
   `fecha_correccion` date NOT NULL,
   `status` int(11) NOT NULL,
   `peticion_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `correcciones`
@@ -1193,7 +1193,7 @@ CREATE TABLE `credito_adicional` (
   `descripcion_credito` longtext NOT NULL,
   `tipo_credito` int(255) NOT NULL,
   `status` int(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -1206,7 +1206,7 @@ CREATE TABLE `dependencias` (
   `dependencia` varchar(255) DEFAULT NULL,
   `cod_dependencia` varchar(10) DEFAULT NULL,
   `id_categoria` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `dependencias`
@@ -1311,7 +1311,7 @@ CREATE TABLE `descripcion_programas` (
   `id_sector` int(11) NOT NULL,
   `id_programa` int(11) NOT NULL,
   `descripcion` longtext NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `descripcion_programas`
@@ -1367,7 +1367,7 @@ CREATE TABLE `distribucion_entes` (
   `fecha` varchar(255) DEFAULT NULL,
   `id_asignacion` int(11) NOT NULL,
   `status_cerrar` int(255) NOT NULL DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `distribucion_entes`
@@ -1519,7 +1519,7 @@ CREATE TABLE `distribucion_presupuestaria` (
   `status` int(11) NOT NULL,
   `status_cerrar` int(255) NOT NULL,
   `id_actividad` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `distribucion_presupuestaria`
@@ -3085,7 +3085,7 @@ CREATE TABLE `ejercicio_fiscal` (
   `situado` varchar(255) DEFAULT NULL,
   `divisor` varchar(255) DEFAULT NULL,
   `status` int(11) NOT NULL DEFAULT 1
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `ejercicio_fiscal`
@@ -3102,26 +3102,26 @@ INSERT INTO `ejercicio_fiscal` (`id`, `ano`, `situado`, `divisor`, `status`) VAL
 
 CREATE TABLE `empleados` (
   `id` int(11) NOT NULL,
-  `nacionalidad` varchar(2) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `cedula` varchar(20) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `nombres` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `nacionalidad` varchar(2) DEFAULT NULL,
+  `cedula` varchar(20) DEFAULT NULL,
+  `nombres` varchar(255) DEFAULT NULL,
   `otros_anios` int(11) NOT NULL DEFAULT 0,
-  `status` varchar(5) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `observacion` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `cod_cargo` varchar(10) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `banco` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `cuenta_bancaria` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `status` varchar(5) DEFAULT NULL,
+  `observacion` varchar(255) DEFAULT NULL,
+  `cod_cargo` varchar(10) DEFAULT NULL,
+  `banco` varchar(255) DEFAULT NULL,
+  `cuenta_bancaria` varchar(255) DEFAULT NULL,
   `hijos` int(11) NOT NULL DEFAULT 0,
   `instruccion_academica` int(11) NOT NULL DEFAULT 0,
   `discapacidades` int(11) NOT NULL DEFAULT 0,
-  `tipo_nomina` varchar(10) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `tipo_nomina` varchar(10) DEFAULT NULL,
   `id_dependencia` int(11) NOT NULL,
   `verificado` int(11) NOT NULL DEFAULT 0,
-  `correcion` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `correcion` varchar(255) DEFAULT NULL,
   `beca` int(11) NOT NULL DEFAULT 0,
   `fecha_ingreso` date DEFAULT NULL,
   `id_categoria` int(11) NOT NULL,
-  `id_partida` longtext COLLATE latin1_spanish_ci DEFAULT NULL
+  `id_partida` longtext DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 --
@@ -4503,22 +4503,22 @@ INSERT INTO `empleados` (`id`, `nacionalidad`, `cedula`, `nombres`, `otros_anios
 
 CREATE TABLE `empleados_pasados` (
   `id` int(11) NOT NULL,
-  `nacionalidad` varchar(2) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `cedula` varchar(20) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `nombres` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `nacionalidad` varchar(2) DEFAULT NULL,
+  `cedula` varchar(20) DEFAULT NULL,
+  `nombres` varchar(255) DEFAULT NULL,
   `otros_anios` int(11) NOT NULL DEFAULT 0,
-  `status` varchar(5) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `observacion` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `cod_cargo` varchar(10) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `banco` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `cuenta_bancaria` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `status` varchar(5) DEFAULT NULL,
+  `observacion` varchar(255) DEFAULT NULL,
+  `cod_cargo` varchar(10) DEFAULT NULL,
+  `banco` varchar(255) DEFAULT NULL,
+  `cuenta_bancaria` varchar(255) DEFAULT NULL,
   `hijos` int(11) NOT NULL DEFAULT 0,
   `instruccion_academica` int(11) NOT NULL DEFAULT 0,
   `discapacidades` int(11) NOT NULL DEFAULT 0,
-  `tipo_nomina` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `tipo_nomina` varchar(255) DEFAULT NULL,
   `id_dependencia` int(11) NOT NULL,
   `verificado` int(11) NOT NULL DEFAULT 0,
-  `correcion` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `correcion` varchar(255) DEFAULT NULL,
   `beca` int(11) NOT NULL DEFAULT 0,
   `fecha_ingreso` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
@@ -5941,16 +5941,16 @@ CREATE TABLE `entes` (
   `ente_nombre` longtext NOT NULL,
   `tipo_ente` varchar(255) DEFAULT NULL,
   `juridico` int(11) NOT NULL DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `entes`
 --
 
 INSERT INTO `entes` (`id`, `sector`, `programa`, `proyecto`, `actividad`, `partida`, `ente_nombre`, `tipo_ente`, `juridico`) VALUES
-(1, '1', '1', '0', '51', NULL, 'CONSEJO LEGISLATIVO', 'J', 0),
-(2, '1', '2', '0', '51', NULL, 'CONTRALORIA GENERAL DEL ESTADO', 'J', 0),
-(3, '1', '3', '0', '51', NULL, 'PROCURADORIA GENERAL', 'J', 0),
+(1, '1', '1', '0', '51', NULL, 'CONSEJO LEGISLATIVO', 'J', 1),
+(2, '1', '2', '0', '51', NULL, 'CONTRALORIA GENERAL DEL ESTADO', 'J', 1),
+(3, '1', '3', '0', '51', NULL, 'PROCURADORIA GENERAL', 'J', 1),
 (4, '1', '4', '0', '51', NULL, 'SECRETARIA EJECUTIVA DEL DESPACHO Y SEGUIMIENTO DE LA GESTION PUBLICA', 'J', 0),
 (5, '1', '5', '0', '51', NULL, 'SECRETARIA GENERAL DE GOBIERNO', 'J', 0),
 (6, '1', '6', '0', '51', NULL, 'SECRETARIA EJECUTIVA DE GESTION HUMANO', 'J', 0),
@@ -6037,149 +6037,149 @@ CREATE TABLE `entes_dependencias` (
   `ente_nombre` longtext DEFAULT NULL,
   `tipo_ente` varchar(255) DEFAULT NULL,
   `juridico` int(11) NOT NULL DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `entes_dependencias`
 --
 
-INSERT INTO `entes_dependencias` (`id`, `ue`, `sector`, `programa`, `proyecto`, `actividad`, `partida`, `ente_nombre`, `tipo_ente`) VALUES
-(5, '4', '1', '4', '0', '52', NULL, 'JEFATURA  DE ANALISIS ESTRATEGICOS', 'J'),
-(6, '4', '1', '4', '0', '53', NULL, 'CONTRATACIONES PUBLICAS', 'J'),
-(7, '4', '1', '4', '0', '54', NULL, 'JEFATURA DE LA RESIDENCIA DEL GOBERNADOR', 'J'),
-(9, '5', '1', '5', '0', '52', NULL, 'SERVICIOS DE INFORMACION Y CUSTODIA DE DOCUMENTOS', 'J'),
-(10, '5', '1', '5', '0', '53', NULL, 'ASESORAMIENTO JURIDICO', 'J'),
-(11, '5', '1', '5', '0', '54', NULL, 'ASUNTOS POLITICOS', 'J'),
-(12, '5', '1', '5', '0', '55', NULL, 'OFICINA DEL FONDO DE COMPENSACION INTERRITORIAL', 'J'),
-(14, '6', '1', '6', '0', '52', NULL, 'RECLUTAMIENTO Y SELECCION Y EVALUACION DE PERSONAL', 'J'),
-(15, '6', '1', '6', '0', '53', NULL, 'REGISTRO Y CONTROL', 'J'),
-(16, '6', '1', '6', '0', '54', NULL, 'PREVISION SOCIAL', 'J'),
-(17, '6', '1', '6', '0', '55', NULL, 'RELACIONES LABORALES', 'J'),
-(18, '6', '1', '6', '0', '56', NULL, 'OFICINA DE BIENESTAR SOCIAL', 'J'),
-(19, '6', '1', '6', '0', '57', NULL, 'ELABORACION, PROCESAMIENTO Y GENERACION DE NOMINAS', 'J'),
-(20, '6', '1', '6', '0', '58', NULL, 'OFICINA DE ATENCION AL SERVIDOR PUBLICO', 'J'),
-(22, '7', '1', '7', '0', '52', NULL, 'FORMULACION Y EVALUACION PRESUPUESTARIA', 'J'),
-(23, '7', '1', '7', '0', '53', NULL, 'CONTROL Y EJECUCION PRESUPUESTARIA', 'J'),
-(24, '7', '1', '7', '0', '54', NULL, 'PLANIFICACION Y EVALUACION DE PROYECTOS', 'J'),
-(25, '7', '1', '7', '0', '55', NULL, 'INFORMATICA', 'J'),
-(27, '8', '1', '8', '0', '52', NULL, 'SERVICIOS CONTABLES', 'J'),
-(28, '8', '1', '8', '0', '53', NULL, 'SERVICIOS DE COMPRAS Y SUMINISTROS', 'J'),
-(29, '8', '1', '8', '0', '54', NULL, 'OFICINA DE BINES Y SERVICIOS', 'J'),
-(31, '9', '1', '9', '0', '52', NULL, 'SERVICIOS CONTABLES DEL TESORO', 'J'),
-(32, '9', '1', '9', '0', '53', NULL, 'UNIDAD DE ORDENAMIENTO DE PAGO', 'J'),
-(33, '9', '1', '9', '0', '54', NULL, 'SERVICIO DE APOYO FISCAL', 'J'),
-(36, '11', '1', '11', '0', '52', NULL, 'OFICINA DE AUDITORIA INTERNA', 'J'),
-(37, '11', '1', '11', '0', '53', NULL, 'OFICINA DE  CONTROL POSTERIOR', 'J'),
-(49, '16', '3', '18', '0', '52', NULL, 'OPERADORES TURISTICO Y EMPRENDEDORES', 'J'),
-(50, '16', '3', '18', '0', '53', NULL, 'PROMOCION Y COMUNICACIÓN', 'J'),
-(51, '16', '3', '18', '0', '54', NULL, 'INSPECTOR DE TURISMO', 'J'),
-(54, '18', '4', '21', '0', '52', NULL, 'ASUNTOS DE LA JUVENTUD', 'J'),
-(55, '18', '4', '21', '0', '53', NULL, 'JEFATURA DE LOS ESTUDIANTES', 'J'),
-(56, '18', '4', '21', '0', '54', NULL, 'ORIENTACION Y PREVENCION A LOS ESTUDIANTES', 'J'),
-(58, '19', '5', '22', '0', '52', NULL, 'JEFATURA DE PRENSA', 'J'),
-(59, '19', '5', '22', '0', '53', NULL, 'JEFATURA COMUNICACIÓN DIGITAL', 'J'),
-(60, '19', '5', '22', '0', '54', NULL, 'JEFATURA DE COMUNICACION POPULAR', 'J'),
-(61, '19', '5', '22', '0', '55', NULL, 'JEFATURA DE DISEÑO PUBLICIDAD', 'J'),
-(64, '21', '5', '24', '0', '57', NULL, 'CONTRUCCION Y MEJORAMIENTO DE OBRAS EN BINES PARA EL DESARROLLO CULTURAL (FCI)', 'J'),
-(66, '22', '6', '26', '0', '52', NULL, 'DIVISION DE SUPERVICION Y EVALUACION DE PROYECTO', 'J'),
-(67, '22', '6', '26', '0', '53', NULL, 'DIVISION DE INFORMATICA, REGISTRO Y CONTROL', 'J'),
-(68, '22', '6', '26', '0', '54', NULL, 'ASESORIA LEGAL', 'J'),
-(69, '22', '6', '27', '1', '57', NULL, 'CONTRUCCION Y MEJORAMIENTO DE OBRAS  (FCI)', 'J'),
-(71, '23', '7', '28', '0', '52', NULL, 'CONTRATACION COLECTIVA OBREROS DE LA SALUD', 'J'),
-(72, '23', '7', '28', '1', '57', NULL, 'CONTRUCCION Y MEJORAS DE OBRAS EN BIENES PARA EL FORTALECIMIENTO DE LA SALUD (FCI)', 'J'),
-(74, '24', '8', '29', '0', '52', NULL, 'JEFATURA DE FORMACION CIUDADANA', 'J'),
-(75, '24', '8', '29', '0', '53', NULL, 'JEFATURA DE GESTION COMUNITARIA', 'J'),
-(76, '24', '8', '29', '0', '54', NULL, 'JEFATURA DE PROTECCION SOCIAL', 'J'),
-(82, '26', '9', '33', '0', '52', NULL, 'CONTRATACION COLECTIVA DE OBREROS DE LA D.I.E', 'J'),
-(83, '26', '9', '33', '0', '53', NULL, 'PENSIONADOS Y JUBILADOS GOBERNACION', 'J'),
-(84, '26', '9', '33', '0', '54', NULL, 'CONTRATADOS GOBERNACION', 'J'),
-(85, '26', '9', '33', '0', '55', NULL, 'PERSONAL DIRECTIVO DE ALTO NIVEL Y JEFATURAS', 'J'),
-(130, '1', '1', '1', '0', '51', NULL, 'CONSEJO LEGISLATIVO', 'J'),
-(131, '2', '1', '2', '0', '51', NULL, 'CONTRALORIA GENERAL DEL ESTADO', 'J'),
-(132, '3', '1', '3', '0', '51', NULL, 'PROCURADORIA GENERAL', 'J'),
-(133, '4', '1', '4', '0', '51', NULL, 'SECRETARIA DEL DESPACHO DEL GOBERNADOR Y SECRETARIA DE LA GESTION PUBLICA', 'J'),
-(134, '5', '1', '5', '0', '51', NULL, 'SECRETARIA GENERAL DE GOBIERNO', 'J'),
-(135, '6', '1', '6', '0', '51', NULL, 'SECRETARIA EJECUTIVA DE GESTION HUMANO', 'J'),
-(136, '7', '1', '7', '0', '51', NULL, 'SECRETARIA DE PLANIFICACION, PROYECTO Y PRESUPUESTO', 'J'),
-(137, '8', '1', '8', '0', '51', NULL, 'SERVICIOS DE ADMINISTRACION', 'J'),
-(138, '9', '1', '9', '0', '51', NULL, 'TESORERIA', 'J'),
-(139, '10', '1', '10', '0', '51', NULL, 'SECRETARIA EJECUTIVA INDIGENA', 'J'),
-(140, '11', '1', '11', '0', '51', NULL, 'AUDITORIA INTERNA', 'J'),
-(141, '12', '2', '14', '0', '51', NULL, 'COORDINACION DE SERVICIOS POLICIALES', 'J'),
-(142, '13', '2', '15', '0', '51', NULL, 'SECRETARIA DE POLITICA DE ASUNTOS FRONTERIZOS', 'J'),
-(143, '14', '2', '16', '0', '51', NULL, 'PROTECCION CIVIL', 'J'),
-(144, '15', '2', '17', '0', '51', NULL, 'PREVENCION Y CONTROL DE SINIESTRO (BOMBEROS)', 'J'),
-(145, '16', '3', '18', '0', '51', NULL, 'SECRETARIA DE TURISMO', 'J'),
-(146, '18', '4', '21', '0', '51', NULL, 'SEC. EJEC. PARA LA ATENCION DE LA JUVENTUD Y ESTUDIANTE UNIVERSITARIO', 'J'),
-(147, '19', '5', '22', '0', '51', NULL, 'SEC. EJEC. DEL SISTEMA DE INFOR. COM. (SICOAMA)', 'J'),
-(148, '21', '5', '24', '0', '51', NULL, 'SECRETARIA DE CULTURA', 'J'),
-(149, '22', '6', '26', '0', '51', NULL, 'SECRETARIA DE INFRAESTRUCTURA', 'J'),
-(150, '23', '7', '28', '0', '51', NULL, 'ADMINISTRATIVOS MALARIOLOGIA-GOBERNACION', 'J'),
-(151, '24', '8', '29', '0', '51', '', 'SECRETARIA DE PARTICIPACION POPULAR', 'J'),
-(152, '25', '8', '30', '0', '51', NULL, 'PROTECCION SOCIAL', 'J'),
-(153, '26', '9', '33', '0', '51', NULL, 'CONTRATACION COLECTIVA DE EMPLEADOS', 'J'),
-(155, '29', '10', '34', '0', '51', '2134', 'AMAVISION', 'D'),
-(156, '30', '10', '34', '0', '51', '2135', 'FUNDACION ORQUESTA SINFONICA JUVENIL E INFANTIL DE AMAZONAS', 'D'),
-(157, '31', '10', '34', '0', '51', '2136', 'FUNDACION CULTURAL ESCUELA ACADEMICA DE ORQUESTAS Y BANDAS DE AMAZONAS', 'D'),
-(158, '32', '10', '34', '0', '51', '2137', 'ESCUELA INTEGRAL DE DANZAS', 'D'),
-(159, '33', '10', '34', '0', '51', '2138', 'FUNDAPRODICAM', 'D'),
-(160, '34', '10', '34', '0', '51', '2139', 'SUPERINTENDENCIA DE ADMINISTRACION TRIBUTARIA DEL ESTADO AMAZONAS (SATEAMAZ)', 'D'),
-(161, '35', '10', '34', '0', '51', '2140', 'MUSEO ETNOLOGICO', 'D'),
-(162, '36', '10', '34', '0', '51', '2141', 'INSTITUTO REGIONAL DE DEPORTE AMAZONAS (I.R.D.A)', 'D'),
-(163, '37', '10', '34', '0', '51', '2142', 'U.N.A', 'D'),
-(164, '38', '10', '34', '0', '51', '2143', 'BIBLIOTECA PUBLICA SIMON RODRIGUEZ', 'D'),
-(165, '39', '10', '34', '0', '51', '2144', 'AMAZONAS F.C', 'D'),
-(166, '40', '10', '34', '0', '51', '2149', 'UNIVERSIDAD EXPERIMENTAL POLITECNICA DE LA FUERZA ARMADA NACIONAL NUCLEO AMAZONAS', 'D'),
-(167, '41', '10', '34', '0', '51', '2145', 'UPEL', 'D'),
-(168, '42', '10', '34', '0', '51', '2146', 'FUNDAIHIRU', 'D'),
-(169, '43', '10', '34', '0', '51', '2147', 'FUNDA SALUD', 'D'),
-(170, '44', '10', '34', '0', '51', '2148', 'HOSPITAL DR. JOSE GREGORIO HERNANDEZ', 'D'),
-(171, '45', '10', '34', '0', '51', '2174', 'A.C. HERMANAS DE JESUS RESUCITADO CASA HOGAR \"CARMEN MARTINEZ\"', 'D'),
-(172, '46', '10', '34', '0', '51', '2150', 'SIUMA', 'D'),
-(173, '47', '10', '34', '0', '51', '2151', 'FUNDACION PARA LA ATENCION INTEGRAL A LA MUJER DE AMAZONAS', 'D'),
-(174, '48', '10', '34', '0', '51', '2152', 'FUNDACION DE SISTEMA DE ATENCION INTEGRAL PARA LAS PERSONAS CON DISCAPACIDAD (SAIPDIS)', 'D'),
-(175, '49', '10', '34', '0', '51', '2153', 'FUNDACION CENTRO DE HISTORIA DE LA IDENTIDAD AMAZONENCE', 'D'),
-(176, '50', '10', '34', '0', '51', '2058', 'INVIOBRAS AMAZONAS', 'D'),
-(177, '51', '10', '34', '0', '51', '2059', 'FUNDACION PROMO-AMAZONAS', 'D'),
-(178, '52', '10', '34', '0', '51', '2155', 'INSCATA', 'D'),
-(179, '53', '10', '34', '0', '51', '2158', 'LUBRICANTES AMAZONAS C.A', 'D'),
-(180, '54', '10', '34', '0', '51', '2157', 'ALIMENTOS AMAZONAS C.A', 'D'),
-(181, '55', '10', '34', '0', '51', '2159', 'HIDROAMAZONAS C.A', 'D'),
-(182, '56', '10', '34', '0', '51', '2160', 'ASFALTO Y PAVIMENTOS AMAZONAS C.A', 'D'),
-(183, '57', '10', '34', '0', '51', '2161', 'COMBUSTIBLES AMAZONAS C.A', 'D'),
-(184, '58', '10', '34', '0', '51', '2162', 'SANEAMIENTO AMBIENTAL C.A', 'D'),
-(185, '59', '10', '34', '0', '51', '2163', 'BLOQUES Y AGREGADOS AMAZONAS C.A', 'D'),
-(186, '60', '10', '34', '0', '51', '2164', 'TEXTILES AMAZONAS C.A', 'D'),
-(187, '61', '10', '34', '0', '51', '2165', 'ACUARIOS AMAZONAS', 'D'),
-(188, '62', '10', '34', '0', '51', '2166', 'EXPORTADORA AMAZONAS C.A', 'D'),
-(189, '63', '10', '34', '0', '51', '2167', 'GAS COMUNAL AMAZONAS C.A', 'D'),
-(190, '64', '10', '34', '0', '51', '2168', 'FARMA-AMAZONAS C.A', 'D'),
-(191, '65', '10', '34', '0', '51', '2169', 'EMPRESA FLUVIALES AMAZONAS C.A', 'D'),
-(192, '66', '10', '34', '0', '51', '2170', 'EMPRESA PUBLICA DE AMAZONAS C.A', 'D'),
-(193, '67', '10', '34', '0', '51', '2171', 'EMPRESA DE SERVICIOS Y MANTENIMIENTO GENERALES AMAZONAS C.A (SERVIAMAZONAS)', 'D'),
-(194, '68', '10', '34', '0', '51', '2172', 'EMPRESA DE TURISMO', 'D'),
-(195, '70', '10', '34', '0', '51', '2133', 'VICARIATO APOSTOLICO', 'D'),
-(196, '23', '1', '2', '0', '53', NULL, 'examens', 'J'),
-(198, '77', '10', '34', '0', '51', '2061', 'CENTRO DE INVESTIGACION AMAZONAS', 'D'),
-(199, '78', '10', '34', '0', '51', '2062', 'AERO AMAZONAS', 'D'),
-(200, '11', '1', '11', '0', '54', NULL, 'OFICINA DE DETERMINACION', 'J'),
-(201, '24', '8', '29', '0', '55', NULL, 'JEFATURA PARTICIPACION COMUNITARIA', 'J'),
-(202, '24', '8', '29', '0', '56', NULL, 'ASESOR LEGAL', 'J'),
-(203, '79', '6', '27', '0', '51', '', 'SECRETARIA EJECUTIVA DE SERVICIOS Y MANTENIMIENTO COMUNITARIO', 'J'),
-(204, '79', '6', '27', '0', '52', NULL, 'JEFATURA  DE REGISTRO Y CONTROL DE GESTION HUMANA', 'J'),
-(205, '79', '6', '27', '0', '53', NULL, 'JEFATURA DE ORGANIZACION Y MANTENIMIENTO TERRITORIAL', 'J'),
-(206, '80', '2', '40', '0', '51', NULL, 'SECRETARIA  EJECUTIVA DE SEGURIDAD CIUDADANA', 'J'),
-(207, '80', '2', '40', '0', '52', NULL, 'COORDINACION DE ARTICULACION INSTITUCIONAL Y CIUDADANA', 'J'),
-(208, '80', '2', '40', '0', '53', NULL, 'COORDINACION DE PREVENCION Y ACCION COMUNITARIA', 'J'),
-(209, '80', '2', '40', '0', '54', NULL, 'COORDINACION DE INFORMATICA Y RED', 'J'),
-(210, '81', '5', '23', '0', '51', NULL, 'ADMINISTRATIVO DE I.A.B.N GOBERNACION', 'J'),
-(211, '82', '4', '20', '0', '51', NULL, 'JUBILADOS Y PENSIONADOS DE EDUCACION', 'J'),
-(212, '82', '4', '20', '0', '52', NULL, 'JUBILADOS Y PENSIONADOS', 'J'),
-(213, '13', '2', '15', '0', '52', NULL, 'CIRMIL', 'J'),
-(214, '12', '2', '14', '0', '52', NULL, 'OFICINA DE INFORMACION Y REDES', 'J'),
-(215, '25', '8', '30', '0', '52', NULL, 'JEFATURA DE PROTECCION SOCIAL', 'J'),
-(216, '25', '8', '30', '0', '53', NULL, 'JEFATURA DE GESTION HUMANA SOCIAL', 'J'),
-(217, '25', '8', '30', '0', '54', NULL, 'GESTION INSTITUCIONAL', 'J');
+INSERT INTO `entes_dependencias` (`id`, `ue`, `sector`, `programa`, `proyecto`, `actividad`, `partida`, `ente_nombre`, `tipo_ente`, `juridico`) VALUES
+(5, '4', '1', '4', '0', '52', NULL, 'JEFATURA  DE ANALISIS ESTRATEGICOS', 'J', 0),
+(6, '4', '1', '4', '0', '53', NULL, 'CONTRATACIONES PUBLICAS', 'J', 0),
+(7, '4', '1', '4', '0', '54', NULL, 'JEFATURA DE LA RESIDENCIA DEL GOBERNADOR', 'J', 0),
+(9, '5', '1', '5', '0', '52', NULL, 'SERVICIOS DE INFORMACION Y CUSTODIA DE DOCUMENTOS', 'J', 0),
+(10, '5', '1', '5', '0', '53', NULL, 'ASESORAMIENTO JURIDICO', 'J', 0),
+(11, '5', '1', '5', '0', '54', NULL, 'ASUNTOS POLITICOS', 'J', 0),
+(12, '5', '1', '5', '0', '55', NULL, 'OFICINA DEL FONDO DE COMPENSACION INTERRITORIAL', 'J', 0),
+(14, '6', '1', '6', '0', '52', NULL, 'RECLUTAMIENTO Y SELECCION Y EVALUACION DE PERSONAL', 'J', 0),
+(15, '6', '1', '6', '0', '53', NULL, 'REGISTRO Y CONTROL', 'J', 0),
+(16, '6', '1', '6', '0', '54', NULL, 'PREVISION SOCIAL', 'J', 0),
+(17, '6', '1', '6', '0', '55', NULL, 'RELACIONES LABORALES', 'J', 0),
+(18, '6', '1', '6', '0', '56', NULL, 'OFICINA DE BIENESTAR SOCIAL', 'J', 0),
+(19, '6', '1', '6', '0', '57', NULL, 'ELABORACION, PROCESAMIENTO Y GENERACION DE NOMINAS', 'J', 0),
+(20, '6', '1', '6', '0', '58', NULL, 'OFICINA DE ATENCION AL SERVIDOR PUBLICO', 'J', 0),
+(22, '7', '1', '7', '0', '52', NULL, 'FORMULACION Y EVALUACION PRESUPUESTARIA', 'J', 0),
+(23, '7', '1', '7', '0', '53', NULL, 'CONTROL Y EJECUCION PRESUPUESTARIA', 'J', 0),
+(24, '7', '1', '7', '0', '54', NULL, 'PLANIFICACION Y EVALUACION DE PROYECTOS', 'J', 0),
+(25, '7', '1', '7', '0', '55', NULL, 'INFORMATICA', 'J', 0),
+(27, '8', '1', '8', '0', '52', NULL, 'SERVICIOS CONTABLES', 'J', 0),
+(28, '8', '1', '8', '0', '53', NULL, 'SERVICIOS DE COMPRAS Y SUMINISTROS', 'J', 0),
+(29, '8', '1', '8', '0', '54', NULL, 'OFICINA DE BINES Y SERVICIOS', 'J', 0),
+(31, '9', '1', '9', '0', '52', NULL, 'SERVICIOS CONTABLES DEL TESORO', 'J', 0),
+(32, '9', '1', '9', '0', '53', NULL, 'UNIDAD DE ORDENAMIENTO DE PAGO', 'J', 0),
+(33, '9', '1', '9', '0', '54', NULL, 'SERVICIO DE APOYO FISCAL', 'J', 0),
+(36, '11', '1', '11', '0', '52', NULL, 'OFICINA DE AUDITORIA INTERNA', 'J', 0),
+(37, '11', '1', '11', '0', '53', NULL, 'OFICINA DE  CONTROL POSTERIOR', 'J', 0),
+(49, '16', '3', '18', '0', '52', NULL, 'OPERADORES TURISTICO Y EMPRENDEDORES', 'J', 0),
+(50, '16', '3', '18', '0', '53', NULL, 'PROMOCION Y COMUNICACIÓN', 'J', 0),
+(51, '16', '3', '18', '0', '54', NULL, 'INSPECTOR DE TURISMO', 'J', 0),
+(54, '18', '4', '21', '0', '52', NULL, 'ASUNTOS DE LA JUVENTUD', 'J', 0),
+(55, '18', '4', '21', '0', '53', NULL, 'JEFATURA DE LOS ESTUDIANTES', 'J', 0),
+(56, '18', '4', '21', '0', '54', NULL, 'ORIENTACION Y PREVENCION A LOS ESTUDIANTES', 'J', 0),
+(58, '19', '5', '22', '0', '52', NULL, 'JEFATURA DE PRENSA', 'J', 0),
+(59, '19', '5', '22', '0', '53', NULL, 'JEFATURA COMUNICACIÓN DIGITAL', 'J', 0),
+(60, '19', '5', '22', '0', '54', NULL, 'JEFATURA DE COMUNICACION POPULAR', 'J', 0),
+(61, '19', '5', '22', '0', '55', NULL, 'JEFATURA DE DISEÑO PUBLICIDAD', 'J', 0),
+(64, '21', '5', '24', '0', '57', NULL, 'CONTRUCCION Y MEJORAMIENTO DE OBRAS EN BINES PARA EL DESARROLLO CULTURAL (FCI)', 'J', 0),
+(66, '22', '6', '26', '0', '52', NULL, 'DIVISION DE SUPERVICION Y EVALUACION DE PROYECTO', 'J', 0),
+(67, '22', '6', '26', '0', '53', NULL, 'DIVISION DE INFORMATICA, REGISTRO Y CONTROL', 'J', 0),
+(68, '22', '6', '26', '0', '54', NULL, 'ASESORIA LEGAL', 'J', 0),
+(69, '22', '6', '27', '1', '57', NULL, 'CONTRUCCION Y MEJORAMIENTO DE OBRAS  (FCI)', 'J', 0),
+(71, '23', '7', '28', '0', '52', NULL, 'CONTRATACION COLECTIVA OBREROS DE LA SALUD', 'J', 0),
+(72, '23', '7', '28', '1', '57', NULL, 'CONTRUCCION Y MEJORAS DE OBRAS EN BIENES PARA EL FORTALECIMIENTO DE LA SALUD (FCI)', 'J', 0),
+(74, '24', '8', '29', '0', '52', NULL, 'JEFATURA DE FORMACION CIUDADANA', 'J', 0),
+(75, '24', '8', '29', '0', '53', NULL, 'JEFATURA DE GESTION COMUNITARIA', 'J', 0),
+(76, '24', '8', '29', '0', '54', NULL, 'JEFATURA DE PROTECCION SOCIAL', 'J', 0),
+(82, '26', '9', '33', '0', '52', NULL, 'CONTRATACION COLECTIVA DE OBREROS DE LA D.I.E', 'J', 0),
+(83, '26', '9', '33', '0', '53', NULL, 'PENSIONADOS Y JUBILADOS GOBERNACION', 'J', 0),
+(84, '26', '9', '33', '0', '54', NULL, 'CONTRATADOS GOBERNACION', 'J', 0),
+(85, '26', '9', '33', '0', '55', NULL, 'PERSONAL DIRECTIVO DE ALTO NIVEL Y JEFATURAS', 'J', 0),
+(130, '1', '1', '1', '0', '51', NULL, 'CONSEJO LEGISLATIVO', 'J', 1),
+(131, '2', '1', '2', '0', '51', NULL, 'CONTRALORIA GENERAL DEL ESTADO', 'J', 1),
+(132, '3', '1', '3', '0', '51', NULL, 'PROCURADORIA GENERAL', 'J', 1),
+(133, '4', '1', '4', '0', '51', NULL, 'SECRETARIA DEL DESPACHO DEL GOBERNADOR Y SECRETARIA DE LA GESTION PUBLICA', 'J', 0),
+(134, '5', '1', '5', '0', '51', NULL, 'SECRETARIA GENERAL DE GOBIERNO', 'J', 0),
+(135, '6', '1', '6', '0', '51', NULL, 'SECRETARIA EJECUTIVA DE GESTION HUMANO', 'J', 0),
+(136, '7', '1', '7', '0', '51', NULL, 'SECRETARIA DE PLANIFICACION, PROYECTO Y PRESUPUESTO', 'J', 0),
+(137, '8', '1', '8', '0', '51', NULL, 'SERVICIOS DE ADMINISTRACION', 'J', 0),
+(138, '9', '1', '9', '0', '51', NULL, 'TESORERIA', 'J', 0),
+(139, '10', '1', '10', '0', '51', NULL, 'SECRETARIA EJECUTIVA INDIGENA', 'J', 0),
+(140, '11', '1', '11', '0', '51', NULL, 'AUDITORIA INTERNA', 'J', 0),
+(141, '12', '2', '14', '0', '51', NULL, 'COORDINACION DE SERVICIOS POLICIALES', 'J', 0),
+(142, '13', '2', '15', '0', '51', NULL, 'SECRETARIA DE POLITICA DE ASUNTOS FRONTERIZOS', 'J', 0),
+(143, '14', '2', '16', '0', '51', NULL, 'PROTECCION CIVIL', 'J', 0),
+(144, '15', '2', '17', '0', '51', NULL, 'PREVENCION Y CONTROL DE SINIESTRO (BOMBEROS)', 'J', 0),
+(145, '16', '3', '18', '0', '51', NULL, 'SECRETARIA DE TURISMO', 'J', 0),
+(146, '18', '4', '21', '0', '51', NULL, 'SEC. EJEC. PARA LA ATENCION DE LA JUVENTUD Y ESTUDIANTE UNIVERSITARIO', 'J', 0),
+(147, '19', '5', '22', '0', '51', NULL, 'SEC. EJEC. DEL SISTEMA DE INFOR. COM. (SICOAMA)', 'J', 0),
+(148, '21', '5', '24', '0', '51', NULL, 'SECRETARIA DE CULTURA', 'J', 0),
+(149, '22', '6', '26', '0', '51', NULL, 'SECRETARIA DE INFRAESTRUCTURA', 'J', 0),
+(150, '23', '7', '28', '0', '51', NULL, 'ADMINISTRATIVOS MALARIOLOGIA-GOBERNACION', 'J', 0),
+(151, '24', '8', '29', '0', '51', '', 'SECRETARIA DE PARTICIPACION POPULAR', 'J', 0),
+(152, '25', '8', '30', '0', '51', NULL, 'PROTECCION SOCIAL', 'J', 0),
+(153, '26', '9', '33', '0', '51', NULL, 'CONTRATACION COLECTIVA DE EMPLEADOS', 'J', 0),
+(155, '29', '10', '34', '0', '51', '2134', 'AMAVISION', 'D', 0),
+(156, '30', '10', '34', '0', '51', '2135', 'FUNDACION ORQUESTA SINFONICA JUVENIL E INFANTIL DE AMAZONAS', 'D', 0),
+(157, '31', '10', '34', '0', '51', '2136', 'FUNDACION CULTURAL ESCUELA ACADEMICA DE ORQUESTAS Y BANDAS DE AMAZONAS', 'D', 0),
+(158, '32', '10', '34', '0', '51', '2137', 'ESCUELA INTEGRAL DE DANZAS', 'D', 0),
+(159, '33', '10', '34', '0', '51', '2138', 'FUNDAPRODICAM', 'D', 0),
+(160, '34', '10', '34', '0', '51', '2139', 'SUPERINTENDENCIA DE ADMINISTRACION TRIBUTARIA DEL ESTADO AMAZONAS (SATEAMAZ)', 'D', 0),
+(161, '35', '10', '34', '0', '51', '2140', 'MUSEO ETNOLOGICO', 'D', 0),
+(162, '36', '10', '34', '0', '51', '2141', 'INSTITUTO REGIONAL DE DEPORTE AMAZONAS (I.R.D.A)', 'D', 0),
+(163, '37', '10', '34', '0', '51', '2142', 'U.N.A', 'D', 0),
+(164, '38', '10', '34', '0', '51', '2143', 'BIBLIOTECA PUBLICA SIMON RODRIGUEZ', 'D', 0),
+(165, '39', '10', '34', '0', '51', '2144', 'AMAZONAS F.C', 'D', 0),
+(166, '40', '10', '34', '0', '51', '2149', 'UNIVERSIDAD EXPERIMENTAL POLITECNICA DE LA FUERZA ARMADA NACIONAL NUCLEO AMAZONAS', 'D', 0),
+(167, '41', '10', '34', '0', '51', '2145', 'UPEL', 'D', 0),
+(168, '42', '10', '34', '0', '51', '2146', 'FUNDAIHIRU', 'D', 0),
+(169, '43', '10', '34', '0', '51', '2147', 'FUNDA SALUD', 'D', 0),
+(170, '44', '10', '34', '0', '51', '2148', 'HOSPITAL DR. JOSE GREGORIO HERNANDEZ', 'D', 0),
+(171, '45', '10', '34', '0', '51', '2174', 'A.C. HERMANAS DE JESUS RESUCITADO CASA HOGAR \"CARMEN MARTINEZ\"', 'D', 0),
+(172, '46', '10', '34', '0', '51', '2150', 'SIUMA', 'D', 0),
+(173, '47', '10', '34', '0', '51', '2151', 'FUNDACION PARA LA ATENCION INTEGRAL A LA MUJER DE AMAZONAS', 'D', 0),
+(174, '48', '10', '34', '0', '51', '2152', 'FUNDACION DE SISTEMA DE ATENCION INTEGRAL PARA LAS PERSONAS CON DISCAPACIDAD (SAIPDIS)', 'D', 0),
+(175, '49', '10', '34', '0', '51', '2153', 'FUNDACION CENTRO DE HISTORIA DE LA IDENTIDAD AMAZONENCE', 'D', 0),
+(176, '50', '10', '34', '0', '51', '2058', 'INVIOBRAS AMAZONAS', 'D', 0),
+(177, '51', '10', '34', '0', '51', '2059', 'FUNDACION PROMO-AMAZONAS', 'D', 0),
+(178, '52', '10', '34', '0', '51', '2155', 'INSCATA', 'D', 0),
+(179, '53', '10', '34', '0', '51', '2158', 'LUBRICANTES AMAZONAS C.A', 'D', 0),
+(180, '54', '10', '34', '0', '51', '2157', 'ALIMENTOS AMAZONAS C.A', 'D', 0),
+(181, '55', '10', '34', '0', '51', '2159', 'HIDROAMAZONAS C.A', 'D', 0),
+(182, '56', '10', '34', '0', '51', '2160', 'ASFALTO Y PAVIMENTOS AMAZONAS C.A', 'D', 0),
+(183, '57', '10', '34', '0', '51', '2161', 'COMBUSTIBLES AMAZONAS C.A', 'D', 0),
+(184, '58', '10', '34', '0', '51', '2162', 'SANEAMIENTO AMBIENTAL C.A', 'D', 0),
+(185, '59', '10', '34', '0', '51', '2163', 'BLOQUES Y AGREGADOS AMAZONAS C.A', 'D', 0),
+(186, '60', '10', '34', '0', '51', '2164', 'TEXTILES AMAZONAS C.A', 'D', 0),
+(187, '61', '10', '34', '0', '51', '2165', 'ACUARIOS AMAZONAS', 'D', 0),
+(188, '62', '10', '34', '0', '51', '2166', 'EXPORTADORA AMAZONAS C.A', 'D', 0),
+(189, '63', '10', '34', '0', '51', '2167', 'GAS COMUNAL AMAZONAS C.A', 'D', 0),
+(190, '64', '10', '34', '0', '51', '2168', 'FARMA-AMAZONAS C.A', 'D', 0),
+(191, '65', '10', '34', '0', '51', '2169', 'EMPRESA FLUVIALES AMAZONAS C.A', 'D', 0),
+(192, '66', '10', '34', '0', '51', '2170', 'EMPRESA PUBLICA DE AMAZONAS C.A', 'D', 0),
+(193, '67', '10', '34', '0', '51', '2171', 'EMPRESA DE SERVICIOS Y MANTENIMIENTO GENERALES AMAZONAS C.A (SERVIAMAZONAS)', 'D', 0),
+(194, '68', '10', '34', '0', '51', '2172', 'EMPRESA DE TURISMO', 'D', 0),
+(195, '70', '10', '34', '0', '51', '2133', 'VICARIATO APOSTOLICO', 'D', 0),
+(196, '23', '1', '2', '0', '53', NULL, 'examens', 'J', 0),
+(198, '77', '10', '34', '0', '51', '2061', 'CENTRO DE INVESTIGACION AMAZONAS', 'D', 0),
+(199, '78', '10', '34', '0', '51', '2062', 'AERO AMAZONAS', 'D', 0),
+(200, '11', '1', '11', '0', '54', NULL, 'OFICINA DE DETERMINACION', 'J', 0),
+(201, '24', '8', '29', '0', '55', NULL, 'JEFATURA PARTICIPACION COMUNITARIA', 'J', 0),
+(202, '24', '8', '29', '0', '56', NULL, 'ASESOR LEGAL', 'J', 0),
+(203, '79', '6', '27', '0', '51', '', 'SECRETARIA EJECUTIVA DE SERVICIOS Y MANTENIMIENTO COMUNITARIO', 'J', 0),
+(204, '79', '6', '27', '0', '52', NULL, 'JEFATURA  DE REGISTRO Y CONTROL DE GESTION HUMANA', 'J', 0),
+(205, '79', '6', '27', '0', '53', NULL, 'JEFATURA DE ORGANIZACION Y MANTENIMIENTO TERRITORIAL', 'J', 0),
+(206, '80', '2', '40', '0', '51', NULL, 'SECRETARIA  EJECUTIVA DE SEGURIDAD CIUDADANA', 'J', 0),
+(207, '80', '2', '40', '0', '52', NULL, 'COORDINACION DE ARTICULACION INSTITUCIONAL Y CIUDADANA', 'J', 0),
+(208, '80', '2', '40', '0', '53', NULL, 'COORDINACION DE PREVENCION Y ACCION COMUNITARIA', 'J', 0),
+(209, '80', '2', '40', '0', '54', NULL, 'COORDINACION DE INFORMATICA Y RED', 'J', 0),
+(210, '81', '5', '23', '0', '51', NULL, 'ADMINISTRATIVO DE I.A.B.N GOBERNACION', 'J', 0),
+(211, '82', '4', '20', '0', '51', NULL, 'JUBILADOS Y PENSIONADOS DE EDUCACION', 'J', 0),
+(212, '82', '4', '20', '0', '52', NULL, 'JUBILADOS Y PENSIONADOS', 'J', 0),
+(213, '13', '2', '15', '0', '52', NULL, 'CIRMIL', 'J', 0),
+(214, '12', '2', '14', '0', '52', NULL, 'OFICINA DE INFORMACION Y REDES', 'J', 0),
+(215, '25', '8', '30', '0', '52', NULL, 'JEFATURA DE PROTECCION SOCIAL', 'J', 0),
+(216, '25', '8', '30', '0', '53', NULL, 'JEFATURA DE GESTION HUMANA SOCIAL', 'J', 0),
+(217, '25', '8', '30', '0', '54', NULL, 'GESTION INSTITUCIONAL', 'J', 0);
 
 -- --------------------------------------------------------
 
@@ -6191,7 +6191,7 @@ CREATE TABLE `error_log` (
   `id` int(11) NOT NULL,
   `descripcion` longtext NOT NULL,
   `fecha` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `error_log`
@@ -6228,7 +6228,7 @@ CREATE TABLE `frecuencias_por_grupo` (
   `id` int(11) NOT NULL,
   `id_grupo` int(11) NOT NULL,
   `tipo` varchar(10) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `frecuencias_por_grupo`
@@ -6256,7 +6256,7 @@ CREATE TABLE `gastos` (
   `identificador` longtext NOT NULL,
   `distribuciones` longtext NOT NULL,
   `fecha` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -6269,7 +6269,7 @@ CREATE TABLE `historico_conceptos` (
   `identificador` varchar(255) NOT NULL,
   `valor` varchar(255) NOT NULL,
   `fecha` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `historico_conceptos`
@@ -6297,7 +6297,7 @@ CREATE TABLE `historico_reintegros` (
   `nombre_nomina` varchar(255) DEFAULT NULL,
   `fecha` varchar(255) DEFAULT NULL,
   `time` datetime NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `historico_reintegros`
@@ -6977,7 +6977,7 @@ CREATE TABLE `informacion_consejo` (
   `pagina_web` longtext NOT NULL,
   `email` longtext NOT NULL,
   `consejo_local` longtext NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `informacion_consejo`
@@ -6999,7 +6999,7 @@ CREATE TABLE `informacion_contraloria` (
   `telefono` longtext NOT NULL,
   `pagina_web` longtext NOT NULL,
   `email` longtext NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `informacion_contraloria`
@@ -7023,7 +7023,7 @@ CREATE TABLE `informacion_gobernacion` (
   `fax` longtext NOT NULL,
   `codigo_postal` longtext NOT NULL,
   `nombre_apellido_gobernador` longtext NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `informacion_gobernacion`
@@ -7045,7 +7045,7 @@ CREATE TABLE `informacion_pdf` (
   `correlativo` varchar(255) DEFAULT NULL,
   `identificador` varchar(255) DEFAULT NULL,
   `banco` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `informacion_pdf`
@@ -7079,7 +7079,7 @@ CREATE TABLE `informacion_personas` (
   `id` int(11) NOT NULL,
   `nombres` longtext NOT NULL,
   `cargo` longtext NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `informacion_personas`
@@ -7104,7 +7104,7 @@ CREATE TABLE `menu` (
   `nombre` varchar(255) DEFAULT NULL,
   `dir` varchar(255) DEFAULT NULL,
   `icono` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `menu`
@@ -7156,7 +7156,8 @@ INSERT INTO `menu` (`id`, `oficina`, `categoria`, `nombre`, `dir`, `icono`) VALU
 (43, 'ejecucion_p', NULL, 'traspasos', 'mod_ejecucion_presupuestaria/pre_traspasos_form', 'bx bx-receipt'),
 (46, 'ejecucion_p', NULL, 'Solicitudes de dozavo', 'mod_ejecucion_presupuestaria/pre_solicitudes_tabla', 'bx-cog'),
 (48, 'pl_formulacion', NULL, 'planes operativos', 'mod_pl_formulacion/form_plan_operativo', 'bxs-report'),
-(49, 'proyectos', NULL, 'créditos / proyectos', 'mod_proyectos/pro_proyectos_form', 'bx-folder');
+(49, 'proyectos', NULL, 'créditos / proyectos', 'mod_proyectos/pro_proyectos_form', 'bx-folder'),
+(50, 'ejecucion_p', NULL, 'Distribución por entes', 'mod_ejecucion_presupuestaria/pre_asignacion_entes_vista', 'bx-sitemap');
 
 -- --------------------------------------------------------
 
@@ -7167,11 +7168,11 @@ INSERT INTO `menu` (`id`, `oficina`, `categoria`, `nombre`, `dir`, `icono`) VALU
 CREATE TABLE `modificaciones_empleados` (
   `id` int(11) NOT NULL,
   `empleado` int(11) NOT NULL,
-  `campo` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `valor` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `campo` varchar(255) DEFAULT NULL,
+  `valor` varchar(255) DEFAULT NULL,
   `timestamp` datetime NOT NULL DEFAULT current_timestamp(),
   `user_acepta` int(11) NOT NULL DEFAULT 0,
-  `fecha` varchar(50) COLLATE latin1_spanish_ci NOT NULL
+  `fecha` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 -- --------------------------------------------------------
@@ -7183,15 +7184,15 @@ CREATE TABLE `modificaciones_empleados` (
 CREATE TABLE `movimientos` (
   `id` int(11) NOT NULL,
   `id_empleado` int(11) NOT NULL,
-  `id_nomina` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `id_nomina` varchar(255) DEFAULT NULL,
   `fecha_movimiento` datetime NOT NULL DEFAULT current_timestamp(),
-  `accion` varchar(50) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `tabla` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `campo` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `descripcion` longtext COLLATE latin1_spanish_ci DEFAULT NULL,
-  `valor_anterior` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `valor_nuevo` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `usuario_id` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `accion` varchar(50) DEFAULT NULL,
+  `tabla` varchar(255) DEFAULT NULL,
+  `campo` varchar(255) DEFAULT NULL,
+  `descripcion` longtext DEFAULT NULL,
+  `valor_anterior` varchar(255) DEFAULT NULL,
+  `valor_nuevo` varchar(255) DEFAULT NULL,
+  `usuario_id` varchar(255) DEFAULT NULL,
   `status` int(11) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
@@ -7212,11 +7213,11 @@ INSERT INTO `movimientos` (`id`, `id_empleado`, `id_nomina`, `fecha_movimiento`,
 
 CREATE TABLE `nominas` (
   `id` int(11) NOT NULL,
-  `grupo_nomina` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `nombre` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `frecuencia` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `tipo` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `conceptos_aplicados` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL
+  `grupo_nomina` varchar(255) DEFAULT NULL,
+  `nombre` varchar(255) DEFAULT NULL,
+  `frecuencia` varchar(255) DEFAULT NULL,
+  `tipo` varchar(255) DEFAULT NULL,
+  `conceptos_aplicados` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 --
@@ -7251,7 +7252,7 @@ CREATE TABLE `nominas_conceptos` (
   `cod_nomina` varchar(10) DEFAULT NULL,
   `nom_nomina` varchar(255) DEFAULT NULL,
   `tipo_concepto` varchar(1) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
 -- Volcado de datos para la tabla `nominas_conceptos`
@@ -7282,8 +7283,8 @@ INSERT INTO `nominas_conceptos` (`id`, `contador_cod_con`, `cod_concepto`, `nom_
 
 CREATE TABLE `nominas_grupos` (
   `id` int(11) NOT NULL,
-  `codigo` varchar(20) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `nombre` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `codigo` varchar(20) DEFAULT NULL,
+  `nombre` varchar(255) DEFAULT NULL,
   `creado` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
@@ -7305,12 +7306,12 @@ INSERT INTO `nominas_grupos` (`id`, `codigo`, `nombre`, `creado`) VALUES
 CREATE TABLE `notificaciones` (
   `id` int(11) NOT NULL,
   `user_1` int(11) NOT NULL,
-  `user_2` varchar(150) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `user_2` varchar(150) DEFAULT NULL,
   `tipo` int(11) NOT NULL,
-  `guia` longtext COLLATE latin1_spanish_ci DEFAULT NULL,
+  `guia` longtext DEFAULT NULL,
   `date` datetime DEFAULT current_timestamp(),
   `visto` int(11) NOT NULL DEFAULT 0,
-  `comentario` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL
+  `comentario` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 --
@@ -7335,7 +7336,7 @@ CREATE TABLE `partidas_presupuestarias` (
   `nombre` longtext DEFAULT NULL,
   `descripcion` longtext DEFAULT NULL,
   `status` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `partidas_presupuestarias`
@@ -8800,9 +8801,9 @@ INSERT INTO `partidas_presupuestarias` (`id`, `partida`, `nombre`, `descripcion`
 
 CREATE TABLE `password_resets` (
   `id` int(11) NOT NULL,
-  `email` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `token` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `expires` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `token` varchar(255) DEFAULT NULL,
+  `expires` varchar(255) DEFAULT NULL,
   `attempts` int(11) DEFAULT 0,
   `last_attempt` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
@@ -8819,7 +8820,7 @@ CREATE TABLE `personal_directivo` (
   `nombre_apellido` longtext DEFAULT NULL,
   `email` longtext DEFAULT NULL,
   `telefono` longtext DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `personal_directivo`
@@ -8852,7 +8853,7 @@ CREATE TABLE `peticiones` (
   `identificador` varchar(255) DEFAULT NULL,
   `status_archivos` varchar(255) DEFAULT NULL,
   `correccion` longtext DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `peticiones`
@@ -8879,7 +8880,7 @@ CREATE TABLE `plan_inversion` (
   `id` int(11) NOT NULL,
   `id_ejercicio` int(11) DEFAULT NULL,
   `monto_total` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -8903,7 +8904,7 @@ CREATE TABLE `plan_operativo` (
   `servicios` longtext NOT NULL,
   `ambientes` longtext NOT NULL,
   `id_ejercicio` int(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -8915,7 +8916,7 @@ CREATE TABLE `pl_actividades` (
   `id` int(11) NOT NULL,
   `actividad` varchar(10) DEFAULT NULL,
   `denominacion` longtext DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `pl_actividades`
@@ -8939,7 +8940,7 @@ CREATE TABLE `pl_metas` (
   `cantidad` int(11) NOT NULL,
   `costo` varchar(255) NOT NULL,
   `id_ejercicio` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `pl_metas`
@@ -9050,7 +9051,7 @@ CREATE TABLE `pl_partidas` (
   `id` int(11) NOT NULL,
   `partida` varchar(20) DEFAULT NULL,
   `denominacion` longtext DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `pl_partidas`
@@ -9077,7 +9078,7 @@ CREATE TABLE `pl_programas` (
   `sector` varchar(10) DEFAULT NULL,
   `programa` varchar(10) DEFAULT NULL,
   `denominacion` longtext DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `pl_programas`
@@ -9126,7 +9127,7 @@ CREATE TABLE `pl_proyectos` (
   `id` int(11) NOT NULL,
   `proyecto_id` varchar(255) DEFAULT NULL,
   `denominacion` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `pl_proyectos`
@@ -9145,7 +9146,7 @@ CREATE TABLE `pl_sectores` (
   `id` int(11) NOT NULL,
   `sector` varchar(11) DEFAULT NULL,
   `denominacion` longtext DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `pl_sectores`
@@ -9175,7 +9176,7 @@ CREATE TABLE `pl_sectores_presupuestarios` (
   `programa` varchar(10) DEFAULT NULL,
   `proyecto` varchar(10) DEFAULT NULL,
   `nombre` longtext DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `pl_sectores_presupuestarios`
@@ -9232,7 +9233,7 @@ CREATE TABLE `poa_actividades` (
   `total` varchar(255) DEFAULT NULL,
   `id_ente` varchar(255) DEFAULT NULL,
   `fecha` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -9242,8 +9243,8 @@ CREATE TABLE `poa_actividades` (
 
 CREATE TABLE `primantiguedad` (
   `id` int(11) NOT NULL,
-  `porcentaje` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `tiempo` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL
+  `porcentaje` varchar(255) DEFAULT NULL,
+  `tiempo` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -9284,8 +9285,8 @@ INSERT INTO `primantiguedad` (`id`, `porcentaje`, `tiempo`) VALUES
 
 CREATE TABLE `profesiones` (
   `id_profesion` int(11) NOT NULL,
-  `profesion` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `porcentaje` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL
+  `profesion` varchar(255) DEFAULT NULL,
+  `porcentaje` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -9314,7 +9315,7 @@ CREATE TABLE `proyecto_credito` (
   `distribuciones` longtext NOT NULL,
   `decreto` longtext NOT NULL,
   `status` int(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -9330,7 +9331,7 @@ CREATE TABLE `proyecto_inversion` (
   `monto_proyecto` varchar(255) DEFAULT NULL,
   `status` int(11) DEFAULT 0,
   `comentario` longtext DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -9347,7 +9348,7 @@ CREATE TABLE `proyecto_inversion_partidas` (
   `programa_id` int(11) DEFAULT NULL,
   `proyecto_id` int(11) DEFAULT NULL,
   `actividad_id` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -9370,7 +9371,7 @@ CREATE TABLE `recibo_pago` (
   `nombre_nomina` varchar(255) DEFAULT NULL,
   `fecha_inicio` varchar(255) DEFAULT NULL,
   `fecha_fin` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `recibo_pago`
@@ -13519,14 +13520,14 @@ INSERT INTO `recibo_pago` (`id`, `id_empleado`, `sueldo_base`, `sueldo_integral`
 
 CREATE TABLE `reportes` (
   `id` int(11) NOT NULL,
-  `furmulacion` longtext COLLATE latin1_spanish_ci DEFAULT NULL,
-  `nominas` longtext COLLATE latin1_spanish_ci DEFAULT NULL,
-  `columnas` longtext COLLATE latin1_spanish_ci DEFAULT NULL,
-  `formato` varchar(10) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `nombre` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `furmulacion` longtext DEFAULT NULL,
+  `nominas` longtext DEFAULT NULL,
+  `columnas` longtext DEFAULT NULL,
+  `formato` varchar(10) DEFAULT NULL,
+  `nombre` varchar(255) DEFAULT NULL,
   `user` int(11) DEFAULT NULL,
   `creacion` datetime NOT NULL DEFAULT current_timestamp(),
-  `tipoFiltro` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL
+  `tipoFiltro` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 --
@@ -13570,7 +13571,7 @@ CREATE TABLE `solicitud_dozavos` (
   `status` int(11) DEFAULT NULL,
   `id_ejercicio` int(255) NOT NULL,
   `mes` int(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `solicitud_dozavos`
@@ -13597,11 +13598,7 @@ INSERT INTO `solicitud_dozavos` (`id`, `numero_orden`, `numero_compromiso`, `des
 CREATE TABLE `system_bd` (
   `id` int(11) NOT NULL,
   `actualizacion` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Volcado de datos para la tabla `system_bd`
---
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -13614,14 +13611,14 @@ CREATE TABLE `system_users` (
   `u_nombre` varchar(255) DEFAULT NULL,
   `u_oficina_id` int(11) DEFAULT NULL,
   `u_oficina` varchar(255) DEFAULT NULL,
-  `u_email` varchar(255) CHARACTER SET utf8 COLLATE utf8_spanish2_ci DEFAULT NULL,
+  `u_email` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_spanish2_ci DEFAULT NULL,
   `u_contrasena` varchar(255) DEFAULT NULL,
   `creado` datetime DEFAULT current_timestamp(),
   `u_nivel` int(11) DEFAULT NULL,
   `u_status` int(11) NOT NULL DEFAULT 1,
   `u_cedula` varchar(255) DEFAULT NULL,
   `id_ente` int(255) NOT NULL DEFAULT 1
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
 -- Volcado de datos para la tabla `system_users`
@@ -13635,8 +13632,8 @@ INSERT INTO `system_users` (`u_id`, `u_nombre`, `u_oficina_id`, `u_oficina`, `u_
 (35, 'Ricardo', 4, 'pl_formulacion', 'rr@gmail.com', '$2y$10$azF/dOpnDs9sCTYiLEF7kO8612REFdjpk8Te.bih4BaNDSfhAw9MO', '2024-10-12 11:21:03', 1, 1, '6722697', 1),
 (40, 'Hilson Martinez', 4, 'pl_formulacion', 'martinezhilson8@gmail.com', '$2y$10$3mEuUd1/uIn0nNx3.qBoYeGeDc7WAXsEUvldqHX1WNaWusgVwnu9e', '2024-11-06 15:30:45', 2, 1, '18835804', 1),
 (42, 'ASDRUBAL MARTINEZ', 4, 'pl_formulacion', 'asdrubalmartinez486@gmail.com', '$2y$10$yUnVJhDWX6xkB4BEch2HPeAbEGNA311qcjs1DXVIsTmaah6jzHwzW', '2024-11-07 11:23:04', 2, 1, '31607394', 1),
-(43, 'user ejecucion', 5, 'ejecucion_p', 'eje@correo.com', '$2y$10$eyp1moy39kuw4uredk7ao.uuzq10yniz95izlm70mupo5j6yzebvg', '2024-08-06 18:31:06', 1, 1, '67226972', 1),
-(44, 'user ente', 6, 'entes', 'ente@correo.com', '$2y$10$eyp1moy39kuw4uredk7ao.uuzq10yniz95izlm70mupo5j6yzebvg', '2024-12-20 16:30:38', 1, 1, '67226972', 1),
+(43, 'user ejecucion', 5, 'ejecucion_p', 'eje@correo.com', '$2y$10$EyP1MOY39kuw4uREdk7ao.UUzQ10YNIZ95IZLM70MUPo5J6YzEBVG', '2024-08-06 18:31:06', 1, 1, '67226972', 1),
+(44, 'user ente', 6, 'entes', 'ente@correo.com', '$2y$10$EyP1MOY39kuw4uREdk7ao.UUzQ10YNIZ95IZLM70MUPo5J6YzEBVG', '2024-12-20 16:30:38', 1, 1, '67226972', 1),
 (45, 'user proyectos', 7, 'proyectos', 'proyecto@correo.com', '$2y$10$eyp1moy39kuw4uredk7ao.uuzq10yniz95izlm70mupo5j6yzebvg', '2024-08-06 18:31:06', 1, 1, '67226972', 1);
 
 -- --------------------------------------------------------
@@ -13649,7 +13646,7 @@ CREATE TABLE `system_users_permisos` (
   `id` int(11) NOT NULL,
   `id_user` int(11) NOT NULL,
   `id_item_menu` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `system_users_permisos`
@@ -13697,7 +13694,7 @@ CREATE TABLE `tabuladores` (
   `pasos` varchar(255) DEFAULT NULL,
   `aniosPasos` varchar(255) DEFAULT NULL,
   `timestamp` date NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `tabuladores`
@@ -13718,7 +13715,7 @@ CREATE TABLE `tabuladores_estr` (
   `grado` varchar(255) DEFAULT NULL,
   `monto` varchar(255) DEFAULT NULL,
   `tabulador_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `tabuladores_estr`
@@ -14127,14 +14124,14 @@ CREATE TABLE `tasa` (
   `descripcion` varchar(255) DEFAULT NULL,
   `simbolo` varchar(255) DEFAULT NULL,
   `valor` varchar(2000) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `tasa`
 --
 
 INSERT INTO `tasa` (`id`, `descripcion`, `simbolo`, `valor`) VALUES
-(1, 'Precio del Dólar Actual', '$', '56.283');
+(1, 'Precio del Dólar Actual', '$', '65.2662');
 
 -- --------------------------------------------------------
 
@@ -14148,7 +14145,7 @@ CREATE TABLE `tasa_historico` (
   `precio` varchar(255) DEFAULT NULL,
   `descripcion` varchar(2000) DEFAULT NULL,
   `fecha` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `tasa_historico`
@@ -14191,7 +14188,8 @@ INSERT INTO `tasa_historico` (`id`, `u_nombre`, `precio`, `descripcion`, `fecha`
 (34, 'sigob', '48.3265', 'actualizacion automática', '06-12-2024'),
 (35, 'sigob', '48.7903', 'actualizacion automática', '07-12-2024'),
 (36, 'sigob', '51.7659', 'actualizacion automática', '27-12-2024'),
-(37, 'sigob', '56.283', 'actualizacion automática', '24-01-2025');
+(37, 'sigob', '56.283', 'actualizacion automática', '24-01-2025'),
+(38, 'sigob', '65.2662', 'actualizacion automática', '10-03-2025');
 
 -- --------------------------------------------------------
 
@@ -14203,7 +14201,7 @@ CREATE TABLE `tipo_gastos` (
   `id` int(255) NOT NULL,
   `nombre` longtext DEFAULT NULL,
   `id_partida` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -14215,7 +14213,7 @@ CREATE TABLE `titulo_1` (
   `id` int(11) NOT NULL,
   `articulo` longtext NOT NULL,
   `descripcion` longtext NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `titulo_1`
@@ -14261,7 +14259,7 @@ CREATE TABLE `traspasos` (
   `fecha` varchar(255) DEFAULT NULL,
   `status` int(255) NOT NULL,
   `tipo` int(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -14275,7 +14273,7 @@ CREATE TABLE `traspaso_informacion` (
   `id_distribucion` int(255) NOT NULL,
   `monto` varchar(255) NOT NULL,
   `tipo` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -14291,7 +14289,7 @@ CREATE TABLE `txt` (
   `identificador` varchar(255) DEFAULT NULL,
   `fecha_pagar` varchar(255) DEFAULT NULL,
   `correlativo` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `txt`
@@ -19166,7 +19164,7 @@ ALTER TABLE `informacion_personas`
 -- AUTO_INCREMENT de la tabla `menu`
 --
 ALTER TABLE `menu`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
 
 --
 -- AUTO_INCREMENT de la tabla `modificaciones_empleados`
@@ -19376,7 +19374,7 @@ ALTER TABLE `tasa`
 -- AUTO_INCREMENT de la tabla `tasa_historico`
 --
 ALTER TABLE `tasa_historico`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
 -- AUTO_INCREMENT de la tabla `tipo_gastos`
