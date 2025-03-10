@@ -14202,7 +14202,7 @@ CREATE TABLE `tipo_gastos` (
   `nombre` longtext DEFAULT NULL,
   `id_partida` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
+ALTER TABLE `tipo_gastos` ADD `prefijo` VARCHAR(255) NULL AFTER `id_partida`;
 -- --------------------------------------------------------
 
 --
