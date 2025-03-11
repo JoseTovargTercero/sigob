@@ -16,7 +16,7 @@ function gestionarAsignaciones($data, $method)
     $paramsId = isset($params['id']) ? $params['id'] : null;
     $paramsEjercicioId = isset($params['id_ejercicio']) ? $params['id_ejercicio'] : null;
 
-    $url = "https://sigob.net/api/asignaciones";
+    $url = "https://sigob.net/sigob_entes/api/asignaciones";
 
 
     try {

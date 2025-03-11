@@ -6,12 +6,11 @@ import {
   toastNotification,
 } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
+import { APP_URL, config } from './urlConfig.js'
 
-const compromisosPdfUrl =
-  '../../../../sigob/back/modulo_ejecucion_presupuestaria/pre_compromisos_pdf.php'
+const compromisosPdfUrl = `${APP_URL}${config.MODULE_NAMES.EJECUCION}/pre_compromisos_pdf.php`
 
-const compromisosUrl =
-  '../../../../sigob/back/modulo_ejecucion_presupuestaria/pre_compromisos_registrar.php'
+const compromisosUrl = `${APP_URL}${config.MODULE_NAMES.EJECUCION}/pre_compromisos_registrar.php`
 
 const generarCompromisoPdf = async (id, nombreArchivo) => {
   showLoader()

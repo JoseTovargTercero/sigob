@@ -8,14 +8,11 @@ import {
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 import { APP_URL, config } from './urlConfig.js'
 
-const ejercicioFiscalUrl =
-  '../../../../sigob/back/sistema_global/ejercicio_fiscal.php'
+const ejercicioFiscalUrl = `${APP_URL}${config.MODULE_NAMES.GLOBAL}ejercicio_fiscal.php`
 
-const distribucionPresupuestariaUrl =
-  '../../../../sigob/back/modulo_pl_formulacion/form_distribucion.php'
+const distribucionPresupuestariaUrl = `${APP_URL}${config.MODULE_NAMES.FORMULACION}form_distribucion.php`
 
-const distribucionPresupuestariaEntesUrl =
-  '../../../../sigob/back/modulo_pl_formulacion/form_distribucion_entes.php'
+const distribucionPresupuestariaEntesUrl = `${APP_URL}${config.MODULE_NAMES.FORMULACION}form_distribucion_entes.php`
 
 const getEjecicios = async (id) => {
   showLoader()

@@ -69,7 +69,7 @@ if ($tablaRegistro == "gastos") {
     }
 } elseif ($tablaRegistro == "solicitud_dozavos") {
     // URL de la API
-    $api_url = "https://sigob.net/api/solicitudes";
+    $api_url = "https://sigob.net/sigob_entes/api/solicitudes";
 
     // Configuración de la solicitud cURL
     $ch = curl_init();
@@ -129,7 +129,7 @@ if ($tablaRegistro == "gastos") {
 
     foreach ($distribuciones as $distribucion) {
         $id_distribucion = $distribucion['id_distribucion'];
-        $queryDistribucion = "SELECT id_partida FROM distribucion_presupuestaria WHERE id = ?";
+        $queryDistribucion = "SELECT * FROM distribucion_presupuestaria WHERE id = ?";
         $stmtDistribucion = $conexion->prepare($queryDistribucion);
         $stmtDistribucion->bind_param('i', $id_distribucion);
         $stmtDistribucion->execute();
@@ -149,9 +149,39 @@ if ($tablaRegistro == "gastos") {
             $stmtPartida->close();
 
             if ($dataPartida) {
+                // Consultar sector
+            $querySector = "SELECT sector FROM pl_sectores WHERE id = ?";
+            $stmtSector = $conexion->prepare($querySector);
+            $stmtSector->bind_param('i', $dataDistribucion['id_sector']);
+            $stmtSector->execute();
+            $resultSector = $stmtSector->get_result();
+            $dataSector = $resultSector->fetch_assoc();
+            $stmtSector->close();
+
+            // Consultar programa
+            $queryPrograma = "SELECT programa FROM pl_programas WHERE id = ?";
+            $stmtPrograma = $conexion->prepare($queryPrograma);
+            $stmtPrograma->bind_param('i', $dataDistribucion['id_programa']);
+            $stmtPrograma->execute();
+            $resultPrograma = $stmtPrograma->get_result();
+            $dataPrograma = $resultPrograma->fetch_assoc();
+            $stmtPrograma->close();
+
+            // Consultar proyecto
+            $queryProyecto = "SELECT proyecto_id FROM pl_proyectos WHERE id = ?";
+            $stmtProyecto = $conexion->prepare($queryProyecto);
+            $stmtProyecto->bind_param('i', $dataDistribucion['id_proyecto']);
+            $stmtProyecto->execute();
+            $resultProyecto = $stmtProyecto->get_result();
+            $dataProyecto = $resultProyecto->fetch_assoc();
+            $stmtProyecto->close();
+
+            // Concatenar sector.programa.proyecto
+            $codigoCompleto = ($dataSector['sector'] ?? '00') . '.' . ($dataPrograma['programa'] ?? '00') . '.' . ($dataProyecto['proyecto_id'] ?? '00') . '.00';
                 $detalleDistribuciones[] = [
                     'distribucion' => $distribucion,
-                    'partida_presupuestaria' => $dataPartida
+                    'partida_presupuestaria' => $dataPartida,
+                    'codigo_sector_programa_proyecto' => $codigoCompleto
                 ];
             } else {
                 die("No se encontró la partida presupuestaria correspondiente.");
@@ -207,7 +237,7 @@ if ($tablaRegistro == "gastos") {
 
     foreach ($distribuciones as $distribucion) {
         $id_distribucion = $distribucion['id_distribucion'];
-        $queryDistribucion = "SELECT id_partida FROM distribucion_presupuestaria WHERE id = ?";
+        $queryDistribucion = "SELECT * FROM distribucion_presupuestaria WHERE id = ?";
         $stmtDistribucion = $conexion->prepare($queryDistribucion);
         $stmtDistribucion->bind_param('i', $id_distribucion);
         $stmtDistribucion->execute();
@@ -227,9 +257,41 @@ if ($tablaRegistro == "gastos") {
             $stmtPartida->close();
 
             if ($dataPartida) {
+            // Consultar sector
+            $querySector = "SELECT sector FROM pl_sectores WHERE id = ?";
+            $stmtSector = $conexion->prepare($querySector);
+            $stmtSector->bind_param('i', $dataDistribucion['id_sector']);
+            $stmtSector->execute();
+            $resultSector = $stmtSector->get_result();
+            $dataSector = $resultSector->fetch_assoc();
+            $stmtSector->close();
+
+            // Consultar programa
+            $queryPrograma = "SELECT programa FROM pl_programas WHERE id = ?";
+            $stmtPrograma = $conexion->prepare($queryPrograma);
+            $stmtPrograma->bind_param('i', $dataDistribucion['id_programa']);
+            $stmtPrograma->execute();
+            $resultPrograma = $stmtPrograma->get_result();
+            $dataPrograma = $resultPrograma->fetch_assoc();
+            $stmtPrograma->close();
+
+            // Consultar proyecto
+            $queryProyecto = "SELECT proyecto_id FROM pl_proyectos WHERE id = ?";
+            $stmtProyecto = $conexion->prepare($queryProyecto);
+            $stmtProyecto->bind_param('i', $dataDistribucion['id_proyecto']);
+            $stmtProyecto->execute();
+            $resultProyecto = $stmtProyecto->get_result();
+            $dataProyecto = $resultProyecto->fetch_assoc();
+            $stmtProyecto->close();
+
+            // Concatenar sector.programa.proyecto
+            $codigoCompleto = ($dataSector['sector'] ?? '00') . '.' . ($dataPrograma['programa'] ?? '00') . '.' . ($dataProyecto['proyecto_id'] ?? '00') . '.00';
+
+
                 $detalleDistribuciones[] = [
                     'distribucion' => $distribucion,
-                    'partida_presupuestaria' => $dataPartida
+                    'partida_presupuestaria' => $dataPartida,
+                    'codigo_sector_programa_proyecto' => $codigoCompleto
                 ];
             } else {
                 die("No se encontró la partida presupuestaria correspondiente.");
@@ -249,7 +311,7 @@ if ($tablaRegistro == "gastos") {
     ];
 } elseif ($tablaRegistro == "solicitud_dozavos") {
     // URL de la API
-    $api_url = "https://sigob.net/api/solicitudes";
+    $api_url = "https://sigob.net/sigob_entes/api/solicitudes";
 
     // ID del registro del compromiso
 
@@ -304,67 +366,101 @@ if ($tablaRegistro == "gastos") {
         $detallePartidas = [];
 
         foreach ($partidas as $partida) {
-            $id_distribucion = $partida['id'];
-            $monto_partida = $partida['monto'];
+    $id_distribucion = $partida['id'];
+    $monto_partida = $partida['monto'];
 
-            // Consultar la distribución presupuestaria asociada a la partida
-            $queryDistribucion = "SELECT * FROM distribucion_presupuestaria WHERE id = ?";
-            $stmtDistribucion = $conexion->prepare($queryDistribucion);
-            $stmtDistribucion->bind_param('i', $id_distribucion);
-            $stmtDistribucion->execute();
-            $resultDistribucion = $stmtDistribucion->get_result();
-            $dataDistribucion = $resultDistribucion->fetch_assoc();
-            $stmtDistribucion->close();
+    // Consultar la distribución presupuestaria asociada a la partida
+    $queryDistribucion = "SELECT * FROM distribucion_presupuestaria WHERE id = ?";
+    $stmtDistribucion = $conexion->prepare($queryDistribucion);
+    $stmtDistribucion->bind_param('i', $id_distribucion);
+    $stmtDistribucion->execute();
+    $resultDistribucion = $stmtDistribucion->get_result();
+    $dataDistribucion = $resultDistribucion->fetch_assoc();
+    $stmtDistribucion->close();
 
-            if ($dataDistribucion) {
-                // Consultar los detalles de la partida presupuestaria
-                $queryPartida = "SELECT * FROM partidas_presupuestarias WHERE id = ?";
-                $stmtPartida = $conexion->prepare($queryPartida);
-                $stmtPartida->bind_param('i', $dataDistribucion['id_partida']);
-                $stmtPartida->execute();
-                $resultPartida = $stmtPartida->get_result();
-                $dataPartida = $resultPartida->fetch_assoc();
-                $stmtPartida->close();
+    if ($dataDistribucion) {
+        // Consultar los detalles de la partida presupuestaria
+        $queryPartida = "SELECT * FROM partidas_presupuestarias WHERE id = ?";
+        $stmtPartida = $conexion->prepare($queryPartida);
+        $stmtPartida->bind_param('i', $dataDistribucion['id_partida']);
+        $stmtPartida->execute();
+        $resultPartida = $stmtPartida->get_result();
+        $dataPartida = $resultPartida->fetch_assoc();
+        $stmtPartida->close();
 
-                if ($dataPartida) {
-                    $detallePartidas[] = [
-                        'partida' => [
-                            'id' => $dataDistribucion['id_partida'],
-                            'monto' => $monto_partida
-                        ],
-                        'distribucion_presupuestaria' => $dataDistribucion,
-                        'partida_presupuestaria' => $dataPartida
-                    ];
-                } else {
-                    die("No se encontró la información de la partida presupuestaria para el ID {$dataDistribucion['id_partida']}.");
-                }
-            } else {
-                die("No se encontró la distribución presupuestaria para el ID de la partida $id_distribucion.");
-            }
+        if ($dataPartida) {
+            // Consultar sector
+            $querySector = "SELECT sector FROM pl_sectores WHERE id = ?";
+            $stmtSector = $conexion->prepare($querySector);
+            $stmtSector->bind_param('i', $dataDistribucion['id_sector']);
+            $stmtSector->execute();
+            $resultSector = $stmtSector->get_result();
+            $dataSector = $resultSector->fetch_assoc();
+            $stmtSector->close();
+
+            // Consultar programa
+            $queryPrograma = "SELECT programa FROM pl_programas WHERE id = ?";
+            $stmtPrograma = $conexion->prepare($queryPrograma);
+            $stmtPrograma->bind_param('i', $dataDistribucion['id_programa']);
+            $stmtPrograma->execute();
+            $resultPrograma = $stmtPrograma->get_result();
+            $dataPrograma = $resultPrograma->fetch_assoc();
+            $stmtPrograma->close();
+
+            // Consultar proyecto
+            $queryProyecto = "SELECT proyecto_id FROM pl_proyectos WHERE id = ?";
+            $stmtProyecto = $conexion->prepare($queryProyecto);
+            $stmtProyecto->bind_param('i', $dataDistribucion['id_proyecto']);
+            $stmtProyecto->execute();
+            $resultProyecto = $stmtProyecto->get_result();
+            $dataProyecto = $resultProyecto->fetch_assoc();
+            $stmtProyecto->close();
+
+            // Concatenar sector.programa.proyecto
+            $codigoCompleto = ($dataSector['sector'] ?? '00') . '.' . ($dataPrograma['programa'] ?? '00') . '.' . ($dataProyecto['proyecto_id'] ?? '00') . '.00';
+
+            $detallePartidas[] = [
+                'partida' => [
+                    'id' => $dataDistribucion['id_partida'],
+                    'monto' => $monto_partida
+                ],
+                'distribucion_presupuestaria' => $dataDistribucion,
+                'partida_presupuestaria' => $dataPartida,
+                'codigo_sector_programa_proyecto' => $codigoCompleto
+            ];
+        } else {
+            die("No se encontró la información de la partida presupuestaria para el ID {$dataDistribucion['id_partida']}.");
         }
-
-        // Resultado final con la información de la solicitud, las partidas y distribuciones presupuestarias
-        $response = [
-            'compromiso' => $response_data['success']['informacion_compromiso'],
-            'registro_especifico' => $response_data['success'],
-            'solicitud' => [
-                'id' => $response_data['success']['id'],
-                'numero_orden' => $response_data['success']['numero_orden'],
-                'numero_compromiso' => $response_data['success']['numero_compromiso'],
-                'descripcion' => $response_data['success']['descripcion'],
-                'tipo' => $response_data['success']['tipo'],
-                'monto' => $response_data['success']['monto'],
-                'fecha' => $response_data['success']['fecha'],
-                'id_ente' => $response_data['success']['id_ente'],
-                'status' => $response_data['success']['status'],
-                'id_ejercicio' => $response_data['success']['id_ejercicio'],
-                'mes' => $date2 // Incluir el mes en formato textual
-            ],
-            'partidas' => $detallePartidas
-        ];
+    } else {
+        die("No se encontró la distribución presupuestaria para el ID de la partida $id_distribucion.");
     }
 }
 
+
+        // Resultado final con la información de la solicitud, las partidas y distribuciones presupuestarias
+        $response = [
+    'compromiso' => $dataCompromiso,
+    'registro_especifico' => $response_data['success'],
+    'solicitud' => [
+        'id' => $response_data['success']['id'],
+        'numero_orden' => $response_data['success']['numero_orden'],
+        'numero_compromiso' => $response_data['success']['numero_compromiso'],
+        'descripcion' => $response_data['success']['descripcion'],
+        'tipo' => $response_data['success']['tipo'],
+        'monto' => $response_data['success']['monto'],
+        'fecha' => $response_data['success']['fecha'],
+        'id_ente' => $response_data['success']['id_ente'],
+        'status' => $response_data['success']['status'],
+        'id_ejercicio' => $response_data['success']['id_ejercicio'],
+        'mes' => $date2 // Incluir el mes en formato textual
+    ],
+    'partidas' => $detallePartidas
+];
+
+
+    }
+}
+$dataSolicitud = $response; // Asegurar que la vista accede a los datos
 
 
 
@@ -906,9 +1002,10 @@ function unidad2($numuero)
     <?php if (($tablaRegistro === 'gastos' || $tablaRegistro === 'proyecto_credito') && !empty($detalleDistribuciones) && is_array($detalleDistribuciones)) : ?>
         <?php foreach ($detalleDistribuciones as $distribucion) : 
             $partidaPresupuestaria = $distribucion['partida_presupuestaria'] ?? null;
+            $codigo_sector_programa_proyecto = $distribucion['codigo_sector_programa_proyecto'] ?? null;
             ?>
             <tr>
-                <td class="bl bt bb"><?php echo $partidaPresupuestaria['partida'] ?? 'N/A'; ?></td>
+                <td class="bl bt bb"><?php echo $codigo_sector_programa_proyecto ?? '00.00.00.00'; ?>.<?php echo $partidaPresupuestaria['partida'] ?? 'N/A'; ?></td>
                 <td class="bl bt bb br"><?php echo $partidaPresupuestaria['descripcion'] ?? 'Sin descripción'; ?></td>
                 <td class="bl bt bb br">
                     <?php echo number_format($distribucion['distribucion']['monto'] ?? 0, 2, ',', '.'); ?>
@@ -917,11 +1014,14 @@ function unidad2($numuero)
         <?php endforeach; ?>
     <?php elseif ($tablaRegistro === 'solicitud_dozavos' && !empty($dataSolicitud)) : ?>
         <?php 
-        $partidas = !empty($dataRegistro['partidas']) ? json_decode($dataRegistro['partidas'], true) : [];
+        $partidas = !empty($dataRegistro['partidas']) && is_string($dataRegistro['partidas']) 
+    ? json_decode($dataRegistro['partidas'], true) 
+    : (is_array($dataRegistro['partidas']) ? $dataRegistro['partidas'] : []);
+
         ?>
         <?php foreach ($detallePartidas as $detalle) : ?>
             <tr>
-                <td class="bl bt bb"><?php echo $detalle['partida_presupuestaria']['partida'] ?? 'N/A'; ?></td>
+                <td class="bl bt bb"><?php echo $detalle['codigo_sector_programa_proyecto'] ?? '0.0.0.0'; ?>.<?php echo $detalle['partida_presupuestaria']['partida'] ?? 'N/A'; ?></td>
                 <td class="bl bt bb"><?php echo htmlspecialchars($detalle['partida_presupuestaria']['descripcion'] ?? 'Sin descripción'); ?></td>
                 <td class="bl bt bb"><?php echo number_format($detalle['partida']['monto'] ?? 0, 2, ',', '.'); ?></td>
             </tr>

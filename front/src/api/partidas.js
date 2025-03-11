@@ -6,15 +6,13 @@ import {
   toastNotification,
 } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
+import { APP_URL, config } from './urlConfig.js'
 
-const partidasUrl =
-  '../../../../sigob/back/modulo_nomina/nom_partidas_datos.php'
+const partidasUrl = `${APP_URL}${config.MODULE_NAMES.NOMINA}nom_partidas_datos.php`
 
-const partidasOrdinariasUrl =
-  '../../../../sigob/back/modulo_pl_formulacion/form_registro_ordinarias.php'
+const partidasOrdinariasUrl = `${APP_URL}${config.MODULE_NAMES.FORMULACION}form_registro_ordinarias.php`
 
-const partidasFormUrl =
-  '../../../../sigob/back/modulo_pl_formulacion/form_partidas.php'
+const partidasFormUrl = `${APP_URL}${config.MODULE_NAMES.FORMULACION}form_partidas.php`
 
 const getPartidas = async (id) => {
   try {

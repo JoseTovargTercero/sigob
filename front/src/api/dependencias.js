@@ -6,9 +6,9 @@ import {
   toastNotification,
 } from '../helpers/helpers.js'
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
+import { APP_URL, config } from './urlConfig.js'
 
-const dependenciasUrl =
-  '../../../../sigob/back/modulo_nomina/nom_dependencias_datos.php'
+const dependenciasUrl = `${APP_URL}${config.MODULE_NAMES.NOMINA}nom_dependencias_datos.php`
 
 const getDependencias = async (id) => {
   try {

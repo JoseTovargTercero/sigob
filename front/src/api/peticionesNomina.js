@@ -7,51 +7,39 @@ import {
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 import { getDependencias } from './dependencias.js'
 import { getJobData, getProfessionData } from './empleados.js'
+import { APP_URL, config } from './urlConfig.js'
 
-const obtenerNominasUrl =
-  '../../../../../sigob/back/modulo_nomina/nom_empleados_pagar_back.php'
+const obtenerNominasUrl = `${APP_URL}${config.MODULE_NAMES.NOMINA}nom_empleados_pagar_back.php`
 
-const calculoNominaUrl =
-  '../../../../../sigob/back/modulo_nomina/nom_calculonomina.php'
+const calculoNominaUrl = `${APP_URL}${config.MODULE_NAMES.NOMINA}nom_calculonomina.php`
 
-const enviarCalculoNominaUrl =
-  '../../../../../sigob/back/modulo_nomina/nom_calculonomina_registro.php'
+const enviarCalculoNominaUrl = `${APP_URL}${config.MODULE_NAMES.NOMINA}nom_calculonomina_registro.php`
 
-const getSemanasDelAnioUrl =
-  '../../../../sigob/back/modulo_nomina/nom_cantidad_semanas.php'
+const getSemanasDelAnioUrl = `${APP_URL}${config.MODULE_NAMES.NOMINA}nom_cantidad_semanas.php`
 
-const comparacionNominaUrl =
-  '../../../../../sigob/back/modulo_nomina/nom_comparacion_nominas.php'
+const comparacionNominaUrl = `${APP_URL}${config.MODULE_NAMES.NOMINA}nom_comparacion_nominas.php`
 
-const regconComparacionNominaUrl =
-  '../../../../sigob/back/modulo_registro_control/regcon_comparacion_nominas.php'
+const regconComparacionNominaUrl = `${APP_URL}${config.MODULE_NAMES.REGISTRO_CONTROL}regcon_comparacion_nominas.php`
 
-const comparacionNominaUrl2 =
-  '../../../../../sigob/back/modulo_nomina/nom_comparacion_nominas2.php'
+const comparacionNominaUrl2 = `${APP_URL}${config.MODULE_NAMES.NOMINA}nom_comparacion_nominas2.php`
 
-const confirmarPeticionNominaUrl =
-  '../../../../sigob/back/modulo_registro_control/regcon_status_peticiones.php'
+const confirmarPeticionNominaUrl = `${APP_URL}${config.MODULE_NAMES.REGISTRO_CONTROL}regcon_status_peticiones.php`
 
-const obtenerPeticionesNominaUrl =
-  '../../../../../sigob/back/modulo_nomina/nom_peticiones.php'
+const obtenerPeticionesNominaUrl = `${APP_URL}${config.MODULE_NAMES.NOMINA}nom_peticiones.php`
 
-const eliminarPeticionNominaUrl =
-  '../../../../sigob/back/modulo_nomina/nom_peticiones_borrar.php'
+const eliminarPeticionNominaUrl = `${APP_URL}${config.MODULE_NAMES.NOMINA}nom_peticiones_borrar.php`
 
-const regConObtenerPeticionesNominaUrl =
-  '../../../../sigob/back/modulo_registro_control/regcon_peticiones.php'
+const regConObtenerPeticionesNominaUrl = `${APP_URL}${config.MODULE_NAMES.REGISTRO_CONTROL}regcon_peticiones.php`
 
 // const obtenerNominasTxtUrl =
-//   '../../../../sigob/back/modulo_registro_control/regcon_txt_return.php'
+// '${APP_URL}${config.MODULE_NAMES.REGISTRO_CONTROL}regcon_txt_return.php`
 
-const creacionNominasTxtUrl =
-  '../../../../../sigob/back/modulo_nomina/nom_creacion_txt.php'
+const creacionNominasTxtUrl = `${APP_URL}${config.MODULE_NAMES.NOMINA}nom_creacion_txt.php`
 
-const regconCreacionNominasTxtUrl =
-  '../../../../sigob/back/modulo_registro_control/regcon_creacion_txt.php'
+const regconCreacionNominasTxtUrl = `${APP_URL}${config.MODULE_NAMES.REGISTRO_CONTROL}regcon_creacion_txt.php`
 
 const descargarNominaTxtUrl = (correlativo) =>
-  `../../../../../sigob/back/modulo_nomina/nom_txt_descargas.php?correlativo=${correlativo}`
+  `${APP_URL}${config.MODULE_NAMES.NOMINA}nom_txt_descargas.php?correlativo=${correlativo}`
 
 const getNominas = async (grupo) => {
   const data = new FormData()
@@ -521,7 +509,7 @@ const descargarNominaTxt = async ({ correlativo, identificador }) => {
 
   try {
     let res = await fetch(
-      `../../../../sigob/back/modulo_nomina/nom_txt_descargas.php`,
+      `${APP_URL}${config.MODULE_NAMES.NOMINA}nom_txt_descargas.php`,
       {
         method: 'POST',
         body: data,
