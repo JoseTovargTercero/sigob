@@ -10,14 +10,14 @@ header('Content-Type: application/json');
 
 require_once '../sistema_global/errores.php';
 
-function crearGasto($id_tipo, $descripcion, $monto, $id_ejercicio, $beneficiario, $identificador, $distribuciones, $fecha)
+function crearGasto($id_tipo, $descripcion, $monto, $id_ejercicio, $beneficiario, $identificador, $distribuciones, $fecha, $codigo)
 {
     global $conexion;
 
     try {
         // Validar que todos los campos no estén vacíos
-        if (empty($id_tipo) || empty($descripcion) || empty($monto) || empty($id_ejercicio) || empty($beneficiario) || empty($identificador) || empty($distribuciones) || empty($fecha)) {
-            throw new Exception("Faltaron uno o más valores (id_tipo, descripción, monto, id_ejercicio, beneficiario, identificador, distribuciones, fecha)");
+        if (empty($id_tipo) || empty($descripcion) || empty($monto) || empty($id_ejercicio) || empty($beneficiario) || empty($identificador) || empty($codigo) || empty($distribuciones) || empty($fecha)) {
+            throw new Exception("Faltaron uno o más valores (id_tipo, descripción, monto, id_ejercicio, beneficiario, identificador, codigo, distribuciones, fecha)");
         }
 
         // Decodificar el JSON de distribuciones si es necesario
@@ -59,7 +59,20 @@ function crearGasto($id_tipo, $descripcion, $monto, $id_ejercicio, $beneficiario
 
         if ($stmtInsertGasto->affected_rows > 0) {
             $id_insertado = $stmtInsertGasto->insert_id; // Obtener el ID insertado
-            return json_encode(["success" => "Gasto registrado correctamente", "id" => $id_insertado]);
+             $resultadoCompromiso = registrarCompromiso($id_insertado, 'gastos', $descripcion, $id_ejercicio, $codigo);
+
+                if (isset($resultadoCompromiso['success']) && $resultadoCompromiso['success']) {
+                   
+                    return json_encode([
+                        "success" => "El gasto ha sido registrado, el compromiso se ha registrado",
+                        "compromiso" => [
+                            "correlativo" => $resultadoCompromiso['correlativo'],
+                            "id_compromiso" => $resultadoCompromiso['id_compromiso']
+                        ]
+                    ]);
+                } else {
+                    throw new Exception("No se pudo registrar el compromiso");
+                }
         } else {
             throw new Exception("No se pudo registrar el gasto");
         }
@@ -73,7 +86,7 @@ function crearGasto($id_tipo, $descripcion, $monto, $id_ejercicio, $beneficiario
 
 
 
-function gestionarGasto($idGasto, $accion, $codigo)
+function gestionarGasto($idGasto, $accion)
 {
     global $conexion;
 
@@ -145,20 +158,9 @@ function gestionarGasto($idGasto, $accion, $codigo)
             $stmtUpdateGasto->execute();
 
             if ($stmtUpdateGasto->affected_rows > 0) {
-                $resultadoCompromiso = registrarCompromiso($idGasto, 'gastos', $descripcion, $id_ejercicio, $codigo);
-
-                if (isset($resultadoCompromiso['success']) && $resultadoCompromiso['success']) {
-                    $conexion->commit();
-                    return json_encode([
-                        "success" => "El gasto ha sido aceptado, el compromiso se ha registrado y el presupuesto actualizado",
-                        "compromiso" => [
-                            "correlativo" => $resultadoCompromiso['correlativo'],
-                            "id_compromiso" => $resultadoCompromiso['id_compromiso']
-                        ]
-                    ]);
-                } else {
-                    throw new Exception("No se pudo registrar el compromiso");
-                }
+                 $conexion->commit();
+                 return json_encode(["success" => "El gasto ha sido aceptado y el presupuesto actualizado",]);
+               
             } else {
                 throw new Exception("No se pudo actualizar el gasto a aceptado");
             }
@@ -611,7 +613,8 @@ if (isset($data["accion"])) {
                 $data["beneficiario"],
                 $data["identificador"],
                 $data["distribuciones"], // El parámetro distribuciones ahora es un array JSON
-                $data["fecha"]
+                $data["fecha"],
+                $data["codigo"]
             );
             break;
 
@@ -646,7 +649,7 @@ if (isset($data["accion"])) {
 
         case 'gestionar':  // Nueva opción para aceptar o rechazar
 
-            echo gestionarGasto($data["id"], $data["accion_gestion"], $data["codigo"]);
+            echo gestionarGasto($data["id"], $data["accion_gestion"]);
             break;
 
         default:
