@@ -13,6 +13,7 @@ import { APP_URL, config } from './urlConfig.js'
 const gastosUrl = `${APP_URL}${config.MODULE_NAMES.EJECUCION}/pre_gastos.php`
 
 const tipoGastosUrl = `${APP_URL}${config.MODULE_NAMES.EJECUCION}/pre_tipo_gastos.php`
+const correlativoGastosUrl = `${APP_URL}${config.MODULE_NAMES.EJECUCION}/pre_correlativo_gastos.php`
 
 const getGastos = async (id_ejercicio) => {
   showLoader()
@@ -394,6 +395,51 @@ const registrarTipoGasto = async ({ nombre }) => {
   }
 }
 
+const getCorrelativoTipoGasto = async (id_ejercicio, id_tipo_gasto) => {
+  showLoader()
+  try {
+    let res = await fetch(correlativoGastosUrl, {
+      method: 'POST',
+      body: JSON.stringify({
+        id_ejercicio,
+        id_tipo_gasto,
+      }),
+    })
+
+    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+
+    // let clone = res.clone()
+    // let text = await clone.text()
+
+    // console.log(text)
+
+    const json = await res.json()
+    console.log(json)
+
+    if (json.success) {
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.done,
+        message: json.success,
+      })
+      return json
+    }
+
+    if (json.error) {
+      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+    }
+    return json
+  } catch (e) {
+    console.log(e)
+
+    return confirmNotification({
+      type: NOTIFICATIONS_TYPES.fail,
+      message: 'Error al obtener correlativo de gastos gasto',
+    })
+  } finally {
+    hideLoader()
+  }
+}
+
 const eliminarTipoGasto = async (id) => {
   showLoader()
   try {
@@ -488,4 +534,5 @@ export {
   registrarTipoGasto,
   eliminarTipoGasto,
   eliminarGasto,
+  getCorrelativoTipoGasto,
 }

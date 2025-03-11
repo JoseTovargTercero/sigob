@@ -10,7 +10,12 @@ import { pre_gastos_form_card } from './pre_gastos_form_card.js'
 
 const d = document
 
-export const pre_gastosTipo_form_card = async ({ elementToInsert, data }) => {
+export const pre_gastosTipo_form_card = async ({
+  elementToInsert,
+  ejercicioFiscal,
+  data,
+  reset,
+}) => {
   const cardElement = d.getElementById('gastos-tipo-form-card')
   if (cardElement) cardElement.remove()
 
@@ -89,7 +94,7 @@ export const pre_gastosTipo_form_card = async ({ elementToInsert, data }) => {
   function validateClick(e) {
     if (e.target.dataset.close) {
       closeCard()
-      pre_gastos_form_card({ elementToInsert: 'gastos-view' })
+      pre_gastos_form_card({ elementToInsert: 'gastos-view', ejercicioFiscal })
     }
     if (e.target.id === 'gastos-tipo-guardar') {
       enviarInformacion()
@@ -103,6 +108,7 @@ export const pre_gastosTipo_form_card = async ({ elementToInsert, data }) => {
       successFunction: async function () {
         let res = await registrarTipoGasto({ nombre: fieldList.nombre })
         if (res.success) {
+          reset()
           closeCard()
         }
       },
