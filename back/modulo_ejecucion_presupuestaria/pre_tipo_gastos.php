@@ -18,7 +18,7 @@ function registrarTipoGasto($nombre)
         // Consultar el tipo de gasto por ID
         $sql = "SELECT * FROM tipo_gastos WHERE nombre = ?";
         $stmt = $conexion->prepare($sql);
-        $stmt->bind_param("i", $nombre);
+        $stmt->bind_param("s", $nombre);
         $stmt->execute();
         $result = $stmt->get_result();
 
