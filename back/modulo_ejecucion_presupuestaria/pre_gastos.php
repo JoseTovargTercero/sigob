@@ -10,7 +10,6 @@ header('Content-Type: application/json');
 
 require_once '../sistema_global/errores.php';
 
-// Función para crear un nuevo gasto
 function crearGasto($id_tipo, $descripcion, $monto, $id_ejercicio, $beneficiario, $identificador, $distribuciones, $fecha)
 {
     global $conexion;
@@ -21,10 +20,20 @@ function crearGasto($id_tipo, $descripcion, $monto, $id_ejercicio, $beneficiario
             throw new Exception("Faltaron uno o más valores (id_tipo, descripción, monto, id_ejercicio, beneficiario, identificador, distribuciones, fecha)");
         }
 
-        // Decodificar el JSON de distribuciones
+        // Decodificar el JSON de distribuciones si es necesario
         $distribucionesArray = $distribuciones;
-        if (json_last_error() !== JSON_ERROR_NONE) {
+        if (!is_array($distribucionesArray)) {
             throw new Exception("El formato de distribuciones no es válido");
+        }
+
+        // Calcular la sumatoria de los montos en distribuciones
+        $sumaDistribuciones = array_sum(array_column($distribucionesArray, 'monto'));
+        
+        if ($sumaDistribuciones > $monto) {
+            throw new Exception("La sumatoria de las partidas ({$sumaDistribuciones}) no puede ser superior al monto total ({$monto})");
+        }
+        if ($sumaDistribuciones < $monto) {
+            throw new Exception("La sumatoria de las partidas ({$sumaDistribuciones}) no puede ser menor al monto total ({$monto})");
         }
 
         require_once '../sistema_global/sigob_api.php';
