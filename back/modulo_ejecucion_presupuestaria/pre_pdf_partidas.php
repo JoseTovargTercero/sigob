@@ -135,6 +135,7 @@ foreach ($gastos as $gasto) {
             $data[$codigo_partida][5] += $monto_actual;
         }
     }
+    }
 }
 
 // Imprimir resultados

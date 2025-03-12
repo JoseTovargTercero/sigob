@@ -139,6 +139,7 @@ foreach ($gastos as $gasto) {
             $data[$identificador][5] += $monto_actual;
         }
     }
+    }
 }
 
 // Imprimir resultados
