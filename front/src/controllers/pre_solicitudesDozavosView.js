@@ -48,13 +48,6 @@ export const validateSolicitudesDozavos = async () => {
       })
     }
 
-    if (e.target.dataset.rechazarid) {
-      confirmNotification({
-        type: NOTIFICATIONS_TYPES.fail,
-        message: '¿Desea rechazar esta solicitud?',
-      })
-    }
-
     if (e.target.dataset.detalleid) {
       let formCard = d.getElementById('solicitud-ente-card')
       if (formCard) formCard.remove()

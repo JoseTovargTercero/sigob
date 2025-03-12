@@ -43,8 +43,11 @@ export const pre_solicitudDozavo_card = async ({
   data,
   reset,
 }) => {
-  const modalElemet = d.getElementById('card-solicitud-dozavo')
-  if (modalElemet) modalElemet.remove()
+  const oldCardElement = d.getElementById('card-solicitud-dozavo')
+
+  if (oldCardElement) {
+    closeCard(oldCardElement)
+  }
 
   let {
     id,
@@ -192,6 +195,8 @@ export const pre_solicitudDozavo_card = async ({
 
   d.getElementById(elementToInsert).insertAdjacentHTML('beforebegin', card)
 
+  let cardElement = d.getElementById('card-solicitud-dozavo')
+
   let listDataTable = new DataTable('#solicitud-partidas', {
     responsive: true,
     scrollY: 120,
@@ -209,13 +214,10 @@ export const pre_solicitudDozavo_card = async ({
       bottomEnd: 'paging',
     },
   })
-  const closeModalCard = () => {
-    let cardElement = d.getElementById('card-solicitud-dozavo')
-
-    cardElement.remove()
+  function closeCard(card) {
+    card.remove()
     d.removeEventListener('click', validateClick)
     // formElement.removeEventListener('input', validateInputFunction)
-
     return false
   }
 
@@ -234,7 +236,7 @@ export const pre_solicitudDozavo_card = async ({
           let res = await aceptarDozavo(e.target.dataset.confirmarid, codigo)
 
           if (res.success) {
-            closeModalCard()
+            closeCard(cardElement)
           }
           return res
         },
@@ -245,7 +247,7 @@ export const pre_solicitudDozavo_card = async ({
     if (e.target.dataset.rechazarid) {
       let id = e.target.dataset.rechazarid
       confirmNotification({
-        type: NOTIFICATIONS_TYPES.send,
+        type: NOTIFICATIONS_TYPES.delete,
         message: '¿Seguro de rechazar esta solicitud de dozavo?',
         successFunction: async function () {
           let response = await rechazarDozavo(id)
@@ -253,7 +255,7 @@ export const pre_solicitudDozavo_card = async ({
           if (response.success) {
             let row = d.querySelector(`[data-detalleid="${id}"]`).closest('tr')
             deleteSolicitudDozeavoRow({ row, id })
-            closeModalCard()
+            closeCard(cardElement)
           }
         },
       })
@@ -273,7 +275,7 @@ export const pre_solicitudDozavo_card = async ({
 
           console.log(response)
           if (response.success) {
-            closeModalCard()
+            closeCard(cardElement)
             reset()
           }
         },
@@ -281,9 +283,9 @@ export const pre_solicitudDozavo_card = async ({
     }
 
     if (e.target.dataset.close) {
-      closeModalCard()
+      closeCard(cardElement)
     }
   }
 
-  d.addEventListener('click', validateClick)
+  cardElement.addEventListener('click', validateClick)
 }
