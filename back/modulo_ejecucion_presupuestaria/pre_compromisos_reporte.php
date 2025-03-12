@@ -88,7 +88,10 @@ function procesarDatos($tipo, $tipo_fecha, $fecha, $local_db, $remote_db, $id_ej
                 $solicitud = $result_solicitud->fetch_assoc();
                 $stmt_solicitud->close();
                 if (!$solicitud) continue;
-                $mes = $solicitud['mes']-1;
+                $mes = $solicitud['mes'];
+                if ($mes == 0) {
+                    $mes = $solicitud['mes']+1;
+                }
 
                 
 
