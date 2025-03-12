@@ -297,12 +297,14 @@ function obtenerGastos($id_ejercicio)
 
                     $proyectoInfo = null;
                     // Consultar proyecto
+                if ($id_proyecto) {
                 $queryProyecto = "SELECT proyecto_id FROM pl_proyectos WHERE id = ?";
                 $stmtProyecto = $conexion->prepare($queryProyecto);
                 $stmtProyecto->bind_param('i', $id_proyecto);
                 $stmtProyecto->execute();
                 $resultProyecto = $stmtProyecto->get_result();
                 $proyectoInfo = $resultProyecto->fetch_assoc();
+                }
 
                     // Añadir sector y programa a la información de distribución
                     $distribucionInfo['sector'] = $sectorInfo['sector_numero'] ?? null;
@@ -501,13 +503,14 @@ function obtenerGastoPorId($id)
                         $programaInfo = $resultadoPrograma->fetch_assoc();
 
                          $proyectoInfo = null;
-                    // Consultar proyecto
+                     if ($id_proyecto) {
                 $queryProyecto = "SELECT proyecto_id FROM pl_proyectos WHERE id = ?";
                 $stmtProyecto = $conexion->prepare($queryProyecto);
                 $stmtProyecto->bind_param('i', $id_proyecto);
                 $stmtProyecto->execute();
                 $resultProyecto = $stmtProyecto->get_result();
                 $proyectoInfo = $resultProyecto->fetch_assoc();
+                }
 
                         $informacionDistribuciones[] = [
                             'id_distribucion' => $distribucionInfo["id"],
