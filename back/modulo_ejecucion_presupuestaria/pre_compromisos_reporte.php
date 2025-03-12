@@ -1,7 +1,7 @@
 <?php
 require_once '../sistema_global/conexion.php';
 require_once '../sistema_global/conexion_remota.php';
-
+global $ano_ejercicio, $situado_ejercicio;
 // Función para manejar errores
 function manejarError($mensaje, $db = null) {
     if ($db && $db->error) {
@@ -15,6 +15,7 @@ function manejarError($mensaje, $db = null) {
 function procesarDatos($tipo, $tipo_fecha, $fecha, $local_db, $remote_db, $id_ejercicio) {
     try {
         $db = $local_db; // Solo se usa $local_db
+         global $ano_ejercicio, $situado_ejercicio;
 
         // Consultar el ejercicio fiscal
         $stmt_ejercicio = $db->prepare("SELECT * FROM ejercicio_fiscal WHERE id = ?");
