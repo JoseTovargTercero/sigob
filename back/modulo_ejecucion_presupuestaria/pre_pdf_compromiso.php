@@ -177,7 +177,7 @@ if ($tablaRegistro == "gastos") {
                 $stmtProyecto->close();
 
                 // Concatenar sector.programa.proyecto
-                $codigoCompleto = ($dataSector['sector'] ?? '00') . '.' . ($dataPrograma['programa'] ?? '00') . '.' . ($dataProyecto['proyecto_id'] ?? '00') . ($dataDistribucion['id_actividad'] ?? '00');
+                    $codigoCompleto = ($dataSector['sector'] ?? '00') . '.' . ($dataPrograma['programa'] ?? '00') . '.' . ($dataProyecto['proyecto_id'] ?? '00') . '.' . ($dataDistribucion['id_actividad'] ?? '00');
                 $detalleDistribuciones[] = [
                     'distribucion' => $distribucion,
                     'partida_presupuestaria' => $dataPartida,
@@ -285,7 +285,7 @@ if ($tablaRegistro == "gastos") {
                 $stmtProyecto->close();
 
                 // Concatenar sector.programa.proyecto
-                $codigoCompleto = ($dataSector['sector'] ?? '00') . '.' . ($dataPrograma['programa'] ?? '00') . '.' . ($dataProyecto['proyecto_id'] ?? '00') . ($dataDistribucion['id_actividad'] ?? '00');
+                $codigoCompleto = ($dataSector['sector'] ?? '00') . '.' . ($dataPrograma['programa'] ?? '00') . '.' . ($dataProyecto['proyecto_id'] ?? '00') . '.' . ($dataDistribucion['id_actividad'] ?? '00');
 
 
                 $detalleDistribuciones[] = [
@@ -417,7 +417,7 @@ if ($tablaRegistro == "gastos") {
                     $stmtProyecto->close();
 
                     // Concatenar sector.programa.proyecto
-                $codigoCompleto = ($dataSector['sector'] ?? '00') . '.' . ($dataPrograma['programa'] ?? '00') . '.' . ($dataProyecto['proyecto_id'] ?? '00') . ($dataDistribucion['id_actividad'] ?? '00');
+                    $codigoCompleto = ($dataSector['sector'] ?? '00') . '.' . ($dataPrograma['programa'] ?? '00') . '.' . ($dataProyecto['proyecto_id'] ?? '00') . '.' . ($dataDistribucion['id_actividad'] ?? '00');
 
                     $detallePartidas[] = [
                         'partida' => [
