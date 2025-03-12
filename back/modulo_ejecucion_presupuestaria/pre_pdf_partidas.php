@@ -127,11 +127,10 @@ foreach ($gastos as $gasto) {
         // Sumar montos al agrupamiento
         $data[$codigo_partida][2] += $monto_inicial;      // Sumar monto_inicial
         $data[$codigo_partida][6] += $monto_disponible;   // Sumar monto_actual (disponibilidad)
+        $data[$codigo_partida][4] += $monto_actual;
 
         // Sumar comprometido o causado según el status del gasto
-        if ($gasto['status'] == 0) { // Comprometido
-            $data[$codigo_partida][4] += $monto_actual;
-        } elseif ($gasto['status'] == 1) { // Causado
+        if ($gasto['status'] == 1) { // Causado
             $data[$codigo_partida][5] += $monto_actual;
         }
     }

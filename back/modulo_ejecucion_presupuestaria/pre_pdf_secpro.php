@@ -131,11 +131,9 @@ foreach ($gastos as $gasto) {
         // Sumar montos al agrupamiento
         $data[$identificador][2] += $monto_inicial;      // Sumar monto_inicial
         $data[$identificador][6] += $monto_disponible;   // Sumar monto_actual (disponibilidad)
+        $data[$identificador][4] += $monto_actual;
 
-        // Sumar comprometido o causado según el status del gasto
-        if ($gasto['status'] == 0) { // Comprometido
-            $data[$identificador][4] += $monto_actual;
-        } elseif ($gasto['status'] == 1) { // Causado
+        if ($gasto['status'] == 1) { // Causado
             $data[$identificador][5] += $monto_actual;
         }
     }
