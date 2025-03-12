@@ -2,7 +2,7 @@
 require_once '../sistema_global/conexion.php';
 
 $id_ejercicio = $_GET['id_ejercicio'];
-
+$trimestre = $_GET['trimestre'];
 // Consultar ejercicio fiscal
 $query_sector = "SELECT * FROM ejercicio_fiscal WHERE id = ?";
 $stmt = $conexion->prepare($query_sector);
@@ -34,7 +34,7 @@ $data = [];
 foreach ($gastos as $gasto) {
     $distribuciones_json = $gasto['distribuciones'];
     $distribuciones_array = json_decode($distribuciones_json, true);
-
+    $mes = (int)date('n', strtotime($gasto['fecha']));
     if (!is_array($distribuciones_array)) {
         echo "Error al decodificar el JSON de distribuciones para el gasto con ID: " . $gasto['id'] . "<br>";
         continue;
@@ -106,6 +106,11 @@ foreach ($gastos as $gasto) {
 
         if (!$partida_data) {
             echo "No se encontraron registros en pl_partidas para el código de partida: " . $codigo_partida . "<br>";
+            continue;
+        }
+        $inicio_trimestre = ($trimestre - 1) * 3 + 1; // Mes inicial del trimestre
+        $fin_trimestre = $inicio_trimestre + 2;       // Mes final del trimestre
+        if ($mes < $inicio_trimestre OR $mes > $fin_trimestre) {
             continue;
         }
 

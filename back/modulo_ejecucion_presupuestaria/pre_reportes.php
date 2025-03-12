@@ -22,6 +22,8 @@ if ($tipo == "compromiso") {
         $tipo_fecha = "trimestre";
     }
     $fecha = $data['fecha'];
+}else{
+   $trimestre = $data['trimestre']; 
 }
 
 
@@ -57,7 +59,7 @@ $reportes = [
 ];
 
 $pdf_files = [];
-$url_pdf = "{$base_url}pre_pdf_$tipo.php?id_ejercicio=" . $id_ejercicio;
+$url_pdf = "{$base_url}pre_pdf_$tipo.php?id_ejercicio=$id_ejercicio&trimestre=$trimestre";
 if ($tipo == "compromiso") {
     if ($tipo_fecha == "mensual") {
             $fecha += 1;
