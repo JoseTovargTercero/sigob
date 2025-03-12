@@ -17,8 +17,8 @@ if ($tipo == "compromiso") {
         $tipo_tabla = 'solicitud_dozavos';
     }
     $fecha = $data['fecha'];
-}else{
-   $trimestre = $data['trimestre']; 
+} else {
+    $trimestre = $data['trimestre'];
 }
 
 
@@ -63,7 +63,7 @@ if ($tipo == 'sectores') {
     $pdf_files["{$url_pdf}&id_ejercicio=$id_ejercicio"] = "SECTORES.pdf";
 } elseif ($tipo == 'partidas') {
     $pdf_files["{$url_pdf}&id_ejercicio=$id_ejercicio"] = "PARTIDAS.pdf";
-}elseif($tipo == 'compromiso'){
+} elseif ($tipo == 'compromiso') {
     $pdf_files["{$url_pdf}&id_ejercicio=$id_ejercicio"] = "Compromiso.pdf";
 } else {
     $pdf_files["{$url_pdf}&id_ejercicio=$id_ejercicio"] = "SECTORES Y PROGRAMAS.pdf";
@@ -87,10 +87,26 @@ foreach ($pdf_files as $url => $pdf_filename) {
         'tempDir' => __DIR__ . '/temp/mpdf',
         'margin_left' => 16,  // margen izquierdo estándar (en mm)
         'margin_right' => 15, // margen derecho estándar (en mm)
-        'margin_top' => 16,   // margen superior estándar (en mm)
+        'margin_top' => 35,   // margen superior estándar (en mm)
         'margin_bottom' => 15 // margen inferior estándar (en mm)
     ]);
-    $mpdf->SetHTMLHeader('<div style="text-align: right;">Página {PAGENO} de {nb}</div>');
+
+    $fecha = date('d/m/Y');
+
+    $mpdf->SetHTMLHeader('
+<table width="100%">
+    <tr>
+        <td width="50%" style="text-align: left;">
+            <img src="../../img/logo.jpg" height="40">
+        </td>
+        <td width="50%" style="text-align: right; font-size: 10pt;">
+            Fecha: ' . $fecha . '<br>Página {PAGENO} de {nb}
+        </td>
+    </tr>
+</table>
+');
+
+
     $mpdf->WriteHTML($html);
     $mpdf->Output($pdf_filename, 'F');
     $zip->addFile($pdf_filename);

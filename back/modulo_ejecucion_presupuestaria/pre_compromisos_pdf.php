@@ -65,6 +65,27 @@ foreach ($pdf_files as $url => $pdf_filename) {
         'margin_bottom' => 16
     ]);
     $mpdf->SetHTMLHeader('<div style="text-align: right;">Página {PAGENO} de {nb}</div>');
+
+    $mpdf->SetHTMLFooter('
+        <div style="position: fixed; bottom: 60px; left: 0; width: 100%; font-size: 10pt;">
+            <table width="100%">
+                <tr>
+                    <td style="text-align: center;">
+                        ______________________________________________________________
+                        <br><br>
+                        NOMBRES Y APELLIDOS DEL ANALISTA C.I NRO. ____________________
+                    </td>
+                    <td style="text-align: center;">
+                               ______________________________________________________________
+                        <br><br>
+                        JEFE DE OFICINA DE PRESUPUESTO
+                    </td>
+                </tr>
+            </table>
+        </div>
+        ', 'O'); // 'O' = solo última página
+
+
     $mpdf->WriteHTML($html);
     $mpdf->Output($pdf_filename, 'F');
     $zip->addFile($pdf_filename);
