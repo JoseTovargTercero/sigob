@@ -1,5 +1,5 @@
 <?php
-    public function actualizarDistribucion2($distribuciones, $id_ejercicio)
+    function actualizarDistribucion2($distribuciones, $id_ejercicio)
     {
 
         $this->conexion->begin_transaction();
@@ -67,7 +67,7 @@
         }
     }
 
-    public function consultarDisponibilidad($distribuciones, $id_ejercicio)
+    function consultarDisponibilidad($distribuciones, $id_ejercicio)
     {
         $this->conexion->begin_transaction();
 
