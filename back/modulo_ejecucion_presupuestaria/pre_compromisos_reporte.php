@@ -144,14 +144,9 @@ function procesarDatos($tipo, $tipo_fecha, $fecha, $local_db, $remote_db, $id_ej
             if ($tipo_fecha === 'trimestre') {
                 $trimestre = (int)$fecha;
 
-                if ($tipo === "gastos" OR $tipo === 'proyecto_credito') {
                     $inicio_trimestre = ($trimestre - 1) * 3 + 1; // Mes inicial del trimestre
                     $fin_trimestre = $inicio_trimestre + 2;       // Mes final del trimestre
-                }else{
-                    $inicio_trimestre = ($trimestre - 1) * 3; // Mes inicial del trimestre
-                    $fin_trimestre = $inicio_trimestre + 2;       // Mes final del trimestre
-                    
-                }
+             
                 
              
 
