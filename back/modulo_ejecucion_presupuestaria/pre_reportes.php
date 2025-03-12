@@ -16,11 +16,6 @@ if ($tipo == "compromiso") {
     if ($tipo_tabla == "dozavos") {
         $tipo_tabla = 'solicitud_dozavos';
     }
-    if ($data['tipo_fecha'] == "Mensual") {
-        $tipo_fecha = "mensual";
-    }else{
-        $tipo_fecha = "trimestre";
-    }
     $fecha = $data['fecha'];
 }else{
    $trimestre = $data['trimestre']; 
