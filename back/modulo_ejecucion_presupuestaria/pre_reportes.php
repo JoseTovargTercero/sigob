@@ -60,7 +60,10 @@ $pdf_files = [];
 $url_pdf = "{$base_url}pre_pdf_$tipo.php?id_ejercicio=" . $id_ejercicio;
 if ($tipo == "compromiso") {
     if ($tipo_fecha == "mensual") {
-        $fecha += 1;
+        if ($tipo_tabla == "gastos") {
+            $fecha += 1;
+        }
+        
     }
     $url_pdf = "{$base_url}pre_compromisos_reporte.php?id_ejercicio=$id_ejercicio&tipo=$tipo_tabla&tipo_fecha=$tipo_fecha&fecha=$fecha";
 }
