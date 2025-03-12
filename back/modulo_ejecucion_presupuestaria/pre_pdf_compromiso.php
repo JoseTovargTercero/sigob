@@ -1030,49 +1030,6 @@ function unidad2($numuero)
                 <?php endforeach; ?>
             <?php endif; ?>
         </table>
-
-
-
-        <div style="page-break-inside: avoid; margin-top: 50px;">
-            <div style="position: relative; bottom: 0; width: 100%; font-size: 10pt;">
-                <table width="100%">
-                    <tr>
-                        <td style="text-align: center;">
-                            _______________________________<br>
-                            NOMBRES Y APELLIDOS DEL ANALISTA C.I NRO. ________________
-                        </td>
-                        <td style="text-align: center;">
-                            _______________________________<br>
-                            JEFE DE OFICINA DE PRESUPUESTO
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-
-
-
-        <!--
-
-
-        <table>
-            <tr>
-                <td style="text-align: center;">
-                    __________________________________________
-                    <br>
-                    <br>
-                    NOMBRES Y APELLIDOS DEL ANALISTA C.I
-                    NRO: _____________________
-                </td>
-                <td style="text-align: center;">
-                    __________________________________________
-                    <br>
-                    <br>
-                    JEFE DE OFICINA DE PRESUPUESTO
-                </td>
-            </tr>
-        </table>
-                -->
 </body>
 
 </html>
