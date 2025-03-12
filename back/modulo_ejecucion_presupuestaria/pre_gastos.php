@@ -307,7 +307,8 @@ function obtenerGastos($id_ejercicio)
                     // Añadir sector y programa a la información de distribución
                     $distribucionInfo['sector'] = $sectorInfo['sector_numero'] ?? null;
                     $distribucionInfo['programa'] = $programaInfo['programa_numero'] ?? null;
-                    $distribucionInfo['proyecto'] = $programaInfo['proyectoInfo'] ?? null;
+                    $distribucionInfo['proyecto'] = $proyectoInfo['proyectoInfo'] ?? null;
+                    $distribucionInfo['actividad'] = $id_actividad ?? null;
 
                     // Agregar la distribución al array de detalles
                     $informacionDistribuciones[] = [
@@ -516,7 +517,7 @@ function obtenerGastoPorId($id)
                             'descripcion_partida' => $partidaInfo['descripcion'] ?? null,
                             'sector' => $sectorInfo['sector_numero'] ?? null,
                             'programa' => $programaInfo['programa_numero'] ?? null
-                            'proyecto' => $programaInfo['proyecto'] ?? null,
+                            'proyecto' => $proyectoInfo['proyecto'] ?? null,
                             'actividad' => $id_actividad ?? null,
                         ];
                     }
