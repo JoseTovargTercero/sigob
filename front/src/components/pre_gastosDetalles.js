@@ -43,9 +43,14 @@ export const pre_gastosDetalles = ({
 
   const distribucionLista = () => {
     let filas = data.informacion_distribuciones.map((el) => {
+      let sppa = `
+      ${el.sector ? el.sector : '00'}.${el.programa ? el.programa : '00'}.${
+        el.proyecto ? el.proyecto : '00'
+      }.${el.actividad ? el.actividad : '00'}`
+
       return `  <tr>
           <td>
-            ${el.sector}.${el.programa}.${el.sector}.${el.partida}
+            ${sppa}.${el.partida}
           </td>
           <td>${separadorLocal(el.monto)}</td>
         </tr>`
@@ -307,7 +312,7 @@ export const pre_gastosDetalles = ({
           </div>
         </div>
       </div>
-      <div class='card-footer d-flex justify-content-center gap-2'>
+      <div class='py-2 card-footer d-flex justify-content-center gap-2'>
         ${validarFooter()}
       </div>
     </div>`
@@ -319,7 +324,7 @@ export const pre_gastosDetalles = ({
 
   let personaTable = new DataTable('#distribuciones-table', {
     responsive: true,
-    scrollY: 100,
+    scrollY: 300,
     language: tableLanguage,
     layout: {
       topStart: function () {
