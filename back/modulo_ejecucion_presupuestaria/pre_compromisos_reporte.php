@@ -154,32 +154,8 @@ function procesarDatos($tipo, $tipo_fecha, $fecha, $local_db, $remote_db, $id_ej
                     continue;
                 }
             }else{
-                 if ($mes == 0) {
-                     $mes = 1;
-                 }elseif($mes == 1){
-                    $mes = 2;
-                 }elseif($mes == 2){
-                    $mes = 3;
-                 }elseif($mes == 3){
-                    $mes = 4;
-                 }elseif($mes == 4){
-                    $mes = 5;
-                 }elseif($mes == 5){
-                    $mes = 6;
-                 }elseif($mes == 6){
-                    $mes = 7;
-                 }elseif($mes == 7){
-                    $mes = 8;
-                 }elseif($mes == 8){
-                    $mes = 9;
-                 }elseif($mes == 9){
-                    $mes = 10;
-                 }elseif($mes == 10){
-                    $mes = 11;
-                 }elseif($mes == 11){
-                    $mes = 12;
-                 }
-                if (!$mes == $fecha) {
+              
+                if ($mes < $fecha OR $mes > $fecha) {
                     continue;
                 }
             }
