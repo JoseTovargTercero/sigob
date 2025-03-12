@@ -20,7 +20,7 @@ $situado = $resultado['situado'];
 $stmt->close();
 
 // Nueva consulta a la tabla gastos
-$query_gastos = "SELECT * FROM gastos WHERE id_ejercicio = ?";
+$query_gastos = "SELECT * FROM gastos WHERE id_ejercicio = ? AND status = 1";
 $stmt_gastos = $conexion->prepare($query_gastos);
 $stmt_gastos->bind_param('i', $id_ejercicio);
 $stmt_gastos->execute();
