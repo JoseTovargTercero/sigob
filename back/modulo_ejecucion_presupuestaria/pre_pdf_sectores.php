@@ -124,7 +124,7 @@ foreach ($gastos as $gasto) {
 }
 
 // Imprimir resultados
-print_r(array_values($data));
+//print_r(array_values($data));
 ?>
 
 
@@ -301,98 +301,86 @@ print_r(array_values($data));
 <body>
 
     <div style='font-size: 9px;'>
-        <table class='header-table bt br bb bl bc-lightgray'>
+        <table class='header-table'>
             <tr>
                 <td class='text-left' style='width: 20px'>
                     <img src='../../img/logo.jpg' class='logo'>
                 </td>
-                <td class='text-left' style='vertical-align: top;padding-top: 13px;'>
+                <td class='text-right' style='vertical-align: top;padding: 13px 10px 0 0; '>
                     <b>
-                        REPÚBLICA BOLIVARIANA DE VENEZUELA <br>
-                        GOBERNACIÓN DEL ESTADO AMAZONAS <br>
-                        CODIGO PRESUPUESTARIO: E5100
+                        Fecha: <?php echo date('d/m/Y') ?>
                     </b>
+                </td>
+            </tr>
+            <tr>
+                <td colspan='3'>
+                    <h2 align='center'> RESUMEN GENERAL A NIVEL DE SECTORES</h2>
+                </td>
+            </tr>
+        </table>
     </div>
-    <td class='text-right' style='vertical-align: top;padding: 13px 10px 0 0; '>
-        <b>
-            Fecha: <?php echo date('d/m/Y') ?>
-        </b>
-    </td>
-    </tr>
-    <tr>
-        <td colspan='3'>
-            <h2 align='center'>RESUMEN DE LOS CREDITOS PRESUPUESTARIOS A NIVEL DE PARTIDAS Y FUENTES DE FINANCIAMIENTO</h2>
-        </td>
-    </tr>
 
-    <tr>
-        <td class='text-left'>
-            <b>PRESUPUESTO <?php echo $ano ?></b>
-        </td>
-    </tr>
-    </table>
+    <table>
+        <thead>
+            <tr>
+                <th class="bt bb p-15" style="width: 10%; border-width: 3px;">Codigo del Sector</th>
+                <th class="bt bb p-15" style=" border-width: 3px;">Denominación</th>
+                <th class="bt bb p-15" style=" border-width: 3px;">Asignación Inicial</th>
+                <th class="bt bb p-15" style=" border-width: 3px;">Modificación</th>
+                <th class="bt bb p-15" style=" border-width: 3px;">Compromiso</th>
+                <th class="bt bb p-15" style=" border-width: 3px;">Causado</th>
+                <th class="bt bb p-15" style=" border-width: 3px;">Disponibilidad</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            $total_asignacion_inicial = 0;
+            $total_modificacion = 0;
+            $total_compromiso = 0;
+            $total_causado = 0;
+            $total_disponibilidad = 0;
 
-<table>
-    <thead>
-        <tr>
-            <th class="bt bl bb p-15" style="width: 10%">Codigo del Sector</th>
-            <th class="bt bl bb p-15">Denominación</th>
-            <th class="bt bl bb p-15">Asignación Inicial</th>
-            <th class="bt bl bb p-15">Modificación</th>
-            <th class="bt bl bb p-15">Compromiso</th>
-            <th class="bt bl bb p-15">Causado</th>
-            <th class="bt bl bb p-15">Disponibilidad</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php
-        $total_asignacion_inicial = 0;
-        $total_modificacion = 0;
-        $total_compromiso = 0;
-        $total_causado = 0;
-        $total_disponibilidad = 0;
+            foreach ($data as $info_partida) {
+                // Asignar los valores usando índices numéricos
+                $codigo_partida = $info_partida[0] ?? 'N/A';
+                $denominacion = $info_partida[1] ?? 'N/A';
+                $asignacion_inicial = $info_partida[2] ?? 0;
+                $modificacion = $info_partida[3] ?? 0; // Si corresponde al índice [3]
+                $compromiso = $info_partida[4] ?? 0;   // Si corresponde al índice [4]
+                $causado = $info_partida[5] ?? 0;     // Si corresponde al índice [5]
+                $disponibilidad = $info_partida[6] ?? 0;
 
-        foreach ($data as $info_partida) {
-            // Asignar los valores usando índices numéricos
-            $codigo_partida = $info_partida[0] ?? 'N/A';
-            $denominacion = $info_partida[1] ?? 'N/A';
-            $asignacion_inicial = $info_partida[2] ?? 0;
-            $modificacion = $info_partida[3] ?? 0; // Si corresponde al índice [3]
-            $compromiso = $info_partida[4] ?? 0;   // Si corresponde al índice [4]
-            $causado = $info_partida[5] ?? 0;     // Si corresponde al índice [5]
-            $disponibilidad = $info_partida[6] ?? 0;
+                // Acumular totales
+                $total_asignacion_inicial += $asignacion_inicial;
+                $total_modificacion += $modificacion;
+                $total_compromiso += $compromiso;
+                $total_causado += $causado;
+                $total_disponibilidad += $disponibilidad;
 
-            // Acumular totales
-            $total_asignacion_inicial += $asignacion_inicial;
-            $total_modificacion += $modificacion;
-            $total_compromiso += $compromiso;
-            $total_causado += $causado;
-            $total_disponibilidad += $disponibilidad;
-
-            echo "<tr>
-                <td class='fz-8 bl'>{$codigo_partida}</td>
-                <td class='fz-8 bl text-left'>{$denominacion}</td>
-                <td class='fz-8 bl'>" . number_format($asignacion_inicial, 2, ',', '.') . "</td>
-                <td class='fz-8 bl'>" . number_format($modificacion, 2, ',', '.') . "</td>
-                <td class='fz-8 bl'>" . number_format($compromiso, 2, ',', '.') . "</td>
-                <td class='fz-8 bl'>" . number_format($causado, 2, ',', '.') . "</td>
-                <td class='fz-8 bl br'>" . number_format($disponibilidad, 2, ',', '.') . "</td>
+                echo "<tr>
+                <td class='fz-8' style='border-width: 3px;'>{$codigo_partida}</td>
+                <td class='fz-8 text-left' style='border-width: 3px;'>{$denominacion}</td>
+                <td class='fz-8' style='border-width: 3px;'>" . number_format($asignacion_inicial, 2, ',', '.') . "</td>
+                <td class='fz-8' style='border-width: 3px;'>" . number_format($modificacion, 2, ',', '.') . "</td>
+                <td class='fz-8' style='border-width: 3px;'>" . number_format($compromiso, 2, ',', '.') . "</td>
+                <td class='fz-8' style='border-width: 3px;'>" . number_format($causado, 2, ',', '.') . "</td>
+                <td class='fz-8' style='border-width: 3px;'>" . number_format($disponibilidad, 2, ',', '.') . "</td>
             </tr>";
-        }
+            }
 
-        // Totales generales
-        echo "<tr>
-            <td class='bl bb'></td>
-            <td class='bl bb fw-bold'>TOTALES</td>
-            <td class='bl bb fw-bold'>" . number_format($total_asignacion_inicial, 2, ',', '.') . "</td>
-            <td class='bl bb fw-bold'>" . number_format($total_modificacion, 2, ',', '.') . "</td>
-            <td class='bl bb fw-bold'>" . number_format($total_compromiso, 2, ',', '.') . "</td>
-            <td class='bl bb fw-bold'>" . number_format($total_causado, 2, ',', '.') . "</td>
-            <td class='bl br bb fw-bold'>" . number_format($total_disponibilidad, 2, ',', '.') . "</td>
+            // Totales generales
+            echo "<tr>
+            <td class='bt'></td>
+            <td class='bt fw-bold'>TOTALES</td>
+            <td class='bt fw-bold'>" . number_format($total_asignacion_inicial, 2, ',', '.') . "</td>
+            <td class='bt fw-bold'>" . number_format($total_modificacion, 2, ',', '.') . "</td>
+            <td class='bt fw-bold'>" . number_format($total_compromiso, 2, ',', '.') . "</td>
+            <td class='bt fw-bold'>" . number_format($total_causado, 2, ',', '.') . "</td>
+            <td class='bt fw-bold'>" . number_format($total_disponibilidad, 2, ',', '.') . "</td>
         </tr>";
-        ?>
-    </tbody>
-</table>
+            ?>
+        </tbody>
+    </table>
 
 
 
