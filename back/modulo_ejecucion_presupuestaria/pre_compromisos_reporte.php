@@ -141,8 +141,14 @@ function procesarDatos($tipo, $tipo_fecha, $fecha, $local_db, $remote_db, $id_ej
             if ($tipo_fecha === 'trimestre') {
                 $trimestre = (int)$fecha;
 
-                $inicio_trimestre = ($trimestre - 1) * 3 + 1; // Mes inicial del trimestre
-                $fin_trimestre = $inicio_trimestre + 2;       // Mes final del trimestre
+                if ($tipo === "solicitud_dozavos") {
+                    $inicio_trimestre = ($trimestre - 1) * 3; // Mes inicial del trimestre
+                    $fin_trimestre = $inicio_trimestre + 2;       // Mes final del trimestre
+                }else{
+                    $inicio_trimestre = ($trimestre - 1) * 3 + 1; // Mes inicial del trimestre
+                    $fin_trimestre = $inicio_trimestre + 2;       // Mes final del trimestre
+                }
+                
              
 
                 if ($mes < $inicio_trimestre OR $mes > $fin_trimestre) {
