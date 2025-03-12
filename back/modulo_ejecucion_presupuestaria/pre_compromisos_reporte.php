@@ -21,7 +21,7 @@ function procesarDatos($tipo, $tipo_fecha, $fecha, $local_db, $remote_db, $id_ej
         if ($tipo === "gastos") {
             $db = $local_db;
         }elseif($tipo === "solicitud_dozavos"){
-            $db = $remote_db;
+            $db = $local_db;
         }else{
             $db = $local_db;
         }
