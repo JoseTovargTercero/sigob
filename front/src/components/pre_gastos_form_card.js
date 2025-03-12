@@ -5,10 +5,12 @@ import {
 import { obtenerDistribucionSecretaria } from '../api/pre_entes.js'
 import {
   actualizarGasto,
+  getCorrelativoTipoGasto,
   getGasto,
   getTiposGastos,
   registrarGasto,
 } from '../api/pre_gastos.js'
+import { loadTipoGastosTable } from '../controllers/pre_gastosFuncionamientoTable.js'
 
 import {
   confirmNotification,
@@ -42,6 +44,7 @@ export const pre_gastos_form_card = async ({
     descripcion: '',
     id_ejercicio: ejercicioFiscal.id,
     distribuciones: [],
+    codigo: 0,
   }
 
   if (id) {
@@ -117,6 +120,11 @@ export const pre_gastos_form_card = async ({
       message: 'Coloque una descripción válida',
       type: 'textarea',
     },
+    codigo: {
+      value: true,
+      message: 'Coloque un numero de compromiso válido',
+      type: 'number',
+    },
   }
 
   const cargarTiposGastos = async () => {
@@ -142,7 +150,7 @@ export const pre_gastos_form_card = async ({
 
   console.log(partidasDisponibles)
 
-  let card = ` <div class='card slide-up-animation' id='gastos-form-card'>
+  let card = `  <div class='card slide-up-animation' id='gastos-form-card'>
       <div class='card-header d-flex justify-content-between'>
         <div class=''>
           <h5 class='mb-0'>Registro de nuevo gasto presupuestario</h5>
@@ -169,7 +177,7 @@ export const pre_gastos_form_card = async ({
                 </label>
                 <div class='input-group'>
                   <select
-                    class='form-select gasto-input'
+                    class='form-select'
                     name='id_tipo'
                     id='search-select-tipo-gasto'
                   ></select>
@@ -200,6 +208,31 @@ export const pre_gastos_form_card = async ({
               </div>
             </div>
           </div>
+${
+  !id
+    ? ` <div class='row d-none slide-up-animation' id='compromiso-input'>
+      <div class='form-group' >
+        <label for='codigo' class='form-label'>
+          Identificar compromiso
+        </label>
+        <div class='input-group mb-3'>
+          <span class='input-group-text mb-auto' id='compromiso-prefijo'>
+            No seleccionado
+          </span>
+          <div class='col'>
+            <input
+              class='form-control gasto-input'
+              type='number'
+              name='codigo'
+              id='codigo'
+              placeholder='Identificación para el compromiso'
+            />
+          </div>
+        </div>
+      </div>
+    </div>`
+    : ''
+}
           <div class='row'>
             <div class='col-sm'>
               <div class='form-group'>
@@ -247,7 +280,7 @@ export const pre_gastos_form_card = async ({
             <div class='col-sm'>
               <div class='form-group'>
                 <label for='descripcion' class='form-label'>
-                  DESCRIPCIóN
+                  Descripción
                 </label>
                 <textarea
                   class='form-control gasto-input'
@@ -259,6 +292,7 @@ export const pre_gastos_form_card = async ({
               </div>
             </div>
           </div>
+
           <div class='row'>
             <div class='col-sm' id='distribuciones-container'></div>
           </div>
@@ -284,11 +318,43 @@ export const pre_gastos_form_card = async ({
 
   let numsRows = 0
 
+  let correlativoRecomendado
+
   let tipoGastoSelect = $('#search-select-tipo-gasto')
 
   tipoGastoSelect.chosen().change(function (obj, result) {
     let value = result.selected
     fieldList.id_tipo = value
+
+    if (id) return
+
+    let compromisoContainer = d.getElementById('compromiso-input')
+    let codigoElement = d.getElementById('codigo')
+    let prefijoElement = d.getElementById('compromiso-prefijo')
+
+    if (compromisoContainer.classList.contains('d-none')) {
+      compromisoContainer.classList.remove('d-none')
+    }
+
+    getCorrelativoTipoGasto(ejercicioFiscal.id, fieldList.id_tipo).then(
+      (res) => {
+        codigoElement.value = res.numero_compromiso_recomendado
+        prefijoElement.textContent = res.prefijo
+
+        correlativoRecomendado = res
+
+        let inputs = d.querySelectorAll('.gasto-input')
+
+        inputs.forEach((input) => {
+          fieldList = validateInput({
+            target: input,
+            fieldList,
+            fieldListErrors,
+            type: fieldListErrors[input.name].type,
+          })
+        })
+      }
+    )
   })
 
   cargarTiposGastos()
@@ -346,11 +412,17 @@ export const pre_gastos_form_card = async ({
     if (e.target.id === 'add-tipo-gasto') {
       closeCard()
 
-      pre_gastosTipo_form_card({ elementToInsert: 'gastos-view' })
+      pre_gastosTipo_form_card({
+        elementToInsert: 'gastos-view',
+        ejercicioFiscal,
+        reset: () => {
+          loadTipoGastosTable()
+        },
+      })
     }
 
     if (e.target.id === 'gastos-guardar') {
-      let inputs = d.querySelectorAll('.gastos-input')
+      let inputs = d.querySelectorAll('.gasto-input')
 
       inputs.forEach((input) => {
         fieldList = validateInput({
@@ -369,6 +441,11 @@ export const pre_gastos_form_card = async ({
           message: 'No se ha completado la información necesaria',
         })
         return
+      }
+
+      if (id) {
+        delete fieldList.codigo
+        delete fieldListErrors.codigo
       }
 
       if (Object.values(fieldListErrors).some((el) => el.value)) {
@@ -511,8 +588,6 @@ export const pre_gastos_form_card = async ({
 
     partidasList.innerHTML = options.join('')
 
-    console.log(options)
-
     if (defaultOptionValue) {
       console.log(defaultOptionValue)
       let distribucionSelect = $(`#distribucion-${numsRows}`)
@@ -615,25 +690,21 @@ export const pre_gastos_form_card = async ({
         },
       })
     } else {
+      let compromisoGenerado = `${correlativoRecomendado.prefijo}-${fieldList.codigo}`
+
       confirmNotification({
         type: NOTIFICATIONS_TYPES.send,
         message: '¿Desea registrar este gasto?',
         successFunction: async function () {
-          let res = await registrarGasto({ data: fieldList })
+          let res = await registrarGasto({
+            data: { ...fieldList, codigo: compromisoGenerado },
+          })
           if (res.success) {
-            let registrado = await registrarCompromiso({
-              id: res.id,
-              nombre_tabla: 'gastos',
-              descripcion: fieldList.descripcion,
-              id_ejercicio: fieldList.id_ejercicio,
-            })
+            generarCompromisoPdf(
+              res.compromiso.id_compromiso,
+              res.compromiso.correlativo
+            )
 
-            if (registrado.success) {
-              generarCompromisoPdf(
-                registrado.id_compromiso,
-                registrado.correlativo
-              )
-            }
             closeCard()
             recargarEjercicio()
           }

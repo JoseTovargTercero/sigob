@@ -26,7 +26,7 @@ export const validateProProyectosView = async () => {
   loadProyectosTable(ejercicioFiscal.id)
 
   d.addEventListener('click', async (e) => {
-    if (e.target.id === 'proyectos-registrar') {
+    if (e.target.id === 'pro-proyectos-registrar') {
       if (!ejercicioFiscal) {
         toastNotification({
           type: NOTIFICATIONS_TYPES.fail,

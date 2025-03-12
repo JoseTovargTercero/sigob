@@ -2,7 +2,7 @@
 require_once '../sistema_global/conexion.php';
 
 $id_ejercicio = $_GET['id_ejercicio'];
-
+$trimestre = $_GET['trimestre'];
 // Consultar ejercicio fiscal
 $query_sector = "SELECT * FROM ejercicio_fiscal WHERE id = ?";
 $stmt = $conexion->prepare($query_sector);
@@ -20,7 +20,7 @@ $situado = $resultado['situado'];
 $stmt->close();
 
 // Nueva consulta a la tabla gastos
-$query_gastos = "SELECT * FROM gastos WHERE id_ejercicio = ?";
+$query_gastos = "SELECT * FROM gastos WHERE id_ejercicio = ? AND status != 2";
 $stmt_gastos = $conexion->prepare($query_gastos);
 $stmt_gastos->bind_param('i', $id_ejercicio);
 $stmt_gastos->execute();
@@ -34,15 +34,34 @@ $data = [];
 foreach ($gastos as $gasto) {
     $distribuciones_json = $gasto['distribuciones'];
     $distribuciones_array = json_decode($distribuciones_json, true);
-
+    $mes = (int)date('n', strtotime($gasto['fecha']));
     if (!is_array($distribuciones_array)) {
         echo "Error al decodificar el JSON de distribuciones para el gasto con ID: " . $gasto['id'] . "<br>";
         continue;
     }
 
     foreach ($distribuciones_array as $distribucion) {
-        $id_distribucion = $distribucion['id_distribucion'];
+       $id_distribucion = $distribucion['id_distribucion'];
         $monto_actual = $distribucion['monto'];
+
+
+                $sqlDistribucionEnte = "SELECT id, distribucion FROM distribucion_entes WHERE id_ejercicio = ? AND distribucion LIKE ?";
+                $likePattern = '%"id_distribucion":"' . $id_distribucion . '"%';
+                $stmtDistribucionEnte = $conexion->prepare($sqlDistribucionEnte);
+                $stmtDistribucionEnte->bind_param("is", $id_ejercicio, $likePattern);
+                $stmtDistribucionEnte->execute();
+                $resultadoDistribucionEnte = $stmtDistribucionEnte->get_result();
+
+                if ($distribucionEnte = $resultadoDistribucionEnte->fetch_assoc()) {
+                    $id_distribucion_ente = $distribucionEnte['id'];
+                    $distribucionData = json_decode($distribucionEnte['distribucion'], true);
+
+                    foreach ($distribucionData as $dist) {
+                        if ($dist['id_distribucion'] == $id_distribucion) {
+                            $montoDistribucion = $dist['monto'];
+                            break;
+                        }
+                    }
 
         // Consultar distribucion_presupuestaria
         $query_distribucion = "SELECT * FROM distribucion_presupuestaria WHERE id = ? AND id_ejercicio = ?";
@@ -58,7 +77,7 @@ foreach ($gastos as $gasto) {
         }
 
         $monto_inicial = $distribucion_presupuestaria['monto_inicial'] ?? 0;
-        $monto_disponible = $distribucion_presupuestaria['monto_actual'] ?? 0; // Monto disponible desde distribucion_presupuestaria
+        $monto_disponible = $montoDistribucion; // Monto disponible desde distribucion_presupuestaria entes
         $id_partida = $distribucion_presupuestaria['id_partida'] ?? 0;
 
         // Consultar en partidas_presupuestarias
@@ -89,6 +108,11 @@ foreach ($gastos as $gasto) {
             echo "No se encontraron registros en pl_partidas para el código de partida: " . $codigo_partida . "<br>";
             continue;
         }
+        $inicio_trimestre = ($trimestre - 1) * 3 + 1; // Mes inicial del trimestre
+        $fin_trimestre = $inicio_trimestre + 2;       // Mes final del trimestre
+        if ($mes < $inicio_trimestre OR $mes > $fin_trimestre) {
+            continue;
+        }
 
         $denominacion = $partida_data['denominacion'] ?? 'N/A';
 
@@ -108,13 +132,13 @@ foreach ($gastos as $gasto) {
         // Sumar montos al agrupamiento
         $data[$codigo_partida][2] += $monto_inicial;      // Sumar monto_inicial
         $data[$codigo_partida][6] += $monto_disponible;   // Sumar monto_actual (disponibilidad)
+        $data[$codigo_partida][4] += $monto_actual;
 
         // Sumar comprometido o causado según el status del gasto
-        if ($gasto['status'] == 0) { // Comprometido
-            $data[$codigo_partida][4] += $monto_actual;
-        } elseif ($gasto['status'] == 1) { // Causado
+        if ($gasto['status'] == 1) { // Causado
             $data[$codigo_partida][5] += $monto_actual;
         }
+    }
     }
 }
 

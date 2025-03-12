@@ -269,7 +269,7 @@ function obtenerTodosLosCreditos()
 
 
     if ($resultado->num_rows === 0) {
-        return json_encode(["error" => "No se encontraron créditos adicionales registrados."]);
+        return json_encode(["success" => []]);
     }
 
     return json_encode($resultado->fetch_all(MYSQLI_ASSOC));
@@ -330,7 +330,7 @@ function actualizarCredito($data)
 
     try {
 
-        if ($data['id_ente'] == "" or $data['id_ejercicio'] == "" or $data['monto'] == "" or $data['fecha'] == "" or  $data['tipo_credito'] == "" or $data['tipo_proyecto'] == "" or $data['descripcion_proyecto'] == "" or $data['distribuciones'] == "") {
+        if ($data['id_ente'] == "" or $data['id_ejercicio'] == "" or $data['monto'] == "" or $data['fecha'] == "" or $data['tipo_credito'] == "" or $data['tipo_proyecto'] == "" or $data['descripcion_proyecto'] == "" or $data['distribuciones'] == "") {
             throw new Exception("No se han enviado todos los valores para el registro.");
         }
 

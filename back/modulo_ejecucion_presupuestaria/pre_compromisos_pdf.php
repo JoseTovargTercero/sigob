@@ -28,20 +28,21 @@ $stmt->close();
 $prefijo = '';
 switch ($tabla_registro) {
     case 'gastos':
-        $prefijo = 'G';
+        $zip_filename = "{$numero_compromiso}.zip";
         break;
     case 'solicitud_dozavos':
         $prefijo = 'D';
+        $zip_filename = "{$prefijo}-{$numero_compromiso}.zip";
         break;
     case 'proyecto':
         $prefijo = 'P';
+        $zip_filename = "{$prefijo}-{$numero_compromiso}.zip";
         break;
     default:
         exit("Tipo de compromiso desconocido.");
 }
 
-// Nombre del archivo ZIP
-$zip_filename = "{$prefijo}-{$numero_compromiso}.zip";
+
 
 $pdf_files = [];
 $url_pdf = "{$base_url}pre_pdf_compromiso.php?id=" . $id_compromiso;

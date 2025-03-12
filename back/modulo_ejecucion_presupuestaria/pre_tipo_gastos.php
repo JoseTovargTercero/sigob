@@ -14,6 +14,19 @@ function registrarTipoGasto($nombre)
     }
 
     try {
+
+        // Consultar el tipo de gasto por ID
+        $sql = "SELECT * FROM tipo_gastos WHERE nombre = ?";
+        $stmt = $conexion->prepare($sql);
+        $stmt->bind_param("s", $nombre);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            throw new Exception("Ya existe un tipo de gasto con el mismo nombre.");
+            exit;
+        }
+
         // Registrar el nuevo tipo de gasto
         $sql = "INSERT INTO tipo_gastos (nombre) VALUES (?)";
         $stmt = $conexion->prepare($sql);
@@ -164,4 +177,3 @@ if (isset($data["accion"])) {
 }
 
 echo $response;
-?>

@@ -21,7 +21,7 @@ function procesarDatos($tipo, $tipo_fecha, $fecha, $local_db, $remote_db, $id_ej
         if ($tipo === "gastos") {
             $db = $local_db;
         }elseif($tipo === "solicitud_dozavos"){
-            $db = $remote_db;
+            $db = $local_db;
         }else{
             $db = $local_db;
         }
@@ -88,7 +88,11 @@ function procesarDatos($tipo, $tipo_fecha, $fecha, $local_db, $remote_db, $id_ej
                 $solicitud = $result_solicitud->fetch_assoc();
                 $stmt_solicitud->close();
                 if (!$solicitud) continue;
-                $mes = $solicitud['mes']-1;
+                $mes = $solicitud['mes'];
+                if ($mes == 0) {
+                    $mes = $solicitud['mes']+1;
+                }
+
                 
 
             }elseif ($tipo === 'gastos') {
@@ -108,7 +112,7 @@ function procesarDatos($tipo, $tipo_fecha, $fecha, $local_db, $remote_db, $id_ej
                 $stmt_gasto->close();
 
                 if (!$gasto) continue;
-                $mes = (int)date('n', strtotime($gasto['fecha']))-1;
+                $mes = (int)date('n', strtotime($gasto['fecha']));
          
             }elseif ($tipo === 'proyecto_credito') {
     // Consultar la tabla credito_adicional uniendo con proyecto_credito
@@ -132,7 +136,7 @@ function procesarDatos($tipo, $tipo_fecha, $fecha, $local_db, $remote_db, $id_ej
     $stmt_gasto->close();
 
     if (!$gasto) continue;
-    $mes = (int)date('n', strtotime($gasto['fecha'])) - 1;
+    $mes = (int)date('n', strtotime($gasto['fecha']));
 }
 
 
@@ -140,8 +144,10 @@ function procesarDatos($tipo, $tipo_fecha, $fecha, $local_db, $remote_db, $id_ej
             if ($tipo_fecha === 'trimestre') {
                 $trimestre = (int)$fecha;
 
-                $inicio_trimestre = ($trimestre - 1) * 3 + 1; // Mes inicial del trimestre
-                $fin_trimestre = $inicio_trimestre + 2;       // Mes final del trimestre
+                    $inicio_trimestre = ($trimestre - 1) * 3 + 1; // Mes inicial del trimestre
+                    $fin_trimestre = $inicio_trimestre + 2;       // Mes final del trimestre
+             
+                
              
 
                 if ($mes < $inicio_trimestre OR $mes > $fin_trimestre) {

@@ -2,6 +2,7 @@ import { generarCompromisoPdf } from '../api/pre_compromisos.js'
 import {
   aceptarGasto,
   eliminarGasto,
+  getCorrelativoTipoGasto,
   rechazarGasto,
 } from '../api/pre_gastos.js'
 import {
@@ -259,6 +260,27 @@ export const pre_gastosDetalles = ({
                     </div>
                 </div>
             </li>
+             <li class="list-group-item px-0">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <div class="avtar avtar-s border">
+                        <i class='bx bxs-dock-top' ></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <div class="row g-1">
+                            <div class="col-6">
+                                <h6 class="mb-0 text-left">Correlativo:</h6>
+                            </div>
+                            <div class="col-6 text-end">
+                                <h6 class="mb-1">  ${
+                                  data.numero_compromiso
+                                }</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
         </ul>
             <div class="mt-3">
                <div class="mt-3">
@@ -333,6 +355,12 @@ export const pre_gastosDetalles = ({
     }
 
     if (e.target.dataset.aceptarid) {
+      // form_aceptarGasto({
+      //   elementToInsert: 'gastos-view',
+      //   data,
+      //   reset: () => {},
+      // })
+
       confirmNotification({
         type: NOTIFICATIONS_TYPES.send,
         message:
@@ -410,17 +438,24 @@ export const pre_gastosDetalles = ({
   cardElement.addEventListener('click', validateClick)
 }
 
-const form_aceptarGasto = ({ elementToInsert, id, reset }) => {
+async function form_aceptarGasto({ elementToInsert, data, reset }) {
   let fieldList = { codigo: '' }
   let fieldListErrors = {
     codigo: {
       value: true,
       message: 'El compromiso necesita una identificación',
-      type: 'textarea',
+      type: 'number',
     },
   }
 
   let nombreCard = 'aceptar-gasto'
+
+  let correlativoRecomendaro = await getCorrelativoTipoGasto(
+    data.id_ejercicio,
+    data.id_tipo
+  )
+
+  console.log(correlativoRecomendaro)
 
   const oldCardElement = d.getElementById(`${nombreCard}-form-card`)
   if (oldCardElement) oldCardElement.remove()
@@ -444,18 +479,7 @@ const form_aceptarGasto = ({ elementToInsert, id, reset }) => {
 
       <div class='card-body'>
         <form id='${nombreCard}-form'>
-          <div class='form-group'>
-            <label for='codigo' class='form-label'>
-              Identificar compromiso
-            </label>
-            <input
-              class='form-control partida-partida chosen-distribucion'
-              type='text'
-              name='codigo'
-              id='codigo'
-              placeholder='Identificación para el compromiso'
-            />
-          </div>
+          
         </form>
         <div class='card-footer'>
           <button class='btn btn-primary' id='${nombreCard}-guardar'>
@@ -466,7 +490,7 @@ const form_aceptarGasto = ({ elementToInsert, id, reset }) => {
     </div>`
 
   let modal = `  <div class='modal-window' id='${nombreCard}-form-card'>
-      <div class='w-60 slide-up-animation' style="max-width:400px">${card}</div>
+      <div class='w-80 slide-up-animation' style="max-width:650px">${card}</div>
     </div>`
 
   d.getElementById(elementToInsert).insertAdjacentHTML('afterbegin', modal)
@@ -479,7 +503,6 @@ const form_aceptarGasto = ({ elementToInsert, id, reset }) => {
     cardElement.remove()
     cardElement.removeEventListener('click', validateClick)
     // cardElement.removeEventListener('input', validateInputFunction)
-
     return false
   }
 
@@ -505,6 +528,17 @@ const form_aceptarGasto = ({ elementToInsert, id, reset }) => {
         return
       }
 
+      if (
+        correlativoRecomendaro.no_disponibles.some(
+          (correlativo) => correlativo === Number(fieldList.compromiso)
+        )
+      ) {
+        toastNotification({
+          type: NOTIFICATIONS_TYPES.fail,
+          message: 'Ese número de compromiso ya está tomado',
+        })
+        return
+      }
       enviarInformacion()
     }
   }
@@ -519,7 +553,6 @@ const form_aceptarGasto = ({ elementToInsert, id, reset }) => {
   }
 
   // CARGAR LISTA DE PARTIDAS
-
   function enviarInformacion() {
     confirmNotification({
       type: NOTIFICATIONS_TYPES.send,

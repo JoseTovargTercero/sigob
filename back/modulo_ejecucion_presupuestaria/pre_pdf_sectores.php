@@ -2,7 +2,7 @@
 require_once '../sistema_global/conexion.php';
 
 $id_ejercicio = $_GET['id_ejercicio'];
-
+$trimestre = $_GET['trimestre'];
 // Consultar ejercicio fiscal
 $query_sector = "SELECT * FROM ejercicio_fiscal WHERE id = ?";
 $stmt = $conexion->prepare($query_sector);
@@ -20,7 +20,7 @@ $situado = $resultado['situado'];
 $stmt->close();
 
 // Nueva consulta a la tabla gastos
-$query_gastos = "SELECT * FROM gastos WHERE id_ejercicio = ?";
+$query_gastos = "SELECT * FROM gastos WHERE id_ejercicio = ? AND status != 2";
 $stmt_gastos = $conexion->prepare($query_gastos);
 $stmt_gastos->bind_param('i', $id_ejercicio);
 $stmt_gastos->execute();
@@ -28,12 +28,14 @@ $result_gastos = $stmt_gastos->get_result();
 
 $gastos = $result_gastos->fetch_all(MYSQLI_ASSOC);
 
+
 // Procesar distribuciones en los registros de gastos
 $data = [];
 
 foreach ($gastos as $gasto) {
     $distribuciones_json = $gasto['distribuciones'];
     $distribuciones_array = json_decode($distribuciones_json, true);
+    $mes = (int)date('n', strtotime($gasto['fecha']));
 
     if (!is_array($distribuciones_array)) {
         echo "Error al decodificar el JSON de distribuciones para el gasto con ID: " . $gasto['id'] . "<br>";
@@ -43,6 +45,25 @@ foreach ($gastos as $gasto) {
     foreach ($distribuciones_array as $distribucion) {
         $id_distribucion = $distribucion['id_distribucion'];
         $monto_actual = $distribucion['monto'];
+
+
+                $sqlDistribucionEnte = "SELECT id, distribucion FROM distribucion_entes WHERE id_ejercicio = ? AND distribucion LIKE ?";
+                $likePattern = '%"id_distribucion":"' . $id_distribucion . '"%';
+                $stmtDistribucionEnte = $conexion->prepare($sqlDistribucionEnte);
+                $stmtDistribucionEnte->bind_param("is", $id_ejercicio, $likePattern);
+                $stmtDistribucionEnte->execute();
+                $resultadoDistribucionEnte = $stmtDistribucionEnte->get_result();
+
+                if ($distribucionEnte = $resultadoDistribucionEnte->fetch_assoc()) {
+                    $id_distribucion_ente = $distribucionEnte['id'];
+                    $distribucionData = json_decode($distribucionEnte['distribucion'], true);
+
+                    foreach ($distribucionData as $dist) {
+                        if ($dist['id_distribucion'] == $id_distribucion) {
+                            $montoDistribucion = $dist['monto'];
+                            break;
+                        }
+                    }
 
         // Consultar distribucion_presupuestaria
         $query_distribucion = "SELECT * FROM distribucion_presupuestaria WHERE id = ? AND id_ejercicio = ?";
@@ -58,7 +79,7 @@ foreach ($gastos as $gasto) {
         }
 
         $monto_inicial = $distribucion_presupuestaria['monto_inicial'] ?? 0;
-        $monto_disponible = $distribucion_presupuestaria['monto_actual'] ?? 0; // Monto disponible desde distribucion_presupuestaria
+        $monto_disponible = $montoDistribucion; // Monto disponible desde distribucion_presupuestaria entes
         $id_sector = $distribucion_presupuestaria['id_sector'] ?? 0;
 
         // Consultar sector y denominación en pl_sectores
@@ -71,6 +92,12 @@ foreach ($gastos as $gasto) {
 
         if (!$sector_data) {
             echo "No se encontró registro en pl_sectores para id_sector: $id_sector<br>";
+            continue;
+        }
+
+        $inicio_trimestre = ($trimestre - 1) * 3 + 1; // Mes inicial del trimestre
+        $fin_trimestre = $inicio_trimestre + 2;       // Mes final del trimestre
+        if ($mes < $inicio_trimestre OR $mes > $fin_trimestre) {
             continue;
         }
 
@@ -93,18 +120,18 @@ foreach ($gastos as $gasto) {
         // Sumar montos al agrupamiento
         $data[$id_sector][2] += $monto_inicial;      // Sumar monto_inicial
         $data[$id_sector][6] += $monto_disponible;   // Sumar monto_actual (disponibilidad)
+        $data[$id_sector][4] += $monto_actual;
 
         // Sumar comprometido o causado según el status del gasto
-        if ($gasto['status'] == 0) { // Comprometido
-            $data[$id_sector][4] += $monto_actual;
-        } elseif ($gasto['status'] == 1) { // Causado
+        if ($gasto['status'] == 1) { // Causado
             $data[$id_sector][5] += $monto_actual;
         }
+    }
     }
 }
 
 // Imprimir resultados
-print_r(array_values($data));
+//print_r(array_values($data));
 ?>
 
 
@@ -281,98 +308,86 @@ print_r(array_values($data));
 <body>
 
     <div style='font-size: 9px;'>
-        <table class='header-table bt br bb bl bc-lightgray'>
+        <table class='header-table'>
             <tr>
                 <td class='text-left' style='width: 20px'>
                     <img src='../../img/logo.jpg' class='logo'>
                 </td>
-                <td class='text-left' style='vertical-align: top;padding-top: 13px;'>
+                <td class='text-right' style='vertical-align: top;padding: 13px 10px 0 0; '>
                     <b>
-                        REPÚBLICA BOLIVARIANA DE VENEZUELA <br>
-                        GOBERNACIÓN DEL ESTADO AMAZONAS <br>
-                        CODIGO PRESUPUESTARIO: E5100
+                        Fecha: <?php echo date('d/m/Y') ?>
                     </b>
+                </td>
+            </tr>
+            <tr>
+                <td colspan='3'>
+                    <h2 align='center'> RESUMEN GENERAL A NIVEL DE SECTORES</h2>
+                </td>
+            </tr>
+        </table>
     </div>
-    <td class='text-right' style='vertical-align: top;padding: 13px 10px 0 0; '>
-        <b>
-            Fecha: <?php echo date('d/m/Y') ?>
-        </b>
-    </td>
-    </tr>
-    <tr>
-        <td colspan='3'>
-            <h2 align='center'>RESUMEN DE LOS CREDITOS PRESUPUESTARIOS A NIVEL DE PARTIDAS Y FUENTES DE FINANCIAMIENTO</h2>
-        </td>
-    </tr>
 
-    <tr>
-        <td class='text-left'>
-            <b>PRESUPUESTO <?php echo $ano ?></b>
-        </td>
-    </tr>
-    </table>
+    <table>
+        <thead>
+            <tr>
+                <th class="bt bb p-15" style="width: 10%; border-width: 3px;">Codigo del Sector</th>
+                <th class="bt bb p-15" style=" border-width: 3px;">Denominación</th>
+                <th class="bt bb p-15" style=" border-width: 3px;">Asignación Inicial</th>
+                <th class="bt bb p-15" style=" border-width: 3px;">Modificación</th>
+                <th class="bt bb p-15" style=" border-width: 3px;">Compromiso</th>
+                <th class="bt bb p-15" style=" border-width: 3px;">Causado</th>
+                <th class="bt bb p-15" style=" border-width: 3px;">Disponibilidad</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            $total_asignacion_inicial = 0;
+            $total_modificacion = 0;
+            $total_compromiso = 0;
+            $total_causado = 0;
+            $total_disponibilidad = 0;
 
-<table>
-    <thead>
-        <tr>
-            <th class="bt bl bb p-15" style="width: 10%">Codigo del Sector</th>
-            <th class="bt bl bb p-15">Denominación</th>
-            <th class="bt bl bb p-15">Asignación Inicial</th>
-            <th class="bt bl bb p-15">Modificación</th>
-            <th class="bt bl bb p-15">Compromiso</th>
-            <th class="bt bl bb p-15">Causado</th>
-            <th class="bt bl bb p-15">Disponibilidad</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php
-        $total_asignacion_inicial = 0;
-        $total_modificacion = 0;
-        $total_compromiso = 0;
-        $total_causado = 0;
-        $total_disponibilidad = 0;
+            foreach ($data as $info_partida) {
+                // Asignar los valores usando índices numéricos
+                $codigo_partida = $info_partida[0] ?? 'N/A';
+                $denominacion = $info_partida[1] ?? 'N/A';
+                $asignacion_inicial = $info_partida[2] ?? 0;
+                $modificacion = $info_partida[3] ?? 0; // Si corresponde al índice [3]
+                $compromiso = $info_partida[4] ?? 0;   // Si corresponde al índice [4]
+                $causado = $info_partida[5] ?? 0;     // Si corresponde al índice [5]
+                $disponibilidad = $info_partida[6] ?? 0;
 
-        foreach ($data as $info_partida) {
-            // Asignar los valores usando índices numéricos
-            $codigo_partida = $info_partida[0] ?? 'N/A';
-            $denominacion = $info_partida[1] ?? 'N/A';
-            $asignacion_inicial = $info_partida[2] ?? 0;
-            $modificacion = $info_partida[3] ?? 0; // Si corresponde al índice [3]
-            $compromiso = $info_partida[4] ?? 0;   // Si corresponde al índice [4]
-            $causado = $info_partida[5] ?? 0;     // Si corresponde al índice [5]
-            $disponibilidad = $info_partida[6] ?? 0;
+                // Acumular totales
+                $total_asignacion_inicial += $asignacion_inicial;
+                $total_modificacion += $modificacion;
+                $total_compromiso += $compromiso;
+                $total_causado += $causado;
+                $total_disponibilidad += $disponibilidad;
 
-            // Acumular totales
-            $total_asignacion_inicial += $asignacion_inicial;
-            $total_modificacion += $modificacion;
-            $total_compromiso += $compromiso;
-            $total_causado += $causado;
-            $total_disponibilidad += $disponibilidad;
-
-            echo "<tr>
-                <td class='fz-8 bl'>{$codigo_partida}</td>
-                <td class='fz-8 bl text-left'>{$denominacion}</td>
-                <td class='fz-8 bl'>" . number_format($asignacion_inicial, 2, ',', '.') . "</td>
-                <td class='fz-8 bl'>" . number_format($modificacion, 2, ',', '.') . "</td>
-                <td class='fz-8 bl'>" . number_format($compromiso, 2, ',', '.') . "</td>
-                <td class='fz-8 bl'>" . number_format($causado, 2, ',', '.') . "</td>
-                <td class='fz-8 bl br'>" . number_format($disponibilidad, 2, ',', '.') . "</td>
+                echo "<tr>
+                <td class='fz-8' style='border-width: 3px;'>{$codigo_partida}</td>
+                <td class='fz-8 text-left' style='border-width: 3px;'>{$denominacion}</td>
+                <td class='fz-8' style='border-width: 3px;'>" . number_format($asignacion_inicial, 2, ',', '.') . "</td>
+                <td class='fz-8' style='border-width: 3px;'>" . number_format($modificacion, 2, ',', '.') . "</td>
+                <td class='fz-8' style='border-width: 3px;'>" . number_format($compromiso, 2, ',', '.') . "</td>
+                <td class='fz-8' style='border-width: 3px;'>" . number_format($causado, 2, ',', '.') . "</td>
+                <td class='fz-8' style='border-width: 3px;'>" . number_format($disponibilidad, 2, ',', '.') . "</td>
             </tr>";
-        }
+            }
 
-        // Totales generales
-        echo "<tr>
-            <td class='bl bb'></td>
-            <td class='bl bb fw-bold'>TOTALES</td>
-            <td class='bl bb fw-bold'>" . number_format($total_asignacion_inicial, 2, ',', '.') . "</td>
-            <td class='bl bb fw-bold'>" . number_format($total_modificacion, 2, ',', '.') . "</td>
-            <td class='bl bb fw-bold'>" . number_format($total_compromiso, 2, ',', '.') . "</td>
-            <td class='bl bb fw-bold'>" . number_format($total_causado, 2, ',', '.') . "</td>
-            <td class='bl br bb fw-bold'>" . number_format($total_disponibilidad, 2, ',', '.') . "</td>
+            // Totales generales
+            echo "<tr>
+            <td class='bt'></td>
+            <td class='bt fw-bold'>TOTALES</td>
+            <td class='bt fw-bold'>" . number_format($total_asignacion_inicial, 2, ',', '.') . "</td>
+            <td class='bt fw-bold'>" . number_format($total_modificacion, 2, ',', '.') . "</td>
+            <td class='bt fw-bold'>" . number_format($total_compromiso, 2, ',', '.') . "</td>
+            <td class='bt fw-bold'>" . number_format($total_causado, 2, ',', '.') . "</td>
+            <td class='bt fw-bold'>" . number_format($total_disponibilidad, 2, ',', '.') . "</td>
         </tr>";
-        ?>
-    </tbody>
-</table>
+            ?>
+        </tbody>
+    </table>
 
 
 

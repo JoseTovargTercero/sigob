@@ -1,39 +1,78 @@
-import { generarReporte } from '../api/pre_reportes.js'
+import { generarReporte } from "../api/pre_reportes.js";
 import {
   confirmNotification,
   hideLoader,
   insertOptions,
   toastNotification,
   validateInput,
-} from '../helpers/helpers.js'
-import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
-const d = document
+} from "../helpers/helpers.js";
+import { NOTIFICATIONS_TYPES } from "../helpers/types.js";
+const d = document;
 let options = {
   sectores: {
-    titulo: 'SECTORES',
-    subtitulo: 'Resumen de sectores',
-    tipo: 'sectores',
-    opciones: false,
-    nombre_archivo: 'Reporte de sectores',
+    titulo: "SECTORES",
+    subtitulo: "Resumen de sectores",
+    tipo: "sectores",
+    opciones: true,
+    form: ` <form id='reportes-form-sectores'>
+        <div class='mb-3'>
+          <label for='trimestre' class='form-label'>
+            Trimestre
+          </label>
+          <select class='form-select' id='trimestre' name='trimestre'>
+            <option value='1'>Primero</option>
+            <option value='2'>Segundo</option>
+            <option value='3'>Tercero</option>
+            <option value='4'>Cuarto</option>
+          </select>
+        </div>
+      </form>`,
+    nombre_archivo: "Reporte de sectores",
   },
   partidas: {
-    titulo: 'PARTIDAS',
-    subtitulo: 'Resumen de partidas',
-    tipo: 'partidas',
-    opciones: false,
-    nombre_archivo: 'Reporte de partidas',
+    titulo: "PARTIDAS",
+    subtitulo: "Resumen de partidas",
+    tipo: "partidas",
+    opciones: true,
+    form: ` <form id='reportes-form-partidas'>
+    <div class='mb-3'>
+      <label for='trimestre' class='form-label'>
+        Trimestre
+      </label>
+      <select class='form-select' id='trimestre' name='trimestre'>
+        <option value='1'>Primero</option>
+        <option value='2'>Segundo</option>
+        <option value='3'>Tercero</option>
+        <option value='4'>Cuarto</option>
+      </select>
+    </div>
+  </form>`,
+    nombre_archivo: "Reporte de partidas",
   },
   secpro: {
-    titulo: 'SECTORES Y PROGRAMAS',
-    subtitulo: 'Resumen de sectores y programas',
-    tipo: 'secpro',
-    opciones: false,
-    nombre_archivo: 'Reporte de programas y partidas',
+    titulo: "SECTORES Y PROGRAMAS",
+    subtitulo: "Resumen de sectores y programas",
+    tipo: "secpro",
+    opciones: true,
+    form: ` <form id='reportes-form-secpro'>
+        <div class='mb-3'>
+          <label for='trimestre' class='form-label'>
+            Trimestre
+          </label>
+          <select class='form-select' id='trimestre' name='trimestre'>
+            <option value='1'>Primero</option>
+            <option value='2'>Segundo</option>
+            <option value='3'>Tercero</option>
+            <option value='4'>Cuarto</option>
+          </select>
+        </div>
+      </form>`,
+    nombre_archivo: "Reporte de programas y partidas",
   },
   compromiso: {
-    titulo: 'COMPROMISOS',
-    subtitulo: 'Resumen de compromisos',
-    tipo: 'compromiso',
+    titulo: "COMPROMISOS",
+    subtitulo: "Resumen de compromisos",
+    tipo: "compromiso",
     opciones: true,
     form: ` <form id='reportes-form-compromiso'>
         <div class='mb-3'>
@@ -118,15 +157,15 @@ let options = {
           </select>
         </div>
       </form>`,
-    nombre_archivo: 'Reportes de compromisos',
+    nombre_archivo: "Reportes de compromisos",
   },
-}
+};
 export const pre_reportesLista = ({ elementToInsert }) => {
-  let nombreCard = 'reporte-list'
+  let nombreCard = "reporte-list";
 
-  const oldCardElement = d.getElementById(`${nombreCard}-form-card`)
+  const oldCardElement = d.getElementById(`${nombreCard}-form-card`);
   if (oldCardElement) {
-    closeCard(oldCardElement)
+    closeCard(oldCardElement);
   }
 
   const crearLista = () => {
@@ -136,11 +175,11 @@ export const pre_reportesLista = ({ elementToInsert }) => {
           data-tab-ids='${option.tipo}'
         >
           <b>${option.titulo}:</b> ${option.subtitulo}
-        </li>`
-    })
+        </li>`;
+    });
 
-    return listItems.join('')
-  }
+    return listItems.join("");
+  };
 
   let card = `<div class='card slide-up-animation' id='${nombreCard}-form-card'>
       <div class='card-header d-flex justify-content-between'>
@@ -160,25 +199,25 @@ export const pre_reportesLista = ({ elementToInsert }) => {
         >${crearLista()}</div>
       
       </div>
-    </div>`
+    </div>`;
 
-  d.getElementById(elementToInsert).insertAdjacentHTML('afterbegin', card)
+  d.getElementById(elementToInsert).insertAdjacentHTML("afterbegin", card);
 
-  let cardElement = d.getElementById(`${nombreCard}-form-card`)
-  let formElement = d.getElementById(`${nombreCard}-form`)
+  let cardElement = d.getElementById(`${nombreCard}-form-card`);
+  let formElement = d.getElementById(`${nombreCard}-form`);
 
   function closeCard(card) {
     // validateEditButtons()
-    card.remove()
-    card.removeEventListener('click', validateClick)
-    card.removeEventListener('input', validateInputFunction)
+    card.remove();
+    card.removeEventListener("click", validateClick);
+    card.removeEventListener("input", validateInputFunction);
 
-    return false
+    return false;
   }
 
   function validateClick(e) {
     if (e.target.dataset.close) {
-      closeCard(cardElement)
+      closeCard(cardElement);
     }
   }
 
@@ -190,42 +229,42 @@ export const pre_reportesLista = ({ elementToInsert }) => {
 
   //   formElement.addEventListener('submit', (e) => e.preventDefault())
 
-  cardElement.addEventListener('input', validateInputFunction)
-  cardElement.addEventListener('click', validateClick)
-}
+  cardElement.addEventListener("input", validateInputFunction);
+  cardElement.addEventListener("click", validateClick);
+};
 
 export const pre_reporteDocumento = ({
   elementToInsert,
   report,
   ejercicioId,
 }) => {
-  let fieldList = { ejemplo: '' }
+  let fieldList = { ejemplo: "" };
   let fieldListErrors = {
     ejemplo: {
       value: true,
-      message: 'mensaje de error',
-      type: 'text',
+      message: "mensaje de error",
+      type: "text",
     },
-  }
+  };
 
-  let nombreCard = 'reporte-documento'
+  let nombreCard = "reporte-documento";
 
-  const oldCardElement = d.getElementById(`${nombreCard}-form-card`)
+  const oldCardElement = d.getElementById(`${nombreCard}-form-card`);
   if (oldCardElement) {
-    closeCard(oldCardElement)
+    closeCard(oldCardElement);
   }
 
   const validarOpciones = () => {
-    let opcionValida = options[report].opciones
+    let opcionValida = options[report].opciones;
     if (!opcionValida) {
       return `   <p class="text-center">${options[report].subtitulo}</p>
      <div class="mt-4 alert alert-success text-center">
      <p class="text-center">No se requiere mas información.</p>
-     <button class='btn btn-secondary' id="${nombreCard}-descargar">Descargar</button></div>`
+     <button class='btn btn-secondary' id="${nombreCard}-descargar">Descargar</button></div>`;
     }
 
-    return `${options[report].form} <button class='btn btn-secondary' id="${nombreCard}-descargar">Descargar</button></div>`
-  }
+    return `${options[report].form} <button class='btn btn-secondary' id="${nombreCard}-descargar">Descargar</button></div>`;
+  };
 
   let card = ` <div class='card slide-up-animation'>
       <div class='card-header d-flex justify-content-between'>
@@ -253,78 +292,78 @@ export const pre_reporteDocumento = ({
         </div>`
         }
       </div>
-    </div>`
+    </div>`;
 
-  d.getElementById(elementToInsert).insertAdjacentHTML('afterbegin', card)
+  d.getElementById(elementToInsert).insertAdjacentHTML("afterbegin", card);
 
   function crearFieldlistDesdeFormulario(idFormulario) {
-    const formulario = document.getElementById(idFormulario)
+    const formulario = document.getElementById(idFormulario);
     if (!formulario) {
-      console.error('No se encontró el formulario con el ID:', idFormulario)
-      return null
+      console.error("No se encontró el formulario con el ID:", idFormulario);
+      return null;
     }
 
-    let list = {}
-    let listErrors = {}
-    const elementosFormulario = formulario.elements
+    let list = {};
+    let listErrors = {};
+    const elementosFormulario = formulario.elements;
 
     for (let i = 0; i < elementosFormulario.length; i++) {
-      const elemento = elementosFormulario[i]
+      const elemento = elementosFormulario[i];
 
       // Ignorar elementos que no son inputs
       if (
-        elemento.tagName !== 'INPUT' &&
-        elemento.tagName !== 'SELECT' &&
-        elemento.tagName !== 'TEXTAREA'
+        elemento.tagName !== "INPUT" &&
+        elemento.tagName !== "SELECT" &&
+        elemento.tagName !== "TEXTAREA"
       ) {
-        continue
+        continue;
       }
 
-      const nombre = elemento.name
-      let valor = elemento.value
+      const nombre = elemento.name;
+      let valor = elemento.value;
 
       // Validar el valor (puedes agregar más validaciones aquí)
-      if (valor === '' || valor === null || valor === undefined) {
-        valor = '' // Cadena vacía para valores inválidos
+      if (valor === "" || valor === null || valor === undefined) {
+        valor = ""; // Cadena vacía para valores inválidos
       }
 
-      list = { ...list, [nombre]: valor }
+      list = { ...list, [nombre]: valor };
       listErrors = {
         ...listErrors,
         [nombre]: {
           value: true,
-          message: 'Campo inválido',
-          type: 'text',
+          message: "Campo inválido",
+          type: "text",
         },
-      }
+      };
     }
 
-    return { list, listErrors }
+    return { list, listErrors };
   }
 
   if (report && options[report].opciones) {
-    let result = crearFieldlistDesdeFormulario(`reportes-form-${report}`)
-    fieldList = result.list
-    fieldListErrors = result.listErrors
-    console.log(fieldList)
+    let result = crearFieldlistDesdeFormulario(`reportes-form-${report}`);
+    fieldList = result.list;
+    fieldListErrors = result.listErrors;
+    console.log(fieldList);
   } else {
-    fieldList = {}
+    fieldList = {};
   }
 
-  let cardElement = d.getElementById(`${nombreCard}-form-card`)
+  let cardElement = d.getElementById(`${nombreCard}-form-card`);
 
   function closeCard(card) {
     // validateEditButtons()
-    card.remove()
-    card.removeEventListener('click', validateClick)
-    card.removeEventListener('input', validateInputFunction)
+    card.remove();
+    card.removeEventListener("click", validateClick);
+    card.removeEventListener("input", validateInputFunction);
 
-    return false
+    return false;
   }
 
   function validateClick(e) {
     if (e.target.dataset.close) {
-      closeCard(cardElement)
+      closeCard(cardElement);
     }
 
     if (e.target.id === `${nombreCard}-descargar`) {
@@ -333,19 +372,19 @@ export const pre_reporteDocumento = ({
         nombreArchivo: options[report].nombre_archivo,
         tipo: report,
         ...fieldList,
-      }
+      };
 
-      console.log(data)
+      console.log(data);
 
-      generarReporte(data)
+      generarReporte(data);
     }
   }
 
   async function validateInputFunction(e) {
-    if (report === options.compromiso.tipo && e.target.name === 'tipo_fecha') {
-      let inputFecha = d.getElementById('fecha')
+    if (report === options.compromiso.tipo && e.target.name === "tipo_fecha") {
+      let inputFecha = d.getElementById("fecha");
 
-      if (e.target.value === 'mensual') {
+      if (e.target.value === "mensual") {
         inputFecha.innerHTML = `<option value="0">Enero</option>
             <option value="1">Febrero</option>
             <option value="2">Marzo</option>
@@ -357,12 +396,12 @@ export const pre_reporteDocumento = ({
             <option value="8">Septiembre</option>
             <option value="9">Octubre</option>
             <option value="10">Noviembre</option>
-            <option value="11">Diciembre</option>`
+            <option value="11">Diciembre</option>`;
       } else {
         inputFecha.innerHTML = ` <option value="1">Trimestre 1</option>
         <option value="2">Trimestre 2</option>
         <option value="3">Trimestre 3</option>
-        <option value="4">Trimestre 4</option>`
+        <option value="4">Trimestre 4</option>`;
       }
     }
 
@@ -371,13 +410,13 @@ export const pre_reporteDocumento = ({
       fieldList,
       fieldListErrors,
       type: fieldListErrors[e.target.name].type,
-    })
+    });
   }
 
   // CARGAR LISTA DE PARTIDAS
 
   function enviarInformacion(data) {}
 
-  cardElement.addEventListener('input', validateInputFunction)
-  cardElement.addEventListener('click', validateClick)
-}
+  cardElement.addEventListener("input", validateInputFunction);
+  cardElement.addEventListener("click", validateClick);
+};

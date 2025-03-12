@@ -16,8 +16,14 @@ if ($tipo == "compromiso") {
     if ($tipo_tabla == "dozavos") {
         $tipo_tabla = 'solicitud_dozavos';
     }
-    $tipo_fecha = $data['tipo_fecha'];
+    if ($data['tipo_fecha'] == "Mensual") {
+        $tipo_fecha = "mensual";
+    }else{
+        $tipo_fecha = "trimestre";
+    }
     $fecha = $data['fecha'];
+}else{
+   $trimestre = $data['trimestre']; 
 }
 
 
@@ -53,8 +59,11 @@ $reportes = [
 ];
 
 $pdf_files = [];
-$url_pdf = "{$base_url}pre_pdf_$tipo.php?id_ejercicio=" . $id_ejercicio;
+$url_pdf = "{$base_url}pre_pdf_$tipo.php?id_ejercicio=$id_ejercicio&trimestre=$trimestre";
 if ($tipo == "compromiso") {
+    if ($tipo_fecha == "mensual") {
+            $fecha += 1;
+    }
     $url_pdf = "{$base_url}pre_compromisos_reporte.php?id_ejercicio=$id_ejercicio&tipo=$tipo_tabla&tipo_fecha=$tipo_fecha&fecha=$fecha";
 }
 
@@ -63,7 +72,7 @@ if ($tipo == 'sectores') {
 } elseif ($tipo == 'partidas') {
     $pdf_files["{$url_pdf}&id_ejercicio=$id_ejercicio"] = "PARTIDAS.pdf";
 }elseif($tipo == 'compromiso'){
-    $pdf_files["{$url_pdf}"] = "Compromiso.pdf";
+    $pdf_files["{$url_pdf}&id_ejercicio=$id_ejercicio"] = "Compromiso.pdf";
 } else {
     $pdf_files["{$url_pdf}&id_ejercicio=$id_ejercicio"] = "SECTORES Y PROGRAMAS.pdf";
 }
