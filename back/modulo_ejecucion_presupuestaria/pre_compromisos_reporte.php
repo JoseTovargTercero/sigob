@@ -2,43 +2,28 @@
 require_once '../sistema_global/conexion.php';
 require_once '../sistema_global/conexion_remota.php';
 
-global $ano_ejercicio, $situado_ejercicio;
-
 // Función para manejar errores
 function manejarError($mensaje, $db = null) {
     if ($db && $db->error) {
         $mensaje .= " Error en la base de datos: " . $db->error;
     }
-    error_log($mensaje); // Registra el error en el log del servidor
-    die(json_encode(["error" => $mensaje])); // Respuesta con error en formato JSON
+    error_log($mensaje);
+    echo json_encode(["error" => $mensaje]);
+    exit;
 }
 
 function procesarDatos($tipo, $tipo_fecha, $fecha, $local_db, $remote_db, $id_ejercicio) {
-    global $ano_ejercicio, $situado_ejercicio;
-
     try {
-        // Seleccionar la base de datos en función del tipo
-        if ($tipo === "gastos") {
-            $db = $local_db;
-        }elseif($tipo === "solicitud_dozavos"){
-            $db = $local_db;
-        }else{
-            $db = $local_db;
-        }
-        
+        $db = $local_db; // Solo se usa $local_db
 
         // Consultar el ejercicio fiscal
-        $query_ejercicio = "SELECT * FROM ejercicio_fiscal WHERE id = ?";
-        $stmt_ejercicio = $db->prepare($query_ejercicio);
+        $stmt_ejercicio = $db->prepare("SELECT * FROM ejercicio_fiscal WHERE id = ?");
         if (!$stmt_ejercicio) {
             manejarError("Fallo al preparar la consulta del ejercicio fiscal.", $db);
         }
         $stmt_ejercicio->bind_param('i', $id_ejercicio);
         $stmt_ejercicio->execute();
         $result_ejercicio = $stmt_ejercicio->get_result();
-        if (!$result_ejercicio) {
-            manejarError("Fallo al ejecutar la consulta del ejercicio fiscal.", $db);
-        }
         $ejercicio = $result_ejercicio->fetch_assoc();
         $stmt_ejercicio->close();
 
@@ -51,111 +36,81 @@ function procesarDatos($tipo, $tipo_fecha, $fecha, $local_db, $remote_db, $id_ej
         $situado_ejercicio = $ejercicio['situado'];
 
         // Consultar la tabla compromisos
-        $query_compromisos = "SELECT * FROM compromisos WHERE tabla_registro = ?";
-        $stmt = $db->prepare($query_compromisos);
+        $stmt = $db->prepare("SELECT * FROM compromisos WHERE tabla_registro = ?");
         if (!$stmt) {
             manejarError("Fallo al preparar la consulta de compromisos.", $db);
         }
         $stmt->bind_param('s', $tipo);
         $stmt->execute();
         $result_compromisos = $stmt->get_result();
-        if (!$result_compromisos) {
-            manejarError("Fallo al ejecutar la consulta de compromisos.", $db);
-        }
         $compromisos = $result_compromisos->fetch_all(MYSQLI_ASSOC);
         $stmt->close();
 
         $data = [];
-
 
         foreach ($compromisos as $compromiso) {
             $id_registro = $compromiso['id_registro'];
             $mes = null;
 
             if ($tipo === 'solicitud_dozavos') {
-                // Consultar la tabla solicitud_dozavos
-                $query_solicitud = "SELECT mes FROM solicitud_dozavos WHERE id = ?";
-                $stmt_solicitud = $db->prepare($query_solicitud);
+                $stmt_solicitud = $db->prepare("SELECT mes FROM solicitud_dozavos WHERE id = ?");
                 if (!$stmt_solicitud) {
                     manejarError("Fallo al preparar la consulta de solicitud_dozavos.", $db);
                 }
                 $stmt_solicitud->bind_param('i', $id_registro);
                 $stmt_solicitud->execute();
                 $result_solicitud = $stmt_solicitud->get_result();
-                if (!$result_solicitud) {
-                    manejarError("Fallo al ejecutar la consulta de solicitud_dozavos.", $db);
-                }
                 $solicitud = $result_solicitud->fetch_assoc();
                 $stmt_solicitud->close();
                 if (!$solicitud) continue;
-                $mes = $solicitud['mes'];
-                if ($mes == 0) {
-                    $mes = $solicitud['mes']+1;
-                }
 
-                
+                $mes = max(1, $solicitud['mes']); // Si es 0, lo cambia a 1 automáticamente
 
-            }elseif ($tipo === 'gastos') {
-                // Consultar la tabla gastos
-                $query_gasto = "SELECT fecha FROM gastos WHERE id = ?";
-                $stmt_gasto = $db->prepare($query_gasto);
+            } elseif ($tipo === 'gastos') {
+                $stmt_gasto = $db->prepare("SELECT fecha FROM gastos WHERE id = ?");
                 if (!$stmt_gasto) {
                     manejarError("Fallo al preparar la consulta de gastos.", $db);
                 }
                 $stmt_gasto->bind_param('i', $id_registro);
                 $stmt_gasto->execute();
                 $result_gasto = $stmt_gasto->get_result();
-                if (!$result_gasto) {
-                    manejarError("Fallo al ejecutar la consulta de gastos.", $db);
-                }
                 $gasto = $result_gasto->fetch_assoc();
                 $stmt_gasto->close();
-
                 if (!$gasto) continue;
+
                 $mes = (int)date('n', strtotime($gasto['fecha']));
-         
-            }elseif ($tipo === 'proyecto_credito') {
-    // Consultar la tabla credito_adicional uniendo con proyecto_credito
-    $query_gasto = "
-        SELECT ca.fecha 
-        FROM proyecto_credito pc
-        JOIN credito_adicional ca ON pc.id_credito = ca.id
-        WHERE pc.id = ?
-    ";
-    $stmt_gasto = $db->prepare($query_gasto);
-    if (!$stmt_gasto) {
-        manejarError("Fallo al preparar la consulta de crédito adicional.", $db);
-    }
-    $stmt_gasto->bind_param('i', $id_registro);
-    $stmt_gasto->execute();
-    $result_gasto = $stmt_gasto->get_result();
-    if (!$result_gasto) {
-        manejarError("Fallo al ejecutar la consulta de crédito adicional.", $db);
-    }
-    $gasto = $result_gasto->fetch_assoc();
-    $stmt_gasto->close();
 
-    if (!$gasto) continue;
-    $mes = (int)date('n', strtotime($gasto['fecha']));
-}
+            } elseif ($tipo === 'proyecto_credito') {
+                $stmt_gasto = $db->prepare("
+                    SELECT ca.fecha 
+                    FROM proyecto_credito pc
+                    JOIN credito_adicional ca ON pc.id_credito = ca.id
+                    WHERE pc.id = ?
+                ");
+                if (!$stmt_gasto) {
+                    manejarError("Fallo al preparar la consulta de crédito adicional.", $db);
+                }
+                $stmt_gasto->bind_param('i', $id_registro);
+                $stmt_gasto->execute();
+                $result_gasto = $stmt_gasto->get_result();
+                $gasto = $result_gasto->fetch_assoc();
+                $stmt_gasto->close();
+                if (!$gasto) continue;
 
+                $mes = (int)date('n', strtotime($gasto['fecha']));
+            }
 
-            // Validar si el mes pertenece al trimestre especificado
+            // Validar si el mes pertenece al trimestre o al mes exacto
             if ($tipo_fecha === 'trimestre') {
                 $trimestre = (int)$fecha;
+                $inicio_trimestre = ($trimestre - 1) * 3 + 1;
+                $fin_trimestre = $inicio_trimestre + 2;
 
-                    $inicio_trimestre = ($trimestre - 1) * 3 + 1; // Mes inicial del trimestre
-                    $fin_trimestre = $inicio_trimestre + 2;       // Mes final del trimestre
-             
-                
-             
-
-                if ($mes < $inicio_trimestre OR $mes > $fin_trimestre) {
+                if ($mes < $inicio_trimestre || $mes > $fin_trimestre) {
                     continue;
                 }
-            }else{
-              
-                if ($mes < $fecha OR $mes > $fecha) {
+            } else {
+                if ($mes != $fecha) {
                     continue;
                 }
             }
@@ -172,7 +127,6 @@ function procesarDatos($tipo, $tipo_fecha, $fecha, $local_db, $remote_db, $id_ej
         }
 
         return $data;
-
     } catch (Exception $e) {
         manejarError("Ocurrió un error inesperado: " . $e->getMessage());
     }
@@ -184,17 +138,14 @@ $tipo_fecha = $_GET['tipo_fecha'] ?? '';
 $fecha = $_GET['fecha'] ?? '';
 $id_ejercicio = $_GET['id_ejercicio'] ?? null;
 
-// Validación de entrada
 if (!$id_ejercicio) {
     manejarError("El parámetro 'id_ejercicio' es obligatorio.");
 }
 
-// Procesar los datos
 $data = procesarDatos($tipo, $tipo_fecha, $fecha, $local_db, $remote_db, $id_ejercicio);
 
 echo json_encode($data);
 ?>
-
 
 
 
