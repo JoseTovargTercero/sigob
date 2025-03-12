@@ -6,6 +6,7 @@ require_once '../sistema_global/notificaciones.php';
 require_once 'pre_compromisos.php'; // Agregado
 require_once 'pre_dispo_presupuestaria.php'; // Agregado
 
+
 header('Content-Type: application/json');
 
 require_once '../sistema_global/errores.php';
@@ -123,7 +124,9 @@ function gestionarGasto($idGasto, $accion)
         if ($accion === "aceptar") {
 
             require_once '../sistema_global/sigob_api.php';
+            require_once 'pre_dispo_presupuestaria2.php'; // Agregado
             $disponible = consultarDisponibilidadApi($distribuciones, $id_ejercicio);
+            $disponible2 = consultarDisponibilidad2($distribuciones, $id_ejercicio);
 
             if (isset($disponible['error'])) {
                 throw new Exception($disponible['error']);
@@ -137,15 +140,16 @@ function gestionarGasto($idGasto, $accion)
             }
 
             $actualizar = actualizarDistribucionApi($distribuciones, $id_ejercicio);
-            if (isset($actualizar['error'])) {
+            $actualizar2 = actualizarDistribucion2($distribuciones, $id_ejercicio);
+            if (isset($actualizar['error']) || isset($actualizar2['error']) ) {
                 throw new Exception($actualizar['error']);
             }
 
-            if (!isset($actualizar['success'])) {
+            if (!isset($actualizar['success']) || !isset($actualizar2['success'])) {
                 throw new Exception('Error al acceder a la respuesta al actualizar monto');
             }
 
-            if (!$actualizar) {
+            if (!$actualizar || !$actualizar2) {
                 throw new Exception('No se pudo actualizar el mondo en la distribucion');
             }
 
@@ -440,7 +444,7 @@ function obtenerGastoPorId($id)
 
                     foreach ($distribucionData as $dist) {
                         if ($dist['id_distribucion'] == $id_distribucion) {
-                            $montoDistribucion = $distribucion['monto'];
+                            $montoDistribucion = $dist['monto'];
                             break;
                         }
                     }
