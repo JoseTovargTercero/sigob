@@ -58,7 +58,7 @@ foreach ($gastos as $gasto) {
 
                     foreach ($distribucionData as $dist) {
                         if ($dist['id_distribucion'] == $id_distribucion) {
-                            $montoDistribucion = $distribucion['monto'];
+                            $montoDistribucion = $dist['monto'];
                             break;
                         }
                     }
@@ -77,7 +77,7 @@ foreach ($gastos as $gasto) {
         }
 
         $monto_inicial = $distribucion_presupuestaria['monto_inicial'] ?? 0;
-        $monto_disponible += $montoDistribucion; // Monto disponible desde distribucion_presupuestaria entes
+        $monto_disponible = $montoDistribucion; // Monto disponible desde distribucion_presupuestaria entes
         $id_sector = $distribucion_presupuestaria['id_sector'] ?? 0;
 
         // Consultar sector y denominación en pl_sectores
