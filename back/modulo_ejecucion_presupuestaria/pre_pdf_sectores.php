@@ -121,6 +121,7 @@ foreach ($gastos as $gasto) {
             $data[$id_sector][6] += $monto_disponible;
         }
     }
+    }
 }
 
 // Imprimir resultados
