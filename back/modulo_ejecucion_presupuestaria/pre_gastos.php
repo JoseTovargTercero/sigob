@@ -126,7 +126,7 @@ function gestionarGasto($idGasto, $accion)
             require_once '../sistema_global/sigob_api.php';
             require_once 'pre_dispo_presupuestaria2.php'; // Agregado
             $disponible = consultarDisponibilidadApi($distribuciones, $id_ejercicio);
-            $disponible2 = consultarDisponibilidad2($distribuciones, $id_ejercicio);
+            $disponible2 = consultarDisponibilidad2($distribuciones, $id_ejercicio, $conexion);
 
             if (isset($disponible['error'])) {
                 throw new Exception($disponible['error']);
@@ -140,7 +140,7 @@ function gestionarGasto($idGasto, $accion)
             }
 
             $actualizar = actualizarDistribucionApi($distribuciones, $id_ejercicio);
-            $actualizar2 = actualizarDistribucion2($distribuciones, $id_ejercicio);
+            $actualizar2 = actualizarDistribucion2($distribuciones, $id_ejercicio, $conexion);
             if (isset($actualizar['error']) || isset($actualizar2['error']) ) {
                 throw new Exception($actualizar['error']);
             }

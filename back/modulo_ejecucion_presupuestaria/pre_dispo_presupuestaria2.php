@@ -1,5 +1,5 @@
 <?php
-    function actualizarDistribucion2($distribuciones, $id_ejercicio)
+    function actualizarDistribucion2($distribuciones, $id_ejercicio, $conexion)
     {
         global $conexion;
         $conexion->begin_transaction();
