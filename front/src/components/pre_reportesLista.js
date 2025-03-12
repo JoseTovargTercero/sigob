@@ -110,6 +110,24 @@ let options = {
           <label for='tipo_fecha' class='form-label'>
             Tipo de Fecha
           </label>
+
+
+
+          
+          <div class='form-check'>
+            <input
+              class='form-check-input'
+              type='radio'
+              name='tipo_fecha'
+              id='tipo_fecha_trimestral'
+              value='trimestre'
+            />
+            <label class='form-check-label' for='tipo_fecha_trimestral'>
+              Trimestre
+            </label>
+          </div>
+
+
           <div class='form-check'>
             <input
               class='form-check-input'
@@ -123,18 +141,8 @@ let options = {
               Mensual
             </label>
           </div>
-          <div class='form-check'>
-            <input
-              class='form-check-input'
-              type='radio'
-              name='tipo_fecha'
-              id='tipo_fecha_trimestral'
-              value='trimestre'
-            />
-            <label class='form-check-label' for='tipo_fecha_trimestral'>
-              Trimestre
-            </label>
-          </div>
+
+          
         </div>
 
         <div class='mb-3'>
