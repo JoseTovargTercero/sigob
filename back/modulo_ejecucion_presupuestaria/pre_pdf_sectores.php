@@ -118,7 +118,6 @@ foreach ($gastos as $gasto) {
             $data[$id_sector][4] += $monto_actual;
         } elseif ($gasto['status'] == 1) { // Causado
             $data[$id_sector][5] += $monto_actual;
-            $data[$id_sector][6] += $monto_disponible;
         }
     }
     }
