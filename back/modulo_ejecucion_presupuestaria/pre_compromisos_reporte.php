@@ -179,7 +179,7 @@ function procesarDatos($tipo, $tipo_fecha, $fecha, $local_db, $remote_db, $id_ej
                  }elseif($mes == 11){
                     $mes = 12;
                  }
-                if ($mes < $fecha OR $mes > $fecha) {
+                if (!$mes == $fecha) {
                     continue;
                 }
             }
