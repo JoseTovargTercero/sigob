@@ -88,8 +88,8 @@ function procesarDatos($tipo, $tipo_fecha, $fecha, $local_db, $remote_db, $id_ej
                 $solicitud = $result_solicitud->fetch_assoc();
                 $stmt_solicitud->close();
                 if (!$solicitud) continue;
-                $mes = $solicitud['mes']-1;
-                print_r($mes);
+                $mes = $solicitud['mes'];
+
                 
 
             }elseif ($tipo === 'gastos') {
@@ -109,7 +109,7 @@ function procesarDatos($tipo, $tipo_fecha, $fecha, $local_db, $remote_db, $id_ej
                 $stmt_gasto->close();
 
                 if (!$gasto) continue;
-                $mes = (int)date('n', strtotime($gasto['fecha']))-1;
+                $mes = (int)date('n', strtotime($gasto['fecha']));
          
             }elseif ($tipo === 'proyecto_credito') {
     // Consultar la tabla credito_adicional uniendo con proyecto_credito
@@ -133,7 +133,7 @@ function procesarDatos($tipo, $tipo_fecha, $fecha, $local_db, $remote_db, $id_ej
     $stmt_gasto->close();
 
     if (!$gasto) continue;
-    $mes = (int)date('n', strtotime($gasto['fecha'])) - 1;
+    $mes = (int)date('n', strtotime($gasto['fecha']));
 }
 
 
