@@ -677,12 +677,17 @@ ${
   function enviarInformacion() {
     console.log(fieldList)
 
+    let informacion = {
+      ...fieldList,
+      monto: formatearFloat(fieldList.monto),
+    }
+
     if (id) {
       confirmNotification({
         type: NOTIFICATIONS_TYPES.send,
         message: '¿Desea actualizar este gasto?',
         successFunction: async function () {
-          let res = await actualizarGasto({ data: { id, ...fieldList } })
+          let res = await actualizarGasto({ data: { id, ...informacion } })
           if (res.success) {
             closeCard()
             recargarEjercicio()
@@ -697,7 +702,7 @@ ${
         message: '¿Desea registrar este gasto?',
         successFunction: async function () {
           let res = await registrarGasto({
-            data: { ...fieldList, codigo: compromisoGenerado },
+            data: { ...informacion, codigo: compromisoGenerado },
           })
           if (res.success) {
             generarCompromisoPdf(
