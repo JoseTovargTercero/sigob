@@ -16,7 +16,6 @@ if ($tipo == "compromiso") {
     if ($tipo_tabla == "dozavos") {
         $tipo_tabla = 'solicitud_dozavos';
     }
-    $tipo_fecha = ;
     if ($data['tipo_fecha'] == "Mensual") {
         $tipo_fecha = "mensual";
     }else{
