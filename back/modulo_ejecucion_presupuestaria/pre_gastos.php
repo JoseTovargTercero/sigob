@@ -248,7 +248,7 @@ function obtenerGastos($id_ejercicio)
                 $montoDistribucion = $distribucion['monto'];
 
                 // Obtener detalles de la distribución
-                $sqlDistribucion = "SELECT id, id_partida, id_sector, id_programa FROM distribucion_presupuestaria WHERE id = ?";
+                $sqlDistribucion = "SELECT id, id_partida, id_sector, id_programa, id_proyecto, id_actividad FROM distribucion_presupuestaria WHERE id = ?";
                 $stmtDistribucion = $conexion->prepare($sqlDistribucion);
                 $stmtDistribucion->bind_param("i", $id_distribucion);
                 $stmtDistribucion->execute();
@@ -259,6 +259,8 @@ function obtenerGastos($id_ejercicio)
                     $id_partida = $distribucionInfo['id_partida'];
                     $id_sector = $distribucionInfo['id_sector'];
                     $id_programa = $distribucionInfo['id_programa'];
+                    $id_proyecto = $distribucionInfo['id_proyecto'];
+                    $id_actividad = $distribucionInfo['id_actividad'];
 
                     // Consultar detalles de la partida
                     $partidaInfo = null;
@@ -293,9 +295,19 @@ function obtenerGastos($id_ejercicio)
                         $programaInfo = $resultadoPrograma->fetch_assoc();
                     }
 
+                    $proyectoInfo = null;
+                    // Consultar proyecto
+                $queryProyecto = "SELECT proyecto_id FROM pl_proyectos WHERE id = ?";
+                $stmtProyecto = $conexion->prepare($queryProyecto);
+                $stmtProyecto->bind_param('i', $id_proyecto);
+                $stmtProyecto->execute();
+                $resultProyecto = $stmtProyecto->get_result();
+                $proyectoInfo = $resultProyecto->fetch_assoc();
+
                     // Añadir sector y programa a la información de distribución
                     $distribucionInfo['sector'] = $sectorInfo['sector_numero'] ?? null;
                     $distribucionInfo['programa'] = $programaInfo['programa_numero'] ?? null;
+                    $distribucionInfo['proyecto'] = $programaInfo['proyectoInfo'] ?? null;
 
                     // Agregar la distribución al array de detalles
                     $informacionDistribuciones[] = [
@@ -306,6 +318,8 @@ function obtenerGastos($id_ejercicio)
                         'descripcion_partida' => $partidaInfo['descripcion'] ?? null,
                         'sector' => $sectorInfo['sector_numero'] ?? null,
                         'programa' => $programaInfo['programa_numero'] ?? null,
+                        'proyecto' => $programaInfo['proyecto'] ?? null,
+                        'actividad' => $id_actividad ?? null,
                     ];
                 }
             }
@@ -449,7 +463,7 @@ function obtenerGastoPorId($id)
                         }
                     }
 
-                    $sqlDistribucion = "SELECT id, id_partida, id_sector, id_programa FROM distribucion_presupuestaria WHERE id = ?";
+                    $sqlDistribucion = "SELECT id, id_partida, id_sector, id_programa, id_proyecto, id_actividad FROM distribucion_presupuestaria WHERE id = ?";
                     $stmtDistribucion = $conexion->prepare($sqlDistribucion);
                     $stmtDistribucion->bind_param("i", $id_distribucion);
                     $stmtDistribucion->execute();
@@ -460,6 +474,9 @@ function obtenerGastoPorId($id)
                         $id_partida = $distribucionInfo['id_partida'];
                         $id_sector = $distribucionInfo['id_sector'];
                         $id_programa = $distribucionInfo['id_programa'];
+                        $id_proyecto = $distribucionInfo['id_proyecto'];
+                        $id_actividad = $distribucionInfo['id_actividad'];
+
 
                         $sqlPartida = "SELECT partida, nombre, descripcion FROM partidas_presupuestarias WHERE id = ?";
                         $stmtPartida = $conexion->prepare($sqlPartida);
@@ -482,6 +499,15 @@ function obtenerGastoPorId($id)
                         $resultadoPrograma = $stmtPrograma->get_result();
                         $programaInfo = $resultadoPrograma->fetch_assoc();
 
+                         $proyectoInfo = null;
+                    // Consultar proyecto
+                $queryProyecto = "SELECT proyecto_id FROM pl_proyectos WHERE id = ?";
+                $stmtProyecto = $conexion->prepare($queryProyecto);
+                $stmtProyecto->bind_param('i', $id_proyecto);
+                $stmtProyecto->execute();
+                $resultProyecto = $stmtProyecto->get_result();
+                $proyectoInfo = $resultProyecto->fetch_assoc();
+
                         $informacionDistribuciones[] = [
                             'id_distribucion' => $distribucionInfo["id"],
                             'monto' => $montoDistribucion,
@@ -490,6 +516,8 @@ function obtenerGastoPorId($id)
                             'descripcion_partida' => $partidaInfo['descripcion'] ?? null,
                             'sector' => $sectorInfo['sector_numero'] ?? null,
                             'programa' => $programaInfo['programa_numero'] ?? null
+                            'proyecto' => $programaInfo['proyecto'] ?? null,
+                            'actividad' => $id_actividad ?? null,
                         ];
                     }
                 }
