@@ -70,7 +70,7 @@ if ($tipo == 'sectores') {
 } elseif ($tipo == 'partidas') {
     $pdf_files["{$url_pdf}&id_ejercicio=$id_ejercicio"] = "PARTIDAS.pdf";
 }elseif($tipo == 'compromiso'){
-    $pdf_files["{$url_pdf}"] = "Compromiso.pdf";
+    $pdf_files["{$url_pdf}&id_ejercicio=$id_ejercicio"] = "Compromiso.pdf";
 } else {
     $pdf_files["{$url_pdf}&id_ejercicio=$id_ejercicio"] = "SECTORES Y PROGRAMAS.pdf";
 }
