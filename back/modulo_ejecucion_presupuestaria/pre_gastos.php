@@ -519,7 +519,7 @@ function obtenerGastoPorId($id)
                             'nombre_partida' => $partidaInfo['nombre'] ?? null,
                             'descripcion_partida' => $partidaInfo['descripcion'] ?? null,
                             'sector' => $sectorInfo['sector_numero'] ?? null,
-                            'programa' => $programaInfo['programa_numero'] ?? null
+                            'programa' => $programaInfo['programa_numero'] ?? null,
                             'proyecto' => $proyectoInfo['proyecto'] ?? null,
                             'actividad' => $id_actividad ?? null,
                         ];
