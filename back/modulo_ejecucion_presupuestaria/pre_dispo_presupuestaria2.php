@@ -67,7 +67,7 @@
         }
     }
 
-    function consultarDisponibilidad($distribuciones, $id_ejercicio)
+    function consultarDisponibilidad2($distribuciones, $id_ejercicio)
     {
         $this->conexion->begin_transaction();
 
