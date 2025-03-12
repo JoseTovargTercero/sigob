@@ -20,7 +20,7 @@ $situado = $resultado['situado'];
 $stmt->close();
 
 // Nueva consulta a la tabla gastos
-$query_gastos = "SELECT * FROM gastos WHERE id_ejercicio = ? AND status = 1";
+$query_gastos = "SELECT * FROM gastos WHERE id_ejercicio = ? AND status != 2";
 $stmt_gastos = $conexion->prepare($query_gastos);
 $stmt_gastos->bind_param('i', $id_ejercicio);
 $stmt_gastos->execute();
@@ -44,6 +44,25 @@ foreach ($gastos as $gasto) {
         $id_distribucion = $distribucion['id_distribucion'];
         $monto_actual = $distribucion['monto'];
 
+
+                $sqlDistribucionEnte = "SELECT id, distribucion FROM distribucion_entes WHERE id_ejercicio = ? AND distribucion LIKE ?";
+                $likePattern = '%"id_distribucion":"' . $id_distribucion . '"%';
+                $stmtDistribucionEnte = $conexion->prepare($sqlDistribucionEnte);
+                $stmtDistribucionEnte->bind_param("is", $id_ejercicio, $likePattern);
+                $stmtDistribucionEnte->execute();
+                $resultadoDistribucionEnte = $stmtDistribucionEnte->get_result();
+
+                if ($distribucionEnte = $resultadoDistribucionEnte->fetch_assoc()) {
+                    $id_distribucion_ente = $distribucionEnte['id'];
+                    $distribucionData = json_decode($distribucionEnte['distribucion'], true);
+
+                    foreach ($distribucionData as $dist) {
+                        if ($dist['id_distribucion'] == $id_distribucion) {
+                            $montoDistribucion = $distribucion['monto'];
+                            break;
+                        }
+                    }
+
         // Consultar distribucion_presupuestaria
         $query_distribucion = "SELECT * FROM distribucion_presupuestaria WHERE id = ? AND id_ejercicio = ?";
         $stmt_distribucion = $conexion->prepare($query_distribucion);
@@ -58,7 +77,7 @@ foreach ($gastos as $gasto) {
         }
 
         $monto_inicial = $distribucion_presupuestaria['monto_inicial'] ?? 0;
-        $monto_disponible = $distribucion_presupuestaria['monto_actual'] ?? 0; // Monto disponible desde distribucion_presupuestaria
+        $monto_disponible = $montoDistribucion ?? 0; // Monto disponible desde distribucion_presupuestaria entes
         $id_sector = $distribucion_presupuestaria['id_sector'] ?? 0;
 
         // Consultar sector y denominación en pl_sectores
@@ -99,6 +118,7 @@ foreach ($gastos as $gasto) {
             $data[$id_sector][4] += $monto_actual;
         } elseif ($gasto['status'] == 1) { // Causado
             $data[$id_sector][5] += $monto_actual;
+            $data[$id_sector][6] += $monto_disponible;
         }
     }
 }
