@@ -112,11 +112,10 @@ foreach ($gastos as $gasto) {
         // Sumar montos al agrupamiento
         $data[$id_sector][2] += $monto_inicial;      // Sumar monto_inicial
         $data[$id_sector][6] += $monto_disponible;   // Sumar monto_actual (disponibilidad)
+        $data[$id_sector][4] += $monto_actual;
 
         // Sumar comprometido o causado según el status del gasto
-        if ($gasto['status'] == 0) { // Comprometido
-            $data[$id_sector][4] += $monto_actual;
-        } elseif ($gasto['status'] == 1) { // Causado
+        if ($gasto['status'] == 1) { // Causado
             $data[$id_sector][5] += $monto_actual;
         }
     }
