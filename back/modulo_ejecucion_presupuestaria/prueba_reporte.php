@@ -7,8 +7,8 @@ $data = [
         "ejercicio_fiscal" => "1",
         "tipo" => "compromiso",
         "tipo_tabla" => "dozavos",
-        "tipo_fecha" => "mensual",
-        "fecha" => "0"
+        "tipo_fecha" => "trimestre",
+        "fecha" => "1"
     ]
 ];
 
