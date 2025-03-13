@@ -202,6 +202,7 @@ foreach ($identificadores_fijos as $identificador) {
         $data[$identificador][5] += $monto_actual;
     }
 }
+}
 // Consultar los traspasos principales filtrando por id_ejercicio
 $sql = "SELECT t.id, t.n_orden, t.id_ejercicio, t.monto_total, t.fecha, t.status, t.tipo 
         FROM traspasos t
