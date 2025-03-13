@@ -1,5 +1,8 @@
 <?php
 require_once '../sistema_global/conexion.php';
+require_once '../sistema_global/conexion_remota.php';
+global $conexion;
+global $remote_db;
 
 $id_ejercicio = $_GET['id_ejercicio'];
 $trimestre = $_GET['trimestre'];
