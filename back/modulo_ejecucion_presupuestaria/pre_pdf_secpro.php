@@ -79,9 +79,12 @@ foreach ($sectores_con_programas as $id_sector => $sector_con_programas) {
     }
 }
 
-// Consultar monto_inicial desde distribucion_presupuestaria agrupado por id_sector e id_programa
-$query_distribucion = "SELECT id_sector, id_programa, monto_inicial FROM distribucion_presupuestaria";
-$result_distribucion = $conexion->query($query_distribucion);
+// Consultar monto_inicial desde distribucion_presupuestaria filtrado por id_ejercicio y agrupado por id_sector e id_programa
+$query_distribucion = "SELECT id_sector, id_programa, monto_inicial FROM distribucion_presupuestaria WHERE id_ejercicio = ?";
+$stmt_distribucion = $conexion->prepare($query_distribucion);
+$stmt_distribucion->bind_param('i', $id_ejercicio);
+$stmt_distribucion->execute();
+$result_distribucion = $stmt_distribucion->get_result();
 
 while ($row = $result_distribucion->fetch_assoc()) {
     $id_sector = $row['id_sector'];
@@ -100,6 +103,7 @@ while ($row = $result_distribucion->fetch_assoc()) {
         }
     }
 }
+
 
 
 
