@@ -109,7 +109,7 @@ foreach ($gastos as $gasto) {
             if (in_array($codigo_partida, $codigos_partida_permitidos)) {
                 $data[$codigo_partida][2] += $monto_inicial;
                 $data[$codigo_partida][6] += $monto_actual;
-                $data[$id_sector][4] += $monto_actual;
+                $data[$codigo_partida][4] += $monto_actual;
                 if ($gasto['status'] == 1) { // Causado
                     $data[$codigo_partida][5] += $monto_actual;
                 }
