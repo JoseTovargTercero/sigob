@@ -217,7 +217,7 @@ if ($resultado->num_rows > 0) {
 
                         // Agrupar datos por los primeros 3 dígitos del código de partida
                         if (!isset($data[$codigo_partida])) {
-                            $data[$codigo_partida][3] += $monto_traspaso; // Sumar al monto comprometido o causado
+                            $data[$codigo_partida][3] += $monto_traspaso; 
                         }
 
                         // Sumar el monto de traspaso a la partida correspondiente
