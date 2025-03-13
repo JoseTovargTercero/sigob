@@ -79,6 +79,28 @@ foreach ($sectores_con_programas as $id_sector => $sector_con_programas) {
     }
 }
 
+// Consultar monto_inicial desde distribucion_presupuestaria agrupado por id_sector e id_programa
+$query_distribucion = "SELECT id_sector, id_programa, monto_inicial FROM distribucion_presupuestaria";
+$result_distribucion = $conexion->query($query_distribucion);
+
+while ($row = $result_distribucion->fetch_assoc()) {
+    $id_sector = $row['id_sector'];
+    $id_programa = $row['id_programa'];
+    $monto_inicial = $row['monto_inicial'];
+    
+    // Formatear identificador como sector-programa
+    foreach ($sectores_con_programas[$id_sector]['programas'] as $programa) {
+        if ($programa['id'] == $id_programa) {
+            $identificador = sprintf("%s-%s", $sectores_con_programas[$id_sector]['sector'], $programa['programa']);
+            
+            // Sumar monto_inicial al identificador correspondiente
+            if (isset($data[$identificador])) {
+                $data[$identificador][2] += $monto_inicial;
+            }
+        }
+    }
+}
+
 
 
 // Consultar ejercicio fiscal
@@ -199,7 +221,6 @@ foreach ($gastos as $gasto) {
             
             // Agrupar datos por identificador
             if (isset($data[$identificador])) {
-                $data[$identificador][2] += $monto_inicial;      // Sumar monto_inicial
                 $data[$identificador][6] += $monto_disponible;   // Sumar monto_actual (disponibilidad)
                     $data[$identificador][5] += $monto_actual;
             }
