@@ -20,6 +20,55 @@ $identificadores_fijos = [
     "08-02", "08-03", "09-01", "09-02", "11-01", "11-02", "12-01", "13-01", "13-02", 
     "14-01", "15-01"
 ];
+foreach ($identificadores_fijos as $identificador) {
+    // Extraer el sector y el programa de la clave del identificador
+    $id_sector = substr($identificador, 0, 2);  // El primer dígito es el sector
+    $id_programa = substr($identificador, 3, 2);  // El segundo dígito es el programa
+    
+    // Consultar sector en pl_sectores
+    $query_sector = "SELECT sector FROM pl_sectores WHERE sector = ?";
+    $stmt_sector = $conexion->prepare($query_sector);
+    $stmt_sector->bind_param('i', $id_sector);
+    $stmt_sector->execute();
+    $result_sector = $stmt_sector->get_result();
+    $sector_data = $result_sector->fetch_assoc();
+
+    if (!$sector_data) {
+        echo "No se encontró registro en pl_sectores para id_sector: $id_sector<br>";
+        continue;
+    }
+
+    $sector = $sector_data['sector'] ?? 'N/A';
+
+    // Consultar programa en pl_programas
+    $query_programa = "SELECT programa, denominacion FROM pl_programas WHERE programa = ?";
+    $stmt_programa = $conexion->prepare($query_programa);
+    $stmt_programa->bind_param('i', $id_programa);
+    $stmt_programa->execute();
+    $result_programa = $stmt_programa->get_result();
+    $programa_data = $result_programa->fetch_assoc();
+
+    if (!$programa_data) {
+        echo "No se encontró registro en pl_programas para id_programa: $id_programa<br>";
+        continue;
+    }
+
+    $programa = $programa_data['programa'] ?? 'N/A';
+    $denominacion = $programa_data['denominacion'] ?? 'N/A';
+    
+    // Agrupar datos por identificador
+    if (!isset($data[$identificador])) {
+        $data[$identificador] = [
+            $identificador,  // Sector y programa combinados
+            $denominacion,   // Denominación del programa
+            0,               // Sumatoria de monto_inicial
+            0,               // Sumatoria comprometido
+            0,               // Sumatoria causado
+            0,               // Sumatoria disponible (monto_actual de distribucion_presupuestaria)
+            0                // Sumatoria de monto_actual (de las distribuciones)
+        ];
+    }
+}
 
 // Consultar ejercicio fiscal
 $query_ejercicio = "SELECT * FROM ejercicio_fiscal WHERE id = ?";
@@ -98,58 +147,7 @@ foreach ($gastos as $gasto) {
 
             $monto_inicial = $distribucion_presupuestaria['monto_inicial'] ?? 0;
             $monto_disponible = $montoDistribucion; // Monto disponible desde distribucion_presupuestaria entes
-// Iterar sobre cada identificador fijo
-foreach ($identificadores_fijos as $identificador) {
-    // Extraer el sector y el programa de la clave del identificador
-    $id_sector = substr($identificador, 0, 2);  // El primer dígito es el sector
-    $id_programa = substr($identificador, 3, 2);  // El segundo dígito es el programa
-    
-    // Consultar sector en pl_sectores
-    $query_sector = "SELECT sector FROM pl_sectores WHERE sector = ?";
-    $stmt_sector = $conexion->prepare($query_sector);
-    $stmt_sector->bind_param('i', $id_sector);
-    $stmt_sector->execute();
-    $result_sector = $stmt_sector->get_result();
-    $sector_data = $result_sector->fetch_assoc();
 
-    if (!$sector_data) {
-        echo "No se encontró registro en pl_sectores para id_sector: $id_sector<br>";
-        continue;
-    }
-
-    $sector = $sector_data['sector'] ?? 'N/A';
-
-    // Consultar programa en pl_programas
-    $query_programa = "SELECT programa, denominacion FROM pl_programas WHERE programa = ?";
-    $stmt_programa = $conexion->prepare($query_programa);
-    $stmt_programa->bind_param('i', $id_programa);
-    $stmt_programa->execute();
-    $result_programa = $stmt_programa->get_result();
-    $programa_data = $result_programa->fetch_assoc();
-
-    if (!$programa_data) {
-        echo "No se encontró registro en pl_programas para id_programa: $id_programa<br>";
-        continue;
-    }
-
-    $programa = $programa_data['programa'] ?? 'N/A';
-    $denominacion = $programa_data['denominacion'] ?? 'N/A';
-    
-    // Agrupar datos por identificador
-    if (!isset($data[$identificador])) {
-        $data[$identificador] = [
-            $identificador,  // Sector y programa combinados
-            $denominacion,   // Denominación del programa
-            0,               // Sumatoria de monto_inicial
-            0,               // Sumatoria comprometido
-            0,               // Sumatoria causado
-            0,               // Sumatoria disponible (monto_actual de distribucion_presupuestaria)
-            0                // Sumatoria de monto_actual (de las distribuciones)
-        ];
-    }
-
-    // Aquí puedes agregar los montos correspondientes a las sumatorias
-    // Ejemplo de agregar monto (esto depende de cómo estés calculando los montos)
     $data[$identificador][2] += $monto_inicial;      // Sumar monto_inicial
     $data[$identificador][6] += $monto_disponible;   // Sumar monto_actual (disponibilidad)
 
@@ -159,7 +157,7 @@ foreach ($identificadores_fijos as $identificador) {
 }
 }
 }
-}
+
 
 
 
