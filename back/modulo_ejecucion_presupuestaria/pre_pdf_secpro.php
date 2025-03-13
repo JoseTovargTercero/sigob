@@ -483,7 +483,7 @@ if ($resultado->num_rows > 0) {
                        }else{
                         $asignacion_ajustada = $asignacion_inicial - $modificacion;
                     }
-                    $disponibilidad = $info_partida[6] ?? 0;
+                    $disponibilidad = ($asignacion_inicial + $modificacion) - $compromiso;
 
                     // Acumular totales
                     $total_asignacion_inicial += $asignacion_inicial;
