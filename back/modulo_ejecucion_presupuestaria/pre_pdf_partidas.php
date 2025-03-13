@@ -214,6 +214,7 @@ if ($resultado->num_rows > 0) {
                         // Obtener la denominación de la partida
                         $denominacion_partida = $partida_data['denominacion'] ?? 'N/A';
                         $monto_traspaso = $detalle['monto'];
+                        print_r($monto_traspaso);
 
                         // Agrupar datos por los primeros 3 dígitos del código de partida
                         if (!isset($data[$codigo_partida])) {
