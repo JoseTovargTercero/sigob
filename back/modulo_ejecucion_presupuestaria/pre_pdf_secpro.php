@@ -14,7 +14,7 @@ $trimestres_text = [
     4 => 'CUARTO TRIMESTRE',
 ];
 
-
+$identificadores = [];
  // Consultar sector en pl_sectores
             $query_sector = "SELECT sector FROM pl_sectores ";
             $stmt_sector = $conexion->prepare($query_sector);
@@ -84,7 +84,7 @@ $gastos = $result_gastos->fetch_all(MYSQLI_ASSOC);
 
 // Procesar distribuciones en los registros de gastos
 $data = [];
-$identificadores = [];
+
 
 foreach ($gastos as $gasto) {
     $distribuciones_json = $gasto['distribuciones'];
