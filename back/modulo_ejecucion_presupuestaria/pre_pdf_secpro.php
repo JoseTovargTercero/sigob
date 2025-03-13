@@ -148,12 +148,14 @@ foreach ($gastos as $gasto) {
             $monto_inicial = $distribucion_presupuestaria['monto_inicial'] ?? 0;
             $monto_disponible = $montoDistribucion; // Monto disponible desde distribucion_presupuestaria entes
 
+    if (isset($data[$identificador])) {
+    // Acceder a los índices de forma segura
     $data[$identificador][2] += $monto_inicial;      // Sumar monto_inicial
     $data[$identificador][6] += $monto_disponible;   // Sumar monto_actual (disponibilidad)
-
     if ($gasto['status'] == 1) { // Causado
         $data[$identificador][5] += $monto_actual;
     }
+}
 }
 }
 }
