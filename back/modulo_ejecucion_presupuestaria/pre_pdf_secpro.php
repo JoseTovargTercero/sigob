@@ -252,10 +252,10 @@ if ($resultado->num_rows > 0) {
                     $denominacion = $programa_data['denominacion'] ?? 'N/A';
 
                     // Formatear identificador como xx-xx
-                    $identificador = sprintf("%s-%s", $sector, $programa);
+                    $identificador2 = sprintf("%s-%s", $sector, $programa);
 
                     // Agrupar datos por identificador
-                    if (!isset($data[$identificador])) {
+                    if (in_array($identificador2, $identificador)) {
                          // Sumar montos al agrupamiento
                     $data[$identificador][3] += $monto_traspaso;  // Sumar monto del traspaso
                       
