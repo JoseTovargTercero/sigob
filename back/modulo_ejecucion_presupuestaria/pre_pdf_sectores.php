@@ -14,6 +14,7 @@ $trimestres_text = [
 ];
 
 // Inicializar todos los sectores del 1 al 10 con valores en 0
+// Inicializar data para cada sector permitido
 $data = [];
 for ($i = 1; $i <= 10; $i++) {
     $data[$i] = [
@@ -26,6 +27,24 @@ for ($i = 1; $i <= 10; $i++) {
         0  // Sumatoria de monto_actual (de las distribuciones)
     ];
 }
+
+// Consultar monto_inicial desde distribucion_presupuestaria filtrado por id_ejercicio para sectores
+$query_distribucion_sector = "SELECT id_sector, monto_inicial FROM distribucion_presupuestaria WHERE id_ejercicio = ?";
+$stmt_distribucion_sector = $conexion->prepare($query_distribucion_sector);
+$stmt_distribucion_sector->bind_param('i', $id_ejercicio);
+$stmt_distribucion_sector->execute();
+$result_distribucion_sector = $stmt_distribucion_sector->get_result();
+
+while ($row = $result_distribucion_sector->fetch_assoc()) {
+    $id_sector = $row['id_sector'];
+    $monto_inicial = $row['monto_inicial'];
+    
+    // Sumar monto_inicial al sector correspondiente
+    if (isset($data[$id_sector])) {
+        $data[$id_sector][2] += $monto_inicial;
+    }
+}
+
 
 // Consultar ejercicio fiscal
 $query_sector = "SELECT * FROM ejercicio_fiscal WHERE id = ?";
@@ -60,11 +79,24 @@ $gastos = $result_gastos->fetch_all(MYSQLI_ASSOC);
 
 foreach ($gastos as $gasto) {
     $mes = (int)date('n', strtotime($gasto['fecha']));
-    $inicio_trimestre = ($trimestre - 1) * 3 + 1;
-    $fin_trimestre = $inicio_trimestre + 2;
-    if ($mes < $inicio_trimestre || $mes > $fin_trimestre) {
-        continue;
-    }
+      if ($trimestre == 1) {
+                    $inicio_trimestre = 1;
+                    $fin_trimestre = 3;
+                }elseif ($trimestre == 2) {
+                    $inicio_trimestre = 4;
+                    $fin_trimestre = 6;
+                }elseif ($trimestre == 3) {
+                    $inicio_trimestre = 7;
+                    $fin_trimestre = 9;
+                }elseif ($trimestre == 4) {
+                    $inicio_trimestre = 10;
+                    $fin_trimestre = 12;
+                }
+                
+
+                if ($mes < $inicio_trimestre || $mes > $fin_trimestre) {
+                    continue;
+                }
 
     $distribuciones_array = json_decode($gasto['distribuciones'], true);
     if (!is_array($distribuciones_array)) {
@@ -84,8 +116,7 @@ foreach ($gastos as $gasto) {
 
         if ($distribucion_presupuestaria) {
             $id_sector = $distribucion_presupuestaria['id_sector'];
-            $monto_inicial = $distribucion_presupuestaria['monto_inicial'] ?? 0;
-            $data[$id_sector][2] += $monto_inicial;
+    
             $data[$id_sector][6] += $monto_actual;
             $data[$id_sector][4] += $monto_actual;
             if ($gasto['status'] == 1) {
@@ -105,11 +136,24 @@ $traspasos = $resultado->fetch_all(MYSQLI_ASSOC);
 
 foreach ($traspasos as $traspaso) {
     $mes2 = (int)date('n', strtotime($traspaso['fecha']));
-    $inicio_trimestre = ($trimestre - 1) * 3 + 1;
-    $fin_trimestre = $inicio_trimestre + 2;
-    if ($mes2 < $inicio_trimestre || $mes2 > $fin_trimestre) {
-        continue;
-    }
+     if ($trimestre == 1) {
+                    $inicio_trimestre = 1;
+                    $fin_trimestre = 3;
+                }elseif ($trimestre == 2) {
+                    $inicio_trimestre = 4;
+                    $fin_trimestre = 6;
+                }elseif ($trimestre == 3) {
+                    $inicio_trimestre = 7;
+                    $fin_trimestre = 9;
+                }elseif ($trimestre == 4) {
+                    $inicio_trimestre = 10;
+                    $fin_trimestre = 12;
+                }
+                
+
+                if ($mes2 < $inicio_trimestre || $mes2 > $fin_trimestre) {
+                    continue;
+                }
 
     $sqlInfo = "SELECT id_distribucion, monto FROM traspaso_informacion WHERE id_traspaso = ? AND tipo='A'";
     $stmtInfo = $remote_db->prepare($sqlInfo);

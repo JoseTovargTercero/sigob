@@ -79,6 +79,32 @@ foreach ($sectores_con_programas as $id_sector => $sector_con_programas) {
     }
 }
 
+// Consultar monto_inicial desde distribucion_presupuestaria filtrado por id_ejercicio y agrupado por id_sector e id_programa
+$query_distribucion = "SELECT id_sector, id_programa, monto_inicial FROM distribucion_presupuestaria WHERE id_ejercicio = ?";
+$stmt_distribucion = $conexion->prepare($query_distribucion);
+$stmt_distribucion->bind_param('i', $id_ejercicio);
+$stmt_distribucion->execute();
+$result_distribucion = $stmt_distribucion->get_result();
+
+while ($row = $result_distribucion->fetch_assoc()) {
+    $id_sector = $row['id_sector'];
+    $id_programa = $row['id_programa'];
+    $monto_inicial = $row['monto_inicial'];
+    
+    // Formatear identificador como sector-programa
+    foreach ($sectores_con_programas[$id_sector]['programas'] as $programa) {
+        if ($programa['id'] == $id_programa) {
+            $identificador = sprintf("%s-%s", $sectores_con_programas[$id_sector]['sector'], $programa['programa']);
+            
+            // Sumar monto_inicial al identificador correspondiente
+            if (isset($data[$identificador])) {
+                $data[$identificador][2] += $monto_inicial;
+            }
+        }
+    }
+}
+
+
 
 
 // Consultar ejercicio fiscal
@@ -111,6 +137,7 @@ foreach ($gastos as $gasto) {
     $distribuciones_json = $gasto['distribuciones'];
     $distribuciones_array = json_decode($distribuciones_json, true);
     $mes = (int)date('n', strtotime($gasto['fecha']));
+    
 
     if (!is_array($distribuciones_array)) {
         echo "Error al decodificar el JSON de distribuciones para el gasto con ID: " . $gasto['id'] . "<br>";
@@ -185,11 +212,24 @@ foreach ($gastos as $gasto) {
                 continue;
             }
 
-            $inicio_trimestre = ($trimestre - 1) * 3 + 1; // Mes inicial del trimestre
-            $fin_trimestre = $inicio_trimestre + 2;       // Mes final del trimestre
-            if ($mes < $inicio_trimestre or $mes > $fin_trimestre) {
-                continue;
-            }
+             if ($trimestre == 1) {
+                    $inicio_trimestre = 1;
+                    $fin_trimestre = 3;
+                }elseif ($trimestre == 2) {
+                    $inicio_trimestre = 4;
+                    $fin_trimestre = 6;
+                }elseif ($trimestre == 3) {
+                    $inicio_trimestre = 7;
+                    $fin_trimestre = 9;
+                }elseif ($trimestre == 4) {
+                    $inicio_trimestre = 10;
+                    $fin_trimestre = 12;
+                }
+                
+
+                if ($mes < $inicio_trimestre || $mes > $fin_trimestre) {
+                    continue;
+                }
 
             $programa = $programa_data['programa'] ?? 'N/A';
             $denominacion = $programa_data['denominacion'] ?? 'N/A';
@@ -199,7 +239,6 @@ foreach ($gastos as $gasto) {
             
             // Agrupar datos por identificador
             if (isset($data[$identificador])) {
-                $data[$identificador][2] += $monto_inicial;      // Sumar monto_inicial
                 $data[$identificador][6] += $monto_disponible;   // Sumar monto_actual (disponibilidad)
                     $data[$identificador][5] += $monto_actual;
             }
@@ -225,11 +264,24 @@ if ($resultado->num_rows > 0) {
     foreach ($traspasos as &$traspaso) {
         $mes2 = (int)date('n', strtotime($traspaso['fecha']));
 
-        $inicio_trimestre = ($trimestre - 1) * 3 + 1; // Mes inicial del trimestre
-        $fin_trimestre = $inicio_trimestre + 2;       // Mes final del trimestre
-        if ($mes2 < $inicio_trimestre or $mes2 > $fin_trimestre) {
-            continue;
-        }
+          if ($trimestre == 1) {
+                    $inicio_trimestre = 1;
+                    $fin_trimestre = 3;
+                }elseif ($trimestre == 2) {
+                    $inicio_trimestre = 4;
+                    $fin_trimestre = 6;
+                }elseif ($trimestre == 3) {
+                    $inicio_trimestre = 7;
+                    $fin_trimestre = 9;
+                }elseif ($trimestre == 4) {
+                    $inicio_trimestre = 10;
+                    $fin_trimestre = 12;
+                }
+                
+
+                if ($mes2 < $inicio_trimestre || $mes2 > $fin_trimestre) {
+                    continue;
+                }
 
         $sqlInfo = "SELECT ti.id_distribucion, ti.monto, ti.tipo 
                     FROM traspaso_informacion ti 

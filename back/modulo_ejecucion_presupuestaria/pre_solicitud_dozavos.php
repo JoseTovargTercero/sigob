@@ -1,6 +1,7 @@
 <?php
 
 require_once '../sistema_global/conexion.php';
+require_once '../sistema_global/conexion_remota.php';
 
 require_once '../sistema_global/notificaciones.php';
 header('Content-Type: application/json');
@@ -232,90 +233,91 @@ function consultarSolicitudPorId($data)
 function registrarSolicitudozavo($data)
 {
     global $conexion;
+    global $remote_db;
 
     try {
         if (!isset($data['descripcion']) || !isset($data['monto']) || !isset($data['tipo']) || !isset($data['partidas']) || !isset($data['id_ente']) || !isset($data['id_ejercicio']) || !isset($data['mes'])) {
             return json_encode(["error" => "Faltan datos obligatorios para registrar la solicitud."]);
         }
 
-        // Iniciar una transacción
+        // Iniciar transacción en ambas bases de datos
         $conexion->begin_transaction();
+        $remote_db->begin_transaction();
 
-        $mesActual = date("n") - 1; // Mes actual (0-11)
-        $mesSolicitado = $data['mes']; // Mes solicitado (0-11)
+        $mesActual = date("n") - 1;
+        $mesSolicitado = $data['mes'];
         $idEnte = $data['id_ente'];
         $idEjercicio = $data['id_ejercicio'];
 
-        // Verificar si ya existe una solicitud pendiente (status = 1)
-        $sqlPendiente = "SELECT COUNT(*) AS total FROM solicitud_dozavos WHERE id_ente = ? AND status = 1 AND id_ejercicio = ?";
-        $stmtPendiente = $conexion->prepare($sqlPendiente);
-        $stmtPendiente->bind_param("ii", $idEnte, $idEjercicio);
-        $stmtPendiente->execute();
-        $resultadoPendiente = $stmtPendiente->get_result();
-        $filaPendiente = $resultadoPendiente->fetch_assoc();
+        // Verificar si ya existe una solicitud pendiente
+        foreach ([$conexion, $remote_db] as $db) {
+            $sqlPendiente = "SELECT COUNT(*) AS total FROM solicitud_dozavos WHERE id_ente = ? AND status = 1 AND id_ejercicio = ?";
+            $stmtPendiente = $db->prepare($sqlPendiente);
+            $stmtPendiente->bind_param("ii", $idEnte, $idEjercicio);
+            $stmtPendiente->execute();
+            $resultadoPendiente = $stmtPendiente->get_result();
+            $filaPendiente = $resultadoPendiente->fetch_assoc();
 
-        if ($filaPendiente['total'] > 0) {
-            $conexion->rollback();
-            return json_encode(["error" => "No se puede registrar la solicitud porque hay una pendiente."]);
+            if ($filaPendiente['total'] > 0) {
+                $conexion->rollback();
+                $remote_db->rollback();
+                return json_encode(["error" => "No se puede registrar la solicitud porque hay una pendiente."]);
+            }
         }
 
-        // Verificar la existencia de solicitudes para el mes actual
-        $sqlMesActual = "SELECT COUNT(*) AS total FROM solicitud_dozavos WHERE id_ente = ? AND mes = ? AND id_ejercicio = ? AND status != '3'";
-        $stmtMesActual = $conexion->prepare($sqlMesActual);
-        $stmtMesActual->bind_param("iii", $idEnte, $mesActual, $idEjercicio);
-        $stmtMesActual->execute();
-        $resultadoMesActual = $stmtMesActual->get_result();
-        $filaMesActual = $resultadoMesActual->fetch_assoc();
-        $existeMesActual = $filaMesActual['total'] > 0;
+        // Verificar existencia de solicitudes para el mes actual
+        $existeMesActual = false;
+        foreach ([$conexion, $remote_db] as $db) {
+            $sqlMesActual = "SELECT COUNT(*) AS total FROM solicitud_dozavos WHERE id_ente = ? AND mes = ? AND id_ejercicio = ? AND status != '3'";
+            $stmtMesActual = $db->prepare($sqlMesActual);
+            $stmtMesActual->bind_param("iii", $idEnte, $mesActual, $idEjercicio);
+            $stmtMesActual->execute();
+            $resultadoMesActual = $stmtMesActual->get_result();
+            $filaMesActual = $resultadoMesActual->fetch_assoc();
+            
+            if ($filaMesActual['total'] > 0) {
+                $existeMesActual = true;
+            }
+        }
 
-         // Calcular el mes siguiente correctamente
-        $mesSiguiente = ($mesActual + 1) % 12;
-
-        // Condiciones para permitir el registro
-        //if ($mesSolicitado == $mesActual && !$existeMesActual) {
-            // Permitido registrar para el mes en curso si aún no existe
-        //} elseif ($mesSolicitado == $mesSiguiente && $existeMesActual) {
-            // Permitido registrar para el siguiente mes si el mes actual ya existe
-        //} else {
-          //  $conexion->rollback();
-           // return json_encode(["error" => "No se puede registrar la solicitud. Condiciones no cumplidas."]);
-        //}
-
-
-           // Condiciones para permitir el registro
-        if (!$existeMesActual) {
-     
-        } else {
-           $conexion->rollback();
+        if ($existeMesActual) {
+            $conexion->rollback();
+            $remote_db->rollback();
             return json_encode(["error" => "No se puede registrar la solicitud. Condiciones no cumplidas."]);
         }
 
         // Generar el numero_orden automáticamente
         $numero_orden = generarNumeroOrden();
         $fecha = date("Y-m-d");
+        $partidasJson = json_encode($data['partidas']);
 
-        // Insertar en solicitud_dozavos (numero_compromiso siempre será 0 inicialmente)
-        $sqlInsertar = "INSERT INTO solicitud_dozavos (numero_orden, numero_compromiso, descripcion, tipo, monto, fecha, partidas, id_ente, status, id_ejercicio, mes) VALUES (?, 0, ?, ?, ?, ?, ?, ?, 1, ?, ?)";
-        $stmtInsertar = $conexion->prepare($sqlInsertar);
-        $partidasJson = json_encode($data['partidas']); // Convertir partidas a formato JSON
-        $stmtInsertar->bind_param("sssssssss", $numero_orden, $data['descripcion'], $data['tipo'], $data['monto'], $fecha, $partidasJson, $idEnte, $idEjercicio, $mesSolicitado);
-        $stmtInsertar->execute();
+        // Insertar en ambas bases de datos
+        foreach ([$conexion, $remote_db] as $db) {
+            $sqlInsertar = "INSERT INTO solicitud_dozavos (numero_orden, numero_compromiso, descripcion, tipo, monto, fecha, partidas, id_ente, status, id_ejercicio, mes) VALUES (?, 0, ?, ?, ?, ?, ?, ?, 1, ?, ?)";
+            $stmtInsertar = $db->prepare($sqlInsertar);
+            $stmtInsertar->bind_param("sssssssss", $numero_orden, $data['descripcion'], $data['tipo'], $data['monto'], $fecha, $partidasJson, $idEnte, $idEjercicio, $mesSolicitado);
+            $stmtInsertar->execute();
 
-        if ($stmtInsertar->affected_rows > 0) {
-            // Confirmar la transacción
-            $conexion->commit();
-            return json_encode(["success" => "Registro exitoso"]);
-        } else {
-            $conexion->rollback();
-            return json_encode(["error" => "No se pudo registrar la solicitud."]);
+            if ($stmtInsertar->affected_rows === 0) {
+                $conexion->rollback();
+                $remote_db->rollback();
+                return json_encode(["error" => "No se pudo registrar la solicitud."]);
+            }
         }
+
+        // Confirmar la transacción en ambas bases de datos
+        $conexion->commit();
+        $remote_db->commit();
+        return json_encode(["success" => "Registro exitoso"]);
     } catch (Exception $e) {
-        // Revertir transacción en caso de error
+        // Revertir transacciones en caso de error
         $conexion->rollback();
+        $remote_db->rollback();
         registrarError($e->getMessage());
         return json_encode(["error" => $e->getMessage()]);
     }
 }
+
 
 
 
@@ -353,14 +355,16 @@ function generarNumeroOrden()
 function gestionarSolicitudDozavos2($idSolicitud, $accion, $codigo)
 {
     global $conexion;
+    global $remote_db;
 
     try {
         if (empty($idSolicitud) || empty($accion)) {
             throw new Exception("Faltan uno o más valores necesarios (idSolicitud, accion)");
         }
 
-        // Iniciar la transacción
+        // Iniciar las transacciones en ambas bases de datos
         $conexion->begin_transaction();
+        $remote_db->begin_transaction();
 
         // Consultar los detalles de la solicitud, incluyendo el campo partidas
         $sqlSolicitud = "SELECT numero_orden, numero_compromiso, descripcion, tipo, monto, id_ente, partidas, status, id_ejercicio FROM solicitud_dozavos WHERE id = ?";
@@ -439,67 +443,85 @@ function gestionarSolicitudDozavos2($idSolicitud, $accion, $codigo)
                 // Volver a codificar el array a formato JSON
                 $nuevaDistribucion = json_encode($distribuciones);
 
-                // Actualizar el monto en distribucion_entes
-                $sqlUpdatePartida = "UPDATE distribucion_entes SET distribucion = ? WHERE id_ente = ? AND id_ejercicio = ? AND distribucion LIKE '%\"id_distribucion\":\"$id_distribucion\"%'";
-                $stmtUpdatePartida = $conexion->prepare($sqlUpdatePartida);
-                $stmtUpdatePartida->bind_param("sii", $nuevaDistribucion, $id_ente, $id_ejercicio);
-                $stmtUpdatePartida->execute();
+                // Actualizar el monto en distribucion_entes en ambas bases de datos
+                foreach ([$conexion, $remote_db] as $db) {
+                    $sqlUpdatePartida = "UPDATE distribucion_entes SET distribucion = ? WHERE id_ente = ? AND id_ejercicio = ? AND distribucion LIKE '%\"id_distribucion\":\"$id_distribucion\"%'";
+                    $stmtUpdatePartida = $db->prepare($sqlUpdatePartida);
+                    $stmtUpdatePartida->bind_param("sii", $nuevaDistribucion, $id_ente, $id_ejercicio);
+                    $stmtUpdatePartida->execute();
 
-                if ($stmtUpdatePartida->affected_rows === 0) {
-                    throw new Exception("No se pudo actualizar el monto de distribución para el ID de distribución proporcionado");
+                    if ($stmtUpdatePartida->affected_rows === 0) {
+                        $conexion->rollback();
+                        $remote_db->rollback();
+                        throw new Exception("No se pudo actualizar el monto de distribución para el ID de distribución proporcionado");
+                    }
                 }
             }
 
-            // Actualizar el estado de la solicitud a aceptado
-            $sqlUpdateSolicitud = "UPDATE solicitud_dozavos SET status = 0 WHERE id = ?";
-            $stmtUpdateSolicitud = $conexion->prepare($sqlUpdateSolicitud);
-            $stmtUpdateSolicitud->bind_param("i", $idSolicitud);
-            $stmtUpdateSolicitud->execute();
+            // Actualizar el estado de la solicitud a aceptado en ambas bases de datos
+            foreach ([$conexion, $remote_db] as $db) {
+                $sqlUpdateSolicitud = "UPDATE solicitud_dozavos SET status = 0 WHERE id = ?";
+                $stmtUpdateSolicitud = $db->prepare($sqlUpdateSolicitud);
+                $stmtUpdateSolicitud->bind_param("i", $idSolicitud);
+                $stmtUpdateSolicitud->execute();
 
-            if ($stmtUpdateSolicitud->affected_rows > 0) {
-                $resultadoCompromiso = registrarCompromiso($idSolicitud, 'solicitud_dozavos', $descripcion, $id_ejercicio, $codigo);
-                if (isset($resultadoCompromiso['success']) && $resultadoCompromiso['success']) {
-                    // Confirmar la transacción
-                    $conexion->commit();
+                if ($stmtUpdateSolicitud->affected_rows > 0) {
+                    $resultadoCompromiso = registrarCompromiso($idSolicitud, 'solicitud_dozavos', $descripcion, $id_ejercicio, $codigo);
+                    if (isset($resultadoCompromiso['success']) && $resultadoCompromiso['success']) {
+                        // Confirmar la transacción en ambas bases de datos
+                        $conexion->commit();
+                        $remote_db->commit();
 
-                    return json_encode([
-                        "success" => "La solicitud ha sido aceptada, el compromiso se ha registrado y el presupuesto actualizado",
-                        "compromiso" => [
-                            "correlativo" => $resultadoCompromiso['correlativo'],
-                            "id_compromiso" => $resultadoCompromiso['id_compromiso']
-                        ]
-                    ]);
+                        return json_encode([
+                            "success" => "La solicitud ha sido aceptada, el compromiso se ha registrado y el presupuesto actualizado",
+                            "compromiso" => [
+                                "correlativo" => $resultadoCompromiso['correlativo'],
+                                "id_compromiso" => $resultadoCompromiso['id_compromiso']
+                            ]
+                        ]);
+                    } else {
+                        $conexion->rollback();
+                        $remote_db->rollback();
+                        throw new Exception("No se pudo registrar el compromiso");
+                    }
                 } else {
-                    throw new Exception("No se pudo registrar el compromiso");
+                    $conexion->rollback();
+                    $remote_db->rollback();
+                    throw new Exception("No se pudo actualizar la solicitud a aceptada");
                 }
-            } else {
-                throw new Exception("No se pudo actualizar la solicitud a aceptada");
             }
         } elseif ($accion === "rechazar") {
-            // Actualizar el estado de la solicitud a rechazado
-            $sqlUpdateSolicitud = "UPDATE solicitud_dozavos SET status = 3 WHERE id = ?";
-            $stmtUpdateSolicitud = $conexion->prepare($sqlUpdateSolicitud);
-            $stmtUpdateSolicitud->bind_param("i", $idSolicitud);
-            $stmtUpdateSolicitud->execute();
+            // Actualizar el estado de la solicitud a rechazado en ambas bases de datos
+            foreach ([$conexion, $remote_db] as $db) {
+                $sqlUpdateSolicitud = "UPDATE solicitud_dozavos SET status = 3 WHERE id = ?";
+                $stmtUpdateSolicitud = $db->prepare($sqlUpdateSolicitud);
+                $stmtUpdateSolicitud->bind_param("i", $idSolicitud);
+                $stmtUpdateSolicitud->execute();
 
-            if ($stmtUpdateSolicitud->affected_rows > 0) {
-                // Confirmar la transacción
-                $conexion->commit();
+                if ($stmtUpdateSolicitud->affected_rows > 0) {
+                    // Confirmar la transacción en ambas bases de datos
+                    $conexion->commit();
+                    $remote_db->commit();
 
-                return json_encode(["success" => "La solicitud ha sido rechazada"]);
-            } else {
-                throw new Exception("No se pudo rechazar la solicitud");
+                    return json_encode(["success" => "La solicitud ha sido rechazada"]);
+                } else {
+                    $conexion->rollback();
+                    $remote_db->rollback();
+                    throw new Exception("No se pudo rechazar la solicitud");
+                }
             }
         } else {
             throw new Exception("Acción no válida. Debe ser 'aceptar' o 'rechazar'.");
         }
     } catch (Exception $e) {
-        // Si ocurre algún error, deshacer todas las operaciones anteriores
+        // Revertir transacciones en caso de error
         $conexion->rollback();
+        $remote_db->rollback();
         registrarError($e->getMessage());
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 function actualizarStatusSolicitud($data)
 {

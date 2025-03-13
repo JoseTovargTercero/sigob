@@ -35,7 +35,7 @@ $query_partidas = "SELECT partida, denominacion FROM pl_partidas WHERE partida I
 $result_partidas = $conexion->query($query_partidas);
 
 while ($row = $result_partidas->fetch_assoc()) {
-    $codigo_partida = $row['partida'];  // Cambié de 'codigo_partida' a 'partida'
+    $codigo_partida = $row['partida'];
     $denominacion = $row['denominacion'];
     
     // Actualizar denominación de cada partida
@@ -43,6 +43,27 @@ while ($row = $result_partidas->fetch_assoc()) {
         $data[$codigo_partida][1] = $denominacion;
     }
 }
+
+// Consultar monto_inicial desde distribucion_presupuestaria filtrado por id_ejercicio
+$query_distribucion = "SELECT dp.id_partida, dp.monto_inicial, pp.partida 
+                      FROM distribucion_presupuestaria dp
+                      JOIN partidas_presupuestarias pp ON dp.id_partida = pp.id
+                      WHERE dp.id_ejercicio = ?";
+$stmt_distribucion = $conexion->prepare($query_distribucion);
+$stmt_distribucion->bind_param('i', $id_ejercicio);
+$stmt_distribucion->execute();
+$result_distribucion = $stmt_distribucion->get_result();
+
+while ($row = $result_distribucion->fetch_assoc()) {
+    $codigo_partida = substr($row['partida'], 0, 3); // Tomar los primeros 3 dígitos
+    $monto_inicial = $row['monto_inicial'];
+    
+    // Sumar monto_inicial a la partida correspondiente
+    if (isset($data[$codigo_partida])) {
+        $data[$codigo_partida][2] += $monto_inicial;
+    }
+}
+
 
 
 // Consultar ejercicio fiscal
@@ -69,11 +90,24 @@ $gastos = $result_gastos->fetch_all(MYSQLI_ASSOC);
 
 foreach ($gastos as $gasto) {
     $mes = (int)date('n', strtotime($gasto['fecha']));
-    $inicio_trimestre = ($trimestre - 1) * 3 + 1;
-    $fin_trimestre = $inicio_trimestre + 2;
-    if ($mes < $inicio_trimestre || $mes > $fin_trimestre) {
-        continue;
-    }
+   if ($trimestre == 1) {
+                    $inicio_trimestre = 1;
+                    $fin_trimestre = 3;
+                }elseif ($trimestre == 2) {
+                    $inicio_trimestre = 4;
+                    $fin_trimestre = 6;
+                }elseif ($trimestre == 3) {
+                    $inicio_trimestre = 7;
+                    $fin_trimestre = 9;
+                }elseif ($trimestre == 4) {
+                    $inicio_trimestre = 10;
+                    $fin_trimestre = 12;
+                }
+                
+
+                if ($mes < $inicio_trimestre || $mes > $fin_trimestre) {
+                    continue;
+                }
 
     $distribuciones_array = json_decode($gasto['distribuciones'], true);
     if (!is_array($distribuciones_array)) {
@@ -107,7 +141,6 @@ foreach ($gastos as $gasto) {
 
             // Solo agregar al data si el código de partida está en los permitidos
             if (in_array($codigo_partida, $codigos_partida_permitidos)) {
-                $data[$codigo_partida][2] += $monto_inicial;
                 $data[$codigo_partida][6] += $monto_actual;
                 $data[$codigo_partida][4] += $monto_actual;
                 if ($gasto['status'] == 1) { // Causado
@@ -128,11 +161,24 @@ $traspasos = $resultado->fetch_all(MYSQLI_ASSOC);
 
 foreach ($traspasos as $traspaso) {
     $mes2 = (int)date('n', strtotime($traspaso['fecha']));
-    $inicio_trimestre = ($trimestre - 1) * 3 + 1;
-    $fin_trimestre = $inicio_trimestre + 2;
-    if ($mes2 < $inicio_trimestre || $mes2 > $fin_trimestre) {
-        continue;
-    }
+     if ($trimestre == 1) {
+                    $inicio_trimestre = 1;
+                    $fin_trimestre = 3;
+                }elseif ($trimestre == 2) {
+                    $inicio_trimestre = 4;
+                    $fin_trimestre = 6;
+                }elseif ($trimestre == 3) {
+                    $inicio_trimestre = 7;
+                    $fin_trimestre = 9;
+                }elseif ($trimestre == 4) {
+                    $inicio_trimestre = 10;
+                    $fin_trimestre = 12;
+                }
+                
+
+                if ($mes2 < $inicio_trimestre || $mes2 > $fin_trimestre) {
+                    continue;
+                }
 
     $sqlInfo = "SELECT id_distribucion, monto FROM traspaso_informacion WHERE id_traspaso = ? AND tipo='A'";
     $stmtInfo = $remote_db->prepare($sqlInfo);
