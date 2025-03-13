@@ -17,16 +17,24 @@ $trimestres_text = [
 // Inicializar todos los identificadores con valores por defecto
 $query_sectores = "SELECT id, sector FROM pl_sectores";
 $query_programas = "SELECT id, programa, denominacion FROM pl_programas WHERE sector IS NOT NULL";
+
+// Preparar la primera consulta para los sectores
 $stmt_sectores = $conexion->prepare($query_sectores);
-$stmt_programas = $conexion->prepare($query_programas);
 $stmt_sectores->execute();
-$stmt_programas->execute();
-
 $sectores_result = $stmt_sectores->get_result();
-$programas_result = $stmt_programas->get_result();
-
 $sectores = $sectores_result->fetch_all(MYSQLI_ASSOC);
+
+// Liberar el resultado de la primera consulta
+$sectores_result->free();
+
+// Preparar la segunda consulta para los programas
+$stmt_programas = $conexion->prepare($query_programas);
+$stmt_programas->execute();
+$programas_result = $stmt_programas->get_result();
 $programas = $programas_result->fetch_all(MYSQLI_ASSOC);
+
+// Liberar el resultado de la segunda consulta
+$programas_result->free();
 
 // Inicializar $data con todos los sectores y programas con valores en 0
 $data = [];
