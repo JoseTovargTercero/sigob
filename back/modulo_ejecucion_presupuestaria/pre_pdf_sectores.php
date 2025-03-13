@@ -1,12 +1,8 @@
 <?php
 require_once '../sistema_global/conexion.php';
 require_once '../sistema_global/conexion_remota.php';
-
-
- global $conexion;
-    global $remote_db;
-
-
+global $conexion;
+global $remote_db;
 
 $id_ejercicio = $_GET['id_ejercicio'];
 $trimestre = $_GET['trimestre'];
@@ -33,28 +29,26 @@ $ano = $resultado['ano'];
 $situado = $resultado['situado'];
 $stmt->close();
 
-// Consulta a la tabla gastos
+// Nueva consulta a la tabla gastos
 $query_gastos = "SELECT * FROM gastos WHERE id_ejercicio = ? AND status != 2";
 $stmt_gastos = $conexion->prepare($query_gastos);
 $stmt_gastos->bind_param('i', $id_ejercicio);
 $stmt_gastos->execute();
 $result_gastos = $stmt_gastos->get_result();
+
 $gastos = $result_gastos->fetch_all(MYSQLI_ASSOC);
+
 
 // Procesar distribuciones en los registros de gastos
 $data = [];
+
 foreach ($gastos as $gasto) {
     $distribuciones_json = $gasto['distribuciones'];
     $distribuciones_array = json_decode($distribuciones_json, true);
     $mes = (int)date('n', strtotime($gasto['fecha']));
 
-      $inicio_trimestre = ($trimestre - 1) * 3 + 1; // Mes inicial del trimestre
-            $fin_trimestre = $inicio_trimestre + 2;       // Mes final del trimestre
-            if ($mes < $inicio_trimestre or $mes > $fin_trimestre) {
-                continue;
-            }
-
     if (!is_array($distribuciones_array)) {
+        echo "Error al decodificar el JSON de distribuciones para el gasto con ID: " . $gasto['id'] . "<br>";
         continue;
     }
 
@@ -62,7 +56,8 @@ foreach ($gastos as $gasto) {
         $id_distribucion = $distribucion['id_distribucion'];
         $monto_actual = $distribucion['monto'];
 
-         $sqlDistribucionEnte = "SELECT id, distribucion FROM distribucion_entes WHERE id_ejercicio = ? AND distribucion LIKE ?";
+
+        $sqlDistribucionEnte = "SELECT id, distribucion FROM distribucion_entes WHERE id_ejercicio = ? AND distribucion LIKE ?";
         $likePattern = '%"id_distribucion":"' . $id_distribucion . '"%';
         $stmtDistribucionEnte = $conexion->prepare($sqlDistribucionEnte);
         $stmtDistribucionEnte->bind_param("is", $id_ejercicio, $likePattern);
@@ -80,54 +75,72 @@ foreach ($gastos as $gasto) {
                 }
             }
 
-        // Consultar distribucion_presupuestaria
-        $query_distribucion = "SELECT * FROM distribucion_presupuestaria WHERE id = ? AND id_ejercicio = ?";
-        $stmt_distribucion = $conexion->prepare($query_distribucion);
-        $stmt_distribucion->bind_param('ii', $id_distribucion, $id_ejercicio);
-        $stmt_distribucion->execute();
-        $result_distribucion = $stmt_distribucion->get_result();
-        $distribucion_presupuestaria = $result_distribucion->fetch_assoc();
+            // Consultar distribucion_presupuestaria
+            $query_distribucion = "SELECT * FROM distribucion_presupuestaria WHERE id = ? AND id_ejercicio = ?";
+            $stmt_distribucion = $conexion->prepare($query_distribucion);
+            $stmt_distribucion->bind_param('ii', $id_distribucion, $id_ejercicio);
+            $stmt_distribucion->execute();
+            $result_distribucion = $stmt_distribucion->get_result();
+            $distribucion_presupuestaria = $result_distribucion->fetch_assoc();
 
-        if (!$distribucion_presupuestaria) {
-            continue;
-        }
+            if (!$distribucion_presupuestaria) {
+                echo "No se encontró distribucion_presupuestaria para id_distribucion: $id_distribucion y id_ejercicio: $id_ejercicio<br>";
+                continue;
+            }
 
-        $monto_inicial = $distribucion_presupuestaria['monto_inicial'] ?? 0;
-        $monto_disponible = $montoDistribucion; // Monto disponible desde distribucion_presupuestaria entes
-        $id_sector = $distribucion_presupuestaria['id_sector'] ?? 0;
+            $monto_inicial = $distribucion_presupuestaria['monto_inicial'] ?? 0;
+            $monto_disponible = $montoDistribucion; // Monto disponible desde distribucion_presupuestaria entes
+            $id_sector = $distribucion_presupuestaria['id_sector'] ?? 0;
 
-        // Consultar sector y denominación en pl_sectores
-        $query_sector = "SELECT sector, denominacion FROM pl_sectores WHERE id = ?";
-        $stmt_sector = $conexion->prepare($query_sector);
-        $stmt_sector->bind_param('i', $id_sector);
-        $stmt_sector->execute();
-        $result_sector = $stmt_sector->get_result();
-        $sector_data = $result_sector->fetch_assoc();
+            // Consultar sector y denominación en pl_sectores
+            $query_sector = "SELECT sector, denominacion FROM pl_sectores WHERE id = ?";
+            $stmt_sector = $conexion->prepare($query_sector);
+            $stmt_sector->bind_param('i', $id_sector);
+            $stmt_sector->execute();
+            $result_sector = $stmt_sector->get_result();
+            $sector_data = $result_sector->fetch_assoc();
 
-        if (!$sector_data) {
-            continue;
-        }
+            if (!$sector_data) {
+                echo "No se encontró registro en pl_sectores para id_sector: $id_sector<br>";
+                continue;
+            }
 
-        $sector = $sector_data['sector'] ?? 'N/A';
-        $denominacion = $sector_data['denominacion'] ?? 'N/A';
+            $inicio_trimestre = ($trimestre - 1) * 3 + 1; // Mes inicial del trimestre
+            $fin_trimestre = $inicio_trimestre + 2;       // Mes final del trimestre
+            if ($mes < $inicio_trimestre or $mes > $fin_trimestre) {
+                continue;
+            }
 
-        if (!isset($data[$id_sector])) {
-            $data[$id_sector] = [$sector, $denominacion, 0, 0, 0, 0, 0];
-        }
+            $sector = $sector_data['sector'] ?? 'N/A';
+            $denominacion = $sector_data['denominacion'] ?? 'N/A';
 
-        $data[$id_sector][2] += $monto_inicial;
-        $data[$identificador][6] += $monto_disponible;
-        $data[$id_sector][4] += $monto_actual;
+            // Agrupar datos por id_sector
+            if (!isset($data[$id_sector])) {
+                $data[$id_sector] = [
+                    $sector,        // Sector
+                    $denominacion,  // Denominación
+                    0,              // Sumatoria de monto_inicial
+                    0,              // Sumatoria comprometido
+                    0,              // Sumatoria causado
+                    0,              // Sumatoria disponible (monto_actual de distribucion_presupuestaria)
+                    0               // Sumatoria de monto_actual (de las distribuciones)
+                ];
+            }
 
-        if ($gasto['status'] == 1) {
-            $data[$id_sector][5] += $monto_actual;
+            // Sumar montos al agrupamiento
+            $data[$id_sector][2] += $monto_inicial;      // Sumar monto_inicial
+            $data[$id_sector][6] += $monto_disponible;   // Sumar monto_actual (disponibilidad)
+            $data[$id_sector][4] += $monto_actual;
+
+            // Sumar comprometido o causado según el status del gasto
+            if ($gasto['status'] == 1) { // Causado
+                $data[$id_sector][5] += $monto_actual;
+            }
         }
     }
 }
-}
- 
 
- // Consultar los traspasos principales filtrando por id_ejercicio
+// Consultar los traspasos principales filtrando por id_ejercicio
 $sql = "SELECT t.id, t.n_orden, t.id_ejercicio, t.monto_total, t.fecha, t.status, t.tipo 
         FROM traspasos t
         WHERE t.id_ejercicio = ?";
@@ -191,10 +204,8 @@ if ($resultado->num_rows > 0) {
     }
 }
 
-
-
 // Imprimir resultados
- print_r(array_values($data));
+//print_r(array_values($data));
 ?>
 
 
