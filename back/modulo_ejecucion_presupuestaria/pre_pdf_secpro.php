@@ -16,7 +16,7 @@ $trimestres_text = [
 
 // Inicializar todos los identificadores con valores por defecto
 $query_sectores = "SELECT id, sector FROM pl_sectores";
-$query_programas = "SELECT id, programa, denominacion FROM pl_programas WHERE sector = ?";
+$query_programas = "SELECT id, programa, denominacion, sector AS id_sector FROM pl_programas WHERE sector = ?"; // Agregar el alias id_sector
 
 // Preparar la primera consulta para los sectores
 $stmt_sectores = $conexion->prepare($query_sectores);
@@ -43,17 +43,24 @@ foreach ($sectores as $sector) {
     
     // Liberar el resultado de la consulta de programas
     $programas_result->free();
+    
+    // Almacenar los programas encontrados bajo cada sector
+    $sectores_con_programas[] = [
+        'sector' => $sector['sector'],  // Nombre del sector
+        'programas' => $programas      // Programas asociados a este sector
+    ];
 }
 
 // Inicializar $data con todos los sectores y programas con valores en 0
 $data = [];
 $identificadores = [];
 
-foreach ($sectores as $sector) {
-    foreach ($programas as $programa) {
-        if ($sector['id'] == $programa['id_sector']) {
+foreach ($sectores_con_programas as $sector_con_programas) {
+    foreach ($sector_con_programas['programas'] as $programa) {
+        // Asegurarse de que id_sector está presente en el arreglo $programa
+        if (isset($programa['id_sector']) && $sector_con_programas['sector'] == $programa['sector']) {
             // Formatear identificador como sector-programa
-            $identificador = sprintf("%s-%s", $sector['sector'], $programa['programa']);
+            $identificador = sprintf("%s-%s", $sector_con_programas['sector'], $programa['programa']);
             
             // Inicializar valores en 0
             $data[$identificador] = [
@@ -71,6 +78,7 @@ foreach ($sectores as $sector) {
         }
     }
 }
+
 
 // Consultar ejercicio fiscal
 $query_ejercicio = "SELECT * FROM ejercicio_fiscal WHERE id = ?";
