@@ -41,6 +41,12 @@ foreach ($gastos as $gasto) {
     $distribuciones_array = json_decode($distribuciones_json, true);
     $mes = (int)date('n', strtotime($gasto['fecha']));
 
+      $inicio_trimestre = ($trimestre - 1) * 3 + 1; // Mes inicial del trimestre
+            $fin_trimestre = $inicio_trimestre + 2;       // Mes final del trimestre
+            if ($mes < $inicio_trimestre or $mes > $fin_trimestre) {
+                continue;
+            }
+
     if (!is_array($distribuciones_array)) {
         continue;
     }
