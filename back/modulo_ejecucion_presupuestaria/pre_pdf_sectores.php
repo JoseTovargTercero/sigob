@@ -62,6 +62,24 @@ foreach ($gastos as $gasto) {
         $id_distribucion = $distribucion['id_distribucion'];
         $monto_actual = $distribucion['monto'];
 
+         $sqlDistribucionEnte = "SELECT id, distribucion FROM distribucion_entes WHERE id_ejercicio = ? AND distribucion LIKE ?";
+        $likePattern = '%"id_distribucion":"' . $id_distribucion . '"%';
+        $stmtDistribucionEnte = $conexion->prepare($sqlDistribucionEnte);
+        $stmtDistribucionEnte->bind_param("is", $id_ejercicio, $likePattern);
+        $stmtDistribucionEnte->execute();
+        $resultadoDistribucionEnte = $stmtDistribucionEnte->get_result();
+
+        if ($distribucionEnte = $resultadoDistribucionEnte->fetch_assoc()) {
+            $id_distribucion_ente = $distribucionEnte['id'];
+            $distribucionData = json_decode($distribucionEnte['distribucion'], true);
+
+            foreach ($distribucionData as $dist) {
+                if ($dist['id_distribucion'] == $id_distribucion) {
+                    $montoDistribucion = $dist['monto'];
+                    break;
+                }
+            }
+
         // Consultar distribucion_presupuestaria
         $query_distribucion = "SELECT * FROM distribucion_presupuestaria WHERE id = ? AND id_ejercicio = ?";
         $stmt_distribucion = $conexion->prepare($query_distribucion);
@@ -75,6 +93,7 @@ foreach ($gastos as $gasto) {
         }
 
         $monto_inicial = $distribucion_presupuestaria['monto_inicial'] ?? 0;
+        $monto_disponible = $montoDistribucion; // Monto disponible desde distribucion_presupuestaria entes
         $id_sector = $distribucion_presupuestaria['id_sector'] ?? 0;
 
         // Consultar sector y denominación en pl_sectores
@@ -97,6 +116,7 @@ foreach ($gastos as $gasto) {
         }
 
         $data[$id_sector][2] += $monto_inicial;
+        $data[$identificador][6] += $monto_disponible;
         $data[$id_sector][4] += $monto_actual;
 
         if ($gasto['status'] == 1) {
