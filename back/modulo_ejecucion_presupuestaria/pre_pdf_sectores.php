@@ -35,7 +35,8 @@ $stmt->execute();
 $result = $stmt->get_result();
 $resultado = $result->fetch_assoc();
 $stmt->close();
-
+$ano = $resultado['ano'];
+$situado = $resultado['situado'];
 if (!$resultado) {
     die("No se encontró el ejercicio fiscal para el ID proporcionado.");
 }
@@ -132,7 +133,7 @@ foreach ($traspasos as $traspaso) {
 }
 
 // Imprimir resultados
-print_r(array_values($data));
+//print_r(array_values($data));
 ?>
 
 
