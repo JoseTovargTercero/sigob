@@ -27,7 +27,7 @@ foreach ($identificadores_fijos as $identificador) {
     $id_programa = substr($identificador, 3, 2);  // El segundo dígito es el programa
     
     // Consultar sector en pl_sectores
-    $query_sector = "SELECT sector FROM pl_sectores WHERE sector = ?";
+    $query_sector = "SELECT * FROM pl_sectores WHERE sector = ?";
     $stmt_sector = $conexion->prepare($query_sector);
     $stmt_sector->bind_param('i', $id_sector);
     $stmt_sector->execute();
@@ -39,12 +39,12 @@ foreach ($identificadores_fijos as $identificador) {
         continue;
     }
 
-    $sector = $sector_data['sector'] ?? 'N/A';
+    $id = $sector_data['id'] ?? 'N/A';
 
     // Consultar programa en pl_programas
-    $query_programa = "SELECT programa, denominacion FROM pl_programas WHERE programa = ?";
+    $query_programa = "SELECT programa, denominacion FROM pl_programas WHERE programa = ? AND sector = ?";
     $stmt_programa = $conexion->prepare($query_programa);
-    $stmt_programa->bind_param('i', $id_programa);
+    $stmt_programa->bind_param('ii', $id_programa, $id);
     $stmt_programa->execute();
     $result_programa = $stmt_programa->get_result();
     $programa_data = $result_programa->fetch_assoc();
