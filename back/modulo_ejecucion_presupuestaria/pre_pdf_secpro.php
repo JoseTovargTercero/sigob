@@ -98,52 +98,7 @@ foreach ($gastos as $gasto) {
 
             $monto_inicial = $distribucion_presupuestaria['monto_inicial'] ?? 0;
             $monto_disponible = $montoDistribucion; // Monto disponible desde distribucion_presupuestaria entes
-            $id_sector = $distribucion_presupuestaria['id_sector'] ?? 0;
-            $id_programa = $distribucion_presupuestaria['id_programa'] ?? 0;
-
-            // Consultar sector en pl_sectores
-            $query_sector = "SELECT sector FROM pl_sectores WHERE id = ?";
-            $stmt_sector = $conexion->prepare($query_sector);
-            $stmt_sector->bind_param('i', $id_sector);
-            $stmt_sector->execute();
-            $result_sector = $stmt_sector->get_result();
-            $sector_data = $result_sector->fetch_assoc();
-
-            if (!$sector_data) {
-                echo "No se encontró registro en pl_sectores para id_sector: $id_sector<br>";
-                continue;
-            }
-
-            $sector = $sector_data['sector'] ?? 'N/A';
-
-            // Consultar programa en pl_programas
-            $query_programa = "SELECT programa, denominacion FROM pl_programas WHERE id = ?";
-            $stmt_programa = $conexion->prepare($query_programa);
-            $stmt_programa->bind_param('i', $id_programa);
-            $stmt_programa->execute();
-            $result_programa = $stmt_programa->get_result();
-            $programa_data = $result_programa->fetch_assoc();
-
-            if (!$programa_data) {
-                echo "No se encontró registro en pl_programas para id_programa: $id_programa<br>";
-                continue;
-            }
-            $inicio_trimestre = ($trimestre - 1) * 3 + 1; // Mes inicial del trimestre
-            $fin_trimestre = $inicio_trimestre + 2;       // Mes final del trimestre
-            if ($mes < $inicio_trimestre or $mes > $fin_trimestre) {
-                continue;
-            }
-
-            $programa = $programa_data['programa'] ?? 'N/A';
-            $denominacion = $programa_data['denominacion'] ?? 'N/A';
-
-            // Formatear identificador como xx-xx
-            $identificador = sprintf("%s-%s", $sector, $programa);
-             if (!in_array($identificador, $identificadores)) {
-                $identificadores[] = $identificador;
-            }
-
- // Iterar sobre cada identificador fijo
+// Iterar sobre cada identificador fijo
 foreach ($identificadores_fijos as $identificador) {
     // Extraer el sector y el programa de la clave del identificador
     $id_sector = substr($identificador, 0, 2);  // El primer dígito es el sector
@@ -202,8 +157,9 @@ foreach ($identificadores_fijos as $identificador) {
         $data[$identificador][5] += $monto_actual;
     }
 }
-}
-}
+
+
+
 // Consultar los traspasos principales filtrando por id_ejercicio
 $sql = "SELECT t.id, t.n_orden, t.id_ejercicio, t.monto_total, t.fecha, t.status, t.tipo 
         FROM traspasos t
