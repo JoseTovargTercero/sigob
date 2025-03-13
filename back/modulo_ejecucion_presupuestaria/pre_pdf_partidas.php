@@ -31,7 +31,7 @@ foreach ($codigos_partida_permitidos as $codigo_partida) {
 }
 
 // Consultar denominación de las partidas desde pl_partidas
-$query_partidas = "SELECT codigo_partida, denominacion FROM pl_partidas WHERE partida IN ('" . implode("','", $codigos_partida_permitidos) . "')";
+$query_partidas = "SELECT partida, denominacion FROM pl_partidas WHERE partida IN ('" . implode("','", $codigos_partida_permitidos) . "')";
 $result_partidas = $conexion->query($query_partidas);
 
 while ($row = $result_partidas->fetch_assoc()) {
