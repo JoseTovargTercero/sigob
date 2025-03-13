@@ -180,6 +180,8 @@ foreach ($gastos as $gasto) {
                 }
             }
         }
+    }
+}
  
 
 
