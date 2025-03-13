@@ -218,6 +218,8 @@ if ($resultado->num_rows > 0) {
                         // Agrupar datos por los primeros 3 dígitos del código de partida
                         if ($data[$codigo_partida] == $codigo_partida2) {
                         $data[$codigo_partida][3] += $monto_traspaso;
+                    }else{
+                        echo "algo esta pasando";
                     }
 
                         // Sumar el monto de traspaso a la partida correspondiente
