@@ -472,7 +472,7 @@ echo "
     <td class='bt fw-bold'>" . number_format($total_causado, 2, ',', '.') . "</td>
     <td class='bt fw-bold'>" . number_format($total_disponibilidad, 2, ',', '.') . "</td>
 </tr>";
-
+?>
         </tbody>
     </table>
 
