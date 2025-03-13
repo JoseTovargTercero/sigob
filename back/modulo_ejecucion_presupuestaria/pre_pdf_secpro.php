@@ -1,19 +1,5 @@
 <?php
-require_once '../sistema_global/conexion.php';
-require_once '../sistema_global/conexion_remota.php';
-global $conexion;
-global $remote_db;
 
-$id_ejercicio = $_GET['id_ejercicio'];
-$trimestre = $_GET['trimestre'];
-$trimestres_text = [
-    1 => 'PRIMER TRIMESTRE',
-    2 => 'SEGUNDO TRIMESTRE',
-    3 => 'TERCER TRIMESTRE',
-    4 => 'CUARTO TRIMESTRE',
-];
-
-<?php
 require_once '../sistema_global/conexion.php';
 require_once '../sistema_global/conexion_remota.php';
 global $conexion;
