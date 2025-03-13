@@ -99,9 +99,10 @@ foreach ($gastos as $gasto) {
 }
 
 // Consultar traspasos y traspaso_informacion
-$query_traspasos = "SELECT t.monto_total, ti.id_distribucion, ti.monto FROM traspasos t 
-                    JOIN traspaso_informacion ti ON t.id = ti.id_traspaso 
-                    WHERE t.id_ejercicio = ? AND ti.tipo = 'A'";
+$query_traspasos = "SELECT t.monto_total, ti.id_distribucion, ti.monto 
+FROM traspasos t 
+JOIN traspaso_informacion ti ON t.id = ti.id_traspaso;
+";
 
 $stmt_traspasos = $conexion->prepare($query_traspasos);
 $stmt_traspasos->bind_param('i', $id_ejercicio);
