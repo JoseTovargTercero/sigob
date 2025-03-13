@@ -213,7 +213,7 @@ if ($resultado->num_rows > 0) {
                         $monto_traspaso = $detalle['monto'];
 
                         // Agrupar datos por los primeros 3 dígitos del código de partida
-                        if (isset($data[$codigo_partida])) {
+                        if ($data[$codigo_partida] == $codigo_partida2) {
                         $data[$codigo_partida][3] += $monto_traspaso;
                     }
 
