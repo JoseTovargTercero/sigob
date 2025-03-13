@@ -40,6 +40,7 @@ $gastos = $result_gastos->fetch_all(MYSQLI_ASSOC);
 
 // Procesar distribuciones en los registros de gastos
 $data = [];
+$identificadores = [];
 
 foreach ($gastos as $gasto) {
     $distribuciones_json = $gasto['distribuciones'];
@@ -130,6 +131,9 @@ foreach ($gastos as $gasto) {
 
             // Formatear identificador como xx-xx
             $identificador = sprintf("%s-%s", $sector, $programa);
+             if (!in_array($identificador, $identificadores)) {
+                $identificadores[] = $identificador;
+            }
 
             // Agrupar datos por identificador
             if (!isset($data[$identificador])) {
@@ -255,7 +259,7 @@ if ($resultado->num_rows > 0) {
                     $identificador2 = sprintf("%s-%s", $sector, $programa);
 
                     // Agrupar datos por identificador
-                    if (in_array($identificador2, $identificador)) {
+                    if (in_array($identificador2, $identificadores)) {
                          // Sumar montos al agrupamiento
                     $data[$identificador][3] += $monto_traspaso;  // Sumar monto del traspaso
                       
