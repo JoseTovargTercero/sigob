@@ -16,7 +16,7 @@ $trimestres_text = [
 
 // Inicializar todos los identificadores con valores por defecto
 $query_sectores = "SELECT id, sector FROM pl_sectores";
-$query_programas = "SELECT id, programa, denominacion FROM pl_programas WHERE id_sector IS NOT NULL";
+$query_programas = "SELECT id, programa, denominacion FROM pl_programas WHERE sector IS NOT NULL";
 $stmt_sectores = $conexion->prepare($query_sectores);
 $stmt_programas = $conexion->prepare($query_programas);
 $stmt_sectores->execute();
