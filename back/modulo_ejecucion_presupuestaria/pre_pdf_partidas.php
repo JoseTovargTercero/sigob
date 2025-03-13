@@ -443,7 +443,7 @@ foreach ($traspasos as &$traspaso) {
                 }
 
                 $causado = $info_partida[5] ?? 0;     // Si corresponde al índice [5]
-                $disponibilidad = $info_partida[6] ?? 0;
+                $disponibilidad = ($asignacion_inicial + $modificacion) - $compromiso;
 
                 // Acumular totales
                 $total_asignacion_inicial += $asignacion_inicial;
