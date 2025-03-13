@@ -4,6 +4,7 @@ require_once '../sistema_global/conexion_remota.php';
 global $conexion;
 global $remote_db;
 
+
 $id_ejercicio = $_GET['id_ejercicio'];
 $trimestre = $_GET['trimestre'];
 
@@ -13,22 +14,6 @@ $trimestres_text = [
     3 => 'TERCER TRIMESTRE',
     4 => 'CUARTO TRIMESTRE',
 ];
-
-$codigos_partida = ['401','402','403','404','407','408','411','498'];
-$data = [];
-
-// Inicializar todas las partidas en $data con valores en 0
-foreach ($codigos_partida as $codigo) {
-    $data[$codigo] = [
-        $codigo, // Código partida
-        'N/A',  // Denominación (se actualizará si hay datos)
-        0,       // Sumatoria de monto_inicial
-        0,       // Sumatoria comprometido
-        0,       // Sumatoria causado
-        0,       // Sumatoria disponible
-        0        // Sumatoria de monto_actual
-    ];
-}
 
 // Consultar ejercicio fiscal
 $query_sector = "SELECT * FROM ejercicio_fiscal WHERE id = ?";
@@ -46,107 +31,203 @@ $ano = $resultado['ano'];
 $situado = $resultado['situado'];
 $stmt->close();
 
-// Consulta gastos
+// Nueva consulta a la tabla gastos
 $query_gastos = "SELECT * FROM gastos WHERE id_ejercicio = ? AND status != 2";
 $stmt_gastos = $conexion->prepare($query_gastos);
 $stmt_gastos->bind_param('i', $id_ejercicio);
 $stmt_gastos->execute();
 $result_gastos = $stmt_gastos->get_result();
+
 $gastos = $result_gastos->fetch_all(MYSQLI_ASSOC);
 
-// Procesar gastos
+// Procesar distribuciones en los registros de gastos
+$data = [];
+$codigos_partida = ['401','402','403','404','407','408', '411','498'];
+
+// Inicializar todas las partidas en $data con valores en 0
+foreach ($codigos_partida as $codigo) {
+    $data[$codigo] = [
+        $codigo, // Código partida
+        'N/A',  // Denominación (se actualizará si hay datos)
+        0,       // Sumatoria de monto_inicial
+        0,       // Sumatoria comprometido
+        0,       // Sumatoria causado
+        0,       // Sumatoria disponible
+        0        // Sumatoria de monto_actual
+    ];
+}
 foreach ($gastos as $gasto) {
+    $distribuciones_json = $gasto['distribuciones'];
+    $distribuciones_array = json_decode($distribuciones_json, true);
     $mes = (int)date('n', strtotime($gasto['fecha']));
-    $inicio_trimestre = ($trimestre - 1) * 3 + 1;
-    $fin_trimestre = $inicio_trimestre + 2;
-    if ($mes < $inicio_trimestre || $mes > $fin_trimestre) continue;
-    
-    $distribuciones = json_decode($gasto['distribuciones'], true);
-    if (!is_array($distribuciones)) continue;
-    
-    foreach ($distribuciones as $distribucion) {
+    if (!is_array($distribuciones_array)) {
+        echo "Error al decodificar el JSON de distribuciones para el gasto con ID: " . $gasto['id'] . "<br>";
+        continue;
+    }
+
+    foreach ($distribuciones_array as $distribucion) {
         $id_distribucion = $distribucion['id_distribucion'];
         $monto_actual = $distribucion['monto'];
+
+
+        $sqlDistribucionEnte = "SELECT id, distribucion FROM distribucion_entes WHERE id_ejercicio = ? AND distribucion LIKE ?";
+        $likePattern = '%"id_distribucion":"' . $id_distribucion . '"%';
+        $stmtDistribucionEnte = $conexion->prepare($sqlDistribucionEnte);
+        $stmtDistribucionEnte->bind_param("is", $id_ejercicio, $likePattern);
+        $stmtDistribucionEnte->execute();
+        $resultadoDistribucionEnte = $stmtDistribucionEnte->get_result();
+
+        if ($distribucionEnte = $resultadoDistribucionEnte->fetch_assoc()) {
+            $id_distribucion_ente = $distribucionEnte['id'];
+            $distribucionData = json_decode($distribucionEnte['distribucion'], true);
+
+            foreach ($distribucionData as $dist) {
+                if ($dist['id_distribucion'] == $id_distribucion) {
+                    $montoDistribucion = $dist['monto'];
+                    break;
+                }
+            }
+
+            // Consultar distribucion_presupuestaria
+            $query_distribucion = "SELECT * FROM distribucion_presupuestaria WHERE id = ? AND id_ejercicio = ?";
+            $stmt_distribucion = $conexion->prepare($query_distribucion);
+            $stmt_distribucion->bind_param('ii', $id_distribucion, $id_ejercicio);
+            $stmt_distribucion->execute();
+            $result_distribucion = $stmt_distribucion->get_result();
+            $distribucion_presupuestaria = $result_distribucion->fetch_assoc();
+
+            if (!$distribucion_presupuestaria) {
+                echo "No se encontró distribucion_presupuestaria para id_distribucion: $id_distribucion y id_ejercicio: $id_ejercicio<br>";
+                continue;
+            }
+
+            $monto_inicial = $distribucion_presupuestaria['monto_inicial'] ?? 0;
+            $monto_disponible = $montoDistribucion; // Monto disponible desde distribucion_presupuestaria entes
+            $id_partida = $distribucion_presupuestaria['id_partida'] ?? 0;
+
+            // Consultar en partidas_presupuestarias
+            $query_presupuestaria = "SELECT partida FROM partidas_presupuestarias WHERE id = ?";
+            $stmt_presupuestaria = $conexion->prepare($query_presupuestaria);
+            $stmt_presupuestaria->bind_param('i', $id_partida);
+            $stmt_presupuestaria->execute();
+            $result_presupuestaria = $stmt_presupuestaria->get_result();
+            $presupuestaria_data = $result_presupuestaria->fetch_assoc();
+
+            if (!$presupuestaria_data) {
+                echo "No se encontró registro en partidas_presupuestarias para id_partida: $id_partida<br>";
+                continue;
+            }
+
+            // Obtener el valor de partida desde partidas_presupuestarias
+            $codigo_partida = substr($presupuestaria_data['partida'], 0, 3);
+
         
-        $query_distribucion = "SELECT id_partida, monto_inicial FROM distribucion_presupuestaria WHERE id = ? AND id_ejercicio = ?";
-        $stmt_distribucion = $conexion->prepare($query_distribucion);
-        $stmt_distribucion->bind_param('ii', $id_distribucion, $id_ejercicio);
-        $stmt_distribucion->execute();
-        $result_distribucion = $stmt_distribucion->get_result();
-        $distribucion_presupuestaria = $result_distribucion->fetch_assoc();
 
-        if (!$distribucion_presupuestaria) continue;
-        $id_partida = $distribucion_presupuestaria['id_partida'];
-        $monto_inicial = $distribucion_presupuestaria['monto_inicial'] ?? 0;
+            // Consultar partida y descripción en pl_partidas
+            $query_partida = "SELECT partida, denominacion FROM pl_partidas WHERE partida = ?";
+            $stmt_partida = $conexion->prepare($query_partida);
+            $stmt_partida->bind_param('s', $codigo_partida);
+            $stmt_partida->execute();
+            $result_partida = $stmt_partida->get_result();
+            $partida_data = $result_partida->fetch_assoc();
 
-        $query_partida = "SELECT partida, denominacion FROM pl_partidas WHERE id = ?";
-        $stmt_partida = $conexion->prepare($query_partida);
-        $stmt_partida->bind_param('i', $id_partida);
-        $stmt_partida->execute();
-        $result_partida = $stmt_partida->get_result();
-        $partida_data = $result_partida->fetch_assoc();
+            if (!$partida_data) {
+                echo "No se encontraron registros en pl_partidas para el código de partida: " . $codigo_partida . "<br>";
+                continue;
+            }
+            $inicio_trimestre = ($trimestre - 1) * 3 + 1; // Mes inicial del trimestre
+            $fin_trimestre = $inicio_trimestre + 2;       // Mes final del trimestre
+            if ($mes < $inicio_trimestre or $mes > $fin_trimestre) {
+                continue;
+            }
 
-        if (!$partida_data) continue;
-        $codigo_partida = substr($partida_data['partida'], 0, 3);
-        if (!isset($data[$codigo_partida])) continue;
-        
-        $data[$codigo_partida][1] = $partida_data['denominacion'];
+            $denominacion = $partida_data['denominacion'] ?? 'N/A';
+
+   
+  $data[$codigo_partida][1] = $partida_data['denominacion'];
         $data[$codigo_partida][2] += $monto_inicial;
         $data[$codigo_partida][6] += $monto_actual;
         if ($gasto['status'] == 1) $data[$codigo_partida][5] += $monto_actual;
+        }
     }
 }
 
-// Consultar traspasos
-$sql = "SELECT t.id, t.monto_total, t.fecha FROM traspasos t WHERE t.id_ejercicio = ?";
+// Consultar los traspasos principales filtrando por id_ejercicio
+$sql = "SELECT t.id, t.n_orden, t.id_ejercicio, t.monto_total, t.fecha, t.status, t.tipo 
+        FROM traspasos t
+        WHERE t.id_ejercicio = ?";
 $stmt = $remote_db->prepare($sql);
 $stmt->bind_param("i", $id_ejercicio);
 $stmt->execute();
 $resultado = $stmt->get_result();
-$traspasos = $resultado->fetch_all(MYSQLI_ASSOC);
 
-foreach ($traspasos as $traspaso) {
-    $mes = (int)date('n', strtotime($traspaso['fecha']));
-    $inicio_trimestre = ($trimestre - 1) * 3 + 1;
-    $fin_trimestre = $inicio_trimestre + 2;
-    if ($mes < $inicio_trimestre || $mes > $fin_trimestre) continue;
-    
-    $sqlInfo = "SELECT id_distribucion, monto FROM traspaso_informacion WHERE id_traspaso = ?";
+if ($resultado->num_rows > 0) {
+    $traspasos = $resultado->fetch_all(MYSQLI_ASSOC);
+
+    // Agregar la información de traspaso_informacion para cada traspaso
+foreach ($traspasos as &$traspaso) {
+    $mes2 = (int)date('n', strtotime($traspaso['fecha']));
+
+    $inicio_trimestre = ($trimestre - 1) * 3 + 1; // Mes inicial del trimestre
+    $fin_trimestre = $inicio_trimestre + 2;       // Mes final del trimestre
+
+    if ($mes2 < $inicio_trimestre || $mes2 > $fin_trimestre) {
+        continue;
+    }
+
+    $sqlInfo = "SELECT ti.id_distribucion, ti.monto, ti.tipo 
+                FROM traspaso_informacion ti 
+                WHERE ti.id_traspaso = ? AND ti.tipo = 'A'";
     $stmtInfo = $remote_db->prepare($sqlInfo);
     $stmtInfo->bind_param("i", $traspaso['id']);
     $stmtInfo->execute();
     $resultadoInfo = $stmtInfo->get_result();
-    $detalles = $resultadoInfo->fetch_all(MYSQLI_ASSOC);
-    
-    foreach ($detalles as $detalle) {
-        $sqlDistribucion = "SELECT id_partida FROM distribucion_presupuestaria WHERE id = ?";
-        $stmtDistribucion = $remote_db->prepare($sqlDistribucion);
-        $stmtDistribucion->bind_param("i", $detalle['id_distribucion']);
-        $stmtDistribucion->execute();
-        $resultadoDistribucion = $stmtDistribucion->get_result();
-        $distribucion = $resultadoDistribucion->fetch_assoc();
-        
-        if (!$distribucion) continue;
-        $id_partida = $distribucion['id_partida'];
-        
-        $sqlPartida = "SELECT partida FROM partidas_presupuestarias WHERE id = ?";
-        $stmtPartida = $remote_db->prepare($sqlPartida);
-        $stmtPartida->bind_param("i", $id_partida);
-        $stmtPartida->execute();
-        $resultadoPartida = $stmtPartida->get_result();
-        $partida = $resultadoPartida->fetch_assoc();
-        
-        if (!$partida) continue;
-        $codigo_partida = substr($partida['partida'], 0, 3);
-        if (!isset($data[$codigo_partida])) continue;
-        
-        $data[$codigo_partida][3] += $detalle['monto'];
+
+    if ($resultadoInfo->num_rows > 0) {
+        $detalles = $resultadoInfo->fetch_all(MYSQLI_ASSOC);
+        foreach ($detalles as &$detalle) {
+            // Obtener la información de distribucion_presupuestaria
+            $sqlDistribucion = "SELECT dp.* FROM distribucion_presupuestaria dp WHERE dp.id = ?";
+            $stmtDistribucion = $remote_db->prepare($sqlDistribucion);
+            $stmtDistribucion->bind_param("i", $detalle['id_distribucion']);
+            $stmtDistribucion->execute();
+            $resultadoDistribucion = $stmtDistribucion->get_result();
+
+            if ($resultadoDistribucion->num_rows > 0) {
+                $distribucion_presupuestaria = $resultadoDistribucion->fetch_assoc();
+                $detalle['distribucion_presupuestaria'] = $distribucion_presupuestaria;
+                $id_partida = $distribucion_presupuestaria['id_partida'] ?? 0;
+
+                // Obtener la información de partidas_presupuestarias usando id_partida
+                $sqlPartida = "SELECT pp.* FROM partidas_presupuestarias pp WHERE pp.id = ?";
+                $stmtPartida = $remote_db->prepare($sqlPartida);
+                $stmtPartida->bind_param("i", $id_partida);
+                $stmtPartida->execute();
+                $resultadoPartida = $stmtPartida->get_result();
+
+                if ($resultadoPartida->num_rows > 0) {
+                    $partida_data = $resultadoPartida->fetch_assoc();
+                    $codigo_partida2 = substr($partida_data['partida'], 0, 3); // Los primeros 3 caracteres de la partida
+
+                    // Comprobar si el código de partida está en el array de códigos de partida
+                    if (in_array($codigo_partida2, $codigos_partida)) {
+                        $denominacion_partida = $partida_data['denominacion'] ?? 'N/A';
+                        $monto_traspaso = $detalle['monto'];
+
+                        // Sumar el monto de traspaso a la partida correspondiente
+                        $data[$codigo_partida2][3] += $monto_traspaso;
+                    }
+                }
+            }
+        }
     }
 }
 
-// Mostrar resultados
-echo json_encode(array_values($data));
+}
+// Mostrar resultados (puedes ajustar esto según sea necesario)
+//print_r(array_values($data));
 ?>
+
 
 
 
