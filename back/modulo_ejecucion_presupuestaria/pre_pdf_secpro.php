@@ -143,46 +143,65 @@ foreach ($gastos as $gasto) {
                 $identificadores[] = $identificador;
             }
 
-            // Agrupar datos por identificador
-            if (!isset($data[$identificador])) {
-                $data[$identificador] = [
-                    $identificador,  // Sector y programa combinados
-                    $denominacion,   // Denominación del programa
-                    0,              // Sumatoria de monto_inicial
-                    0,              // Sumatoria comprometido
-                    0,              // Sumatoria causado
-                    0,              // Sumatoria disponible (monto_actual de distribucion_presupuestaria)
-                    0               // Sumatoria de monto_actual (de las distribuciones)
-                ];
-            }
+ // Iterar sobre cada identificador fijo
+foreach ($identificadores_fijos as $identificador) {
+    // Extraer el sector y el programa de la clave del identificador
+    $id_sector = substr($identificador, 0, 2);  // El primer dígito es el sector
+    $id_programa = substr($identificador, 3, 2);  // El segundo dígito es el programa
+    
+    // Consultar sector en pl_sectores
+    $query_sector = "SELECT sector FROM pl_sectores WHERE sector = ?";
+    $stmt_sector = $conexion->prepare($query_sector);
+    $stmt_sector->bind_param('i', $id_sector);
+    $stmt_sector->execute();
+    $result_sector = $stmt_sector->get_result();
+    $sector_data = $result_sector->fetch_assoc();
 
-            // Sumar montos al agrupamiento
-            $data[$identificador][2] += $monto_inicial;      // Sumar monto_inicial
-            $data[$identificador][6] += $monto_disponible;   // Sumar monto_actual (disponibilidad)
-
-            if ($gasto['status'] == 1) { // Causado
-                $data[$identificador][5] += $monto_actual;
-            }
-        }
+    if (!$sector_data) {
+        echo "No se encontró registro en pl_sectores para id_sector: $id_sector<br>";
+        continue;
     }
-}
 
-// Asegurarse de que todos los identificadores fijos se muestren
-foreach ($identificadores_fijos as $identificador_fijo) {
-    if (!isset($data[$identificador_fijo])) {
-        // Si no existe en el arreglo $data, agregarlo con valores por defecto
-        $data[$identificador_fijo] = [
-            $identificador_fijo,  // Identificador fijo
-            $denominacion,      // Denominación por defecto
-            0,                    // Monto inicial por defecto
-            0,                    // Monto comprometido por defecto
-            0,                    // Monto causado por defecto
-            0,                    // Monto disponible por defecto
-            0                     // Monto actual por defecto
+    $sector = $sector_data['sector'] ?? 'N/A';
+
+    // Consultar programa en pl_programas
+    $query_programa = "SELECT programa, denominacion FROM pl_programas WHERE programa = ?";
+    $stmt_programa = $conexion->prepare($query_programa);
+    $stmt_programa->bind_param('i', $id_programa);
+    $stmt_programa->execute();
+    $result_programa = $stmt_programa->get_result();
+    $programa_data = $result_programa->fetch_assoc();
+
+    if (!$programa_data) {
+        echo "No se encontró registro en pl_programas para id_programa: $id_programa<br>";
+        continue;
+    }
+
+    $programa = $programa_data['programa'] ?? 'N/A';
+    $denominacion = $programa_data['denominacion'] ?? 'N/A';
+    
+    // Agrupar datos por identificador
+    if (!isset($data[$identificador])) {
+        $data[$identificador] = [
+            $identificador,  // Sector y programa combinados
+            $denominacion,   // Denominación del programa
+            0,               // Sumatoria de monto_inicial
+            0,               // Sumatoria comprometido
+            0,               // Sumatoria causado
+            0,               // Sumatoria disponible (monto_actual de distribucion_presupuestaria)
+            0                // Sumatoria de monto_actual (de las distribuciones)
         ];
     }
-}
 
+    // Aquí puedes agregar los montos correspondientes a las sumatorias
+    // Ejemplo de agregar monto (esto depende de cómo estés calculando los montos)
+    $data[$identificador][2] += $monto_inicial;      // Sumar monto_inicial
+    $data[$identificador][6] += $monto_disponible;   // Sumar monto_actual (disponibilidad)
+
+    if ($gasto['status'] == 1) { // Causado
+        $data[$identificador][5] += $monto_actual;
+    }
+}
 // Consultar los traspasos principales filtrando por id_ejercicio
 $sql = "SELECT t.id, t.n_orden, t.id_ejercicio, t.monto_total, t.fecha, t.status, t.tipo 
         FROM traspasos t
