@@ -124,7 +124,7 @@ foreach ($gastos as $gasto) {
         }
     }
 }
-
+}
  
 
  // Consultar los traspasos principales filtrando por id_ejercicio
