@@ -124,22 +124,17 @@ foreach ($gastos as $gasto) {
         
 
             // Consultar partida y descripción en pl_partidas
-           $placeholders = implode(',', array_fill(0, count($codigos_partida), '?')); // "?,?,?,?"
-$query_partidas = "SELECT partida, denominacion FROM pl_partidas WHERE LEFT(partida,3) IN ($placeholders)";
-$stmt_partidas = $conexion->prepare($query_partidas);
+            $query_partida = "SELECT partida, denominacion FROM pl_partidas WHERE partida = ?";
+            $stmt_partida = $conexion->prepare($query_partida);
+            $stmt_partida->bind_param('s', $codigo_partida);
+            $stmt_partida->execute();
+            $result_partida = $stmt_partida->get_result();
+            $partida_data = $result_partida->fetch_assoc();
 
-// Crear los parámetros dinámicamente
-$stmt_partidas->bind_param(str_repeat('s', count($codigos_partida)), ...$codigos_partida);
-$stmt_partidas->execute();
-$result_partidas = $stmt_partidas->get_result();
-
-// Guardar los resultados en un array asociativo
-$partidas_map = [];
-while ($row = $result_partidas->fetch_assoc()) {
-    $partidas_map[substr($row['partida'], 0, 3)] = $row['denominacion'];
-}
-$stmt_partidas->close();
-
+            if (!$partida_data) {
+                echo "No se encontraron registros en pl_partidas para el código de partida: " . $codigo_partida . "<br>";
+                continue;
+            }
             $inicio_trimestre = ($trimestre - 1) * 3 + 1; // Mes inicial del trimestre
             $fin_trimestre = $inicio_trimestre + 2;       // Mes final del trimestre
             if ($mes < $inicio_trimestre or $mes > $fin_trimestre) {
