@@ -1,5 +1,12 @@
 <?php
 require_once '../sistema_global/conexion.php';
+require_once '../sistema_global/conexion_remota.php';
+
+
+ global $conexion;
+    global $remote_db;
+
+
 
 $id_ejercicio = $_GET['id_ejercicio'];
 $trimestre = $_GET['trimestre'];
@@ -98,37 +105,63 @@ foreach ($gastos as $gasto) {
     }
 }
 
-// Consultar traspasos
-$query_traspasos = "SELECT id, monto_total FROM traspasos WHERE id_ejercicio = ?";
-$stmt_traspasos = $conexion->prepare($query_traspasos);
-$stmt_traspasos->bind_param('i', $id_ejercicio);
-$stmt_traspasos->execute();
-$result_traspasos = $stmt_traspasos->get_result();
-print_r($result_traspasos);
+ 
 
-while ($traspaso = $result_traspasos->fetch_assoc()) {
-    $id_traspaso = $traspaso['id'];
-    $monto_total = $traspaso['monto_total'];
+    // Consultar los traspasos principales filtrando por id_ejercicio
+    $sql = "SELECT t.id, t.n_orden, t.id_ejercicio, t.monto_total, t.fecha, t.status, t.tipo 
+            FROM traspasos t
+            WHERE t.id_ejercicio = ?";
+    $stmt = $remote_db->prepare($sql);
+    $stmt->bind_param("i", $id_ejercicio);
+    $stmt->execute();
+    $resultado = $stmt->get_result();
 
-    // Consultar traspaso_informacion usando el id_traspaso
-    $query_info = "SELECT id_distribucion, monto FROM traspaso_informacion WHERE id_traspaso = ? AND tipo = 'A'";
-    $stmt_info = $conexion->prepare($query_info);
-    $stmt_info->bind_param('i', $id_traspaso);
-    $stmt_info->execute();
-    $result_info = $stmt_info->get_result();
-    print_r($result_info);
+    if ($resultado->num_rows > 0) {
+        $traspasos = $resultado->fetch_all(MYSQLI_ASSOC);
 
-    while ($info = $result_info->fetch_assoc()) {
-        $id_distribucion = $info['id_distribucion'];
-        $monto_traspaso = $info['monto'];
+        // Agregar la información de traspaso_informacion para cada traspaso
+        foreach ($traspasos as &$traspaso) {
+            $sqlInfo = "SELECT ti.id_distribucion, ti.monto, ti.tipo 
+                        FROM traspaso_informacion ti 
+                        WHERE ti.id_traspaso = ?";
+            $stmtInfo = $remote_db->prepare($sqlInfo);
+            $stmtInfo->bind_param("i", $traspaso['id']);
+            $stmtInfo->execute();
+            $resultadoInfo = $stmtInfo->get_result();
 
-        // Consultar distribucion_presupuestaria para obtener id_sector
-        $query_distribucion = "SELECT id_sector FROM distribucion_presupuestaria WHERE id = ? AND id_ejercicio = ?";
-        $stmt_distribucion = $conexion->prepare($query_distribucion);
-        $stmt_distribucion->bind_param('ii', $id_distribucion, $id_ejercicio);
-        $stmt_distribucion->execute();
-        $result_distribucion = $stmt_distribucion->get_result();
-        $distribucion_presupuestaria = $result_distribucion->fetch_assoc();
+            if ($resultadoInfo->num_rows > 0) {
+                $detalles = $resultadoInfo->fetch_all(MYSQLI_ASSOC);
+                foreach ($detalles as &$detalle) {
+                    // Obtener la información de distribucion_presupuestaria
+                    $sqlDistribucion = "SELECT dp.* 
+                                        FROM distribucion_presupuestaria dp 
+                                        WHERE dp.id = ?";
+                    $stmtDistribucion = $remote_db->prepare($sqlDistribucion);
+                    $stmtDistribucion->bind_param("i", $detalle['id_distribucion']);
+                    $stmtDistribucion->execute();
+                    $resultadoDistribucion = $stmtDistribucion->get_result();
+
+                    if ($resultadoDistribucion->num_rows > 0) {
+                        $detalle['distribucion_presupuestaria'] = $resultadoDistribucion->fetch_assoc();
+
+                        // Obtener la información de partidas_presupuestarias usando id_partida
+                        $id_partida = $detalle['distribucion_presupuestaria']['id_partida'];
+                        $sqlPartida = "SELECT pp.* 
+                                       FROM partidas_presupuestarias pp 
+                                       WHERE pp.id = ?";
+                        $stmtPartida = $remote_db->prepare($sqlPartida);
+                        $stmtPartida->bind_param("i", $id_partida);
+                        $stmtPartida->execute();
+                        $resultadoPartida = $stmtPartida->get_result();
+
+                        if ($resultadoPartida->num_rows > 0) {
+                            $detalle['distribucion_presupuestaria']['partida_presupuestaria'] = $resultadoPartida->fetch_assoc();
+                        } else {
+                            $detalle['distribucion_presupuestaria']['partida_presupuestaria'] = [];
+                        }
+                    } else {
+                        $detalle['distribucion_presupuestaria'] = [];
+                    }
 
         if (!$distribucion_presupuestaria) {
             continue;
