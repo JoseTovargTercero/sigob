@@ -157,6 +157,8 @@ foreach ($identificadores_fijos as $identificador) {
         $data[$identificador][5] += $monto_actual;
     }
 }
+}
+}
 
 
 
