@@ -495,8 +495,14 @@ if ($resultado->num_rows > 0) {
                     echo "<tr>
                 <td class='fz-8'>{$codigo_partida}</td>
                 <td class='fz-8 text-left'>{$denominacion}</td>
-                <td class='fz-8'>" . number_format($asignacion_inicial, 2, ',', '.') . "</td>
-                <td class='fz-8'>" . number_format($modificacion, 2, ',', '.') . "</td>
+                <td class='fz-8'>" . number_format($asignacion_inicial, 2, ',', '.') . "</td>";
+
+                           if ($modificacion > $compromiso) {
+    echo "<td class='fz-8' style=''>" . number_format($modificacion, 2, ',', '.') . "</td>";
+} else {
+    echo "<td class='fz-8' style=''>-" . number_format($modificacion, 2, ',', '.') . "</td>";
+}
+                echo "
                 <td class='fz-8'>" . number_format($asignacion_ajustada, 2, ',', '.') . "</td>
                 <td class='fz-8'>" . number_format($compromiso, 2, ',', '.') . "</td>
                 <td class='fz-8'>" . number_format($disponibilidad, 2, ',', '.') . "</td>
@@ -507,8 +513,13 @@ if ($resultado->num_rows > 0) {
                 echo "<tr>
             <td class='bt'  style='border-width: 3px;'></td>
             <td class='bt fw-bold' style='border-width: 3px;'>TOTAL RESUMEN POR SECTORES Y PROGRAMAS</td>
-            <td class='bt fw-bold' style='border-width: 3px;'>" . number_format($total_asignacion_inicial, 2, ',', '.') . "</td>
-            <td class='bt fw-bold' style='border-width: 3px;'>" . number_format($total_modificacion, 2, ',', '.') . "</td>
+            <td class='bt fw-bold' style='border-width: 3px;'>" . number_format($total_asignacion_inicial, 2, ',', '.') . "</td>";
+                    if ($total_modificacion > $total_compromiso) {
+    echo "<td class='bt fw-bold' style='border-width: 3px;'>" . number_format($total_modificacion, 2, ',', '.') . "</td>";
+} else {
+    echo "<td class='bt fw-bold' style='border-width: 3px;'>-" . number_format($total_modificacion, 2, ',', '.') . "</td>";
+}
+        echo"
             <td class='bt fw-bold' style='border-width: 3px;'>" . number_format($total_asignacion_ajustada, 2, ',', '.') . "</td>
             <td class='bt fw-bold' style='border-width: 3px;'>" . number_format($total_compromiso, 2, ',', '.') . "</td>
             <td class='bt fw-bold' style='border-width: 3px;'>" . number_format($total_disponibilidad, 2, ',', '.') . "</td>
