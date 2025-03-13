@@ -22,10 +22,7 @@ $trimestres_text = [
             $result_sector = $stmt_sector->get_result();
             $sector_data = $result_sector->fetch_assoc();
 
-            if (!$sector_data) {
-                echo "No se encontró registro en pl_sectores para id_sector: $id_sector<br>";
-                continue;
-            }
+        
 
             $sector = $sector_data['sector'] ?? 'N/A';
 
@@ -36,10 +33,7 @@ $trimestres_text = [
             $result_programa = $stmt_programa->get_result();
             $programa_data = $result_programa->fetch_assoc();
 
-            if (!$programa_data) {
-                echo "No se encontró registro en pl_programas para id_programa: $id_programa<br>";
-                continue;
-            }
+          
             $inicio_trimestre = ($trimestre - 1) * 3 + 1; // Mes inicial del trimestre
             $fin_trimestre = $inicio_trimestre + 2;       // Mes final del trimestre
             if ($mes < $inicio_trimestre or $mes > $fin_trimestre) {
