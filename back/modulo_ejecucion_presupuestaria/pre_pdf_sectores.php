@@ -13,15 +13,12 @@ $trimestres_text = [
     4 => 'CUARTO TRIMESTRE',
 ];
 
-// Inicializar todos los códigos de partida permitidos
-$codigos_partida_permitidos = ['401', '402', '403', '404', '407', '408', '411', '498'];
-
-// Inicializar data para cada código de partida permitido
+// Inicializar todos los sectores del 1 al 10 con valores en 0
 $data = [];
-foreach ($codigos_partida_permitidos as $codigo_partida) {
-    $data[$codigo_partida] = [
-        "Código $codigo_partida", // Código partida
-        "Denominación $codigo_partida", // Denominación
+for ($i = 1; $i <= 10; $i++) {
+    $data[$i] = [
+        "Sector $i", // Sector
+        "Denominación $i", // Denominación
         0, // Sumatoria de monto_inicial
         0, // Sumatoria comprometido
         0, // Sumatoria causado
@@ -42,6 +39,15 @@ $ano = $resultado['ano'];
 $situado = $resultado['situado'];
 if (!$resultado) {
     die("No se encontró el ejercicio fiscal para el ID proporcionado.");
+}
+
+// Consultar sectores y sus denominaciones
+$query_sectores = "SELECT id, sector, denominacion FROM pl_sectores WHERE id BETWEEN 1 AND 10";
+$result_sectores = $conexion->query($query_sectores);
+while ($row = $result_sectores->fetch_assoc()) {
+    $id_sector = $row['id'];
+    $data[$id_sector][0] = $row['sector'];
+    $data[$id_sector][1] = $row['denominacion'];
 }
 
 // Consultar gastos
@@ -68,9 +74,8 @@ foreach ($gastos as $gasto) {
     foreach ($distribuciones_array as $distribucion) {
         $id_distribucion = $distribucion['id_distribucion'];
         $monto_actual = $distribucion['monto'];
-
-        // Consultar distribucion_presupuestaria
-        $query_distribucion = "SELECT id_partida, monto_inicial FROM distribucion_presupuestaria WHERE id = ? AND id_ejercicio = ?";
+        
+        $query_distribucion = "SELECT id_sector, monto_inicial FROM distribucion_presupuestaria WHERE id = ? AND id_ejercicio = ?";
         $stmt_distribucion = $conexion->prepare($query_distribucion);
         $stmt_distribucion->bind_param('ii', $id_distribucion, $id_ejercicio);
         $stmt_distribucion->execute();
@@ -78,25 +83,12 @@ foreach ($gastos as $gasto) {
         $distribucion_presupuestaria = $result_distribucion->fetch_assoc();
 
         if ($distribucion_presupuestaria) {
-            $id_partida = $distribucion_presupuestaria['id_partida'];
+            $id_sector = $distribucion_presupuestaria['id_sector'];
             $monto_inicial = $distribucion_presupuestaria['monto_inicial'] ?? 0;
-
-            // Consultar el código de partida
-            $query_partida = "SELECT partida FROM partidas_presupuestarias WHERE id = ?";
-            $stmt_partida = $conexion->prepare($query_partida);
-            $stmt_partida->bind_param('i', $id_partida);
-            $stmt_partida->execute();
-            $result_partida = $stmt_partida->get_result();
-            $partida_data = $result_partida->fetch_assoc();
-            $codigo_partida = substr($partida_data['partida'], 0, 3);
-
-            // Solo agregar al data si el código de partida está en los permitidos
-            if (in_array($codigo_partida, $codigos_partida_permitidos)) {
-                $data[$codigo_partida][2] += $monto_inicial;
-                $data[$codigo_partida][6] += $monto_actual;
-                if ($gasto['status'] == 1) { // Causado
-                    $data[$codigo_partida][5] += $monto_actual;
-                }
+            $data[$id_sector][2] += $monto_inicial;
+            $data[$id_sector][6] += $monto_actual;
+            if ($gasto['status'] == 1) {
+                $data[$id_sector][5] += $monto_actual;
             }
         }
     }
@@ -126,29 +118,16 @@ foreach ($traspasos as $traspaso) {
     $detalles = $resultadoInfo->fetch_all(MYSQLI_ASSOC);
 
     foreach ($detalles as $detalle) {
-        $sqlDistribucion = "SELECT id_partida FROM distribucion_presupuestaria WHERE id = ?";
+        $sqlDistribucion = "SELECT id_sector FROM distribucion_presupuestaria WHERE id = ?";
         $stmtDistribucion = $remote_db->prepare($sqlDistribucion);
         $stmtDistribucion->bind_param("i", $detalle['id_distribucion']);
         $stmtDistribucion->execute();
         $resultadoDistribucion = $stmtDistribucion->get_result();
 
         if ($distribucion_presupuestaria = $resultadoDistribucion->fetch_assoc()) {
-            $id_partida = $distribucion_presupuestaria['id_partida'];
-            
-            // Consultar el código de partida
-            $sqlPartida = "SELECT partida FROM partidas_presupuestarias WHERE id = ?";
-            $stmtPartida = $remote_db->prepare($sqlPartida);
-            $stmtPartida->bind_param("i", $id_partida);
-            $stmtPartida->execute();
-            $resultadoPartida = $stmtPartida->get_result();
-            $partida_data = $resultadoPartida->fetch_assoc();
-            $codigo_partida2 = substr($partida_data['partida'], 0, 3);
-
-            // Solo agregar al data si el código de partida está en los permitidos
-            if (in_array($codigo_partida2, $codigos_partida_permitidos)) {
-                $monto_traspaso = $detalle['monto'];
-                $data[$codigo_partida2][3] += $monto_traspaso;
-            }
+            $id_sector = $distribucion_presupuestaria['id_sector'];
+            $monto_traspaso = $detalle['monto'];
+            $data[$id_sector][3] += $monto_traspaso;
         }
     }
 }
