@@ -13,6 +13,21 @@ $trimestres_text = [
     4 => 'CUARTO TRIMESTRE',
 ];
 
+<?php
+require_once '../sistema_global/conexion.php';
+require_once '../sistema_global/conexion_remota.php';
+global $conexion;
+global $remote_db;
+
+$id_ejercicio = $_GET['id_ejercicio'];
+$trimestre = $_GET['trimestre'];
+$trimestres_text = [
+    1 => 'PRIMER TRIMESTRE',
+    2 => 'SEGUNDO TRIMESTRE',
+    3 => 'TERCER TRIMESTRE',
+    4 => 'CUARTO TRIMESTRE',
+];
+
 // Lista de identificadores fijos
 $identificadores_fijos = [
     "01-01", "01-02", "01-03", "01-04", "01-05", "01-06", "01-07", "01-08", "01-09", "01-10", 
@@ -69,6 +84,9 @@ foreach ($identificadores_fijos as $identificador) {
         ];
     }
 }
+
+
+
 
 // Consultar ejercicio fiscal
 $query_ejercicio = "SELECT * FROM ejercicio_fiscal WHERE id = ?";
@@ -147,19 +165,62 @@ foreach ($gastos as $gasto) {
 
             $monto_inicial = $distribucion_presupuestaria['monto_inicial'] ?? 0;
             $monto_disponible = $montoDistribucion; // Monto disponible desde distribucion_presupuestaria entes
+            $id_sector = $distribucion_presupuestaria['id_sector'] ?? 0;
+            $id_programa = $distribucion_presupuestaria['id_programa'] ?? 0;
 
-    if (isset($data[$identificador])) {
-    // Acceder a los índices de forma segura
-    $data[$identificador][2] += $monto_inicial;      // Sumar monto_inicial
-    $data[$identificador][6] += $monto_disponible;   // Sumar monto_actual (disponibilidad)
-    if ($gasto['status'] == 1) { // Causado
-        $data[$identificador][5] += $monto_actual;
+            // Consultar sector en pl_sectores
+            $query_sector = "SELECT sector FROM pl_sectores WHERE id = ?";
+            $stmt_sector = $conexion->prepare($query_sector);
+            $stmt_sector->bind_param('i', $id_sector);
+            $stmt_sector->execute();
+            $result_sector = $stmt_sector->get_result();
+            $sector_data = $result_sector->fetch_assoc();
+
+            if (!$sector_data) {
+                echo "No se encontró registro en pl_sectores para id_sector: $id_sector<br>";
+                continue;
+            }
+
+            $sector = $sector_data['sector'] ?? 'N/A';
+
+            // Consultar programa en pl_programas
+            $query_programa = "SELECT programa, denominacion FROM pl_programas WHERE id = ?";
+            $stmt_programa = $conexion->prepare($query_programa);
+            $stmt_programa->bind_param('i', $id_programa);
+            $stmt_programa->execute();
+            $result_programa = $stmt_programa->get_result();
+            $programa_data = $result_programa->fetch_assoc();
+
+            if (!$programa_data) {
+                echo "No se encontró registro en pl_programas para id_programa: $id_programa<br>";
+                continue;
+            }
+            $inicio_trimestre = ($trimestre - 1) * 3 + 1; // Mes inicial del trimestre
+            $fin_trimestre = $inicio_trimestre + 2;       // Mes final del trimestre
+            if ($mes < $inicio_trimestre or $mes > $fin_trimestre) {
+                continue;
+            }
+
+            $programa = $programa_data['programa'] ?? 'N/A';
+            $denominacion = $programa_data['denominacion'] ?? 'N/A';
+
+            // Formatear identificador como xx-xx
+            $identificador = sprintf("%s-%s", $sector, $programa);
+             if (!in_array($identificador, $identificadores)) {
+                $identificadores[] = $identificador;
+            }
+
+
+            // Sumar montos al agrupamiento
+            $data[$identificador][2] += $monto_inicial;      // Sumar monto_inicial
+            $data[$identificador][6] += $monto_disponible;   // Sumar monto_actual (disponibilidad)
+
+            if ($gasto['status'] == 1) { // Causado
+                $data[$identificador][5] += $monto_actual;
+            }
+        }
     }
 }
-}
-}
-}
-
 
 
 
