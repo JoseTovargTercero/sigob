@@ -438,35 +438,41 @@ if ($resultado->num_rows > 0) {
                 $total_causado += $causado;
                 $total_disponibilidad += $disponibilidad;
 
-                echo "<tr>
-                <td class='fz-8' style='border-width: 3px;'>{$codigo_partida}</td>
-                <td class='fz-8 text-left' style='border-width: 3px;'>{$denominacion}</td>
-                <td class='fz-8' style='border-width: 3px;'>" . number_format($asignacion_inicial, 2, ',', '.') . "</td>
-                ";
-              if ($modificacion > $compromiso) {
+  echo "<tr>
+    <td class='fz-8' style='border-width: 3px;'>{$codigo_partida}</td>
+    <td class='fz-8 text-left' style='border-width: 3px;'>{$denominacion}</td>
+    <td class='fz-8' style='border-width: 3px;'>" . number_format($asignacion_inicial, 2, ',', '.') . "</td>";
+
+if ($modificacion > $compromiso) {
     echo "<td class='fz-8' style='border-width: 3px; color: green;'>" . number_format($modificacion, 2, ',', '.') . "</td>";
 } else {
     echo "<td class='fz-8' style='border-width: 3px; color: red;'>" . number_format($modificacion, 2, ',', '.') . "</td>";
 }
 
-                echo"
-                <td class='fz-8' style='border-width: 3px;'>" . number_format($compromiso, 2, ',', '.') . "</td>
-                <td class='fz-8' style='border-width: 3px;'>" . number_format($causado, 2, ',', '.') . "</td>
-                <td class='fz-8' style='border-width: 3px;'>" . number_format($disponibilidad, 2, ',', '.') . "</td>
-            </tr>";
-            }
+echo "
+    <td class='fz-8' style='border-width: 3px;'>" . number_format($compromiso, 2, ',', '.') . "</td>
+    <td class='fz-8' style='border-width: 3px;'>" . number_format($causado, 2, ',', '.') . "</td>
+    <td class='fz-8' style='border-width: 3px;'>" . number_format($disponibilidad, 2, ',', '.') . "</td>
+</tr>";
 
-            // Totales generales
-            echo "<tr>
-            <td class='bt'></td>
-            <td class='bt fw-bold'>TOTALES</td>
-            <td class='bt fw-bold'>" . number_format($total_asignacion_inicial, 2, ',', '.') . "</td>
-            <td class='bt fw-bold'>" . number_format($total_modificacion, 2, ',', '.') . "</td>
-            <td class='bt fw-bold'>" . number_format($total_compromiso, 2, ',', '.') . "</td>
-            <td class='bt fw-bold'>" . number_format($total_causado, 2, ',', '.') . "</td>
-            <td class='bt fw-bold'>" . number_format($total_disponibilidad, 2, ',', '.') . "</td>
-        </tr>";
-            ?>
+// Totales generales
+echo "<tr>
+    <td class='bt'></td>
+    <td class='bt fw-bold'>TOTALES</td>
+    <td class='bt fw-bold'>" . number_format($total_asignacion_inicial, 2, ',', '.') . "</td>";
+
+if ($total_modificacion > $total_compromiso) {
+    echo "<td class='bt fw-bold' style='color: green;'>" . number_format($total_modificacion, 2, ',', '.') . "</td>";
+} else {
+    echo "<td class='bt fw-bold' style='color: red;'>" . number_format($total_modificacion, 2, ',', '.') . "</td>";
+}
+
+echo "
+    <td class='bt fw-bold'>" . number_format($total_compromiso, 2, ',', '.') . "</td>
+    <td class='bt fw-bold'>" . number_format($total_causado, 2, ',', '.') . "</td>
+    <td class='bt fw-bold'>" . number_format($total_disponibilidad, 2, ',', '.') . "</td>
+</tr>";
+
         </tbody>
     </table>
 
