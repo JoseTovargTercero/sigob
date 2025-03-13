@@ -118,13 +118,8 @@ foreach ($gastos as $gasto) {
                 continue;
             }
 
-            // Obtener el valor de partida desde partidas_presupuestarias
-            $codigo_partida = substr($presupuestaria_data['partida'], 0, 3);
-
-        
-
-            // Consultar partida y descripción en pl_partidas
-           $placeholders = implode(',', array_fill(0, count($codigos_partida), '?')); // "?,?,?,?"
+           // Consultar todas las partidas de una sola vez
+$placeholders = implode(',', array_fill(0, count($codigos_partida), '?')); // "?,?,?,?"
 $query_partidas = "SELECT partida, denominacion FROM pl_partidas WHERE LEFT(partida,3) IN ($placeholders)";
 $stmt_partidas = $conexion->prepare($query_partidas);
 
@@ -136,9 +131,22 @@ $result_partidas = $stmt_partidas->get_result();
 // Guardar los resultados en un array asociativo
 $partidas_map = [];
 while ($row = $result_partidas->fetch_assoc()) {
-    $partidas_map[substr($row['partida'], 0, 3)] = $row['denominacion'];
+    $codigo_partida = substr($row['partida'], 0, 3); // Tomar los primeros 3 caracteres
+    $partidas_map[$codigo_partida] = $row['denominacion'];
 }
 $stmt_partidas->close();
+
+// Asignar denominaciones a `$data`
+foreach ($data as $codigo => &$values) {
+    $values[1] = $partidas_map[$codigo] ?? 'N/A';
+}
+
+// Verificar si hay partidas que no fueron encontradas
+foreach ($codigos_partida as $codigo) {
+    if (!isset($partidas_map[$codigo])) {
+        echo "Advertencia: No se encontró denominación en pl_partidas para la partida $codigo <br>";
+    }
+}
 
             $inicio_trimestre = ($trimestre - 1) * 3 + 1; // Mes inicial del trimestre
             $fin_trimestre = $inicio_trimestre + 2;       // Mes final del trimestre
