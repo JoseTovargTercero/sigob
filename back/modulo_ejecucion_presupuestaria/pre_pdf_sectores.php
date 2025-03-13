@@ -105,7 +105,6 @@ JOIN traspaso_informacion ti ON t.id = ti.id_traspaso;
 ";
 
 $stmt_traspasos = $conexion->prepare($query_traspasos);
-$stmt_traspasos->bind_param('i', $id_ejercicio);
 $stmt_traspasos->execute();
 $result_traspasos = $stmt_traspasos->get_result();
 
