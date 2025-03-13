@@ -165,6 +165,12 @@ if ($resultado->num_rows > 0) {
         if ($resultadoInfo->num_rows > 0) {
             $detalles = $resultadoInfo->fetch_all(MYSQLI_ASSOC);
             foreach ($detalles as &$detalle) {
+
+                 $inicio_trimestre = ($trimestre - 1) * 3 + 1; // Mes inicial del trimestre
+            $fin_trimestre = $inicio_trimestre + 2;       // Mes final del trimestre
+            if ($mes < $inicio_trimestre or $mes > $fin_trimestre) {
+                continue;
+            }
                 // Obtener la información de distribucion_presupuestaria
                 $sqlDistribucion = "SELECT dp.* FROM distribucion_presupuestaria dp WHERE dp.id = ?";
                 $stmtDistribucion = $remote_db->prepare($sqlDistribucion);
