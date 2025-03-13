@@ -500,7 +500,12 @@ if ($resultado->num_rows > 0) {
                            if ($modificacion > $compromiso) {
     echo "<td class='fz-8' style=''>" . number_format($modificacion, 2, ',', '.') . "</td>";
 } else {
-    echo "<td class='fz-8' style=''>-" . number_format($modificacion, 2, ',', '.') . "</td>";
+    if ($modificacion == 0) {
+        echo "<td class='fz-8' style=''>" . number_format($modificacion, 2, ',', '.') . "</td>";
+    }else{
+        echo "<td class='fz-8' style=''>-" . number_format($modificacion, 2, ',', '.') . "</td>";
+    }
+    
 }
                 echo "
                 <td class='fz-8'>" . number_format($asignacion_ajustada, 2, ',', '.') . "</td>
@@ -517,7 +522,12 @@ if ($resultado->num_rows > 0) {
                     if ($total_modificacion > $total_compromiso) {
     echo "<td class='bt fw-bold' style='border-width: 3px;'>" . number_format($total_modificacion, 2, ',', '.') . "</td>";
 } else {
-    echo "<td class='bt fw-bold' style='border-width: 3px;'>-" . number_format($total_modificacion, 2, ',', '.') . "</td>";
+    if ($total_modificacion == 0) {
+        echo "<td class='bt fw-bold' style='border-width: 3px;'>" . number_format($total_modificacion, 2, ',', '.') . "</td>";
+    }else{
+        echo "<td class='bt fw-bold' style='border-width: 3px;'>-" . number_format($total_modificacion, 2, ',', '.') . "</td>";
+    }   
+    
 }
         echo"
             <td class='bt fw-bold' style='border-width: 3px;'>" . number_format($total_asignacion_ajustada, 2, ',', '.') . "</td>
