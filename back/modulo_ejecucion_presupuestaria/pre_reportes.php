@@ -13,10 +13,11 @@ $id_ejercicio = $data['ejercicio_fiscal'];
 $tipo = $data['tipo'];
 if ($tipo == "compromiso") {
     $tipo_tabla = $data['tipo_tabla'];
+    $tipo_fecha = $data['tipo_fecha'];
     if ($tipo_tabla == "dozavos") {
         $tipo_tabla = 'solicitud_dozavos';
     }
-    $fecha = $data['fecha'];
+    $fecha2 = $data['fecha'];
 } else {
     $trimestre = $data['trimestre'];
 }
@@ -56,7 +57,7 @@ $reportes = [
 $pdf_files = [];
 $url_pdf = "{$base_url}pre_pdf_$tipo.php?id_ejercicio=$id_ejercicio&trimestre=$trimestre";
 if ($tipo == "compromiso") {
-    $url_pdf = "{$base_url}pre_compromisos_reporte.php?id_ejercicio=$id_ejercicio&tipo=$tipo_tabla&tipo_fecha=$tipo_fecha&fecha=$fecha";
+    $url_pdf = "{$base_url}pre_compromisos_reporte.php?id_ejercicio=$id_ejercicio&tipo=$tipo_tabla&tipo_fecha=$tipo_fecha&fecha=$fecha2";
 }
 
 if ($tipo == 'sectores') {
