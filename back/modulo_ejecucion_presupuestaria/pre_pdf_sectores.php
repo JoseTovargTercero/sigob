@@ -98,35 +98,45 @@ foreach ($gastos as $gasto) {
     }
 }
 
-// Consultar traspasos y traspaso_informacion
-$query_traspasos = "SELECT t.monto_total, ti.id_distribucion, ti.monto FROM traspasos t 
-                    JOIN traspaso_informacion ti ON t.id = ti.id_traspaso 
-                    WHERE t.id_ejercicio = ? AND ti.tipo = 'A'";
+// Consultar traspasos
+$query_traspasos = "SELECT id, monto_total FROM traspasos WHERE id_ejercicio = ?";
 $stmt_traspasos = $conexion->prepare($query_traspasos);
 $stmt_traspasos->bind_param('i', $id_ejercicio);
 $stmt_traspasos->execute();
 $result_traspasos = $stmt_traspasos->get_result();
-print_r($result_traspasos);
 
 while ($traspaso = $result_traspasos->fetch_assoc()) {
-    $id_distribucion = $traspaso['id_distribucion'];
-    $monto_traspaso = $traspaso['monto'];
+    $id_traspaso = $traspaso['id'];
+    $monto_total = $traspaso['monto_total'];
 
-    $query_distribucion = "SELECT id_sector FROM distribucion_presupuestaria WHERE id = ? AND id_ejercicio = ?";
-    $stmt_distribucion = $conexion->prepare($query_distribucion);
-    $stmt_distribucion->bind_param('ii', $id_distribucion, $id_ejercicio);
-    $stmt_distribucion->execute();
-    $result_distribucion = $stmt_distribucion->get_result();
-    $distribucion_presupuestaria = $result_distribucion->fetch_assoc();
+    // Consultar traspaso_informacion usando el id_traspaso
+    $query_info = "SELECT id_distribucion, monto FROM traspaso_informacion WHERE id_traspaso = ? AND tipo = 'A'";
+    $stmt_info = $conexion->prepare($query_info);
+    $stmt_info->bind_param('i', $id_traspaso);
+    $stmt_info->execute();
+    $result_info = $stmt_info->get_result();
 
-    if (!$distribucion_presupuestaria) {
-        continue;
-    }
+    while ($info = $result_info->fetch_assoc()) {
+        $id_distribucion = $info['id_distribucion'];
+        $monto_traspaso = $info['monto'];
 
-    $id_sector = $distribucion_presupuestaria['id_sector'] ?? 0;
+        // Consultar distribucion_presupuestaria para obtener id_sector
+        $query_distribucion = "SELECT id_sector FROM distribucion_presupuestaria WHERE id = ? AND id_ejercicio = ?";
+        $stmt_distribucion = $conexion->prepare($query_distribucion);
+        $stmt_distribucion->bind_param('ii', $id_distribucion, $id_ejercicio);
+        $stmt_distribucion->execute();
+        $result_distribucion = $stmt_distribucion->get_result();
+        $distribucion_presupuestaria = $result_distribucion->fetch_assoc();
 
-    if (isset($data[$id_sector])) {
-        $data[$id_sector][3] += $monto_traspaso;
+        if (!$distribucion_presupuestaria) {
+            continue;
+        }
+
+        $id_sector = $distribucion_presupuestaria['id_sector'] ?? 0;
+
+        if (isset($data[$id_sector])) {
+            $data[$id_sector][3] += $monto_traspaso;
+        }
     }
 }
 
