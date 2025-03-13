@@ -209,16 +209,16 @@ if ($resultado->num_rows > 0) {
 
                     if ($resultadoPartida->num_rows > 0) {
                         $partida_data = $resultadoPartida->fetch_assoc();
-                        $codigo_partida = substr($partida_data['partida'], 0, 3); // Los primeros 3 caracteres de la partida
+                        $codigo_partida2 = substr($partida_data['partida'], 0, 3); // Los primeros 3 caracteres de la partida
 
                         // Obtener la denominación de la partida
                         $denominacion_partida = $partida_data['denominacion'] ?? 'N/A';
                         $monto_traspaso = $detalle['monto'];
 
                         // Agrupar datos por los primeros 3 dígitos del código de partida
-                        if (!isset($data[$codigo_partida])) {
-                            $data[$codigo_partida][3] += $monto_traspaso; 
-                        }
+                        if ($data[$codigo_partida] == $codigo_partida2) {
+                        $data[$codigo_partida][3] += $monto_traspaso;
+                    }
 
                         // Sumar el monto de traspaso a la partida correspondiente
                     }
