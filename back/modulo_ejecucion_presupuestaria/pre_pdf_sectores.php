@@ -442,7 +442,7 @@ if ($resultado->num_rows > 0) {
                 <td class='fz-8' style='border-width: 3px;'>{$codigo_partida}</td>
                 <td class='fz-8 text-left' style='border-width: 3px;'>{$denominacion}</td>
                 <td class='fz-8' style='border-width: 3px;'>" . number_format($asignacion_inicial, 2, ',', '.') . "</td>
-                "
+                ";
                 if ($modificacion > $compromiso) {
                     echo "<td class='fz-8' style='border-width: 3px; color=green;'>" . number_format($modificacion, 2, ',', '.') . "</td>";
                 }else{
