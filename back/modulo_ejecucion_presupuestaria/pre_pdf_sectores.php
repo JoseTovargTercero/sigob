@@ -103,7 +103,7 @@ $result_traspasos = $stmt_traspasos->get_result();
 
 while ($traspaso = $result_traspasos->fetch_assoc()) {
     $id_distribucion = $traspaso['id_distribucion'];
-    $monto_traspaso = $traspaso['monto_total'];
+    $monto_traspaso = $traspaso['monto'];
 
     $query_distribucion = "SELECT id_sector FROM distribucion_presupuestaria WHERE id = ? AND id_ejercicio = ?";
     $stmt_distribucion = $conexion->prepare($query_distribucion);
