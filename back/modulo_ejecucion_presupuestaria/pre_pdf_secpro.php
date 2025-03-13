@@ -98,9 +98,8 @@ foreach ($gastos as $gasto) {
             $id_programa = $distribucion_presupuestaria['id_programa'] ?? 0;
 
             // Consultar sector en pl_sectores
-            $query_sector = "SELECT sector FROM pl_sectores WHERE id = ?";
+            $query_sector = "SELECT sector FROM pl_sectores ";
             $stmt_sector = $conexion->prepare($query_sector);
-            $stmt_sector->bind_param('i', $id_sector);
             $stmt_sector->execute();
             $result_sector = $stmt_sector->get_result();
             $sector_data = $result_sector->fetch_assoc();
@@ -229,9 +228,9 @@ if ($resultado->num_rows > 0) {
                     $monto_traspaso = $detalle['monto'];
 
                     // Consultar sector en pl_sectores
-                    $query_sector = "SELECT sector FROM pl_sectores WHERE id = ?";
+                    $query_sector = "SELECT sector FROM pl_sectores";
                     $stmt_sector = $conexion->prepare($query_sector);
-                    $stmt_sector->bind_param('i', $id_sector);
+
                     $stmt_sector->execute();
                     $result_sector = $stmt_sector->get_result();
                     $sector_data = $result_sector->fetch_assoc();
