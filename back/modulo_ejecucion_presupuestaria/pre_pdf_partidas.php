@@ -150,11 +150,8 @@ foreach ($gastos as $gasto) {
             if ($gasto['status'] == 1) { // Causado
                 $data[$codigo_partida][5] += $monto_actual;
             }
-        }
-    }
-}
 
-// Consultar los traspasos principales filtrando por id_ejercicio
+            // Consultar los traspasos principales filtrando por id_ejercicio
 $sql = "SELECT t.id, t.n_orden, t.id_ejercicio, t.monto_total, t.fecha, t.status, t.tipo 
         FROM traspasos t
         WHERE t.id_ejercicio = ?";
@@ -216,10 +213,8 @@ if ($resultado->num_rows > 0) {
                         $monto_traspaso = $detalle['monto'];
 
                         // Agrupar datos por los primeros 3 dígitos del código de partida
-                        if ($data[$codigo_partida] == $codigo_partida2) {
+                        if (isset($data[$codigo_partida])) {
                         $data[$codigo_partida][3] += $monto_traspaso;
-                    }else{
-                        echo "algo esta pasando";
                     }
 
                         // Sumar el monto de traspaso a la partida correspondiente
@@ -229,6 +224,11 @@ if ($resultado->num_rows > 0) {
         }
     }
 }
+
+        }
+    }
+}
+
 
 // Mostrar resultados (puedes ajustar esto según sea necesario)
 print_r(array_values($data));
