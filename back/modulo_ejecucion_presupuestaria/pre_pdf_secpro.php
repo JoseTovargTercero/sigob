@@ -14,62 +14,6 @@ $trimestres_text = [
     4 => 'CUARTO TRIMESTRE',
 ];
 
-// Lista de identificadores fijos
-$identificadores_fijos = [
-    "01-01", "01-02", "01-03", "01-04", "01-05", "01-06", "01-07", "01-08", "01-09", "01-10", 
-    "01-11", "01-12", "01-13", "02-01", "02-02", "02-03", "02-04", "02-05", "06-01", 
-    "08-02", "08-03", "09-01", "09-02", "11-01", "11-02", "12-01", "13-01", "13-02", 
-    "14-01", "15-01"
-];
-foreach ($identificadores_fijos as $identificador) {
-    // Extraer el sector y el programa de la clave del identificador
-    $id_sector = substr($identificador, 0, 2);  // El primer dígito es el sector
-    $id_programa = substr($identificador, 3, 2);  // El segundo dígito es el programa
-    
-    // Consultar sector en pl_sectores
-    $query_sector = "SELECT * FROM pl_sectores WHERE sector = ?";
-    $stmt_sector = $conexion->prepare($query_sector);
-    $stmt_sector->bind_param('i', $id_sector);
-    $stmt_sector->execute();
-    $result_sector = $stmt_sector->get_result();
-    $sector_data = $result_sector->fetch_assoc();
-
-    if (!$sector_data) {
-        echo "No se encontró registro en pl_sectores para id_sector: $id_sector<br>";
-        continue;
-    }
-
-    $id = $sector_data['id'] ?? 'N/A';
-
-    // Consultar programa en pl_programas
-    $query_programa = "SELECT programa, denominacion FROM pl_programas WHERE programa = ? AND sector = ?";
-    $stmt_programa = $conexion->prepare($query_programa);
-    $stmt_programa->bind_param('ii', $id_programa, $id);
-    $stmt_programa->execute();
-    $result_programa = $stmt_programa->get_result();
-    $programa_data = $result_programa->fetch_assoc();
-
-    if (!$programa_data) {
-        echo "No se encontró registro en pl_programas para id_programa: $id_programa<br>";
-        continue;
-    }
-
-    $programa = $programa_data['programa'] ?? 'N/A';
-    $denominacion = $programa_data['denominacion'] ?? 'N/A';
-    
-    // Agrupar datos por identificador
-    if (!isset($data[$identificador])) {
-        $data[$identificador] = [
-            $identificador,  // Sector y programa combinados
-            $denominacion,   // Denominación del programa
-            0,               // Sumatoria de monto_inicial
-            0,               // Sumatoria comprometido
-            0,               // Sumatoria causado
-            0,               // Sumatoria disponible (monto_actual de distribucion_presupuestaria)
-            0                // Sumatoria de monto_actual (de las distribuciones)
-        ];
-    }
-}
 
 
 
@@ -195,6 +139,18 @@ foreach ($gastos as $gasto) {
                 $identificadores[] = $identificador;
             }
 
+            // Agrupar datos por identificador
+    if (!isset($data[$identificador])) {
+        $data[$identificador] = [
+            $identificador,  // Sector y programa combinados
+            $denominacion,   // Denominación del programa
+            0,               // Sumatoria de monto_inicial
+            0,               // Sumatoria comprometido
+            0,               // Sumatoria causado
+            0,               // Sumatoria disponible (monto_actual de distribucion_presupuestaria)
+            0                // Sumatoria de monto_actual (de las distribuciones)
+        ];
+    }
 
             if (isset($data[$identificador])) {
     // Acceder a los índices de forma segura
@@ -310,7 +266,7 @@ if ($resultado->num_rows > 0) {
                     // Agrupar datos por identificador
                     if (in_array($identificador2, $identificadores)) {
                          // Sumar montos al agrupamiento
-                    $data[$identificador][3] += $monto_traspaso;  // Sumar monto del traspaso
+                    $data[$identificador2][3] += $monto_traspaso;  // Sumar monto del traspaso
                       
                     }
 
