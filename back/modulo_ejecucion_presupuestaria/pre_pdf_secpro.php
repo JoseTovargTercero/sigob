@@ -46,48 +46,6 @@ $gastos = $result_gastos->fetch_all(MYSQLI_ASSOC);
 $data = [];
 $identificadores = [];
 
- // Consultar sector en pl_sectores
-            $query_sector = "SELECT sector FROM pl_sectores ";
-            $stmt_sector = $conexion->prepare($query_sector);
-            $stmt_sector->execute();
-            $result_sector = $stmt_sector->get_result();
-            $sector_data = $result_sector->fetch_assoc();
-
-        
-
-            $sector = $sector_data['sector'] ?? 'N/A';
-
-            // Consultar programa en pl_programas
-            $query_programa = "SELECT programa, denominacion FROM pl_programas";
-            $stmt_programa = $conexion->prepare($query_programa);
-            $stmt_programa->execute();
-            $result_programa = $stmt_programa->get_result();
-            $programa_data = $result_programa->fetch_assoc();
-
-          
-            
-            $programa = $programa_data['programa'] ?? 'N/A';
-            $denominacion = $programa_data['denominacion'] ?? 'N/A';
-
-            // Formatear identificador como xx-xx
-            $identificador = sprintf("%s-%s", $sector, $programa);
-             if (!in_array($identificador, $identificadores)) {
-                $identificadores[] = $identificador;
-            }
-
-            // Agrupar datos por identificador
-    if (!isset($data[$identificador])) {
-        $data[$identificador] = [
-            $identificador,  // Sector y programa combinados
-            $denominacion,   // Denominación del programa
-            0,               // Sumatoria de monto_inicial
-            0,               // Sumatoria comprometido
-            0,               // Sumatoria causado
-            0,               // Sumatoria disponible (monto_actual de distribucion_presupuestaria)
-            0                // Sumatoria de monto_actual (de las distribuciones)
-        ];
-    }
-
 foreach ($gastos as $gasto) {
     $distribuciones_json = $gasto['distribuciones'];
     $distribuciones_array = json_decode($distribuciones_json, true);
@@ -178,7 +136,23 @@ foreach ($gastos as $gasto) {
             // Formatear identificador como xx-xx
             $identificador = sprintf("%s-%s", $sector, $programa);
              if (!in_array($identificador, $identificadores)) {
-                if (isset($data[$identificador])) {
+                $identificadores[] = $identificador;
+            }
+
+            // Agrupar datos por identificador
+    if (!isset($data[$identificador])) {
+        $data[$identificador] = [
+            $identificador,  // Sector y programa combinados
+            $denominacion,   // Denominación del programa
+            0,               // Sumatoria de monto_inicial
+            0,               // Sumatoria comprometido
+            0,               // Sumatoria causado
+            0,               // Sumatoria disponible (monto_actual de distribucion_presupuestaria)
+            0                // Sumatoria de monto_actual (de las distribuciones)
+        ];
+    }
+
+            if (isset($data[$identificador])) {
     // Acceder a los índices de forma segura
     $data[$identificador][2] += $monto_inicial;      // Sumar monto_inicial
     $data[$identificador][6] += $monto_disponible;   // Sumar monto_actual (disponibilidad)
@@ -186,11 +160,6 @@ foreach ($gastos as $gasto) {
         $data[$identificador][5] += $monto_actual;
     }
 }
-               
-            }
-
-
-            
         }
     }
 }
