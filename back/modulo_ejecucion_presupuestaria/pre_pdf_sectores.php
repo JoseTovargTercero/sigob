@@ -99,50 +99,36 @@ foreach ($gastos as $gasto) {
 }
 
 // Consultar traspasos y traspaso_informacion
-$query_traspasos = "SELECT t.monto_total, ti.id_distribucion, ti.monto 
-FROM traspasos t 
-JOIN traspaso_informacion ti ON t.id = ti.id_traspaso;
-";
-
+$query_traspasos = "SELECT t.monto_total, ti.id_distribucion, ti.monto FROM traspasos t 
+                    JOIN traspaso_informacion ti ON t.id = ti.id_traspaso 
+                    WHERE t.id_ejercicio = ? AND ti.tipo = 'A'";
 $stmt_traspasos = $conexion->prepare($query_traspasos);
+$stmt_traspasos->bind_param('i', $id_ejercicio);
 $stmt_traspasos->execute();
 $result_traspasos = $stmt_traspasos->get_result();
-
-var_dump($result_traspasos->num_rows); // Ver cuántos registros devuelve
+print_r($result_traspasos);
 
 while ($traspaso = $result_traspasos->fetch_assoc()) {
-    print_r($traspaso); // Ver qué datos devuelve la consulta
-
     $id_distribucion = $traspaso['id_distribucion'];
     $monto_traspaso = $traspaso['monto'];
-
-    echo "ID Distribución: $id_distribucion<br>";
 
     $query_distribucion = "SELECT id_sector FROM distribucion_presupuestaria WHERE id = ? AND id_ejercicio = ?";
     $stmt_distribucion = $conexion->prepare($query_distribucion);
     $stmt_distribucion->bind_param('ii', $id_distribucion, $id_ejercicio);
     $stmt_distribucion->execute();
     $result_distribucion = $stmt_distribucion->get_result();
-
-    var_dump($result_distribucion->num_rows); // Ver si encuentra registros
-
     $distribucion_presupuestaria = $result_distribucion->fetch_assoc();
+
     if (!$distribucion_presupuestaria) {
-        echo "No se encontró distribucion_presupuestaria para ID: $id_distribucion<br>";
         continue;
     }
 
     $id_sector = $distribucion_presupuestaria['id_sector'] ?? 0;
-    echo "Sector encontrado: $id_sector<br>";
 
     if (isset($data[$id_sector])) {
         $data[$id_sector][3] += $monto_traspaso;
-        echo "Monto agregado: $monto_traspaso al sector $id_sector<br>";
-    } else {
-        echo "El sector $id_sector no existe en data<br>";
     }
 }
-
 
 
 // Imprimir resultados
