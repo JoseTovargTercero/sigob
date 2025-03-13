@@ -16,7 +16,7 @@ $trimestres_text = [
 
 // Inicializar todos los identificadores con valores por defecto
 $query_sectores = "SELECT id, sector FROM pl_sectores";
-$query_programas = "SELECT id, programa, denominacion FROM pl_programas WHERE sector IS NOT NULL";
+$query_programas = "SELECT id, programa, denominacion FROM pl_programas WHERE sector = ?";
 
 // Preparar la primera consulta para los sectores
 $stmt_sectores = $conexion->prepare($query_sectores);
@@ -27,14 +27,23 @@ $sectores = $sectores_result->fetch_all(MYSQLI_ASSOC);
 // Liberar el resultado de la primera consulta
 $sectores_result->free();
 
-// Preparar la segunda consulta para los programas
-$stmt_programas = $conexion->prepare($query_programas);
-$stmt_programas->execute();
-$programas_result = $stmt_programas->get_result();
-$programas = $programas_result->fetch_all(MYSQLI_ASSOC);
+// Ahora recorrer cada sector y ejecutar la consulta para obtener los programas
+$sectores_con_programas = [];
 
-// Liberar el resultado de la segunda consulta
-$programas_result->free();
+foreach ($sectores as $sector) {
+    // Obtener el id del sector
+    $id_sector = $sector['id'];
+    
+    // Preparar la consulta para los programas con el id del sector
+    $stmt_programas = $conexion->prepare($query_programas);
+    $stmt_programas->bind_param('i', $id_sector);
+    $stmt_programas->execute();
+    $programas_result = $stmt_programas->get_result();
+    $programas = $programas_result->fetch_all(MYSQLI_ASSOC);
+    
+    // Liberar el resultado de la consulta de programas
+    $programas_result->free();
+}
 
 // Inicializar $data con todos los sectores y programas con valores en 0
 $data = [];
