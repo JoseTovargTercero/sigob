@@ -208,16 +208,15 @@ if ($resultado->num_rows > 0) {
                     $resultadoPartida = $stmtPartida->get_result();
 
                     if ($resultadoPartida->num_rows > 0) {
-                        $detalle['distribucion_presupuestaria']['partida_presupuestaria'] = $resultadoPartida->fetch_assoc();
-                    } else {
-                        $detalle['distribucion_presupuestaria']['partida_presupuestaria'] = [];
-                    }
+                        $partida_data = $resultadoPartida->fetch_assoc();
+                        $codigo_partida = substr($partida_data['partida'], 0, 3); // Los primeros 3 caracteres de la partida
 
-                    $monto_traspaso = $detalle['monto'];
+                        // Obtener la denominación de la partida
+                        $denominacion_partida = $partida_data['denominacion'] ?? 'N/A';
 
-                    // Sumar el monto de traspaso a la partida correspondiente
-                    if (isset($data[$id_partida])) {
-                        $data[$id_partida][5] += $monto_traspaso;
+                      // Sumar el monto de traspaso a la partida correspondiente
+                        $monto_traspaso = $detalle['monto'];
+                        $data[$codigo_partida][5] += $monto_traspaso; // Sumar al monto comprometido o causado
                     }
                 }
             }
