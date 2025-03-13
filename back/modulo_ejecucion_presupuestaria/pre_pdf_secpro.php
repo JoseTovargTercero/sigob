@@ -45,7 +45,7 @@ foreach ($sectores as $sector) {
     $programas_result->free();
     
     // Almacenar los programas encontrados bajo cada sector
-    $sectores_con_programas[] = [
+    $sectores_con_programas[$sector['id']] = [
         'sector' => $sector['sector'],  // Nombre del sector
         'programas' => $programas      // Programas asociados a este sector
     ];
@@ -55,10 +55,10 @@ foreach ($sectores as $sector) {
 $data = [];
 $identificadores = [];
 
-foreach ($sectores_con_programas as $sector_con_programas) {
+foreach ($sectores_con_programas as $id_sector => $sector_con_programas) {
     foreach ($sector_con_programas['programas'] as $programa) {
         // Asegurarse de que id_sector está presente en el arreglo $programa
-        if (isset($programa['id_sector']) && $sector_con_programas['sector'] == $programa['sector']) {
+        if (isset($programa['id_sector']) && $id_sector == $programa['id_sector']) {
             // Formatear identificador como sector-programa
             $identificador = sprintf("%s-%s", $sector_con_programas['sector'], $programa['programa']);
             
@@ -78,6 +78,7 @@ foreach ($sectores_con_programas as $sector_con_programas) {
         }
     }
 }
+
 
 
 // Consultar ejercicio fiscal
