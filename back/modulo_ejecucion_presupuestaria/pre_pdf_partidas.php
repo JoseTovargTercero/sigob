@@ -433,9 +433,15 @@ print_r(array_values($data));
                 // Asignar los valores usando índices numéricos
                 $codigo_partida = $info_partida[0] ?? 'N/A';
                 $denominacion = $info_partida[1] ?? 'N/A';
-                $asignacion_inicial = $info_partida[2] ?? 0;
-                $modificacion = $info_partida[3] ?? 0; // Si corresponde al índice [3]
+                 $modificacion = $info_partida[3] ?? 0; // Si corresponde al índice [3]
                 $compromiso = $info_partida[4] ?? 0;   // Si corresponde al índice [4]
+                $asignacion_inicial2 = $info_partida[2] ?? 0;
+                if ($modificacion > $compromiso) {
+                    $asignacion_inicial = $asignacion_inicial2 + $modificacion;
+                }else{
+                    $asignacion_inicial = $asignacion_inicial2 - $modificacion;
+                }
+
                 $causado = $info_partida[5] ?? 0;     // Si corresponde al índice [5]
                 $disponibilidad = $info_partida[6] ?? 0;
 
@@ -449,7 +455,13 @@ print_r(array_values($data));
                 echo "<tr>
                 <td class='fz-8 '>{$codigo_partida}</td>
                 <td class='fz-8  text-left'>{$denominacion}</td>
-                <td class='fz-8 '>" . number_format($asignacion_inicial, 2, ',', '.') . "</td>
+                ";
+              if ($modificacion > $compromiso) {
+    echo "<td class='fz-8' style='color: green;'>" . number_format($modificacion, 2, ',', '.') . "</td>";
+} else {
+    echo "<td class='fz-8' style='color: red;'>" . number_format($modificacion, 2, ',', '.') . "</td>";
+}
+            echo"
                 <td class='fz-8 '>" . number_format($modificacion, 2, ',', '.') . "</td>
                 <td class='fz-8 '>" . number_format($compromiso, 2, ',', '.') . "</td>
                 <td class='fz-8 '>" . number_format($causado, 2, ',', '.') . "</td>
@@ -457,17 +469,24 @@ print_r(array_values($data));
             </tr>";
             }
 
-            // Totales generales
-            echo "<tr>
-            <td class='bt'  style='border-width: 3px;'></td>
-            <td class='bt fw-bold'  style='border-width: 3px;'>TOTALES</td>
-            <td class='bt fw-bold'  style='border-width: 3px;'>" . number_format($total_asignacion_inicial, 2, ',', '.') . "</td>
-            <td class='bt fw-bold'  style='border-width: 3px;'>" . number_format($total_modificacion, 2, ',', '.') . "</td>
-            <td class='bt fw-bold'  style='border-width: 3px;'>" . number_format($total_compromiso, 2, ',', '.') . "</td>
-            <td class='bt fw-bold'  style='border-width: 3px;'>" . number_format($total_causado, 2, ',', '.') . "</td>
-            <td class='bt fw-bold'  style='border-width: 3px;'>" . number_format($total_disponibilidad, 2, ',', '.') . "</td>
-        </tr>";
-            ?>
+           // Totales generales
+echo "<tr>
+    <td class='bt'></td>
+    <td class='bt fw-bold'>TOTALES</td>
+    <td class='bt fw-bold'>" . number_format($total_asignacion_inicial, 2, ',', '.') . "</td>";
+
+if ($total_modificacion > $total_compromiso) {
+    echo "<td class='bt fw-bold' style='color: green;'>" . number_format($total_modificacion, 2, ',', '.') . "</td>";
+} else {
+    echo "<td class='bt fw-bold' style='color: red;'>" . number_format($total_modificacion, 2, ',', '.') . "</td>";
+}
+
+echo "
+    <td class='bt fw-bold'>" . number_format($total_compromiso, 2, ',', '.') . "</td>
+    <td class='bt fw-bold'>" . number_format($total_causado, 2, ',', '.') . "</td>
+    <td class='bt fw-bold'>" . number_format($total_disponibilidad, 2, ',', '.') . "</td>
+</tr>";
+?>
         </tbody>
     </table>
 
