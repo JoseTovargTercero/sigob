@@ -115,7 +115,6 @@ foreach ($gastos as $gasto) {
             // Consultar programa en pl_programas
             $query_programa = "SELECT programa, denominacion FROM pl_programas";
             $stmt_programa = $conexion->prepare($query_programa);
-            $stmt_programa->bind_param('i', $id_programa);
             $stmt_programa->execute();
             $result_programa = $stmt_programa->get_result();
             $programa_data = $result_programa->fetch_assoc();
