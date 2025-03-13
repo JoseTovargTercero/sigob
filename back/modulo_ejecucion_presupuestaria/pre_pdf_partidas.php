@@ -157,7 +157,7 @@ foreach ($codigos_partida as $codigo) {
             $denominacion = $partida_data['denominacion'] ?? 'N/A';
 
    
-  $data[$codigo_partida][1] = $data[$codigo_partida][1];
+  $data[$codigo_partida][1] = $partida_data['denominacion'];
         $data[$codigo_partida][2] += $monto_inicial;
         $data[$codigo_partida][6] += $monto_actual;
         if ($gasto['status'] == 1) $data[$codigo_partida][5] += $monto_actual;
