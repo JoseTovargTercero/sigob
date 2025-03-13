@@ -14,7 +14,38 @@ $trimestres_text = [
     4 => 'CUARTO TRIMESTRE',
 ];
 
+
+
+
+// Consultar ejercicio fiscal
+$query_ejercicio = "SELECT * FROM ejercicio_fiscal WHERE id = ?";
+$stmt = $conexion->prepare($query_ejercicio);
+$stmt->bind_param('i', $id_ejercicio);
+$stmt->execute();
+$result = $stmt->get_result();
+$resultado = $result->fetch_assoc();
+
+if (!$resultado) {
+    die("No se encontró el ejercicio fiscal para el ID proporcionado.");
+}
+
+$ano = $resultado['ano'];
+$situado = $resultado['situado'];
+$stmt->close();
+
+// Nueva consulta a la tabla gastos
+$query_gastos = "SELECT * FROM gastos WHERE id_ejercicio = ? AND status != 2";
+$stmt_gastos = $conexion->prepare($query_gastos);
+$stmt_gastos->bind_param('i', $id_ejercicio);
+$stmt_gastos->execute();
+$result_gastos = $stmt_gastos->get_result();
+
+$gastos = $result_gastos->fetch_all(MYSQLI_ASSOC);
+
+// Procesar distribuciones en los registros de gastos
+$data = [];
 $identificadores = [];
+
  // Consultar sector en pl_sectores
             $query_sector = "SELECT sector FROM pl_sectores ";
             $stmt_sector = $conexion->prepare($query_sector);
@@ -57,35 +88,6 @@ $identificadores = [];
         ];
     }
 
-// Consultar ejercicio fiscal
-$query_ejercicio = "SELECT * FROM ejercicio_fiscal WHERE id = ?";
-$stmt = $conexion->prepare($query_ejercicio);
-$stmt->bind_param('i', $id_ejercicio);
-$stmt->execute();
-$result = $stmt->get_result();
-$resultado = $result->fetch_assoc();
-
-if (!$resultado) {
-    die("No se encontró el ejercicio fiscal para el ID proporcionado.");
-}
-
-$ano = $resultado['ano'];
-$situado = $resultado['situado'];
-$stmt->close();
-
-// Nueva consulta a la tabla gastos
-$query_gastos = "SELECT * FROM gastos WHERE id_ejercicio = ? AND status != 2";
-$stmt_gastos = $conexion->prepare($query_gastos);
-$stmt_gastos->bind_param('i', $id_ejercicio);
-$stmt_gastos->execute();
-$result_gastos = $stmt_gastos->get_result();
-
-$gastos = $result_gastos->fetch_all(MYSQLI_ASSOC);
-
-// Procesar distribuciones en los registros de gastos
-$data = [];
-
-
 foreach ($gastos as $gasto) {
     $distribuciones_json = $gasto['distribuciones'];
     $distribuciones_array = json_decode($distribuciones_json, true);
@@ -119,14 +121,6 @@ foreach ($gastos as $gasto) {
                 }
             }
 
-
-
-            $inicio_trimestre = ($trimestre - 1) * 3 + 1; // Mes inicial del trimestre
-            $fin_trimestre = $inicio_trimestre + 2;       // Mes final del trimestre
-            if ($mes < $inicio_trimestre or $mes > $fin_trimestre) {
-                continue;
-            }
-
             // Consultar distribucion_presupuestaria
             $query_distribucion = "SELECT * FROM distribucion_presupuestaria WHERE id = ? AND id_ejercicio = ?";
             $stmt_distribucion = $conexion->prepare($query_distribucion);
@@ -145,9 +139,46 @@ foreach ($gastos as $gasto) {
             $id_sector = $distribucion_presupuestaria['id_sector'] ?? 0;
             $id_programa = $distribucion_presupuestaria['id_programa'] ?? 0;
 
-           
+            // Consultar sector en pl_sectores
+            $query_sector = "SELECT sector FROM pl_sectores WHERE id = ?";
+            $stmt_sector = $conexion->prepare($query_sector);
+            $stmt_sector->bind_param('i', $id_sector);
+            $stmt_sector->execute();
+            $result_sector = $stmt_sector->get_result();
+            $sector_data = $result_sector->fetch_assoc();
 
-            if (isset($data[$identificador])) {
+            if (!$sector_data) {
+                echo "No se encontró registro en pl_sectores para id_sector: $id_sector<br>";
+                continue;
+            }
+
+            $sector = $sector_data['sector'] ?? 'N/A';
+
+            // Consultar programa en pl_programas
+            $query_programa = "SELECT programa, denominacion FROM pl_programas WHERE id = ?";
+            $stmt_programa = $conexion->prepare($query_programa);
+            $stmt_programa->bind_param('i', $id_programa);
+            $stmt_programa->execute();
+            $result_programa = $stmt_programa->get_result();
+            $programa_data = $result_programa->fetch_assoc();
+
+            if (!$programa_data) {
+                echo "No se encontró registro en pl_programas para id_programa: $id_programa<br>";
+                continue;
+            }
+            $inicio_trimestre = ($trimestre - 1) * 3 + 1; // Mes inicial del trimestre
+            $fin_trimestre = $inicio_trimestre + 2;       // Mes final del trimestre
+            if ($mes < $inicio_trimestre or $mes > $fin_trimestre) {
+                continue;
+            }
+
+            $programa = $programa_data['programa'] ?? 'N/A';
+            $denominacion = $programa_data['denominacion'] ?? 'N/A';
+
+            // Formatear identificador como xx-xx
+            $identificador = sprintf("%s-%s", $sector, $programa);
+             if (!in_array($identificador, $identificadores)) {
+                if (isset($data[$identificador])) {
     // Acceder a los índices de forma segura
     $data[$identificador][2] += $monto_inicial;      // Sumar monto_inicial
     $data[$identificador][6] += $monto_disponible;   // Sumar monto_actual (disponibilidad)
@@ -155,6 +186,11 @@ foreach ($gastos as $gasto) {
         $data[$identificador][5] += $monto_actual;
     }
 }
+               
+            }
+
+
+            
         }
     }
 }
@@ -225,9 +261,9 @@ if ($resultado->num_rows > 0) {
                     $monto_traspaso = $detalle['monto'];
 
                     // Consultar sector en pl_sectores
-                    $query_sector = "SELECT sector FROM pl_sectores";
+                    $query_sector = "SELECT sector FROM pl_sectores WHERE id = ?";
                     $stmt_sector = $conexion->prepare($query_sector);
-
+                    $stmt_sector->bind_param('i', $id_sector);
                     $stmt_sector->execute();
                     $result_sector = $stmt_sector->get_result();
                     $sector_data = $result_sector->fetch_assoc();
@@ -240,8 +276,9 @@ if ($resultado->num_rows > 0) {
                     $sector = $sector_data['sector'] ?? 'N/A';
 
                     // Consultar programa en pl_programas
-                    $query_programa = "SELECT programa, denominacion FROM pl_programas";
+                    $query_programa = "SELECT programa, denominacion FROM pl_programas WHERE id = ?";
                     $stmt_programa = $conexion->prepare($query_programa);
+                    $stmt_programa->bind_param('i', $id_programa);
                     $stmt_programa->execute();
                     $result_programa = $stmt_programa->get_result();
                     $programa_data = $result_programa->fetch_assoc();
