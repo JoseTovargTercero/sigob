@@ -214,7 +214,7 @@ foreach ($gastos as $gasto) {
 
 
 // Imprimir resultados
-//print_r(array_values($data));
+print_r(array_values($data));
 ?>
 
 
