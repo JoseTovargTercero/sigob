@@ -65,7 +65,7 @@ function procesarDatos($tipo, $tipo_fecha, $fecha, $local_db, $remote_db, $id_ej
                 $stmt_solicitud->close();
                 if (!$solicitud) continue;
 
-                $mes = max(1, $solicitud['mes']); // Si es 0, lo cambia a 1 automáticamente
+                $mes = $solicitud['mes']+1; // Si es 0, lo cambia a 1 automáticamente
 
             } elseif ($tipo === 'gastos') {
                 $stmt_gasto = $db->prepare("SELECT fecha FROM gastos WHERE id = ?");
@@ -104,8 +104,20 @@ function procesarDatos($tipo, $tipo_fecha, $fecha, $local_db, $remote_db, $id_ej
             // Validar si el mes pertenece al trimestre o al mes exacto
             if ($tipo_fecha === 'trimestre') {
                 $trimestre = (int)$fecha;
-                $inicio_trimestre = ($trimestre - 1) * 3 + 1;
-                $fin_trimestre = $inicio_trimestre + 2;
+                if ($trimestre == 1) {
+                    $inicio_trimestre = 1;
+                    $fin_trimestre = 3;
+                }elseif ($trimestre == 2) {
+                    $inicio_trimestre = 4;
+                    $fin_trimestre = 6;
+                }elseif ($trimestre == 3) {
+                    $inicio_trimestre = 7;
+                    $fin_trimestre = 9;
+                }elseif ($trimestre == 4) {
+                    $inicio_trimestre = 10;
+                    $fin_trimestre = 12;
+                }
+                
 
                 if ($mes < $inicio_trimestre || $mes > $fin_trimestre) {
                     continue;
