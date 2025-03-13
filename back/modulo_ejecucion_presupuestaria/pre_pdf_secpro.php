@@ -151,7 +151,6 @@ foreach ($gastos as $gasto) {
             // Sumar montos al agrupamiento
             $data[$identificador][2] += $monto_inicial;      // Sumar monto_inicial
             $data[$identificador][6] += $monto_disponible;   // Sumar monto_actual (disponibilidad)
-            $data[$identificador][4] += $monto_actual;
 
             if ($gasto['status'] == 1) { // Causado
                 $data[$identificador][5] += $monto_actual;
@@ -468,25 +467,29 @@ if ($resultado->num_rows > 0) {
                 <?php
                 $total_asignacion_inicial = 0;
                 $total_modificacion = 0;
+                $total_asignacion_ajustada = 0;
                 $total_compromiso = 0;
-                $total_causado = 0;
                 $total_disponibilidad = 0;
 
                 foreach ($data as $info_partida) {
                     // Asignar los valores usando índices numéricos
                     $codigo_partida = $info_partida[0] ?? 'N/A';
                     $denominacion = $info_partida[1] ?? 'N/A';
-                    $asignacion_inicial = $info_partida[2] ?? 0;
-                    $modificacion = $info_partida[3] ?? 0; // Si corresponde al índice [3]
-                    $compromiso = $info_partida[4] ?? 0;   // Si corresponde al índice [4]
-                    $causado = $info_partida[5] ?? 0;     // Si corresponde al índice [5]
+                       $modificacion = $info_partida[3] ?? 0; // Si corresponde al índice [3]
+                       $compromiso = $info_partida[5] ?? 0;   // Si corresponde al índice [4]
+                       $asignacion_inicial = $info_partida[2] ?? 0;
+                       if ($modificacion > $compromiso) {
+                        $asignacion_ajustada = $asignacion_inicial + $modificacion;
+                       }else{
+                        $asignacion_ajustada = $asignacion_inicial - $modificacion;
+                    }
                     $disponibilidad = $info_partida[6] ?? 0;
 
                     // Acumular totales
                     $total_asignacion_inicial += $asignacion_inicial;
                     $total_modificacion += $modificacion;
+                    $total_asignacion_ajustada += $asignacion_ajustada;
                     $total_compromiso += $compromiso;
-                    $total_causado += $causado;
                     $total_disponibilidad += $disponibilidad;
 
                     echo "<tr>
@@ -494,7 +497,7 @@ if ($resultado->num_rows > 0) {
                 <td class='fz-8 text-left'>{$denominacion}</td>
                 <td class='fz-8'>" . number_format($asignacion_inicial, 2, ',', '.') . "</td>
                 <td class='fz-8'>" . number_format($modificacion, 2, ',', '.') . "</td>
-                <td class='fz-8'></td>
+                <td class='fz-8'>" . number_format($asignacion_ajustada, 2, ',', '.') . "</td>
                 <td class='fz-8'>" . number_format($compromiso, 2, ',', '.') . "</td>
                 <td class='fz-8'>" . number_format($disponibilidad, 2, ',', '.') . "</td>
             </tr>";
@@ -506,7 +509,7 @@ if ($resultado->num_rows > 0) {
             <td class='bt fw-bold' style='border-width: 3px;'>TOTAL RESUMEN POR SECTORES Y PROGRAMAS</td>
             <td class='bt fw-bold' style='border-width: 3px;'>" . number_format($total_asignacion_inicial, 2, ',', '.') . "</td>
             <td class='bt fw-bold' style='border-width: 3px;'>" . number_format($total_modificacion, 2, ',', '.') . "</td>
-            <td class='bt fw-bold' style='border-width: 3px;'>0</td>
+            <td class='bt fw-bold' style='border-width: 3px;'>" . number_format($total_asignacion_ajustada, 2, ',', '.') . "</td>
             <td class='bt fw-bold' style='border-width: 3px;'>" . number_format($total_compromiso, 2, ',', '.') . "</td>
             <td class='bt fw-bold' style='border-width: 3px;'>" . number_format($total_disponibilidad, 2, ',', '.') . "</td>
         </tr>";
