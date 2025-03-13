@@ -129,11 +129,9 @@ while ($traspaso = $result_traspasos->fetch_assoc()) {
     }
 }
 
-?>
-
 
 // Imprimir resultados
-//print_r(array_values($data));
+ print_r(array_values($data));
 ?>
 
 
