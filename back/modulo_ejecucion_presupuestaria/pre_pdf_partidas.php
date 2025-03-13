@@ -44,11 +44,15 @@ while ($row = $result_partidas->fetch_assoc()) {
     }
 }
 
-// Consultar monto_inicial desde distribucion_presupuestaria
+// Consultar monto_inicial desde distribucion_presupuestaria filtrado por id_ejercicio
 $query_distribucion = "SELECT dp.id_partida, dp.monto_inicial, pp.partida 
                       FROM distribucion_presupuestaria dp
-                      JOIN partidas_presupuestarias pp ON dp.id_partida = pp.id";
-$result_distribucion = $conexion->query($query_distribucion);
+                      JOIN partidas_presupuestarias pp ON dp.id_partida = pp.id
+                      WHERE dp.id_ejercicio = ?";
+$stmt_distribucion = $conexion->prepare($query_distribucion);
+$stmt_distribucion->bind_param('i', $id_ejercicio);
+$stmt_distribucion->execute();
+$result_distribucion = $stmt_distribucion->get_result();
 
 while ($row = $result_distribucion->fetch_assoc()) {
     $codigo_partida = substr($row['partida'], 0, 3); // Tomar los primeros 3 dígitos
