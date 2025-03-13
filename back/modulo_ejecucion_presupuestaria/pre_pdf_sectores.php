@@ -173,7 +173,6 @@ foreach ($gastos as $gasto) {
             $data[$id_sector][3] += $monto_traspaso;
         }
     }
-}
 
 
 // Imprimir resultados
