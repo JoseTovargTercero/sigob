@@ -35,7 +35,7 @@ $query_partidas = "SELECT partida, denominacion FROM pl_partidas WHERE partida I
 $result_partidas = $conexion->query($query_partidas);
 
 while ($row = $result_partidas->fetch_assoc()) {
-    $codigo_partida = $row['codigo_partida'];
+    $codigo_partida = $row['partida'];  // Cambié de 'codigo_partida' a 'partida'
     $denominacion = $row['denominacion'];
     
     // Actualizar denominación de cada partida
@@ -43,6 +43,7 @@ while ($row = $result_partidas->fetch_assoc()) {
         $data[$codigo_partida][1] = $denominacion;
     }
 }
+
 
 // Consultar ejercicio fiscal
 $query_sector = "SELECT * FROM ejercicio_fiscal WHERE id = ?";
