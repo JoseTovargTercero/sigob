@@ -173,13 +173,11 @@ if ($resultado->num_rows > 0) {
     foreach ($traspasos as &$traspaso) {
         $mes2 = (int)date('n', strtotime($traspaso['fecha']));
 
-          $inicio_trimestre = ($trimestre - 1) * 3 + 1; // Mes inicial del trimestre
-            $fin_trimestre = $inicio_trimestre + 2;       // Mes final del trimestre
-            if ($mes2 < $inicio_trimestre or $mes2 > $fin_trimestre) {
-                continue;
-            }
-
-
+        $inicio_trimestre = ($trimestre - 1) * 3 + 1; // Mes inicial del trimestre
+        $fin_trimestre = $inicio_trimestre + 2;       // Mes final del trimestre
+        if ($mes2 < $inicio_trimestre or $mes2 > $fin_trimestre) {
+            continue;
+        }
 
         $sqlInfo = "SELECT ti.id_distribucion, ti.monto, ti.tipo 
                     FROM traspaso_informacion ti 
@@ -218,18 +216,58 @@ if ($resultado->num_rows > 0) {
                     }
 
                     // Obtener el id_sector de distribucion_presupuestaria
+                    $id_sector = $distribucion_presupuestaria['id_sector'] ?? 0;
                     $id_programa = $distribucion_presupuestaria['id_programa'] ?? 0;
                     $monto_traspaso = $detalle['monto'];
 
-                    // Sumar el monto de traspaso al sector correspondiente
-                    if (isset($data[$id_programa])) {
-                        $data[$id_programa][3] += $monto_traspaso;
+                    // Consultar sector en pl_sectores
+                    $query_sector = "SELECT sector FROM pl_sectores WHERE id = ?";
+                    $stmt_sector = $conexion->prepare($query_sector);
+                    $stmt_sector->bind_param('i', $id_sector);
+                    $stmt_sector->execute();
+                    $result_sector = $stmt_sector->get_result();
+                    $sector_data = $result_sector->fetch_assoc();
+
+                    if (!$sector_data) {
+                        echo "No se encontró registro en pl_sectores para id_sector: $id_sector<br>";
+                        continue;
                     }
+
+                    $sector = $sector_data['sector'] ?? 'N/A';
+
+                    // Consultar programa en pl_programas
+                    $query_programa = "SELECT programa, denominacion FROM pl_programas WHERE id = ?";
+                    $stmt_programa = $conexion->prepare($query_programa);
+                    $stmt_programa->bind_param('i', $id_programa);
+                    $stmt_programa->execute();
+                    $result_programa = $stmt_programa->get_result();
+                    $programa_data = $result_programa->fetch_assoc();
+
+                    if (!$programa_data) {
+                        echo "No se encontró registro en pl_programas para id_programa: $id_programa<br>";
+                        continue;
+                    }
+
+                    $programa = $programa_data['programa'] ?? 'N/A';
+                    $denominacion = $programa_data['denominacion'] ?? 'N/A';
+
+                    // Formatear identificador como xx-xx
+                    $identificador = sprintf("%s-%s", $sector, $programa);
+
+                    // Agrupar datos por identificador
+                    if (!isset($data[$identificador])) {
+                         // Sumar montos al agrupamiento
+                    $data[$identificador][3] += $monto_traspaso;  // Sumar monto del traspaso
+                      
+                    }
+
+                   
                 }
             }
         }
     }
 }
+
 
 // Imprimir resultados
 //print_r(array_values($data));
