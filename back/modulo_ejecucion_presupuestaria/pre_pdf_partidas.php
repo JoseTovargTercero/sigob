@@ -480,7 +480,6 @@ print_r(array_values($data));
 }
 
             echo"
-            <td class='bt fw-bold'  style='border-width: 3px;'>" . number_format($total_modificacion, 2, ',', '.') . "</td>
             <td class='bt fw-bold'  style='border-width: 3px;'>" . number_format($total_compromiso, 2, ',', '.') . "</td>
             <td class='bt fw-bold'  style='border-width: 3px;'>" . number_format($total_causado, 2, ',', '.') . "</td>
             <td class='bt fw-bold'  style='border-width: 3px;'>" . number_format($total_disponibilidad, 2, ',', '.') . "</td>
