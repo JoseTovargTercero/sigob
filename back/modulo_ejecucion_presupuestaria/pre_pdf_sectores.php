@@ -14,6 +14,7 @@ $trimestres_text = [
 ];
 
 // Inicializar todos los sectores del 1 al 10 con valores en 0
+// Inicializar data para cada sector permitido
 $data = [];
 for ($i = 1; $i <= 10; $i++) {
     $data[$i] = [
@@ -26,6 +27,21 @@ for ($i = 1; $i <= 10; $i++) {
         0  // Sumatoria de monto_actual (de las distribuciones)
     ];
 }
+
+// Consultar monto_inicial desde distribucion_presupuestaria agrupado por id_sector
+$query_distribucion = "SELECT id_sector, monto_inicial FROM distribucion_presupuestaria";
+$result_distribucion = $conexion->query($query_distribucion);
+
+while ($row = $result_distribucion->fetch_assoc()) {
+    $id_sector = $row['id_sector'];
+    $monto_inicial = $row['monto_inicial'];
+    
+    // Sumar monto_inicial al sector correspondiente
+    if (isset($data[$id_sector])) {
+        $data[$id_sector][2] += $monto_inicial;
+    }
+}
+
 
 // Consultar ejercicio fiscal
 $query_sector = "SELECT * FROM ejercicio_fiscal WHERE id = ?";
@@ -84,8 +100,7 @@ foreach ($gastos as $gasto) {
 
         if ($distribucion_presupuestaria) {
             $id_sector = $distribucion_presupuestaria['id_sector'];
-            $monto_inicial = $distribucion_presupuestaria['monto_inicial'] ?? 0;
-            $data[$id_sector][2] += $monto_inicial;
+    
             $data[$id_sector][6] += $monto_actual;
             $data[$id_sector][4] += $monto_actual;
             if ($gasto['status'] == 1) {
