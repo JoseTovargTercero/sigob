@@ -213,16 +213,23 @@ if ($resultado->num_rows > 0) {
 
                         // Obtener la denominación de la partida
                         $denominacion_partida = $partida_data['denominacion'] ?? 'N/A';
+                         $monto_traspaso = $detalle['monto'];
 
-                      // Sumar el monto de traspaso a la partida correspondiente
-                        $monto_traspaso = $detalle['monto'];
-                        $data[$codigo_partida][5] += $monto_traspaso; // Sumar al monto comprometido o causado
+                        // Agrupar datos por los primeros 3 dígitos del código de partida
+                        if (!isset($data[$codigo_partida])) {
+                            $data[$codigo_partida][5] += $monto_traspaso; // Sumar al monto comprometido o causado
+                        }
+
+                        // Sumar el monto de traspaso a la partida correspondiente
+                       
+                        
                     }
                 }
             }
         }
     }
 }
+
 
 
 // Imprimir resultados
