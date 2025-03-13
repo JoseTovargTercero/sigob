@@ -42,7 +42,7 @@ $gastos = $result_gastos->fetch_all(MYSQLI_ASSOC);
 
 // Procesar distribuciones en los registros de gastos
 $data = [];
-
+$codigos_partida = [];
 foreach ($gastos as $gasto) {
     $distribuciones_json = $gasto['distribuciones'];
     $distribuciones_array = json_decode($distribuciones_json, true);
@@ -107,6 +107,9 @@ foreach ($gastos as $gasto) {
 
             // Obtener el valor de partida desde partidas_presupuestarias
             $codigo_partida = substr($presupuestaria_data['partida'], 0, 3);
+            if (!in_array($codigo_partida, $codigos_partida)) {
+                $codigos_partida[] = $codigo_partida;
+            }
 
             // Consultar partida y descripción en pl_partidas
             $query_partida = "SELECT partida, denominacion FROM pl_partidas WHERE partida = ?";
@@ -150,8 +153,10 @@ foreach ($gastos as $gasto) {
             if ($gasto['status'] == 1) { // Causado
                 $data[$codigo_partida][5] += $monto_actual;
             }
+        }
+    }
+}
 
-            // Consultar los traspasos principales filtrando por id_ejercicio
 // Consultar los traspasos principales filtrando por id_ejercicio
 $sql = "SELECT t.id, t.n_orden, t.id_ejercicio, t.monto_total, t.fecha, t.status, t.tipo 
         FROM traspasos t
@@ -165,67 +170,60 @@ if ($resultado->num_rows > 0) {
     $traspasos = $resultado->fetch_all(MYSQLI_ASSOC);
 
     // Agregar la información de traspaso_informacion para cada traspaso
-    foreach ($traspasos as &$traspaso) {
-        $mes2 = (int)date('n', strtotime($traspaso['fecha']));
+foreach ($traspasos as &$traspaso) {
+    $mes2 = (int)date('n', strtotime($traspaso['fecha']));
 
-        $inicio_trimestre = ($trimestre - 1) * 3 + 1; // Mes inicial del trimestre
-        $fin_trimestre = $inicio_trimestre + 2;       // Mes final del trimestre
+    $inicio_trimestre = ($trimestre - 1) * 3 + 1; // Mes inicial del trimestre
+    $fin_trimestre = $inicio_trimestre + 2;       // Mes final del trimestre
 
-        if ($mes2 < $inicio_trimestre || $mes2 > $fin_trimestre) {
-            continue;
-        }
+    if ($mes2 < $inicio_trimestre || $mes2 > $fin_trimestre) {
+        continue;
+    }
 
-        $sqlInfo = "SELECT ti.id_distribucion, ti.monto, ti.tipo 
-                    FROM traspaso_informacion ti 
-                    WHERE ti.id_traspaso = ? AND ti.tipo = 'A'";
-        $stmtInfo = $remote_db->prepare($sqlInfo);
-        $stmtInfo->bind_param("i", $traspaso['id']);
-        $stmtInfo->execute();
-        $resultadoInfo = $stmtInfo->get_result();
+    $sqlInfo = "SELECT ti.id_distribucion, ti.monto, ti.tipo 
+                FROM traspaso_informacion ti 
+                WHERE ti.id_traspaso = ? AND ti.tipo = 'A'";
+    $stmtInfo = $remote_db->prepare($sqlInfo);
+    $stmtInfo->bind_param("i", $traspaso['id']);
+    $stmtInfo->execute();
+    $resultadoInfo = $stmtInfo->get_result();
 
-        if ($resultadoInfo->num_rows > 0) {
-            $detalles = $resultadoInfo->fetch_all(MYSQLI_ASSOC);
-            foreach ($detalles as &$detalle) {
-                // Obtener la información de distribucion_presupuestaria
-                $sqlDistribucion = "SELECT dp.* FROM distribucion_presupuestaria dp WHERE dp.id = ?";
-                $stmtDistribucion = $remote_db->prepare($sqlDistribucion);
-                $stmtDistribucion->bind_param("i", $detalle['id_distribucion']);
-                $stmtDistribucion->execute();
-                $resultadoDistribucion = $stmtDistribucion->get_result();
+    if ($resultadoInfo->num_rows > 0) {
+        $detalles = $resultadoInfo->fetch_all(MYSQLI_ASSOC);
+        foreach ($detalles as &$detalle) {
+            // Obtener la información de distribucion_presupuestaria
+            $sqlDistribucion = "SELECT dp.* FROM distribucion_presupuestaria dp WHERE dp.id = ?";
+            $stmtDistribucion = $remote_db->prepare($sqlDistribucion);
+            $stmtDistribucion->bind_param("i", $detalle['id_distribucion']);
+            $stmtDistribucion->execute();
+            $resultadoDistribucion = $stmtDistribucion->get_result();
 
-                if ($resultadoDistribucion->num_rows > 0) {
-                    $distribucion_presupuestaria = $resultadoDistribucion->fetch_assoc();
-                    $detalle['distribucion_presupuestaria'] = $distribucion_presupuestaria;
-                    $id_partida = $distribucion_presupuestaria['id_partida'] ?? 0;
+            if ($resultadoDistribucion->num_rows > 0) {
+                $distribucion_presupuestaria = $resultadoDistribucion->fetch_assoc();
+                $detalle['distribucion_presupuestaria'] = $distribucion_presupuestaria;
+                $id_partida = $distribucion_presupuestaria['id_partida'] ?? 0;
 
-                    // Obtener la información de partidas_presupuestarias usando id_partida
-                    $sqlPartida = "SELECT pp.* FROM partidas_presupuestarias pp WHERE pp.id = ?";
-                    $stmtPartida = $remote_db->prepare($sqlPartida);
-                    $stmtPartida->bind_param("i", $id_partida);
-                    $stmtPartida->execute();
-                    $resultadoPartida = $stmtPartida->get_result();
+                // Obtener la información de partidas_presupuestarias usando id_partida
+                $sqlPartida = "SELECT pp.* FROM partidas_presupuestarias pp WHERE pp.id = ?";
+                $stmtPartida = $remote_db->prepare($sqlPartida);
+                $stmtPartida->bind_param("i", $id_partida);
+                $stmtPartida->execute();
+                $resultadoPartida = $stmtPartida->get_result();
 
-                    if ($resultadoPartida->num_rows > 0) {
-                        $partida_data = $resultadoPartida->fetch_assoc();
-                        $codigo_partida2 = substr($partida_data['partida'], 0, 3); // Los primeros 3 caracteres de la partida
+                if ($resultadoPartida->num_rows > 0) {
+                    $partida_data = $resultadoPartida->fetch_assoc();
+                    $codigo_partida2 = substr($partida_data['partida'], 0, 3); // Los primeros 3 caracteres de la partida
 
-                        // Obtener la denominación de la partida
+                    // Comprobar si el código de partida está en el array de códigos de partida
+                    if (in_array($codigo_partida2, $codigos_partida)) {
                         $denominacion_partida = $partida_data['denominacion'] ?? 'N/A';
                         $monto_traspaso = $detalle['monto'];
 
-                        // Comparar el código de partida de la primera parte con el de la segunda parte
-                        if (isset($data[$codigo_partida]) && $codigo_partida == $codigo_partida2) {
-                            // Sumar el monto de traspaso a la partida correspondiente
-                            $data[$codigo_partida][3] += $monto_traspaso;
-                        }
+                        // Sumar el monto de traspaso a la partida correspondiente
+                        $data[$codigo_partida2][3] += $monto_traspaso;
                     }
                 }
             }
-        }
-    }
-}
-
-
         }
     }
 }
