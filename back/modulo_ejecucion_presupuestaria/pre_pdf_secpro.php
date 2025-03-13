@@ -310,7 +310,7 @@ if ($resultado->num_rows > 0) {
                     // Agrupar datos por identificador
                     if (in_array($identificador2, $identificadores)) {
                          // Sumar montos al agrupamiento
-                    $data[$identificador2][3] += $monto_traspaso;  // Sumar monto del traspaso
+                    $data[$identificador][3] += $monto_traspaso;  // Sumar monto del traspaso
                       
                     }
 
