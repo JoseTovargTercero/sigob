@@ -173,7 +173,7 @@ foreach ($identificadores_fijos as $identificador_fijo) {
         // Si no existe en el arreglo $data, agregarlo con valores por defecto
         $data[$identificador_fijo] = [
             $identificador_fijo,  // Identificador fijo
-            'No disponible',      // Denominación por defecto
+            $denominacion,      // Denominación por defecto
             0,                    // Monto inicial por defecto
             0,                    // Monto comprometido por defecto
             0,                    // Monto causado por defecto
