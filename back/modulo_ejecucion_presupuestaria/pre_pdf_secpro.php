@@ -44,7 +44,13 @@ $gastos = $result_gastos->fetch_all(MYSQLI_ASSOC);
 
 // Procesar distribuciones en los registros de gastos
 $data = [];
-$identificadores = [];
+$identificadores = [
+    "01-01", "01-02", "01-03", "01-04", "01-05", "01-06", "01-07", "01-08", "01-09", "01-10", 
+    "01-11", "01-12", "01-13", "02-01", "02-02", "02-03", "02-04", "02-05", "06-01", 
+    "08-02", "08-03", "09-01", "09-02", "11-01", "11-02", "12-01", "13-01", "13-02", 
+    "14-01", "15-01"
+];
+
 
 foreach ($gastos as $gasto) {
     $distribuciones_json = $gasto['distribuciones'];
@@ -135,9 +141,7 @@ foreach ($gastos as $gasto) {
 
             // Formatear identificador como xx-xx
             $identificador = sprintf("%s-%s", $sector, $programa);
-             if (!in_array($identificador, $identificadores)) {
-                $identificadores[] = $identificador;
-            }
+             
 
             // Agrupar datos por identificador
     if (!isset($data[$identificador])) {
