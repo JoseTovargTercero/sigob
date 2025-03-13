@@ -106,6 +106,7 @@ $stmt_traspasos = $conexion->prepare($query_traspasos);
 $stmt_traspasos->bind_param('i', $id_ejercicio);
 $stmt_traspasos->execute();
 $result_traspasos = $stmt_traspasos->get_result();
+print_r($result_traspasos);
 
 while ($traspaso = $result_traspasos->fetch_assoc()) {
     $id_distribucion = $traspaso['id_distribucion'];
