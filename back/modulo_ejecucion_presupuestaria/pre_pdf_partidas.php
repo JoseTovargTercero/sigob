@@ -20,14 +20,28 @@ $codigos_partida_permitidos = ['401', '402', '403', '404', '407', '408', '411', 
 $data = [];
 foreach ($codigos_partida_permitidos as $codigo_partida) {
     $data[$codigo_partida] = [
-        "Código $codigo_partida", // Código partida
-        "Denominación $codigo_partida", // Denominación
+        "$codigo_partida", // Código partida
+        "$codigo_partida", // Denominación (temporalmente como código partida)
         0, // Sumatoria de monto_inicial
         0, // Sumatoria comprometido
         0, // Sumatoria causado
         0, // Sumatoria disponible (monto_actual de distribucion_presupuestaria)
         0  // Sumatoria de monto_actual (de las distribuciones)
     ];
+}
+
+// Consultar denominación de las partidas desde pl_partidas
+$query_partidas = "SELECT codigo_partida, denominacion FROM pl_partidas WHERE codigo_partida IN ('" . implode("','", $codigos_partida_permitidos) . "')";
+$result_partidas = $conexion->query($query_partidas);
+
+while ($row = $result_partidas->fetch_assoc()) {
+    $codigo_partida = $row['codigo_partida'];
+    $denominacion = $row['denominacion'];
+    
+    // Actualizar denominación de cada partida
+    if (isset($data[$codigo_partida])) {
+        $data[$codigo_partida][1] = $denominacion;
+    }
 }
 
 // Consultar ejercicio fiscal
