@@ -42,7 +42,7 @@ $gastos = $result_gastos->fetch_all(MYSQLI_ASSOC);
 
 // Procesar distribuciones en los registros de gastos
 $data = [];
-$codigos_partida = [];
+$codigos_partida = ['401','402','403','404','407','408', '411','498'];
 foreach ($gastos as $gasto) {
     $distribuciones_json = $gasto['distribuciones'];
     $distribuciones_array = json_decode($distribuciones_json, true);
@@ -107,9 +107,8 @@ foreach ($gastos as $gasto) {
 
             // Obtener el valor de partida desde partidas_presupuestarias
             $codigo_partida = substr($presupuestaria_data['partida'], 0, 3);
-            if (!in_array($codigo_partida, $codigos_partida)) {
-                $codigos_partida[] = $codigo_partida;
-            }
+
+        
 
             // Consultar partida y descripción en pl_partidas
             $query_partida = "SELECT partida, denominacion FROM pl_partidas WHERE partida = ?";
