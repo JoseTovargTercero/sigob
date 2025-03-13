@@ -474,9 +474,9 @@ print_r(array_values($data));
             <td class='bt fw-bold'  style='border-width: 3px;'>TOTALES</td>
             <td class='bt fw-bold'  style='border-width: 3px;'>" . number_format($total_asignacion_inicial, 2, ',', '.') . "</td>";
             if ($total_modificacion > $total_compromiso) {
-    echo "<td class='bt fw-bold' style='color: green;'>" . number_format($total_modificacion, 2, ',', '.') . "</td>";
+    echo "<td class='bt fw-bold' style='border-width: 3px;color: green;'>" . number_format($total_modificacion, 2, ',', '.') . "</td>";
 } else {
-    echo "<td class='bt fw-bold' style='color: red;'>" . number_format($total_modificacion, 2, ',', '.') . "</td>";
+    echo "<td class='bt fw-bold' style='border-width: 3px;color: red;'>" . number_format($total_modificacion, 2, ',', '.') . "</td>";
 }
 
             echo"
