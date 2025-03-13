@@ -34,12 +34,7 @@ $trimestres_text = [
             $programa_data = $result_programa->fetch_assoc();
 
           
-            $inicio_trimestre = ($trimestre - 1) * 3 + 1; // Mes inicial del trimestre
-            $fin_trimestre = $inicio_trimestre + 2;       // Mes final del trimestre
-            if ($mes < $inicio_trimestre or $mes > $fin_trimestre) {
-                continue;
-            }
-
+            
             $programa = $programa_data['programa'] ?? 'N/A';
             $denominacion = $programa_data['denominacion'] ?? 'N/A';
 
@@ -122,6 +117,14 @@ foreach ($gastos as $gasto) {
                     $montoDistribucion = $dist['monto'];
                     break;
                 }
+            }
+
+
+
+            $inicio_trimestre = ($trimestre - 1) * 3 + 1; // Mes inicial del trimestre
+            $fin_trimestre = $inicio_trimestre + 2;       // Mes final del trimestre
+            if ($mes < $inicio_trimestre or $mes > $fin_trimestre) {
+                continue;
             }
 
             // Consultar distribucion_presupuestaria
