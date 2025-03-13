@@ -113,7 +113,7 @@ foreach ($gastos as $gasto) {
             $sector = $sector_data['sector'] ?? 'N/A';
 
             // Consultar programa en pl_programas
-            $query_programa = "SELECT programa, denominacion FROM pl_programas WHERE id = ?";
+            $query_programa = "SELECT programa, denominacion FROM pl_programas";
             $stmt_programa = $conexion->prepare($query_programa);
             $stmt_programa->bind_param('i', $id_programa);
             $stmt_programa->execute();
@@ -245,7 +245,7 @@ if ($resultado->num_rows > 0) {
                     $sector = $sector_data['sector'] ?? 'N/A';
 
                     // Consultar programa en pl_programas
-                    $query_programa = "SELECT programa, denominacion FROM pl_programas WHERE id = ?";
+                    $query_programa = "SELECT programa, denominacion FROM pl_programas";
                     $stmt_programa = $conexion->prepare($query_programa);
                     $stmt_programa->bind_param('i', $id_programa);
                     $stmt_programa->execute();
