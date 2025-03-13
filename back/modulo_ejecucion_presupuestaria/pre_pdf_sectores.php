@@ -87,6 +87,7 @@ foreach ($gastos as $gasto) {
             $monto_inicial = $distribucion_presupuestaria['monto_inicial'] ?? 0;
             $data[$id_sector][2] += $monto_inicial;
             $data[$id_sector][6] += $monto_actual;
+            $data[$id_sector][4] += $monto_actual;
             if ($gasto['status'] == 1) {
                 $data[$id_sector][5] += $monto_actual;
             }
