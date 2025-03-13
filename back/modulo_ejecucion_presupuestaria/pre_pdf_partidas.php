@@ -230,7 +230,7 @@ foreach ($traspasos as &$traspaso) {
 
 }
 // Mostrar resultados (puedes ajustar esto según sea necesario)
-print_r(array_values($data));
+//print_r(array_values($data));
 ?>
 
 
