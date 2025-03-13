@@ -14,8 +14,46 @@ $trimestres_text = [
     4 => 'CUARTO TRIMESTRE',
 ];
 
+// Inicializar todos los identificadores con valores por defecto
+$query_sectores = "SELECT id, sector FROM pl_sectores";
+$query_programas = "SELECT id, programa, denominacion FROM pl_programas WHERE id_sector IS NOT NULL";
+$stmt_sectores = $conexion->prepare($query_sectores);
+$stmt_programas = $conexion->prepare($query_programas);
+$stmt_sectores->execute();
+$stmt_programas->execute();
 
+$sectores_result = $stmt_sectores->get_result();
+$programas_result = $stmt_programas->get_result();
 
+$sectores = $sectores_result->fetch_all(MYSQLI_ASSOC);
+$programas = $programas_result->fetch_all(MYSQLI_ASSOC);
+
+// Inicializar $data con todos los sectores y programas con valores en 0
+$data = [];
+$identificadores = [];
+
+foreach ($sectores as $sector) {
+    foreach ($programas as $programa) {
+        if ($sector['id'] == $programa['id_sector']) {
+            // Formatear identificador como sector-programa
+            $identificador = sprintf("%s-%s", $sector['sector'], $programa['programa']);
+            
+            // Inicializar valores en 0
+            $data[$identificador] = [
+                $identificador,  // Sector y programa combinados
+                $programa['denominacion'],   // Denominación del programa
+                0,               // Sumatoria de monto_inicial
+                0,               // Sumatoria comprometido
+                0,               // Sumatoria causado
+                0,               // Sumatoria disponible (monto_actual de distribucion_presupuestaria)
+                0                // Sumatoria de monto_actual (de las distribuciones)
+            ];
+            if (!in_array($identificador, $identificadores)) {
+                $identificadores[] = $identificador;
+            }
+        }
+    }
+}
 
 // Consultar ejercicio fiscal
 $query_ejercicio = "SELECT * FROM ejercicio_fiscal WHERE id = ?";
@@ -43,9 +81,6 @@ $result_gastos = $stmt_gastos->get_result();
 $gastos = $result_gastos->fetch_all(MYSQLI_ASSOC);
 
 // Procesar distribuciones en los registros de gastos
-$data = [];
-$identificadores = [];
-
 foreach ($gastos as $gasto) {
     $distribuciones_json = $gasto['distribuciones'];
     $distribuciones_array = json_decode($distribuciones_json, true);
@@ -59,7 +94,6 @@ foreach ($gastos as $gasto) {
     foreach ($distribuciones_array as $distribucion) {
         $id_distribucion = $distribucion['id_distribucion'];
         $monto_actual = $distribucion['monto'];
-
 
         $sqlDistribucionEnte = "SELECT id, distribucion FROM distribucion_entes WHERE id_ejercicio = ? AND distribucion LIKE ?";
         $likePattern = '%"id_distribucion":"' . $id_distribucion . '"%';
@@ -96,11 +130,11 @@ foreach ($gastos as $gasto) {
             $monto_disponible = $montoDistribucion; // Monto disponible desde distribucion_presupuestaria entes
             $id_sector = $distribucion_presupuestaria['id_sector'] ?? 0;
             $id_programa = $distribucion_presupuestaria['id_programa'] ?? 0;
-        }
-            // Consultar sector en pl_sectores
-            $query_sector = "SELECT sector FROM pl_sectores";
-            $stmt_sector = $conexion->prepare($query_sector);
 
+            // Consultar sector en pl_sectores
+            $query_sector = "SELECT sector FROM pl_sectores WHERE id = ?";
+            $stmt_sector = $conexion->prepare($query_sector);
+            $stmt_sector->bind_param('i', $id_sector);
             $stmt_sector->execute();
             $result_sector = $stmt_sector->get_result();
             $sector_data = $result_sector->fetch_assoc();
@@ -113,8 +147,9 @@ foreach ($gastos as $gasto) {
             $sector = $sector_data['sector'] ?? 'N/A';
 
             // Consultar programa en pl_programas
-            $query_programa = "SELECT programa, denominacion FROM pl_programas";
+            $query_programa = "SELECT programa, denominacion FROM pl_programas WHERE id = ?";
             $stmt_programa = $conexion->prepare($query_programa);
+            $stmt_programa->bind_param('i', $id_programa);
             $stmt_programa->execute();
             $result_programa = $stmt_programa->get_result();
             $programa_data = $result_programa->fetch_assoc();
@@ -123,6 +158,7 @@ foreach ($gastos as $gasto) {
                 echo "No se encontró registro en pl_programas para id_programa: $id_programa<br>";
                 continue;
             }
+
             $inicio_trimestre = ($trimestre - 1) * 3 + 1; // Mes inicial del trimestre
             $fin_trimestre = $inicio_trimestre + 2;       // Mes final del trimestre
             if ($mes < $inicio_trimestre or $mes > $fin_trimestre) {
@@ -134,30 +170,129 @@ foreach ($gastos as $gasto) {
 
             // Formatear identificador como xx-xx
             $identificador = sprintf("%s-%s", $sector, $programa);
-             if (!in_array($identificador, $identificadores)) {
-                $identificadores[] = $identificador;
-            }
-
+            
             // Agrupar datos por identificador
-    if (!isset($data[$identificador])) {
-        $data[$identificador] = [
-            $identificador,  // Sector y programa combinados
-            $denominacion,   // Denominación del programa
-            0,               // Sumatoria de monto_inicial
-            0,               // Sumatoria comprometido
-            0,               // Sumatoria causado
-            0,               // Sumatoria disponible (monto_actual de distribucion_presupuestaria)
-            0                // Sumatoria de monto_actual (de las distribuciones)
-        ];
-    }
+            if (isset($data[$identificador])) {
+                $data[$identificador][2] += $monto_inicial;      // Sumar monto_inicial
+                $data[$identificador][6] += $monto_disponible;   // Sumar monto_actual (disponibilidad)
+                if ($gasto['status'] == 1) { // Causado
+                    $data[$identificador][5] += $monto_actual;
+                }
+            }
+        }
+ 
 
-  
-        
+
+// Consultar los traspasos principales filtrando por id_ejercicio
+$sql = "SELECT t.id, t.n_orden, t.id_ejercicio, t.monto_total, t.fecha, t.status, t.tipo 
+        FROM traspasos t
+        WHERE t.id_ejercicio = ?";
+$stmt = $remote_db->prepare($sql);
+$stmt->bind_param("i", $id_ejercicio);
+$stmt->execute();
+$resultado = $stmt->get_result();
+
+if ($resultado->num_rows > 0) {
+    $traspasos = $resultado->fetch_all(MYSQLI_ASSOC);
+
+    // Agregar la información de traspaso_informacion para cada traspaso
+    foreach ($traspasos as &$traspaso) {
+        $mes2 = (int)date('n', strtotime($traspaso['fecha']));
+
+        $inicio_trimestre = ($trimestre - 1) * 3 + 1; // Mes inicial del trimestre
+        $fin_trimestre = $inicio_trimestre + 2;       // Mes final del trimestre
+        if ($mes2 < $inicio_trimestre or $mes2 > $fin_trimestre) {
+            continue;
+        }
+
+        $sqlInfo = "SELECT ti.id_distribucion, ti.monto, ti.tipo 
+                    FROM traspaso_informacion ti 
+                    WHERE ti.id_traspaso = ? AND tipo='A'";
+        $stmtInfo = $remote_db->prepare($sqlInfo);
+        $stmtInfo->bind_param("i", $traspaso['id']);
+        $stmtInfo->execute();
+        $resultadoInfo = $stmtInfo->get_result();
+
+        if ($resultadoInfo->num_rows > 0) {
+            $detalles = $resultadoInfo->fetch_all(MYSQLI_ASSOC);
+            foreach ($detalles as &$detalle) {
+                // Obtener la información de distribucion_presupuestaria
+                $sqlDistribucion = "SELECT dp.* FROM distribucion_presupuestaria dp WHERE dp.id = ?";
+                $stmtDistribucion = $remote_db->prepare($sqlDistribucion);
+                $stmtDistribucion->bind_param("i", $detalle['id_distribucion']);
+                $stmtDistribucion->execute();
+                $resultadoDistribucion = $stmtDistribucion->get_result();
+
+                if ($resultadoDistribucion->num_rows > 0) {
+                    $distribucion_presupuestaria = $resultadoDistribucion->fetch_assoc();
+                    $detalle['distribucion_presupuestaria'] = $distribucion_presupuestaria;
+
+                    // Obtener la información de partidas_presupuestarias usando id_partida
+                    $id_partida = $distribucion_presupuestaria['id_partida'];
+                    $sqlPartida = "SELECT pp.* FROM partidas_presupuestarias pp WHERE pp.id = ?";
+                    $stmtPartida = $remote_db->prepare($sqlPartida);
+                    $stmtPartida->bind_param("i", $id_partida);
+                    $stmtPartida->execute();
+                    $resultadoPartida = $stmtPartida->get_result();
+
+                    if ($resultadoPartida->num_rows > 0) {
+                        $detalle['distribucion_presupuestaria']['partida_presupuestaria'] = $resultadoPartida->fetch_assoc();
+                    } else {
+                        $detalle['distribucion_presupuestaria']['partida_presupuestaria'] = [];
+                    }
+
+                    // Obtener el id_sector de distribucion_presupuestaria
+                    $id_sector = $distribucion_presupuestaria['id_sector'] ?? 0;
+                    $id_programa = $distribucion_presupuestaria['id_programa'] ?? 0;
+                    $monto_traspaso = $detalle['monto'];
+
+                    // Consultar sector en pl_sectores
+                    $query_sector = "SELECT sector FROM pl_sectores WHERE id = ?";
+                    $stmt_sector = $conexion->prepare($query_sector);
+                    $stmt_sector->bind_param('i', $id_sector);
+                    $stmt_sector->execute();
+                    $result_sector = $stmt_sector->get_result();
+                    $sector_data = $result_sector->fetch_assoc();
+
+                    if (!$sector_data) {
+                        echo "No se encontró registro en pl_sectores para id_sector: $id_sector<br>";
+                        continue;
+                    }
+
+                    $sector = $sector_data['sector'] ?? 'N/A';
+
+                    // Consultar programa en pl_programas
+                    $query_programa = "SELECT programa, denominacion FROM pl_programas WHERE id = ?";
+                    $stmt_programa = $conexion->prepare($query_programa);
+                    $stmt_programa->bind_param('i', $id_programa);
+                    $stmt_programa->execute();
+                    $result_programa = $stmt_programa->get_result();
+                    $programa_data = $result_programa->fetch_assoc();
+
+                    if (!$programa_data) {
+                        echo "No se encontró registro en pl_programas para id_programa: $id_programa<br>";
+                        continue;
+                    }
+
+                    $programa = $programa_data['programa'] ?? 'N/A';
+                    $denominacion = $programa_data['denominacion'] ?? 'N/A';
+
+                    // Formatear identificador como xx-xx
+                    $identificador2 = sprintf("%s-%s", $sector, $programa);
+
+                    // Agrupar datos por identificador
+                    if (in_array($identificador2, $identificadores)) {
+                         // Sumar montos al agrupamiento
+                    $data[$identificador2][3] += $monto_traspaso;  // Sumar monto del traspaso
+                      
+                    }
+
+                   
+                }
+            }
+        }
     }
 }
-
-
-
 
 
 // Imprimir resultados
