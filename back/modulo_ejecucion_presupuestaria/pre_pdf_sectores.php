@@ -28,13 +28,14 @@ for ($i = 1; $i <= 10; $i++) {
     ];
 }
 
+// Consultar monto_inicial desde distribucion_presupuestaria filtrado por id_ejercicio para sectores
 $query_distribucion_sector = "SELECT id_sector, monto_inicial FROM distribucion_presupuestaria WHERE id_ejercicio = ?";
 $stmt_distribucion_sector = $conexion->prepare($query_distribucion_sector);
 $stmt_distribucion_sector->bind_param('i', $id_ejercicio);
 $stmt_distribucion_sector->execute();
 $result_distribucion_sector = $stmt_distribucion_sector->get_result();
 
-while ($row = $result_distribucion->fetch_assoc()) {
+while ($row = $result_distribucion_sector->fetch_assoc()) {
     $id_sector = $row['id_sector'];
     $monto_inicial = $row['monto_inicial'];
     
