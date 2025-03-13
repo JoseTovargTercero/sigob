@@ -79,7 +79,7 @@ function procesarDatos($tipo, $tipo_fecha, $fecha, $local_db, $remote_db, $id_ej
                 $stmt_gasto->close();
                 if (!$gasto) continue;
                 
-                $mes = (int)date('n', strtotime($gasto['fecha']))-1;
+                $mes = (int)date('n', strtotime($gasto['fecha']));
 
             } elseif ($tipo === 'proyecto_credito') {
                 $stmt_gasto = $db->prepare("
@@ -98,7 +98,7 @@ function procesarDatos($tipo, $tipo_fecha, $fecha, $local_db, $remote_db, $id_ej
                 $stmt_gasto->close();
                 if (!$gasto) continue;
 
-                $mes = (int)date('n', strtotime($gasto['fecha']))-1;
+                $mes = (int)date('n', strtotime($gasto['fecha']));
             }
 
             // Validar si el mes pertenece al trimestre o al mes exacto
