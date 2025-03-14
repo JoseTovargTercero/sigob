@@ -426,7 +426,7 @@ foreach ($traspasos as $traspaso) {
     }
 
     // Calcular total de modificaciones correctamente
-    $total_modificacion = $total_modificacion2 - $total_modificacion3;
+    $total_modificacion = $total_modificacion2 + $total_modificacion3;
 
     // Imprimir totales generales
     echo "<tr>
