@@ -69,13 +69,13 @@ function procesarDatos($tipo, $tipo_fecha, $fecha, $local_db, $remote_db, $id_ej
 
                 $mes = $solicitud['mes'] + 1; // Si es 0, lo cambia a 1 automáticamente
 
-$meses = [
+$meses2 = [
     1 => 'Enero', 2 => 'Febrero', 3 => 'Marzo', 4 => 'Abril',
     5 => 'Mayo', 6 => 'Junio', 7 => 'Julio', 8 => 'Agosto',
     9 => 'Septiembre', 10 => 'Octubre', 11 => 'Noviembre', 12 => 'Diciembre'
 ];
 
-$mes2 = $meses[$mes] ?? 'Mes inválido';
+$mes2 = $meses2[$mes] ?? 'Mes inválido';
 
 
 
