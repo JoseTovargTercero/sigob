@@ -162,9 +162,9 @@ const obtenerDistribucionSecretaria = async ({ id_ejercicio }) => {
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
 
-    const clone = res.clone()
+    // const clone = res.clone()
 
-    let text = await clone.text()
+    // let text = await clone.text()
 
     // console.log(text)
 
