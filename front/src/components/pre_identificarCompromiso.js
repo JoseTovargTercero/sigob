@@ -152,8 +152,8 @@ export const pre_identificarCompromiso = ({
             return
           }
           generarCompromisoPdf(
-            res.success.compromiso.id_compromiso,
-            res.success.compromiso.correlativo
+            res.compromiso.id_compromiso,
+            res.compromiso.correlativo
           )
 
           closeCard()
