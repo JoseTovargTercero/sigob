@@ -1,6 +1,7 @@
 <?php
 
 require_once '../sistema_global/conexion.php';
+require_once '../sistema_global/conexion_remota.php';
 require_once '../sistema_global/session.php';
 require_once '../sistema_global/notificaciones.php';
 require_once 'pre_compromisos.php'; // Agregado
@@ -14,6 +15,7 @@ require_once '../sistema_global/errores.php';
 function crearGasto($id_tipo, $descripcion, $monto, $id_ejercicio, $beneficiario, $identificador, $distribuciones, $fecha, $codigo)
 {
     global $conexion;
+    global $remote_db;
 
     try {
         // Validar que todos los campos no estén vacíos
@@ -38,29 +40,38 @@ function crearGasto($id_tipo, $descripcion, $monto, $id_ejercicio, $beneficiario
         }
 
         require_once '../sistema_global/sigob_api.php';
+        require_once 'pre_dispo_presupuestaria2.php'; // Agregado
         $disponible = consultarDisponibilidadApi($distribuciones, $id_ejercicio);
+        $disponible2 = consultarDisponibilidad2($distribuciones, $id_ejercicio, $conexion);
 
-        if (isset($disponible['error'])) {
+
+        if (isset($disponible['error']) OR isset($disponible2['error'])) {
             throw new Exception($disponible['error']);
         }
-        if (!isset($disponible['success'])) {
+        if (!isset($disponible['success']) OR !isset($disponible2['success'])) {
             throw new Exception('Error al acceder a la respuesta');
         }
 
-        if (!$disponible) {
+        if (!$disponible OR !$disponible2) {
             throw new Exception('No se pudo verificar la disponibilidad presupuestaria');
         }
 
         // Insertar el gasto si el presupuesto es suficiente para todas las distribuciones
-        $sqlInsertGasto = "INSERT INTO gastos (id_tipo, descripcion, monto, status, id_ejercicio, beneficiario, identificador, distribuciones, fecha) VALUES (?, ?, ?, 0, ?, ?, ?, ?, ?)";
-        $stmtInsertGasto = $conexion->prepare($sqlInsertGasto);
-        $jsonDistribuciones = json_encode($distribucionesArray);  // Convertir el array de distribuciones de nuevo a JSON
-        $stmtInsertGasto->bind_param("ississss", $id_tipo, $descripcion, $monto, $id_ejercicio, $beneficiario, $identificador, $jsonDistribuciones, $fecha);
-        $stmtInsertGasto->execute();
+        $sqlInsertGasto = "INSERT INTO gastos (id_tipo, descripcion, monto, status, id_ejercicio, beneficiario, identificador, distribuciones, fecha) 
+                   VALUES (?, ?, ?, 0, ?, ?, ?, ?, ?)";
+
+        $jsonDistribuciones = json_encode($distribucionesArray); // Convertir el array de distribuciones a JSON
+
+            foreach ([$conexion, $remote_db] as $db) {
+                $stmtInsertGasto = $db->prepare($sqlInsertGasto);
+                $stmtInsertGasto->bind_param("ississss", $id_tipo, $descripcion, $monto, $id_ejercicio, $beneficiario, $identificador, $jsonDistribuciones, $fecha);
+                $stmtInsertGasto->execute();
+            }
+
 
         if ($stmtInsertGasto->affected_rows > 0) {
             $id_insertado = $stmtInsertGasto->insert_id; // Obtener el ID insertado
-             $resultadoCompromiso = registrarCompromiso($id_insertado, 'gastos', $descripcion, $id_ejercicio, $codigo);
+             $resultadoCompromiso = registrarCompromiso($conexion, $remote_db, $id_insertado, 'gastos', $descripcion, $id_ejercicio, $codigo);
 
                 if (isset($resultadoCompromiso['success']) && $resultadoCompromiso['success']) {
                    
