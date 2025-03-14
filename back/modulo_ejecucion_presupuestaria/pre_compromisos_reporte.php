@@ -129,7 +129,8 @@ function procesarDatos($tipo, $tipo_fecha, $fecha, $local_db, $remote_db, $id_ej
                 }
             }
 
-            $data[] = [
+            if ($tipo == "gastos" OR $tipo == "proyecto_credito") {
+               $data[] = [
                 'id' => $compromiso['id'],
                 'correlativo' => $compromiso['correlativo'],
                 'descripcion' => $compromiso['descripcion'],
@@ -137,7 +138,22 @@ function procesarDatos($tipo, $tipo_fecha, $fecha, $local_db, $remote_db, $id_ej
                 'id_ejercicio' => $compromiso['id_ejercicio'],
                 'tabla_registro' => $compromiso['tabla_registro'],
                 'numero_compromiso' => $compromiso['numero_compromiso'],
+                'fecha' => $gasto['fecha'],
             ];
+            }else{
+                $data[] = [
+                'id' => $compromiso['id'],
+                'correlativo' => $compromiso['correlativo'],
+                'descripcion' => $compromiso['descripcion'],
+                'id_registro' => $compromiso['id_registro'],
+                'id_ejercicio' => $compromiso['id_ejercicio'],
+                'tabla_registro' => $compromiso['tabla_registro'],
+                'numero_compromiso' => $compromiso['numero_compromiso'],
+                'fecha' => $solicitud['mes'],
+            ];
+            }
+
+            
         }
 
         return $data;
@@ -397,6 +413,7 @@ $stmt->close();
                     $descripcion = $compromiso['descripcion'];
                     $tabla_registro = $compromiso['tabla_registro'];
                     $numero_compromiso = $compromiso['numero_compromiso'];
+                    $fecha = $compromiso['fecha'];
 
                     $prefijo = strtoupper(substr($numero_compromiso, 0, 1));
 
@@ -404,7 +421,7 @@ $stmt->close();
                     echo "<tr>
                     <td class='fz-8 bl'>" . $count++ . "</td>
                     <td class='fz-8 bl text-left'>{$descripcion}</td>
-                    <td class='fz-8 bl'>FECHA</td>
+                    <td class='fz-8 bl'>{$fecha}</td>
                     <td class='fz-8 bl'>{$tipos_gasto[$prefijo]}</td>
                     <td class='fz-8 bl br'>{$numero_compromiso}</td>
                 </tr>";
