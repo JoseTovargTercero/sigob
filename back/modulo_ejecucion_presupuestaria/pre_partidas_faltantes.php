@@ -4,6 +4,11 @@ require_once '../sistema_global/conexion_remota.php';
 require_once '../sistema_global/session.php';
 require_once '../sistema_global/notificaciones.php';
 
+if (!$conexion || !$remote_db) {
+    throw new Exception("Conexiones a bases de datos no válidas.");
+}
+
+
 function obtenerPartidasFaltantes($id_ejercicio)
 {
     global $conexion;
@@ -105,8 +110,8 @@ function registrarDistribucionPresupuestaria($id_ejercicio, $actividad, $partida
         }
         $actividad_id = $resultDependencia->fetch_assoc()['id'];
 
-        // Buscar id_asignacion en asignacion_entes
-        $sqlAsignacion = "SELECT id FROM asignacion_entes WHERE id_ente = ? AND id_ejercicio = ?";
+        // Buscar id_asignacion en asignacion_ente
+        $sqlAsignacion = "SELECT id FROM asignacion_ente WHERE id_ente = ? AND id_ejercicio = ?";
         $stmtAsignacion = $conexion->prepare($sqlAsignacion);
         $stmtAsignacion->bind_param("ii", $id_ente, $id_ejercicio);
         $stmtAsignacion->execute();
@@ -167,7 +172,6 @@ function registrarDistribucionPresupuestaria($id_ejercicio, $actividad, $partida
         $remote_db->commit();
 
         return json_encode(["success" => "Registro exitoso en ambas bases de datos"]);
-
     } catch (Exception $e) {
         // Revertir las transacciones en caso de error
         $conexion->rollback();
@@ -186,12 +190,12 @@ $data = json_decode(file_get_contents("php://input"), true);
 
 if (isset($data["accion"])) {
     $accion = $data["accion"];
-    
+
 
     if ($accion === "consulta") {
         $id_ejercicio = $data["id_ejercicio"] ?? '';
         $response = obtenerPartidasFaltantes($id_ejercicio);
-    } 
+    }
     if ($accion === "registrar") {
         $actividad = $data["actividad"] ?? '';
         $id_ejercicio = $data["id_ejercicio"] ?? '';
@@ -200,15 +204,9 @@ if (isset($data["accion"])) {
         $programa = $data["programa"] ?? '';
         $proyecto = $data["proyecto"] ?? '';
         $response = registrarDistribucionPresupuestaria($id_ejercicio, $actividad, $partida_incluir, $sector, $programa, $proyecto);
-    } 
+    }
 } else {
     $response = json_encode(['error' => "No se especificó ninguna acción"]);
 }
 
 echo $response;
-
-
-
-
-
- ?>

@@ -322,6 +322,7 @@ $stmt->close();
         return true
       }
 
+
       $('#data_partida').on('submit', function(e) {
         e.preventDefault();
 
@@ -334,21 +335,26 @@ $stmt->close();
 
         // Enviar los datos al backend mediante AJAX
         $.ajax({
-          url: url_back,
-          type: 'POST',
-          dataType: 'json',
-          contentType: 'application/json',
-          data: JSON.stringify(formData),
-          success: function(response) {
-              console.log('Respuesta del servidor:', response);
+            url: url_back,
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify(formData)
+          })
+          .done(function(response) {
+            console.log('Respuesta del servidor:', response);
+          })
+          .fail(function(jqXHR, textStatus, errorThrown) {
+            console.error('Error en la solicitud:', textStatus, errorThrown);
+          })
+          .always(function(res) {
+            console.log('Solicitud finalizada:', res);
+          });
 
-            }.fail(function(jqXHR, textStatus, errorThrown) {
-              console.error('Error en la solicitud:', textStatus, errorThrown);
-            })
-            .always(function(res) {
-              console.log('Solicitud finalizada:', res);
-            })
-        });
+
+
+
+
       });
 
 
