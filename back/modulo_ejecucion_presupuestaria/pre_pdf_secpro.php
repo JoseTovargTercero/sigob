@@ -285,7 +285,7 @@ if ($resultado->num_rows > 0) {
 
         $sqlInfo = "SELECT ti.id_distribucion, ti.monto, ti.tipo 
                     FROM traspaso_informacion ti 
-                    WHERE ti.id_traspaso = ? AND tipo='A'";
+                    WHERE ti.id_traspaso = ?";
         $stmtInfo = $remote_db->prepare($sqlInfo);
         $stmtInfo->bind_param("i", $traspaso['id']);
         $stmtInfo->execute();

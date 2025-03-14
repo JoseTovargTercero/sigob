@@ -155,7 +155,7 @@ foreach ($traspasos as $traspaso) {
                     continue;
                 }
 
-    $sqlInfo = "SELECT id_distribucion, monto FROM traspaso_informacion WHERE id_traspaso = ? AND tipo='A'";
+    $sqlInfo = "SELECT id_distribucion, monto FROM traspaso_informacion WHERE id_traspaso = ?";
     $stmtInfo = $remote_db->prepare($sqlInfo);
     $stmtInfo->bind_param("i", $traspaso['id']);
     $stmtInfo->execute();
