@@ -70,7 +70,7 @@ function insertarDistribuciones($distribuciones)
                 throw new Exception("Error al convertir el array de distribución a JSON.");
             }
 
-            $sqlInsert = "INSERT INTO distribucion_entes (id_ente, actividad_id, distribucion, monto_total, status, id_ejercicio, comentario, fecha, id_asignacion) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $sqlInsert = "INSERT INTO distribucion_entes (id_ente, actividad_id, distribucion, monto_total, status, id_ejercicio, comentario, fecha, id_asignacion, nuevo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0)";
             $stmtInsert = $conexion->prepare($sqlInsert);
 
             if ($actividad_id === null) {
