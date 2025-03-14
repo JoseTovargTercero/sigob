@@ -152,9 +152,9 @@ $stmt->close();
       <div class=" d-flex justify-content-between">
 
         <?php
-        $y_d = date('Y') + 1;
+        $y_d = date('Y');
         $y_d1 = $y_d - 1;
-        $y_d2 = date('Y') + 2;
+        $y_d2 = date('Y') + 1;
         ?>
         <h4 class="fw-bold py-3 mb-4">
           <span class="text-muted fw-light">Formulación /</span> Ejercicio fiscal <?php echo $y_d; ?>
