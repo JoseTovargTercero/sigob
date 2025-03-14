@@ -431,8 +431,16 @@ $stmt->close();
                     echo "<tr>
                     <td class='fz-8 bl'>" . $count++ . "</td>
                     <td class='fz-8 bl text-left'>{$descripcion}</td>
-                    <td class='fz-8 bl'>{$fecha}</td>
-                    <td class='fz-8 bl'>{$tipos_gasto[$prefijo]}</td>
+                    <td class='fz-8 bl'>{$fecha}</td>";
+                    if ($tipo == "solicitud_dozavos") {
+                        echo "
+                    <td class='fz-8 bl'>Solicitud de Dozavo</td>";
+                    }else{
+                        echo "
+                    <td class='fz-8 bl'>{$tipos_gasto[$prefijo]}</td>";
+                    }
+                    
+                    echo "
                     <td class='fz-8 bl br'>{$numero_compromiso}</td>
                 </tr>";
                 }
