@@ -611,7 +611,9 @@ if ($resultado->num_rows > 0) {
         // Imprimir modificación con su respectivo signo
         if ($modificacion > 0) {
             echo "<td class='fz-8'>" . number_format($modificacion, 2, ',', '.') . "</td>";
-        } else {
+        }elseif ($modificacion == 0) {
+            echo "<td class='fz-8'>" . number_format($modificacion, 2, ',', '.') . "</td>";
+        }else{
             echo "<td class='fz-8'>-" . number_format(abs($modificacion), 2, ',', '.') . "</td>";
         }
 
@@ -630,6 +632,8 @@ if ($resultado->num_rows > 0) {
 
     // Imprimir el total de modificaciones con su signo
     if ($total_modificacion > 0) {
+        echo "<td class='bt fw-bold'>" . number_format($total_modificacion, 2, ',', '.') . "</td>";
+    }elseif ($total_modificacion == 0) {
         echo "<td class='bt fw-bold'>" . number_format($total_modificacion, 2, ',', '.') . "</td>";
     } else {
         echo "<td class='bt fw-bold'>-" . number_format(abs($total_modificacion), 2, ',', '.') . "</td>";
