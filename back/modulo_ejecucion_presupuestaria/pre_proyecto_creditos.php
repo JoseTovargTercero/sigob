@@ -595,7 +595,7 @@ function procesarCreditoAdicional($data)
         }
 
         // Si el monto es suficiente, registrar el compromiso
-        $resultadoCompromiso = registrarCompromiso($id_credito, 'proyecto_credito', $descripcion_proyecto, $id_ejercicio, '');
+        $resultadoCompromiso = registrarCompromiso($conexion, $conexion_remota, $id_credito, 'proyecto_credito', $descripcion_proyecto, $id_ejercicio, '');
         if (isset($resultadoCompromiso['success']) && $resultadoCompromiso['success']) {
             $conexion->commit();
 
