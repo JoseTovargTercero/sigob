@@ -332,6 +332,7 @@ $stmt->close();
         formData.accion = 'registrar';
         formData.partida_incluir = partida_incluir;
         formData.id_ejercicio = id_ejercicio_fiscal;
+        $('#cargando').show()
 
         // Enviar los datos al backend mediante AJAX
         $.ajax({
@@ -342,13 +343,21 @@ $stmt->close();
             data: JSON.stringify(formData)
           })
           .done(function(response) {
-            console.log('Respuesta del servidor:', response);
+            if (response.success) {
+              toast_s('success', 'Registrado correctamente')
+              obtenerPartidas()
+            } else {
+              toast_s('error', 'Error al registrar ' + response.error)
+            }
           })
           .fail(function(jqXHR, textStatus, errorThrown) {
             console.error('Error en la solicitud:', textStatus, errorThrown);
           })
           .always(function(res) {
             console.log('Solicitud finalizada:', res);
+            $('#cargando').hide()
+            toggleDialogs()
+
           });
 
 
@@ -364,6 +373,7 @@ $stmt->close();
 
       // OBTENER LISTA DE PARTIDAS SIN USAR
       function obtenerPartidas() {
+        $('#cargando').show()
         $.ajax({
             url: url_back,
             type: 'POST',
@@ -393,7 +403,10 @@ $stmt->close();
             console.error('Error en la solicitud:', textStatus, errorThrown);
             //  alert('Hubo un problema al obtener los datos. Por favor, inténtalo de nuevo.');
           })
-          .always(function(res) {});
+          .always(function(res) {
+            $('#cargando').hide()
+
+          });
       }
       obtenerPartidas()
     </script>
