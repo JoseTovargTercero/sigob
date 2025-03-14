@@ -409,7 +409,18 @@ $stmt->close();
             <tr>
                 <th class="bt bl bb p-15">#</th>
                 <th class="bt bl bb p-15 text-left">Descripción</th>
+                <?php
+                if ($tipo == "solicitud_dozavos") {
+                ?>
+                <th class="bt bl bb p-15">Mes</th>
+                <?php
+                }else{
+                ?>
                 <th class="bt bl bb p-15">Fecha</th>
+                <?php 
+                }
+                ?>
+                
                 <th class="bt bl bb p-15">Tipo de compromiso</th>
                 <th class="bt bl bb p-15">Número de Compromiso</th>
             </tr>
