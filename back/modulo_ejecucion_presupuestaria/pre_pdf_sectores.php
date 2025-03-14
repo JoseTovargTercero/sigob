@@ -376,7 +376,7 @@ foreach ($traspasos as $traspaso) {
                 <th class="bt bb p-15" style=" border-width: 3px;">Disponibilidad</th>
             </tr>
         </thead>
-    <tbody>
+ <tbody>
     <?php
     $total_asignacion_inicial = 0;
     $total_modificacion2 = 0; // Total de modificaciones aumentadas
@@ -400,8 +400,8 @@ foreach ($traspasos as $traspaso) {
 
         // Acumular valores
         $total_asignacion_inicial += $asignacion_inicial;
-        $total_modificacion2 += $modificacion_aumentada;
-        $total_modificacion3 += $modificacion_restada;
+        $total_modificacion2 += $modificacion_aumentada; // Solo sumamos aumentos aquí
+        $total_modificacion3 += $modificacion_restada;   // Solo sumamos restas aquí
         $total_compromiso += $compromiso;
         $total_causado += $causado;
         $total_disponibilidad += $disponibilidad;
@@ -415,8 +415,10 @@ foreach ($traspasos as $traspaso) {
         // Mostrar modificaciones correctamente
         if ($modificacion_aumentada > 0) {
             echo "<td class='fz-8' style='border-width: 3px;'>" . number_format($modificacion_aumentada, 2, ',', '.') . "</td>";
+        } elseif ($modificacion_restada > 0) {
+            echo "<td class='fz-8' style='border-width: 3px;'>-" . number_format($modificacion_restada, 2, ',', '.') . "</td>";
         } else {
-            echo "<td class='fz-8' style=''>" . ($modificacion_restada == 0 ? number_format($modificacion_restada, 2, ',', '.') : '-' . number_format($modificacion_restada, 2, ',', '.')) . "</td>";
+            echo "<td class='fz-8' style='border-width: 3px;'>0,00</td>";
         }
 
         echo "<td class='fz-8' style='border-width: 3px;'>" . number_format($compromiso, 2, ',', '.') . "</td>
@@ -426,7 +428,7 @@ foreach ($traspasos as $traspaso) {
     }
 
     // Calcular total de modificaciones correctamente
-    $total_modificacion = $total_modificacion2 + $total_modificacion3;
+    $total_modificacion = $total_modificacion2 - $total_modificacion3;
 
     // Imprimir totales generales
     echo "<tr>
