@@ -406,7 +406,7 @@ foreach ($traspasos as $traspaso) {
                 $total_asignacion_inicial += $asignacion_inicial;
                 $total_modificacion2 += $modificacion_aumentada;
                 $total_modificacion3 += $modificacion_restada;
-                 $total_modificacion += $modificacion_aumentada - $modificacion_restada; // Neto de modificaciones
+                $total_modificacion += $total_modificacion2 - $total_modificacion3; // Neto de modificaciones
 
 
                 $total_compromiso += $compromiso;
