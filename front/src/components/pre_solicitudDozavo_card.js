@@ -199,7 +199,7 @@ export const pre_solicitudDozavo_card = async ({
 
   let listDataTable = new DataTable('#solicitud-partidas', {
     responsive: true,
-    scrollY: 120,
+    scrollY: 200,
     language: tableLanguage,
     layout: {
       topStart: function () {

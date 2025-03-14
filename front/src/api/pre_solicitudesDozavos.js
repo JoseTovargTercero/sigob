@@ -15,12 +15,10 @@ const solicitudesDozavosUrl = `${APP_URL}${config.MODULE_NAMES.EJECUCION}pre_sol
 const getSolicitudesDozavos = async (id_ejercicio) => {
   showLoader()
   try {
-    let res = await fetch(
-      `${solicitudesDozavosUrl}?id_ejercicio=${id_ejercicio}`,
-      {
-        method: 'get',
-      }
-    )
+    let res = await fetch(solicitudesDozavosUrl, {
+      method: 'POST',
+      body: JSON.stringify({ accion: 'consulta', id_ejercicio }),
+    })
 
     // console.log(res)
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
@@ -65,10 +63,10 @@ const getSolicitudesDozavos = async (id_ejercicio) => {
 const getSolicitudDozavos = async (id) => {
   showLoader()
   try {
-    let res = await fetch(`${solicitudesDozavosUrl}?id=${id}`, {
-      method: 'get',
+    let res = await fetch(solicitudesDozavosUrl, {
+      method: 'POST',
+      body: JSON.stringify({ accion: 'consulta_id', id }),
     })
-
     // console.log(res)
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
 
@@ -169,7 +167,7 @@ const aceptarDozavo = async (id, codigo) => {
     const clone = res.clone()
     const text = await clone.text()
 
-    // console.log(text)
+    console.log(text)
     const json = await res.json()
     console.log(json)
 

@@ -307,7 +307,6 @@ export const pre_solicitudGenerar_card = async ({
 
     actividadesEnte.forEach((distribucion) => {
       distribucion.distribucion_partidas.forEach((partida) => {
-        let dozavo = partida.monto / 12
         let codigo = `${
           partida.sector_informacion ? partida.sector_informacion.sector : '0'
         }.${
@@ -323,7 +322,7 @@ export const pre_solicitudGenerar_card = async ({
 
         fila.push(`   
           <tr>     
-        <td><input type="checkbox" class="dozavo-checkbox" id="${
+        <td><input type="checkbox" class="dozavo-checkbox" value="${
           partida.id_distribucion
         }"></td>
         <td>${codigo}</td>
@@ -380,7 +379,7 @@ export const pre_solicitudGenerar_card = async ({
               name='distribucion-monto-${partida.id_distribucion}'
               id='distribucion-monto-${partida.id_distribucion}'
               data-distribucionid='${partida.id_distribucion}'
-              placeholder='monto a solicitar'
+              placeholder='Monto a solicitar'
             />
           </td>
         </tr>`
@@ -607,13 +606,13 @@ export const pre_solicitudGenerar_card = async ({
         actividadesEnte.forEach((distribucion) => {
           // console.log(distribucion)
 
-          let partida = distribucion.distribucion_partidas.find(
-            (partida) => partida.id_distribucion === e.target.id
-          )
-
-          partida.actividad = distribucion.actividad
-
-          distribucionesSeleccionadas.push(partida)
+          let partida = distribucion.distribucion_partidas.find((partida) => {
+            return Number(partida.id_distribucion) === Number(e.target.value)
+          })
+          if (partida) {
+            partida.actividad = distribucion.actividad
+            distribucionesSeleccionadas.push(partida)
+          }
         })
       } else {
         const index = distribucionesSeleccionadas.findIndex(

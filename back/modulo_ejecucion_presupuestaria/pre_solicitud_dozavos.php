@@ -144,7 +144,7 @@ function consultarSolicitudes($data)
 
         return json_encode(["success" => $solicitudes]);
     } else {
-        return json_encode(["success" => "No se encontraron registros en solicitud_dozavos."]);
+        return json_encode(["success" => []]);
     }
 }
 
@@ -274,7 +274,7 @@ function registrarSolicitudozavo($data)
             $stmtMesActual->execute();
             $resultadoMesActual = $stmtMesActual->get_result();
             $filaMesActual = $resultadoMesActual->fetch_assoc();
-            
+
             if ($filaMesActual['total'] > 0) {
                 $existeMesActual = true;
             }
