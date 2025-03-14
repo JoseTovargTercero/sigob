@@ -28,19 +28,6 @@ function obtenerPartidasFaltantes($id_ejercicio)
             ];
         }
 
-        // Obtener todas las partidas que ya existen en distribucion_presupuestaria para el id_ejercicio
-        $sqlDistribucion = "SELECT id_partida FROM distribucion_presupuestaria WHERE id_ejercicio = ?";
-        $stmtDistribucion = $conexion->prepare($sqlDistribucion);
-        $stmtDistribucion->bind_param("i", $id_ejercicio);
-        $stmtDistribucion->execute();
-        $resultDistribucion = $stmtDistribucion->get_result();
-
-        while ($row = $resultDistribucion->fetch_assoc()) {
-            if (isset($partidas[$row['id_partida']])) {
-                unset($partidas[$row['id_partida']]); // Eliminar las que ya existen en distribución
-            }
-        }
-
         return json_encode($partidas, JSON_PRETTY_PRINT);
     } catch (Exception $e) {
         return json_encode(["error" => $e->getMessage()]);
@@ -58,6 +45,18 @@ function registrarDistribucionPresupuestaria($id_ejercicio, $actividad, $partida
         if ($param === null || $param === '') {
             return json_encode(["error" => "Todos los parámetros son obligatorios y no pueden estar vacíos."]);
         }
+    }
+
+    // Verificar si ya existe un registro en distribucion_presupuestaria con los mismos parámetros
+    $sqlCheckExistencia = "SELECT id FROM distribucion_presupuestaria 
+                           WHERE id_partida = ? AND id_ejercicio = ? AND id_sector = ? AND id_programa = ? AND id_actividad = ?";
+    $stmtCheckExistencia = $conexion->prepare($sqlCheckExistencia);
+    $stmtCheckExistencia->bind_param("iiiii", $partida_incluir, $id_ejercicio, $sector, $programa, $actividad);
+    $stmtCheckExistencia->execute();
+    $resultCheckExistencia = $stmtCheckExistencia->get_result();
+
+    if ($resultCheckExistencia->num_rows > 0) {
+        return json_encode(["error" => "Ya existe un registro con la misma partida, ejercicio, sector, programa y actividad en distribucion_presupuestaria."]);
     }
 
     // Iniciar transacciones en ambas bases de datos
