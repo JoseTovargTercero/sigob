@@ -581,6 +581,9 @@ if ($resultado->num_rows > 0) {
         $compromiso = $info_partida[4] ?? 0;
         $causado = $info_partida[5] ?? 0;
         $modificacion_restada = $info_partida[7] ?? 0;
+        if ($asignacion_inicial == 0) {
+            continue;
+        }
 
         // Calcular modificación como un solo valor positivo o negativo
         $modificacion = $modificacion_aumentada - $modificacion_restada;
@@ -601,6 +604,8 @@ if ($resultado->num_rows > 0) {
         $total_asignacion_ajustada += $asignacion_ajustada;
         $total_compromiso += $compromiso;
         $total_disponibilidad += $disponibilidad;
+
+        
 
         // Imprimir filas
         echo "<tr>
