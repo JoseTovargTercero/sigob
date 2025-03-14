@@ -472,6 +472,7 @@ foreach ($traspasos as $traspaso) {
     ?>
 </tbody>
 
+    </table>
 
 
 
