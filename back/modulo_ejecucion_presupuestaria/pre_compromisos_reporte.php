@@ -69,13 +69,13 @@ function procesarDatos($tipo, $tipo_fecha, $fecha, $local_db, $remote_db, $id_ej
 
                 $mes = $solicitud['mes'] + 1; // Si es 0, lo cambia a 1 automáticamente
 
-$meses2 = [
+$meses = [
     1 => 'Enero', 2 => 'Febrero', 3 => 'Marzo', 4 => 'Abril',
     5 => 'Mayo', 6 => 'Junio', 7 => 'Julio', 8 => 'Agosto',
     9 => 'Septiembre', 10 => 'Octubre', 11 => 'Noviembre', 12 => 'Diciembre'
 ];
 
-$mes2 = $meses2[$mes] ?? 'Mes inválido';
+$mes2 = $meses[$mes] ?? 'Mes inválido';
 
 
 
@@ -159,7 +159,7 @@ $mes2 = $meses2[$mes] ?? 'Mes inválido';
                 'id_ejercicio' => $compromiso['id_ejercicio'],
                 'tabla_registro' => $compromiso['tabla_registro'],
                 'numero_compromiso' => $compromiso['numero_compromiso'],
-                'fecha' => $mes2,
+                'fecha' => $mes,
             ];
             }
 
@@ -409,17 +409,7 @@ $stmt->close();
             <tr>
                 <th class="bt bl bb p-15">#</th>
                 <th class="bt bl bb p-15 text-left">Descripción</th>
-                <?php
-                if ($tipo == "solicitud_dozavos") {
-                ?>
-                <th class="bt bl bb p-15">Mes</th>
-                <?php 
-                }else{
-                ?>
                 <th class="bt bl bb p-15">Fecha</th>
-                <?php
-                }
-                ?>               
                 <th class="bt bl bb p-15">Tipo de compromiso</th>
                 <th class="bt bl bb p-15">Número de Compromiso</th>
             </tr>
