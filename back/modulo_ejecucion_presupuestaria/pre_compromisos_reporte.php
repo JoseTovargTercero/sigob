@@ -3,7 +3,8 @@ require_once '../sistema_global/conexion.php';
 require_once '../sistema_global/conexion_remota.php';
 global $ano_ejercicio, $situado_ejercicio;
 // Función para manejar errores
-function manejarError($mensaje, $db = null) {
+function manejarError($mensaje, $db = null)
+{
     if ($db && $db->error) {
         $mensaje .= " Error en la base de datos: " . $db->error;
     }
@@ -12,10 +13,11 @@ function manejarError($mensaje, $db = null) {
     exit;
 }
 
-function procesarDatos($tipo, $tipo_fecha, $fecha, $local_db, $remote_db, $id_ejercicio) {
+function procesarDatos($tipo, $tipo_fecha, $fecha, $local_db, $remote_db, $id_ejercicio)
+{
     try {
         $db = $local_db; // Solo se usa $local_db
-         global $ano_ejercicio, $situado_ejercicio;
+        global $ano_ejercicio, $situado_ejercicio;
 
         // Consultar el ejercicio fiscal
         $stmt_ejercicio = $db->prepare("SELECT * FROM ejercicio_fiscal WHERE id = ?");
@@ -65,7 +67,7 @@ function procesarDatos($tipo, $tipo_fecha, $fecha, $local_db, $remote_db, $id_ej
                 $stmt_solicitud->close();
                 if (!$solicitud) continue;
 
-                $mes = $solicitud['mes']+1; // Si es 0, lo cambia a 1 automáticamente
+                $mes = $solicitud['mes'] + 1; // Si es 0, lo cambia a 1 automáticamente
 
             } elseif ($tipo === 'gastos') {
                 $stmt_gasto = $db->prepare("SELECT fecha FROM gastos WHERE id = ?");
@@ -78,9 +80,8 @@ function procesarDatos($tipo, $tipo_fecha, $fecha, $local_db, $remote_db, $id_ej
                 $gasto = $result_gasto->fetch_assoc();
                 $stmt_gasto->close();
                 if (!$gasto) continue;
-                
-                $mes = (int)date('n', strtotime($gasto['fecha']));
 
+                $mes = (int)date('n', strtotime($gasto['fecha']));
             } elseif ($tipo === 'proyecto_credito') {
                 $stmt_gasto = $db->prepare("
                     SELECT ca.fecha 
@@ -107,17 +108,17 @@ function procesarDatos($tipo, $tipo_fecha, $fecha, $local_db, $remote_db, $id_ej
                 if ($trimestre == 1) {
                     $inicio_trimestre = 1;
                     $fin_trimestre = 3;
-                }elseif ($trimestre == 2) {
+                } elseif ($trimestre == 2) {
                     $inicio_trimestre = 4;
                     $fin_trimestre = 6;
-                }elseif ($trimestre == 3) {
+                } elseif ($trimestre == 3) {
                     $inicio_trimestre = 7;
                     $fin_trimestre = 9;
-                }elseif ($trimestre == 4) {
+                } elseif ($trimestre == 4) {
                     $inicio_trimestre = 10;
                     $fin_trimestre = 12;
                 }
-                
+
 
                 if ($mes < $inicio_trimestre || $mes > $fin_trimestre) {
                     continue;
@@ -157,14 +158,59 @@ if (!$id_ejercicio) {
 
 $data = procesarDatos($tipo, $tipo_fecha, $fecha, $local_db, $remote_db, $id_ejercicio);
 
-echo json_encode($data);
+
+
+$stmt = mysqli_prepare($conexion, "SELECT * FROM `ejercicio_fiscal`  WHERE id = ?");
+$stmt->bind_param('s', $id_ejercicio);
+$stmt->execute();
+$result = $stmt->get_result();
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $ano = $row['ano']; // formato: dd-mm-YY
+    }
+}
+$stmt->close();
+
+
+if ($tipo_fecha == 'trimestre') {
+    $trimestres = [
+        '1' => 'primer trimestre',
+        '2' => 'segundo trimestre',
+        '3' => 'tercer trimestre',
+        '4' => 'cuarto trimestre'
+    ];
+    $periodo_texto = $trimestres[$fecha];
+} else {
+    $meses = [
+        '0' => 'enero',
+        '1' => 'febrero',
+        '2' => 'marzo',
+        '3' => 'abril',
+        '4' => 'mayo',
+        '5' => 'junio',
+        '6' => 'julio',
+        '7' => 'agosto',
+        '8' => 'septiembre',
+        '9' => 'octubre',
+        '10' => 'noviembre',
+        '11' => 'diciembre'
+    ];
+    $periodo_texto = $meses[$fecha];
+}
+
+$tipos_gasto = [];
+
+$stmt = mysqli_prepare($conexion, "SELECT * FROM `tipo_gastos`");
+$stmt->execute();
+$result = $stmt->get_result();
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $tipos_gasto[strtoupper($row['prefijo'])] = strtoupper($row['nombre']);
+    }
+}
+$stmt->close();
+
 ?>
-
-
-
-
-
-
 
 <!DOCTYPE html>
 <html>
@@ -329,85 +375,58 @@ echo json_encode($data);
 
 <body>
 
-    <div style='font-size: 9px;'>
-        <table class='header-table bt br bb bl bc-lightgray'>
+    <h2 align='center'>Total de compromisos para el <?= $periodo_texto ?> del <?= $ano ?></h2>
+    <br>
+
+    <table>
+        <thead>
             <tr>
-                <td class='text-left' style='width: 20px'>
-                    <img src='../../img/logo.jpg' class='logo'>
-                </td>
-                <td class='text-left' style='vertical-align: top;padding-top: 13px;'>
-                    <b>
-                        REPÚBLICA BOLIVARIANA DE VENEZUELA <br>
-                        GOBERNACIÓN DEL ESTADO AMAZONAS <br>
-                        CODIGO PRESUPUESTARIO: E5100
-                    </b>
-    </div>
-    <td class='text-right' style='vertical-align: top;padding: 13px 10px 0 0; '>
-        <b>
-            Fecha: <?php echo date('d/m/Y') ?>
-        </b>
-    </td>
-    </tr>
-    <tr>
-        <td colspan='3'>
-            <h2 align='center'>Reporte de Compromisos</h2>
-        </td>
-    </tr>
+                <th class="bt bl bb p-15">#</th>
+                <th class="bt bl bb p-15 text-left">Descripción</th>
+                <th class="bt bl bb p-15">Fecha</th>
+                <th class="bt bl bb p-15">Tipo de compromiso</th>
+                <th class="bt bl bb p-15">Número de Compromiso</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            if (!empty($data)) {
+                $count = 1;
+                foreach ($data as $compromiso) {
+                    $correlativo = $compromiso['correlativo'];
+                    $descripcion = $compromiso['descripcion'];
+                    $tabla_registro = $compromiso['tabla_registro'];
+                    $numero_compromiso = $compromiso['numero_compromiso'];
 
-    <tr>
-        <td class='text-left'>
-            <b>PRESUPUESTO <?php echo $ano_ejercicio ?></b>
-        </td>
-    </tr>
-    </table>
+                    $prefijo = strtoupper(substr($numero_compromiso, 0, 1));
 
-<table>
-    <thead>
-        <tr>
-            <th class="bt bl bb p-15">Correlativo</th>
-            <th class="bt bl bb p-15">Descripción</th>
-            <th class="bt bl bb p-15">ID Registro</th>
-            <th class="bt bl bb p-15">Ejercicio Fiscal</th>
-            <th class="bt bl bb p-15">Tabla Registro</th>
-            <th class="bt bl bb p-15">Número de Compromiso</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php
-        if (!empty($data)) {
-            foreach ($data as $compromiso) {
-                $correlativo = $compromiso['correlativo'];
-                $descripcion = $compromiso['descripcion'];
-                $id_registro = $compromiso['id_registro'];
-                $id_ejercicio = $compromiso['id_ejercicio'];
-                $tabla_registro = $compromiso['tabla_registro'];
-                $numero_compromiso = $compromiso['numero_compromiso'];
 
-                echo "<tr>
-                    <td class='fz-8 bl'>{$correlativo}</td>
+                    echo "<tr>
+                    <td class='fz-8 bl'>" . $count++ . "</td>
                     <td class='fz-8 bl text-left'>{$descripcion}</td>
-                    <td class='fz-8 bl'>{$id_registro}</td>
-                    <td class='fz-8 bl'>{$ano_ejercicio}</td>
-                    <td class='fz-8 bl'>{$tabla_registro}</td>
+                    <td class='fz-8 bl'>FECHA</td>
+                    <td class='fz-8 bl'>{$tipos_gasto[$prefijo]}</td>
                     <td class='fz-8 bl br'>{$numero_compromiso}</td>
                 </tr>";
-            }
-        } else {
-            echo "<tr>
+                }
+            } else {
+                echo "<tr>
                 <td colspan='7' class='text-center fz-8 bl br'>No se encontraron datos</td>
             </tr>";
-        }
-        ?>
-    </tbody>
-</table>
+            }
+            ?>
 
 
-
-
-
-
-
-
+            <tr>
+                <td class='bt'></td>
+                <td class='bt'></td>
+                <td class='bt'></td>
+                <td class='bt'></td>
+                <td class='bt'></td>
+                <td class='bt'></td>
+            </tr>
+        </tbody>
+    </table>
 </body>
 
 </html>
