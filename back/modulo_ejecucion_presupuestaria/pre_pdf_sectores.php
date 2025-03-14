@@ -417,13 +417,13 @@ foreach ($traspasos as $traspaso) {
                 <td class='fz-8 text-left' style='border-width: 3px;'>{$denominacion}</td>
                 <td class='fz-8' style='border-width: 3px;'>" . number_format($asignacion_inicial, 2, ',', '.') . "</td>
                 ";
-              if ($modificacion > $compromiso) {
-                echo "<td class='fz-8' style='border-width: 3px;'>" . number_format($modificacion, 2, ',', '.') . "</td>";
+              if ($modificacion_aumentada > 0) {
+                echo "<td class='fz-8' style='border-width: 3px;'>" . number_format($modificacion_aumentada, 2, ',', '.') . "</td>";
               } else {
-                 if ($modificacion == 0) {
-        echo "<td class='fz-8' style=''>" . number_format($modificacion, 2, ',', '.') . "</td>";
+                 if ($modificacion_restada == 0) {
+        echo "<td class='fz-8' style=''>" . number_format($modificacion_restada, 2, ',', '.') . "</td>";
     }else{
-        echo "<td class='fz-8' style=''>-" . number_format($modificacion, 2, ',', '.') . "</td>";
+        echo "<td class='fz-8' style=''>-" . number_format($modificacion_restada, 2, ',', '.') . "</td>";
     }
               }
 
