@@ -466,7 +466,7 @@ function gestionarSolicitudDozavos2($idSolicitud, $accion, $codigo)
                 $stmtUpdateSolicitud->execute();
 
                 if ($stmtUpdateSolicitud->affected_rows > 0) {
-                    $resultadoCompromiso = registrarCompromiso($conexion, $conexion_remota, $idSolicitud, 'solicitud_dozavos', $descripcion, $id_ejercicio, $codigo);
+                    $resultadoCompromiso = registrarCompromiso($conexion, $remote_db, $idSolicitud, 'solicitud_dozavos', $descripcion, $id_ejercicio, $codigo);
                     if (isset($resultadoCompromiso['success']) && $resultadoCompromiso['success']) {
                         // Confirmar la transacción en ambas bases de datos
                         $conexion->commit();
