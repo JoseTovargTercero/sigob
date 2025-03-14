@@ -8,20 +8,19 @@ if ($_SESSION["u_oficina_id"] == '1' && isset($_GET['tabla']) || true) {
 
     // Configuración de conexión a la base de datos remota
     $remoteHost = REMOTE_HOST;
-    $remoteDb = 'sigob_web';
-    $remoteUser = 'sigob_user';
-    $remotePass = 'JH6$.GnJA6eL';
+    $remoteDb = 'sigobnet_sigob_entes';
+    $remoteUser = 'sigobnet_userroot';
+    $remotePass = ']n^VmqjqCD1k';
 
     // Conexión a la base de datos del hosting
     $remoteConn = new mysqli($remoteHost, $remoteUser, $remotePass, $remoteDb);
-    $remoteConn->set_charset('latin1_spanish_ci'); // Establecer charset
+    $remoteConn->set_charset('utf8mb4'); // Establecer charset
 
 
     if ($remoteConn->connect_error) { // Verificar la conexión
         echo json_encode(['status' => 'error', 'mensaje' => "Conexión fallida a la base de datos del hosting: " . $remoteConn->connect_error]);
         exit();
     }
-
 
     // Contadores de operaciones
     $agregados = 0;
@@ -56,8 +55,6 @@ if ($_SESSION["u_oficina_id"] == '1' && isset($_GET['tabla']) || true) {
             }
         }
     }
-
-
 
     // Función para sincronizar datos entre las tablas
     function backups($tabla, $id_table)
@@ -152,55 +149,16 @@ if ($_SESSION["u_oficina_id"] == '1' && isset($_GET['tabla']) || true) {
         }
     }
 
-    $ids = array(
-        'empleados' => 'id',
-        'cargos_grados' => 'id',
-        'empleados_por_grupo' => 'id',
-        'nominas_grupos' => 'id',
-        'dependencias' => 'id_dependencia'
+
+    /*  $tablas = array(
+        'ejercicio_fiscal' => 'id',
+        'distribucion_entes' => 'id',
+        'distribucion_presupuestaria' => 'id'
     );
-    $tabla = $_GET['tabla'];
-    $condicion = $_GET["condicion"];
 
-
-
-    backups($tabla, $ids[$tabla]);
-
-
-    if ($condicion == 'nuevo') {
-
-        // update 'backups' campos: user, fecha
-        $stmt = mysqli_prepare($conexion, "INSERT INTO `backups` (user, fecha, tablas) VALUES (?, ?, ?)");
-        $user_id = $_SESSION['u_id'];
-        $fecha_actual = date('d-m-Y');
-        $stmt->bind_param('sss', $user_id, $fecha_actual, $tabla);
-        $stmt->execute();
-       
-        
-
-    } else {
-        // obtiene el valor de tabla del ultimo registro y le concatena ', $tqbla' mediante un UPDATE
-
-        $stmt = mysqli_prepare($conexion, "SELECT tablas, id FROM `backups` ORDER BY id DESC LIMIT 1");
-        $stmt->execute();
-        $result = $stmt->get_result();
-        if ($result->num_rows > 0) {
-            while ($row = $result->fetch_assoc()) {
-                $id = $row['id'];
-                $tablasActualizadas = $row['tablas'];
-            }
-        }
-        $stmt->close();
-
-        $tablasActualizadas = $tablasActualizadas . ', ' . $tabla;
-
-
-
-        $stmt2 = $conexion->prepare("UPDATE `backups` SET `tablas`='$tablasActualizadas' WHERE id=?");
-        $stmt2->bind_param("s", $id);
-        $stmt2->execute();
-        $stmt2->close();
-    }
+    foreach ($tablas as $tabla => $id) {
+        backups($tabla, $id);
+    }*/
 
     // Crear arreglo con los resultados de la sincronización
     $resultado = [
