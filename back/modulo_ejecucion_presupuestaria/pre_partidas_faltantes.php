@@ -60,7 +60,7 @@ function registrarDistribucionPresupuestaria($id_ejercicio, $actividad, $partida
                 VALUES (?, 0, ?, 0, ?, ?, ?, 1, 0, ?)";
 
             $stmtDistribucion = $db->prepare($sqlInsertDistribucion);
-            $stmtDistribucion->bind_param("iiiii", $partida_incluir, $id_ejercicio, $sector, $programa, $proyecto, $actividad);
+            $stmtDistribucion->bind_param("iiiiii", $partida_incluir, $id_ejercicio, $sector, $programa, $proyecto, $actividad);
             $stmtDistribucion->execute();
 
             if ($stmtDistribucion->affected_rows === 0) {
