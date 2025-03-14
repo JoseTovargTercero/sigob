@@ -1,3 +1,4 @@
+import { getPreAsignacionEnte } from '../api/pre_entes.js'
 import { getSolicitudDozavos } from '../api/pre_solicitudesDozavos.js'
 import {
   ejerciciosLista,
@@ -41,10 +42,16 @@ export const validateSolicitudesDozavos = async () => {
     }
 
     if (e.target.dataset.validarid) {
+      let asignacionEnte = await getPreAsignacionEnte(
+        e.target.dataset.validarid,
+        ejercicioFiscal.id
+      )
+      console.log(asignacionEnte)
       pre_solicitudGenerar_card({
         elementToInsert: 'solicitudes-dozavos-view',
-        enteId: e.target.dataset.validarid,
+
         ejercicioId: ejercicioFiscal.id,
+        asignacionEnte,
       })
     }
 
