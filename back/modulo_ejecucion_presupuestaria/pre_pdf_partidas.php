@@ -208,15 +208,8 @@ foreach ($traspasos as $traspaso) {
 
             // Solo agregar al data si el código de partida está en los permitidos
             if (in_array($codigo_partida2, $codigos_partida_permitidos)) {
-                if ($detalle['tipo'] === 'A') {
-                    $monto_traspaso = $detalle['monto'];
-                    $data[$codigo_partida2][3] += $monto_traspaso;
-                } elseif ($detalle['tipo'] === 'D') {
-                    $monto_traspaso = $detalle['monto'];
-                    $data[$codigo_partida2][7] += $monto_traspaso;
-                }
-
-                
+                $monto_traspaso = $detalle['monto'];
+                $data[$codigo_partida2][3] += $monto_traspaso;
             }
         }
     }
