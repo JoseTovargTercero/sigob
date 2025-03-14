@@ -379,7 +379,7 @@ export const pre_solicitudGenerar_card = async ({
               name='distribucion-monto-${partida.id_distribucion}'
               id='distribucion-monto-${partida.id_distribucion}'
               data-distribucionid='${partida.id_distribucion}'
-              placeholder='monto a solicitar'
+              placeholder='Monto a solicitar'
             />
           </td>
         </tr>`
