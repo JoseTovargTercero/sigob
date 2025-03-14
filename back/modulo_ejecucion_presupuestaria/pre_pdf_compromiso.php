@@ -177,7 +177,7 @@ if ($tablaRegistro == "gastos") {
                 $stmtProyecto->close();
 
                 // Concatenar sector.programa.proyecto
-                    $codigoCompleto = ($dataSector['sector'] ?? '00') . '.' . ($dataPrograma['programa'] ?? '00') . '.' . ($dataProyecto['proyecto_id'] ?? '00') . '.' . ($dataDistribucion['id_actividad'] ?? '00');
+                $codigoCompleto = ($dataSector['sector'] ?? '00') . '.' . ($dataPrograma['programa'] ?? '00') . '.' . ($dataProyecto['proyecto_id'] ?? '00') . '.' . ($dataDistribucion['id_actividad'] ?? '00');
                 $detalleDistribuciones[] = [
                     'distribucion' => $distribucion,
                     'partida_presupuestaria' => $dataPartida,
@@ -346,8 +346,8 @@ if ($tablaRegistro == "gastos") {
 
     if ($response_data) {
         // Procesar los datos de la respuesta
-        echo "Respuesta de la API:\n";
-        print_r($response_data);
+        //echo "Respuesta de la API:\n";
+        //print_r($response_data);
 
         // Obtener el mes desde la respuesta
         $meses = array("ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO", "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE");
@@ -942,7 +942,7 @@ function unidad2($numuero)
                 </td>
                 <td class='text-right' style='width:100px'>
                     <b>
-                        Fecha: <?php echo date('d/m/Y') ?>
+                        Fecha: <?php echo $dataRegistro['fecha'] ?>
                     </b>
 
 
@@ -972,7 +972,7 @@ function unidad2($numuero)
                 <?php elseif ($tablaRegistro === 'solicitud_dozavos') : ?>
                     <tr>
                         <td class="bl bt bb w-50 p1"><b>Solicitante:</b> <?php echo $dataEnte['ente_nombre'] ?? 'No disponible'; ?></td>
-                        <td class="bl bt bb br w-50 p1"><b>Motivo:</b> SOLICITUD DE DOZAVO CORRESPONDIENTE AL MES DE <?php echo $date2 ?? 'No definido'; ?></td>
+                        <td colspan="2" class="bl bt bb br w-50 p1"><b>Motivo:</b> SOLICITUD DE DOZAVO CORRESPONDIENTE AL MES DE <?php echo $date2 ?? 'No definido'; ?></td>
                     </tr>
                 <?php elseif ($tablaRegistro === 'proyecto_credito') : ?>
                     <tr>
@@ -1025,7 +1025,7 @@ function unidad2($numuero)
                     <tr>
                         <td class="bl bt bb"><?php echo $detalle['codigo_sector_programa_proyecto'] ?? '0.0.0.0'; ?>.<?php echo $detalle['partida_presupuestaria']['partida'] ?? 'N/A'; ?></td>
                         <td class="bl bt bb"><?php echo htmlspecialchars($detalle['partida_presupuestaria']['descripcion'] ?? 'Sin descripción'); ?></td>
-                        <td class="bl bt bb"><?php echo number_format($detalle['partida']['monto'] ?? 0, 2, ',', '.'); ?></td>
+                        <td class="bl bt bb br"><?php echo number_format($detalle['partida']['monto'] ?? 0, 2, ',', '.'); ?></td>
                     </tr>
                 <?php endforeach; ?>
             <?php endif; ?>
