@@ -136,26 +136,27 @@ $traspasos = $resultado->fetch_all(MYSQLI_ASSOC);
 
 foreach ($traspasos as $traspaso) {
     $mes2 = (int)date('n', strtotime($traspaso['fecha']));
-     if ($trimestre == 1) {
-                    $inicio_trimestre = 1;
-                    $fin_trimestre = 3;
-                }elseif ($trimestre == 2) {
-                    $inicio_trimestre = 4;
-                    $fin_trimestre = 6;
-                }elseif ($trimestre == 3) {
-                    $inicio_trimestre = 7;
-                    $fin_trimestre = 9;
-                }elseif ($trimestre == 4) {
-                    $inicio_trimestre = 10;
-                    $fin_trimestre = 12;
-                }
-                
+    
+    if ($trimestre == 1) {
+        $inicio_trimestre = 1;
+        $fin_trimestre = 3;
+    } elseif ($trimestre == 2) {
+        $inicio_trimestre = 4;
+        $fin_trimestre = 6;
+    } elseif ($trimestre == 3) {
+        $inicio_trimestre = 7;
+        $fin_trimestre = 9;
+    } elseif ($trimestre == 4) {
+        $inicio_trimestre = 10;
+        $fin_trimestre = 12;
+    }
 
-                if ($mes2 < $inicio_trimestre || $mes2 > $fin_trimestre) {
-                    continue;
-                }
+    if ($mes2 < $inicio_trimestre || $mes2 > $fin_trimestre) {
+        continue;
+    }
 
-    $sqlInfo = "SELECT id_distribucion, monto FROM traspaso_informacion WHERE id_traspaso = ?";
+    // Consultar detalles del traspaso y el tipo desde traspaso_informacion
+    $sqlInfo = "SELECT id_distribucion, monto, tipo FROM traspaso_informacion WHERE id_traspaso = ?";
     $stmtInfo = $remote_db->prepare($sqlInfo);
     $stmtInfo->bind_param("i", $traspaso['id']);
     $stmtInfo->execute();
@@ -172,10 +173,17 @@ foreach ($traspasos as $traspaso) {
         if ($distribucion_presupuestaria = $resultadoDistribucion->fetch_assoc()) {
             $id_sector = $distribucion_presupuestaria['id_sector'];
             $monto_traspaso = $detalle['monto'];
-            $data[$id_sector][3] += $monto_traspaso;
+
+            // Determinar dónde almacenar el monto según el tipo de traspaso
+            if ($detalle['tipo'] === 'A') {
+                $data[$id_sector][3] += $monto_traspaso;
+            } elseif ($detalle['tipo'] === 'D') {
+                $data[$id_sector][7] += $monto_traspaso;
+            }
         }
     }
 }
+
 
 // Imprimir resultados
 //print_r(array_values($data));
@@ -380,22 +388,26 @@ foreach ($traspasos as $traspaso) {
                 // Asignar los valores usando índices numéricos
                 $codigo_partida = $info_partida[0] ?? 'N/A';
                 $denominacion = $info_partida[1] ?? 'N/A';
-                $modificacion = $info_partida[3] ?? 0; // Si corresponde al índice [3]
+                $modificacion_aumentada = $info_partida[3] ?? 0; // Si corresponde al índice [3]
+                $modificacion_restada = $info_partida[7] ?? 0; // Si corresponde al índice [3]
                 $compromiso = $info_partida[4] ?? 0;   // Si corresponde al índice [4]
-                $asignacion_inicial2 = $info_partida[2] ?? 0;
-                if ($modificacion > $compromiso) {
-                    $asignacion_inicial = $asignacion_inicial2 + $modificacion;
+                $asignacion_inicial = $info_partida[2] ?? 0;
+                $causado = $info_partida[5] ?? 0;     // Si corresponde al índice [5]
+                if ($modificacion_aumentada > 0) {
+                    $disponibilidad = ($asignacion_inicial + $modificacion_aumentada) - $compromiso;
+                }elseif ($modificacion_restada > 0) {
+                    $disponibilidad = ($asignacion_inicial - $modificacion_restada) - $compromiso;
                 }else{
-                    $asignacion_inicial = $asignacion_inicial2 - $modificacion;
+                    $disponibilidad = $asignacion_inicial  - $compromiso;
                 }
                 
-                
-                $causado = $info_partida[5] ?? 0;     // Si corresponde al índice [5]
-                $disponibilidad = $asignacion_inicial - $compromiso;
 
                 // Acumular totales
                 $total_asignacion_inicial += $asignacion_inicial;
-                $total_modificacion += $modificacion;
+                $total_modificacion2 += $modificacion_aumentada;
+                $total_modificacion3 += $modificacion_restada;
+                $total_modificacion += $modificacion_restada + $modificacion_aumentada;
+
                 $total_compromiso += $compromiso;
                 $total_causado += $causado;
                 $total_disponibilidad += $disponibilidad;
