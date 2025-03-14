@@ -43,7 +43,6 @@ function obtenerPartidasFaltantes($id_ejercicio)
 }
 
 
-
 function registrarDistribucionPresupuestaria($id_ejercicio, $actividad, $partida_incluir, $sector, $programa, $proyecto)
 {
     global $conexion, $remote_db;
@@ -117,12 +116,11 @@ function registrarDistribucionPresupuestaria($id_ejercicio, $actividad, $partida
         }
         $id_asignacion = $resultAsignacion->fetch_assoc()['id'];
 
-        // Preparar el JSON para distribucion_entes
-        $distribucion_json = json_encode([["id_distribucion" => $id_distribucion, "monto" => 0]]);
+        // Obtener la fecha actual
         $fecha_actual = date('Y-m-d');
 
-        // Verificar si ya existe un registro en distribucion_entes con los mismos valores
-        $sqlCheckDistribucion = "SELECT id FROM distribucion_entes WHERE id_ente = ? AND actividad_id = ? AND id_ejercicio = ?";
+        // Verificar si ya existe un registro en distribucion_entes
+        $sqlCheckDistribucion = "SELECT id, distribucion FROM distribucion_entes WHERE id_ente = ? AND actividad_id = ? AND id_ejercicio = ?";
         $stmtCheckDistribucion = $conexion->prepare($sqlCheckDistribucion);
         $stmtCheckDistribucion->bind_param("iii", $id_ente, $actividad_id, $id_ejercicio);
         $stmtCheckDistribucion->execute();
@@ -130,15 +128,21 @@ function registrarDistribucionPresupuestaria($id_ejercicio, $actividad, $partida
 
         if ($resultCheckDistribucion->num_rows > 0) {
             // Si ya existe, actualizar el registro
-            $id_distribucion_existente = $resultCheckDistribucion->fetch_assoc()['id'];
+            $row = $resultCheckDistribucion->fetch_assoc();
+            $id_distribucion_existente = $row['id'];
+            $distribucion_actual = json_decode($row['distribucion'], true);
+
+            // Agregar la nueva distribución sin eliminar las anteriores
+            $distribucion_actual[] = ["id_distribucion" => $id_distribucion, "monto" => 0];
+            $nuevo_distribucion_json = json_encode($distribucion_actual);
 
             foreach ([$conexion, $remote_db] as $db) {
                 $sqlUpdateDistribucionEntes = "UPDATE distribucion_entes 
-                    SET distribucion = ?, monto_total = 0, fecha = ?, status = 1, status_cerrar = 0 
+                    SET distribucion = ?, nuevo = 1 
                     WHERE id = ?";
 
                 $stmtUpdateDistribucionEntes = $db->prepare($sqlUpdateDistribucionEntes);
-                $stmtUpdateDistribucionEntes->bind_param("ssi", $distribucion_json, $fecha_actual, $id_distribucion_existente);
+                $stmtUpdateDistribucionEntes->bind_param("si", $nuevo_distribucion_json, $id_distribucion_existente);
                 $stmtUpdateDistribucionEntes->execute();
 
                 if ($stmtUpdateDistribucionEntes->affected_rows === 0) {
@@ -147,6 +151,8 @@ function registrarDistribucionPresupuestaria($id_ejercicio, $actividad, $partida
             }
         } else {
             // Si no existe, insertar un nuevo registro en distribucion_entes
+            $distribucion_json = json_encode([["id_distribucion" => $id_distribucion, "monto" => 0]]);
+
             foreach ([$conexion, $remote_db] as $db) {
                 $sqlInsertDistribucionEntes = "INSERT INTO distribucion_entes 
                     (id_ente, actividad_id, distribucion, monto_total, status, id_ejercicio, comentario, fecha, id_asignacion, status_cerrar, nuevo) 
@@ -175,6 +181,7 @@ function registrarDistribucionPresupuestaria($id_ejercicio, $actividad, $partida
         return json_encode(["error" => $e->getMessage()]);
     }
 }
+
 
 
 
