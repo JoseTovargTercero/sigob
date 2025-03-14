@@ -159,7 +159,7 @@ $mes2 = $meses[$mes] ?? 'Mes inválido';
                 'id_ejercicio' => $compromiso['id_ejercicio'],
                 'tabla_registro' => $compromiso['tabla_registro'],
                 'numero_compromiso' => $compromiso['numero_compromiso'],
-                'fecha' => $mes,
+                'fecha' => $solicitud['mes'],
             ];
             }
 
