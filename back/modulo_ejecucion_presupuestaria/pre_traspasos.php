@@ -178,12 +178,12 @@ function registrarTraspasoPartida($data)
         } else {
             throw new Exception("Tipo inválido: " . $tipo);
         }
-
+        $id_ente = "";
         // Insertar el registro principal en la tabla `traspasos` en ambas bases de datos
         foreach ([$conexion, $remote_db] as $db) {
-            $sqlTraspaso = "INSERT INTO traspasos (n_orden, id_ejercicio, monto_total, fecha, status, tipo) VALUES (?, ?, ?, ?, 0, ?)";
+            $sqlTraspaso = "INSERT INTO traspasos (n_orden, id_ejercicio, monto_total, fecha, status, tipo, id_ente) VALUES (?, ?, ?, ?, 0, ?, ?)";
             $stmtTraspaso = $db->prepare($sqlTraspaso);
-            $stmtTraspaso->bind_param("sidsi", $nOrden, $info['id_ejercicio'], $info['monto_total'], $fecha_actual, $tipo);
+            $stmtTraspaso->bind_param("sidsis", $nOrden, $info['id_ejercicio'], $info['monto_total'], $fecha_actual, $tipo, $id_ente);
             $stmtTraspaso->execute();
 
             if ($stmtTraspaso->affected_rows === 0) {
