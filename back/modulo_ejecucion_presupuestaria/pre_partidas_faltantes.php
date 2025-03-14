@@ -48,12 +48,20 @@ function registrarDistribucionPresupuestaria($id_ejercicio, $actividad, $partida
 {
     global $conexion, $remote_db;
 
+    // Validar que los parámetros no sean nulos o vacíos (pero sí pueden ser 0)
+    $parametros = [$id_ejercicio, $actividad, $partida_incluir, $sector, $programa, $proyecto];
+    foreach ($parametros as $param) {
+        if ($param === null || $param === '') {
+            return json_encode(["error" => "Todos los parámetros son obligatorios y no pueden estar vacíos."]);
+        }
+    }
+
     // Iniciar transacciones en ambas bases de datos
     $conexion->begin_transaction();
     $remote_db->begin_transaction();
 
     try {
-        // Realizar la inserción en distribucion_presupuestaria en ambas bases de datos
+        // Insertar en distribucion_presupuestaria en ambas bases de datos
         foreach ([$conexion, $remote_db] as $db) {
             $sqlInsertDistribucion = "INSERT INTO distribucion_presupuestaria 
                 (id_partida, monto_inicial, id_ejercicio, monto_actual, id_sector, id_programa, id_proyecto, status, status_cerrar, id_actividad) 
@@ -67,7 +75,7 @@ function registrarDistribucionPresupuestaria($id_ejercicio, $actividad, $partida
                 throw new Exception("Error al insertar en distribucion_presupuestaria.");
             }
 
-            // Guardar el id generado solo en la primera inserción (asumimos que es igual en ambas bases)
+            // Guardar el id generado solo en la primera inserción
             if ($db === $conexion) {
                 $id_distribucion = $stmtDistribucion->insert_id;
             }
@@ -113,18 +121,44 @@ function registrarDistribucionPresupuestaria($id_ejercicio, $actividad, $partida
         $distribucion_json = json_encode([["id_distribucion" => $id_distribucion, "monto" => 0]]);
         $fecha_actual = date('Y-m-d');
 
-        // Insertar en distribucion_entes en ambas bases de datos
-        foreach ([$conexion, $remote_db] as $db) {
-            $sqlInsertDistribucionEntes = "INSERT INTO distribucion_entes 
-                (id_ente, actividad_id, distribucion, monto_total, status, id_ejercicio, comentario, fecha, id_asignacion, status_cerrar, nuevo) 
-                VALUES (?, ?, ?, 0, 1, ?, '', ?, ?, 0, 1)";
+        // Verificar si ya existe un registro en distribucion_entes con los mismos valores
+        $sqlCheckDistribucion = "SELECT id FROM distribucion_entes WHERE id_ente = ? AND actividad_id = ? AND id_ejercicio = ?";
+        $stmtCheckDistribucion = $conexion->prepare($sqlCheckDistribucion);
+        $stmtCheckDistribucion->bind_param("iii", $id_ente, $actividad_id, $id_ejercicio);
+        $stmtCheckDistribucion->execute();
+        $resultCheckDistribucion = $stmtCheckDistribucion->get_result();
 
-            $stmtDistribucionEntes = $db->prepare($sqlInsertDistribucionEntes);
-            $stmtDistribucionEntes->bind_param("iisisi", $id_ente, $actividad_id, $distribucion_json, $id_ejercicio, $fecha_actual, $id_asignacion);
-            $stmtDistribucionEntes->execute();
+        if ($resultCheckDistribucion->num_rows > 0) {
+            // Si ya existe, actualizar el registro
+            $id_distribucion_existente = $resultCheckDistribucion->fetch_assoc()['id'];
 
-            if ($stmtDistribucionEntes->affected_rows === 0) {
-                throw new Exception("Error al insertar en distribucion_entes.");
+            foreach ([$conexion, $remote_db] as $db) {
+                $sqlUpdateDistribucionEntes = "UPDATE distribucion_entes 
+                    SET distribucion = ?, monto_total = 0, fecha = ?, status = 1, status_cerrar = 0 
+                    WHERE id = ?";
+
+                $stmtUpdateDistribucionEntes = $db->prepare($sqlUpdateDistribucionEntes);
+                $stmtUpdateDistribucionEntes->bind_param("ssi", $distribucion_json, $fecha_actual, $id_distribucion_existente);
+                $stmtUpdateDistribucionEntes->execute();
+
+                if ($stmtUpdateDistribucionEntes->affected_rows === 0) {
+                    throw new Exception("Error al actualizar distribucion_entes.");
+                }
+            }
+        } else {
+            // Si no existe, insertar un nuevo registro en distribucion_entes
+            foreach ([$conexion, $remote_db] as $db) {
+                $sqlInsertDistribucionEntes = "INSERT INTO distribucion_entes 
+                    (id_ente, actividad_id, distribucion, monto_total, status, id_ejercicio, comentario, fecha, id_asignacion, status_cerrar, nuevo) 
+                    VALUES (?, ?, ?, 0, 1, ?, '', ?, ?, 0, 1)";
+
+                $stmtDistribucionEntes = $db->prepare($sqlInsertDistribucionEntes);
+                $stmtDistribucionEntes->bind_param("iisisi", $id_ente, $actividad_id, $distribucion_json, $id_ejercicio, $fecha_actual, $id_asignacion);
+                $stmtDistribucionEntes->execute();
+
+                if ($stmtDistribucionEntes->affected_rows === 0) {
+                    throw new Exception("Error al insertar en distribucion_entes.");
+                }
             }
         }
 
@@ -141,6 +175,7 @@ function registrarDistribucionPresupuestaria($id_ejercicio, $actividad, $partida
         return json_encode(["error" => $e->getMessage()]);
     }
 }
+
 
 
 
