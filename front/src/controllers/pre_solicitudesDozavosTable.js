@@ -84,7 +84,7 @@ export async function loadSolicitudesDozavosTable(id_ejercicio) {
     .map((solicitud) => {
       return {
         numero_orden: solicitud.numero_orden,
-        entes: solicitud.ente_nombre,
+        entes: solicitud.ente.ente_nombre,
 
         mes: meses[solicitud.mes],
         tipo: solicitud.tipo === 'D' ? 'Disminuye' : 'Aumenta',
