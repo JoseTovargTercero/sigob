@@ -642,7 +642,7 @@ if ($resultado->num_rows > 0) {
     </tr>";
     ?>
 </tbody>
-
+</table>
 
 
 
