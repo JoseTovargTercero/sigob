@@ -59,16 +59,20 @@ function gestionarCreditosAdicionales($data)
 }
 
 
-
 function registrarCreditoAdicional($data)
 {
-
     global $conexion;
     global $remote_db;
 
     try {
-        // Iniciar la transacción
+        // Validar que no haya campos vacíos
+        if (!isset($data['id_ente']) || !isset($data['id_ejercicio']) || !isset($data['monto']) || !isset($data['fecha']) || !isset($data['tipo_credito']) || !isset($data['tipo_proyecto']) || !isset($data['descripcion_proyecto']) || !isset($data['distribuciones'])) {
+            return json_encode(["error" => "Faltan datos obligatorios para registrar el crédito adicional."]);
+        }
+
+        // Iniciar transacción en ambas bases de datos
         $conexion->begin_transaction();
+        $remote_db->begin_transaction();
 
         // Datos recibidos
         $id_ente = $data['id_ente'];
@@ -80,119 +84,107 @@ function registrarCreditoAdicional($data)
         $descripcion_proyecto = $data['descripcion_proyecto'];
         $distribuciones = $data['distribuciones'];
 
+        // Validación de montos en distribucion_entes en ambas bases de datos
+        foreach ([$conexion, $remote_db] as $db) {
+            foreach ($distribuciones as $partida) {
+                $id_distribucion = $partida['id_distribucion'];
+                $monto_solicitado = $partida['monto'];
 
-        if ($data['id_ente'] == "" or $data['id_ejercicio'] == "" or $data['monto'] == "" or $data['fecha'] == "" or $data['tipo_credito'] == "" or $data['tipo_proyecto'] == "" or $data['descripcion_proyecto'] == "" or $data['distribuciones'] == "") {
-            throw new Exception("No se han enviado todos los valores para el registro.");
-        }
-
-        // Validación de montos en distribucion_entes
-        foreach ($distribuciones as $partida) {
-            $id_distribucion = $partida['id_distribucion'];
-            $monto_solicitado = $partida['monto'];
-
-            // Consultar el monto de distribución desde distribucion_entes
-            $sqlMontoDistribucion = "SELECT distribucion 
+                // Consultar el monto de distribución desde distribucion_entes
+                $sqlMontoDistribucion = "SELECT distribucion 
                                          FROM distribucion_entes 
                                          WHERE id_ente = ? AND id_ejercicio = ? AND distribucion LIKE '%\"id_distribucion\":\"$id_distribucion\"%'";
-            $stmtMontoDistribucion = $remote_db->prepare($sqlMontoDistribucion);
-            $stmtMontoDistribucion->bind_param("ii", $id_ente, $id_ejercicio);
-            $stmtMontoDistribucion->execute();
-            $resultadoMontoDistribucion = $stmtMontoDistribucion->get_result();
+                $stmtMontoDistribucion = $db->prepare($sqlMontoDistribucion);
+                $stmtMontoDistribucion->bind_param("ii", $id_ente, $id_ejercicio);
+                $stmtMontoDistribucion->execute();
+                $resultadoMontoDistribucion = $stmtMontoDistribucion->get_result();
 
-            if ($resultadoMontoDistribucion->num_rows === 0) {
-                throw new Exception("El ID de distribución no se encuentra en el campo 'distribucion' de distribucion_entes");
-            }
-
-            $filaMontoDistribucion = $resultadoMontoDistribucion->fetch_assoc();
-            $distribucionesData = json_decode($filaMontoDistribucion['distribucion'], true);
-
-            // Obtener monto disponible en la distribución
-            $montoDistribucion = null;
-            foreach ($distribucionesData as &$distribucion) {
-                if ($distribucion['id_distribucion'] == $id_distribucion) {
-                    $montoDistribucion = (float) $distribucion['monto'];
-                    break;
-                }
-            }
-
-            if ($montoDistribucion === null) {
-                throw new Exception("No se encontró el monto para el ID de distribución $id_distribucion.");
-            }
-
-            // Validar si el monto disponible es suficiente
-            if ($montoDistribucion < $monto_solicitado) {
-                // Obtener id_partida desde distribucion_presupuestaria
-                $sqlDistribucion = "SELECT id_partida FROM distribucion_presupuestaria WHERE id = ?";
-                $stmtDistribucion = $remote_db->prepare($sqlDistribucion);
-                $stmtDistribucion->bind_param("i", $id_distribucion);
-                $stmtDistribucion->execute();
-                $resultadoDistribucion = $stmtDistribucion->get_result();
-
-                if ($resultadoDistribucion->num_rows === 0) {
-                    throw new Exception("No se encontró la distribución presupuestaria con ID " . $id_distribucion);
+                if ($resultadoMontoDistribucion->num_rows === 0) {
+                    throw new Exception("El ID de distribución no se encuentra en el campo 'distribucion' de distribucion_entes");
                 }
 
-                $filaDistribucion = $resultadoDistribucion->fetch_assoc();
-                $idPartida = $filaDistribucion['id_partida'];
+                $filaMontoDistribucion = $resultadoMontoDistribucion->fetch_assoc();
+                $distribucionesData = json_decode($filaMontoDistribucion['distribucion'], true);
 
-                // Obtener la clave de partida
-                $sqlPartida = "SELECT partida FROM partidas_presupuestarias WHERE id = ?";
-                $stmtPartida = $remote_db->prepare($sqlPartida);
-                $stmtPartida->bind_param("i", $idPartida);
-                $stmtPartida->execute();
-                $resultadoPartida = $stmtPartida->get_result();
-
-                if ($resultadoPartida->num_rows === 0) {
-                    throw new Exception("No se encontró la partida presupuestaria con ID " . $idPartida);
+                // Obtener monto disponible en la distribución
+                $montoDistribucion = null;
+                foreach ($distribucionesData as &$distribucion) {
+                    if ($distribucion['id_distribucion'] == $id_distribucion) {
+                        $montoDistribucion = (float) $distribucion['monto'];
+                        break;
+                    }
                 }
 
-                $partida = $resultadoPartida->fetch_assoc()['partida'];
+                if ($montoDistribucion === null) {
+                    throw new Exception("No se encontró el monto para el ID de distribución $id_distribucion.");
+                }
 
-                throw new Exception("El presupuesto en distribucion_entes es insuficiente para la partida " . $partida);
+                // Validar si el monto disponible es suficiente
+                if ($montoDistribucion < $monto_solicitado) {
+                    throw new Exception("El presupuesto en distribucion_entes es insuficiente para el ID de distribución $id_distribucion.");
+                }
             }
         }
 
-        // Insertar en credito_adicional
-        $sqlCredito = "INSERT INTO credito_adicional (id_ente, id_ejercicio, monto, fecha, tipo_credito, status) 
-                       VALUES (?, ?, ?, ?, ?, 0)";
-        $stmtCredito = $conexion->prepare($sqlCredito);
-        $stmtCredito->bind_param("iidsi", $id_ente, $id_ejercicio, $monto, $fecha, $tipo_credito);
-        if (!$stmtCredito->execute()) {
-            throw new Exception("Error en credito_adicional: " . $stmtCredito->error);
-        }
-
-        if ($stmtCredito->affected_rows === 0) {
-            throw new Exception("No se pudo registrar el crédito adicional.");
-        }
-
-        $id_credito = $conexion->insert_id;
-        $decreto = "";
-
-        // Insertar en proyecto_credito
-        $sqlProyecto = "INSERT INTO proyecto_credito (id_credito, tipo_proyecto, descripcion_proyecto, distribuciones, decreto, status) 
-                        VALUES (?, ?, ?, ?, ?, 0)";
-        $stmtProyecto = $conexion->prepare($sqlProyecto);
+        // Generar el número de orden automáticamente
+        $numero_orden = generarNumeroOrden();
+        $fecha = date("Y-m-d");
         $distribuciones_json = json_encode($distribuciones);
-        $stmtProyecto->bind_param("issss", $id_credito, $tipo_proyecto, $descripcion_proyecto, $distribuciones_json, $decreto);
-        if (!$stmtProyecto->execute()) {
-            throw new Exception("Error en proyecto_credito: " . $stmtProyecto->error);
+
+        // Insertar en ambas bases de datos
+        foreach ([$conexion, $remote_db] as $db) {
+            // Insertar en credito_adicional
+            $sqlCredito = "INSERT INTO credito_adicional (id_ente, id_ejercicio, monto, fecha, tipo_credito, status) 
+                           VALUES (?, ?, ?, ?, ?, 0)";
+            $stmtCredito = $db->prepare($sqlCredito);
+            $stmtCredito->bind_param("iidsi", $id_ente, $id_ejercicio, $monto, $fecha, $tipo_credito);
+            if (!$stmtCredito->execute()) {
+                $conexion->rollback();
+                $remote_db->rollback();
+                return json_encode(["error" => "Error en credito_adicional: " . $stmtCredito->error]);
+            }
+
+            if ($stmtCredito->affected_rows === 0) {
+                $conexion->rollback();
+                $remote_db->rollback();
+                return json_encode(["error" => "No se pudo registrar el crédito adicional."]);
+            }
+
+            $id_credito = $db->insert_id; // Obtén el ID del crédito insertado
+            $decreto = "";
+
+            // Insertar en proyecto_credito
+            $sqlProyecto = "INSERT INTO proyecto_credito (id_credito, tipo_proyecto, descripcion_proyecto, distribuciones, decreto, status) 
+                            VALUES (?, ?, ?, ?, ?, 0)";
+            $stmtProyecto = $db->prepare($sqlProyecto);
+            $distribuciones_json = json_encode($distribuciones);
+            $stmtProyecto->bind_param("issss", $id_credito, $tipo_proyecto, $descripcion_proyecto, $distribuciones_json, $decreto);
+            if (!$stmtProyecto->execute()) {
+                $conexion->rollback();
+                $remote_db->rollback();
+                return json_encode(["error" => "Error en proyecto_credito: " . $stmtProyecto->error]);
+            }
+
+            if ($stmtProyecto->affected_rows === 0) {
+                $conexion->rollback();
+                $remote_db->rollback();
+                return json_encode(["error" => "No se pudo registrar el proyecto de crédito."]);
+            }
         }
 
-
-        if ($stmtProyecto->affected_rows === 0) {
-            throw new Exception("No se pudo registrar el proyecto de crédito.");
-        }
-
-        if ($stmtProyecto->affected_rows > 0 and $stmtCredito->affected_rows > 0) {
-            $conexion->commit();  // Primero confirmar la transacción
-            return json_encode(["success" => "El credito adicional y su proyecto se registraron correctamente."]);
-        }
+        // Confirmar la transacción en ambas bases de datos
+        $conexion->commit();
+        $remote_db->commit();
+        return json_encode(["success" => "El crédito adicional y su proyecto se registraron correctamente."]);
     } catch (Exception $e) {
+        // Revertir transacciones en caso de error
         $conexion->rollback();
+        $remote_db->rollback();
         registrarError($e->getMessage());
         return json_encode(["error" => $e->getMessage()]);
     }
 }
+
 
 
 
@@ -279,9 +271,11 @@ function obtenerTodosLosCreditos()
 function eliminarCredito($data)
 {
     global $conexion;
+    global $remote_db;
 
-    // Iniciar una transacción para asegurar la integridad de los datos
+    // Iniciar transacción en ambas bases de datos
     $conexion->begin_transaction();
+    $remote_db->begin_transaction();
 
     try {
 
@@ -290,34 +284,43 @@ function eliminarCredito($data)
         }
 
         $id_credito = $data['id_credito'];
-        // Eliminar primero el registro en proyecto_credito
-        $sqlProyecto = "DELETE FROM proyecto_credito WHERE id_credito = ?";
-        $stmtProyecto = $conexion->prepare($sqlProyecto);
-        $stmtProyecto->bind_param("i", $id_credito);
 
-        if (!$stmtProyecto->execute()) {
-            throw new Exception("Error al eliminar el proyecto asociado: " . $stmtProyecto->error);
+        // Eliminar primero el registro en proyecto_credito en ambas bases de datos
+        foreach ([$conexion, $remote_db] as $db) {
+            $sqlProyecto = "DELETE FROM proyecto_credito WHERE id_credito = ?";
+            $stmtProyecto = $db->prepare($sqlProyecto);
+            $stmtProyecto->bind_param("i", $id_credito);
+
+            if (!$stmtProyecto->execute()) {
+                throw new Exception("Error al eliminar el proyecto asociado: " . $stmtProyecto->error);
+            }
         }
 
-        // Luego eliminar el registro en credito_adicional
-        $sqlCredito = "DELETE FROM credito_adicional WHERE id = ?";
-        $stmtCredito = $conexion->prepare($sqlCredito);
-        $stmtCredito->bind_param("i", $id_credito);
+        // Luego eliminar el registro en credito_adicional en ambas bases de datos
+        foreach ([$conexion, $remote_db] as $db) {
+            $sqlCredito = "DELETE FROM credito_adicional WHERE id = ?";
+            $stmtCredito = $db->prepare($sqlCredito);
+            $stmtCredito->bind_param("i", $id_credito);
 
-        if (!$stmtCredito->execute()) {
-            throw new Exception("Error al eliminar el crédito adicional: " . $stmtCredito->error);
+            if (!$stmtCredito->execute()) {
+                throw new Exception("Error al eliminar el crédito adicional: " . $stmtCredito->error);
+            }
         }
 
-        // Confirmar la transacción
+        // Confirmar la transacción en ambas bases de datos
         $conexion->commit();
+        $remote_db->commit();
 
         return json_encode(["success" => "Crédito adicional eliminado correctamente"]);
+
     } catch (Exception $e) {
-        // Revertir la transacción en caso de error
+        // Revertir la transacción en ambas bases de datos en caso de error
         $conexion->rollback();
+        $remote_db->rollback();
         return json_encode(["error" => $e->getMessage()]);
     }
 }
+
 
 
 function actualizarCredito($data)
@@ -325,8 +328,9 @@ function actualizarCredito($data)
     global $conexion;
     global $remote_db;
 
-    // Iniciar una transacción para asegurar la integridad de los datos
+    // Iniciar una transacción para ambas bases de datos
     $conexion->begin_transaction();
+    $remote_db->begin_transaction();
 
     try {
 
@@ -334,126 +338,135 @@ function actualizarCredito($data)
             throw new Exception("No se han enviado todos los valores para el registro.");
         }
 
-
         $distribuciones = $data['distribuciones'];
-        // Validación de montos en distribucion_entes
-        foreach ($distribuciones as $partida) {
-            $id_distribucion = $partida['id_distribucion'];
-            $monto_solicitado = $partida['monto'];
+        // Validación de montos en distribucion_entes en ambas bases de datos
+        foreach ([$conexion, $remote_db] as $db) {
+            foreach ($distribuciones as $partida) {
+                $id_distribucion = $partida['id_distribucion'];
+                $monto_solicitado = $partida['monto'];
 
-            // Consultar monto de distribución en distribucion_entes
-            $sqlMontoDistribucion = "SELECT distribucion 
-                                     FROM distribucion_entes 
-                                     WHERE id_ente = ? 
-                                     AND id_ejercicio = ? 
-                                     AND distribucion LIKE ?";
-            $likePattern = '%"id_distribucion":"' . $id_distribucion . '"%';
-            $stmtMontoDistribucion = $remote_db->prepare($sqlMontoDistribucion);
-            $stmtMontoDistribucion->bind_param("iis", $id_ente, $id_ejercicio, $likePattern);
-            $stmtMontoDistribucion->execute();
-            $resultadoMontoDistribucion = $stmtMontoDistribucion->get_result();
+                // Consultar monto de distribución en distribucion_entes
+                $sqlMontoDistribucion = "SELECT distribucion 
+                                         FROM distribucion_entes 
+                                         WHERE id_ente = ? 
+                                         AND id_ejercicio = ? 
+                                         AND distribucion LIKE ?";
+                $likePattern = '%"id_distribucion":"' . $id_distribucion . '"%';
+                $stmtMontoDistribucion = $db->prepare($sqlMontoDistribucion);
+                $stmtMontoDistribucion->bind_param("iis", $data['id_ente'], $data['id_ejercicio'], $likePattern);
+                $stmtMontoDistribucion->execute();
+                $resultadoMontoDistribucion = $stmtMontoDistribucion->get_result();
 
-            if ($resultadoMontoDistribucion->num_rows === 0) {
-                throw new Exception("El ID de distribución $id_distribucion no se encuentra en distribucion_entes.");
-            }
-
-            $filaMontoDistribucion = $resultadoMontoDistribucion->fetch_assoc();
-            $distribucionesData = json_decode($filaMontoDistribucion['distribucion'], true);
-
-            // Obtener monto disponible en la distribución
-            $montoDistribucion = null;
-            foreach ($distribucionesData as &$distribucion) {
-                if ($distribucion['id_distribucion'] == $id_distribucion) {
-                    $montoDistribucion = (float) $distribucion['monto'];
-                    break;
-                }
-            }
-
-            if ($montoDistribucion === null) {
-                throw new Exception("No se encontró el monto para el ID de distribución $id_distribucion.");
-            }
-
-            // Validar si el monto disponible es suficiente
-            if ($montoDistribucion < $monto_solicitado) {
-                // Obtener id_partida desde distribucion_presupuestaria
-                $sqlDistribucion = "SELECT id_partida FROM distribucion_presupuestaria WHERE id = ?";
-                $stmtDistribucion = $conexion->prepare($sqlDistribucion);
-                $stmtDistribucion->bind_param("i", $id_distribucion);
-                $stmtDistribucion->execute();
-                $resultadoDistribucion = $stmtDistribucion->get_result();
-
-                if ($resultadoDistribucion->num_rows === 0) {
-                    throw new Exception("No se encontró la distribución presupuestaria con ID " . $id_distribucion);
+                if ($resultadoMontoDistribucion->num_rows === 0) {
+                    throw new Exception("El ID de distribución $id_distribucion no se encuentra en distribucion_entes.");
                 }
 
-                $filaDistribucion = $resultadoDistribucion->fetch_assoc();
-                $idPartida = $filaDistribucion['id_partida'];
+                $filaMontoDistribucion = $resultadoMontoDistribucion->fetch_assoc();
+                $distribucionesData = json_decode($filaMontoDistribucion['distribucion'], true);
 
-                // Obtener la clave de partida
-                $sqlPartida = "SELECT partida FROM partidas_presupuestarias WHERE id = ?";
-                $stmtPartida = $conexion->prepare($sqlPartida);
-                $stmtPartida->bind_param("i", $idPartida);
-                $stmtPartida->execute();
-                $resultadoPartida = $stmtPartida->get_result();
-
-                if ($resultadoPartida->num_rows === 0) {
-                    throw new Exception("No se encontró la partida presupuestaria con ID " . $idPartida);
+                // Obtener monto disponible en la distribución
+                $montoDistribucion = null;
+                foreach ($distribucionesData as &$distribucion) {
+                    if ($distribucion['id_distribucion'] == $id_distribucion) {
+                        $montoDistribucion = (float) $distribucion['monto'];
+                        break;
+                    }
                 }
 
-                $partida = $resultadoPartida->fetch_assoc()['partida'];
+                if ($montoDistribucion === null) {
+                    throw new Exception("No se encontró el monto para el ID de distribución $id_distribucion.");
+                }
 
-                throw new Exception("El presupuesto en distribucion_entes es insuficiente para la partida " . $partida);
+                // Validar si el monto disponible es suficiente
+                if ($montoDistribucion < $monto_solicitado) {
+                    // Obtener id_partida desde distribucion_presupuestaria
+                    $sqlDistribucion = "SELECT id_partida FROM distribucion_presupuestaria WHERE id = ?";
+                    $stmtDistribucion = $conexion->prepare($sqlDistribucion);
+                    $stmtDistribucion->bind_param("i", $id_distribucion);
+                    $stmtDistribucion->execute();
+                    $resultadoDistribucion = $stmtDistribucion->get_result();
+
+                    if ($resultadoDistribucion->num_rows === 0) {
+                        throw new Exception("No se encontró la distribución presupuestaria con ID " . $id_distribucion);
+                    }
+
+                    $filaDistribucion = $resultadoDistribucion->fetch_assoc();
+                    $idPartida = $filaDistribucion['id_partida'];
+
+                    // Obtener la clave de partida
+                    $sqlPartida = "SELECT partida FROM partidas_presupuestarias WHERE id = ?";
+                    $stmtPartida = $conexion->prepare($sqlPartida);
+                    $stmtPartida->bind_param("i", $idPartida);
+                    $stmtPartida->execute();
+                    $resultadoPartida = $stmtPartida->get_result();
+
+                    if ($resultadoPartida->num_rows === 0) {
+                        throw new Exception("No se encontró la partida presupuestaria con ID " . $idPartida);
+                    }
+
+                    $partida = $resultadoPartida->fetch_assoc()['partida'];
+
+                    throw new Exception("El presupuesto en distribucion_entes es insuficiente para la partida " . $partida);
+                }
             }
         }
 
-        // Actualizar los datos en la tabla credito_adicional
-        $sqlCredito = "UPDATE credito_adicional SET 
-                        id_ente = ?, id_ejercicio = ?, monto = ?, fecha = ?,  tipo_credito = ? 
-                       WHERE id = ?";
+        // Actualizar los datos en la tabla credito_adicional en ambas bases de datos
+        foreach ([$conexion, $remote_db] as $db) {
+            $sqlCredito = "UPDATE credito_adicional SET 
+                            id_ente = ?, id_ejercicio = ?, monto = ?, fecha = ?, tipo_credito = ? 
+                            WHERE id = ?";
 
-        $stmtCredito = $conexion->prepare($sqlCredito);
-        $stmtCredito->bind_param(
-            "iidssi",
-            $data['id_ente'],
-            $data['id_ejercicio'],
-            $data['monto'],
-            $data['fecha'],
-            $data['tipo_credito'],
-            $data['id_credito']
-        );
+            $stmtCredito = $db->prepare($sqlCredito);
+            $stmtCredito->bind_param(
+                "iidssi",
+                $data['id_ente'],
+                $data['id_ejercicio'],
+                $data['monto'],
+                $data['fecha'],
+                $data['tipo_credito'],
+                $data['id_credito']
+            );
 
-        if (!$stmtCredito->execute()) {
-            throw new Exception("Error al actualizar crédito adicional: " . $stmtCredito->error);
+            if (!$stmtCredito->execute()) {
+                throw new Exception("Error al actualizar crédito adicional: " . $stmtCredito->error);
+            }
         }
 
-        // Actualizar los datos en la tabla proyecto_credito
-        $sqlProyecto = "UPDATE proyecto_credito SET 
+        // Actualizar los datos en la tabla proyecto_credito en ambas bases de datos
+        foreach ([$conexion, $remote_db] as $db) {
+            $sqlProyecto = "UPDATE proyecto_credito SET 
                             tipo_proyecto = ?, descripcion_proyecto = ?, distribuciones = ? 
-                        WHERE id_credito = ?";
+                            WHERE id_credito = ?";
 
-        $stmtProyecto = $conexion->prepare($sqlProyecto);
-        $stmtProyecto->bind_param(
-            "sssi",
-            $data['tipo_proyecto'],
-            $data['descripcion_proyecto'],
-            $data['distribuciones'],
-            $data['id_credito']
-        );
+            $stmtProyecto = $db->prepare($sqlProyecto);
+            $stmtProyecto->bind_param(
+                "sssi",
+                $data['tipo_proyecto'],
+                $data['descripcion_proyecto'],
+                $data['distribuciones'],
+                $data['id_credito']
+            );
 
-        if (!$stmtProyecto->execute()) {
-            throw new Exception("Error al actualizar proyecto crédito: " . $stmtProyecto->error);
+            if (!$stmtProyecto->execute()) {
+                throw new Exception("Error al actualizar proyecto crédito: " . $stmtProyecto->error);
+            }
         }
 
-        // Confirmar la transacción
+        // Confirmar la transacción en ambas bases de datos
         $conexion->commit();
+        $remote_db->commit();
 
         return json_encode(["success" => "Crédito adicional actualizado correctamente"]);
+
     } catch (Exception $e) {
-        // Revertir la transacción en caso de error
+        // Revertir la transacción en ambas bases de datos en caso de error
         $conexion->rollback();
+        $remote_db->rollback();
         return json_encode(["error" => $e->getMessage()]);
     }
 }
+
 
 function procesarCreditoAdicional($data)
 {
@@ -483,18 +496,6 @@ function procesarCreditoAdicional($data)
         }
 
         // Crear un nombre de archivo único
-        // $nombreArchivoUnico = uniqid('decreto_', true) . '.pdf';
-        // $rutaDestino = __DIR__ . ".." . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . 'decretos' . DIRECTORY_SEPARATOR . $nombreArchivoUnico;
-
-        // // Guardar el archivo
-        // if (file_put_contents($rutaDestino, $archivoDecodificado) === false) {
-        //     throw new Exception("Error al guardar el archivo PDF.");
-        // }
-
-
-
-
-        // Crear un nombre de archivo único
         $nombreArchivoUnico = uniqid('decreto_', true) . '.pdf';
         $rutaDestino = __DIR__ . ".." . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . 'decretos' . DIRECTORY_SEPARATOR . $nombreArchivoUnico;
 
@@ -511,77 +512,78 @@ function procesarCreditoAdicional($data)
             throw new Exception("Error al guardar el archivo PDF.");
         }
 
+        // Actualizar la tabla proyecto_credito con el nombre del archivo en ambas bases de datos
+        foreach ([$conexion, $remote_db] as $db) {
+            $sqlUpdateProyecto = "UPDATE proyecto_credito SET decreto = ? WHERE id_credito = ?";
+            $stmtUpdateProyecto = $db->prepare($sqlUpdateProyecto);
+            $stmtUpdateProyecto->bind_param("si", $nombreArchivoUnico, $id_credito);
+            $stmtUpdateProyecto->execute();
 
-
-
-
-
-        // Actualizar la tabla proyecto_credito con el nombre del archivo
-        $sqlUpdateProyecto = "UPDATE proyecto_credito SET decreto = ? WHERE id_credito = ?";
-        $stmtUpdateProyecto = $conexion->prepare($sqlUpdateProyecto);
-        $stmtUpdateProyecto->bind_param("si", $nombreArchivoUnico, $id_credito);
-        $stmtUpdateProyecto->execute();
-
-        if ($stmtUpdateProyecto->affected_rows === 0) {
-            throw new Exception("No se pudo actualizar el decreto en proyecto_credito.");
+            if ($stmtUpdateProyecto->affected_rows === 0) {
+                throw new Exception("No se pudo actualizar el decreto en proyecto_credito.");
+            }
         }
 
+        // Consultar distribuciones de proyecto_credito en ambas bases de datos
+        $distribuciones = [];
+        foreach ([$conexion, $remote_db] as $db) {
+            $sqlDistribuciones = "SELECT distribuciones, tipo_proyecto, descripcion_proyecto FROM proyecto_credito WHERE id_credito = ?";
+            $stmtDistribuciones = $db->prepare($sqlDistribuciones);
+            $stmtDistribuciones->bind_param("i", $id_credito);
+            $stmtDistribuciones->execute();
+            $resultadoDistribuciones = $stmtDistribuciones->get_result();
 
+            if ($resultadoDistribuciones->num_rows === 0) {
+                throw new Exception("No se encontró el registro en proyecto_credito.");
+            }
 
-        // Consultar distribuciones de proyecto_credito
-        $sqlDistribuciones = "SELECT distribuciones, tipo_proyecto, descripcion_proyecto FROM proyecto_credito WHERE id_credito = ?";
-        $stmtDistribuciones = $conexion->prepare($sqlDistribuciones);
-        $stmtDistribuciones->bind_param("i", $id_credito);
-        $stmtDistribuciones->execute();
-        $resultadoDistribuciones = $stmtDistribuciones->get_result();
-
-        if ($resultadoDistribuciones->num_rows === 0) {
-            throw new Exception("No se encontró el registro en proyecto_credito.");
+            $filaDistribuciones = $resultadoDistribuciones->fetch_assoc();
+            $distribuciones = json_decode($filaDistribuciones['distribuciones'], true);
         }
 
-        $filaDistribuciones = $resultadoDistribuciones->fetch_assoc();
-        $distribuciones = json_decode($filaDistribuciones['distribuciones'], true);
-        $tipo_proyecto = $filaDistribuciones['tipo_proyecto'];
-        $descripcion_proyecto = $filaDistribuciones['descripcion_proyecto'];
+        // Consultar distribuciones de credito_adicional en ambas bases de datos
+        $id_ejercicio = null;
+        foreach ([$conexion, $remote_db] as $db) {
+            $sqlDistribuciones2 = "SELECT id_ejercicio FROM credito_adicional WHERE id = ?";
+            $stmtDistribuciones2 = $db->prepare($sqlDistribuciones2);
+            $stmtDistribuciones2->bind_param("i", $id_credito);
+            $stmtDistribuciones2->execute();
+            $resultadoDistribuciones2 = $stmtDistribuciones2->get_result();
 
-        // Consultar distribuciones de credito_adicional
-        $sqlDistribuciones2 = "SELECT id_ejercicio FROM credito_adicional WHERE id = ?";
-        $stmtDistribuciones2 = $conexion->prepare($sqlDistribuciones2);
-        $stmtDistribuciones2->bind_param("i", $id_credito);
-        $stmtDistribuciones2->execute();
-        $resultadoDistribuciones2 = $stmtDistribuciones2->get_result();
+            if ($resultadoDistribuciones2->num_rows === 0) {
+                throw new Exception("No se encontró el registro en credito_adicional.");
+            }
 
-        if ($resultadoDistribuciones2->num_rows === 0) {
-            throw new Exception("No se encontró el registro en credito_adicional.");
+            $filaDistribuciones2 = $resultadoDistribuciones2->fetch_assoc();
+            $id_ejercicio = $filaDistribuciones2['id_ejercicio'];
         }
 
-        $filaDistribuciones2 = $resultadoDistribuciones2->fetch_assoc();
-        $id_ejercicio = $filaDistribuciones2['id_ejercicio'];
-
-        // Validar montos de distribuciones
+        // Validar montos de distribuciones en ambas bases de datos
         foreach ($distribuciones as $partida) {
             $id_distribucion = $partida['id_distribucion'];
             $monto_solicitado = $partida['monto'];
 
-            $sqlMontoDistribucion = "SELECT distribucion FROM distribucion_entes WHERE distribucion LIKE ?";
-            $likePattern = '%"id_distribucion":"' . $id_distribucion . '"%';
-            $stmtMontoDistribucion = $remote_db->prepare($sqlMontoDistribucion);
-            $stmtMontoDistribucion->bind_param("s", $likePattern);
-            $stmtMontoDistribucion->execute();
-            $resultadoMontoDistribucion = $stmtMontoDistribucion->get_result();
-
-            if ($resultadoMontoDistribucion->num_rows === 0) {
-                throw new Exception("El ID de distribución $id_distribucion no se encuentra en distribucion_entes.");
-            }
-
-            $filaMontoDistribucion = $resultadoMontoDistribucion->fetch_assoc();
-            $distribucionesData = json_decode($filaMontoDistribucion['distribucion'], true);
-
             $montoDistribucion = null;
-            foreach ($distribucionesData as &$distribucion) {
-                if ($distribucion['id_distribucion'] == $id_distribucion) {
-                    $montoDistribucion = (float) $distribucion['monto'];
-                    break;
+            foreach ([$conexion, $remote_db] as $db) {
+                $sqlMontoDistribucion = "SELECT distribucion FROM distribucion_entes WHERE distribucion LIKE ?";
+                $likePattern = '%"id_distribucion":"' . $id_distribucion . '"%';
+                $stmtMontoDistribucion = $db->prepare($sqlMontoDistribucion);
+                $stmtMontoDistribucion->bind_param("s", $likePattern);
+                $stmtMontoDistribucion->execute();
+                $resultadoMontoDistribucion = $stmtMontoDistribucion->get_result();
+
+                if ($resultadoMontoDistribucion->num_rows === 0) {
+                    throw new Exception("El ID de distribución $id_distribucion no se encuentra en distribucion_entes.");
+                }
+
+                $filaMontoDistribucion = $resultadoMontoDistribucion->fetch_assoc();
+                $distribucionesData = json_decode($filaMontoDistribucion['distribucion'], true);
+
+                foreach ($distribucionesData as &$distribucion) {
+                    if ($distribucion['id_distribucion'] == $id_distribucion) {
+                        $montoDistribucion = (float) $distribucion['monto'];
+                        break;
+                    }
                 }
             }
 
@@ -594,10 +596,11 @@ function procesarCreditoAdicional($data)
             }
         }
 
-        // Si el monto es suficiente, registrar el compromiso
-        $resultadoCompromiso = registrarCompromiso($conexion, $conexion_remota, $id_credito, 'proyecto_credito', $descripcion_proyecto, $id_ejercicio, '');
+        // Si el monto es suficiente, registrar el compromiso en ambas bases de datos
+        $resultadoCompromiso = registrarCompromiso($conexion, $remote_db, $id_credito, 'proyecto_credito', $descripcion_proyecto, $id_ejercicio, '');
         if (isset($resultadoCompromiso['success']) && $resultadoCompromiso['success']) {
             $conexion->commit();
+            $remote_db->commit();
 
             // Si tipo_proyecto es 1, actualizar monto en distribucion_entes
             if ($tipo_proyecto == 1) {
@@ -612,24 +615,30 @@ function procesarCreditoAdicional($data)
                     }
 
                     $nuevoDistribucionJSON = json_encode($distribucionesData);
-                    $sqlUpdateDistribucionEnte = "UPDATE distribucion_entes SET distribucion = ? WHERE distribucion LIKE ?";
-                    $stmtUpdateDistribucionEnte = $conexion->prepare($sqlUpdateDistribucionEnte);
-                    $stmtUpdateDistribucionEnte->bind_param("ss", $nuevoDistribucionJSON, $likePattern);
-                    $stmtUpdateDistribucionEnte->execute();
+                    foreach ([$conexion, $remote_db] as $db) {
+                        $sqlUpdateDistribucionEnte = "UPDATE distribucion_entes SET distribucion = ? WHERE distribucion LIKE ?";
+                        $stmtUpdateDistribucionEnte = $db->prepare($sqlUpdateDistribucionEnte);
+                        $stmtUpdateDistribucionEnte->bind_param("ss", $nuevoDistribucionJSON, $likePattern);
+                        $stmtUpdateDistribucionEnte->execute();
+                    }
                 }
             }
 
-            // Actualizar el campo "status" en proyecto_credito
-            $sqlUpdateProyectoStatus = "UPDATE proyecto_credito SET status = 1 WHERE id_credito = ?";
-            $stmtUpdateProyectoStatus = $conexion->prepare($sqlUpdateProyectoStatus);
-            $stmtUpdateProyectoStatus->bind_param("i", $id_credito);
-            $stmtUpdateProyectoStatus->execute();
+            // Actualizar el campo "status" en proyecto_credito en ambas bases de datos
+            foreach ([$conexion, $remote_db] as $db) {
+                $sqlUpdateProyectoStatus = "UPDATE proyecto_credito SET status = 1 WHERE id_credito = ?";
+                $stmtUpdateProyectoStatus = $db->prepare($sqlUpdateProyectoStatus);
+                $stmtUpdateProyectoStatus->bind_param("i", $id_credito);
+                $stmtUpdateProyectoStatus->execute();
+            }
 
-            // Actualizar el campo "status" en credito_adicional
-            $sqlUpdateCreditoAdicionalStatus = "UPDATE credito_adicional SET status = 1 WHERE id = ?";
-            $stmtUpdateCreditoAdicionalStatus = $conexion->prepare($sqlUpdateCreditoAdicionalStatus);
-            $stmtUpdateCreditoAdicionalStatus->bind_param("i", $id_credito);
-            $stmtUpdateCreditoAdicionalStatus->execute();
+            // Actualizar el campo "status" en credito_adicional en ambas bases de datos
+            foreach ([$conexion, $remote_db] as $db) {
+                $sqlUpdateCreditoAdicionalStatus = "UPDATE credito_adicional SET status = 1 WHERE id = ?";
+                $stmtUpdateCreditoAdicionalStatus = $db->prepare($sqlUpdateCreditoAdicionalStatus);
+                $stmtUpdateCreditoAdicionalStatus->bind_param("i", $id_credito);
+                $stmtUpdateCreditoAdicionalStatus->execute();
+            }
 
             return json_encode([
                 "success" => "El proyecto ha sido aceptado, el compromiso se ha registrado, el presupuesto actualizado, el estado actualizado y el decreto ha sido subido.",
@@ -641,9 +650,11 @@ function procesarCreditoAdicional($data)
         }
     } catch (Exception $e) {
         $conexion->rollback();
+        $remote_db->rollback();
         return json_encode(["error" => $e->getMessage()]);
     }
 }
+
 
 
 

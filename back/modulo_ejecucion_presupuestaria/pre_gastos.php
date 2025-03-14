@@ -579,6 +579,11 @@ function obtenerGastoPorId($id)
 function actualizarGasto($id, $id_tipo, $descripcion, $monto, $id_ejercicio, $beneficiario, $identificador, $distribuciones)
 {
     global $conexion;
+    global $remote_db;
+
+    // Iniciar transacción en ambas bases de datos
+    $conexion->begin_transaction();
+    $remote_db->begin_transaction();
 
     try {
         // Validar que los campos obligatorios no estén vacíos
@@ -589,18 +594,27 @@ function actualizarGasto($id, $id_tipo, $descripcion, $monto, $id_ejercicio, $be
         // Convertir el array de distribuciones en JSON
         $distribuciones_json = json_encode($distribuciones);
 
+        // Actualizar el registro en la tabla 'gastos' en ambas bases de datos
+        foreach ([$conexion, $remote_db] as $db) {
+            $sql = "UPDATE gastos SET id_tipo = ?, descripcion = ?, monto = ?, status = 0, id_ejercicio = ?, beneficiario = ?, identificador = ?, distribuciones = ? WHERE id = ?";
+            $stmt = $db->prepare($sql);
+            $stmt->bind_param("isdiissi", $id_tipo, $descripcion, $monto, $id_ejercicio, $beneficiario, $identificador, $distribuciones_json, $id);
 
-        // Actualizar el registro en la tabla 'gastos' con los campos adicionales
-        $sql = "UPDATE gastos SET id_tipo = ?, descripcion = ?, monto = ?, status = 0, id_ejercicio = ?, beneficiario = ?, identificador = ?, distribuciones = ? WHERE id = ?";
-        $stmt = $conexion->prepare($sql);
-        $stmt->bind_param("isdiissi", $id_tipo, $descripcion, $monto, $id_ejercicio, $beneficiario, $identificador, $distribuciones_json, $id);
-
-        if ($stmt->execute()) {
-            return json_encode(['success' => 'Gasto actualizado exitosamente']);
-        } else {
-            throw new Exception("Error al actualizar el gasto.");
+            if (!$stmt->execute()) {
+                throw new Exception("Error al actualizar el gasto en la base de datos: " . $stmt->error);
+            }
         }
+
+        // Confirmar la transacción en ambas bases de datos
+        $conexion->commit();
+        $remote_db->commit();
+
+        return json_encode(['success' => 'Gasto actualizado exitosamente']);
+
     } catch (Exception $e) {
+        // Revertir la transacción en ambas bases de datos en caso de error
+        $conexion->rollback();
+        $remote_db->rollback();
         registrarError($e->getMessage());
         return json_encode(['error' => $e->getMessage()]);
     }
@@ -611,38 +625,48 @@ function actualizarGasto($id, $id_tipo, $descripcion, $monto, $id_ejercicio, $be
 function eliminarGasto($id)
 {
     global $conexion;
+    global $remote_db;
+
+    // Iniciar transacción en ambas bases de datos
+    $conexion->begin_transaction();
+    $remote_db->begin_transaction();
 
     try {
-        // Iniciar una transacción para asegurar la integridad de los datos
-        $conexion->begin_transaction();
-
-        // Eliminar el registro de la tabla 'compromisos'
-        $sqlCompromisos = "DELETE FROM compromisos WHERE id_registro = ? AND tabla_registro = 'gastos'";
-        $stmtCompromisos = $conexion->prepare($sqlCompromisos);
-        $stmtCompromisos->bind_param("i", $id);
-        if (!$stmtCompromisos->execute()) {
-            throw new Exception("Error al eliminar el compromiso asociado.");
+        // Eliminar el registro de la tabla 'compromisos' en ambas bases de datos
+        foreach ([$conexion, $remote_db] as $db) {
+            $sqlCompromisos = "DELETE FROM compromisos WHERE id_registro = ? AND tabla_registro = 'gastos'";
+            $stmtCompromisos = $db->prepare($sqlCompromisos);
+            $stmtCompromisos->bind_param("i", $id);
+            if (!$stmtCompromisos->execute()) {
+                throw new Exception("Error al eliminar el compromiso asociado en la base de datos.");
+            }
         }
 
-        // Eliminar el registro de la tabla 'gastos'
-        $sqlGastos = "DELETE FROM gastos WHERE id = ?";
-        $stmtGastos = $conexion->prepare($sqlGastos);
-        $stmtGastos->bind_param("i", $id);
-        if (!$stmtGastos->execute()) {
-            throw new Exception("Error al eliminar el gasto.");
+        // Eliminar el registro de la tabla 'gastos' en ambas bases de datos
+        foreach ([$conexion, $remote_db] as $db) {
+            $sqlGastos = "DELETE FROM gastos WHERE id = ?";
+            $stmtGastos = $db->prepare($sqlGastos);
+            $stmtGastos->bind_param("i", $id);
+            if (!$stmtGastos->execute()) {
+                throw new Exception("Error al eliminar el gasto en la base de datos.");
+            }
         }
 
-        // Confirmar la transacción
+        // Confirmar la transacción en ambas bases de datos
         $conexion->commit();
+        $remote_db->commit();
 
         return json_encode(['success' => 'Gasto y compromiso asociado eliminados exitosamente']);
+
     } catch (Exception $e) {
-        // Revertir la transacción en caso de error
+        // Revertir la transacción en ambas bases de datos en caso de error
         $conexion->rollback();
+        $remote_db->rollback();
         registrarError($e->getMessage());
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 
 /// Procesar la solicitud
