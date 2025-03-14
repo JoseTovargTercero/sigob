@@ -7,7 +7,8 @@ import {
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 import { APP_URL, config } from './urlConfig.js'
 
-const solicitudesDozavosUrl = `${APP_URL}${config.MODULE_NAMES.EJECUCION}pre_solicitud_dozavos_api.php`
+const solicitudesDozavosUrl = `${APP_URL}${config.MODULE_NAMES.EJECUCION}pre_solicitud_dozavos.php`
+// const solicitudesDozavosUrl = `${APP_URL}${config.MODULE_NAMES.EJECUCION}pre_solicitud_dozavos.php`
 // const solicitudesDozavosUrl =
 // '../../../../sigob/back/modulo_ejecucion_presupuestaria/pre_solicitud_dozavos.php'
 

@@ -226,12 +226,6 @@ export const pre_solicitudDozavo_card = async ({
       pre_identificarCompromiso({
         id: e.target.dataset.confirmarid,
         elementToInsert: 'solicitudes-dozavos-view',
-        registerCompromise: {
-          id,
-          nombre_tabla: 'solicitud_dozavos',
-          descripcion,
-          id_ejercicio,
-        },
         acceptFunction: async function (codigo) {
           let res = await aceptarDozavo(e.target.dataset.confirmarid, codigo)
 
