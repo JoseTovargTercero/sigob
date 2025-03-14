@@ -293,7 +293,7 @@ $stmt->close();
           const id = event.target.closest('.btn-add').getAttribute('data-add-id');
           const partida = event.target.closest('.btn-add').getAttribute('data-partida');
           document.getElementById('partida').value = partida
-          partida_incluir = partida;
+          partida_incluir = id;
           toggleDialogs()
         }
       });
@@ -332,6 +332,8 @@ $stmt->close();
         formData.accion = 'registrar';
         formData.partida_incluir = partida_incluir;
         formData.id_ejercicio = id_ejercicio_fiscal;
+        toggleDialogs()
+
         $('#cargando').show()
 
         // Enviar los datos al backend mediante AJAX
@@ -345,25 +347,21 @@ $stmt->close();
           .done(function(response) {
             if (response.success) {
               toast_s('success', 'Registrado correctamente')
-              obtenerPartidas()
             } else {
               toast_s('error', 'Error al registrar ' + response.error)
+              toggleDialogs()
+
             }
           })
           .fail(function(jqXHR, textStatus, errorThrown) {
             console.error('Error en la solicitud:', textStatus, errorThrown);
+            toggleDialogs()
+
           })
           .always(function(res) {
             console.log('Solicitud finalizada:', res);
             $('#cargando').hide()
-            toggleDialogs()
-
           });
-
-
-
-
-
       });
 
 
@@ -405,7 +403,6 @@ $stmt->close();
           })
           .always(function(res) {
             $('#cargando').hide()
-
           });
       }
       obtenerPartidas()
