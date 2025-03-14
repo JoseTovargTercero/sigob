@@ -383,6 +383,8 @@ foreach ($traspasos as $traspaso) {
             $total_compromiso = 0;
             $total_causado = 0;
             $total_disponibilidad = 0;
+            $total_modificacion2 = 0;
+            $total_modificacion3 = 0;
 
             foreach ($data as $info_partida) {
                 // Asignar los valores usando índices numéricos
@@ -395,8 +397,13 @@ foreach ($traspasos as $traspaso) {
                 $causado = $info_partida[5] ?? 0;     // Si corresponde al índice [5]
                 if ($modificacion_aumentada > 0) {
                     $disponibilidad = ($asignacion_inicial + $modificacion_aumentada) - $compromiso;
+                    $total_modificacion2 += $modificacion_aumentada;
+                    $total_modificacion += $total_modificacion2; // Neto de modificaciones
+
                 }elseif ($modificacion_restada > 0) {
                     $disponibilidad = ($asignacion_inicial - $modificacion_restada) - $compromiso;
+                    $total_modificacion3 += $modificacion_restada;
+                    $total_modificacion += $total_modificacion3; // Neto de modificaciones
                 }else{
                     $disponibilidad = $asignacion_inicial  - $compromiso;
                 }
@@ -404,9 +411,8 @@ foreach ($traspasos as $traspaso) {
 
                 // Acumular totales
                 $total_asignacion_inicial += $asignacion_inicial;
-                $total_modificacion2 += $modificacion_aumentada;
-                $total_modificacion3 += $modificacion_restada;
-                $total_modificacion += $total_modificacion2 - $total_modificacion3; // Neto de modificaciones
+                
+
 
 
                 $total_compromiso += $compromiso;
