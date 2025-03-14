@@ -526,85 +526,144 @@ function gestionarSolicitudDozavos2($idSolicitud, $accion, $codigo)
 function actualizarStatusSolicitud($data)
 {
     global $conexion;
+    global $remote_db;
 
-    if (!$idSolicitud) {
+    if (!isset($data['idSolicitud'])) {
         return json_encode(["error" => "No se ha especificado el ID de la solicitud."]);
     }
 
+    $idSolicitud = $data['idSolicitud'];
+
+    // Iniciar transacciones en ambas bases de datos
+    $conexion->begin_transaction();
+    $remote_db->begin_transaction();
+
     try {
-        // Preparar la consulta para actualizar el status
-        $sql = "UPDATE solicitud_dozavos SET status = 4 WHERE id = ?";
-        $stmt = $conexion->prepare($sql);
+        // Preparar la consulta para actualizar el status en ambas bases de datos
+        foreach ([$conexion, $remote_db] as $db) {
+            $sql = "UPDATE solicitud_dozavos SET status = 4 WHERE id = ?";
+            $stmt = $db->prepare($sql);
 
-        if (!$stmt) {
-            throw new Exception("Error al preparar la consulta: " . $conexion->error);
+            if (!$stmt) {
+                throw new Exception("Error al preparar la consulta: " . $db->error);
+            }
+
+            $stmt->bind_param("i", $idSolicitud);
+            $stmt->execute();
+
+            // Verificar si se actualizó algún registro
+            if ($stmt->affected_rows === 0) {
+                throw new Exception("No se encontró la solicitud con el ID proporcionado o ya tenía el status 4.");
+            }
         }
 
-        $stmt->bind_param("i", $idSolicitud);
-        $stmt->execute();
+        // Confirmar las transacciones en ambas bases de datos
+        $conexion->commit();
+        $remote_db->commit();
 
-        // Verificar si se actualizó algún registro
-        if ($stmt->affected_rows > 0) {
-            $stmt->close();
-            return json_encode(["success" => "El status de la solicitud se actualizó correctamente."]);
-        } else {
-            $stmt->close();
-            return json_encode(["error" => "No se encontró la solicitud con el ID proporcionado o ya tenía el status 4."]);
-        }
+        return json_encode(["success" => "El status de la solicitud se actualizó correctamente."]);
+
     } catch (Exception $e) {
+        // Revertir las transacciones en caso de error
+        $conexion->rollback();
+        $remote_db->rollback();
         return json_encode(["error" => "Error: " . $e->getMessage()]);
     }
 }
+
 
 
 // Función para actualizar una solicitud
 function actualizarSolicitudozavo($data)
 {
     global $conexion;
+    global $remote_db;
 
     if (!isset($data['id'], $data['numero_orden'], $data['numero_compromiso'], $data['descripcion'], $data['monto'], $data['fecha'], $data['partidas'], $data['id_ente'], $data['status'], $data['id_ejercicio'], $data['mes'])) {
         return json_encode(["error" => "Faltan datos o el ID para actualizar la solicitud."]);
     }
 
-    $sql = "UPDATE solicitud_dozavos SET numero_orden = ?, numero_compromiso = ?, descripcion = ?, monto = ?, fecha = ?, partidas = ?, id_ente = ?, status = ?, id_ejercicio = ?, mes = ? WHERE id = ?";
-    $stmt = $conexion->prepare($sql);
-    $stmt->bind_param("issdsssisss", $data['numero_orden'], $data['numero_compromiso'], $data['descripcion'], $data['monto'], $data['fecha'], json_encode($data['partidas']), $data['id_ente'], $data['status'], $data['id_ejercicio'], $data['mes'], $data['id']);
-    $stmt->execute();
+    // Iniciar una transacción para asegurar la integridad de los datos en ambas bases de datos
+    $conexion->begin_transaction();
+    $remote_db->begin_transaction();
 
-    if ($stmt->affected_rows > 0) {
+    try {
+        // Actualizar la solicitud en ambas bases de datos
+        foreach ([$conexion, $remote_db] as $db) {
+            $sql = "UPDATE solicitud_dozavos SET numero_orden = ?, numero_compromiso = ?, descripcion = ?, monto = ?, fecha = ?, partidas = ?, id_ente = ?, status = ?, id_ejercicio = ?, mes = ? WHERE id = ?";
+            $stmt = $db->prepare($sql);
+            $stmt->bind_param("issdsssisss", $data['numero_orden'], $data['numero_compromiso'], $data['descripcion'], $data['monto'], $data['fecha'], json_encode($data['partidas']), $data['id_ente'], $data['status'], $data['id_ejercicio'], $data['mes'], $data['id']);
+            $stmt->execute();
+
+            if ($stmt->affected_rows === 0) {
+                throw new Exception("No se pudo actualizar la solicitud en la base de datos.");
+            }
+        }
+
+        // Confirmar la transacción en ambas bases de datos
+        $conexion->commit();
+        $remote_db->commit();
+
         return json_encode(["success" => "Solicitud actualizada con éxito."]);
-    } else {
-        return json_encode(["error" => "No se pudo actualizar la solicitud."]);
+
+    } catch (Exception $e) {
+        // Revertir la transacción en ambas bases de datos en caso de error
+        $conexion->rollback();
+        $remote_db->rollback();
+        return json_encode(["error" => $e->getMessage()]);
     }
 }
+
 
 // Función para rechazar una solicitud
 function rechazarSolicitud($data)
 {
     global $conexion;
+    global $remote_db;
 
     if (!isset($data['id'])) {
         return json_encode(["error" => "No se ha especificado ID para rechazar la solicitud."]);
     }
 
-    $sql = "DELETE FROM solicitud_dozavos WHERE id = ?";
-    $stmt = $conexion->prepare($sql);
-    $stmt->bind_param("i", $data['id']);
-    $stmt->execute();
+    // Iniciar transacción en ambas bases de datos
+    $conexion->begin_transaction();
+    $remote_db->begin_transaction();
 
-    if ($stmt->affected_rows > 0) {
+    try {
+        // Eliminar solicitud en ambas bases de datos
+        foreach ([$conexion, $remote_db] as $db) {
+            $sql = "DELETE FROM solicitud_dozavos WHERE id = ?";
+            $stmt = $db->prepare($sql);
+            $stmt->bind_param("i", $data['id']);
+            $stmt->execute();
+
+            if ($stmt->affected_rows === 0) {
+                throw new Exception("No se pudo rechazar la solicitud en la base de datos.");
+            }
+        }
+
+        // Confirmar la transacción en ambas bases de datos
+        $conexion->commit();
+        $remote_db->commit();
+
+        // Notificar tras el rechazo
         notificar(['nomina'], 11);
+
         return json_encode(["success" => "Solicitud rechazada y eliminada con éxito."]);
-    } else {
-        return json_encode(["error" => "No se pudo rechazar la solicitud."]);
+
+    } catch (Exception $e) {
+        // Revertir la transacción en ambas bases de datos en caso de error
+        $conexion->rollback();
+        $remote_db->rollback();
+        return json_encode(["error" => $e->getMessage()]);
     }
 }
-
 
 // Función para eliminar una solicitud y su compromiso relacionado
 function eliminarSolicitudozavo($data)
 {
     global $conexion;
+    global $remote_db;
 
     if (!isset($data['id'])) {
         return json_encode(["error" => "No se ha especificado ID para eliminar."]);
@@ -612,24 +671,49 @@ function eliminarSolicitudozavo($data)
 
     $idSolicitud = $data['id'];
 
-    // Eliminar el compromiso relacionado
-    $sqlCompromiso = "DELETE FROM compromisos WHERE id_registro = ?";
-    $stmtCompromiso = $conexion->prepare($sqlCompromiso);
-    $stmtCompromiso->bind_param("i", $idSolicitud);
-    $stmtCompromiso->execute();
+    // Iniciar transacciones en ambas bases de datos
+    $conexion->begin_transaction();
+    $remote_db->begin_transaction();
 
-    // Eliminar la solicitud
-    $sqlSolicitud = "DELETE FROM solicitud_dozavos WHERE id = ?";
-    $stmtSolicitud = $conexion->prepare($sqlSolicitud);
-    $stmtSolicitud->bind_param("i", $idSolicitud);
-    $stmtSolicitud->execute();
+    try {
+        // Eliminar el compromiso relacionado en ambas bases de datos
+        foreach ([$conexion, $remote_db] as $db) {
+            $sqlCompromiso = "DELETE FROM compromisos WHERE id_registro = ?";
+            $stmtCompromiso = $db->prepare($sqlCompromiso);
+            $stmtCompromiso->bind_param("i", $idSolicitud);
+            $stmtCompromiso->execute();
 
-    if ($stmtSolicitud->affected_rows > 0) {
+            // Verificar si el compromiso se eliminó
+            if ($stmtCompromiso->affected_rows === 0) {
+                throw new Exception("No se pudo eliminar el compromiso relacionado.");
+            }
+
+            // Eliminar la solicitud en ambas bases de datos
+            $sqlSolicitud = "DELETE FROM solicitud_dozavos WHERE id = ?";
+            $stmtSolicitud = $db->prepare($sqlSolicitud);
+            $stmtSolicitud->bind_param("i", $idSolicitud);
+            $stmtSolicitud->execute();
+
+            // Verificar si la solicitud se eliminó
+            if ($stmtSolicitud->affected_rows === 0) {
+                throw new Exception("No se pudo eliminar la solicitud.");
+            }
+        }
+
+        // Confirmar las transacciones en ambas bases de datos
+        $conexion->commit();
+        $remote_db->commit();
+
         return json_encode(["success" => "Solicitud y compromiso eliminados con éxito."]);
-    } else {
-        return json_encode(["error" => "No se pudo eliminar la solicitud o el compromiso."]);
+
+    } catch (Exception $e) {
+        // Revertir las transacciones en caso de error
+        $conexion->rollback();
+        $remote_db->rollback();
+        return json_encode(["error" => "Error: " . $e->getMessage()]);
     }
 }
+
 
 // Ejecutar la función principal
 $data = json_decode(file_get_contents("php://input"), true);

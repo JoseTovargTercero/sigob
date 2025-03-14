@@ -703,49 +703,54 @@ function eliminarTraspaso($id_traspaso)
     global $conexion;
     global $remote_db;
 
-    $conexion = $remote_db;
+    // Iniciar las transacciones en ambas bases de datos
+    $conexion->begin_transaction();
+    $remote_db->begin_transaction();
 
     try {
-        // Iniciar la transacción
-        $conexion->begin_transaction();
+        // Verificar si existen registros en traspaso_informacion para el traspaso en ambas bases de datos
+        foreach ([$conexion, $remote_db] as $db) {
+            $sqlTraspasoInfo = "SELECT id FROM traspaso_informacion WHERE id_traspaso = ?";
+            $stmtTraspasoInfo = $db->prepare($sqlTraspasoInfo);
+            $stmtTraspasoInfo->bind_param("i", $id_traspaso);
+            $stmtTraspasoInfo->execute();
+            $resultadoTraspasoInfo = $stmtTraspasoInfo->get_result();
 
-        // Verificar si existen registros en traspaso_informacion para el traspaso
-        $sqlTraspasoInfo = "SELECT id FROM traspaso_informacion WHERE id_traspaso = ?";
-        $stmtTraspasoInfo = $conexion->prepare($sqlTraspasoInfo);
-        $stmtTraspasoInfo->bind_param("i", $id_traspaso);
-        $stmtTraspasoInfo->execute();
-        $resultadoTraspasoInfo = $stmtTraspasoInfo->get_result();
+            if ($resultadoTraspasoInfo->num_rows === 0) {
+                throw new Exception("No se encontró información de distribuciones para el traspaso proporcionado.");
+            }
 
-        if ($resultadoTraspasoInfo->num_rows === 0) {
-            throw new Exception("No se encontro informacion de distribuciones para el traspaso proporcionado.");
+            // Eliminar registros de traspaso_informacion
+            $sqlEliminarTraspasoInfo = "DELETE FROM traspaso_informacion WHERE id_traspaso = ?";
+            $stmtEliminarTraspasoInfo = $db->prepare($sqlEliminarTraspasoInfo);
+            $stmtEliminarTraspasoInfo->bind_param("i", $id_traspaso);
+            $stmtEliminarTraspasoInfo->execute();
+
+            if ($stmtEliminarTraspasoInfo->affected_rows === 0) {
+                throw new Exception("No se pudo eliminar la información del traspaso.");
+            }
+
+            // Eliminar el traspaso
+            $sqlEliminarTraspaso = "DELETE FROM traspasos WHERE id = ?";
+            $stmtEliminarTraspaso = $db->prepare($sqlEliminarTraspaso);
+            $stmtEliminarTraspaso->bind_param("i", $id_traspaso);
+            $stmtEliminarTraspaso->execute();
+
+            if ($stmtEliminarTraspaso->affected_rows === 0) {
+                throw new Exception("No se pudo eliminar el traspaso.");
+            }
         }
 
-        // Eliminar registros de traspaso_informacion
-        $sqlEliminarTraspasoInfo = "DELETE FROM traspaso_informacion WHERE id_traspaso = ?";
-        $stmtEliminarTraspasoInfo = $conexion->prepare($sqlEliminarTraspasoInfo);
-        $stmtEliminarTraspasoInfo->bind_param("i", $id_traspaso);
-        $stmtEliminarTraspasoInfo->execute();
-
-        if ($stmtEliminarTraspasoInfo->affected_rows === 0) {
-            throw new Exception("No se pudo eliminar la informacion del traspaso.");
-        }
-
-        // Eliminar el traspaso
-        $sqlEliminarTraspaso = "DELETE FROM traspasos WHERE id = ?";
-        $stmtEliminarTraspaso = $conexion->prepare($sqlEliminarTraspaso);
-        $stmtEliminarTraspaso->bind_param("i", $id_traspaso);
-        $stmtEliminarTraspaso->execute();
-
-        if ($stmtEliminarTraspaso->affected_rows === 0) {
-            throw new Exception("No se pudo eliminar el traspaso.");
-        }
-
-        // Confirmar la transacción
+        // Confirmar las transacciones en ambas bases de datos
         $conexion->commit();
-        return json_encode(["success" => "El traspaso se elimino correctamente."]);
+        $remote_db->commit();
+
+        return json_encode(["success" => "El traspaso se eliminó correctamente."]);
 
     } catch (Exception $e) {
+        // Revertir las transacciones en caso de error
         $conexion->rollback();
+        $remote_db->rollback();
         registrarError($e->getMessage());
         return json_encode(['error' => $e->getMessage()]);
     }
