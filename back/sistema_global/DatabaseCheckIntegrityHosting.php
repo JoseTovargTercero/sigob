@@ -239,16 +239,7 @@ if (isset($_GET['tabla']) || true) {
         }
     }
 
-    $resultado = [
-        'status' => 'ok',
-        'acciones' => [
-            "agregados" => $agregados,
-            "eliminados" => $eliminados,
-            "actualizados" => $actualizados
-        ]
-    ];
 
-    echo json_encode($resultado);
 
     
 
