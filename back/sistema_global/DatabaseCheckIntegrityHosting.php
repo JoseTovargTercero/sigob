@@ -233,6 +233,8 @@ if (!$localColsResult) {
 
     echo json_encode($resultado);
 
+    $conexion->close();
+    $remoteConn->close();
 } else {
     echo json_encode(['status' => 'error', 'mensaje' => 'Permiso denegado']);
 }
