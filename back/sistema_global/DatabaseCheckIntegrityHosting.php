@@ -1,6 +1,5 @@
 <?php
 require_once '../sistema_global/conexion.php';
-require_once '../sistema_global/conexion_remota.php';
 require_once '../sistema_global/session.php';
 header('Content-Type: application/json');
 
@@ -9,10 +8,19 @@ if (isset($_GET['tabla']) || true) {
 
 
 
-    if ($remote_db->connect_error) {
-        echo json_encode(['status' => 'error', 'mensaje' => "Conexión fallida a la base de datos del hosting: " . $remote_db->connect_error]);
-        exit();
-    }
+  $remote_db = new mysqli('sigob.net', 'sigobnet_userroot', ']n^VmqjqCD1k', 'sigobnet_sigob_entes');
+
+if ($remote_db->connect_error) {
+    die(json_encode([
+        'status' => 'error',
+        'mensaje' => 'Conexión fallida: ' . $remote_db->connect_error
+    ]));
+    exit();
+}
+
+echo json_encode(['status' => 'ok', 'mensaje' => 'Conexión exitosa']);
+
+
 
     // Contadores de operaciones
     $agregados = 0;
@@ -25,7 +33,7 @@ if (isset($_GET['tabla']) || true) {
 function verificarColumnas($tabla) {
     global $conexion, $remote_db;
 
-
+    //  Validar conexión remota antes de ejecutar consultas
     if (!$remote_db || $remote_db->connect_error) {
         die(json_encode([
             'status' => 'error',
@@ -33,7 +41,7 @@ function verificarColumnas($tabla) {
         ]));
     }
 
-
+    //  Validar conexión local antes de ejecutar consultas
     if (!$conexion || $conexion->connect_error) {
         die(json_encode([
             'status' => 'error',
@@ -41,11 +49,10 @@ function verificarColumnas($tabla) {
         ]));
     }
 
-    // Obtener columnas de la tabla remota desde INFORMATION_SCHEMA
+    // Obtener columnas remotas desde INFORMATION_SCHEMA
     $query_remote = "SELECT COLUMN_NAME, COLUMN_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ?";
-    $stmt_remote = $remote_db->prepare($query_remote);
-
-    if (!$stmt_remote) {
+    
+    if (!($stmt_remote = $remote_db->prepare($query_remote))) {
         die(json_encode(['status' => 'error', 'mensaje' => 'Error en prepare() remoto: ' . $remote_db->error]));
     }
 
@@ -63,11 +70,10 @@ function verificarColumnas($tabla) {
         $remoteColumns[$col['COLUMN_NAME']] = $col['COLUMN_TYPE'];
     }
 
-    // Obtener columnas de la tabla local desde INFORMATION_SCHEMA
+    // Obtener columnas locales desde INFORMATION_SCHEMA
     $query_local = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ?";
-    $stmt_local = $conexion->prepare($query_local);
-
-    if (!$stmt_local) {
+    
+    if (!($stmt_local = $conexion->prepare($query_local))) {
         die(json_encode(['status' => 'error', 'mensaje' => 'Error en prepare() local: ' . $conexion->error]));
     }
 
@@ -85,7 +91,7 @@ function verificarColumnas($tabla) {
         $localColumns[] = $col['COLUMN_NAME'];
     }
 
-    // Comparar y agregar columnas faltantes en la tabla local
+    // Agregar columnas faltantes en la tabla local
     foreach ($remoteColumns as $column => $type) {
         if (!in_array($column, $localColumns)) {
             $sql = "ALTER TABLE `$tabla` ADD COLUMN `$column` $type";
@@ -94,7 +100,10 @@ function verificarColumnas($tabla) {
             }
         }
     }
+
+    echo json_encode(['status' => 'ok', 'mensaje' => 'Verificación completada']);
 }
+
 
 
 
