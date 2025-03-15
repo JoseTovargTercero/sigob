@@ -81,7 +81,7 @@ if (isset($_GET['tabla']) || true) {
             }
         }
 
-        echo json_encode(['status' => 'ok', 'mensaje' => 'Verificación completada']);
+
     }
 
     function backups($tabla, $id_table)
