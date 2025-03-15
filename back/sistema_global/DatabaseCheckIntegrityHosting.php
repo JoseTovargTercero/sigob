@@ -1,5 +1,6 @@
 <?php
 require_once '../sistema_global/conexion.php';
+require_once '../sistema_global/conexion_remota.php';
 require_once '../sistema_global/session.php';
 header('Content-Type: application/json');
 
@@ -8,11 +9,11 @@ if (isset($_GET['tabla']) || true) {
 
 
     // Conexión a la base de datos del hosting
-    $remoteConn = new mysqli('sigob.net', 'sigobnet_userroot', ']n^VmqjqCD1k', 'sigobnet_sigob_entes');
+    $remote_db = new mysqli('sigob.net', 'sigobnet_userroot', ']n^VmqjqCD1k', 'sigobnet_sigob_entes');
 
 
-    if ($remoteConn->connect_error) {
-        echo json_encode(['status' => 'error', 'mensaje' => "Conexión fallida a la base de datos del hosting: " . $remoteConn->connect_error]);
+    if ($remote_db->connect_error) {
+        echo json_encode(['status' => 'error', 'mensaje' => "Conexión fallida a la base de datos del hosting: " . $remote_db->connect_error]);
         exit();
     }
 
@@ -26,14 +27,14 @@ if (isset($_GET['tabla']) || true) {
     // Función para verificar y crear columnas faltantes
     function verificarColumnas($tabla)
     {
-        global $conexion, $remoteConn;
+        global $conexion, $remote_db;
 
-        $remoteColsResult = $remoteConn->query("SHOW COLUMNS FROM $tabla");
+        $remoteColsResult = $remote_db->query("SHOW COLUMNS FROM $tabla");
 
 if (!$remoteColsResult) {
     die(json_encode([
         'status' => 'error',
-        'mensaje' => 'Error en la consulta remota: ' . $remoteConn->error
+        'mensaje' => 'Error en la consulta remota: ' . $remote_db->error
     ]));
 }
 
@@ -59,7 +60,7 @@ if (!$localColsResult) {
 
         foreach ($remoteColumns as $column) {
             if (!in_array($column, $localColumns)) {
-                $colDefinition = $remoteConn->query("SHOW COLUMNS FROM $tabla WHERE Field = '$column'")->fetch_assoc();
+                $colDefinition = $remote_db->query("SHOW COLUMNS FROM $tabla WHERE Field = '$column'")->fetch_assoc();
                 $conexion->query("ALTER TABLE $tabla ADD COLUMN {$colDefinition['Field']} {$colDefinition['Type']}");
             }
         }
@@ -67,11 +68,11 @@ if (!$localColsResult) {
 
     function backups($tabla, $id_table)
     {
-        global $agregados, $eliminados, $actualizados, $conexion, $remoteConn;
+        global $agregados, $eliminados, $actualizados, $conexion, $remote_db;
 
         verificarColumnas($tabla);
 
-        $remoteResult = $remoteConn->query("SELECT * FROM $tabla");
+        $remoteResult = $remote_db->query("SELECT * FROM $tabla");
         $remoteData = [];
         while ($row = $remoteResult->fetch_assoc()) {
             $remoteData[$row[$id_table]] = $row;
@@ -139,12 +140,12 @@ if (!$localColsResult) {
 
     function backupsPorId($tabla, $id_table, $id_especifico)
 {
-    global $agregados, $eliminados, $actualizados, $conexion, $remoteConn;
+    global $agregados, $eliminados, $actualizados, $conexion, $remote_db;
 
     verificarColumnas($tabla);
 
     // Obtener datos del registro específico en la tabla remota
-    $stmt = $remoteConn->prepare("SELECT * FROM $tabla WHERE $id_table = ?");
+    $stmt = $remote_db->prepare("SELECT * FROM $tabla WHERE $id_table = ?");
     $stmt->bind_param('s', $id_especifico);
     $stmt->execute();
     $remoteResult = $stmt->get_result();
@@ -234,7 +235,7 @@ if (!$localColsResult) {
     echo json_encode($resultado);
 
     $conexion->close();
-    $remoteConn->close();
+    $remote_db->close();
 } else {
     echo json_encode(['status' => 'error', 'mensaje' => 'Permiso denegado']);
 }
