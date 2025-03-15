@@ -5,13 +5,10 @@ header('Content-Type: application/json');
 
 if (isset($_GET['tabla']) || true) {
     // Configuración de conexión a la base de datos remota
-    $remoteHost = 'sigob.net';
-    $remoteDb = 'sigobnet_sigob_entes';
-    $remoteUser = 'sigobnet_userroot';
-    $remotePass = ']n^VmqjqCD1k';
+
 
     // Conexión a la base de datos del hosting
-    $remoteConn = new mysqli($remoteHost, $remoteUser, $remotePass, $remoteDb);
+    $remoteConn = new mysqli('sigob.net', 'sigobnet_userroot', ']n^VmqjqCD1k', 'sigobnet_sigob_entes');
     $remoteConn->set_charset('utf8mb4');
 
     if ($remoteConn->connect_error) {
