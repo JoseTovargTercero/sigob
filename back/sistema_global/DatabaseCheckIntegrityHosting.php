@@ -24,18 +24,37 @@ if (isset($_GET['tabla']) || true) {
     $eliminados = 0;
     $actualizados = 0;
 
+
+
     // Función para verificar y crear columnas faltantes
     function verificarColumnas($tabla)
     {
         global $conexion, $remoteConn;
 
         $remoteColsResult = $remoteConn->query("SHOW COLUMNS FROM $tabla");
+
+if (!$remoteColsResult) {
+    die(json_encode([
+        'status' => 'error',
+        'mensaje' => 'Error en la consulta remota: ' . $remoteConn->error
+    ]));
+}
+
         $remoteColumns = [];
         while ($col = $remoteColsResult->fetch_assoc()) {
             $remoteColumns[] = $col['Field'];
         }
 
         $localColsResult = $conexion->query("SHOW COLUMNS FROM $tabla");
+
+if (!$localColsResult) {
+    die(json_encode([
+        'status' => 'error',
+        'mensaje' => 'Error en la consulta local: ' . $conexion->error
+    ]));
+}
+
+        
         $localColumns = [];
         while ($col = $localColsResult->fetch_assoc()) {
             $localColumns[] = $col['Field'];
