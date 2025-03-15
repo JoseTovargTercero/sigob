@@ -252,7 +252,7 @@ if (isset($_GET['tabla']) || true) {
     echo json_encode($resultado);
 
     $conexion->close();
-    $remote_db->close();
+
 } else {
     echo json_encode(['status' => 'error', 'mensaje' => 'Permiso denegado']);
 }
