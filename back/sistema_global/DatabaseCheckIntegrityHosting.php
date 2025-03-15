@@ -12,7 +12,6 @@ if (isset($_GET['tabla']) || true) {
             'mensaje' => 'Conexión fallida: ' . $remote_db->connect_error
         ]));
     }
-    echo json_encode(['status' => 'ok', 'mensaje' => 'Conexión exitosa']);
 
     // Contadores de operaciones
     $agregados = 0;
