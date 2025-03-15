@@ -5,107 +5,84 @@ header('Content-Type: application/json');
 
 if (isset($_GET['tabla']) || true) {
     // Configuración de conexión a la base de datos remota
-
-
-
-  $remote_db = new mysqli('sigob.net', 'sigobnet_userroot', ']n^VmqjqCD1k', 'sigobnet_sigob_entes');
-
-if ($remote_db->connect_error) {
-    die(json_encode([
-        'status' => 'error',
-        'mensaje' => 'Conexión fallida: ' . $remote_db->connect_error
-    ]));
-    exit();
-}
-
-echo json_encode(['status' => 'ok', 'mensaje' => 'Conexión exitosa']);
-
-
+    $remote_db = new mysqli('sigob.net', 'sigobnet_userroot', ']n^VmqjqCD1k', 'sigobnet_sigob_entes');
+    if ($remote_db->connect_error) {
+        die(json_encode([
+            'status' => 'error',
+            'mensaje' => 'Conexión fallida: ' . $remote_db->connect_error
+        ]));
+    }
+    echo json_encode(['status' => 'ok', 'mensaje' => 'Conexión exitosa']);
 
     // Contadores de operaciones
     $agregados = 0;
     $eliminados = 0;
     $actualizados = 0;
 
-
-
     // Función para verificar y crear columnas faltantes
-function verificarColumnas($tabla) {
-    global $conexion, $remote_db;
+    function verificarColumnas($tabla) {
+        global $conexion, $remote_db;
 
-    //  Validar conexión remota antes de ejecutar consultas
-    if (!$remote_db || $remote_db->connect_error) {
-        die(json_encode([
-            'status' => 'error',
-            'mensaje' => 'Error: Conexión remota fallida: ' . ($remote_db ? $remote_db->connect_error : 'No disponible')
-        ]));
-    }
+        // Validar conexión remota antes de ejecutar consultas
+        if ($remote_db->connect_error) {
+            die(json_encode([
+                'status' => 'error',
+                'mensaje' => 'Error: Conexión remota fallida: ' . $remote_db->connect_error
+            ]));
+        }
 
-    //  Validar conexión local antes de ejecutar consultas
-    if (!$conexion || $conexion->connect_error) {
-        die(json_encode([
-            'status' => 'error',
-            'mensaje' => 'Error: Conexión local fallida: ' . ($conexion ? $conexion->connect_error : 'No disponible')
-        ]));
-    }
+        // Validar conexión local antes de ejecutar consultas
+        if ($conexion->connect_error) {
+            die(json_encode([
+                'status' => 'error',
+                'mensaje' => 'Error: Conexión local fallida: ' . $conexion->connect_error
+            ]));
+        }
 
-    // Obtener columnas remotas desde INFORMATION_SCHEMA
-    $query_remote = "SELECT COLUMN_NAME, COLUMN_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ?";
-    
-    if (!($stmt_remote = $remote_db->prepare($query_remote))) {
-        die(json_encode(['status' => 'error', 'mensaje' => 'Error en prepare() remoto: ' . $remote_db->error]));
-    }
+        // Obtener columnas remotas desde INFORMATION_SCHEMA
+        $query_remote = "SELECT COLUMN_NAME, COLUMN_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ?";
+        $stmt_remote = $remote_db->prepare($query_remote);
+        $stmt_remote->bind_param('s', $tabla);
+        $stmt_remote->execute();
+        $result_remote = $stmt_remote->get_result();
 
-    $stmt_remote->bind_param('s', $tabla);
-    $stmt_remote->execute();
-    $result_remote = $stmt_remote->get_result();
-    $stmt_remote->close();
+        if (!$result_remote) {
+            die(json_encode(['status' => 'error', 'mensaje' => 'Error en la consulta remota: ' . $remote_db->error]));
+        }
 
-    if (!$result_remote) {
-        die(json_encode(['status' => 'error', 'mensaje' => 'Error en la consulta remota: ' . $remote_db->error]));
-    }
+        $remoteColumns = [];
+        while ($col = $result_remote->fetch_assoc()) {
+            $remoteColumns[$col['COLUMN_NAME']] = $col['COLUMN_TYPE'];
+        }
 
-    $remoteColumns = [];
-    while ($col = $result_remote->fetch_assoc()) {
-        $remoteColumns[$col['COLUMN_NAME']] = $col['COLUMN_TYPE'];
-    }
+        // Obtener columnas locales desde INFORMATION_SCHEMA
+        $query_local = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ?";
+        $stmt_local = $conexion->prepare($query_local);
+        $stmt_local->bind_param('s', $tabla);
+        $stmt_local->execute();
+        $result_local = $stmt_local->get_result();
 
-    // Obtener columnas locales desde INFORMATION_SCHEMA
-    $query_local = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ?";
-    
-    if (!($stmt_local = $conexion->prepare($query_local))) {
-        die(json_encode(['status' => 'error', 'mensaje' => 'Error en prepare() local: ' . $conexion->error]));
-    }
+        if (!$result_local) {
+            die(json_encode(['status' => 'error', 'mensaje' => 'Error en la consulta local: ' . $conexion->error]));
+        }
 
-    $stmt_local->bind_param('s', $tabla);
-    $stmt_local->execute();
-    $result_local = $stmt_local->get_result();
-    $stmt_local->close();
+        $localColumns = [];
+        while ($col = $result_local->fetch_assoc()) {
+            $localColumns[] = $col['COLUMN_NAME'];
+        }
 
-    if (!$result_local) {
-        die(json_encode(['status' => 'error', 'mensaje' => 'Error en la consulta local: ' . $conexion->error]));
-    }
-
-    $localColumns = [];
-    while ($col = $result_local->fetch_assoc()) {
-        $localColumns[] = $col['COLUMN_NAME'];
-    }
-
-    // Agregar columnas faltantes en la tabla local
-    foreach ($remoteColumns as $column => $type) {
-        if (!in_array($column, $localColumns)) {
-            $sql = "ALTER TABLE `$tabla` ADD COLUMN `$column` $type";
-            if (!$conexion->query($sql)) {
-                die(json_encode(['status' => 'error', 'mensaje' => "Error al agregar columna $column: " . $conexion->error]));
+        // Agregar columnas faltantes en la tabla local
+        foreach ($remoteColumns as $column => $type) {
+            if (!in_array($column, $localColumns)) {
+                $sql = "ALTER TABLE `$tabla` ADD COLUMN `$column` $type";
+                if (!$conexion->query($sql)) {
+                    die(json_encode(['status' => 'error', 'mensaje' => "Error al agregar columna $column: " . $conexion->error]));
+                }
             }
         }
+
+        echo json_encode(['status' => 'ok', 'mensaje' => 'Verificación completada']);
     }
-
-    echo json_encode(['status' => 'ok', 'mensaje' => 'Verificación completada']);
-}
-
-
-
 
     function backups($tabla, $id_table)
     {
@@ -180,89 +157,88 @@ function verificarColumnas($tabla) {
     }
 
     function backupsPorId($tabla, $id_table, $id_especifico)
-{
-    global $agregados, $eliminados, $actualizados, $conexion, $remote_db;
+    {
+        global $agregados, $eliminados, $actualizados, $conexion, $remote_db;
 
-    verificarColumnas($tabla);
+        verificarColumnas($tabla);
 
-    // Obtener datos del registro específico en la tabla remota
-    $stmt = $remote_db->prepare("SELECT * FROM $tabla WHERE $id_table = ?");
-    $stmt->bind_param('s', $id_especifico);
-    $stmt->execute();
-    $remoteResult = $stmt->get_result();
-    $stmt->close();
+        // Obtener datos del registro específico en la tabla remota
+        $stmt = $remote_db->prepare("SELECT * FROM $tabla WHERE $id_table = ?");
+        $stmt->bind_param('s', $id_especifico);
+        $stmt->execute();
+        $remoteResult = $stmt->get_result();
+        $stmt->close();
 
-    $remoteData = [];
-    while ($row = $remoteResult->fetch_assoc()) {
-        $remoteData[$row[$id_table]] = $row;
-    }
+        $remoteData = [];
+        while ($row = $remoteResult->fetch_assoc()) {
+            $remoteData[$row[$id_table]] = $row;
+        }
 
-    // Obtener datos del registro específico en la tabla local
-    $stmt = $conexion->prepare("SELECT * FROM $tabla WHERE $id_table = ?");
-    $stmt->bind_param('s', $id_especifico);
-    $stmt->execute();
-    $localResult = $stmt->get_result();
-    $stmt->close();
+        // Obtener datos del registro específico en la tabla local
+        $stmt = $conexion->prepare("SELECT * FROM $tabla WHERE $id_table = ?");
+        $stmt->bind_param('s', $id_especifico);
+        $stmt->execute();
+        $localResult = $stmt->get_result();
+        $stmt->close();
 
-    $localData = [];
-    while ($row = $localResult->fetch_assoc()) {
-        $localData[$row[$id_table]] = $row;
-    }
+        $localData = [];
+        while ($row = $localResult->fetch_assoc()) {
+            $localData[$row[$id_table]] = $row;
+        }
 
-    $conexion->begin_transaction();
+        $conexion->begin_transaction();
 
-    try {
-        foreach ($remoteData as $id => $remoteRow) {
-            if (isset($localData[$id])) {
-                if ($remoteRow != $localData[$id]) {
-                    $set = [];
-                    foreach ($remoteRow as $key => $value) {
-                        $set[] = "$key=?";
+        try {
+            foreach ($remoteData as $id => $remoteRow) {
+                if (isset($localData[$id])) {
+                    if ($remoteRow != $localData[$id]) {
+                        $set = [];
+                        foreach ($remoteRow as $key => $value) {
+                            $set[] = "$key=?";
+                        }
+                        $setStr = implode(", ", $set);
+
+                        $stmt = $conexion->prepare("UPDATE $tabla SET $setStr WHERE $id_table=?");
+                        $types = str_repeat('s', count($remoteRow)) . 's';
+                        $values = array_values($remoteRow);
+                        $values[] = $id;
+                        $stmt->bind_param($types, ...$values);
+                        $stmt->execute();
+                        $stmt->close();
+
+                        $actualizados++;
                     }
-                    $setStr = implode(", ", $set);
+                } else {
+                    $columns = implode(", ", array_keys($remoteRow));
+                    $placeholders = implode(", ", array_fill(0, count($remoteRow), '?'));
 
-                    $stmt = $conexion->prepare("UPDATE $tabla SET $setStr WHERE $id_table=?");
-                    $types = str_repeat('s', count($remoteRow)) . 's';
-                    $values = array_values($remoteRow);
-                    $values[] = $id;
-                    $stmt->bind_param($types, ...$values);
+                    $stmt = $conexion->prepare("INSERT INTO $tabla ($columns) VALUES ($placeholders)");
+                    $types = str_repeat('s', count($remoteRow));
+                    $stmt->bind_param($types, ...array_values($remoteRow));
                     $stmt->execute();
                     $stmt->close();
 
-                    $actualizados++;
+                    $agregados++;
                 }
-            } else {
-                $columns = implode(", ", array_keys($remoteRow));
-                $placeholders = implode(", ", array_fill(0, count($remoteRow), '?'));
-
-                $stmt = $conexion->prepare("INSERT INTO $tabla ($columns) VALUES ($placeholders)");
-                $types = str_repeat('s', count($remoteRow));
-                $stmt->bind_param($types, ...array_values($remoteRow));
-                $stmt->execute();
-                $stmt->close();
-
-                $agregados++;
             }
-        }
 
-        foreach ($localData as $id => $localRow) {
-            if (!isset($remoteData[$id])) {
-                $stmt = $conexion->prepare("DELETE FROM $tabla WHERE $id_table=?");
-                $stmt->bind_param('s', $id);
-                $stmt->execute();
-                $stmt->close();
+            foreach ($localData as $id => $localRow) {
+                if (!isset($remoteData[$id])) {
+                    $stmt = $conexion->prepare("DELETE FROM $tabla WHERE $id_table=?");
+                    $stmt->bind_param('s', $id);
+                    $stmt->execute();
+                    $stmt->close();
 
-                $eliminados++;
+                    $eliminados++;
+                }
             }
-        }
 
-        $conexion->commit();
-    } catch (Exception $e) {
-        $conexion->rollback();
-        throw $e;
+            $conexion->commit();
+        } catch (Exception $e) {
+            $conexion->rollback();
+            throw $e;
+        }
     }
-}
-
 
     $resultado = [
         'status' => 'ok',
