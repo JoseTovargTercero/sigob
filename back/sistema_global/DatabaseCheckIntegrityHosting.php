@@ -3,7 +3,7 @@ require_once '../sistema_global/conexion.php';
 require_once '../sistema_global/session.php';
 header('Content-Type: application/json');
 
-if ($_SESSION["u_oficina_id"] == '5' && isset($_GET['tabla']) || true) {
+if (isset($_GET['tabla']) || true) {
     // Configuración de conexión a la base de datos remota
     $remoteHost = REMOTE_HOST;
     $remoteDb = 'sigobnet_sigob_entes';
