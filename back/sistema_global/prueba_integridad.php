@@ -1,16 +1,15 @@
 <?php
-require_once '../sistema_global/conexion.php';
-require_once '../sistema_global/session.php';
-require_once '../sistema_global/DatabaseCheckIntegrityHosting.php';
-header('Content-Type: application/json');
+$remote_db = new mysqli('sigob.net', 'sigobnet_userroot', ']n^VmqjqCD1k', 'sigobnet_sigob_entes');
 
+if ($remote_db->connect_error) {
+    die(json_encode([
+        'status' => 'error',
+        'mensaje' => 'Conexión fallida: ' . $remote_db->connect_error
+    ]));
+}
 
-  $sincronizacion = verificarColumnas('traspasos');
-    $sincronizacion2 = verificarColumnas('traspaso_informacion');
-
-
-
-
+echo json_encode(['status' => 'ok', 'mensaje' => 'Conexión exitosa']);
+exit();
 
 
  ?>
