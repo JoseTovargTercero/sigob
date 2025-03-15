@@ -850,16 +850,19 @@ export const pre_traspasosForm_card = async ({
 
     partidasList.innerHTML = options.join('')
 
-    $('.chosen-distribucion')
+    let distribucionMontoActual = d.getElementById(
+      `distribucion-monto-actual-${newNumRow}`
+    )
+
+    $(`.chosen-distribucion-${newNumRow}`)
       .chosen()
       .change(function (obj, result) {
-        let distribucionMontoActual = d.getElementById(
-          `distribucion-monto-actual-${newNumRow}`
-        )
         let partida = distribucionesSecretarias.find(
           (partida) =>
             Number(partida.id_distribucion) === Number(result.selected)
         )
+
+        console.log(result.selected, partida.id_distribucion)
 
         distribucionMontoActual.value = partida
           ? `${separadorLocal(partida.monto)} Bs`
@@ -880,7 +883,7 @@ function partidaRow(partidaNum, tipo) {
               Distribucion
             </label>
             <select
-              class='form-control partida-partida chosen-distribucion'
+              class='form-control partida-partida chosen-distribucion-${partidaNum}'
               type='text'
               placeholder='Sector...'
               name='distribucion-${partidaNum}'
