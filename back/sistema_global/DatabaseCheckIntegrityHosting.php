@@ -22,46 +22,59 @@ if (isset($_GET['tabla']) || true) {
 
 
     // Función para verificar y crear columnas faltantes
-    function verificarColumnas($tabla)
-    {
-        global $conexion, $remote_db;
+function verificarColumnas($tabla) {
+    global $conexion, $remote_db;
 
-        $remoteColsResult = $remote_db->query("SHOW COLUMNS FROM $tabla");
+    // Verificar si la conexión remota es válida
+    if (!$remote_db) {
+        die(json_encode(['status' => 'error', 'mensaje' => 'Error: Conexión remota no disponible.']));
+    }
 
-if (!$remoteColsResult) {
-    die(json_encode([
-        'status' => 'error',
-        'mensaje' => 'Error en la consulta remota: ' . $remote_db->error
-    ]));
-}
+    // Obtener columnas de la tabla remota desde INFORMATION_SCHEMA
+    $query_remote = "SELECT COLUMN_NAME, COLUMN_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ?";
+    $stmt_remote = $remote_db->prepare($query_remote);
+    $stmt_remote->bind_param('s', $tabla);
+    $stmt_remote->execute();
+    $result_remote = $stmt_remote->get_result();
+    
+    if (!$result_remote) {
+        die(json_encode(['status' => 'error', 'mensaje' => 'Error en la consulta remota: ' . $remote_db->error]));
+    }
 
-        $remoteColumns = [];
-        while ($col = $remoteColsResult->fetch_assoc()) {
-            $remoteColumns[] = $col['Field'];
-        }
+    $remoteColumns = [];
+    while ($col = $result_remote->fetch_assoc()) {
+        $remoteColumns[$col['COLUMN_NAME']] = $col['COLUMN_TYPE'];
+    }
+    $stmt_remote->close();
 
-        $localColsResult = $conexion->query("SHOW COLUMNS FROM $tabla");
+    // Obtener columnas de la tabla local desde INFORMATION_SCHEMA
+    $query_local = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ?";
+    $stmt_local = $conexion->prepare($query_local);
+    $stmt_local->bind_param('s', $tabla);
+    $stmt_local->execute();
+    $result_local = $stmt_local->get_result();
 
-if (!$localColsResult) {
-    die(json_encode([
-        'status' => 'error',
-        'mensaje' => 'Error en la consulta local: ' . $conexion->error
-    ]));
-}
+    if (!$result_local) {
+        die(json_encode(['status' => 'error', 'mensaje' => 'Error en la consulta local: ' . $conexion->error]));
+    }
 
+    $localColumns = [];
+    while ($col = $result_local->fetch_assoc()) {
+        $localColumns[] = $col['COLUMN_NAME'];
+    }
+    $stmt_local->close();
 
-        $localColumns = [];
-        while ($col = $localColsResult->fetch_assoc()) {
-            $localColumns[] = $col['Field'];
-        }
-
-        foreach ($remoteColumns as $column) {
-            if (!in_array($column, $localColumns)) {
-                $colDefinition = $remote_db->query("SHOW COLUMNS FROM $tabla WHERE Field = '$column'")->fetch_assoc();
-                $conexion->query("ALTER TABLE $tabla ADD COLUMN {$colDefinition['Field']} {$colDefinition['Type']}");
+    // Comparar y agregar columnas faltantes en la tabla local
+    foreach ($remoteColumns as $column => $type) {
+        if (!in_array($column, $localColumns)) {
+            $sql = "ALTER TABLE $tabla ADD COLUMN `$column` $type";
+            if (!$conexion->query($sql)) {
+                die(json_encode(['status' => 'error', 'mensaje' => "Error al agregar columna $column: " . $conexion->error]));
             }
         }
     }
+}
+
 
     function backups($tabla, $id_table)
     {
