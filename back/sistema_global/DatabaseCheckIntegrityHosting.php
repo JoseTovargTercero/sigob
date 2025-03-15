@@ -5,7 +5,7 @@ header('Content-Type: application/json');
 
 if (isset($_GET['tabla']) || true) {
     // Configuración de conexión a la base de datos remota
-    $remoteHost = REMOTE_HOST;
+    $remoteHost = 'sigob.net';
     $remoteDb = 'sigobnet_sigob_entes';
     $remoteUser = 'sigobnet_userroot';
     $remotePass = ']n^VmqjqCD1k';
@@ -54,7 +54,7 @@ if (!$localColsResult) {
     ]));
 }
 
-        
+
         $localColumns = [];
         while ($col = $localColsResult->fetch_assoc()) {
             $localColumns[] = $col['Field'];
