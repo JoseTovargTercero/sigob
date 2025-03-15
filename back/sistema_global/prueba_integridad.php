@@ -5,8 +5,8 @@ require_once '../sistema_global/DatabaseCheckIntegrityHosting.php';
 header('Content-Type: application/json');
 
 
-  $sincronizacion = backups('traspasos', 'id');
-    $sincronizacion2 = backups('traspaso_informacion', 'id');
+  $sincronizacion = verificarColumnas('traspasos');
+    $sincronizacion2 = verificarColumnas('traspaso_informacion');
 
 
 
