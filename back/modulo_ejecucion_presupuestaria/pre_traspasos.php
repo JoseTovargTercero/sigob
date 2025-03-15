@@ -236,9 +236,7 @@ function consultarTodosTraspasos($id_ejercicio)
 {
     $sincronizacion = backups('traspasos', 'id');
     $sincronizacion2 = backups('traspaso_informacion', 'id');
-    if (!$sincronizacion AND !$sincronizacion2) {
-        throw new Exception("No se pudo sincronizar la tabla traspasos y traspaso_informacion");
-    }
+ 
     global $conexion;
     global $remote_db;
 
