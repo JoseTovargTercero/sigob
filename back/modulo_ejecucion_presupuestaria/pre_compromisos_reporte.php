@@ -69,6 +69,16 @@ function procesarDatos($tipo, $tipo_fecha, $fecha, $local_db, $remote_db, $id_ej
 
                 $mes = $solicitud['mes'] + 1; // Si es 0, lo cambia a 1 automáticamente
 
+$meses2 = [
+    1 => 'Enero', 2 => 'Febrero', 3 => 'Marzo', 4 => 'Abril',
+    5 => 'Mayo', 6 => 'Junio', 7 => 'Julio', 8 => 'Agosto',
+    9 => 'Septiembre', 10 => 'Octubre', 11 => 'Noviembre', 12 => 'Diciembre'
+];
+
+$mes2 = $meses2[$mes] ?? 'Mes inválido';
+
+
+
             } elseif ($tipo === 'gastos') {
                 $stmt_gasto = $db->prepare("SELECT fecha FROM gastos WHERE id = ?");
                 if (!$stmt_gasto) {
@@ -129,7 +139,8 @@ function procesarDatos($tipo, $tipo_fecha, $fecha, $local_db, $remote_db, $id_ej
                 }
             }
 
-            $data[] = [
+            if ($tipo == "gastos" OR $tipo == "proyecto_credito") {
+               $data[] = [
                 'id' => $compromiso['id'],
                 'correlativo' => $compromiso['correlativo'],
                 'descripcion' => $compromiso['descripcion'],
@@ -137,7 +148,22 @@ function procesarDatos($tipo, $tipo_fecha, $fecha, $local_db, $remote_db, $id_ej
                 'id_ejercicio' => $compromiso['id_ejercicio'],
                 'tabla_registro' => $compromiso['tabla_registro'],
                 'numero_compromiso' => $compromiso['numero_compromiso'],
+                'fecha' => $gasto['fecha'],
             ];
+            }else{
+                $data[] = [
+                'id' => $compromiso['id'],
+                'correlativo' => $compromiso['correlativo'],
+                'descripcion' => $compromiso['descripcion'],
+                'id_registro' => $compromiso['id_registro'],
+                'id_ejercicio' => $compromiso['id_ejercicio'],
+                'tabla_registro' => $compromiso['tabla_registro'],
+                'numero_compromiso' => $compromiso['numero_compromiso'],
+                'fecha' => $mes2,
+            ];
+            }
+
+            
         }
 
         return $data;
@@ -383,7 +409,18 @@ $stmt->close();
             <tr>
                 <th class="bt bl bb p-15">#</th>
                 <th class="bt bl bb p-15 text-left">Descripción</th>
+                <?php
+                if ($tipo == "solicitud_dozavos") {
+                ?>
+                <th class="bt bl bb p-15">Mes</th>
+                <?php
+                }else{
+                ?>
                 <th class="bt bl bb p-15">Fecha</th>
+                <?php 
+                }
+                ?>
+                
                 <th class="bt bl bb p-15">Tipo de compromiso</th>
                 <th class="bt bl bb p-15">Número de Compromiso</th>
             </tr>
@@ -397,6 +434,7 @@ $stmt->close();
                     $descripcion = $compromiso['descripcion'];
                     $tabla_registro = $compromiso['tabla_registro'];
                     $numero_compromiso = $compromiso['numero_compromiso'];
+                    $fecha = $compromiso['fecha'];
 
                     $prefijo = strtoupper(substr($numero_compromiso, 0, 1));
 
@@ -404,8 +442,16 @@ $stmt->close();
                     echo "<tr>
                     <td class='fz-8 bl'>" . $count++ . "</td>
                     <td class='fz-8 bl text-left'>{$descripcion}</td>
-                    <td class='fz-8 bl'>FECHA</td>
-                    <td class='fz-8 bl'>{$tipos_gasto[$prefijo]}</td>
+                    <td class='fz-8 bl'>{$fecha}</td>";
+                    if ($tipo == "solicitud_dozavos") {
+                        echo "
+                    <td class='fz-8 bl'>Solicitud de Dozavo</td>";
+                    }else{
+                        echo "
+                    <td class='fz-8 bl'>{$tipos_gasto[$prefijo]}</td>";
+                    }
+                    
+                    echo "
                     <td class='fz-8 bl br'>{$numero_compromiso}</td>
                 </tr>";
                 }
