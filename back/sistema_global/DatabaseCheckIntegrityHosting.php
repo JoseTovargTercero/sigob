@@ -9,7 +9,7 @@ if (isset($_GET['tabla']) || true) {
 
     // Conexión a la base de datos del hosting
     $remoteConn = new mysqli('sigob.net', 'sigobnet_userroot', ']n^VmqjqCD1k', 'sigobnet_sigob_entes');
-    $remoteConn->set_charset('utf8mb4');
+
 
     if ($remoteConn->connect_error) {
         echo json_encode(['status' => 'error', 'mensaje' => "Conexión fallida a la base de datos del hosting: " . $remoteConn->connect_error]);
@@ -233,8 +233,6 @@ if (!$localColsResult) {
 
     echo json_encode($resultado);
 
-    $conexion->close();
-    $remoteConn->close();
 } else {
     echo json_encode(['status' => 'error', 'mensaje' => 'Permiso denegado']);
 }
