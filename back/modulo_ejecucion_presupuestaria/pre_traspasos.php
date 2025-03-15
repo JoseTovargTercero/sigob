@@ -1,6 +1,7 @@
 <?php
 
 require_once '../sistema_global/conexion.php';
+require_once '../sistema_global/DatabaseCheckIntegrityHosting.php';
 require_once '../sistema_global/conexion_remota.php';
 require_once '../sistema_global/session.php';
 require_once '../sistema_global/notificaciones.php';
@@ -233,6 +234,11 @@ function registrarTraspasoPartida($data)
 
 function consultarTodosTraspasos($id_ejercicio)
 {
+    $sincronizacion = backups('traspasos', 'id');
+    $sincronizacion2 = backups('traspaso_informacion', 'id');
+    if (!$sincronizacion AND !$sincronizacion2) {
+        throw new Exception("No se pudo sincronizar la tabla traspasos y traspaso_informacion");
+    }
     global $conexion;
     global $remote_db;
 
