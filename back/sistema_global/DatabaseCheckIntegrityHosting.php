@@ -8,9 +8,6 @@ if (isset($_GET['tabla']) || true) {
     // Configuración de conexión a la base de datos remota
 
 
-    // Conexión a la base de datos del hosting
-    $remote_db = new mysqli('sigob.net', 'sigobnet_userroot', ']n^VmqjqCD1k', 'sigobnet_sigob_entes');
-
 
     if ($remote_db->connect_error) {
         echo json_encode(['status' => 'error', 'mensaje' => "Conexión fallida a la base de datos del hosting: " . $remote_db->connect_error]);
