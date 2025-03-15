@@ -25,18 +25,35 @@ if (isset($_GET['tabla']) || true) {
 function verificarColumnas($tabla) {
     global $conexion, $remote_db;
 
-    // Verificar si la conexión remota es válida
-    if (!$remote_db) {
-        die(json_encode(['status' => 'error', 'mensaje' => 'Error: Conexión remota no disponible.']));
+
+    if (!$remote_db || $remote_db->connect_error) {
+        die(json_encode([
+            'status' => 'error',
+            'mensaje' => 'Error: Conexión remota fallida: ' . ($remote_db ? $remote_db->connect_error : 'No disponible')
+        ]));
+    }
+
+
+    if (!$conexion || $conexion->connect_error) {
+        die(json_encode([
+            'status' => 'error',
+            'mensaje' => 'Error: Conexión local fallida: ' . ($conexion ? $conexion->connect_error : 'No disponible')
+        ]));
     }
 
     // Obtener columnas de la tabla remota desde INFORMATION_SCHEMA
     $query_remote = "SELECT COLUMN_NAME, COLUMN_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ?";
     $stmt_remote = $remote_db->prepare($query_remote);
+
+    if (!$stmt_remote) {
+        die(json_encode(['status' => 'error', 'mensaje' => 'Error en prepare() remoto: ' . $remote_db->error]));
+    }
+
     $stmt_remote->bind_param('s', $tabla);
     $stmt_remote->execute();
     $result_remote = $stmt_remote->get_result();
-    
+    $stmt_remote->close();
+
     if (!$result_remote) {
         die(json_encode(['status' => 'error', 'mensaje' => 'Error en la consulta remota: ' . $remote_db->error]));
     }
@@ -45,14 +62,19 @@ function verificarColumnas($tabla) {
     while ($col = $result_remote->fetch_assoc()) {
         $remoteColumns[$col['COLUMN_NAME']] = $col['COLUMN_TYPE'];
     }
-    $stmt_remote->close();
 
     // Obtener columnas de la tabla local desde INFORMATION_SCHEMA
     $query_local = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ?";
     $stmt_local = $conexion->prepare($query_local);
+
+    if (!$stmt_local) {
+        die(json_encode(['status' => 'error', 'mensaje' => 'Error en prepare() local: ' . $conexion->error]));
+    }
+
     $stmt_local->bind_param('s', $tabla);
     $stmt_local->execute();
     $result_local = $stmt_local->get_result();
+    $stmt_local->close();
 
     if (!$result_local) {
         die(json_encode(['status' => 'error', 'mensaje' => 'Error en la consulta local: ' . $conexion->error]));
@@ -62,18 +84,18 @@ function verificarColumnas($tabla) {
     while ($col = $result_local->fetch_assoc()) {
         $localColumns[] = $col['COLUMN_NAME'];
     }
-    $stmt_local->close();
 
     // Comparar y agregar columnas faltantes en la tabla local
     foreach ($remoteColumns as $column => $type) {
         if (!in_array($column, $localColumns)) {
-            $sql = "ALTER TABLE $tabla ADD COLUMN `$column` $type";
+            $sql = "ALTER TABLE `$tabla` ADD COLUMN `$column` $type";
             if (!$conexion->query($sql)) {
                 die(json_encode(['status' => 'error', 'mensaje' => "Error al agregar columna $column: " . $conexion->error]));
             }
         }
     }
 }
+
 
 
     function backups($tabla, $id_table)
