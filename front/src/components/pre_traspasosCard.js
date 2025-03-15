@@ -53,7 +53,7 @@ export const pre_traspasosCard = ({
         partida.programa_denominacion ? partida.programa_denominacion : '00'
       }.${
         partida.proyecto_denominacion ? partida.proyecto_denominacion : '00'
-      }.${partida.actividad ? partida.actividad : '00'}`
+      }.${partida.id_actividad ? partida.id_actividad : '00'}`
 
       let montoFinal = Number(partida.monto) + Number(partida.monto_traspaso)
 
@@ -77,7 +77,7 @@ export const pre_traspasosCard = ({
         partida.programa_denominacion ? partida.programa_denominacion : '00'
       }.${
         partida.proyecto_denominacion ? partida.proyecto_denominacion : '00'
-      }.${partida.actividad ? partida.actividad : '00'}`
+      }.${partida.id_actividad ? partida.id_actividad : '00'}`
 
       let montoFinal = Number(partida.monto) - Number(partida.monto_traspaso)
 
