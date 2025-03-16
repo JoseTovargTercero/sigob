@@ -40,6 +40,10 @@ $reportes = [
         'nombre' => 'SECTORES',
         'formato' => 'A4-L'
     ],
+    'st_pr_partidas' => [
+        'nombre' => 'PARTIDAS',
+        'formato' => 'A4-L'
+    ],
     'partidas' => [
         'nombre' => 'PARTIDAS',
         'formato' => 'A4-L'
@@ -56,6 +60,7 @@ $reportes = [
 
 $pdf_files = [];
 $url_pdf = "{$base_url}pre_pdf_$tipo.php?id_ejercicio=$id_ejercicio&trimestre=$trimestre";
+
 if ($tipo == "compromiso") {
     $url_pdf = "{$base_url}pre_compromisos_reporte.php?id_ejercicio=$id_ejercicio&tipo=$tipo_tabla&tipo_fecha=$tipo_fecha&fecha=$fecha2";
 }
