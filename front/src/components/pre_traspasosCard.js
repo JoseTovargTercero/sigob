@@ -1,4 +1,8 @@
-import { aceptarTraspaso, rechazarTraspaso } from '../api/pre_traspasos.js'
+import {
+  aceptarTraspaso,
+  rechazarTraspaso,
+  ultimosTraspasos,
+} from '../api/pre_traspasos.js'
 import { loadTraspasosTable } from '../controllers/pre_traspasosTable.js'
 import {
   confirmNotification,
@@ -11,19 +15,19 @@ import {
 import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
 const d = document
 
-export const pre_traspasosCard = ({
+export const pre_traspasosCard = async ({
   elementToInsert,
   data,
   ejercicioFiscal,
 }) => {
-  //   let fieldList = { ejemplo: '' }
-  //   let fieldListErrors = {
-  //     ejemplo: {
-  //       value: true,
-  //       message: 'mensaje de error',
-  //       type: 'text',
-  //     },
-  //   }
+  let fieldList = { codigo: '' }
+  let fieldListErrors = {
+    codigo: {
+      value: true,
+      message: 'Código inválido',
+      type: 'textarea',
+    },
+  }
 
   let nombreCard = 'traspasos'
 
@@ -37,7 +41,15 @@ export const pre_traspasosCard = ({
     restar: [],
   }
 
+  console.log(data)
+
   const documentoLabel = data.tipo === 1 ? 'Traslado' : 'Traspaso'
+
+  let ultimosRegistros = await ultimosTraspasos(ejercicioFiscal.id)
+
+  console.log(ultimosRegistros)
+
+  // let ultimosRegistros = await ultimosTraspasos(ejercicioFiscal.id)
 
   const resumenPartidas = () => {
     data.detalles.forEach((distribucion) => {
@@ -107,7 +119,7 @@ export const pre_traspasosCard = ({
           <th class="w-10">Cambio</th>
           <th class="w-50">Monto Final</th>
         </thead>
-        <tbody>${filasDisminuir.join('')}${filasAumentar.join('')}</tbody>
+        <tbody>${filasAumentar.join('')}${filasDisminuir.join('')}</tbody>
       </table>`
 
     return `<div id='card-body-part-3' class="slide-up-animation">
@@ -134,6 +146,21 @@ export const pre_traspasosCard = ({
     }
   }
 
+  const validarTipo = () => {
+    let label = null
+
+    if (data.tipo === 1) {
+      label = ultimosRegistros.ultimo_traslado
+        ? ultimosRegistros.ultimo_traslado
+        : 'No hay ultimo registro'
+    } else {
+      label = ultimosRegistros.ultimo_traspaso
+        ? ultimosRegistros.ultimo_traspaso
+        : 'No hay ultimo registro'
+    }
+    return label
+  }
+
   let card = `<div class='card slide-up-animation' id='${nombreCard}-form-card'>
           <div class='card-header d-flex justify-content-between'>
             <div class=''>
@@ -152,11 +179,61 @@ export const pre_traspasosCard = ({
           <div class='card-body'>
           
           <h6>Numero de documento: <b>${data.n_orden}</b></h6>
+         
+
           <h6>Fecha de creación del documento: <b>${data.fecha
             .split('-')
             .reverse()
             .join('/')}</b></h6>
+
+
+            ${
+              data.ente && data.status === 0
+                ? ` <div id='header' class='row mb-4'>
+                <h6>
+                  Solicitante:
+                  <b>
+                    ${
+                      Number(data.tipo) === 1
+                        ? data.ente
+                        : 'Control Presupuestario'
+                    }
+                  </b>
+                </h6>
+
+                <div class='row mt-3 text-center'>
+                  <div class='col'>
+                    <h6>
+                      Ultima orden: <b id='ultima-orden'>${validarTipo()}</b>
+                    </h6>
+                  </div>
+                  <div class='col'>
+                    <h6>
+                      Se guardará como:
+                      <b id='label-codigo'>Seleccione un tipo</b>
+                    </h6>
+                  </div>
+                </div>
+                <div class='row'>
+                  <div class='form-group'>
+                    <label class='form-label' for='codigo'>
+                      Código para el registro
+                    </label>
+                    <input
+                      class='traslado-input form-control'
+                      id='codigo'
+                      name='codigo'
+                    />
+                  </div>
+                </div>
+              </div>`
+                : ''
+            }
+             
+          
+
           ${resumenPartidas()}
+       
           </div>
           <div class='card-footer text-center'>
 
@@ -184,11 +261,31 @@ export const pre_traspasosCard = ({
       closeCard(cardElement)
     }
     if (e.target.id === 'btn-aceptar') {
+      let inputs = d.querySelectorAll('.traslado-input')
+
+      inputs.forEach((input) => {
+        fieldList = validateInput({
+          target: input,
+          fieldList,
+          fieldListErrors,
+          type: fieldListErrors[input.name].type,
+        })
+      })
+
+      if (Object.values(fieldListErrors).some((el) => el.value)) {
+        toastNotification({
+          type: NOTIFICATIONS_TYPES.fail,
+          message: '¿Tiene que colocar el código antes de aceptar?',
+        })
+
+        return
+      }
+
       confirmNotification({
         type: NOTIFICATIONS_TYPES.send,
         message: '¿Está seguro de aceptar el traspaso?',
         successFunction: async () => {
-          let res = await aceptarTraspaso(data.id)
+          let res = await aceptarTraspaso(data.id, fieldList.codigo)
           if (res.success) {
             closeCard(cardElement)
             loadTraspasosTable(ejercicioFiscal.id)
@@ -218,6 +315,22 @@ export const pre_traspasosCard = ({
       fieldListErrors,
       type: fieldListErrors[e.target.name].type,
     })
+
+    if (e.target.id === 'codigo') {
+      let labelCodigo = d.getElementById('label-codigo')
+
+      if (Number(data.tipo) === 1) {
+        labelCodigo.textContent = `T${ejercicioFiscal.ano}-${e.target.value}`
+      }
+
+      if (Number(data.tipo) === 2) {
+        labelCodigo.textContent = `${
+          ultimosRegistros.ultimo_traspaso
+            ? ultimosRegistros.ultimo_traspaso + '-'
+            : ''
+        }${e.target.value}`
+      }
+    }
   }
 
   // CARGAR LISTA DE PARTIDAS

@@ -64,10 +64,10 @@ const getTraspaso = async (id) => {
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
 
-    let clone = res.clone()
-    let text = await clone.text()
+    // let clone = res.clone()
+    // let text = await clone.text()
 
-    console.log(text)
+    // console.log(text)
 
     const json = await res.json()
     console.log(json)
@@ -135,7 +135,7 @@ const registrarTraspaso = async (informacion) => {
   }
 }
 
-const aceptarTraspaso = async (id) => {
+const aceptarTraspaso = async (id, codigo) => {
   showLoader()
   try {
     let res = await fetch(traspasoUrl, {
@@ -143,15 +143,16 @@ const aceptarTraspaso = async (id) => {
       body: JSON.stringify({
         accion: 'aceptar',
         id,
+        codigo,
       }),
     })
 
     if (!res.ok) throw { status: res.status, statusText: res.statusText }
 
-    let clone = res.clone()
-    let text = await clone.text()
+    // let clone = res.clone()
+    // let text = await clone.text()
 
-    console.log(text)
+    // console.log(text)
 
     const json = await res.json()
 

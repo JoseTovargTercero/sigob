@@ -6,12 +6,21 @@ const d = document
 const w = window
 
 let solicitudesDozavosTable
+
 export async function validateTraspasosTable({ id_ejercicio }) {
   solicitudesDozavosTable = new DataTable('#traspaso-table', {
     scrollY: 300,
     language: tableLanguage,
     columns: [
       { data: 'tipo' },
+      {
+        data: 'solicitante',
+        render: function (data) {
+          return `<div class="text-wrap">
+              ${data}
+            </div>`
+        },
+      },
       { data: 'numero_orden' },
 
       { data: 'monto' },
@@ -50,8 +59,8 @@ export async function loadTraspasosTable(id_ejercicio) {
   let data = datosOrdenados.map((solicitud) => {
     return {
       tipo: Number(solicitud.tipo) === 1 ? 'Traslado' : 'Traspaso',
-      numero_orden: solicitud.n_orden,
-
+      numero_orden: solicitud.n_orden ? solicitud.n_orden : 'Pendiente',
+      solicitante: solicitud.ente ? solicitud.ente : 'Control Presupuestario',
       monto: separadorLocal(solicitud.monto_total),
       fecha: solicitud.fecha,
       status:

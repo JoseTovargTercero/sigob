@@ -67,7 +67,8 @@ require_once '../../back/sistema_global/session.php';
 
 
                                         <th>Tipo</th>
-                                        <th>N° Orden</th>
+                                        <th>SOLICITANTE</th>
+                                        <th>N° ORDEN</th>
 
                                         <th>MONTO</th>
                                         <th>Fecha</th>

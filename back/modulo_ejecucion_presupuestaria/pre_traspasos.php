@@ -236,7 +236,7 @@ function consultarTodosTraspasos($id_ejercicio)
 {
     $sincronizacion = backups('traspasos', 'id');
     $sincronizacion2 = backups('traspaso_informacion', 'id');
- 
+
     global $conexion;
     global $remote_db;
 
@@ -258,19 +258,19 @@ function consultarTodosTraspasos($id_ejercicio)
         foreach ($traspasos as &$traspaso) {
             // Consultar el nombre del ente si id_ente no está vacío
             if (!empty($traspaso['id_ente'])) {
-                $sqlEnte = "SELECT nombre FROM entes WHERE id = ?";
+                $sqlEnte = "SELECT ente_nombre FROM entes WHERE id = ?";
                 $stmtEnte = $conexion->prepare($sqlEnte);
                 $stmtEnte->bind_param("i", $traspaso['id_ente']);
                 $stmtEnte->execute();
                 $resultadoEnte = $stmtEnte->get_result();
-                
+
                 if ($resultadoEnte->num_rows > 0) {
-                    $traspaso['ente'] = $resultadoEnte->fetch_assoc()['nombre'];
+                    $traspaso['ente'] = $resultadoEnte->fetch_assoc()['ente_nombre'];
                 } else {
                     $traspaso['ente'] = null;
                 }
             }
-            
+
             $sqlInfo = "SELECT ti.id_distribucion, ti.monto, ti.tipo 
                         FROM traspaso_informacion ti 
                         WHERE ti.id_traspaso = ?";
@@ -541,9 +541,9 @@ function consultarTraspasoPorId($id)
             $stmtEnte->bind_param("i", $traspaso['id_ente']);
             $stmtEnte->execute();
             $resultadoEnte = $stmtEnte->get_result();
-            
+
             if ($resultadoEnte->num_rows > 0) {
-                $traspaso['ente'] = $resultadoEnte->fetch_assoc()['nombre'];
+                $traspaso['ente'] = $resultadoEnte->fetch_assoc()['ente_nombre'];
             } else {
                 $traspaso['ente'] = null;
             }
