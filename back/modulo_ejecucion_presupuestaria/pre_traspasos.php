@@ -367,7 +367,7 @@ function obtenerUltimosOrdenes($id_ejercicio)
     }
 }
 
-function gestionarTraspaso($id, $accion)
+function gestionarTraspaso($id, $accion, $codigo)
 {
     global $conexion;
     global $remote_db;
@@ -419,7 +419,7 @@ function gestionarTraspaso($id, $accion)
                     $idDistribucion = $row['id_distribucion'];
                     $tipo = $row['tipo'];
 
-                    // Consultar la tabla `distribucion_entes` para obtener el monto de la distribución específica con el filtro adicional por `id_ejercicio`
+                    // Consultar la tabla `distribucion_entes`
                     $sqlDistribucionEnte = "SELECT distribucion FROM distribucion_entes WHERE distribucion LIKE ? AND id_ejercicio = ?";
                     $likePattern = '%"id_distribucion":"' . $idDistribucion . '"%';
                     $stmtDistribucionEnte = $db->prepare($sqlDistribucionEnte);
@@ -449,67 +449,54 @@ function gestionarTraspaso($id, $accion)
 
                     // Actualizar el `monto` en el JSON de la columna `distribucion`
                     if ($tipo === 'D') {
-                        $nuevoMonto = $montoDistribucion - $row['monto']; // Resta el monto
+                        $nuevoMonto = $montoDistribucion - $row['monto'];
                     } elseif ($tipo === 'A') {
-                        $nuevoMonto = $montoDistribucion + $row['monto']; // Suma el monto
+                        $nuevoMonto = $montoDistribucion + $row['monto'];
                     } else {
                         throw new Exception("Tipo inválido: $tipo.");
                     }
 
-                    // Reemplazar el valor actualizado en el JSON
                     foreach ($distribucionData as &$dist) {
                         if ($dist['id_distribucion'] == $idDistribucion) {
-                            $dist['monto'] = $nuevoMonto; // Actualizamos el monto correspondiente
+                            $dist['monto'] = $nuevoMonto;
                         }
                     }
 
-                    // Guardar el JSON actualizado en la tabla `distribucion_entes`
                     $nuevoDistribucionJSON = json_encode($distribucionData);
                     $sqlUpdateDistribucionEnte = "UPDATE distribucion_entes SET distribucion = ? WHERE distribucion LIKE ? AND id_ejercicio = ?";
                     $stmtUpdateDistribucionEnte = $db->prepare($sqlUpdateDistribucionEnte);
                     $stmtUpdateDistribucionEnte->bind_param("ssi", $nuevoDistribucionJSON, $likePattern, $idEjercicio);
                     $stmtUpdateDistribucionEnte->execute();
-
-                    if ($stmtUpdateDistribucionEnte->affected_rows === 0) {
-                        throw new Exception("No se pudo actualizar el monto en la distribución con ID $idDistribucion y el ID de ejercicio $idEjercicio.");
-                    }
                 }
             }
         }
 
-        // Preparar la consulta de actualización para el `status` en ambas bases de datos
+        // Verificar si id_ente no está vacío en la tabla traspasos y actualizar n_orden
+        $sqlUpdateOrden = "UPDATE traspasos SET n_orden = ? WHERE id = ? AND id_ente != ''";
+        foreach ([$conexion, $remote_db] as $db) {
+            $stmtUpdateOrden = $db->prepare($sqlUpdateOrden);
+            $stmtUpdateOrden->bind_param("si", $codigo, $id);
+            $stmtUpdateOrden->execute();
+        }
+
+        // Actualizar status en ambas bases de datos
         foreach ([$conexion, $remote_db] as $db) {
             $sql = "UPDATE traspasos SET status = ? WHERE id = ?";
             $stmt = $db->prepare($sql);
             $stmt->bind_param("ii", $nuevoStatus, $id);
-
-            // Ejecutar la consulta
             $stmt->execute();
-
-            if ($stmt->affected_rows === 0) {
-                throw new Exception("No se encontró el traspaso con ID $id o no se pudo actualizar el estado.");
-            }
         }
 
-        if ($accion === 'aceptar') {
-            $conexion->commit();
-            $remote_db->commit();
-            return json_encode(["success" => "Se ha aceptado el registro correctamente."]);
-        }
-
-        if ($accion === 'rechazar') {
-            $conexion->commit();
-            $remote_db->commit();
-            return json_encode(["success" => "Se ha rechazado el registro correctamente."]);
-        }
-
+        $conexion->commit();
+        $remote_db->commit();
+        return json_encode(["success" => "Se ha " . ($accion === 'aceptar' ? "aceptado" : "rechazado") . " el registro correctamente."]);
     } catch (Exception $e) {
-        // Revertir las transacciones en caso de error en ambas bases de datos
         $conexion->rollback();
         $remote_db->rollback();
         return json_encode(['error' => $e->getMessage()]);
     }
 }
+
 
 
 
@@ -784,7 +771,7 @@ if (isset($data["accion"])) {
             break;
 
         case 'aceptar':
-            echo gestionarTraspaso($data["id"], 'aceptar');
+            echo gestionarTraspaso($data["id"], 'aceptar', $data["codigo"]);
             break;
 
         case 'rechazar':
