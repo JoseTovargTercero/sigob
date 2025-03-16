@@ -243,7 +243,7 @@ function consultarTodosTraspasos($id_ejercicio)
     $conexion = $remote_db;
 
     // Consultar los traspasos principales filtrando por id_ejercicio
-    $sql = "SELECT t.id, t.n_orden, t.id_ejercicio, t.monto_total, t.fecha, t.status, t.tipo 
+    $sql = "SELECT t.id, t.n_orden, t.id_ejercicio, t.monto_total, t.fecha, t.status, t.tipo, t.id_ente 
             FROM traspasos t
             WHERE t.id_ejercicio = ?";
     $stmt = $conexion->prepare($sql);
@@ -256,6 +256,21 @@ function consultarTodosTraspasos($id_ejercicio)
 
         // Agregar la información de traspaso_informacion para cada traspaso
         foreach ($traspasos as &$traspaso) {
+            // Consultar el nombre del ente si id_ente no está vacío
+            if (!empty($traspaso['id_ente'])) {
+                $sqlEnte = "SELECT nombre FROM entes WHERE id = ?";
+                $stmtEnte = $conexion->prepare($sqlEnte);
+                $stmtEnte->bind_param("i", $traspaso['id_ente']);
+                $stmtEnte->execute();
+                $resultadoEnte = $stmtEnte->get_result();
+                
+                if ($resultadoEnte->num_rows > 0) {
+                    $traspaso['ente'] = $resultadoEnte->fetch_assoc()['nombre'];
+                } else {
+                    $traspaso['ente'] = null;
+                }
+            }
+            
             $sqlInfo = "SELECT ti.id_distribucion, ti.monto, ti.tipo 
                         FROM traspaso_informacion ti 
                         WHERE ti.id_traspaso = ?";
@@ -325,6 +340,7 @@ function consultarTodosTraspasos($id_ejercicio)
         return json_encode(["success" => []]);
     }
 }
+
 
 function obtenerUltimosOrdenes($id_ejercicio)
 {
@@ -508,7 +524,7 @@ function consultarTraspasoPorId($id)
     $conexion = $remote_db;
 
     // Consultar el traspaso principal por su ID
-    $sql = "SELECT t.id, t.n_orden, t.id_ejercicio, t.monto_total, t.fecha, t.status, t.tipo 
+    $sql = "SELECT t.id, t.n_orden, t.id_ejercicio, t.monto_total, t.fecha, t.status, t.tipo, t.id_ente 
             FROM traspasos t 
             WHERE t.id = ?";
     $stmt = $conexion->prepare($sql);
@@ -518,6 +534,21 @@ function consultarTraspasoPorId($id)
 
     if ($resultado->num_rows > 0) {
         $traspaso = $resultado->fetch_assoc();
+
+        // Consultar el nombre del ente si id_ente no está vacío
+        if (!empty($traspaso['id_ente'])) {
+            $sqlEnte = "SELECT nombre FROM entes WHERE id = ?";
+            $stmtEnte = $conexion->prepare($sqlEnte);
+            $stmtEnte->bind_param("i", $traspaso['id_ente']);
+            $stmtEnte->execute();
+            $resultadoEnte = $stmtEnte->get_result();
+            
+            if ($resultadoEnte->num_rows > 0) {
+                $traspaso['ente'] = $resultadoEnte->fetch_assoc()['nombre'];
+            } else {
+                $traspaso['ente'] = null;
+            }
+        }
 
         // Consultar los detalles del traspaso desde traspaso_informacion
         $sqlInfo = "SELECT ti.id_distribucion, ti.monto, ti.tipo 
@@ -531,61 +562,51 @@ function consultarTraspasoPorId($id)
         if ($resultadoInfo->num_rows > 0) {
             $detalles = $resultadoInfo->fetch_all(MYSQLI_ASSOC);
             foreach ($detalles as &$detalle) {
-                $idDistribucion = $detalle['id_distribucion'];
-
-                // Obtener información de distribucion_entes
-                $sqlDistribucionEnte = "SELECT de.id AS id_distribucion_ente, de.monto_total, de.distribucion, de.id_ejercicio, de.actividad_id 
-                                        FROM distribucion_entes de 
-                                        WHERE de.distribucion LIKE ? AND de.id_ejercicio = ?";
-                $likePattern = '%"id_distribucion":"' . $idDistribucion . '"%';
-                $stmtDistribucionEnte = $conexion->prepare($sqlDistribucionEnte);
-                $stmtDistribucionEnte->bind_param("si", $likePattern, $traspaso['id_ejercicio']);
-                $stmtDistribucionEnte->execute();
-                $resultadoDistribucionEnte = $stmtDistribucionEnte->get_result();
-                $informacionDistribucionEnte = $resultadoDistribucionEnte->fetch_assoc();
-
-
-                $distribucionPartidas = json_decode($informacionDistribucionEnte["distribucion"], true);
-
-
-
-                // Consulta para obtener detalles de la distribución presupuestaria
-                $sqlDistribucion = "SELECT dp.id_partida, dp.id AS id_distribucion_, dp.id_sector, dp.id_programa, dp.id_proyecto, dp.id_actividad,
-                                           pp.partida AS partida, pp.descripcion AS partida_descripcion, 
-                                           ps.sector AS sector_denominacion, pg.programa AS programa_denominacion, 
-                                           pr.proyecto_id AS proyecto_denominacion
-                                    FROM distribucion_presupuestaria dp
-                                    LEFT JOIN partidas_presupuestarias pp ON dp.id_partida = pp.id
-                                    LEFT JOIN pl_sectores ps ON dp.id_sector = ps.id
-                                    LEFT JOIN pl_programas pg ON dp.id_programa = pg.id
-                                    LEFT JOIN pl_proyectos pr ON dp.id_proyecto = pr.id
+                // Obtener la información de distribucion_presupuestaria
+                $sqlDistribucion = "SELECT dp.* 
+                                    FROM distribucion_presupuestaria dp 
                                     WHERE dp.id = ?";
                 $stmtDistribucion = $conexion->prepare($sqlDistribucion);
-                $stmtDistribucion->bind_param("i", $idDistribucion);
+                $stmtDistribucion->bind_param("i", $detalle['id_distribucion']);
                 $stmtDistribucion->execute();
                 $resultadoDistribucion = $stmtDistribucion->get_result();
 
                 if ($resultadoDistribucion->num_rows > 0) {
-                    $informacionDistribucion = $resultadoDistribucion->fetch_assoc();
-                    $detalle['sector_denominacion'] = $informacionDistribucion["sector_denominacion"];
-                    $detalle['programa_denominacion'] = $informacionDistribucion["programa_denominacion"];
-                    $detalle['programa_denominacion'] = $informacionDistribucion["programa_denominacion"];
-                    $detalle['proyecto_denominacion'] = $informacionDistribucion["proyecto_denominacion"];
-                    $detalle['partida'] = $informacionDistribucion["partida"];
-                    $detalle['partida_descripcion'] = $informacionDistribucion["partida_descripcion"];
-                    $detalle['id_actividad'] = $informacionDistribucion["id_actividad"];
-                    $detalle['monto_traspaso'] = $detalle['monto'];
+                    $detalle['distribucion_presupuestaria'] = $resultadoDistribucion->fetch_assoc();
 
+                    // Obtener la información de partidas_presupuestarias usando id_partida
+                    $id_partida = $detalle['distribucion_presupuestaria']['id_partida'];
+                    $sqlPartida = "SELECT pp.* 
+                                   FROM partidas_presupuestarias pp 
+                                   WHERE pp.id = ?";
+                    $stmtPartida = $conexion->prepare($sqlPartida);
+                    $stmtPartida->bind_param("i", $id_partida);
+                    $stmtPartida->execute();
+                    $resultadoPartida = $stmtPartida->get_result();
 
-                    foreach ($distribucionPartidas as $distribucionItem) {
-                        if ($idDistribucion == $distribucionItem['id_distribucion']) {
-                            $detalle['monto'] = $distribucionItem['monto'];
-                        }
-
+                    if ($resultadoPartida->num_rows > 0) {
+                        $detalle['distribucion_presupuestaria']['partida_presupuestaria'] = $resultadoPartida->fetch_assoc();
+                    } else {
+                        $detalle['distribucion_presupuestaria']['partida_presupuestaria'] = [];
                     }
-
                 } else {
-                    $detalle = [];
+                    $detalle['distribucion_presupuestaria'] = [];
+                }
+
+                // Consultar la información de distribucion_entes usando id_distribucion y id_ejercicio
+                $sqlDistribucionEnte = "SELECT de.* 
+                                        FROM distribucion_entes de 
+                                        WHERE de.distribucion LIKE ? AND de.id_ejercicio = ?";
+                $likePattern = '%"id_distribucion":"' . $detalle['id_distribucion'] . '"%';
+                $stmtDistribucionEnte = $conexion->prepare($sqlDistribucionEnte);
+                $stmtDistribucionEnte->bind_param("si", $likePattern, $traspaso['id_ejercicio']);
+                $stmtDistribucionEnte->execute();
+                $resultadoDistribucionEnte = $stmtDistribucionEnte->get_result();
+
+                if ($resultadoDistribucionEnte->num_rows > 0) {
+                    $detalle['distribucion_entes'] = $resultadoDistribucionEnte->fetch_assoc();
+                } else {
+                    $detalle['distribucion_entes'] = [];
                 }
             }
             $traspaso['detalles'] = $detalles;
@@ -598,6 +619,7 @@ function consultarTraspasoPorId($id)
         return json_encode(["error" => "No se encontró el traspaso."]);
     }
 }
+
 
 
 
