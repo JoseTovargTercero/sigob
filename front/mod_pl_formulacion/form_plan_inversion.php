@@ -161,7 +161,7 @@ $stmt->close();
         $y_d2 = date('Y') + 2;
         ?>
         <h4 class="fw-bold py-3 mb-4">
-          <span class="text-muted fw-light">Formulación /</span> Plan de inversión <?php echo $y_d; ?>
+          <span class="text-muted fw-light">Formulación /</span> Plan de inversión <?php echo $y_d1; ?>
         </h4>
 
         <div class="d-flex gap-1">
