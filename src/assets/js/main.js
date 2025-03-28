@@ -590,3 +590,15 @@ function esNumero(valor) {
     !isNaN(valorConComa.replace(",", ".")) && /^-?\d*,?\d*$/.test(valorConComa)
   );
 }
+
+
+
+
+
+function formatearNumero(numero) {
+  return new Intl.NumberFormat('es-ES', {
+    style: 'decimal', // Para números decimales
+    minimumFractionDigits: 2, // Mínimo de dígitos fraccionarios
+    maximumFractionDigits: 2 // Máximo de dígitos fraccionarios
+  }).format(numero);
+}

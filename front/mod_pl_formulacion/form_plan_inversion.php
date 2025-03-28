@@ -124,6 +124,19 @@ $stmt->close();
       position: absolute;
       margin-top: -19px;
     }
+
+
+
+    #table th:nth-child(2),
+    #table td:nth-child(2) {
+      /* Ajusta el número según la posición de la columna */
+      width: 300px;
+      /* O el tamaño que necesites */
+      word-wrap: break-word;
+      /* Para que el texto no desborde */
+      white-space: normal;
+      /* Evita el desbordamiento del texto */
+    }
   </style>
 
 </head>
@@ -250,15 +263,16 @@ $stmt->close();
                 <div class="card-title mb-auto d-flex justify-content-between">
                   <h5 class="mb-0">Detalles del proyecto</h5>
 
-                  <button class="btn avtar avtar-xs btn-light-dark" onclick="$('#vista_datalles').addClass('hide')"><i class="bx bx-x f-20"></i></button>
+                  <button class="btn avtar avtar-xs btn-light-dark" onclick="$('#vista_datalles').addClass('hide'); document.getElementById('vista-tabla').classList.remove('hide')"><i class="bx bx-x f-20"></i></button>
 
                 </div>
+
 
 
                 <div class="mt-2 card-body">
 
                   <div class="row">
-                    <div class="col-lg-4 br-g">
+                    <div class="col-lg-5 br-g">
                       <div class="mb-3">
                         <small class="text-muted">Nombre del proyecto:</small>
                         <h5 class="fw-bold" id="info_nombre_p"></h5>
@@ -266,7 +280,7 @@ $stmt->close();
 
                       <div class="mb-3">
                         <small class="text-muted">Descripción del proyecto:</small>
-                        <p class="text-dark" id="info_descripcion_p"></p>
+                        <p class="text-dark" style="max-height: 300px; overflow-y: auto;" id="info_descripcion_p"></p>
                       </div>
 
                       <div class="mb-4 d-flex justify-content-between">
@@ -281,7 +295,7 @@ $stmt->close();
 
 
                     </div>
-                    <div class="col-lg-8">
+                    <div class="col-lg-7">
 
                       <table class="table" id="table-2">
                         <thead>
@@ -424,23 +438,25 @@ $stmt->close();
                 </div>
 
 
-                <div class="mt-2 card-body">
 
-                  <table class="table" id="table">
-                    <thead>
-                      <tr>
-                        <th>#</th>
-                        <th>Proyecto</th>
-                        <th>Monto</th>
-                        <th>Estatus</th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                  </table>
+                <div class="mt-2 card-body">
+                  <div class="table-responsive">
+                    <table class="table" id="table">
+                      <thead>
+                        <tr>
+                          <th>#</th>
+                          <th>Proyecto</th>
+                          <th>Monto</th>
+                          <th>Estatus</th>
+                          <th></th>
+                          <th></th>
+                          <th></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             </div>
@@ -498,8 +514,9 @@ $stmt->close();
         const url_back = '../../back/modulo_pl_formulacion/form_plan_inversion.php'
         const planData = <?php echo json_encode([
                             'id' => @$id_plan_inversion,
-                            'monto' => @$plan_inversion_monto
+                            'monto' => @floatval($plan_inversion_monto)
                           ]); ?>;
+
 
 
         // Llamadas a `dbh_select` para cada tabla
@@ -762,12 +779,21 @@ $stmt->close();
         getPartidas();
 
 
+
+
+
+
+
+
         function getDetallesProyecto(proyecto_id) {
           let infoProyecto = proyectos[proyecto_id]
 
+
+          const monto = parseFloat(infoProyecto[3])
+
           document.getElementById('info_nombre_p').innerHTML = infoProyecto[1]
           document.getElementById('info_descripcion_p').innerHTML = infoProyecto[2]
-          document.getElementById('info_monto_p').innerHTML = infoProyecto[3] + ' Bs'
+          document.getElementById('info_monto_p').innerHTML = formatearNumero(monto) + ' Bs'
           document.getElementById('info_estatus_p').innerHTML = infoProyecto[4] === 1 ?
             `<span class="badge bg-light-primary text-lg">Ejecutado</span>` : `<span class="badge bg-light-secondary text-lg">Pendiente</span>`
 
@@ -781,12 +807,13 @@ $stmt->close();
                 infoProyecto[5][key]['sector'] + '.' + infoProyecto[5][key]['programa'] + '.' + infoProyecto[5][key]['proyecto'],
                 infoProyecto[5][key]['partidad_n'],
                 `<i class="bx bxs-info-circle icon-info" title="${infoProyecto[5][key]['descripcion']}"></i>`,
-                infoProyecto[5][key]['monto'],
+                formatearNumero(parseFloat(infoProyecto[5][key]['monto'])),
               ])
           }
           DataTable_2.rows.add(data).draw();
 
           document.getElementById('vista_datalles').classList.remove('hide')
+          document.getElementById('vista-tabla').classList.add('hide')
 
         }
 
@@ -848,7 +875,7 @@ $stmt->close();
             return
           }
 
-          if (planData.monto == monto_total_proyectos) {
+          if (monto_total_proyectos >= planData.monto) {
             toast_s("error", "No se puede crear un proyecto sin disponibilidad presupuestaria");
           } else {
             accion = 'registrar_proyecto'
@@ -1210,7 +1237,7 @@ $stmt->close();
 
                   data_tabla.push([
                     count++,
-                    item.proyecto,
+                    item.proyecto.slice(0, 180),
                     agregarSeparadorMiles(item.monto_proyecto) + 'Bs',
                     item.status === 1 ?
                     `<span class="badge bg-light-primary">Ejecutado</span>` : `<span class="badge bg-light-secondary">Pendiente</span>`,
@@ -1381,6 +1408,7 @@ $stmt->close();
             nueva_dist = parseInt(monto_total_proyectos) + monto_total;
           }
 
+
           if (nueva_dist > parseInt(planData.monto)) {
             toast_s("error", "El monto es mayor al presupuesto disponible");
             return;
@@ -1388,6 +1416,7 @@ $stmt->close();
 
           // Enviar datos al servidor
           if (verificarMonto(monto_total)) {
+            $('.loader-bg').show()
             $.ajax({
               url: url_back,
               type: "json",
@@ -1397,6 +1426,8 @@ $stmt->close();
                 accion: accion
               }),
               success: function(response) {
+                $('.loader-bg').hide()
+
                 if (response.success) {
                   toast_s('success', `Proyecto ${accion === 'update_proyecto' ? 'actualizado' : 'registrado'} con éxito`);
                   get_tabla();
@@ -1414,6 +1445,8 @@ $stmt->close();
               },
               error: function(xhr) {
                 console.log(xhr.responseText);
+                $('.loader-bg').hide()
+
               }
             });
           }

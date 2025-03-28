@@ -3705,3 +3705,8 @@ select {
   font-size: 19px;
   cursor: help;
 }
+
+.table-responsive {
+  max-width: 100%;
+  overflow-x: auto;
+}

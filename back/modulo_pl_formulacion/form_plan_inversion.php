@@ -25,13 +25,23 @@ function guardarProyecto($proyectosArray)
         if (empty($proyectosArray)) {
             throw new Exception("El array de proyectos está vacío");
         }
-
         // Insertar los proyectos en la tabla proyecto_inversion
 
         $nombre = $proyectosArray['nombre'];
         $descripcion = $proyectosArray['descripcion'];
         $monto = $proyectosArray['monto'];
         $id_plan = $proyectosArray['id_plan'];
+
+        $stmt = mysqli_prepare($conexion, "SELECT * FROM `proyecto_inversion` WHERE proyecto = ? AND descripcion = ?");
+        $stmt->bind_param('ss', $nombre, $descripcion);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if ($result->num_rows > 0) {
+            throw new Exception("El proyecto ya existe");
+        }
+        $stmt->close();
+
+
 
         $sqlProyecto = "INSERT INTO proyecto_inversion (
             id_plan,
@@ -220,7 +230,7 @@ function eliminarPlanInversion($id_plan)
         $stmtDeletePlan->bind_param("i", $id_plan);
         $stmtDeletePlan->execute();
         $affectedRowsPlan = $stmtDeletePlan->affected_rows;
-        
+
         if ($affectedRowsPlan <= 0) {
             throw new Exception("Error al eliminar el plan de inversión.");
         }
@@ -237,11 +247,10 @@ function eliminarPlanInversion($id_plan)
         $affected_rows = $affectedRowsPlan + $affectedRowsProyectos; // Total de filas afectadas
         $stmtAudit->bind_param("sssii", $action_type, $table_name, $situation, $affected_rows, $user_id);
         $stmtAudit->execute();
-        
+
         // Confirmar la transacción
         $conexion->commit();
         return json_encode(["success" => "Plan de inversión y proyectos eliminados correctamente."]);
-
     } catch (Exception $e) {
         $conexion->rollback(); // Revertir en caso de error
         registrarError($e->getMessage());
@@ -359,7 +368,6 @@ function eliminarProyecto($id)
         // Confirmar la transacción
         $conexion->commit();
         return json_encode(['success' => 'Proyecto y partidas asociadas eliminados correctamente']);
-
     } catch (Exception $e) {
         $conexion->rollback(); // Revertir en caso de error
         registrarError($e->getMessage());
