@@ -33,7 +33,7 @@ function apiGet($url)
 
         $datos = json_decode($respuesta, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new Exception("Error al decodificar JSON: " . json_last_error_msg());
+            throw new Exception("Error al decodificar JSON: " . json_last_error_msg() . "TEXT: ".$respuesta);
         }
 
         if (array_key_exists('error', $datos)) {

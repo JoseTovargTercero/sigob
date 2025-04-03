@@ -222,7 +222,6 @@ function registrarTraspasoPartida($data)
         $remote_db->commit();
 
         return json_encode(["success" => "El traspaso se registró correctamente."]);
-
     } catch (Exception $e) {
         // Revertir cambios en caso de error en ambas bases de datos
         $conexion->rollback();
@@ -377,7 +376,6 @@ function obtenerUltimosOrdenes($id_ejercicio)
             "ultimo_traslado" => $traslado,
             "ultimo_traspaso" => $traspaso
         ]);
-
     } catch (Exception $e) {
         return json_encode(['error' => $e->getMessage()]);
     }
@@ -488,12 +486,12 @@ function gestionarTraspaso($id, $accion, $codigo)
         }
 
         // Verificar si id_ente no está vacío en la tabla traspasos y actualizar n_orden
-        $sqlUpdateOrden = "UPDATE traspasos SET n_orden = ? WHERE id = ? AND id_ente != ''";
+        /*     $sqlUpdateOrden = "UPDATE traspasos SET n_orden = ? WHERE id = ? AND id_ente != ''";
         foreach ([$conexion, $remote_db] as $db) {
             $stmtUpdateOrden = $db->prepare($sqlUpdateOrden);
             $stmtUpdateOrden->bind_param("si", $codigo, $id);
             $stmtUpdateOrden->execute();
-        }
+        }*/
 
         // Actualizar status en ambas bases de datos
         foreach ([$conexion, $remote_db] as $db) {
@@ -611,9 +609,7 @@ function consultarTraspasoPorId($id)
                         if ($idDistribucion == $distribucionItem['id_distribucion']) {
                             $detalle['monto'] = $distribucionItem['monto'];
                         }
-
                     }
-
                 } else {
                     $detalle = [];
                 }
@@ -767,7 +763,6 @@ function eliminarTraspaso($id_traspaso)
         $remote_db->commit();
 
         return json_encode(["success" => "El traspaso se eliminó correctamente."]);
-
     } catch (Exception $e) {
         // Revertir las transacciones en caso de error
         $conexion->rollback();
