@@ -27,7 +27,7 @@ function registrarTraspasoPartida($data)
         $añadir = $data['añadir'];
         $restar = $data['restar'];
         $tipo = $info['tipo'];
-        $fecha_actual = date("Y-m-d");
+        $fecha_actual = $info["fecha_traspaso"];
 
         // Obtener el año del ejercicio fiscal en ambas bases de datos
         foreach ([$conexion, $remote_db] as $db) {

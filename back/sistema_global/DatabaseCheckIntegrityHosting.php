@@ -1,17 +1,11 @@
 <?php
 require_once '../sistema_global/conexion.php';
+require_once '../sistema_global/conexion_remota.php';
+
 require_once '../sistema_global/session.php';
 header('Content-Type: application/json');
 
 if (isset($_GET['tabla']) || true) {
-    // Configuración de conexión a la base de datos remota
-    $remote_db = new mysqli('sigob.net', 'sigobnet_userroot', ']n^VmqjqCD1k', 'sigobnet_sigob_entes');
-    if ($remote_db->connect_error) {
-        die(json_encode([
-            'status' => 'error',
-            'mensaje' => 'Conexión fallida: ' . $remote_db->connect_error
-        ]));
-    }
 
     // Contadores de operaciones
     $agregados = 0;
@@ -19,7 +13,8 @@ if (isset($_GET['tabla']) || true) {
     $actualizados = 0;
 
     // Función para verificar y crear columnas faltantes
-    function verificarColumnas($tabla) {
+    function verificarColumnas($tabla)
+    {
         global $conexion, $remote_db;
 
         // Validar conexión remota antes de ejecutar consultas
@@ -79,8 +74,6 @@ if (isset($_GET['tabla']) || true) {
                 }
             }
         }
-
-
     }
 
     function backups($tabla, $id_table)
@@ -238,11 +231,6 @@ if (isset($_GET['tabla']) || true) {
             throw $e;
         }
     }
-
-
-
-    
-
 } else {
     echo json_encode(['status' => 'error', 'mensaje' => 'Permiso denegado']);
 }

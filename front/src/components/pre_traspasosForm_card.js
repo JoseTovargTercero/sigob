@@ -34,6 +34,11 @@ export const pre_traspasosForm_card = async ({
       message: "Tipo inválido",
       type: "number",
     },
+    fecha_traspaso: {
+      value: true,
+      message: "Fecha de traspaso inválida",
+      type: "date",
+    },
   };
 
   let distribucionesSecretarias = await obtenerDistribucionSecretaria({
@@ -82,7 +87,7 @@ export const pre_traspasosForm_card = async ({
             <div class='col'>
               <div class='form-group'>
                 <label for='codigo' class='form-label'>
-                  Código para traspaso
+                  Código de la operación
                 </label>
                 <input
                   class='form-control traslado-input'
@@ -90,6 +95,19 @@ export const pre_traspasosForm_card = async ({
                   name='codigo'
                   id='codigo'
                   placeholder='Código de traspaso'
+                />
+              </div>
+            </div>
+ <div class='col'>
+              <div class='form-group'>
+                <label for='fecha_traspaso' class='form-label'>
+                  Fecha del traspaso
+                </label>
+                <input
+                  class='form-control traslado-input'
+                  type='date'
+                  name='fecha_traspaso'
+                  id='fecha_traspaso'
                 />
               </div>
             </div>
@@ -469,6 +487,7 @@ export const pre_traspasosForm_card = async ({
         id_ejercicio: ejercicioFiscal.id,
         monto_total: montos.totalSumar,
         tipo: fieldList.tipo,
+        fecha_traspaso: fieldList.fecha_traspaso,
       },
       añadir: informacion.añadir,
       restar: informacion.restar,

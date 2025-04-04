@@ -1,26 +1,11 @@
 <?php
 require_once '../sistema_global/conexion.php';
+require_once '../sistema_global/conexion_remota.php';
 require_once '../sistema_global/session.php';
 header('Content-Type: application/json');
 
 if ($_SESSION["u_oficina_id"] == '1' && isset($_GET['tabla']) || true) {
-    //192.99.18.84
 
-    // Configuración de conexión a la base de datos remota
-    $remoteHost = REMOTE_HOST;
-    $remoteDb = 'sigobnet_sigob_entes';
-    $remoteUser = 'sigobnet_userroot';
-    $remotePass = ']n^VmqjqCD1k';
-
-    // Conexión a la base de datos del hosting
-    $remoteConn = new mysqli($remoteHost, $remoteUser, $remotePass, $remoteDb);
-    $remoteConn->set_charset('utf8mb4'); // Establecer charset
-
-
-    if ($remoteConn->connect_error) { // Verificar la conexión
-        echo json_encode(['status' => 'error', 'mensaje' => "Conexión fallida a la base de datos del hosting: " . $remoteConn->connect_error]);
-        exit();
-    }
 
     // Contadores de operaciones
     $agregados = 0;
@@ -31,7 +16,7 @@ if ($_SESSION["u_oficina_id"] == '1' && isset($_GET['tabla']) || true) {
     // Función para verificar y crear columnas faltantes
     function verificarColumnas($tabla)
     {
-        global $conexion, $remoteConn;
+        global $conexion, $remote_db;
 
         // Obtener columnas de la tabla local
         $localColsResult = $conexion->query("SHOW COLUMNS FROM $tabla");
@@ -41,7 +26,7 @@ if ($_SESSION["u_oficina_id"] == '1' && isset($_GET['tabla']) || true) {
         }
 
         // Obtener columnas de la tabla remota
-        $remoteColsResult = $remoteConn->query("SHOW COLUMNS FROM $tabla");
+        $remoteColsResult = $remote_db->query("SHOW COLUMNS FROM $tabla");
         $remoteColumns = [];
         while ($col = $remoteColsResult->fetch_assoc()) {
             $remoteColumns[] = $col['Field'];
@@ -51,7 +36,7 @@ if ($_SESSION["u_oficina_id"] == '1' && isset($_GET['tabla']) || true) {
         foreach ($localColumns as $column) {
             if (!in_array($column, $remoteColumns)) {
                 $colDefinition = $conexion->query("SHOW COLUMNS FROM $tabla WHERE Field = '$column'")->fetch_assoc();
-                $remoteConn->query("ALTER TABLE $tabla ADD COLUMN {$colDefinition['Field']} {$colDefinition['Type']}");
+                $remote_db->query("ALTER TABLE $tabla ADD COLUMN {$colDefinition['Field']} {$colDefinition['Type']}");
             }
         }
     }
@@ -59,7 +44,7 @@ if ($_SESSION["u_oficina_id"] == '1' && isset($_GET['tabla']) || true) {
     // Función para sincronizar datos entre las tablas
     function backups($tabla, $id_table)
     {
-        global $agregados, $eliminados, $actualizados, $conexion, $remoteConn;
+        global $agregados, $eliminados, $actualizados, $conexion, $remote_db;
 
         // Verificar columnas antes de sincronizar
         verificarColumnas($tabla);
@@ -72,14 +57,14 @@ if ($_SESSION["u_oficina_id"] == '1' && isset($_GET['tabla']) || true) {
         }
 
         // Obtener datos de la tabla remota
-        $remoteResult = $remoteConn->query("SELECT * FROM $tabla");
+        $remoteResult = $remote_db->query("SELECT * FROM $tabla");
         $remoteData = [];
         while ($row = $remoteResult->fetch_assoc()) {
             $remoteData[$row[$id_table]] = $row;
         }
 
         // Iniciar transacción para asegurar consistencia
-        $remoteConn->begin_transaction();
+        $remote_db->begin_transaction();
 
         try {
             // Comparar y sincronizar
@@ -96,7 +81,7 @@ if ($_SESSION["u_oficina_id"] == '1' && isset($_GET['tabla']) || true) {
                             $setStr = implode(", ", $set);
 
                             // Preparar y ejecutar la consulta de actualización
-                            $stmt = $remoteConn->prepare("UPDATE $tabla SET $setStr WHERE $id_table=?");
+                            $stmt = $remote_db->prepare("UPDATE $tabla SET $setStr WHERE $id_table=?");
 
                             $types = str_repeat('s', count($localRow)) . 's';
 
@@ -118,7 +103,7 @@ if ($_SESSION["u_oficina_id"] == '1' && isset($_GET['tabla']) || true) {
                     $placeholders = implode(", ", array_fill(0, count($localRow), '?'));
 
                     // Preparar y ejecutar la consulta de inserción
-                    $stmt = $remoteConn->prepare("INSERT INTO $tabla ($columns) VALUES ($placeholders)");
+                    $stmt = $remote_db->prepare("INSERT INTO $tabla ($columns) VALUES ($placeholders)");
                     $types = str_repeat('s', count($localRow));
                     $stmt->bind_param($types, ...array_values($localRow));
                     $stmt->execute();
@@ -131,7 +116,7 @@ if ($_SESSION["u_oficina_id"] == '1' && isset($_GET['tabla']) || true) {
             // Eliminar registros que están en el hosting pero no en la tabla local
             foreach ($remoteData as $id => $remoteRow) {
                 if (!isset($localData[$id])) {
-                    $stmt = $remoteConn->prepare("DELETE FROM $tabla WHERE $id_table=?");
+                    $stmt = $remote_db->prepare("DELETE FROM $tabla WHERE $id_table=?");
                     $stmt->bind_param('s', $id);
                     $stmt->execute();
                     $stmt->close();
@@ -141,10 +126,10 @@ if ($_SESSION["u_oficina_id"] == '1' && isset($_GET['tabla']) || true) {
             }
 
             // Confirmar transacción
-            $remoteConn->commit();
+            $remote_db->commit();
         } catch (Exception $e) {
             // Si hay un error, revertir los cambios
-            $remoteConn->rollback();
+            $remote_db->rollback();
             throw $e;
         }
     }
@@ -175,7 +160,7 @@ if ($_SESSION["u_oficina_id"] == '1' && isset($_GET['tabla']) || true) {
 
     // Cerrar conexiones
     $conexion->close();
-    $remoteConn->close();
+    $remote_db->close();
 } else {
     echo json_encode(['status' => 'error', 'mensaje' => 'Permiso denegado']);
 }

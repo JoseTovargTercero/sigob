@@ -3,268 +3,286 @@ import {
   hideLoader,
   showLoader,
   toastNotification,
-} from '../helpers/helpers.js'
-import { NOTIFICATIONS_TYPES } from '../helpers/types.js'
-import { APP_URL, config } from './urlConfig.js'
+} from "../helpers/helpers.js";
+import { NOTIFICATIONS_TYPES } from "../helpers/types.js";
+import { APP_URL, config } from "./urlConfig.js";
 
-const traspasoUrl = `${APP_URL}${config.MODULE_NAMES.EJECUCION}/pre_traspasos.php`
+const traspasoUrl = `${APP_URL}${config.MODULE_NAMES.EJECUCION}/pre_traspasos.php`;
 
 const getTraspasos = async (id_ejercicio) => {
-  showLoader()
+  showLoader();
+
   try {
     let res = await fetch(traspasoUrl, {
-      method: 'POST',
+      method: "POST",
       body: JSON.stringify({
-        accion: 'consultar_todos',
+        accion: "consultar_todos",
         id_ejercicio,
       }),
-    })
+    });
+    /*
+     let clone = res.clone();
+     let text = await clone.text();
+     console.log("respuesta " + text);
+    */
+    if (!res.ok) throw { status: res.status, statusText: res.statusText };
 
-    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+    const json = await res.json();
 
-    // let clone = res.clone()
-    // let text = await clone.text()
-
-    // console.log(text)
-
-    const json = await res.json()
-
-    console.log(json)
+    console.log(json);
 
     if (json.success) {
-      return json.success
+      return json.success;
     }
 
     if (json.error) {
-      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.fail,
+        message: json.error,
+      });
     }
-    return json
+    return json;
   } catch (e) {
-    console.log(e)
+    console.log(e);
 
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
-      message: 'Error al obtener traspasos',
-    })
+      message: "Error al obtener traspasos",
+    });
   } finally {
-    hideLoader()
+    hideLoader();
   }
-}
+};
 
 const getTraspaso = async (id) => {
-  showLoader()
+  showLoader();
   try {
     let res = await fetch(traspasoUrl, {
-      method: 'POST',
+      method: "POST",
       body: JSON.stringify({
-        accion: 'consultar_por_id',
+        accion: "consultar_por_id",
         id,
       }),
-    })
+    });
 
-    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+    if (!res.ok) throw { status: res.status, statusText: res.statusText };
 
     // let clone = res.clone()
     // let text = await clone.text()
 
     // console.log(text)
 
-    const json = await res.json()
-    console.log(json)
+    const json = await res.json();
+    console.log(json);
 
     if (json.success) {
-      return json.success
+      return json.success;
     }
 
     if (json.error) {
-      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.fail,
+        message: json.error,
+      });
     }
-    return json
+    return json;
   } catch (e) {
-    console.log(e)
+    console.log(e);
 
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
-      message: 'Error al obtener traspasos',
-    })
+      message: "Error al obtener traspasos",
+    });
   } finally {
-    hideLoader()
+    hideLoader();
   }
-}
+};
 
 const registrarTraspaso = async (informacion) => {
-  showLoader()
+  showLoader();
   try {
     let res = await fetch(traspasoUrl, {
-      method: 'POST',
+      method: "POST",
       body: JSON.stringify({
-        accion: 'registrar',
+        accion: "registrar",
         ...informacion,
       }),
-    })
+    });
 
-    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+    if (!res.ok) throw { status: res.status, statusText: res.statusText };
 
-    let clone = res.clone()
-    let text = await clone.text()
+    let clone = res.clone();
+    let text = await clone.text();
 
-    console.log(text)
+    console.log(text);
 
-    const json = await res.json()
+    const json = await res.json();
 
     if (json.success) {
       toastNotification({
         type: NOTIFICATIONS_TYPES.done,
         message: json.success,
-      })
+      });
     }
 
     if (json.error) {
-      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.fail,
+        message: json.error,
+      });
     }
-    return json
+    return json;
   } catch (e) {
-    console.log(e)
+    console.log(e);
 
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
-      message: 'Error al obtener traspasos',
-    })
+      message: "Error al obtener traspasos",
+    });
   } finally {
-    hideLoader()
+    hideLoader();
   }
-}
+};
 
 const aceptarTraspaso = async (id, codigo) => {
-  showLoader()
+  showLoader();
   try {
     let res = await fetch(traspasoUrl, {
-      method: 'POST',
+      method: "POST",
       body: JSON.stringify({
-        accion: 'aceptar',
+        accion: "aceptar",
         id,
         codigo,
       }),
-    })
+    });
 
-    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+    if (!res.ok) throw { status: res.status, statusText: res.statusText };
 
     // let clone = res.clone()
     // let text = await clone.text()
 
     // console.log(text)
 
-    const json = await res.json()
+    const json = await res.json();
 
     if (json.success) {
       toastNotification({
         type: NOTIFICATIONS_TYPES.done,
         message: json.success,
-      })
+      });
     }
 
     if (json.error) {
-      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.fail,
+        message: json.error,
+      });
     }
-    return json
+    return json;
   } catch (e) {
-    console.log(e)
+    console.log(e);
 
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
-      message: 'Error al obtener traspasos',
-    })
+      message: "Error al obtener traspasos",
+    });
   } finally {
-    hideLoader()
+    hideLoader();
   }
-}
+};
 
 const rechazarTraspaso = async (id) => {
-  showLoader()
+  showLoader();
   try {
     let res = await fetch(traspasoUrl, {
-      method: 'POST',
+      method: "POST",
       body: JSON.stringify({
-        accion: 'rechazar',
+        accion: "rechazar",
         id,
       }),
-    })
+    });
 
-    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+    if (!res.ok) throw { status: res.status, statusText: res.statusText };
 
-    let clone = res.clone()
-    let text = await clone.text()
+    let clone = res.clone();
+    let text = await clone.text();
 
-    console.log(text)
+    console.log(text);
 
-    const json = await res.json()
+    const json = await res.json();
 
     if (json.success) {
       toastNotification({
         type: NOTIFICATIONS_TYPES.done,
         message: json.success,
-      })
+      });
     }
 
     if (json.error) {
-      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.fail,
+        message: json.error,
+      });
     }
-    return json
+    return json;
   } catch (e) {
-    console.log(e)
+    console.log(e);
 
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
-      message: 'Error al obtener traspasos',
-    })
+      message: "Error al obtener traspasos",
+    });
   } finally {
-    hideLoader()
+    hideLoader();
   }
-}
+};
 
 const ultimosTraspasos = async (id_ejercicio) => {
-  console.log(id_ejercicio)
+  console.log(id_ejercicio);
 
-  showLoader()
+  showLoader();
   try {
     let res = await fetch(traspasoUrl, {
-      method: 'POST',
+      method: "POST",
       body: JSON.stringify({
-        accion: 'ultima_orden',
+        accion: "ultima_orden",
         id_ejercicio,
       }),
-    })
+    });
 
-    if (!res.ok) throw { status: res.status, statusText: res.statusText }
+    if (!res.ok) throw { status: res.status, statusText: res.statusText };
 
     // let clone = res.clone()
     // let text = await clone.text()
 
     // console.log(text)
 
-    const json = await res.json()
+    const json = await res.json();
 
-    console.log(json)
+    console.log(json);
 
     if (json.success) {
-      return json.success
+      return json.success;
     }
 
     if (json.error) {
-      toastNotification({ type: NOTIFICATIONS_TYPES.fail, message: json.error })
+      toastNotification({
+        type: NOTIFICATIONS_TYPES.fail,
+        message: json.error,
+      });
     }
-    return json
+    return json;
   } catch (e) {
-    console.log(e)
+    console.log(e);
 
     return confirmNotification({
       type: NOTIFICATIONS_TYPES.fail,
-      message: 'Error al obtener traspasos',
-    })
+      message: "Error al obtener traspasos",
+    });
   } finally {
-    hideLoader()
+    hideLoader();
   }
-}
+};
 
 export {
   getTraspasos,
@@ -273,4 +291,4 @@ export {
   aceptarTraspaso,
   rechazarTraspaso,
   ultimosTraspasos,
-}
+};
