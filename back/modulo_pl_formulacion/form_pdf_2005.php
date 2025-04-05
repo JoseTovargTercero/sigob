@@ -15,6 +15,46 @@ $ano = $resultado['ano'];
 $situado = $resultado['situado'];
 $stmt->close();
 
+
+
+
+
+// Plan de inversión
+$stmt = $conexion->prepare("SELECT * FROM plan_inversion WHERE id_ejercicio = ?");
+$stmt->bind_param('i', $id_ejercicio);
+$stmt->execute();
+$result = $stmt->get_result();
+$resultado = $result->fetch_assoc();
+$id_plan = $resultado['id'];
+$stmt->close();
+
+
+$fci = [];
+
+$stmt = mysqli_prepare($conexion, "SELECT PIP.monto, PA.partida AS partida_presupuestaria FROM `proyecto_inversion`  AS PI
+RIGHT JOIN proyecto_inversion_partidas AS PIP ON PIP.id_proyecto=PI.id
+LEFT JOIN partidas_presupuestarias AS PA ON PA.id=PIP.partida 
+WHERE PI.id_plan=?");
+$stmt->bind_param('i', $id_plan);
+$stmt->execute();
+$result = $stmt->get_result();
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+
+        if (@$fci[$row['partida_presupuestaria']]) {
+            $fci[$row['partida_presupuestaria']] += (int) $row['monto'];
+        } else {
+            $fci[$row['partida_presupuestaria']] = (int) $row['monto'];
+        }
+    }
+}
+$stmt->close();
+// Plan de inversión
+
+
+
+
+
 // Consultar distribuciones presupuestarias
 $query_distribucion = "SELECT monto_inicial, id_partida FROM distribucion_presupuestaria WHERE id_ejercicio = ?";
 $stmt_distribucion = $conexion->prepare($query_distribucion);
@@ -66,19 +106,20 @@ foreach ($distribuciones as $distribucion) {
 
 
         if (@$data[$codigo_partida][$partida]) {
-
             $data[$codigo_partida][$partida][3] = intval($data[$codigo_partida][$partida][3]) +  $monto_inicial;
         } else {
             $data[$codigo_partida][$partida] = [$partida, $descripcion, 0, $monto_inicial, 0, 0, $monto_inicial];
         }
 
 
+        $data[$codigo_partida][$partida][4] = (isset($fci[$partida]) ? $fci[$partida] : 0);
+
 
 
         if (!isset($totales_por_partida[$codigo_partida])) {
             $totales_por_partida[$codigo_partida] = 0;
         }
-        $totales_por_partida[$codigo_partida] += $monto_inicial;
+        $totales_por_partida[$codigo_partida] += $monto_inicial + $data[$codigo_partida][$partida][4];
     }
 }
 
@@ -335,15 +376,11 @@ foreach ($distribuciones as $distribucion) {
 
                     foreach ($data[$codigo_agrupado] as $row) {
 
-
-
-
-
                         $t_ingreso_propio += $ingreso_propio = $row[2];
                         $t_situado_estada += $situado_estada = $row[3];
                         $t_fci += $fci = $row[4];
                         $t_otras_fuentes += $otras_fuentes = $row[5];
-                        $t_total += $total = $situado_estada;
+                        $t_total += $total = $situado_estada + $fci;
 
 
 
@@ -351,7 +388,7 @@ foreach ($distribuciones as $distribucion) {
                         $tt_situado_estada += $situado_estada;
                         $tt_fci += $fci;
                         $tt_otras_fuentes += $otras_fuentes;
-                        $tt_total += $total;
+                        $tt_total += $t_total;
 
                         echo "<tr>
                             <td class='fz-8 bl'>{$row[0]}</td>

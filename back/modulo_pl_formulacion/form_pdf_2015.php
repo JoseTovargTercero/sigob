@@ -75,10 +75,26 @@ foreach ($distribuciones as $distribucion) {
     // Extraer el código de partida (los primeros 3 caracteres)
     $codigo_partida = substr($partida, 0, 3);
 
+
+    // Plan de inversión
+    $stmt = $conexion->prepare("SELECT * FROM plan_inversion WHERE id_ejercicio = ?");
+    $stmt->bind_param('i', $id_ejercicio);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $resultado = $result->fetch_assoc();
+    $id_plan = $resultado['id'];
+    $stmt->close();
+
+
+
     // Obtener el monto FCI sumado de proyecto_inversion_partidas
-    $query_fci = "SELECT SUM(monto) as total_fci FROM proyecto_inversion_partidas WHERE partida = ?";
+    //   $query_fci = "SELECT SUM(monto) as total_fci FROM proyecto_inversion_partidas WHERE partida = ?";
+    $query_fci = "SELECT SUM(PIP.monto) AS total_fci 
+FROM proyecto_inversion_partidas AS PIP
+RIGHT JOIN proyecto_inversion AS PI ON PIP.id_proyecto = PI.id
+WHERE PIP.partida = ? AND PI.id_plan = ?";
     $stmt_fci = $conexion->prepare($query_fci);
-    $stmt_fci->bind_param('i', $id_partida);
+    $stmt_fci->bind_param('ii', $id_partida, $id_plan);
     $stmt_fci->execute();
     $result_fci = $stmt_fci->get_result();
     $fci_data = $result_fci->fetch_assoc();

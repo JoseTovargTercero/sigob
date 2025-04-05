@@ -297,19 +297,21 @@ $stmt->close();
                     </div>
                     <div class="col-lg-7">
 
-                      <table class="table" id="table-2">
-                        <thead>
-                          <tr>
-                            <th>#</th>
-                            <th>Sector</th>
-                            <th>Partida</th>
-                            <th>Descripción</th>
-                            <th>Asignación</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                      </table>
+                      <div class="table-responsive">
+                        <table class="table" id="table-2">
+                          <thead>
+                            <tr>
+                              <th>#</th>
+                              <th>Sector</th>
+                              <th>Partida</th>
+                              <th>Descripción</th>
+                              <th>Asignación</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
                   </div>
 

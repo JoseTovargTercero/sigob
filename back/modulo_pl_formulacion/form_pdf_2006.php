@@ -27,6 +27,9 @@ function crearEstructuraPartida($denominacion = 'Sin denominación', $sectores)
     ] + $sectores;
 }
 
+
+
+
 // Cargar partidas
 $stmt = $conexion->prepare("SELECT partida, denominacion FROM pl_partidas");
 $stmt->execute();
@@ -45,6 +48,7 @@ function actualizarMonto(&$data, $partida, $sector, $monto, $sectores)
     $data[$partida][$sector] += $monto;
 }
 
+
 // Distribución presupuestaria
 $stmt = $conexion->prepare("
     SELECT DP.monto_inicial AS monto, LEFT(PP.partida, 3) AS partida, PSP.sector 
@@ -61,19 +65,41 @@ while ($row = $result->fetch_assoc()) {
 }
 $stmt->close();
 
-// Valores adicionales del FCI
-$stmt = $conexion->prepare("
-    SELECT DP.monto, LEFT(PP.partida, 3) AS partida, PSP.sector 
-    FROM proyecto_inversion_partidas AS DP
-    LEFT JOIN partidas_presupuestarias AS PP ON PP.id = DP.partida
-    LEFT JOIN pl_sectores AS PSP ON PSP.id = DP.sector_id
-");
+
+
+
+
+// Plan de inversión
+$stmt = $conexion->prepare("SELECT * FROM plan_inversion WHERE id_ejercicio = ?");
+$stmt->bind_param('i', $id_ejercicio);
 $stmt->execute();
 $result = $stmt->get_result();
-while ($row = $result->fetch_assoc()) {
-    actualizarMonto($data, $row['partida'], $row['sector'], $row['monto'], $sectores);
+$resultado = $result->fetch_assoc();
+$id_plan = $resultado['id'];
+$stmt->close();
+
+
+
+$stmt = mysqli_prepare($conexion, "SELECT PSP.sector, PIP.monto, LEFT(PA.partida, 3) AS partida_presupuestaria FROM `proyecto_inversion`  AS PI
+RIGHT JOIN proyecto_inversion_partidas AS PIP ON PIP.id_proyecto=PI.id
+LEFT JOIN partidas_presupuestarias AS PA ON PA.id=PIP.partida
+LEFT JOIN pl_sectores AS PSP ON PSP.id = PIP.sector_id 
+WHERE PI.id_plan=?");
+$stmt->bind_param('i', $id_plan);
+$stmt->execute();
+$result = $stmt->get_result();
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $partida = $row['partida_presupuestaria'];
+        actualizarMonto($data, $partida, $row['sector'], $row['monto'], $sectores);
+    }
 }
 $stmt->close();
+// Plan de inversión
+
+
+
+
 ?>
 
 <!DOCTYPE html>
