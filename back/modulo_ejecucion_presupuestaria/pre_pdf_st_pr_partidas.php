@@ -12,7 +12,19 @@ $trimestres_text = [
     3 => 'TERCER TRIMESTRE',
     4 => 'CUARTO TRIMESTRE',
 ];
-
+if ($trimestre == 1) {
+    $inicio_trimestre = 1;
+    $fin_trimestre = 3;
+} elseif ($trimestre == 2) {
+    $inicio_trimestre = 4;
+    $fin_trimestre = 6;
+} elseif ($trimestre == 3) {
+    $inicio_trimestre = 7;
+    $fin_trimestre = 9;
+} else {
+    $inicio_trimestre = 10;
+    $fin_trimestre = 12;
+}
 
 // Consultar ejercicio fiscal
 $query_sector = "SELECT * FROM ejercicio_fiscal WHERE id = ?";
@@ -40,13 +52,16 @@ while ($row = $result_partidas->fetch_assoc()) {
 }
 
 // Consultar distribuciones presupuestarias
-$query_distribucion = "SELECT dp.id_actividad, dp.id AS id_distribucion, SE.sector, dp.id_partida, dp.monto_inicial, PRO.programa, PRY.proyecto_id
+$query_distribucion = "SELECT dp.id_actividad, dp.id AS id_distribucion, SE.sector, PPA.partida, dp.id_partida, dp.monto_inicial, PRO.programa, PRY.proyecto_id
                       FROM distribucion_presupuestaria dp
-
                       LEFT JOIN pl_sectores_presupuestarios AS SE ON SE.id = dp.id_sector
                       LEFT JOIN pl_programas AS PRO ON PRO.id = dp.id_programa
                       LEFT JOIN pl_proyectos AS PRY ON PRY.id = dp.id_proyecto
-                      WHERE dp.id_ejercicio = ?";
+                                           LEFT JOIN partidas_presupuestarias AS PPA ON PPA.id = dp.id_partida
+
+                      WHERE dp.id_ejercicio = ?
+                      ORDER BY SE.sector, PRO.programa, PRY.proyecto_id, dp.id_actividad, PPA.partida
+                      ";
 $stmt_distribucion = $conexion->prepare($query_distribucion);
 $stmt_distribucion->bind_param('i', $id_ejercicio);
 $stmt_distribucion->execute();
@@ -76,7 +91,13 @@ while ($row = $result_distribucion->fetch_assoc()) {
         'traspado_d' => 0  // traspaso D
     ];
 }
+/*
+echo count($data);
+echo '<pre>';
+print_r($data);
+echo '</pre>';
 
+exit;*/
 // Consultar gastos
 $query_gastos = "SELECT * FROM gastos WHERE id_ejercicio = ? AND status != 2";
 $stmt_gastos = $conexion->prepare($query_gastos);
@@ -87,19 +108,7 @@ $gastos = $result_gastos->fetch_all(MYSQLI_ASSOC);
 
 foreach ($gastos as $gasto) {
     $mes = (int)date('n', strtotime($gasto['fecha']));
-    if ($trimestre == 1) {
-        $inicio_trimestre = 1;
-        $fin_trimestre = 3;
-    } elseif ($trimestre == 2) {
-        $inicio_trimestre = 4;
-        $fin_trimestre = 6;
-    } elseif ($trimestre == 3) {
-        $inicio_trimestre = 7;
-        $fin_trimestre = 9;
-    } else {
-        $inicio_trimestre = 10;
-        $fin_trimestre = 12;
-    }
+
 
     if ($mes < $inicio_trimestre || $mes > $fin_trimestre) {
         continue;
@@ -146,8 +155,7 @@ foreach ($gastos as $gasto) {
                 echo 'G-' . $st_pr_part . PHP_EOL;
             }
 
-
-            $data[$st_pr_part]['causado'] = $gasto['status'] == 1 ? $monto_actual : 0;
+            $data[$st_pr_part]['causado'] += ($gasto['status'] == 1 ? $monto_actual : 0);
             $data[$st_pr_part]['comprometido'] = $monto_actual;
         }
     }
@@ -218,7 +226,6 @@ foreach ($traspasos as $traspaso) {
         }
     }
 }
-
 
 
 
@@ -416,68 +423,104 @@ foreach ($traspasos as $traspaso) {
         <tbody>
             <?php
             $total_asignacion_inicial = 0;
-            $total_modificacion = 0; // Ahora se usará una sola variable para modificaciones
+            $total_modificacion = 0;
             $total_compromiso = 0;
             $total_causado = 0;
             $total_disponibilidad = 0;
 
-            ksort($data);
+            //   ksort($data);
 
+            $sector_actual = null;
+
+            // Subtotales por sector
+            $sub_asignacion = 0;
+            $sub_modificacion = 0;
+            $sub_compromiso = 0;
+            $sub_causado = 0;
+            $sub_disponibilidad = 0;
 
             foreach ($data as $info_partida) {
-                // Asignar valores
-
-
-
                 $codigo_partida = $info_partida['partida'] ?? 'N/A';
                 $denominacion = $info_partida['denominacion'] ?? 'N/A';
                 $asignacion_inicial = $info_partida['monto_inicial'] ?? 0;
                 $compromiso = $info_partida['comprometido'] ?? 0;
                 $causado = $info_partida['causado'] ?? 0;
-
                 $modificacion_aumentada = $info_partida['traspado_d'] ?? 0;
                 $modificacion_restada = $info_partida['traspaso_a'] ?? 0;
-
-                // Calcular modificación como un solo valor positivo o negativo
                 $modificacion = $modificacion_aumentada - $modificacion_restada;
-
-                // Calcular disponibilidad correctamente
                 $disponibilidad = ($asignacion_inicial + $modificacion) - $compromiso;
 
-                // Acumular valores
+                // Extraer sector (los primeros 3 bloques del código de partida)
+                $partes_codigo = explode('.', $codigo_partida);
+                $sector = implode('.', array_slice($partes_codigo, 0, 3));
+
+                // Si cambia el sector, imprimir subtotal del anterior
+                if ($sector_actual !== null && $sector !== $sector_actual) {
+                    echo "<tr class='bg-secondary text-white'>
+            <td colspan='2' class='fw-bold'>TOTAL SECTOR {$sector_actual}</td>
+            <td class='fw-bold'>" . number_format($sub_asignacion, 2, ',', '.') . "</td>
+            <td class='fw-bold'>" . number_format($sub_modificacion, 2, ',', '.') . "</td>
+            <td class='fw-bold'>" . number_format($sub_compromiso, 2, ',', '.') . "</td>
+            <td class='fw-bold'>" . number_format($sub_causado, 2, ',', '.') . "</td>
+            <td class='fw-bold'>" . number_format($sub_disponibilidad, 2, ',', '.') . "</td>
+        </tr>";
+
+                    // Reiniciar subtotales
+                    $sub_asignacion = $sub_modificacion = $sub_compromiso = $sub_causado = $sub_disponibilidad = 0;
+                }
+
+                $sector_actual = $sector;
+
+                // Acumular totales generales
                 $total_asignacion_inicial += $asignacion_inicial;
-                $total_modificacion += $modificacion; // Se usa el valor neto de modificaciones
+                $total_modificacion += $modificacion;
                 $total_compromiso += $compromiso;
                 $total_causado += $causado;
                 $total_disponibilidad += $disponibilidad;
 
-                // Imprimir filas
+                // Acumular subtotales por sector
+                $sub_asignacion += $asignacion_inicial;
+                $sub_modificacion += $modificacion;
+                $sub_compromiso += $compromiso;
+                $sub_causado += $causado;
+                $sub_disponibilidad += $disponibilidad;
+
                 echo "<tr>
-            <td class='fz-8' style='border-width: 3px;'>{$codigo_partida}</td>
-            <td class='fz-8 text-left' style='border-width: 3px;'>{$denominacion}</td>
-            <td class='fz-8' style='border-width: 3px;'>" . number_format($asignacion_inicial, 2, ',', '.') . "</td>";
+        <td class='fz-8' style='border-width: 3px;'>{$codigo_partida}</td>
+        <td class='fz-8 text-left' style='border-width: 3px;'>{$denominacion}</td>
+        <td class='fz-8' style='border-width: 3px;'>" . number_format($asignacion_inicial, 2, ',', '.') . "</td>
+        <td class='fz-8' style='border-width: 3px;'>" . number_format($modificacion, 2, ',', '.') . "</td>
+        <td class='fz-8' style='border-width: 3px;'>" . number_format($compromiso, 2, ',', '.') . "</td>
+        <td class='fz-8' style='border-width: 3px;'>" . number_format($causado, 2, ',', '.') . "</td>
+        <td class='fz-8' style='border-width: 3px;'>" . number_format($disponibilidad, 2, ',', '.') . "</td>
+    </tr>";
+            }
 
-                // Imprimir modificación con su respectivo signo
-                echo "<td class='fz-8' style='border-width: 3px;'>" . number_format($modificacion, 2, ',', '.') . "</td>";
-
-                echo "<td class='fz-8' style='border-width: 3px;'>" . number_format($compromiso, 2, ',', '.') . "</td>
-              <td class='fz-8' style='border-width: 3px;'>" . number_format($causado, 2, ',', '.') . "</td>
-              <td class='fz-8' style='border-width: 3px;'>" . number_format($disponibilidad, 2, ',', '.') . "</td>
-          </tr>";
+            // Imprimir total del último sector
+            if ($sector_actual !== null) {
+                echo "<tr class='bg-secondary text-white'>
+        <td colspan='2' class='fw-bold'>TOTAL SECTOR {$sector_actual}</td>
+        <td class='fw-bold'>" . number_format($sub_asignacion, 2, ',', '.') . "</td>
+        <td class='fw-bold'>" . number_format($sub_modificacion, 2, ',', '.') . "</td>
+        <td class='fw-bold'>" . number_format($sub_compromiso, 2, ',', '.') . "</td>
+        <td class='fw-bold'>" . number_format($sub_causado, 2, ',', '.') . "</td>
+        <td class='fw-bold'>" . number_format($sub_disponibilidad, 2, ',', '.') . "</td>
+    </tr>";
             }
 
             // Imprimir totales generales
-            echo "<tr>
-        <td class='bt'></td>
-        <td class='bt fw-bold'>TOTALES</td>
-        <td class='bt fw-bold'>" . number_format($total_asignacion_inicial, 2, ',', '.') . "</td>
-        <td class='bt fw-bold' style='border-width: 3px;'>" . number_format($total_modificacion, 2, ',', '.') . "</td>
-        <td class='bt fw-bold'>" . number_format($total_compromiso, 2, ',', '.') . "</td>
-        <td class='bt fw-bold'>" . number_format($total_causado, 2, ',', '.') . "</td>
-        <td class='bt fw-bold'>" . number_format($total_disponibilidad, 2, ',', '.') . "</td>
-    </tr>";
+            echo "<tr class='bg-dark text-white'>
+    <td class='bt'></td>
+    <td class='bt fw-bold'>TOTALES GENERALES</td>
+    <td class='bt fw-bold'>" . number_format($total_asignacion_inicial, 2, ',', '.') . "</td>
+    <td class='bt fw-bold'>" . number_format($total_modificacion, 2, ',', '.') . "</td>
+    <td class='bt fw-bold'>" . number_format($total_compromiso, 2, ',', '.') . "</td>
+    <td class='bt fw-bold'>" . number_format($total_causado, 2, ',', '.') . "</td>
+    <td class='bt fw-bold'>" . number_format($total_disponibilidad, 2, ',', '.') . "</td>
+</tr>";
             ?>
         </tbody>
+
 
     </table>
 
