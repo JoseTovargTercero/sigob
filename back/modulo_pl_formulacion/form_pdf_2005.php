@@ -52,11 +52,8 @@ $stmt->close();
 // Plan de inversión
 
 
-
-
-
 // Consultar distribuciones presupuestarias
-$query_distribucion = "SELECT monto_inicial, id_partida FROM distribucion_presupuestaria WHERE id_ejercicio = ?";
+$query_distribucion = "SELECT DP.monto_inicial, DP.id_partida, PP.partida, PP.descripcion FROM distribucion_presupuestaria AS DP LEFT JOIN partidas_presupuestarias PP ON PP.id = DP.id_partida WHERE id_ejercicio = ?";
 $stmt_distribucion = $conexion->prepare($query_distribucion);
 $stmt_distribucion->bind_param('i', $id_ejercicio);
 $stmt_distribucion->execute();
@@ -70,8 +67,29 @@ if ($result_distribucion->num_rows === 0) {
 $distribuciones = $result_distribucion->fetch_all(MYSQLI_ASSOC);
 
 $data = [];
-$totales_por_partida = [];
-$partidas_a_agrupadas = ['301', '302', '303', '304', '305', '306', '307', '308', '309', '310', '311', '312', '313', '400', '401', '402', '403', '404', '405', '406', '407', '408', '409', '410', '411', '412', '498'];
+
+
+// Crear array de codigos de partidas para las distribuciones
+$solo_partidas = array_column($distribuciones, 'partida');
+$codigos = array_map(function ($partida) {
+    return substr($partida, 0, 3);
+}, $solo_partidas);
+
+
+$partidas_a_agrupadas = array_unique($codigos);
+
+// extraer primeros 3 caracteres de las claves de $fci
+foreach (array_keys($fci) as $clave_partida) {
+    $codigo = substr($clave_partida, 0, 3);
+    if (!in_array($codigo, $partidas_a_agrupadas)) {
+        $partidas_a_agrupadas[] = $codigo;
+    }
+}
+
+array_values($partidas_a_agrupadas);
+
+$totales_por_partida = array_fill_keys($partidas_a_agrupadas, 0);
+
 
 
 
@@ -79,27 +97,18 @@ foreach ($distribuciones as $distribucion) {
     $monto_inicial = $distribucion['monto_inicial'];
     $id_partida = $distribucion['id_partida'];
 
-    // Consultar partida y descripción
-    $query_partida = "SELECT partida, descripcion FROM partidas_presupuestarias WHERE id = ?";
-    $stmt_partida = $conexion->prepare($query_partida);
-    $stmt_partida->bind_param('i', $id_partida);
-    $stmt_partida->execute();
-    $result_partida = $stmt_partida->get_result();
-    $partida_data = $result_partida->fetch_assoc();
 
-
-    if (!$partida_data) {
+    if (!$distribucion) {
         echo 'No se encontraron registros en partidas_presupuestarias para el id_partida: ' . $id_partida . "<br>";
         continue; // Continúa al siguiente registro
     }
 
-    $partida = $partida_data['partida'] ?? 'N/A';
-    $descripcion = $partida_data['descripcion'] ?? 'N/A';
-
-
+    $partida = $distribucion['partida'] ?? 'N/A';
+    $descripcion = $distribucion['descripcion'] ?? 'N/A';
 
     // Extraer el código de partida (los primeros 3 caracteres)
     $codigo_partida = substr($partida, 0, 3);
+
 
     // Agrupar datos por código de partida
     if (in_array($codigo_partida, $partidas_a_agrupadas)) {
@@ -108,24 +117,60 @@ foreach ($distribuciones as $distribucion) {
         if (@$data[$codigo_partida][$partida]) {
             $data[$codigo_partida][$partida][3] = intval($data[$codigo_partida][$partida][3]) +  $monto_inicial;
         } else {
-            $data[$codigo_partida][$partida] = [$partida, $descripcion, 0, $monto_inicial, 0, 0, $monto_inicial];
+            $data[$codigo_partida][$partida] = [
+                $partida,
+                $descripcion,
+                0,
+                $monto_inicial,
+                0, // [4] FCI
+                0,
+                $monto_inicial
+            ];
         }
 
-
-        $data[$codigo_partida][$partida][4] = (isset($fci[$partida]) ? $fci[$partida] : 0);
-
-
-
-        if (!isset($totales_por_partida[$codigo_partida])) {
-            $totales_por_partida[$codigo_partida] = 0;
-        }
-        $totales_por_partida[$codigo_partida] += $monto_inicial + $data[$codigo_partida][$partida][4];
+        $totales_por_partida[$codigo_partida] += intval($monto_inicial);
     }
 }
 
 
+// Preparar el statement UNA VEZ
+$stmt = $conexion->prepare("SELECT descripcion FROM `partidas_presupuestarias` WHERE partida = ?");
 
 
+
+function obtenerDescripcionPartida($stmt, $id_partida)
+{
+    $descripcion = 'N/A';
+    $stmt->bind_param('s', $id_partida);
+    $stmt->execute();
+    $stmt->bind_result($descripcion);
+    $stmt->fetch();
+    return $descripcion;
+}
+
+// Asignar valores del plan de inversion 
+
+foreach ($fci as $key => $item) {
+    $codigo_partida = substr($key, 0, 3);
+
+    if (@$data[$codigo_partida][$key]) {
+        $data[$codigo_partida][$key][4] = intval($item);
+    } else {
+        $data[$codigo_partida][$partida] = [
+            $key,
+            obtenerDescripcionPartida($stmt, $key),
+            0,
+            0,
+            intval($item), // [4] FCI
+            0,
+            intval($item)
+        ];
+    }
+
+    $totales_por_partida[$codigo_partida] += intval($item);
+}
+
+$stmt->close();
 
 ?>
 
@@ -380,7 +425,7 @@ foreach ($distribuciones as $distribucion) {
                         $t_situado_estada += $situado_estada = $row[3];
                         $t_fci += $fci = $row[4];
                         $t_otras_fuentes += $otras_fuentes = $row[5];
-                        $t_total += $total = $situado_estada + $fci;
+                        $t_total = $situado_estada + $fci;
 
 
 
@@ -388,7 +433,6 @@ foreach ($distribuciones as $distribucion) {
                         $tt_situado_estada += $situado_estada;
                         $tt_fci += $fci;
                         $tt_otras_fuentes += $otras_fuentes;
-                        $tt_total += $t_total;
 
                         echo "<tr>
                             <td class='fz-8 bl'>{$row[0]}</td>
@@ -397,12 +441,14 @@ foreach ($distribuciones as $distribucion) {
                             <td class='fz-8 bl'>" .  number_format($situado_estada, 2, ',', '.') . "</td>
                             <td class='fz-8 bl'>" .  number_format($fci, 2, ',', '.') . "</td>
                             <td class='fz-8 bl'>" .  number_format($otras_fuentes, 2, ',', '.') . "</td>
-                            <td class='fz-8 bl br'>" .  number_format($total, 2, ',', '.') . "</td>
+                            <td class='fz-8 bl br'>" .  number_format($t_total, 2, ',', '.') . "</td>
                         </tr>";
                     }
 
                     // Imprimir total por partida
                     $monto_total = $totales_por_partida[$codigo_agrupado];
+                    $tt_total += $monto_total;
+
                     echo "<tr>
                             <td class='bl bb'></td>
                             <td class='bl bb fw-bold total_text'>TOTAL POR PARTIDA $codigo_agrupado</td>
@@ -427,6 +473,19 @@ foreach ($distribuciones as $distribucion) {
     </tr >";
             echo "</tbody >
         </table>";
+
+
+            /*
+            $totalll = 0;
+            foreach ($data as $key => $value) {
+                //  print_r(array_keys($value));;
+                foreach ($value as $value2) {
+                    $totalll += $value2[4];
+                }
+            }
+
+            echo number_format($totalll, 0, '.', ',');
+*/
             ?>
 
 

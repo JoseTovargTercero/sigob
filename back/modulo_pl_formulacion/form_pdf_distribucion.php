@@ -199,6 +199,20 @@ $stmt->close();
 ksort($partidasData);
 
 
+$actividades_nombre = [];
+
+$stmt = mysqli_prepare($conexion, "SELECT * FROM `entes_dependencias` WHERE ue = ?");
+$stmt->bind_param('s', $ente);
+$stmt->execute();
+$result = $stmt->get_result();
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $actividades_nombre[$row['actividad']] = $row['ente_nombre'];
+    }
+}
+$stmt->close();
+
+
 
 
 // Determinar el rango de actividades
@@ -569,7 +583,13 @@ $situado = $data['situado'] ?? 'Desconocido';
             <th class="br bb bt">DENOMINACIÓN</th>
             <th class="br bb bt">TOTAL PROGRAMA</th>
             <?php for ($actividad = $inicioActividad; $actividad <= $finActividad; $actividad++): ?>
-                <th class="br bb bt">ACTIVIDAD <?= $actividad ?></th>
+                <th class="br bb bt">
+                    <small style="font-weight: lighter;">
+                        <?php echo $actividades_nombre[$actividad] ?? 'SIN DENOMINACION'; ?>
+                    </small>
+                    <br>
+                    ACTIVIDAD <?= $actividad ?>
+                </th>
             <?php endfor; ?>
             <th class="br bb bt">MONTO DE LA OBRA</th>
         </tr>

@@ -17,7 +17,12 @@ $ano = $data_sector['ano'];
 $situado = $data_sector['situado'];
 
 $data = [];
-$sectores = array_fill_keys(['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15'], 0);
+
+
+$claves = array_map(fn($n) => str_pad($n, 2, '0', STR_PAD_LEFT), range(1, 100));
+$sectores = array_fill_keys($claves, 0);
+
+
 
 // Función para crear estructura base 
 function crearEstructuraPartida($denominacion = 'Sin denominación', $sectores)
